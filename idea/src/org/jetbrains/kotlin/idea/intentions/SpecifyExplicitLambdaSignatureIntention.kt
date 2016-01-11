@@ -43,7 +43,7 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
         return functionDescriptor.valueParameters.none { it.type.isError }
     }
 
-    override fun applyTo(element: KtLambdaExpression, editor: Editor) {
+    override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val psiFactory = KtPsiFactory(element)
         val functionLiteral = element.functionLiteral
         val functionDescriptor = element.analyze()[BindingContext.FUNCTION, functionLiteral]!!

@@ -187,7 +187,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
         return element.delegate == null && !element.isVar && !element.isLocal
     }
 
-    override fun applyTo(element: KtProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         val context = element.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor ?: return
         Converter(element.project, descriptor).run()

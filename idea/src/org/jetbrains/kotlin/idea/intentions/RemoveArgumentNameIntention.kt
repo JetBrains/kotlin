@@ -47,7 +47,7 @@ class RemoveArgumentNameIntention
         return TextRange(element.startOffset, expression.startOffset)
     }
 
-    override fun applyTo(element: KtValueArgument, editor: Editor) {
+    override fun applyTo(element: KtValueArgument, editor: Editor?) {
         val newArgument = KtPsiFactory(element).createArgument(element.getArgumentExpression()!!, null, element.getSpreadElement() != null)
         element.replace(newArgument)
     }

@@ -47,9 +47,9 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
         return TextRange(element.startOffset, rParen.endOffset)
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val newElvis = applyTo(element)
-        editor.caretModel.moveToOffset(newElvis.right!!.textOffset)
+        editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
     }
 
     fun applyTo(element: KtIfExpression): KtBinaryExpression {

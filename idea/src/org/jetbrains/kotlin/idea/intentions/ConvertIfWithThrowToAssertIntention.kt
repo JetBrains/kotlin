@@ -40,7 +40,7 @@ class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntent
         return DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).toString() == "java.lang.AssertionError.<init>"
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val condition = element.condition ?: return
 
         val thenExpr = element.then?.unwrapBlockOrParenthesis() as KtThrowExpression

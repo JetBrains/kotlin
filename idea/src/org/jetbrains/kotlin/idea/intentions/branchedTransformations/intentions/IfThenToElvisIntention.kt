@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.replaced
 
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention())
 
@@ -56,7 +56,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         return innerExpression !is KtBlockExpression && innerExpression.node.elementType != KtNodeTypes.NULL
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val elvis = applyTo(element)
         elvis.inlineLeftSideIfApplicableWithPrompt(editor)
     }

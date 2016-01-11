@@ -43,7 +43,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
 
     override fun startInWriteAction() = false
 
-    override fun applyTo(element: KtTypeReference, editor: Editor) {
+    override fun applyTo(element: KtTypeReference, editor: Editor?) {
         val function = element.parent as? KtNamedFunction ?: return
         val context = function.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return

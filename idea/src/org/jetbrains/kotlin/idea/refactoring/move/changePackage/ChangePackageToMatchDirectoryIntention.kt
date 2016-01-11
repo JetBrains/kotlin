@@ -43,7 +43,7 @@ class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndependentInt
         return true
     }
 
-    override fun applyTo(element: KtPackageDirective, editor: Editor) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         val file = element.getContainingKtFile()
         val newFqName = file.getFqNameByDirectory()
         if (!newFqName.toUnsafe().hasIdentifiersOnly()) return

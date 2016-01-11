@@ -38,7 +38,7 @@ class ConvertNegatedExpressionWithDemorgansLawIntention : SelfTargetingOffsetInd
         return splitBooleanSequence(baseExpression) != null
     }
 
-    override fun applyTo(element: KtPrefixExpression, editor: Editor) {
+    override fun applyTo(element: KtPrefixExpression, editor: Editor?) {
         applyTo(element)
     }
 

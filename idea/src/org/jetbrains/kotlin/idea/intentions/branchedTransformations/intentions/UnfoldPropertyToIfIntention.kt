@@ -34,7 +34,7 @@ class UnfoldPropertyToIfIntention : SelfTargetingRangeIntention<KtProperty>(KtPr
         return TextRange(element.startOffset, initializer.ifKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         val assignment = splitPropertyDeclaration(element)
         BranchedUnfoldingUtils.unfoldAssignmentToIf(assignment, editor)
     }

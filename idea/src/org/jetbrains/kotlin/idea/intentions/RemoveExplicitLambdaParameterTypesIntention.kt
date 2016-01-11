@@ -28,7 +28,7 @@ class RemoveExplicitLambdaParameterTypesIntention : SelfTargetingIntention<KtLam
         return caretOffset <= arrow.endOffset
     }
 
-    override fun applyTo(element: KtLambdaExpression, editor: Editor) {
+    override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val oldParameterList = element.functionLiteral.valueParameterList!!
 
         val parameterString = oldParameterList.parameters.map { it.name }.joinToString(", ")

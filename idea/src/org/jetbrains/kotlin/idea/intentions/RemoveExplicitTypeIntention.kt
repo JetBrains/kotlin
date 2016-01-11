@@ -35,7 +35,7 @@ class RemoveExplicitTypeIntention : SelfTargetingIntention<KtCallableDeclaration
         }
     }
 
-    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         element.setTypeReference(null)
     }
 }

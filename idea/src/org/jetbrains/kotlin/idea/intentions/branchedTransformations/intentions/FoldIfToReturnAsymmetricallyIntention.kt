@@ -33,7 +33,7 @@ class FoldIfToReturnAsymmetricallyIntention : SelfTargetingRangeIntention<KtIfEx
         return element.ifKeyword.textRange
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val condition = element.condition!!
         val thenBranch = element.then!!
         val elseBranch = KtPsiUtil.skipTrailingWhitespacesAndComments(element) as KtReturnExpression

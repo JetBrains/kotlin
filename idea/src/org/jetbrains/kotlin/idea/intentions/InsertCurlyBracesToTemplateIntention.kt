@@ -26,7 +26,7 @@ class InsertCurlyBracesToTemplateIntention : SelfTargetingOffsetIndependentInten
 
     override fun isApplicableTo(element: KtSimpleNameStringTemplateEntry): Boolean = true
 
-    override fun applyTo(element: KtSimpleNameStringTemplateEntry, editor: Editor) {
+    override fun applyTo(element: KtSimpleNameStringTemplateEntry, editor: Editor?) {
         val expression = element.expression ?: return
         element.replace(KtPsiFactory(element).createBlockStringTemplateEntry(expression))
     }

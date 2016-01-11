@@ -38,7 +38,7 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
         return true
     }
 
-    override fun applyTo(element: KtPackageDirective, editor: Editor) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         val file = element.getContainingKtFile()
         val project = file.project
         val targetDirectory = MoveClassesOrPackagesUtil.chooseDestinationPackage(

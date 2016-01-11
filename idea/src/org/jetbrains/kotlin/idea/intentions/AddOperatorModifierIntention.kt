@@ -32,7 +32,7 @@ class AddOperatorModifierIntention : SelfTargetingRangeIntention<KtNamedFunction
         return nameIdentifier.textRange
     }
 
-    override fun applyTo(element: KtNamedFunction, editor: Editor) {
+    override fun applyTo(element: KtNamedFunction, editor: Editor?) {
         applyTo(element)
     }
 

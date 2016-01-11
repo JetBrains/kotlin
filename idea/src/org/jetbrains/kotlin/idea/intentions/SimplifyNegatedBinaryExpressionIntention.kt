@@ -68,7 +68,7 @@ class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtP
         return true
     }
 
-    override fun applyTo(element: KtPrefixExpression, editor: Editor) {
+    override fun applyTo(element: KtPrefixExpression, editor: Editor?) {
         applyTo(element)
     }
 

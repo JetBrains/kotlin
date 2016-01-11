@@ -33,7 +33,7 @@ class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentInt
         return canPlaceAfterSimpleNameEntry(element.nextSibling)
     }
 
-    override fun applyTo(element: KtBlockStringTemplateEntry, editor: Editor) {
+    override fun applyTo(element: KtBlockStringTemplateEntry, editor: Editor?) {
         applyTo(element)
     }
 

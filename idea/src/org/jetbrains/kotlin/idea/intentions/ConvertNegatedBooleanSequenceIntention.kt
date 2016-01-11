@@ -32,7 +32,7 @@ class ConvertNegatedBooleanSequenceIntention : SelfTargetingOffsetIndependentInt
         return splitBooleanSequence(element) != null
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val operatorText = when(element.operationToken) {
             KtTokens.ANDAND -> KtTokens.OROR.value
             KtTokens.OROR -> KtTokens.ANDAND.value

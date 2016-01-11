@@ -39,7 +39,7 @@ class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIntention
         return true
     }
 
-    override fun applyTo(element: KtSimpleNameExpression, editor: Editor) {
+    override fun applyTo(element: KtSimpleNameExpression, editor: Editor?) {
         val (expressionToReplace, receiver, functionLiteral) = extractData(element)!!
 
         val commentSaver = CommentSaver(expressionToReplace)

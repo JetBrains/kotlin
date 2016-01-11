@@ -32,7 +32,7 @@ class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryEx
         return element.operationReference.textRange.containsOffset(caretOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val left = element.left!!
         val right = element.right!!
         val factory = KtPsiFactory(element)

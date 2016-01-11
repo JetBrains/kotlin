@@ -66,7 +66,7 @@ class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(
         return TextRange(element.startOffset, rParen.endOffset)
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val condition = element.condition as KtBinaryExpression
         val expression = condition.expressionComparedToNull()!!
         val result = element.replace(KtPsiFactory(element).createExpressionByPattern("$0!!", expression)) as KtPostfixExpression

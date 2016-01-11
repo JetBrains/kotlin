@@ -46,7 +46,7 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
         return true
     }
 
-    override fun applyTo(element: KtNameReferenceExpression, editor: Editor) {
+    override fun applyTo(element: KtNameReferenceExpression, editor: Editor?) {
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
         val targets = element.mainReference.resolveToDescriptors(bindingContext)
         val fqName = targets.map { it.importableFqName!! }.single()

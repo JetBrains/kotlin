@@ -29,7 +29,7 @@ class MoveLambdaInsideParenthesesIntention : SelfTargetingIntention<KtLambdaArgu
         return !body.textRange.containsInside(caretOffset)
     }
 
-    override fun applyTo(element: KtLambdaArgument, editor: Editor) {
+    override fun applyTo(element: KtLambdaArgument, editor: Editor?) {
         element.moveInsideParentheses(element.analyze())
     }
 }

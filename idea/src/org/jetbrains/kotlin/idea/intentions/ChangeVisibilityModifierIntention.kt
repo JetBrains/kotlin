@@ -83,7 +83,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
         return descriptor
     }
 
-    override fun applyTo(element: KtDeclaration, editor: Editor) {
+    override fun applyTo(element: KtDeclaration, editor: Editor?) {
         element.setVisibility(modifier)
     }
 

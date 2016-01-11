@@ -35,7 +35,7 @@ class UnfoldReturnToIfIntention : SelfTargetingRangeIntention<KtReturnExpression
         return TextRange(element.startOffset, ifExpression.ifKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtReturnExpression, editor: Editor) {
+    override fun applyTo(element: KtReturnExpression, editor: Editor?) {
         val ifExpression = element.returnedExpression as KtIfExpression
         val newIfExpression = ifExpression.copied()
         val thenExpr = newIfExpression.then!!.lastBlockStatementOrThis()

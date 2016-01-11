@@ -26,7 +26,7 @@ class InfixCallToOrdinaryIntention : SelfTargetingIntention<KtBinaryExpression>(
         return element.operationReference.textRange.containsOffset(caretOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         convert(element)
     }
 

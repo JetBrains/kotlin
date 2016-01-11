@@ -43,7 +43,7 @@ class ReplaceCallWithUnaryOperatorIntention : SelfTargetingRangeIntention<KtDotQ
         return call.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val operation = operation(element.calleeName)!!
         val receiver = element.receiverExpression
         element.replace(KtPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))

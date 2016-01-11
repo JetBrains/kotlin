@@ -41,10 +41,10 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
 import org.jetbrains.kotlin.idea.refactoring.move.lazilyProcessInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
@@ -110,7 +110,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
         return expression.replaced(replacement).singletonList()
     }
 
-    override fun inlineElement(project: Project, editor: Editor, element: PsiElement) {
+    override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
         val declaration = element as KtProperty
         val file = declaration.getContainingKtFile()
         val name = declaration.name ?: return
@@ -243,13 +243,13 @@ class KotlinInlineValHandler : InlineActionHandler() {
         }
     }
 
-    private fun reportAmbiguousAssignment(project: Project, editor: Editor, name: String, assignments: Set<PsiElement>) {
+    private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Set<PsiElement>) {
         val key = if (assignments.isEmpty()) "variable.has.no.initializer" else "variable.has.no.dominating.definition"
         val message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name))
         showErrorHint(project, editor, message)
     }
 
-    private fun showErrorHint(project: Project, editor: Editor, message: String) {
+    private fun showErrorHint(project: Project, editor: Editor?, message: String) {
         CommonRefactoringUtil.showErrorHint(project, editor, message, RefactoringBundle.message("inline.variable.title"), HelpID.INLINE_VARIABLE)
     }
 

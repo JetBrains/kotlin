@@ -78,7 +78,7 @@ class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndependentInt
                                                                        operationToken == KtTokens.DIV ||
                                                                        operationToken == KtTokens.PERC
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val replacement = buildOperatorAssignmentText(
                 element.left as KtNameReferenceExpression,
                 element.right as KtBinaryExpression,

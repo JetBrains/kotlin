@@ -263,7 +263,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
         }
     }
 
-    override fun applyTo(element: KtExpression, editor: Editor) {
+    override fun applyTo(element: KtExpression, editor: Editor?) {
         convert(element)
     }
 }

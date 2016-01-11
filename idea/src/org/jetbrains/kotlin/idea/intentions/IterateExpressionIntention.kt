@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.chooseA
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.suggestNamesForComponent
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -62,7 +60,8 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
 
     override fun startInWriteAction() = false
 
-    override fun applyTo(element: KtExpression, editor: Editor) {
+    override fun applyTo(element: KtExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val elementType = data(element)!!.elementType
         val nameValidator = NewDeclarationNameValidator(element, element.siblings(), NewDeclarationNameValidator.Target.VARIABLES)
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)

@@ -31,7 +31,7 @@ class FoldIfToReturnIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIf
         return element.ifKeyword.textRange
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.then!!)!!
         val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.`else`!!)!!
 

@@ -47,7 +47,7 @@ class FoldWhenToAssignmentIntention : SelfTargetingRangeIntention<KtWhenExpressi
         return element.whenKeyword.textRange
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         assert(!element.entries.isEmpty())
 
         val firstAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.entries.first().expression!!)!!

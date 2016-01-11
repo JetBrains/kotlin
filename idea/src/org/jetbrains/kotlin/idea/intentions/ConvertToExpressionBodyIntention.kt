@@ -20,9 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -42,12 +42,14 @@ class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention
 
     override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration
 
-    override fun applyTo(element: KtDeclarationWithBody, editor: Editor) {
+    override fun applyTo(element: KtDeclarationWithBody, editor: Editor?) {
         applyTo(element) {
             val typeRef = it.typeReference!!
             val colon = it.colon!!
-            editor.selectionModel.setSelection(colon.startOffset, typeRef.endOffset)
-            editor.caretModel.moveToOffset(typeRef.endOffset)
+            editor?.apply {
+                selectionModel.setSelection(colon.startOffset, typeRef.endOffset)
+                caretModel.moveToOffset(typeRef.endOffset)
+            }
         }
     }
 

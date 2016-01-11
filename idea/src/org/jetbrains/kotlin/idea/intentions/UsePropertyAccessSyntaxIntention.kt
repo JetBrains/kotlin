@@ -61,7 +61,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         return detectPropertyNameToUse(element) != null
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
         applyTo(element, detectPropertyNameToUse(element)!!)
     }
 

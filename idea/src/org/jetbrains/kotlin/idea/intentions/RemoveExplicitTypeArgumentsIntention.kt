@@ -102,7 +102,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
         override fun getTypeArgumentList() = null
     }
 
-    override fun applyTo(element: KtTypeArgumentList, editor: Editor) {
+    override fun applyTo(element: KtTypeArgumentList, editor: Editor?) {
         element.delete()
     }
 }

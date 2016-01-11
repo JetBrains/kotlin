@@ -32,7 +32,7 @@ class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(Kt
         return element.nameIdentifier?.textRange?.containsOffset(caretOffset) == true
     }
 
-    override fun applyTo(element: KtProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         introduceBackingProperty(element)
     }
 

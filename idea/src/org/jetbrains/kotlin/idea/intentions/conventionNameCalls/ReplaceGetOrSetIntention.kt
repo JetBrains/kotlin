@@ -86,7 +86,7 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         return callExpression.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         applyTo(element)
     }
 

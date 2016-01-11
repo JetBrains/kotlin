@@ -20,12 +20,12 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.setReceiverType
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.quickfix.unblockDocument
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -44,7 +44,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
 
     //TODO: local class
 
-    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
@@ -125,15 +125,17 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             }
         }
 
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+        editor?.apply {
+            unblockDocument()
 
-        if (bodyToSelect != null) {
-            val range = bodyToSelect!!.textRange
-            editor.moveCaret(range.startOffset, ScrollType.CENTER)
-            editor.selectionModel.setSelection(range.startOffset, range.endOffset)
-        }
-        else {
-            editor.moveCaret(extension.textOffset, ScrollType.CENTER)
+            if (bodyToSelect != null) {
+                val range = bodyToSelect!!.textRange
+                moveCaret(range.startOffset, ScrollType.CENTER)
+                selectionModel.setSelection(range.startOffset, range.endOffset)
+            }
+            else {
+                moveCaret(extension.textOffset, ScrollType.CENTER)
+            }
         }
     }
 

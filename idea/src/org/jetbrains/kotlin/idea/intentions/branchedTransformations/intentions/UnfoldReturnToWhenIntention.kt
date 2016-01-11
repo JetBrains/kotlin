@@ -34,7 +34,7 @@ class UnfoldReturnToWhenIntention : SelfTargetingRangeIntention<KtReturnExpressi
         return TextRange(element.startOffset, whenExpr.whenKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtReturnExpression, editor: Editor) {
+    override fun applyTo(element: KtReturnExpression, editor: Editor?) {
         val whenExpression = element.returnedExpression as KtWhenExpression
         val newWhenExpression = whenExpression.copied()
 

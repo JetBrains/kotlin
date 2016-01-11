@@ -60,7 +60,7 @@ class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpressio
         return indexVar.nameIdentifier?.range
     }
 
-    override fun applyTo(element: KtForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor?) {
         val multiParameter = element.destructuringParameter!!
         val loopRange = element.loopRange as KtDotQualifiedExpression
 

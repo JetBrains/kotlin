@@ -29,7 +29,7 @@ class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentInten
         return element.entries.any { it is KtStringTemplateEntryWithExpression }
     }
 
-    override fun applyTo(element: KtStringTemplateExpression, editor: Editor) {
+    override fun applyTo(element: KtStringTemplateExpression, editor: Editor?) {
         val tripleQuoted = isTripleQuoted(element.text!!)
         val quote = if (tripleQuoted) "\"\"\"" else "\""
         val entries = element.entries

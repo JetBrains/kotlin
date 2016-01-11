@@ -53,7 +53,7 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
         return false
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         // Have to use text here to preserve names like "plus"
         val operator = element.operationReference.text!!
         val convertedOperator = when (operator) {

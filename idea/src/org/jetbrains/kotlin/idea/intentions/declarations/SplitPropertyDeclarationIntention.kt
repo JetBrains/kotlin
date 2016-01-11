@@ -31,7 +31,7 @@ class SplitPropertyDeclarationIntention : SelfTargetingRangeIntention<KtProperty
         return TextRange(element.startOffset, initializer.startOffset)
     }
 
-    override fun applyTo(element: KtProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         splitPropertyDeclaration(element)
     }
 }

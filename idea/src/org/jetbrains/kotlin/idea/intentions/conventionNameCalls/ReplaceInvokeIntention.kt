@@ -32,7 +32,7 @@ class ReplaceInvokeIntention : SelfTargetingRangeIntention<KtDotQualifiedExpress
         return element.callExpression!!.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val receiver = element.receiverExpression
         val callExpression = element.callExpression!!.copy() as KtCallExpression
         callExpression.calleeExpression!!.replace(receiver)

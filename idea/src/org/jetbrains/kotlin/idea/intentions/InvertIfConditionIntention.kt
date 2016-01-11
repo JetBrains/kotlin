@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.quickfix.unblockDocument
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -35,7 +35,7 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         return element.condition != null && element.then != null
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val newCondition = element.condition!!.negate()
 
         val newIf = handleSpecialCases(element, newCondition)
@@ -47,8 +47,10 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
             simplifyIntention.applyTo(newIfCondition)
         }
 
-        PsiDocumentManager.getInstance(newIf.project).doPostponedOperationsAndUnblockDocument(editor.document)
-        editor.moveCaret(newIf.textOffset)
+        editor?.apply {
+            unblockDocument()
+            moveCaret(newIf.textOffset)
+        }
     }
 
     private fun handleStandardCase(ifExpression: KtIfExpression, newCondition: KtExpression): KtIfExpression {

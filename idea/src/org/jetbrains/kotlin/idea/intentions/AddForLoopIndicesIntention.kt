@@ -24,8 +24,8 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -56,7 +56,8 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
         return TextRange(element.startOffset, element.body?.startOffset ?: element.endOffset)
     }
 
-    override fun applyTo(element: KtForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val loopRange = element.loopRange!!
         val loopParameter = element.loopParameter!!
         val psiFactory = KtPsiFactory(element)

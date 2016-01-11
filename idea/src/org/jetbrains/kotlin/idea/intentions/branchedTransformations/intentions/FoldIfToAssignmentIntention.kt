@@ -32,7 +32,7 @@ class FoldIfToAssignmentIntention : SelfTargetingRangeIntention<KtIfExpression>(
         return element.ifKeyword.textRange
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         var thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.then!!)!!
         val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.`else`!!)!!
 

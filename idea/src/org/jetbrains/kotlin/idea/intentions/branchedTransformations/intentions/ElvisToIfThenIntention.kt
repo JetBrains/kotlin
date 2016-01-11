@@ -35,7 +35,7 @@ class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(K
             null
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val left = KtPsiUtil.safeDeparenthesize(element.left!!)
         val right = KtPsiUtil.safeDeparenthesize(element.right!!)
 

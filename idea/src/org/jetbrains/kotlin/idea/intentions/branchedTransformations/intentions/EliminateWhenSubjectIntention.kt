@@ -33,7 +33,7 @@ class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(K
         return caretOffset <= lBrace.startOffset
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         val subject = element.subjectExpression!!
 
         val whenExpression = KtPsiFactory(element).buildExpression {

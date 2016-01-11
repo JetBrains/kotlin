@@ -31,7 +31,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         return element.ifKeyword.textRange
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         var whenExpression = KtPsiFactory(element).buildExpression {
             appendFixedText("when {\n")
 

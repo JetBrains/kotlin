@@ -33,7 +33,7 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
         return element.operationTokenNode.textRange
     }
 
-    override fun applyTo(element: KtSafeQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtSafeQualifiedExpression, editor: Editor?) {
         val receiver = KtPsiUtil.safeDeparenthesize(element.receiverExpression)
         val selector = element.selectorExpression!!
 

@@ -52,7 +52,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
         return true
     }
 
-    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         val type = getTypeForDeclaration(element)
         addTypeAnnotation(editor, element, type)
     }

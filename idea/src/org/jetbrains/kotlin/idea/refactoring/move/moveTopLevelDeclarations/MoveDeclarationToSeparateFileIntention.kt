@@ -24,9 +24,9 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
@@ -58,7 +58,8 @@ class MoveDeclarationToSeparateFileIntention :
         return TextRange(startOffset, endOffset)
     }
 
-    override fun applyTo(element: KtClassOrObject, editor: Editor) {
+    override fun applyTo(element: KtClassOrObject, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val file = element.getContainingKtFile()
         val project = file.project
         val originalOffset = editor.caretModel.offset - element.startOffset

@@ -34,7 +34,8 @@ class ReplaceItWithExplicitFunctionLiteralParamIntention() : SelfTargetingOffset
     override fun isApplicableTo(element: KtNameReferenceExpression)
             = isAutoCreatedItUsage(element)
 
-    override fun applyTo(element: KtNameReferenceExpression, editor: Editor) {
+    override fun applyTo(element: KtNameReferenceExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val target = element.mainReference.resolveToDescriptors(element.analyze()).single()
 
         val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.containingDeclaration!!) as KtFunctionLiteral

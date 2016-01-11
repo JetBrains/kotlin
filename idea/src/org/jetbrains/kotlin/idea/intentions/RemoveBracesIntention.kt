@@ -36,7 +36,7 @@ class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(KtBlockE
         return true
     }
 
-    override fun applyTo(element: KtBlockExpression, editor: Editor) {
+    override fun applyTo(element: KtBlockExpression, editor: Editor?) {
         val statement = element.statements.single()
 
         val containerNode = element.parent as KtContainerNode

@@ -98,6 +98,12 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
     return false
 }
 
+fun Editor.unblockDocument() {
+    project?.let {
+        PsiDocumentManager.getInstance(it).doPostponedOperationsAndUnblockDocument(document)
+    }
+}
+
 fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.RELATIVE) {
     caretModel.moveToOffset(offset)
     scrollingModel.scrollToCaret(scrollType)

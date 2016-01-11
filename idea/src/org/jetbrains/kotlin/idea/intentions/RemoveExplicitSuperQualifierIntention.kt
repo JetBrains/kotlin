@@ -65,7 +65,7 @@ class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSupe
         return TextRange(element.instanceReference.endOffset, element.labelQualifier?.startOffset ?: element.endOffset)
     }
 
-    override fun applyTo(element: KtSuperExpression, editor: Editor) {
+    override fun applyTo(element: KtSuperExpression, editor: Editor?) {
         element.replace(toNonQualified(element))
     }
 

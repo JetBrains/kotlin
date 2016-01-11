@@ -38,7 +38,7 @@ class UnfoldAssignmentToWhenIntention : SelfTargetingRangeIntention<KtBinaryExpr
         return TextRange(element.startOffset, right.whenKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         BranchedUnfoldingUtils.unfoldAssignmentToWhen(element, editor)
     }
 }

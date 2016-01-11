@@ -31,7 +31,8 @@ class AddBracesIntention : SelfTargetingIntention<KtExpression>(KtExpression::cl
         return true
     }
 
-    override fun applyTo(element: KtExpression, editor: Editor) {
+    override fun applyTo(element: KtExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset)!!
 
         if (element.nextSibling?.text == ";") {

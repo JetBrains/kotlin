@@ -38,13 +38,13 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
-import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.runWhenSmart
+import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -83,7 +83,8 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
         return null
     }
 
-    override fun applyTo(element: KtNamedDeclaration, editor: Editor) {
+    override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val lightClass = when (element) {
             is KtClassOrObject -> element.toLightClass()
             else -> element.getContainingKtFile().findFacadeClass()

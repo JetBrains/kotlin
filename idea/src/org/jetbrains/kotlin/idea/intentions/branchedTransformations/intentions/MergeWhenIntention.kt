@@ -68,7 +68,7 @@ class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenE
                     ?.mapNotNull { it.name }
                     ?.toSet() ?: emptySet()
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         val nextWhen = PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java) as KtWhenExpression
         for ((entry1, entry2) in element.entries.zip(nextWhen.entries)) {
             entry1.expression.mergeWith(entry2.expression)

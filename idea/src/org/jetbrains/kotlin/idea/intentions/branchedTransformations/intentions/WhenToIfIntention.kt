@@ -32,7 +32,7 @@ class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenEx
         return element.whenKeyword.textRange
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         val factory = KtPsiFactory(element)
         val ifExpression = factory.buildExpression {
             val entries = element.entries

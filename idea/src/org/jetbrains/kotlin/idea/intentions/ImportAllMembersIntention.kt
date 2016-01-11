@@ -56,7 +56,7 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpressio
         return true
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val target = target(element)!!
         val classFqName = target.importableFqName!!.parent()
 

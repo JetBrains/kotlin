@@ -42,7 +42,7 @@ class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpr
         return elseEntry.startOffset <= caretOffset && caretOffset <= innerWhen.whenKeyword.endOffset
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         val subjectExpression = element.subjectExpression
         val nestedWhen = element.elseExpression as KtWhenExpression
 
@@ -72,6 +72,6 @@ class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpr
         val newWhen = element.replaced(whenExpression)
 
         val firstNewEntry = newWhen.entries[outerEntries.size - 1]
-        editor.moveCaret(firstNewEntry.textOffset)
+        editor?.moveCaret(firstNewEntry.textOffset)
     }
 }

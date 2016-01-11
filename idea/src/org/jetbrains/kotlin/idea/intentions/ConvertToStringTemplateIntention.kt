@@ -42,7 +42,7 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
         return true
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         applyTo(element)
     }
 

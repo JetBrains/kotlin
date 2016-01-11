@@ -48,7 +48,7 @@ class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpr
         return true
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val dotQualified = element.parent as KtDotQualifiedExpression
         val receiver = dotQualified.receiverExpression
         val argument = element.valueArguments.single().getArgumentExpression()!!

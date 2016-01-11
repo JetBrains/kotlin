@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.quickfix.unblockDocument
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
@@ -55,7 +55,7 @@ class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<Kt
         return annotationEntry.textRange
     }
 
-    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         val replaceWith = element.suggestReplaceWith()!!
 
         assert('\n' !in replaceWith.expression && '\r' !in replaceWith.expression) { "Formatted expression text should not contain \\n or \\r" }
@@ -98,8 +98,10 @@ class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<Kt
         argument = annotationEntry.valueArgumentList!!.addArgument(argument)
         argument = ShortenReferences.DEFAULT.process(argument) as KtValueArgument
 
-        PsiDocumentManager.getInstance(argument.project).doPostponedOperationsAndUnblockDocument(editor.document)
-        editor.moveCaret(argument.textOffset)
+        editor?.apply {
+            unblockDocument()
+            moveCaret(argument.textOffset)
+        }
     }
 
     private fun KtCallableDeclaration.deprecatedAnnotationWithNoReplaceWith(): KtAnnotationEntry? {

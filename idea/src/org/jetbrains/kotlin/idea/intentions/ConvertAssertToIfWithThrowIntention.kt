@@ -45,7 +45,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         return DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).asString() == "kotlin.assert"
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val args = element.valueArguments
         val conditionText = args[0]?.getArgumentExpression()?.text ?: return
         val functionLiteralArgument = element.lambdaArguments.singleOrNull()

@@ -57,7 +57,7 @@ class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCallExpre
         return !bodyRange.containsInside(caretOffset)
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
         element.moveFunctionLiteralOutsideParentheses()
     }
 

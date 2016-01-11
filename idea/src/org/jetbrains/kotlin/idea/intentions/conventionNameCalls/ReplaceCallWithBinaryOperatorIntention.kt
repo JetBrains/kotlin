@@ -45,7 +45,7 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
         return element.callExpression!!.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val operation = operation(element.calleeName)!!
         val argument = element.callExpression!!.valueArguments.single().getArgumentExpression()!!
         val receiver = element.receiverExpression

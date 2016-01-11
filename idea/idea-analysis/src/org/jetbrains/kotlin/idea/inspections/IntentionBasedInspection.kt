@@ -25,8 +25,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -118,13 +118,12 @@ abstract class IntentionBasedInspection<TElement : KtElement>(
             assert(startElement == endElement)
             if (!isAvailable(project, file, startElement, endElement)) return
 
-            startElement.getOrCreateEditor()?.let { editor ->
-                editor.caretModel.moveToOffset(startElement.textOffset)
-                intention.applyTo(startElement as TElement, editor)
-            }
+            val editor = startElement.findExistingEditor()
+            editor?.caretModel?.moveToOffset(startElement.textOffset)
+            intention.applyTo(startElement as TElement, editor)
         }
 
-        private fun PsiElement.getOrCreateEditor(): Editor? {
+        private fun PsiElement.findExistingEditor(): Editor? {
             val file = containingFile?.virtualFile ?: return null
             val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
 

@@ -200,7 +200,8 @@ abstract class ImplementAbstractMemberIntentionBase :
         }
     }
 
-    override fun applyTo(element: KtNamedDeclaration, editor: Editor) {
+    override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val project = element.project
 
         val classesToProcess = project.runSynchronouslyWithProgress(

@@ -68,7 +68,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         return TextRange(element.objectDeclaration.getObjectKeyword().startOffset, baseTypeRef.endOffset)
     }
 
-    override fun applyTo(element: KtObjectLiteralExpression, editor: Editor) {
+    override fun applyTo(element: KtObjectLiteralExpression, editor: Editor?) {
         applyTo(element)
     }
 

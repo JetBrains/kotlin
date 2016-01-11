@@ -71,7 +71,7 @@ interface AddValVarToConstructorParameterAction {
             return element.nameIdentifier?.textRange
         }
 
-        override fun applyTo(element: KtParameter, editor: Editor) = invoke(element, editor)
+        override fun applyTo(element: KtParameter, editor: Editor?) = invoke(element, editor)
     }
 
     class QuickFix(parameter: KtParameter) :

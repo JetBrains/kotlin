@@ -52,7 +52,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
         return element.canBeReducedToBooleanConstant(null)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val topBinary = PsiTreeUtil.getTopmostParentOfType(element, KtBinaryExpression::class.java) ?: element
         val simplified = toSimplifiedExpression(topBinary)
         topBinary.replace(KtPsiUtil.safeDeparenthesize(simplified))

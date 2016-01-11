@@ -34,7 +34,7 @@ class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallE
         return if (isApplicableTo(element, element.analyze())) element.calleeExpression!!.textRange else null
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val argumentList = createTypeArguments(element, element.analyze())!!
 
         val callee = element.calleeExpression!!

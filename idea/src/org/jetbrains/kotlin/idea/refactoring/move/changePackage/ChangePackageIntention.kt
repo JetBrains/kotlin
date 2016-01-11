@@ -24,8 +24,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -38,10 +38,12 @@ class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageD
 
     override fun isApplicableTo(element: KtPackageDirective) = element.packageNameExpression != null
 
-    override fun applyTo(element: KtPackageDirective, editor: Editor) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         if (ApplicationManager.getApplication().isUnitTestMode) {
             throw UnsupportedOperationException("Do not call applyTo() in the test mode")
         }
+
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
 
         val file = element.getContainingKtFile()
         val project = file.project

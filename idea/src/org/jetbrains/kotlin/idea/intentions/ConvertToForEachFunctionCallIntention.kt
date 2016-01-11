@@ -32,7 +32,7 @@ class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpres
         return element.loopRange != null && element.loopParameter != null && element.body != null
     }
 
-    override fun applyTo(element: KtForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor?) {
         val commentSaver = CommentSaver(element)
 
         val body = element.body!!

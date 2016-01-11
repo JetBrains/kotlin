@@ -33,7 +33,7 @@ class IntroduceWhenSubjectIntention : SelfTargetingRangeIntention<KtWhenExpressi
         return element.whenKeyword.textRange
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         element.introduceSubject()
     }
 }

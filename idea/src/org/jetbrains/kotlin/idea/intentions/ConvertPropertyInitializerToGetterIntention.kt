@@ -30,7 +30,7 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingIntention<KtPro
                && !element.isLocal
     }
 
-    override fun applyTo(element: KtProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         convertPropertyInitializerToGetter(element, editor)
     }
 

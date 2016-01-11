@@ -211,7 +211,7 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
         return !KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType)
     }
 
-    override fun applyTo(element: KtNamedFunction, editor: Editor) {
+    override fun applyTo(element: KtNamedFunction, editor: Editor?) {
         val context = element.analyze(BodyResolveMode.PARTIAL)
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as FunctionDescriptor
         Converter(element.project, descriptor).run()

@@ -94,7 +94,7 @@ fun KtExpression.convertToIfStatement(condition: KtExpression, thenClause: KtExp
     return replaced(KtPsiFactory(this).createIf(condition, thenClause, elseClause))
 }
 
-fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor) {
+fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor?) {
     val project = this.project
     val occurrenceInConditional = (this.condition as KtBinaryExpression).left!!
     KotlinIntroduceVariableHandler.doRefactoring(project,
@@ -104,7 +104,7 @@ fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpressi
                                                  null)
 }
 
-fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
+fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor?) {
     val declaration = this.mainReference.resolve() as? KtProperty ?: return
 
     val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
@@ -119,15 +119,15 @@ fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(e
     }
 }
 
-fun KtSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Editor) {
+fun KtSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Editor?) {
     (this.receiverExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor) {
+fun KtBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor?) {
     (this.left as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor) {
+fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor?) {
     (this.baseExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 

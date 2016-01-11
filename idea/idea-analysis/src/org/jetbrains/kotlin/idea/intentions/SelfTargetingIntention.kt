@@ -51,7 +51,7 @@ abstract class SelfTargetingIntention<TElement : KtElement>(
 
     abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
 
-    abstract fun applyTo(element: TElement, editor: Editor)
+    abstract fun applyTo(element: TElement, editor: Editor?)
 
     private fun getTarget(editor: Editor, file: PsiFile): TElement? {
         val offset = editor.caretModel.offset

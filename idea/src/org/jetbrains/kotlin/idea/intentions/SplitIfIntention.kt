@@ -38,7 +38,7 @@ class SplitIfIntention : SelfTargetingIntention<KtExpression>(KtExpression::clas
         }
     }
 
-    override fun applyTo(element: KtExpression, editor: Editor) {
+    override fun applyTo(element: KtExpression, editor: Editor?) {
         val operator = when (element) {
             is KtIfExpression -> getFirstValidOperator(element)!!
             else -> element as KtOperationReferenceExpression

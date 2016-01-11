@@ -37,7 +37,7 @@ class FoldWhenToReturnIntention : SelfTargetingRangeIntention<KtWhenExpression>(
         return element.whenKeyword.textRange
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         assert(!element.entries.isEmpty())
 
         val newReturnExpression = KtPsiFactory(element).createExpressionByPattern("return $0", element) as KtReturnExpression
