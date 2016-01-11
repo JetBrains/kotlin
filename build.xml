@@ -811,8 +811,8 @@
         </new-kotlinc>
     </target>
 
-    <target name="kotlin.test">
-        <new-kotlinc output="${output}/classes/kotlin.test" moduleName="kotlin-test">
+    <target name="kotlin-test">
+        <new-kotlinc output="${output}/classes/kotlin-test" moduleName="kotlin-test">
             <src>
                 <include name="libraries/kotlin.test/shared/src/main/kotlin" />
                 <include name="libraries/kotlin.test/shared/src/main/kotlin.jvm" />
@@ -823,6 +823,12 @@
                 <pathelement path="libraries/lib/junit-4.11.jar"/>
             </class-path>
         </new-kotlinc>
+
+        <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}">
+            <jar-content>
+                <fileset dir="${output}/classes/kotlin-test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal"/>
+            </jar-content>
+        </pack-runtime-jar>
     </target>
 
     <target name="core">
@@ -988,23 +994,15 @@
         </pack-runtime-jar>
     </target>
 
-    <target name="pack-kotlin-test">
-        <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}">
-            <jar-content>
-                <fileset dir="${output}/classes/kotlin.test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal"/>
-            </jar-content>
-        </pack-runtime-jar>
-    </target>
-
     <target name="runtime"
-            depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
+            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin.test,pack-kotlin-test,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin.test,pack-kotlin-test,kotlin-js-stdlib,android-compiler-plugin"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
