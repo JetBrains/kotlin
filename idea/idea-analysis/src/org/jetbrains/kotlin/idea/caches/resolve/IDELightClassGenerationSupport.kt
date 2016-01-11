@@ -26,7 +26,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.PsiClassHolderFileStub
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -338,17 +337,11 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 return super.getNavigationElement()
             }
 
-            override fun getStub(): PsiClassHolderFileStub<*> {
-                return javaFileStub
-            }
+            override fun getStub() = javaFileStub
 
-            override fun getMirror(): PsiElement {
-                return mirrorFile
-            }
+            override fun getMirror() = mirrorFile
 
-            override fun isPhysical(): Boolean {
-                return false
-            }
+            override fun isPhysical() = false
         }
         javaFileStub.psi = fakeFile
         return fakeFile.classes.single() as ClsClassImpl

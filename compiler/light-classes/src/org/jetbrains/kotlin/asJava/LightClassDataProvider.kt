@@ -31,7 +31,6 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.PsiClassHolderFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
@@ -136,17 +135,11 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
 
         val virtualFile = getRepresentativeVirtualFile(files)
         val fakeFile = object : ClsFileImpl(ClassFileViewProvider(manager, virtualFile)) {
-            override fun getStub(): PsiClassHolderFileStub<*> {
-                return javaFileStub
-            }
+            override fun getStub() = javaFileStub
 
-            override fun getPackageName(): String {
-                return packageFqName.asString()
-            }
+            override fun getPackageName() = packageFqName.asString()
 
-            override fun isPhysical(): Boolean {
-                return false
-            }
+            override fun isPhysical() = false
         }
 
         javaFileStub.psi = fakeFile
