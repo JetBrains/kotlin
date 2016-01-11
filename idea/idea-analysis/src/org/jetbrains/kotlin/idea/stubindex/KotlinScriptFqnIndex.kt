@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.psi.KtScript
 
 class KotlinScriptFqnIndex private constructor() : StringStubIndexExtension<KtScript>() {
     override fun getKey() = KEY
 
     override fun get(fqName: String, project: Project, scope: GlobalSearchScope): Collection<KtScript> {
-        return super.get(fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project))
+        return StubIndex.getElements(KEY, fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtScript::class.java)
     }
 
     companion object {

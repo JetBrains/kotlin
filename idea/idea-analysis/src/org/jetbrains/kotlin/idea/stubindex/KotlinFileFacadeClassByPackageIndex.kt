@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -26,7 +27,7 @@ class KotlinFileFacadeClassByPackageIndex private constructor() : StringStubInde
     override fun getKey(): StubIndexKey<String, KtFile> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
-            super.get(key, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project))
+            StubIndex.getElements(KEY, key, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtFile::class.java)
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinFileFacadeClassByPackageIndex::class.java)

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.stubindex;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
+import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtProperty;
@@ -46,6 +47,6 @@ public class KotlinTopLevelPropertyFqnNameIndex extends StringStubIndexExtension
     @NotNull
     @Override
     public Collection<KtProperty> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return super.get(s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project));
+        return StubIndex.getElements(KEY, s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtProperty.class);
     }
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
 class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<KtCallableDeclaration>() {
@@ -26,7 +27,7 @@ class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() : String
     override fun getKey() = KEY
 
     override fun get(s: String, project: Project, scope: GlobalSearchScope)
-            = super.get(s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project))
+            = StubIndex.getElements(KEY, s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtCallableDeclaration::class.java)
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(KotlinTopLevelExtensionsByReceiverTypeIndex::class.java)
