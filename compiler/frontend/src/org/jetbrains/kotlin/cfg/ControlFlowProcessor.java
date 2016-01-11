@@ -802,8 +802,7 @@ public class ControlFlowProcessor {
                 generateInstructions(condition);
             }
             mark(expression);
-            boolean conditionIsTrueConstant = CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace, true);
-            if (!conditionIsTrueConstant) {
+            if (!CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace.getBindingContext(), true)) {
                 builder.jumpOnFalse(loopInfo.getExitPoint(), expression, builder.getBoundValue(condition));
             }
             else {

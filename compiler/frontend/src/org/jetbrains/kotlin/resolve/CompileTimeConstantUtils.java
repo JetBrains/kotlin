@@ -109,14 +109,14 @@ public class CompileTimeConstantUtils {
 
     public static boolean canBeReducedToBooleanConstant(
             @Nullable KtExpression expression,
-            @NotNull BindingTrace trace,
+            @NotNull BindingContext context,
             @Nullable Boolean expectedValue
     ) {
         KtExpression effectiveExpression = KtPsiUtil.deparenthesize(expression);
 
         if (effectiveExpression == null) return false;
 
-        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.getConstant(effectiveExpression, trace.getBindingContext());
+        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.getConstant(effectiveExpression, context);
         if (!(compileTimeConstant instanceof TypedCompileTimeConstant) || compileTimeConstant.getUsesVariableAsConstant()) return false;
 
         ConstantValue constantValue = ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue();

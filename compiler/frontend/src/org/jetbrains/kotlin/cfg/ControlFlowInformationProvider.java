@@ -743,7 +743,8 @@ public class ControlFlowInformationProvider {
                             KtWhenExpression whenExpression = (KtWhenExpression) element;
                             if (whenExpression.getElseExpression() != null) continue;
 
-                            List<WhenMissingCase> necessaryCases = WhenChecker.getNecessaryCases(whenExpression, trace);
+                            BindingContext context = trace.getBindingContext();
+                            List<WhenMissingCase> necessaryCases = WhenChecker.getNecessaryCases(whenExpression, context);
                             if (!necessaryCases.isEmpty()) {
                                 trace.report(NO_ELSE_IN_WHEN.on(whenExpression, necessaryCases));
                             }
@@ -752,7 +753,7 @@ public class ControlFlowInformationProvider {
                                         trace.getType(whenExpression.getSubjectExpression()));
                                 if (enumClassDescriptor != null) {
                                     List<WhenMissingCase> missingCases = WhenChecker.getEnumMissingCases(
-                                            whenExpression, trace, enumClassDescriptor
+                                            whenExpression, context, enumClassDescriptor
                                     );
                                     if (!missingCases.isEmpty()) {
                                         trace.report(NON_EXHAUSTIVE_WHEN.on(whenExpression, missingCases));

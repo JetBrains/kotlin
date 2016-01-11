@@ -124,9 +124,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
     private fun simplifyExpression(expression: KtExpression) = expression.replaced(toSimplifiedExpression(expression))
 
     private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean?): Boolean {
-        val bindingContext = this.analyze()
-        val trace = DelegatingBindingTrace(bindingContext, "trace for constant check")
-        return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, trace, constant)
+        return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, this.analyze(), constant)
     }
 
     private fun KtExpression.canBeReducedToTrue() = canBeReducedToBooleanConstant(true)

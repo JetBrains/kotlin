@@ -93,7 +93,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             loopBreakContinuePossible = typeInfo.getJumpOutPossible();
             subjectType = typeInfo.getType();
             assert subjectType != null;
-            if (TypeUtils.isNullableType(subjectType) && !WhenChecker.containsNullCase(expression, context.trace)) {
+            if (TypeUtils.isNullableType(subjectType) && !WhenChecker.containsNullCase(expression, context.trace.getBindingContext())) {
                 TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, "Temporary trace for when subject nullability");
                 ExpressionTypingContext subjectContext =
                         context.replaceExpectedType(TypeUtils.makeNotNullable(subjectType)).replaceBindingTrace(trace);
