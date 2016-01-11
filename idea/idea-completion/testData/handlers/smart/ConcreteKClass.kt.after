@@ -5,4 +5,4 @@ open class A<T : Any>(val kClass: KClass<T>?)
 
 class B : A<java.io.File>(File::class)<caret>
 
-// ELEMENT: "File::class"
+// ELEMENT: File
