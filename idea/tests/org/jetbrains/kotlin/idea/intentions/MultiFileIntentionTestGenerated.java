@@ -107,6 +107,12 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         doTest(fileName);
     }
 
+    @TestMetadata("reconcilePackageWithDirectory/innerClass/innerClass.test")
+    public void testReconcilePackageWithDirectory_innerClass_InnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/innerClass/innerClass.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test")
     public void testReconcilePackageWithDirectory_packageMatchesDirectory_PackageMatchesDirectory() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test");

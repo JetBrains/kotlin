@@ -132,6 +132,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
         fun doCreateUsageInfo(refExpr: KtSimpleNameExpression): UsageInfo? {
             if (isAncestor(declaration, false)) {
                 if (descriptor.importableFqName == null) return null
+                if (descriptor is ClassDescriptor && descriptor.isInner && refExpr.parent is KtCallExpression) return null
                 if (isUnqualifiedExtensionReference(refExpr.mainReference, declaration)) return null
                 if (packageName == null || !newPackageName.isSafe) return null
                 return fqName.asString().let {
