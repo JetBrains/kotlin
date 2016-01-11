@@ -78,3 +78,11 @@ fun IntentionAction.detectPriority(): IntentionActionPriority {
         else -> IntentionActionPriority.NORMAL
     }
 }
+
+fun QuickFixWithDelegateFactory(priority: IntentionActionPriority, createAction: () -> IntentionAction?): QuickFixWithDelegateFactory {
+    return when (priority) {
+        IntentionActionPriority.NORMAL -> QuickFixWithDelegateFactory(createAction)
+        IntentionActionPriority.HIGH -> HighPriorityQuickFixWithDelegateFactory(createAction)
+        IntentionActionPriority.LOW -> LowPriorityQuickFixWithDelegateFactory(createAction)
+    }
+}

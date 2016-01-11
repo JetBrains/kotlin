@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D : Any>(
         private val actionPriority: IntentionActionPriority = IntentionActionPriority.NORMAL
@@ -37,18 +38,11 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D :
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> D?
     ): List<QuickFixWithDelegateFactory> {
-        fun createAction(): IntentionAction? {
-            val originalElement = originalElementPointer.element ?: return null
-            val data = quickFixDataFactory() ?: return null
-            return createFix(originalElement, data)
-        }
-
-        val delegateFactory = when (actionPriority) {
-            IntentionActionPriority.NORMAL -> QuickFixWithDelegateFactory(::createAction)
-            IntentionActionPriority.HIGH -> HighPriorityQuickFixWithDelegateFactory(::createAction)
-            IntentionActionPriority.LOW -> LowPriorityQuickFixWithDelegateFactory(::createAction)
-        }
-        return listOf(delegateFactory)
+        return QuickFixWithDelegateFactory(actionPriority) factory@ {
+            val originalElement = originalElementPointer.element ?: return@factory null
+            val data = quickFixDataFactory() ?: return@factory null
+            createFix(originalElement, data)
+        }.singletonList()
     }
 }
 
