@@ -6600,6 +6600,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ThisReference.kt")
+        public void testThisReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ThisReference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TwoFunctions.kt")
         public void testTwoFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/TwoFunctions.kt");
