@@ -21,6 +21,8 @@ import java.util.*
 // The maximum possible length of the byte array in the CONSTANT_Utf8_info structure in the bytecode, as per JVMS7 4.4.7
 const val MAX_UTF8_INFO_LENGTH = 65535
 
+const val UTF8_MODE_MARKER = 0.toChar()
+
 // Leading bytes are prefixed with 110 in UTF-8
 private val LEADING_BYTE_MASK = 0b11000000
 // Continuation bytes are prefixed with 10 in UTF-8
@@ -34,10 +36,16 @@ fun bytesToStrings(bytes: ByteArray): Array<String> {
     val buffer = StringBuilder()
     var bytesInBuffer = 0
 
+    buffer.append(UTF8_MODE_MARKER)
+    // Zeros effectively occupy two bytes because each 0x0 is converted to 0x80 0xc0 in Modified UTF-8, see JVMS7 4.4.7
+    bytesInBuffer += 2
+
     for (b in bytes) {
         if (b >= 0) {
             buffer.append(b.toChar())
             bytesInBuffer++
+            // Zeros occupy two bytes
+            if (b == 0.toByte()) bytesInBuffer++
         }
         else {
             val int = b.toInt() and 0xFF
@@ -92,6 +100,8 @@ fun stringsToBytes(strings: Array<String>): ByteArray {
             }
         }
     }
+
+    assert(i == result.size) { "Should have reached the end" }
 
     return result
 }
