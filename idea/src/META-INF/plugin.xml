@@ -330,7 +330,7 @@
         order="before moveJavaFileOrDir"/>
     <refactoring.moveHandler
         id="kotlin.moveTopLevelDeclarations"
-        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsHandler"
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler"
         order="before kotlin.moveFilesOrDirectories"/>
     <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
     <refactoring.moveDirectoryWithClassesHelper
@@ -1059,7 +1059,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveDeclarationToSeparateFileIntention</className>
+      <className>org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveDeclarationToSeparateFileIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

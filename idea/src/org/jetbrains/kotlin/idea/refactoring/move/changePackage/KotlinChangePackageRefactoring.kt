@@ -18,14 +18,11 @@ package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.PackageWrapper
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
-import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
+import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.KotlinMoveTarget
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.Mover
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
@@ -39,26 +36,28 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
         val packageDirective = file.packageDirective ?: return
         val currentFqName = packageDirective.fqName
 
-        val declarationProcessor = MoveKotlinTopLevelDeclarationsProcessor(
+        val declarationProcessor = MoveKotlinDeclarationsProcessor(
                 project,
-                MoveKotlinTopLevelDeclarationsOptions(
+                MoveDeclarationsDescriptor(
                         elementsToMove = file.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = object: KotlinMoveTarget {
-                            override val packageWrapper = PackageWrapper(file.manager, newFqName.asString())
+                            override val targetContainerFqName = newFqName
 
-                            override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile
+                            override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile as? KtFile
 
                             override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
 
                             override fun verify(file: PsiFile) = null
                         },
+                        delegate = MoveDeclarationsDelegate.TopLevel,
                         updateInternalReferences = false
                 ),
                 Mover.Idle // we don't need to move any declarations physically
         )
 
         val declarationUsages = declarationProcessor.findUsages().toList()
-        val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(PackageNameInfo(currentFqName, newFqName.toUnsafe()))
+        val changeInfo = ContainerChangeInfo(ContainerInfo.Package(currentFqName), ContainerInfo.Package(newFqName))
+        val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(changeInfo)
 
         project.executeWriteCommand("Change file's package to '${newFqName.asString()}'") {
             packageDirective.fqName = newFqName

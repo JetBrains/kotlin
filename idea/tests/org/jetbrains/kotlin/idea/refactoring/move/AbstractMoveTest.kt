@@ -37,20 +37,20 @@ import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
-import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
-import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
+import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.KotlinMoveTargetForDeferredFile
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.KotlinMoveTargetForExistingFile
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
+import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.search.projectScope
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -249,16 +249,16 @@ enum class MoveAction {
             val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtNamedDeclaration>()!!
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
-                KotlinMoveTargetForDeferredFile(project, FqName(packageName)) {
+                KotlinMoveTargetForDeferredFile(FqName(packageName)) {
                     val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
                     createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
-                KotlinMoveTargetForExistingFile(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
+                KotlinMoveTargetForExistingElement(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
             }
 
-            val options = MoveKotlinTopLevelDeclarationsOptions(listOf(elementToMove), moveTarget)
-            MoveKotlinTopLevelDeclarationsProcessor(mainFile.getProject(), options).run()
+            val options = MoveDeclarationsDescriptor(listOf(elementToMove), moveTarget, MoveDeclarationsDelegate.TopLevel)
+            MoveKotlinDeclarationsProcessor(mainFile.getProject(), options).run()
         }
     },
 
@@ -274,6 +274,34 @@ enum class MoveAction {
             val sourceDir = rootDir.findFileByRelativePath(config.getString("sourceDir"))!!.toPsiDirectory(project)!!
             val targetDir = rootDir.findFileByRelativePath(config.getString("targetDir"))!!.toPsiDirectory(project)!!
             MoveDirectoryWithClassesProcessor(project, arrayOf(sourceDir), targetDir, true, true, true, {}).run()
+        }
+    },
+
+    MOVE_KOTLIN_NESTED_CLASS {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.project
+            val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtClassOrObject>()!!
+            val targetClassName = config.getNullableString("targetClass")
+            val targetClass =
+                    if (targetClassName != null) {
+                        KotlinFullClassNameIndex.getInstance().get(targetClassName, project, project.projectScope()).first()!!
+                    }
+                    else null
+            val delegate = MoveDeclarationsDelegate.NestedClass(config.getNullableString("newName"),
+                                                                config.getNullableString("outerInstanceParameter"))
+            val moveTarget =
+                    if (targetClass != null) {
+                        KotlinMoveTargetForExistingElement(targetClass)
+                    }
+                    else {
+                        val fileName = (delegate.newClassName ?: elementToMove.name!!) + ".kt"
+                        val targetPackageFqName = (mainFile as KtFile).packageFqName
+                        KotlinMoveTargetForDeferredFile(targetPackageFqName) {
+                            createKotlinFile(fileName, mainFile.containingDirectory!!, targetPackageFqName.asString())
+                        }
+                    }
+            val descriptor = MoveDeclarationsDescriptor(listOf(elementToMove), moveTarget, delegate)
+            MoveKotlinDeclarationsProcessor(project, descriptor).run()
         }
     };
 

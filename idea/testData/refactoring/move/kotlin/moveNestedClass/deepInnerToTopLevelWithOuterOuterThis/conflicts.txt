@@ -1,0 +1,2 @@
+Indirect outer instances won't be extracted: OuterOuterY()
+Indirect outer instances won't be extracted: this@A

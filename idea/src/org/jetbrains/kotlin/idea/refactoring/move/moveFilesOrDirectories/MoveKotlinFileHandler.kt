@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.move.*
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -42,48 +42,50 @@ class MoveKotlinFileHandler : MoveFileHandler() {
     // so that it can be kept in the transition map
     private class MoveContext(
             psiManager: PsiManager,
-            val declarationMoveProcessor: MoveKotlinTopLevelDeclarationsProcessor
+            val declarationMoveProcessor: MoveKotlinDeclarationsProcessor
     ): LightElement(psiManager, KotlinLanguage.INSTANCE) {
         override fun toString() = ""
     }
 
-    private fun KtFile.getPackageNameInfo(newParent: PsiDirectory?, clearUserData: Boolean): PackageNameInfo? {
+    private fun KtFile.getPackageNameInfo(newParent: PsiDirectory?, clearUserData: Boolean): ContainerChangeInfo? {
         val shouldUpdatePackageDirective = updatePackageDirective ?: packageMatchesDirectory()
         updatePackageDirective = if (clearUserData) null else shouldUpdatePackageDirective
 
         if (!shouldUpdatePackageDirective) return null
 
         val oldPackageName = packageFqName
-        val newPackage = newParent?.getPackage() ?: return PackageNameInfo(oldPackageName, UNKNOWN_PACKAGE_FQ_NAME)
+        val newPackage = newParent?.getPackage() ?: return ContainerChangeInfo(ContainerInfo.Package(oldPackageName),
+                                                                               ContainerInfo.UnknownPackage)
 
         val newPackageName = FqNameUnsafe(newPackage.qualifiedName)
         if (oldPackageName.asString() == newPackageName.asString()) return null
-        if (newPackageName != UNKNOWN_PACKAGE_FQ_NAME && !newPackageName.hasIdentifiersOnly()) return null
+        if (!newPackageName.hasIdentifiersOnly()) return null
 
-        return PackageNameInfo(oldPackageName, newPackageName)
+        return ContainerChangeInfo(ContainerInfo.Package(oldPackageName), ContainerInfo.Package(newPackageName.toSafe()))
     }
 
-    fun initMoveProcessor(psiFile: PsiFile, newParent: PsiDirectory?): MoveKotlinTopLevelDeclarationsProcessor? {
+    fun initMoveProcessor(psiFile: PsiFile, newParent: PsiDirectory?): MoveKotlinDeclarationsProcessor? {
         if (psiFile !is KtFile) return null
         val packageNameInfo = psiFile.getPackageNameInfo(newParent, false) ?: return null
 
         val project = psiFile.project
 
-        val newPackageName = packageNameInfo.newPackageName
-        val moveTarget = when (newPackageName) {
-            UNKNOWN_PACKAGE_FQ_NAME -> EmptyKotlinMoveTarget
+        val newPackage = packageNameInfo.newContainer
+        val moveTarget = when (newPackage) {
+            ContainerInfo.UnknownPackage -> EmptyKotlinMoveTarget
 
-            else -> KotlinMoveTargetForDeferredFile(project, newPackageName.toSafe()) {
+            else -> KotlinMoveTargetForDeferredFile(newPackage.fqName!!) {
                 MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, newParent)
                 newParent?.findFile(psiFile.name) as? KtFile
             }
         }
 
-        val declarationMoveProcessor = MoveKotlinTopLevelDeclarationsProcessor(
+        val declarationMoveProcessor = MoveKotlinDeclarationsProcessor(
                 project,
-                MoveKotlinTopLevelDeclarationsOptions(
+                MoveDeclarationsDescriptor(
                         elementsToMove = psiFile.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = moveTarget,
+                        delegate = MoveDeclarationsDelegate.TopLevel,
                         updateInternalReferences = false
                 ),
                 Mover.Idle
@@ -126,9 +128,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         if (file !is KtFile) return
         val newDirectory = file.parent ?: return
         val packageNameInfo = file.getPackageNameInfo(newDirectory, true) ?: return
-        val newPackageName = packageNameInfo.newPackageName
-        assert(newPackageName.isSafe) { newPackageName }
-        file.packageDirective?.fqName = newPackageName.toSafe()
+        file.packageDirective?.fqName = packageNameInfo.newContainer.fqName!!
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {
@@ -136,7 +136,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
         retargetUsages(usageInfos, moveContext.declarationMoveProcessor)
     }
 
-    fun retargetUsages(usageInfos: List<UsageInfo>?, moveDeclarationsProcessor: MoveKotlinTopLevelDeclarationsProcessor) {
+    fun retargetUsages(usageInfos: List<UsageInfo>?, moveDeclarationsProcessor: MoveKotlinDeclarationsProcessor) {
         postProcessMoveUsages(usageInfos?.firstIsInstanceOrNull<InternalUsagesWrapper>()?.usages ?: emptyList())
         moveDeclarationsProcessor.project.runWithElementsToShortenIsEmptyIgnored {
             usageInfos?.let { moveDeclarationsProcessor.execute(it) }

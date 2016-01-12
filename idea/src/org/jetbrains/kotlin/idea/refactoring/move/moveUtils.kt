@@ -22,6 +22,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringSettings
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
@@ -36,17 +37,20 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
@@ -60,22 +64,48 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.parents
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 val UNKNOWN_PACKAGE_FQ_NAME = FqNameUnsafe("org.jetbrains.kotlin.idea.refactoring.move.<unknown-package>")
 
-class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqNameUnsafe)
+sealed class ContainerInfo() {
+    abstract val fqName: FqName?
+    abstract fun matches(descriptor: DeclarationDescriptor): Boolean
 
-fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
+    object UnknownPackage : ContainerInfo() {
+        override val fqName = null
+        override fun matches(descriptor: DeclarationDescriptor) = descriptor is PackageViewDescriptor
+    }
+
+    class Package(override val fqName: FqName): ContainerInfo() {
+        override fun matches(descriptor: DeclarationDescriptor): Boolean {
+            return descriptor is PackageFragmentDescriptor && descriptor.fqName == fqName
+        }
+    }
+
+    class Class(override val fqName: FqName) : ContainerInfo() {
+        override fun matches(descriptor: DeclarationDescriptor): Boolean {
+            return descriptor is ClassDescriptor && descriptor.importableFqName == fqName
+        }
+    }
+}
+
+data class ContainerChangeInfo(val oldContainer: ContainerInfo, val newContainer: ContainerInfo)
+
+fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(containerChangeInfo: ContainerChangeInfo): List<UsageInfo> {
     val usages = ArrayList<UsageInfo>()
-    lazilyProcessInternalReferencesToUpdateOnPackageNameChange(packageNameInfo) { expr, factory -> usages.addIfNotNull(factory(expr)) }
+    lazilyProcessInternalReferencesToUpdateOnPackageNameChange(containerChangeInfo) { expr, factory -> usages.addIfNotNull(factory(expr)) }
     return usages
 }
 
 fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
-        packageNameInfo: PackageNameInfo,
+        containerChangeInfo: ContainerChangeInfo,
         body: (originalRefExpr: KtSimpleNameExpression, usageFactory: (KtSimpleNameExpression) -> UsageInfo?) -> Unit
 ) {
     val file = containingFile as? KtFile ?: return
@@ -99,46 +129,61 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
 
         // Special case for enum entry superclass references (they have empty text and don't need to be processed by the refactoring)
-        if (refExpr.textRange.isEmpty) {
-            return null
-        }
+        if (refExpr.textRange.isEmpty) return null
+
+        if (descriptor is ClassDescriptor && descriptor.isInner && refExpr.parent is KtCallExpression) return null
 
         val isCallable = descriptor is CallableDescriptor
         val isExtension = isCallable && declaration.isExtensionDeclaration()
 
-        if (isCallable && !isExtension) {
+        if (isCallable) {
             val containingDescriptor = descriptor.containingDeclaration
-            if (refExpr.getReceiverExpression() != null) {
-                return fun(refExpr: KtSimpleNameExpression): UsageInfo? {
-                    val receiver = refExpr.getReceiverExpression() ?: return null
-                    val receiverRef = receiver.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return null
-                    if (bindingContext[BindingContext.QUALIFIER, receiverRef] == null) return null
-                    return processReference(receiverRef, bindingContext)?.invoke(receiverRef)
+            if (isExtension && containingDescriptor is ClassDescriptor) {
+                val implicitClass = (refExpr.getResolvedCall(bindingContext)?.dispatchReceiver as? ImplicitClassReceiver)?.classDescriptor
+                if (DescriptorUtils.isCompanionObject(implicitClass)) {
+                    return { ImplicitCompanionAsDispatchReceiverUsageInfo(it) }
                 }
+                return null
             }
-            if (containingDescriptor !is PackageFragmentDescriptor) return null
+            if (!isExtension) {
+                if (refExpr.getReceiverExpression() != null) {
+                    return fun(refExpr: KtSimpleNameExpression): UsageInfo? {
+                        val receiver = refExpr.getReceiverExpression() ?: return null
+                        val receiverRef = receiver.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return null
+                        if (bindingContext[BindingContext.QUALIFIER, receiverRef] == null) return null
+                        return processReference(receiverRef, bindingContext)?.invoke(receiverRef)
+                    }
+                }
+                if (!(containingDescriptor is PackageFragmentDescriptor
+                      || containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.OBJECT)) return null
+            }
         }
 
         val fqName = DescriptorUtils.getFqName(descriptor)
         if (!fqName.isSafe) return null
 
-        val packageName = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java, false)?.let {
-            DescriptorUtils.getFqName(it).toSafe()
-        }
+        val (oldContainer, newContainer) = containerChangeInfo
 
-        val oldPackageName = packageNameInfo.oldPackageName
-        val newPackageName = packageNameInfo.newPackageName
+        val containerFqName = descriptor
+                .parents
+                .mapNotNull {
+                    when {
+                        oldContainer.matches(it) -> oldContainer.fqName
+                        newContainer.matches(it) -> newContainer.fqName
+                        else -> null
+                    }
+                }
+                .firstOrNull()
 
         fun doCreateUsageInfo(refExpr: KtSimpleNameExpression): UsageInfo? {
             if (isAncestor(declaration, false)) {
                 if (descriptor.importableFqName == null) return null
-                if (descriptor is ClassDescriptor && descriptor.isInner && refExpr.parent is KtCallExpression) return null
                 if (isUnqualifiedExtensionReference(refExpr.mainReference, declaration)) return null
-                if (packageName == null || !newPackageName.isSafe) return null
+                if (containerFqName == null || newContainer is ContainerInfo.UnknownPackage) return null
                 return fqName.asString().let {
-                    val prefix = packageName.asString()
+                    val prefix = containerFqName.asString()
                     val prefixOffset = it.indexOf(prefix)
-                    val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newPackageName.asString()))
+                    val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newContainer.fqName!!.asString()))
                     MoveRenameSelfUsageInfo(refExpr.mainReference, declaration, newFqName)
                 }
             }
@@ -146,11 +191,8 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
             return createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
         }
 
-        if (!isExtension &&
-            packageName != oldPackageName &&
-            packageName?.asString() != newPackageName.asString() &&
-            !isImported(descriptor)) return null
-        return ::doCreateUsageInfo
+        if (isExtension || containerFqName != null || isImported(descriptor)) return ::doCreateUsageInfo
+        return null
     }
 
     val referenceToContext = KotlinFileReferencesResolver.resolve(file = file, elements = listOf(this))
@@ -162,6 +204,8 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
         processReference(refExpr, bindingContext)?.let { body(refExpr, it) }
     }
 }
+
+class ImplicitCompanionAsDispatchReceiverUsageInfo(callee: KtSimpleNameExpression) : UsageInfo(callee)
 
 class MoveRenameUsageInfoForExtension(
         element: PsiElement,
@@ -276,7 +320,7 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
 
     val nonCodeUsages = ArrayList<NonCodeUsageInfo>()
 
-    for (usage in sortedUsages) {
+    usageLoop@ for (usage in sortedUsages) {
         when (usage) {
             is NonCodeUsageInfo -> {
                 nonCodeUsages.add(usage)
@@ -295,20 +339,16 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
             is MoveRenameUsageInfo -> {
                 val oldElement = usage.referencedElement!!
                 val newElement = counterpart(oldElement)
-                usage.reference?.let {
-                    try {
-                        if (it is KtSimpleNameReference) {
-                            it.bindToElement(newElement, shorteningMode)
-                        }
-                        else if (it is PsiReferenceExpression && updateJavaReference(it, oldElement, newElement)) {
-                        }
-                        else {
-                            it.bindToElement(newElement)
-                        }
+                val reference = usage.reference ?: (usage.element as? KtSimpleNameExpression)?.mainReference
+                try {
+                    when {
+                        reference is KtSimpleNameReference -> reference.bindToElement(newElement, shorteningMode)
+                        reference is PsiReferenceExpression && updateJavaReference(reference, oldElement, newElement) -> continue@usageLoop
+                        else -> reference?.bindToElement(newElement)
                     }
-                    catch (e: IncorrectOperationException) {
-                        // Suppress exception if bindToElement is not implemented
-                    }
+                }
+                catch (e: IncorrectOperationException) {
+                    // Suppress exception if bindToElement is not implemented
                 }
             }
         }
@@ -387,4 +427,87 @@ fun moveFilesOrDirectories(
         setData(elements, initialTargetDirectory, "refactoring.moveFile")
         show()
     }
+}
+
+sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, val isIndirectOuter: Boolean) : UsageInfo(element) {
+    class ExplicitThis(
+            expression: KtThisExpression,
+            isIndirectOuter: Boolean
+    ) : OuterInstanceReferenceUsageInfo(expression, isIndirectOuter) {
+        val expression: KtThisExpression?
+            get() = element as? KtThisExpression
+    }
+
+    class ImplicitReceiver(
+            callElement: KtElement,
+            isIndirectOuter: Boolean,
+            val isDoubleReceiver: Boolean
+    ) : OuterInstanceReferenceUsageInfo(callElement, isIndirectOuter) {
+        val callElement: KtElement?
+            get() = element as? KtElement
+    }
+}
+
+@JvmOverloads
+fun traverseOuterInstanceReferences(innerClass: KtClass, stopAtFirst: Boolean, body: (OuterInstanceReferenceUsageInfo) -> Unit = {}): Boolean {
+    if (!innerClass.isInner()) return false
+
+    val context = innerClass.analyzeFully()
+    val innerClassDescriptor = innerClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
+    val outerClassDescriptor = innerClassDescriptor.containingDeclaration as? ClassDescriptor ?: return false
+    var found = false
+    innerClass.accept(
+            object : PsiRecursiveElementWalkingVisitor() {
+                private fun getOuterInstanceReference(element: PsiElement): OuterInstanceReferenceUsageInfo? {
+                    return when (element) {
+                        is KtThisExpression -> {
+                            val descriptor = context[BindingContext.REFERENCE_TARGET, element.instanceReference]
+                            val isIndirect = when {
+                                descriptor == outerClassDescriptor -> false
+                                DescriptorUtils.isAncestor(descriptor, outerClassDescriptor, true) -> true
+                                else -> return null
+                            }
+                            OuterInstanceReferenceUsageInfo.ExplicitThis(element, isIndirect)
+                        }
+                        is KtSimpleNameExpression -> {
+                            val resolvedCall = element.getResolvedCall(context) ?: return null
+                            val dispatchReceiver = resolvedCall.dispatchReceiver as? ImplicitReceiver
+                            val extensionReceiver = resolvedCall.extensionReceiver as? ImplicitReceiver
+                            var isIndirect = false
+                            val isDoubleReceiver = when {
+                                dispatchReceiver?.declarationDescriptor == outerClassDescriptor -> extensionReceiver != null
+                                extensionReceiver?.declarationDescriptor == outerClassDescriptor -> dispatchReceiver != null
+                                else -> {
+                                    isIndirect = true
+                                    when {
+                                        DescriptorUtils.isAncestor(dispatchReceiver?.declarationDescriptor, outerClassDescriptor, true) ->
+                                            extensionReceiver != null
+                                        DescriptorUtils.isAncestor(extensionReceiver?.declarationDescriptor, outerClassDescriptor, true) ->
+                                            dispatchReceiver != null
+                                        else -> return null
+                                    }
+                                }
+                            }
+                            OuterInstanceReferenceUsageInfo.ImplicitReceiver(resolvedCall.call.callElement, isIndirect, isDoubleReceiver)
+                        }
+                        else -> null
+                    }
+                }
+
+                override fun visitElement(element: PsiElement) {
+                    getOuterInstanceReference(element)?.let {
+                        body(it)
+                        found = true
+                        if (stopAtFirst) stopWalking()
+                        return
+                    }
+                    super.visitElement(element)
+                }
+            }
+    )
+    return found
+}
+
+fun collectOuterInstanceReferences(innerClass: KtClass): List<OuterInstanceReferenceUsageInfo> {
+    return SmartList<OuterInstanceReferenceUsageInfo>().apply { traverseOuterInstanceReferences(innerClass, false) { add(it) } }
 }

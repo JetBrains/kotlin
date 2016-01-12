@@ -275,6 +275,78 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveNestedClass/deepInnerToTopLevelWithOuterOuterThis/deepInnerToTopLevelWithOuterOuterThis.test")
+    public void testKotlin_moveNestedClass_deepInnerToTopLevelWithOuterOuterThis_DeepInnerToTopLevelWithOuterOuterThis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/deepInnerToTopLevelWithOuterOuterThis/deepInnerToTopLevelWithOuterOuterThis.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/deepInnerToTopLevelWithThis/deepInnerToTopLevelWithThis.test")
+    public void testKotlin_moveNestedClass_deepInnerToTopLevelWithThis_DeepInnerToTopLevelWithThis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/deepInnerToTopLevelWithThis/deepInnerToTopLevelWithThis.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/deepNonInnerToTopLevel/deepNonInnerToTopLevel.test")
+    public void testKotlin_moveNestedClass_deepNonInnerToTopLevel_DeepNonInnerToTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/deepNonInnerToTopLevel/deepNonInnerToTopLevel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/innerToTopLevelNoThis/innerToTopLevelNoThis.test")
+    public void testKotlin_moveNestedClass_innerToTopLevelNoThis_InnerToTopLevelNoThis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/innerToTopLevelNoThis/innerToTopLevelNoThis.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/innerToTopLevelWithThis/innerToTopLevelWithThis.test")
+    public void testKotlin_moveNestedClass_innerToTopLevelWithThis_InnerToTopLevelWithThis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/innerToTopLevelWithThis/innerToTopLevelWithThis.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/innerToTopLevelWithThisOuterRefConflicts/innerToTopLevelWithThisOuterRefConflicts.test")
+    public void testKotlin_moveNestedClass_innerToTopLevelWithThisOuterRefConflicts_InnerToTopLevelWithThisOuterRefConflicts() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/innerToTopLevelWithThisOuterRefConflicts/innerToTopLevelWithThisOuterRefConflicts.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/nonInnerToOuterClass1/nonInnerToOuterClass1.test")
+    public void testKotlin_moveNestedClass_nonInnerToOuterClass1_NonInnerToOuterClass1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToOuterClass1/nonInnerToOuterClass1.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/nonInnerToOuterClass2/nonInnerToOuterClass2.test")
+    public void testKotlin_moveNestedClass_nonInnerToOuterClass2_NonInnerToOuterClass2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToOuterClass2/nonInnerToOuterClass2.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/nonInnerToTopLevel/nonInnerToTopLevel.test")
+    public void testKotlin_moveNestedClass_nonInnerToTopLevel_NonInnerToTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToTopLevel/nonInnerToTopLevel.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/nonInnerToTopLevelClass/nonInnerToTopLevelClass.test")
+    public void testKotlin_moveNestedClass_nonInnerToTopLevelClass_NonInnerToTopLevelClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToTopLevelClass/nonInnerToTopLevelClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/nonInnerToTopLevelCompanionConflict/nonInnerToTopLevelCompanionConflict.test")
+    public void testKotlin_moveNestedClass_nonInnerToTopLevelCompanionConflict_NonInnerToTopLevelCompanionConflict() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/nonInnerToTopLevelCompanionConflict/nonInnerToTopLevelCompanionConflict.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveNestedClass/objectToTopLevel/objectToTopLevel.test")
+    public void testKotlin_moveNestedClass_objectToTopLevel_ObjectToTopLevel() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveNestedClass/objectToTopLevel/objectToTopLevel.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/movePackage/movePackage/movePackage.test")
     public void testKotlin_movePackage_movePackage_MovePackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/movePackage/movePackage/movePackage.test");
