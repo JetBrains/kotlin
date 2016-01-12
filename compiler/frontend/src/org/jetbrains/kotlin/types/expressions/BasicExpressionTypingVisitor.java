@@ -1461,11 +1461,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @NotNull
     private static KotlinTypeInfo declarationInIllegalContext(
-            @NotNull  KtDeclaration declaration,
-            @NotNull  ExpressionTypingContext context
+            @NotNull KtDeclaration declaration,
+            @NotNull ExpressionTypingContext context
     ) {
         context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(declaration));
         return TypeInfoFactoryKt.noTypeInfo(context);
+    }
+
+    @Override
+    public KotlinTypeInfo visitProperty(@NotNull KtProperty property, ExpressionTypingContext context) {
+        components.localVariableResolver.process(property, context, context.scope, facade);
+        return declarationInIllegalContext(property, context);
     }
 
     @NotNull

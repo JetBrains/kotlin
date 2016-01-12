@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -103,7 +104,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public KotlinTypeInfo visitProperty(@NotNull KtProperty property, ExpressionTypingContext typingContext) {
-        return components.localVariableResolver.process(property, typingContext, scope, facade);
+        Pair<KotlinTypeInfo, VariableDescriptor> typeInfoAndVariableDescriptor = components.localVariableResolver.process(property, typingContext, scope, facade);
+        scope.addVariableDescriptor(typeInfoAndVariableDescriptor.getSecond());
+        return typeInfoAndVariableDescriptor.getFirst();
     }
 
     @Override

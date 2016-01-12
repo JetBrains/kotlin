@@ -562,6 +562,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PropertyDeclarationAsExpression.kt")
+        public void testPropertyDeclarationAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/PropertyDeclarationAsExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ScopeForSecondaryConstructors.kt")
         public void testScopeForSecondaryConstructors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ScopeForSecondaryConstructors.kt");
