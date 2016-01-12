@@ -50,7 +50,7 @@ fun box(): String {
         return "Bad call getNullA()?.someFun(). result: $n1, counters: ${toStr()}"
     }
 
-    val n2 = getNullA()?.b()
+    val n2 = getNullA()?.b?.invoke()
     if (n2 != null || toStr() != "20000") {
         return "Bad call getNullA()?.b(). result: $n2, counters: ${toStr()}"
     }
@@ -65,7 +65,7 @@ fun box(): String {
         return "Bad call getA()?.someFun(). result: $i1, counters: ${toStr()}"
     }
 
-    val i2 = getA()?.b()
+    val i2 = getA()?.b?.invoke()
     if (i2 != 2 || toStr() != "51101") {
         return "Bad call getA()?.b(). result: $i2, counters: ${toStr()}"
     }

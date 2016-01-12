@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedT
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getErasedReceiverType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnExpressionWithBothReceivers
 import org.jetbrains.kotlin.resolve.calls.callUtil.isExplicitSafeCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.inference.SubstitutionFilteringInternalResolveAnnotations
@@ -454,13 +455,25 @@ public class CandidateResolver(
 
         // Here we know that receiver is OK ignoring nullability and check that nullability is OK too
         // Doing it simply as full subtyping check (receiverValueType <: receiverParameterType)
-        val safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.getCall().isExplicitSafeCall()
+        val call = candidateCall.call
+        val safeAccess = isExplicitReceiver && !implicitInvokeCheck && call.isExplicitSafeCall()
         val expectedReceiverParameterType = if (safeAccess) TypeUtils.makeNullable(receiverParameter.type) else receiverParameter.type
         val smartCastNeeded = !ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, expectedReceiverParameterType)
         var reportUnsafeCall = false
 
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
         val nullability = dataFlowInfo.getPredictableNullability(dataFlowValue)
+        var nullableImplicitInvokeReceiver = false
+        if (implicitInvokeCheck && call is CallForImplicitInvoke && call.isSafeCall()) {
+            val outerCallReceiver = call.outerCall.explicitReceiver
+            if (outerCallReceiver != call.explicitReceiver && outerCallReceiver is ReceiverValue) {
+                val outerReceiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(outerCallReceiver, this)
+                val outerReceiverNullability = dataFlowInfo.getPredictableNullability(outerReceiverDataFlowValue)
+                if (outerReceiverNullability.canBeNull() && !TypeUtils.isNullableType(expectedReceiverParameterType)) {
+                    nullableImplicitInvokeReceiver = true
+                }
+            }
+        }
         val expression = (receiverArgument as? ExpressionReceiver)?.expression
         if (nullability.canBeNull() && !nullability.canBeNonNull()) {
             if (!TypeUtils.isNullableType(expectedReceiverParameterType)) {
@@ -470,7 +483,7 @@ public class CandidateResolver(
                 expression?.let { trace.record(BindingContext.SMARTCAST_NULL, it) }
             }
         }
-        else if (smartCastNeeded) {
+        else if (!nullableImplicitInvokeReceiver && smartCastNeeded) {
             // Look if smart cast has some useful nullability info
 
             val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
@@ -488,7 +501,7 @@ public class CandidateResolver(
 
         val receiverArgumentType = receiverArgument.type
 
-        if (reportUnsafeCall) {
+        if (reportUnsafeCall || nullableImplicitInvokeReceiver) {
             tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)
             return UNSAFE_CALL_ERROR
         }

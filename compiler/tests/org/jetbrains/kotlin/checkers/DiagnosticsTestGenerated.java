@@ -241,6 +241,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExtensionCallInvoke.kt")
+        public void testExtensionCallInvoke() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ExtensionCallInvoke.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fileDependencyRecursion.kt")
         public void testFileDependencyRecursion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/fileDependencyRecursion.kt");
@@ -574,6 +580,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         @TestMetadata("Return.kt")
         public void testReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/Return.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SafeCallInvoke.kt")
+        public void testSafeCallInvoke() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SafeCallInvoke.kt");
             doTest(fileName);
         }
 
