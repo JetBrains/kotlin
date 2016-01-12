@@ -379,6 +379,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("thisAsCallee.kt")
+        public void testThisAsCallee() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/thisAsCallee.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ThisReference.kt")
         public void testThisReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ThisReference.kt");

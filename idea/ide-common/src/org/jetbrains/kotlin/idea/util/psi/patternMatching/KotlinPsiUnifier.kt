@@ -365,6 +365,7 @@ class KotlinPsiUnifier(
                     else -> false
                 }
                 this is KtBinaryExpression -> operationReference.getReferencedNameElementType() == KtTokens.ELVIS
+                this is KtThisExpression -> true
                 else -> false
             }
         }
@@ -420,6 +421,12 @@ class KotlinPsiUnifier(
         private fun matchCallableReferences(e1: KtCallableReferenceExpression, e2: KtCallableReferenceExpression): Boolean {
             val d1 = e1.bindingContext[BindingContext.REFERENCE_TARGET, e1.callableReference]
             val d2 = e2.bindingContext[BindingContext.REFERENCE_TARGET, e2.callableReference]
+            return matchDescriptors(d1, d2)
+        }
+
+        private fun matchThisExpressions(e1: KtThisExpression, e2: KtThisExpression): Boolean {
+            val d1 = e1.bindingContext[BindingContext.REFERENCE_TARGET, e1.instanceReference]
+            val d2 = e2.bindingContext[BindingContext.REFERENCE_TARGET, e2.instanceReference]
             return matchDescriptors(d1, d2)
         }
 
@@ -693,6 +700,8 @@ class KotlinPsiUnifier(
 
                 e1 is KtCallableReferenceExpression && e2 is KtCallableReferenceExpression ->
                     if (matchCallableReferences(e1, e2)) MATCHED else UNMATCHED
+
+                e1 is KtThisExpression && e2 is KtThisExpression -> if (matchThisExpressions(e1, e2)) MATCHED else UNMATCHED
 
                 else ->
                     matchCalls(e1, e2)

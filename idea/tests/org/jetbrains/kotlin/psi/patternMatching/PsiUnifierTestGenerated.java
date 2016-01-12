@@ -715,6 +715,12 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/simpleThis2Runtime.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("thisAsCallee.kt")
+                public void testThisAsCallee() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/thisAsCallee.kt");
+                    doTest(fileName);
+                }
             }
         }
 
