@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.*
@@ -49,18 +48,6 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module)
     private val factory = ConstantValueFactory(module.builtIns)
-
-    override fun loadClassAnnotations(
-            classProto: ProtoBuf.Class,
-            nameResolver: NameResolver
-    ): List<AnnotationDescriptor> {
-        val binaryAnnotationDescriptors = super.loadClassAnnotations(classProto, nameResolver)
-        val serializedAnnotations = classProto.getExtension(JvmProtoBuf.classAnnotation).orEmpty()
-        val serializedAnnotationDescriptors = serializedAnnotations.map {
-            annotationDeserializer.deserializeAnnotation(it, nameResolver)
-        }
-        return binaryAnnotationDescriptors + serializedAnnotationDescriptors
-    }
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
             annotationDeserializer.deserializeAnnotation(proto, nameResolver)

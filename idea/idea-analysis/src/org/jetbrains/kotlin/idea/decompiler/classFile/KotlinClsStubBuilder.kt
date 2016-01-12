@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -113,16 +112,6 @@ class AnnotationLoaderForClassFileStubBuilder(
         errorReporter: ErrorReporter
 ) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>(
         LockBasedStorageManager.NO_LOCKS, kotlinClassFinder, errorReporter) {
-
-    override fun loadClassAnnotations(
-            classProto: ProtoBuf.Class,
-            nameResolver: NameResolver
-    ): List<ClassId> {
-        val binaryAnnotationDescriptors = super.loadClassAnnotations(classProto, nameResolver)
-        val serializedAnnotations = classProto.getExtension(JvmProtoBuf.classAnnotation).orEmpty()
-        val serializedAnnotationDescriptors = serializedAnnotations.map { nameResolver.getClassId(it.id) }
-        return binaryAnnotationDescriptors + serializedAnnotationDescriptors
-    }
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId =
             nameResolver.getClassId(proto.id)

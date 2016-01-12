@@ -13,7 +13,6 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeParameterAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.packageModuleName);
   }
@@ -3798,21 +3797,6 @@ public final class JvmProtoBuf {
       java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> typeParameterAnnotation = com.google.protobuf.GeneratedMessageLite
           .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        100,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
-        false);
-  public static final int CLASS_ANNOTATION_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Class,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> classAnnotation = com.google.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Class.getDefaultInstance(),
         org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         100,
