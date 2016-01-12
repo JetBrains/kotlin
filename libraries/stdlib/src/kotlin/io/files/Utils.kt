@@ -262,7 +262,7 @@ public fun File.relativePath(descendant: File): String {
  * @throws FileAlreadyExistsException if the destination file already exists and 'rewrite' argument is set to `false`.
  * @throws IOException if any errors occur while copying.
  */
-public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = defaultBufferSize): Long {
+public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     if (!exists()) {
         throw NoSuchFileException(file = this, reason = "The source file doesn't exist")
     } else if (isDirectory()) {
