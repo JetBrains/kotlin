@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
@@ -55,11 +56,12 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun findUsages(
             element: PsiElement, allElementsToDelete: Array<out PsiElement>, usages: MutableList<UsageInfo>
     ): NonCodeUsageSearchInfo {
-        val deleteList = allElementsToDelete.toList()
+        val deleteSet = SmartSet.create<PsiElement>()
+        deleteSet.addAll(allElementsToDelete)
 
         fun getIgnoranceCondition() = Condition<PsiElement> {
             if (it is KtFile) return@Condition false
-            deleteList.any { element -> JavaSafeDeleteProcessor.isInside(it, element.unwrapped) }
+            deleteSet.any { element -> JavaSafeDeleteProcessor.isInside(it, element.unwrapped) }
         }
 
         fun getSearchInfo(element: PsiElement): NonCodeUsageSearchInfo {
@@ -69,6 +71,10 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         fun findUsagesByJavaProcessor(element: PsiElement, forceReferencedElementUnwrapping: Boolean): NonCodeUsageSearchInfo? {
             val javaUsages = ArrayList<UsageInfo>()
             val searchInfo = super.findUsages(element, allElementsToDelete, javaUsages)
+
+            javaUsages.filterIsInstance<SafeDeleteOverridingMethodUsageInfo>().mapNotNullTo(deleteSet) { it.element }
+
+            val ignoranceCondition = getIgnoranceCondition()
 
             javaUsages.mapNotNullTo(usages) { usageInfo ->
                 when (usageInfo) {
@@ -87,13 +93,16 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteReferenceJavaDeleteUsageInfo ->
                         usageInfo.element?.let { usageElement ->
-                            if (usageElement.getNonStrictParentOfType<KtValueArgumentName>() != null) null
-                            else {
-                                usageElement.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
-                                    SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as KtDeclaration)
-                                } ?: if (forceReferencedElementUnwrapping) {
-                                    SafeDeleteReferenceJavaDeleteUsageInfo(usageElement, element.unwrapped, usageInfo.isSafeDelete)
-                                } else usageInfo
+                            when {
+                                usageElement.getNonStrictParentOfType<KtValueArgumentName>() != null -> null
+                                ignoranceCondition.value(usageElement) -> null
+                                else -> {
+                                    usageElement.getNonStrictParentOfType<KtImportDirective>()?.let { importDirective ->
+                                        SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as KtDeclaration)
+                                    } ?: if (forceReferencedElementUnwrapping) {
+                                        SafeDeleteReferenceJavaDeleteUsageInfo(usageElement, element.unwrapped, usageInfo.isSafeDelete)
+                                    } else usageInfo
+                                }
                             }
                         }
 

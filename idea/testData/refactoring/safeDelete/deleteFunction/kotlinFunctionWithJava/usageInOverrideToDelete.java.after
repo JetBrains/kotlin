@@ -1,0 +1,4 @@
+class J implements T {
+    T u;
+
+}

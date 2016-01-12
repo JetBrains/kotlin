@@ -384,6 +384,12 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/secondaryConstructor.kt");
             doFunctionTestWithJava(fileName);
         }
+
+        @TestMetadata("usageInOverrideToDelete.kt")
+        public void testUsageInOverrideToDelete() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/usageInOverrideToDelete.kt");
+            doFunctionTestWithJava(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin")
@@ -625,6 +631,12 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         @TestMetadata("propertyExt.kt")
         public void testPropertyExt() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/propertyExt.kt");
+            doPropertyTestWithJava(fileName);
+        }
+
+        @TestMetadata("usageInOverrideToDelete.kt")
+        public void testUsageInOverrideToDelete() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/usageInOverrideToDelete.kt");
             doPropertyTestWithJava(fileName);
         }
     }
