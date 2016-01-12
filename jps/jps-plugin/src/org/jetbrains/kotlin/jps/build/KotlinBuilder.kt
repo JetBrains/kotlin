@@ -188,6 +188,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION)
 
+        val targetsWithoutOutputDir = targets.filter { it.outputDir == null }
+        if (targetsWithoutOutputDir.isNotEmpty()) {
+            messageCollector.report(ERROR, "Output directory not specified for " + targetsWithoutOutputDir.joinToString(), CompilerMessageLocation.NO_LOCATION)
+            return ABORT
+        }
+
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project)
         val incrementalCaches = getIncrementalCaches(chunk, context)
