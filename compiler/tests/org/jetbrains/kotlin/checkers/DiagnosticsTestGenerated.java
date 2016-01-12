@@ -4956,6 +4956,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("deprecatedInheritance.kt")
+            public void testDeprecatedInheritance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("deprecatedPropertyInheritance.kt")
+            public void testDeprecatedPropertyInheritance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedPropertyInheritance.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functionUsage.kt")
             public void testFunctionUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/functionUsage.kt");

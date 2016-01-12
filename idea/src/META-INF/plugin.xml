@@ -1270,6 +1270,14 @@
                      level="WARNING"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OverridingDeprecatedMemberInspection"
+                     shortName="OverridingDeprecatedMember"
+                     displayName="Overriding deprecated member"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
                      displayName="Unresolved reference in KDoc"
                      groupName="Kotlin"
