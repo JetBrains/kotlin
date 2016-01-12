@@ -26,8 +26,9 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -102,61 +103,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public KotlinTypeInfo visitProperty(@NotNull KtProperty property, ExpressionTypingContext typingContext) {
-        ExpressionTypingContext context = typingContext.replaceContextDependency(INDEPENDENT).replaceScope(scope);
-        KtTypeReference receiverTypeRef = property.getReceiverTypeReference();
-        if (receiverTypeRef != null) {
-            context.trace.report(LOCAL_EXTENSION_PROPERTY.on(receiverTypeRef));
-        }
-
-        KtPropertyAccessor getter = property.getGetter();
-        if (getter != null) {
-            context.trace.report(LOCAL_VARIABLE_WITH_GETTER.on(getter));
-        }
-
-        KtPropertyAccessor setter = property.getSetter();
-        if (setter != null) {
-            context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter));
-        }
-
-        KtExpression delegateExpression = property.getDelegateExpression();
-        if (delegateExpression != null) {
-            components.expressionTypingServices.getTypeInfo(delegateExpression, context);
-            context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.getDelegate()));
-        }
-
-        VariableDescriptor propertyDescriptor = components.descriptorResolver.
-                resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.trace);
-        KtExpression initializer = property.getInitializer();
-        KotlinTypeInfo typeInfo;
-        if (initializer != null) {
-            KotlinType outType = propertyDescriptor.getType();
-            typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType));
-            DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
-            KotlinType type = typeInfo.getType();
-            // At this moment we do not take initializer value into account if type is given for a property
-            // We can comment first part of this condition to take them into account, like here: var s: String? = "xyz"
-            // In this case s will be not-nullable until it is changed
-            if (property.getTypeReference() == null && type != null) {
-                DataFlowValue variableDataFlowValue = DataFlowValueFactory.createDataFlowValueForProperty(
-                        property, propertyDescriptor, context.trace.getBindingContext(),
-                        DescriptorUtils.getContainingModuleOrNull(scope.getOwnerDescriptor()));
-                DataFlowValue initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context);
-                // We cannot say here anything new about initializerDataFlowValue
-                // except it has the same value as variableDataFlowValue
-                typeInfo = typeInfo.replaceDataFlowInfo(dataFlowInfo.assign(variableDataFlowValue, initializerDataFlowValue));
-            }
-        }
-        else {
-            typeInfo = TypeInfoFactoryKt.noTypeInfo(context);
-        }
-
-        ExpressionTypingUtils.checkVariableShadowing(context.scope, context.trace, propertyDescriptor);
-
-        scope.addVariableDescriptor(propertyDescriptor);
-        DeclarationsCheckerKt.checkTypeReferences(property, context.trace);
-        components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor);
-        components.identifierChecker.checkDeclaration(property, context.trace);
-        return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(property, context));
+        return components.localVariableResolver.process(property, typingContext, scope, facade);
     }
 
     @Override
