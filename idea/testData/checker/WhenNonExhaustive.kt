@@ -6,6 +6,11 @@ fun nonExhaustiveBoolean(b: Boolean) = <error descr="[NO_ELSE_IN_WHEN] when expr
     false -> 0
 }
 
+fun nonExhaustiveNullableBoolean(b: Boolean?) = <error descr="[NO_ELSE_IN_WHEN] when expression must be exhaustive, add necessary 'null' branch or 'else' branch instead">when</error>(b) {
+    false -> 0
+    true -> 1
+}
+
 enum class Color { 
     RED,
     GREEN,
@@ -46,6 +51,11 @@ sealed class Variant {
 
 fun nonExhaustiveSealed(v: Variant) = <error descr="[NO_ELSE_IN_WHEN] when expression must be exhaustive, add necessary 'is Something', 'Another' branches or 'else' branch instead">when</error>(v) {
     Variant.Singleton -> false
+}
+
+fun nonExhaustiveNullableSealed(v: Variant?) = <error descr="[NO_ELSE_IN_WHEN] when expression must be exhaustive, add necessary 'Another', 'null' branches or 'else' branch instead">when</error>(v) {
+    Variant.Singleton -> false
+    is Variant.Something -> true
 }
 
 sealed class Empty
