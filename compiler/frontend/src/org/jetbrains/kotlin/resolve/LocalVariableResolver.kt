@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.*
@@ -47,9 +46,9 @@ class LocalVariableResolver(
     fun process(
             property: KtProperty,
             typingContext: ExpressionTypingContext,
-            scope: LexicalWritableScope,
+            scope: LexicalScope,
             facade: ExpressionTypingFacade
-    ): KotlinTypeInfo {
+    ): Pair<KotlinTypeInfo, VariableDescriptor> {
         val context = typingContext.replaceContextDependency(ContextDependency.INDEPENDENT).replaceScope(scope)
         val receiverTypeRef = property.receiverTypeReference
         if (receiverTypeRef != null) {
@@ -99,11 +98,10 @@ class LocalVariableResolver(
 
         ExpressionTypingUtils.checkVariableShadowing(context.scope, context.trace, propertyDescriptor)
 
-        scope.addVariableDescriptor(propertyDescriptor)
         property.checkTypeReferences(context.trace)
         modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor)
         identifierChecker.checkDeclaration(property, context.trace)
-        return typeInfo.replaceType(dataFlowAnalyzer.checkStatementType(property, context))
+        return Pair(typeInfo.replaceType(dataFlowAnalyzer.checkStatementType(property, context)), propertyDescriptor)
     }
 
     private fun resolveLocalVariableDescriptor(
