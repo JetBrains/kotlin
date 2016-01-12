@@ -11257,7 +11257,6 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-@JvmName("mutableCopyOf")
 public fun <T> Array<T>.copyOf(): Array<T> {
     return Arrays.copyOf(this, size)
 }
@@ -11330,7 +11329,6 @@ public fun ShortArray.copyOf(): ShortArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-@JvmName("mutableCopyOf")
 public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
     return Arrays.copyOf(this, newSize)
 }
@@ -11403,7 +11401,6 @@ public fun ShortArray.copyOf(newSize: Int): ShortArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-@JvmName("mutableCopyOfRange")
 public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
