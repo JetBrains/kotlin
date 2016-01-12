@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -120,7 +119,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     ) {
         private val fqName = packageView.fqName
         private val fragments = packageView.fragments
-        private val builtinsMessage = BuiltInsProtoBuf.BuiltIns.newBuilder()
+        private val proto = BuiltInsProtoBuf.BuiltIns.newBuilder()
         private val extension = BuiltInsSerializerExtension(fragments)
 
         fun run() {
@@ -132,11 +131,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         private fun serializeClass(classDescriptor: ClassDescriptor) {
             val classProto = DescriptorSerializer.createTopLevel(extension).classProto(classDescriptor).build()
-
-            val stream = ByteArrayOutputStream()
-            classProto.writeTo(stream)
-            write(BuiltInsSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId), stream)
-            builtinsMessage.addClass(classProto)
+            proto.addClass(classProto)
 
             serializeClasses(classDescriptor.unsubstitutedInnerClassesScope)
         }
@@ -150,21 +145,13 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
 
         private fun serializePackageFragments(fragments: List<PackageFragmentDescriptor>) {
-            val stream = ByteArrayOutputStream()
-            val packageProto = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
-            packageProto.writeTo(stream)
-            write(BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), stream)
-            builtinsMessage.setPackage(packageProto)
+            proto.`package` = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
         }
 
         private fun serializeStringTable() {
-            val stream = ByteArrayOutputStream()
             val (strings, qualifiedNames) = extension.stringTable.buildProto()
-            strings.writeDelimitedTo(stream)
-            qualifiedNames.writeDelimitedTo(stream)
-            write(BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), stream)
-            builtinsMessage.setStrings(strings)
-            builtinsMessage.setQualifiedNames(qualifiedNames)
+            proto.strings = strings
+            proto.qualifiedNames = qualifiedNames
         }
 
         private fun serializeBuiltInsFile() {
@@ -174,7 +161,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 writeInt(version.size)
                 version.forEach { writeInt(it) }
             }
-            builtinsMessage.build().writeTo(stream)
+            proto.build().writeTo(stream)
             write(BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName), stream)
         }
 

@@ -28,8 +28,7 @@ fun main(args: Array<String>) {
 Usage: ... <destination dir> (<source dir>)+
 
 Analyzes Kotlin sources found in the given source directories and serializes
-found top-level declarations to <destination dir> (files such as *.kotlin_builtins,
-as well as old files *.kotlin_string_table, *.kotlin_package, *.kotlin_class)"""
+found top-level declarations to <destination dir> (*.kotlin_builtins files)"""
         )
         return
     }

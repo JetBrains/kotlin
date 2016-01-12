@@ -22,7 +22,7 @@
             <resource>
                 <directory>${basedir}/../../../dist/builtins</directory>
                 <includes>
-                    <include>**/*.kotlin_*</include>
+                    <include>**/*.kotlin_builtins</include>
                 </includes>
             </resource>
         </resources>
