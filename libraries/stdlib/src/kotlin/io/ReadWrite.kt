@@ -9,11 +9,11 @@ import java.util.NoSuchElementException
 
 
 /** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
-public fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
+public fun Reader.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader
         = if (this is BufferedReader) this else BufferedReader(this, bufferSize)
 
 /** Returns a buffered reader wrapping this Writer, or this Writer itself if it is already buffered. */
-public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
+public fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter
         = if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
 /**
@@ -107,7 +107,7 @@ public fun Reader.readText(): String {
  * @param bufferSize size of character buffer to use in process.
  * @return number of bytes copies.
  */
-public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long {
+public fun Reader.copyTo(out: Writer, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     var charsCopied: Long = 0
     val buffer = CharArray(bufferSize)
     var chars = read(buffer)
