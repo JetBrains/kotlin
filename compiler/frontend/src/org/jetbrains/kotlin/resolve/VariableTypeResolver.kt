@@ -55,8 +55,13 @@ class VariableTypeResolver(
         val propertyTypeRef = variable.typeReference
 
         val hasDelegate = variable is KtProperty && variable.hasDelegateExpression()
-        if (propertyTypeRef == null) {
-            if (!variable.hasInitializer()) {
+        when {
+            propertyTypeRef != null -> {
+                val type = typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true)
+                setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, type, trace)
+                return type
+            }
+            !variable.hasInitializer() -> {
                 if (hasDelegate && variableDescriptor is PropertyDescriptor) {
                     val property = variable as KtProperty
                     if (property.hasDelegateExpression()) {
@@ -74,29 +79,22 @@ class VariableTypeResolver(
                 }
                 return ErrorUtils.createErrorType("No type, no body")
             }
-            else {
-                if (notLocal) {
-                    return DeferredType.createRecursionIntolerant(
-                            storageManager,
-                            trace
-                    ) {
-                        PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
-                        val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
-                        setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, initializerType, trace)
-                        transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
-                    }
-                }
-                else {
+            notLocal -> {
+                return DeferredType.createRecursionIntolerant(
+                        storageManager,
+                        trace
+                ) {
+                    PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
                     val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
                     setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, initializerType, trace)
-                    return initializerType
+                    transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
                 }
             }
-        }
-        else {
-            val type = typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true)
-            setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, type, trace)
-            return type
+            else -> {
+                val initializerType = resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace)
+                setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, initializerType, trace)
+                return initializerType
+            }
         }
     }
 
@@ -142,12 +140,10 @@ class VariableTypeResolver(
         val type = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, propertyDescriptor, scopeForInitializer, trace, dataFlowInfo)
 
-        if (type != null) {
-            val delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, propertyDescriptor)
-            val getterReturnType = delegatedPropertyResolver.getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, delegateFunctionsScope)
-            if (getterReturnType != null) {
-                return getterReturnType
-            }
+        val delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, propertyDescriptor)
+        val getterReturnType = delegatedPropertyResolver.getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, delegateFunctionsScope)
+        if (getterReturnType != null) {
+            return getterReturnType
         }
         return ErrorUtils.createErrorType("Type from delegate")
     }
