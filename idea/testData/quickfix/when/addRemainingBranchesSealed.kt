@@ -1,4 +1,7 @@
 // "Add remaining branches" "true"
+// ERROR: Unresolved reference: TODO
+// ERROR: Unresolved reference: TODO
+// ERROR: Unresolved reference: TODO
 sealed class Variant {
     object Singleton : Variant()
 

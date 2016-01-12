@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import java.util.*
 
 interface WhenMissingCase {
@@ -132,7 +131,9 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
 private class ClassMissingCase(val descriptor: ClassDescriptor): WhenMissingCase {
     override fun toString() = descriptor.name.identifier.let { if (descriptor.kind.isSingleton) it else "is $it" }
 
-    override val branchConditionText = descriptor.fqNameSafe.asString().let { if (descriptor.kind.isSingleton) it else "is $it" }
+    override val branchConditionText = DescriptorUtils.getFqNameFromTopLevelClass(descriptor).asString().let {
+        if (descriptor.kind.isSingleton) it else "is $it"
+    }
 }
 
 private abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChecker {

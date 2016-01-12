@@ -7580,6 +7580,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addRemainingBranchesInNonDefaultPackage.kt")
+        public void testAddRemainingBranchesInNonDefaultPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesInNonDefaultPackage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addRemainingBranchesSealed.kt")
         public void testAddRemainingBranchesSealed() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesSealed.kt");
