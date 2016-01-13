@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.resolve.scopes.utils.*
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
@@ -142,25 +143,30 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
                 if (packageFragmentForVisibilityCheck is DeclarationDescriptorWithSource && packageFragmentForVisibilityCheck.source == SourceElement.NO_SOURCE) {
                     PackageFragmentWithCustomSource(packageFragmentForVisibilityCheck, KotlinSourceElement(importDirective.getContainingKtFile()))
                 }
-
                 else {
                     packageFragmentForVisibilityCheck
                 }
 
-        if (!importDirective.isAllUnder) {
+        if (importDirective.isAllUnder) {
+            val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForCheck,
+                                                                   scopeForFirstPart = null, position = QualifierPosition.IMPORT) ?: return null
+            if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
+                trace.report(Errors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
+            }
+            return AllUnderImportScope(packageOrClassDescriptor)
+        }
+        else {
             return processSingleImport(moduleDescriptor, trace, importDirective, path, lastPart, packageFragmentForCheck)
         }
-        val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForCheck,
-                                                               scopeForFirstPart = null, position = QualifierPosition.IMPORT) ?: return null
-        if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
-            trace.report(Errors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
-        }
-        return AllUnderImportScope(packageOrClassDescriptor)
-}
+    }
 
     private fun processSingleImport(
-            moduleDescriptor: ModuleDescriptor, trace: BindingTrace, importDirective: KtImportDirective,
-            path: List<QualifierPart>, lastPart: QualifierPart, packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
+            moduleDescriptor: ModuleDescriptor,
+            trace: BindingTrace,
+            importDirective: KtImportDirective,
+            path: List<QualifierPart>,
+            lastPart: QualifierPart,
+            packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
     ): SingleImportScope? {
         val aliasName = KtPsiUtil.getAliasName(importDirective)
         if (aliasName == null) {
