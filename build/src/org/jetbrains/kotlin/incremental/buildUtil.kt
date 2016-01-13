@@ -85,7 +85,7 @@ fun createCompileServices(
         compilationCanceledStatus: CompilationCanceledStatus?
 ): Services {
     val builder = Services.Builder()
-    builder.register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
+    builder.register(IncrementalCompilationComponents::class.java, BasicIncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
     compilationCanceledStatus?.let {
         builder.register(CompilationCanceledStatus::class.java, it)
     }
@@ -158,7 +158,7 @@ fun<Target> updateKotlinIncrementalCache(
 
 
 fun updateLookupStorage(
-        lookupStorage: LookupStorage,
+        lookupStorage: BasicLookupStorage,
         lookupTracker: LookupTracker,
         filesToCompile: Iterable<File>, removedFiles: Iterable<File>
 ) {
@@ -211,7 +211,7 @@ fun<Target> getGeneratedFiles(
 }
 
 
-fun CompilationResult.dirtyFiles(lookupStorage: LookupStorage): Sequence<File> =
+fun CompilationResult.dirtyFiles(lookupStorage: BasicLookupStorage): Sequence<File> =
     // TODO group by fqName?
     changes.mapNotNull { it as? ChangeInfo.MembersChanged }
            .flatMap { change ->

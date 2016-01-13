@@ -33,6 +33,7 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.kotlin.build.JvmSourceRoot;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder;
 
@@ -89,7 +90,8 @@ public class KotlinBuilderModuleScriptGenerator {
                     moduleSources,
                     findSourceRoots(context, target),
                     findClassPathRoots(target),
-                    (JavaModuleBuildTargetType) targetType,
+                    ((JavaModuleBuildTargetType) targetType).getTypeId(),
+                    ((JavaModuleBuildTargetType) targetType).isTests(),
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs,
                     friendDirs

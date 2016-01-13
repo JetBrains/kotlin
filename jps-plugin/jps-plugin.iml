@@ -10,7 +10,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="idea-jps-common" />
     <orderEntry type="module" module-name="cli-common" />
-    <orderEntry type="library" name="jps" level="project" />
+    <orderEntry type="module" module-name="build" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="module" module-name="backend" scope="TEST" />
@@ -23,5 +23,6 @@
     <orderEntry type="module" module-name="daemon-client" />
     <orderEntry type="module" module-name="daemon-common" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="library" name="jps" level="project" />
   </component>
 </module>

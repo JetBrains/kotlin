@@ -208,7 +208,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         val targets = listOf(TargetId(moduleName, targetType))
         val outputDir = File(args.destination)
         val caches = hashMapOf<TargetId, BasicIncrementalCacheImpl<TargetId>>()
-        val lookupStorage = LookupStorage(File(cachesBaseDir, "lookups"))
+        val lookupStorage = BasicLookupStorage(File(cachesBaseDir, "lookups"))
         val lookupTracker = makeLookupTracker()
         var currentRemoved = removed
 

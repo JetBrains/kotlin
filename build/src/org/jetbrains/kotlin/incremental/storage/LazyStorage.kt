@@ -28,7 +28,7 @@ import java.io.IOException
 /**
  * It's lazy in a sense that PersistentHashMap is created only on write
  */
-internal class LazyStorage<K, V>(
+class LazyStorage<K, V>(
         private val storageFile: File,
         private val keyDescriptor: KeyDescriptor<K>,
         private val valueExternalizer: DataExternalizer<V>

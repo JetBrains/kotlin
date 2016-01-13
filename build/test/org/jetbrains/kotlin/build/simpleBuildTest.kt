@@ -16,21 +16,11 @@
 
 package org.jetbrains.kotlin.build
 
-import com.google.common.io.Files
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.incremental.BasicIncrementalCacheImpl
-import org.jetbrains.kotlin.incremental.compileChanged
-import org.jetbrains.kotlin.incremental.makeLookupTracker
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
 
 public class SimpleBuildTest : KotlinIntegrationTestBase() {
 

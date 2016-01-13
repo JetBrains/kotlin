@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build
+package org.jetbrains.kotlin.jps.incremental.storage
 
-import java.io.File
+import com.intellij.openapi.util.io.FileUtil
+import gnu.trove.THashSet
+import org.jetbrains.jps.incremental.storage.PathStringDescriptor
+import org.jetbrains.kotlin.incremental.storage.CollectionExternalizer
 
-data class JvmSourceRoot(val file: File, val packagePrefix: String? = null)
+object PathCollectionExternalizer : CollectionExternalizer<String>(PathStringDescriptor(), { THashSet(FileUtil.PATH_HASHING_STRATEGY) })
+

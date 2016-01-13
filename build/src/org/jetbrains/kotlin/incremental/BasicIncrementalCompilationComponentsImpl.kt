@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 
-class IncrementalCompilationComponentsImpl(
+class BasicIncrementalCompilationComponentsImpl(
         private val caches: Map<TargetId, IncrementalCache>,
         private val lookupTracker: LookupTracker
 ): IncrementalCompilationComponents {

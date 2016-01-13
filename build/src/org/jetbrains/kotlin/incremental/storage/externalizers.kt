@@ -125,7 +125,7 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
 }
 
 
-object PathCollectionExternalizer : DataExternalizer<Collection<String>> {
+object PathStringCollectionExternalizer : DataExternalizer<Collection<String>> {
     override fun save(output: DataOutput, value: Collection<String>) {
         for (str in value) {
             IOUtil.writeUTF(output, str)
@@ -209,14 +209,6 @@ object IntExternalizer : DataExternalizer<Int> {
 
     override fun save(output: DataOutput, value: Int) {
         output.writeInt(value)
-    }
-}
-
-object LongExternalizer : DataExternalizer<Long> {
-    override fun read(input: DataInput): Long = input.readLong()
-
-    override fun save(output: DataOutput, value: Long) {
-        output.writeLong(value)
     }
 }
 

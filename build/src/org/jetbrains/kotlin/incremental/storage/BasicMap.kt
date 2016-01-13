@@ -23,27 +23,39 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-internal abstract class BasicMap<K : Comparable<K>, V>(
+interface BasicMapInterface {
+    fun clean()
+
+    fun flush(memoryCachesOnly: Boolean)
+
+    fun close()
+
+    @TestOnly
+    fun dump(): String
+}
+
+abstract class BasicMap<K : Comparable<K>, V>(
         storageFile: File,
         keyDescriptor: KeyDescriptor<K>,
         valueExternalizer: DataExternalizer<V>
-) {
+) : BasicMapInterface
+{
     protected val storage = LazyStorage(storageFile, keyDescriptor, valueExternalizer)
 
-    open fun clean() {
+    override fun clean() {
         storage.clean()
     }
 
-    fun flush(memoryCachesOnly: Boolean) {
+    override fun flush(memoryCachesOnly: Boolean) {
         storage.flush(memoryCachesOnly)
     }
 
-    fun close() {
+    override fun close() {
         storage.close()
     }
 
     @TestOnly
-    fun dump(): String {
+    override fun dump(): String {
         return with(StringBuilder()) {
             with(Printer(this)) {
                 println(this@BasicMap.javaClass.simpleName)
@@ -67,7 +79,7 @@ internal abstract class BasicMap<K : Comparable<K>, V>(
     protected abstract fun dumpValue(value: V): String
 }
 
-internal abstract class BasicStringMap<V>(
+abstract class BasicStringMap<V>(
         storageFile: File,
         keyDescriptor: KeyDescriptor<String>,
         valueExternalizer: DataExternalizer<V>
