@@ -202,3 +202,9 @@ fun KtParameter.dropDefaultValue() {
     val to = defaultValue ?: from
     deleteChildRange(from, to)
 }
+
+fun dropEnclosingParenthesesIfPossible(expression: KtExpression): KtExpression {
+    val parent = expression.parent as? KtParenthesizedExpression ?: return expression
+    if (!KtPsiUtil.areParenthesesUseless(parent)) return expression
+    return parent.replaced(expression)
+}
