@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 open class KeywordLookupObject
 
@@ -139,7 +140,22 @@ object KeywordCompletion {
         while (parent != null) {
             when (parent) {
                 is KtBlockExpression -> {
-                    return buildFilterWithContext("fun foo() { ", prevParent, position)
+                    val prefixText = "fun foo() { "
+                    if (prevParent is KtExpression) {
+                        return buildFilterWithContext(prefixText, prevParent, position)
+                    }
+                    else {
+                        val lastExpression = prevParent
+                                .siblings(forward = false, withItself = false)
+                                .firstIsInstanceOrNull<KtExpression>()
+                        if (lastExpression != null) {
+                            val contextAfterExpression = lastExpression
+                                    .siblings(forward = true, withItself = false)
+                                    .takeWhile { it != prevParent }
+                                    .joinToString { it.text }
+                            return buildFilterWithContext(prefixText + "x" + contextAfterExpression, prevParent, position)
+                        }
+                    }
                 }
 
                 is KtWithExpressionInitializer -> {
