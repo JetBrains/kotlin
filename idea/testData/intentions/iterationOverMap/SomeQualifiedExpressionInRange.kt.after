@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+fun main(args: Array<String>) {
+    for ((int1, int2) in 1.createListOfDataClasses()) {
+    }
+}
+
+fun Int.createListOfDataClasses() = listOf(MyClass(this, this))
+
+data class MyClass(val a: Int, val b: Int)

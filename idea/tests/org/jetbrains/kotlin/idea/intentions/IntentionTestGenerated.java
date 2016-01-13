@@ -6199,6 +6199,100 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/iterationOverMap")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IterationOverMap extends AbstractIntentionTest {
+        public void testAllFilesPresentInIterationOverMap() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/iterationOverMap"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("AlreadyDestructing.kt")
+        public void testAlreadyDestructing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/AlreadyDestructing.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CaretOffset.kt")
+        public void testCaretOffset() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/CaretOffset.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClass.kt")
+        public void testDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassFirstNPropertiesUsed.kt")
+        public void testDataClassFirstNPropertiesUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassFirstNPropertiesUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassNotAllPropertiesUsed.kt")
+        public void testDataClassNotAllPropertiesUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassNotAllPropertiesUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DataClassParametersOrder.kt")
+        public void testDataClassParametersOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/DataClassParametersOrder.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EntriesCallIsMissing.kt")
+        public void testEntriesCallIsMissing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/EntriesCallIsMissing.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Getters.kt")
+        public void testGetters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/Getters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OnlyKeyUsed.kt")
+        public void testOnlyKeyUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/OnlyKeyUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OtherUsages.kt")
+        public void testOtherUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/OtherUsages.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OtherUsages2.kt")
+        public void testOtherUsages2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/OtherUsages2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PropertiesNames.kt")
+        public void testPropertiesNames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/PropertiesNames.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/Simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SomeQualifiedExpressionInRange.kt")
+        public void testSomeQualifiedExpressionInRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/SomeQualifiedExpressionInRange.kt");
+            doTest(fileName);
+        }
+
+    }
+
     @TestMetadata("idea/testData/intentions/moveAssignmentToInitializer")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

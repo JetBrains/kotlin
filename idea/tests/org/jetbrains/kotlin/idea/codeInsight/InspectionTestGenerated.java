@@ -67,6 +67,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("iterationOverMap/inspectionData/inspections.test")
+        public void testIterationOverMap_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterationOverMap/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectLiteralToLambda/inspectionData/inspections.test")
         public void testObjectLiteralToLambda_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/inspectionData/inspections.test");
