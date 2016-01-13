@@ -19,12 +19,12 @@ val w = <!EXPRESSION_EXPECTED!>while (true) {}<!>
 fun foo() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>z<!> = 2
     val r = {  // type fun(): Any is inferred
-        <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {
-            2
+        if (true) {
+            <!IMPLICIT_CAST_TO_ANY!>2<!>
         }
         else {
-            z = 34
-        }<!>
+            <!IMPLICIT_CAST_TO_ANY!>z = 34<!>
+        }
     }
     val <!UNUSED_VARIABLE!>f<!>: ()-> Int = <!TYPE_MISMATCH!>r<!>
     val <!UNUSED_VARIABLE!>g<!>: ()-> Any = r
@@ -73,11 +73,11 @@ fun testCoercionToUnit() {
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 43
     val checkType = {
-        <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {
-            x = 4
+        if (true) {
+            <!IMPLICIT_CAST_TO_ANY!>x = 4<!>
         } else {
-            45
-        }<!>
+            <!IMPLICIT_CAST_TO_ANY!>45<!>
+        }
     }
     val <!UNUSED_VARIABLE!>f<!> : () -> String = <!TYPE_MISMATCH!>checkType<!>
 }
@@ -93,18 +93,18 @@ fun testImplicitCoercion() {
         else -> z = 20
     }
 
-    var <!UNUSED_VARIABLE!>u<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>when(d) {
+    var <!UNUSED_VARIABLE!>u<!> = when(d) {
         3 -> {
-            <!UNUSED_VALUE!>z =<!> 34
+            <!IMPLICIT_CAST_TO_ANY!><!UNUSED_VALUE!>z =<!> 34<!>
         }
-        else -> <!UNUSED_CHANGED_VALUE!>z--<!>
-    }<!>
+        else -> <!UNUSED_CHANGED_VALUE, IMPLICIT_CAST_TO_ANY!>z--<!>
+    }
 
     var <!UNUSED_VARIABLE!>iff<!> = <!INVALID_IF_AS_EXPRESSION!>if (true) {
         <!UNUSED_VALUE!>z =<!> 34
     }<!>
     val <!UNUSED_VARIABLE!>g<!> = <!INVALID_IF_AS_EXPRESSION!>if (true) 4<!>
-    val <!UNUSED_VARIABLE!>h<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (false) 4 else {}<!>
+    val <!UNUSED_VARIABLE!>h<!> = if (false) <!IMPLICIT_CAST_TO_ANY!>4<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
 
     bar(if (true) {
         <!CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>

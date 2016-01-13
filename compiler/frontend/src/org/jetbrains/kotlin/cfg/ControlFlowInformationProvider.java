@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -69,6 +70,7 @@ import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
@@ -124,9 +126,9 @@ public class ControlFlowInformationProvider {
 
         markUnusedExpressions();
 
-        markIfWithoutElse();
+        checkIfExpressions();
 
-        markWhenWithoutElse();
+        checkWhenExpressions();
     }
 
     public void checkFunction(@Nullable KotlinType expectedReturnType) {
@@ -691,7 +693,7 @@ public class ControlFlowInformationProvider {
         );
     }
 
-    public void markIfWithoutElse() {
+    public void checkIfExpressions() {
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
@@ -725,7 +727,7 @@ public class ControlFlowInformationProvider {
             @NotNull Collection<KtExpression> branchExpressions
     ) {
         KotlinType expectedExpressionType = trace.get(EXPECTED_EXPRESSION_TYPE, expression);
-        if (expectedExpressionType != null) return;
+        if (expectedExpressionType != null && expectedExpressionType != DONT_CARE) return;
 
         KotlinType expressionType = trace.getType(expression);
         if (expressionType == null) {
@@ -733,19 +735,33 @@ public class ControlFlowInformationProvider {
         }
         if (KotlinBuiltIns.isAnyOrNullableAny(expressionType)) {
             for (KtExpression branchExpression : branchExpressions) {
+                if (branchExpression == null) continue;
                 KotlinType branchType = trace.getType(branchExpression);
                 if (branchType == null || KotlinBuiltIns.isAnyOrNullableAny(branchType)) {
                     return;
                 }
             }
-            trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
-        }
-        else if (KotlinBuiltIns.isUnit(expressionType)) {
-            trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
+            for (KtExpression branchExpression : branchExpressions) {
+                if (branchExpression == null) continue;
+                KotlinType branchType = trace.getType(branchExpression);
+                assert branchType != null : "Branch expression type should be non-null";
+                trace.report(IMPLICIT_CAST_TO_ANY.on(getResultingExpression(branchExpression), branchType, expressionType));
+            }
         }
     }
 
-    public void markWhenWithoutElse() {
+    private static @NotNull KtExpression getResultingExpression(@NotNull KtExpression expression) {
+        KtExpression finger = expression;
+        while (true) {
+            KtExpression deparenthesized = KtPsiUtil.deparenthesize(finger);
+            deparenthesized = KtPsiUtil.getExpressionOrLastStatementInBlock(deparenthesized);
+            if (deparenthesized == null || deparenthesized == finger) break;
+            finger = deparenthesized;
+        }
+        return finger;
+    }
+
+    public void checkWhenExpressions() {
         final Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
@@ -776,12 +792,9 @@ public class ControlFlowInformationProvider {
                             KtWhenExpression whenExpression = (KtWhenExpression) element;
 
                             if (BindingContextUtilsKt.isUsedAsExpression(whenExpression, trace.getBindingContext())) {
-                                List<KtExpression> branchExpressions = new ArrayList<KtExpression>(whenExpression.getEntries().size() + 1);
+                                List<KtExpression> branchExpressions = new ArrayList<KtExpression>(whenExpression.getEntries().size());
                                 for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
                                     branchExpressions.add(whenEntry.getExpression());
-                                }
-                                if (whenExpression.getElseExpression() != null) {
-                                    branchExpressions.add(whenExpression.getElseExpression());
                                 }
                                 checkImplicitCastOnConditionalExpression(whenExpression, branchExpressions);
                             }
@@ -806,8 +819,6 @@ public class ControlFlowInformationProvider {
                                 }
                             }
                         }
-
-
                     }
                 }
         );

@@ -71,6 +71,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("implicitCastToAny.kt")
+    public void testImplicitCastToAny() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/implicitCastToAny.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("instar.kt")
     public void testInstar() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/instar.kt");

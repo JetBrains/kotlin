@@ -5,8 +5,8 @@ fun example() {
     val b = <!INVALID_IF_AS_EXPRESSION!>if (true) else false<!>
     val c = <!INVALID_IF_AS_EXPRESSION!>if (true) true<!>
     val d = <!INVALID_IF_AS_EXPRESSION!>if (true) true else<!>;
-    val e = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {} else false<!>
-    val f = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) true else {}<!>
+    val e = if (true) <!IMPLICIT_CAST_TO_ANY!>{}<!> else <!IMPLICIT_CAST_TO_ANY!>false<!>
+    val f = if (true) <!IMPLICIT_CAST_TO_ANY!>true<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
 
     {
         if (true) <!UNUSED_EXPRESSION!>true<!>
@@ -17,12 +17,12 @@ fun example() {
     }();
 
     {
-        <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {} else false<!>
+        if (true) <!IMPLICIT_CAST_TO_ANY!>{}<!> else <!IMPLICIT_CAST_TO_ANY!>false<!>
     }();
 
 
     {
-        <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) true else {}<!>
+        if (true) <!IMPLICIT_CAST_TO_ANY!>true<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
     }()
 
     fun t(): Boolean {

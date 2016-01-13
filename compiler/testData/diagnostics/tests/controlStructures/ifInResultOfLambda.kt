@@ -1,6 +1,6 @@
-val test1 = { <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) 1 else ""<!> }
+val test1 = { if (true) <!IMPLICIT_CAST_TO_ANY!>1<!> else <!IMPLICIT_CAST_TO_ANY!>""<!> }
 
-val test2 = { { <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) 1 else ""<!> } }
+val test2 = { { if (true) <!IMPLICIT_CAST_TO_ANY!>1<!> else <!IMPLICIT_CAST_TO_ANY!>""<!> } }
 
 val test3: (Boolean) -> Any = { if (it) 1 else "" }
 
