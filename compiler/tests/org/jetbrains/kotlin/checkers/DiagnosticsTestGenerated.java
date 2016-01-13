@@ -2604,6 +2604,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/checkArguments"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("arrayAccessSet.kt")
+            public void testArrayAccessSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/checkArguments/arrayAccessSet.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("arrayAccessSetTooManyArgs.kt")
+            public void testArrayAccessSetTooManyArgs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/checkArguments/arrayAccessSetTooManyArgs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("booleanExpressions.kt")
             public void testBooleanExpressions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/checkArguments/booleanExpressions.kt");
@@ -13074,6 +13086,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt10243a.kt")
             public void testKt10243a() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt10243a.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt10633.kt")
+            public void testKt10633() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt10633.kt");
                 doTest(fileName);
             }
 

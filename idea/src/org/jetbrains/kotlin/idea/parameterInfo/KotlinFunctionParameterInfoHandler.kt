@@ -313,14 +313,19 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             return SignatureInfo(overload, { null }, null, isGrey = false)
         }
 
-        assert(call.valueArguments.size >= currentArgumentIndex)
+        val isArraySetMethod = call.callType == Call.CallType.ARRAY_SET_METHOD
 
-        val argumentsBeforeCurrent = call.valueArguments.subList(0, currentArgumentIndex)
+        val arguments = call.valueArguments.let { args ->
+            // For array set method call, we're only interested in the arguments in brackets which are all except the last one
+            if (isArraySetMethod) args.dropLast(1) else args
+        }
+
+        assert(arguments.size >= currentArgumentIndex)
 
         val callToUse: Call
         val currentArgument: ValueArgument
-        if (call.valueArguments.size > currentArgumentIndex) {
-            currentArgument = call.valueArguments[currentArgumentIndex]
+        if (arguments.size > currentArgumentIndex) {
+            currentArgument = arguments[currentArgumentIndex]
             callToUse = call
         }
         else {
@@ -334,9 +339,12 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                 override fun isExternal() = false
             }
             callToUse = object : DelegatingCall(call) {
-                val arguments = call.valueArguments + currentArgument
+                val argumentsWithCurrent =
+                        arguments + currentArgument +
+                        // For array set method call, also add the argument in the right-hand side
+                        (if (isArraySetMethod) listOf(call.valueArguments.last()) else listOf())
 
-                override fun getValueArguments() = arguments
+                override fun getValueArguments() = argumentsWithCurrent
                 override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
                 override fun getValueArgumentList() = null
             }
@@ -347,20 +355,22 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val resultingDescriptor = resolvedCall.resultingDescriptor
 
         fun argumentToParameter(argument: ValueArgument): ValueParameterDescriptor? {
-            val parameter = (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter ?: return null
-            if (call.callType == Call.CallType.ARRAY_SET_METHOD && parameter.index == resultingDescriptor.valueParameters.lastIndex) return null
-            return parameter
+            return (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter
         }
 
         val highlightParameterIndex = argumentToParameter(currentArgument)?.index
 
-        if (!(argumentsBeforeCurrent + currentArgument).all { argumentToParameter(it) != null }) { // some of arguments before the current one (or the current one) are not mapped to any of the parameters
+        val argumentsBeforeCurrent = arguments.subList(0, currentArgumentIndex)
+        if ((argumentsBeforeCurrent + currentArgument).any { argumentToParameter(it) == null }) {
+            // some of arguments before the current one (or the current one) are not mapped to any of the parameters
             return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
         }
 
         // grey out if not all arguments before the current are matched
-        val isGrey = argumentsBeforeCurrent
-                .any { argument -> resolvedCall.getArgumentMapping(argument).isError() && !argument.hasError(bindingContext) /* ignore arguments that has error type */ }
+        val isGrey = argumentsBeforeCurrent.any { argument ->
+            resolvedCall.getArgumentMapping(argument).isError() &&
+            !argument.hasError(bindingContext) /* ignore arguments that have error type */
+        }
         return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey)
     }
 

@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.resolve.calls;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -118,15 +122,18 @@ public class ValueArgumentsToParametersMapper {
 
         // We saw only positioned arguments so far
         private final ProcessorState positionedOnly = new ProcessorState() {
-
             private int currentParameter = 0;
+
+            private int numberOfParametersForPositionedArguments() {
+                int size = candidateCall.getCandidateDescriptor().getValueParameters().size();
+                return call.getCallType() == Call.CallType.ARRAY_SET_METHOD ? size - 1 : size;
+            }
 
             @Nullable
             public ValueParameterDescriptor nextValueParameter() {
-                List<ValueParameterDescriptor> parameters = candidateCall.getCandidateDescriptor().getValueParameters();
-                if (currentParameter >= parameters.size()) return null;
+                if (currentParameter >= numberOfParametersForPositionedArguments()) return null;
 
-                ValueParameterDescriptor head = parameters.get(currentParameter);
+                ValueParameterDescriptor head = candidateCall.getCandidateDescriptor().getValueParameters().get(currentParameter);
 
                 // If we found a vararg parameter, we are stuck with it forever
                 if (head.getVarargElementType() == null) {
@@ -142,20 +149,27 @@ public class ValueArgumentsToParametersMapper {
             }
 
             @Override
-            public ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index) {
-                ValueParameterDescriptor valueParameterDescriptor = nextValueParameter();
+            public ProcessorState processPositionedArgument(@NotNull ValueArgument argument) {
+                processArgument(argument, nextValueParameter());
+                return positionedOnly;
+            }
 
-                if (valueParameterDescriptor != null) {
-                    usedParameters.add(valueParameterDescriptor);
-                    putVararg(valueParameterDescriptor, argument);
+            @Override
+            public ProcessorState processArraySetRHS(@NotNull ValueArgument argument) {
+                processArgument(argument, CollectionsKt.lastOrNull(candidateCall.getCandidateDescriptor().getValueParameters()));
+                return positionedOnly;
+            }
+
+            private void processArgument(@NotNull ValueArgument argument, @Nullable ValueParameterDescriptor parameter) {
+                if (parameter != null) {
+                    usedParameters.add(parameter);
+                    putVararg(parameter, argument);
                 }
                 else {
                     report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidateCall.getCandidateDescriptor()));
                     unmappedArguments.add(argument);
                     setStatus(WEAK_ERROR);
                 }
-
-                return positionedOnly;
             }
         };
 
@@ -220,27 +234,34 @@ public class ValueArgumentsToParametersMapper {
             }
 
             @Override
-            public ProcessorState processPositionedArgument(
-                    @NotNull ValueArgument argument, int index
-            ) {
+            public ProcessorState processPositionedArgument(@NotNull ValueArgument argument) {
                 report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
                 setStatus(WEAK_ERROR);
                 unmappedArguments.add(argument);
 
                 return positionedThenNamed;
             }
+
+            @Override
+            public ProcessorState processArraySetRHS(@NotNull ValueArgument argument) {
+                throw new IllegalStateException("Array set RHS cannot appear after a named argument syntactically: " + argument);
+            }
         };
 
         public void process() {
             ProcessorState state = positionedOnly;
+            boolean isArraySetMethod = call.getCallType() == Call.CallType.ARRAY_SET_METHOD;
             List<? extends ValueArgument> argumentsInParentheses = CallUtilKt.getValueArgumentsInParentheses(call);
-            for (int i = 0; i < argumentsInParentheses.size(); i++) {
-                ValueArgument valueArgument = argumentsInParentheses.get(i);
+            for (Iterator<? extends ValueArgument> iterator = argumentsInParentheses.iterator(); iterator.hasNext(); ) {
+                ValueArgument valueArgument = iterator.next();
                 if (valueArgument.isNamed()) {
                     state = state.processNamedArgument(valueArgument);
                 }
+                else if (isArraySetMethod && !iterator.hasNext()) {
+                    state = state.processArraySetRHS(valueArgument);
+                }
                 else {
-                    state = state.processPositionedArgument(valueArgument, i);
+                    state = state.processPositionedArgument(valueArgument);
                 }
             }
 
@@ -341,9 +362,11 @@ public class ValueArgumentsToParametersMapper {
 
         private interface ProcessorState {
             ProcessorState processNamedArgument(@NotNull ValueArgument argument);
-            ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index);
-        }
 
+            ProcessorState processPositionedArgument(@NotNull ValueArgument argument);
+
+            ProcessorState processArraySetRHS(@NotNull ValueArgument argument);
+        }
     }
 
     private ValueArgumentsToParametersMapper() {}

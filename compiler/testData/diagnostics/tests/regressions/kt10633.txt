@@ -1,0 +1,6 @@
+package
+
+public var count: kotlin.Int
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public operator fun kotlin.Int.get(/*0*/ s: kotlin.Int): kotlin.Int
+public operator fun kotlin.Int.set(/*0*/ s: kotlin.Int, /*1*/ x: kotlin.String = ..., /*2*/ z: kotlin.Int): kotlin.Unit

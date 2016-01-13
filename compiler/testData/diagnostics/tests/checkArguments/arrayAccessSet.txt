@@ -1,0 +1,35 @@
+package
+
+public fun test(): kotlin.Unit
+
+public object A {
+    private constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ..., /*2*/ z: kotlin.Double): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object B {
+    private constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ..., /*2*/ z: kotlin.Double = ..., /*3*/ w: kotlin.Char = ..., /*4*/ v: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object D {
+    private constructor D()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ x: kotlin.Int, /*1*/ vararg y: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*2*/ z: kotlin.Double): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Z {
+    private constructor Z()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
