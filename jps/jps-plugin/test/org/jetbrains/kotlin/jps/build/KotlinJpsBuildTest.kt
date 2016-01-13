@@ -732,6 +732,10 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         doTest()
     }
 
+    fun testKotlinProjectWithEmptyOutputDirInSomeModules() {
+        doTest()
+    }
+
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
                 .map { it as CompilerMessage }
