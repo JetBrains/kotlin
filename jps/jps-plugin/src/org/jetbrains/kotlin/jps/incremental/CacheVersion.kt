@@ -23,6 +23,7 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.incremental.CacheVersion.Action
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import java.io.File
 
 private val NORMAL_VERSION = 8
@@ -47,7 +48,13 @@ class CacheVersion(
         get() = versionFile.readText().toInt()
 
     private val expectedVersion: Int
-        get() = ownVersion * 1000000 + JvmBytecodeBinaryVersion.INSTANCE.major * 1000 + JvmBytecodeBinaryVersion.INSTANCE.minor
+        get() {
+            val metadata = JvmMetadataVersion.INSTANCE
+            val bytecode = JvmBytecodeBinaryVersion.INSTANCE
+            return ownVersion * 1000000 +
+                   bytecode.major * 10000 + bytecode.minor * 100 +
+                   metadata.major * 1000 + metadata.minor
+        }
 
     fun checkVersion(): Action =
             when (versionFile.exists() to isEnabled) {
