@@ -7,7 +7,6 @@ public final class DebugBuiltInsProtoBuf {
   private DebugBuiltInsProtoBuf() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
-    registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.className);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.packageFqName);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.constructorAnnotation);
@@ -1308,17 +1307,6 @@ public final class DebugBuiltInsProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.builtins.BuiltIns)
   }
 
-  public static final int CLASS_NAME_FIELD_NUMBER = 150;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Package,
-      java.util.List<java.lang.Integer>> className = com.google.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.Integer.class,
-        null);
   public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 151;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
@@ -1453,40 +1441,38 @@ public final class DebugBuiltInsProtoBuf {
       "ion.QualifiedNameTable\022<\n\007package\030\003 \001(\0132" +
       "+.org.jetbrains.kotlin.serialization.Pac" +
       "kage\0228\n\005class\030\004 \003(\0132).org.jetbrains.kotl",
-      "in.serialization.Class:D\n\nclass_name\022+.o" +
-      "rg.jetbrains.kotlin.serialization.Packag" +
-      "e\030\226\001 \003(\005B\002\020\001:E\n\017package_fq_name\022+.org.je" +
-      "tbrains.kotlin.serialization.Package\030\227\001 " +
-      "\001(\005:t\n\020class_annotation\022).org.jetbrains." +
-      "kotlin.serialization.Class\030\226\001 \003(\0132..org." +
-      "jetbrains.kotlin.serialization.Annotatio" +
-      "n:\200\001\n\026constructor_annotation\022/.org.jetbr" +
-      "ains.kotlin.serialization.Constructor\030\226\001" +
-      " \003(\0132..org.jetbrains.kotlin.serializatio",
-      "n.Annotation:z\n\023function_annotation\022,.or" +
-      "g.jetbrains.kotlin.serialization.Functio" +
-      "n\030\226\001 \003(\0132..org.jetbrains.kotlin.serializ" +
-      "ation.Annotation:z\n\023property_annotation\022" +
-      ",.org.jetbrains.kotlin.serialization.Pro" +
-      "perty\030\226\001 \003(\0132..org.jetbrains.kotlin.seri" +
-      "alization.Annotation:\210\001\n\022compile_time_va" +
-      "lue\022,.org.jetbrains.kotlin.serialization" +
-      ".Property\030\227\001 \001(\0132=.org.jetbrains.kotlin." +
-      "serialization.Annotation.Argument.Value:",
-      "}\n\025enum_entry_annotation\022-.org.jetbrains" +
-      ".kotlin.serialization.EnumEntry\030\226\001 \003(\0132." +
-      ".org.jetbrains.kotlin.serialization.Anno" +
-      "tation:\201\001\n\024parameter_annotation\0222.org.je" +
-      "tbrains.kotlin.serialization.ValueParame" +
-      "ter\030\226\001 \003(\0132..org.jetbrains.kotlin.serial" +
-      "ization.Annotation:r\n\017type_annotation\022(." +
-      "org.jetbrains.kotlin.serialization.Type\030" +
-      "\226\001 \003(\0132..org.jetbrains.kotlin.serializat" +
-      "ion.Annotation:\205\001\n\031type_parameter_annota",
-      "tion\0221.org.jetbrains.kotlin.serializatio" +
-      "n.TypeParameter\030\226\001 \003(\0132..org.jetbrains.k" +
-      "otlin.serialization.AnnotationB\027B\025DebugB" +
-      "uiltInsProtoBuf"
+      "in.serialization.Class:E\n\017package_fq_nam" +
+      "e\022+.org.jetbrains.kotlin.serialization.P" +
+      "ackage\030\227\001 \001(\005:t\n\020class_annotation\022).org." +
+      "jetbrains.kotlin.serialization.Class\030\226\001 " +
+      "\003(\0132..org.jetbrains.kotlin.serialization" +
+      ".Annotation:\200\001\n\026constructor_annotation\022/" +
+      ".org.jetbrains.kotlin.serialization.Cons" +
+      "tructor\030\226\001 \003(\0132..org.jetbrains.kotlin.se" +
+      "rialization.Annotation:z\n\023function_annot" +
+      "ation\022,.org.jetbrains.kotlin.serializati",
+      "on.Function\030\226\001 \003(\0132..org.jetbrains.kotli" +
+      "n.serialization.Annotation:z\n\023property_a" +
+      "nnotation\022,.org.jetbrains.kotlin.seriali" +
+      "zation.Property\030\226\001 \003(\0132..org.jetbrains.k" +
+      "otlin.serialization.Annotation:\210\001\n\022compi" +
+      "le_time_value\022,.org.jetbrains.kotlin.ser" +
+      "ialization.Property\030\227\001 \001(\0132=.org.jetbrai" +
+      "ns.kotlin.serialization.Annotation.Argum" +
+      "ent.Value:}\n\025enum_entry_annotation\022-.org" +
+      ".jetbrains.kotlin.serialization.EnumEntr",
+      "y\030\226\001 \003(\0132..org.jetbrains.kotlin.serializ" +
+      "ation.Annotation:\201\001\n\024parameter_annotatio" +
+      "n\0222.org.jetbrains.kotlin.serialization.V" +
+      "alueParameter\030\226\001 \003(\0132..org.jetbrains.kot" +
+      "lin.serialization.Annotation:r\n\017type_ann" +
+      "otation\022(.org.jetbrains.kotlin.serializa" +
+      "tion.Type\030\226\001 \003(\0132..org.jetbrains.kotlin." +
+      "serialization.Annotation:\205\001\n\031type_parame" +
+      "ter_annotation\0221.org.jetbrains.kotlin.se" +
+      "rialization.TypeParameter\030\226\001 \003(\0132..org.j",
+      "etbrains.kotlin.serialization.Annotation" +
+      "B\027B\025DebugBuiltInsProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1499,17 +1485,16 @@ public final class DebugBuiltInsProtoBuf {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_builtins_BuiltIns_descriptor,
               new java.lang.String[] { "Strings", "QualifiedNames", "Package", "Class", });
-          className.internalInit(descriptor.getExtensions().get(0));
-          packageFqName.internalInit(descriptor.getExtensions().get(1));
-          classAnnotation.internalInit(descriptor.getExtensions().get(2));
-          constructorAnnotation.internalInit(descriptor.getExtensions().get(3));
-          functionAnnotation.internalInit(descriptor.getExtensions().get(4));
-          propertyAnnotation.internalInit(descriptor.getExtensions().get(5));
-          compileTimeValue.internalInit(descriptor.getExtensions().get(6));
-          enumEntryAnnotation.internalInit(descriptor.getExtensions().get(7));
-          parameterAnnotation.internalInit(descriptor.getExtensions().get(8));
-          typeAnnotation.internalInit(descriptor.getExtensions().get(9));
-          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(10));
+          packageFqName.internalInit(descriptor.getExtensions().get(0));
+          classAnnotation.internalInit(descriptor.getExtensions().get(1));
+          constructorAnnotation.internalInit(descriptor.getExtensions().get(2));
+          functionAnnotation.internalInit(descriptor.getExtensions().get(3));
+          propertyAnnotation.internalInit(descriptor.getExtensions().get(4));
+          compileTimeValue.internalInit(descriptor.getExtensions().get(5));
+          enumEntryAnnotation.internalInit(descriptor.getExtensions().get(6));
+          parameterAnnotation.internalInit(descriptor.getExtensions().get(7));
+          typeAnnotation.internalInit(descriptor.getExtensions().get(8));
+          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(9));
           return null;
         }
       };

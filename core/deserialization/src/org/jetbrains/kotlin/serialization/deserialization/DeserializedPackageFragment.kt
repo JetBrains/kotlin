@@ -49,22 +49,13 @@ abstract class DeserializedPackageFragment(
         computeMemberScope()
     }
 
-    protected open fun computeMemberScope(): DeserializedPackageMemberScope {
-        val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
-        val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.extensionRegistry)
-        return DeserializedPackageMemberScope(
-                this, packageProto, nameResolver, packagePartSource = null, components = components,
-                classNames = { loadClassNames(packageProto) }
-        )
-    }
+    protected abstract fun computeMemberScope(): DeserializedPackageMemberScope
 
     override fun getMemberScope() = deserializedMemberScope
 
     internal fun hasTopLevelClass(name: Name): Boolean {
         return name in getMemberScope().classNames
     }
-
-    protected abstract fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name>
 
     protected fun loadResourceSure(path: String): InputStream =
             loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
