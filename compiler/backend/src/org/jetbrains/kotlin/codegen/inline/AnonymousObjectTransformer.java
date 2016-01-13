@@ -88,7 +88,7 @@ public class AnonymousObjectTransformer {
         reader.accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
-                InlineCodegenUtil.assertVersionNotGreaterThanJava6(version);
+                InlineCodegenUtil.assertVersionNotGreaterThanJava6(version, name);
                 super.visit(version, access, name, signature, superName, interfaces);
             }
 
