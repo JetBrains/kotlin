@@ -95,7 +95,7 @@ public abstract class AnnotationProcessorWrapper(
             return
         }
 
-        val annotationsFilePath = processingEnv.getOptions().get(KAPT_ANNOTATION_OPTION)
+        val annotationsFilePath = processingEnv.options[KAPT_ANNOTATION_OPTION]
         val annotationsFile = if (annotationsFilePath != null) File(annotationsFilePath) else null
         kotlinAnnotationsProvider = if (annotationsFile != null && annotationsFile.exists()) {
             FileKotlinAnnotationProvider(annotationsFile)
@@ -108,13 +108,13 @@ public abstract class AnnotationProcessorWrapper(
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        val supportedAnnotations = processor.getSupportedAnnotationTypes().toMutableSet()
+        val supportedAnnotations = processor.supportedAnnotationTypes.toMutableSet()
         supportedAnnotations.add("__gen.KotlinAptAnnotation")
         return supportedAnnotations
     }
 
     override fun getSupportedSourceVersion(): SourceVersion? {
-        return processor.getSupportedSourceVersion()
+        return processor.supportedSourceVersion
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
@@ -127,13 +127,13 @@ public abstract class AnnotationProcessorWrapper(
     }
 
     override fun getSupportedOptions(): MutableSet<String> {
-        val supportedOptions = processor.getSupportedOptions().toHashSet()
+        val supportedOptions = processor.supportedOptions.toHashSet()
         supportedOptions.add(KAPT_ANNOTATION_OPTION)
         return supportedOptions
     }
 
     private fun ProcessingEnvironment.err(message: String) {
-        getMessager().printMessage(Diagnostic.Kind.ERROR, message)
+        messager.printMessage(Diagnostic.Kind.ERROR, message)
     }
 
 }

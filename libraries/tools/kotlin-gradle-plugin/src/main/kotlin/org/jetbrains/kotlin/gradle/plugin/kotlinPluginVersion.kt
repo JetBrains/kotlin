@@ -24,7 +24,7 @@ internal fun Any.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")
     val props = Properties()
     val propFileName = "project.properties"
-    val inputStream = javaClass.getClassLoader()!!.getResourceAsStream(propFileName)
+    val inputStream = javaClass.classLoader!!.getResourceAsStream(propFileName)
 
     if (inputStream == null) {
         throw FileNotFoundException("property file '" + propFileName + "' not found in the classpath")

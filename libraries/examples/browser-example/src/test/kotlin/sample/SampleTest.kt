@@ -11,11 +11,11 @@ open class SampleTest {
     open val driver: WebDriver = HtmlUnitDriver(true)
 
     @test fun homePage(): Unit {
-        driver.get("file://" + File("sample.html").getCanonicalPath())
+        driver.get("file://" + File("sample.html").canonicalPath)
         Thread.sleep(1000)
 
         val foo = driver.findElement(By.id("foo"))!!
-        val text = foo.getText() ?: ""
+        val text = foo.text ?: ""
         println("Found $foo with text '$text'")
         assertEquals("Some Dynamically Created Content!!!", text.trim())
     }

@@ -130,7 +130,7 @@ class FileTreeWalkTest {
         val basedir = createTestFiles()
         try {
             val referenceNames = setOf("", "1", "1/2", "1/3", "6", "8")
-            assertEquals(referenceNames, basedir.walkTopDown().filter { it.isDirectory() }.map {
+            assertEquals(referenceNames, basedir.walkTopDown().filter { it.isDirectory }.map {
                 it.relativeToOrSelf(basedir).invariantSeparatorsPath
             }.toHashSet())
         } finally {
@@ -145,7 +145,7 @@ class FileTreeWalkTest {
             val referenceNames = setOf("", "1", "1/2", "1/3", "6", "8")
             val namesTopDown = HashSet<String>()
             fun enter(file: File) {
-                assertTrue(file.isDirectory())
+                assertTrue(file.isDirectory)
                 for (child in file.listFiles()) {
                     if (child.name.endsWith("txt"))
                         child.delete()
@@ -168,7 +168,7 @@ class FileTreeWalkTest {
             val referenceNames = setOf("", "1", "1/2", "1/3", "6", "8")
             val namesTopDown = HashSet<String>()
             fun enter(file: File) {
-                assertTrue(file.isDirectory())
+                assertTrue(file.isDirectory)
                 for (child in file.listFiles()) {
                     if (child.name.endsWith("txt"))
                         child.delete()
@@ -287,7 +287,7 @@ class FileTreeWalkTest {
                 failed.add(dir.name)
             }
             basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
-                    fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
+                    fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory) visitFile(it) }
             assertTrue(stack.isEmpty())
             for (fileName in arrayOf("", "1", "1/2", "1/3", "6", "8")) {
                 assertTrue(dirs.contains(File(fileName)), fileName)
@@ -313,7 +313,7 @@ class FileTreeWalkTest {
                     files.clear()
                     dirs.clear()
                     basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
-                            fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
+                            fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory) visitFile(it) }
                     assertTrue(stack.isEmpty())
                     assertEquals(setOf("1"), failed)
                     assertEquals(listOf("", "1", "6", "8").map { File(it) }.toSet(), dirs)
@@ -335,7 +335,7 @@ class FileTreeWalkTest {
             val visited = HashSet<File>()
             val block: (File) -> Unit = {
                 assertTrue(!visited.contains(it), it.toString())
-                assertTrue(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it.toString())
+                assertTrue(it == basedir && visited.isEmpty() || visited.contains(it.parentFile), it.toString())
                 visited.add(it)
             }
             basedir.walkTopDown().forEach(block)
@@ -353,7 +353,7 @@ class FileTreeWalkTest {
                 val visited = HashSet<File>()
                 val block: (File) -> Unit = {
                     assertTrue(!visited.contains(it), it.toString())
-                    assertTrue(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it.toString())
+                    assertTrue(it == basedir && visited.isEmpty() || visited.contains(it.parentFile), it.toString())
                     visited.add(it)
                 }
                 basedir.walkTopDown().forEach(block)
@@ -376,7 +376,7 @@ class FileTreeWalkTest {
         val basedir1 = createTestFiles()
         try {
             basedir1.walkTopDown().forEach {
-                if (it.isFile()) {
+                if (it.isFile) {
                     makeBackup(it)
                 }
             }
@@ -389,7 +389,7 @@ class FileTreeWalkTest {
         val basedir2 = createTestFiles()
         try {
             basedir2.walkTopDown().forEach {
-                if (it.isFile()) {
+                if (it.isFile) {
                     makeBackup(it)
                 }
             }
@@ -424,7 +424,7 @@ class FileTreeWalkTest {
             val found = HashSet<File>()
             for (file in basedir.walkTopDown()) {
                 if (file.name == ".git") {
-                    found.add(file.getParentFile())
+                    found.add(file.parentFile)
                 }
             }
             assertEquals(3, found.size)

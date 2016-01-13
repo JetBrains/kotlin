@@ -122,7 +122,7 @@ abstract class BaseGradleIT {
     }
 
     private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> {
-        val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
+        val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").absolutePath
         val tailParameters = params.asList() +
                 listOf( pathToKotlinPlugin,
                         if (options.withDaemon) "--daemon" else "--no-daemon",
@@ -159,9 +159,9 @@ abstract class BaseGradleIT {
             return text
         }
 
-        val stdout = process.getInputStream()!!.readFully()
+        val stdout = process.inputStream!!.readFully()
         System.out.println(stdout)
-        val stderr = process.getErrorStream()!!.readFully()
+        val stderr = process.errorStream!!.readFully()
         System.err.println(stderr)
 
         val result = process.waitFor()
@@ -169,9 +169,9 @@ abstract class BaseGradleIT {
     }
 
     fun copyRecursively(source: File, target: File) {
-        assertTrue(target.isDirectory())
-        val targetFile = File(target, source.getName())
-        if (source.isDirectory()) {
+        assertTrue(target.isDirectory)
+        val targetFile = File(target, source.name)
+        if (source.isDirectory) {
             targetFile.mkdir()
             source.listFiles()?.forEach { copyRecursively(it, targetFile) }
         } else {
@@ -180,13 +180,13 @@ abstract class BaseGradleIT {
     }
 
     fun copyDirRecursively(source: File, target: File) {
-        assertTrue(source.isDirectory())
-        assertTrue(target.isDirectory())
+        assertTrue(source.isDirectory)
+        assertTrue(target.isDirectory)
         source.listFiles()?.forEach { copyRecursively(it, target) }
     }
 
     fun deleteRecursively(f: File): Unit {
-        if (f.isDirectory()) {
+        if (f.isDirectory) {
             f.listFiles()?.forEach { deleteRecursively(it) }
             val fileList = f.listFiles()
             if (fileList != null) {

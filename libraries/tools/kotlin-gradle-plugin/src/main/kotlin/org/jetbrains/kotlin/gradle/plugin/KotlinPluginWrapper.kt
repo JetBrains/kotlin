@@ -33,12 +33,12 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         }
 
         val kotlinPluginVersion = loadKotlinVersionFromResource(log)
-        project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
+        project.extensions.extraProperties?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
-        val plugin = getPlugin(this.javaClass.getClassLoader(), sourceBuildScript)
+        val plugin = getPlugin(this.javaClass.classLoader, sourceBuildScript)
         plugin.apply(project)
 
-        project.getGradle().addBuildListener(FinishBuildListener(this.javaClass.getClassLoader(), startMemory))
+        project.gradle.addBuildListener(FinishBuildListener(this.javaClass.classLoader, startMemory))
     }
 
     protected abstract fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler): Plugin<Project>
@@ -46,16 +46,16 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
     private fun findSourceBuildScript(project: Project): ScriptHandler? {
         log.kotlinDebug("Looking for proper script handler")
         var curProject = project
-        while (curProject != curProject.getParent()) {
+        while (curProject != curProject.parent) {
             log.kotlinDebug("Looking in project $project")
-            val scriptHandler = curProject.getBuildscript()
-            val found = scriptHandler.getConfigurations().findByName("classpath")?.firstOrNull { it.name.contains("kotlin-gradle-plugin") } != null
+            val scriptHandler = curProject.buildscript
+            val found = scriptHandler.configurations.findByName("classpath")?.firstOrNull { it.name.contains("kotlin-gradle-plugin") } != null
             if (found) {
                 log.kotlinDebug("Found! returning...")
                 return scriptHandler
             }
             log.kotlinDebug("not found, switching to parent")
-            curProject = curProject.getParent() ?: break
+            curProject = curProject.parent ?: break
         }
         return null
     }

@@ -50,7 +50,7 @@ public fun createTempFile(prefix: String = "tmp", suffix: String? = null, direct
  */
 @Deprecated("This property has unclear semantics and will be removed soon.")
 public val File.directory: File
-    get() = if (isDirectory()) this else parentFile!!
+    get() = if (isDirectory) this else parentFile!!
 
 /**
  * Returns parent of this abstract path name, or `null` if it has no parent.
@@ -265,20 +265,20 @@ public fun File.relativePath(descendant: File): String {
 public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     if (!exists()) {
         throw NoSuchFileException(file = this, reason = "The source file doesn't exist")
-    } else if (isDirectory()) {
+    } else if (isDirectory) {
         throw IllegalArgumentException("Use copyRecursively to copy a directory $this")
     } else if (dst.exists()) {
         if (!overwrite) {
             throw FileAlreadyExistsException(file = this,
                     other = dst,
                     reason = "The destination file already exists")
-        } else if (dst.isDirectory() && dst.listFiles().any()) {
+        } else if (dst.isDirectory && dst.listFiles().any()) {
             // In this case file should be copied *into* this directory,
             // no matter whether it is empty or not
             return copyTo(dst.resolve(name), overwrite, bufferSize)
         }
     }
-    dst.getParentFile()?.mkdirs()
+    dst.parentFile?.mkdirs()
     dst.delete()
     val input = FileInputStream(this)
     return input.use<FileInputStream, Long> {
@@ -340,12 +340,12 @@ public fun File.copyRecursively(dst: File,
             } else {
                 val relPath = src.relativeTo(this)
                 val dstFile = File(dst, relPath)
-                if (dstFile.exists() && !(src.isDirectory() && dstFile.isDirectory())) {
+                if (dstFile.exists() && !(src.isDirectory && dstFile.isDirectory)) {
                     if (onError(dstFile, FileAlreadyExistsException(file = src,
                             other = dstFile,
                             reason = "The destination file already exists")) == OnErrorAction.TERMINATE)
                         return false
-                } else if (src.isDirectory()) {
+                } else if (src.isDirectory) {
                     dstFile.mkdirs()
                 } else {
                     if (src.copyTo(dstFile, true) != src.length()) {

@@ -71,9 +71,9 @@ public class CompilerSmokeTest {
             return text
         }
 
-        val stdout = process.getInputStream()!!.readFully()
+        val stdout = process.inputStream!!.readFully()
         System.out.println(stdout)
-        val stderr = process.getErrorStream()!!.readFully()
+        val stderr = process.errorStream!!.readFully()
         System.err.println(stderr)
 
         val result = process.waitFor()

@@ -54,8 +54,8 @@ public open class KaptAdditionalArgumentsDelegate(
     }
 
     fun execute(closure: Closure<*>) {
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST)
-        closure.setDelegate(this)
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = this
         closure.call()
     }
 

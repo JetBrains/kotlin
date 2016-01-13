@@ -17,18 +17,18 @@ internal class RoundEnvironmentWrapper(
 ) : RoundEnvironment {
 
     override fun getRootElements(): MutableSet<out Element>? {
-        return parent.getRootElements()
+        return parent.rootElements
     }
 
     override fun getElementsAnnotatedWith(a: TypeElement): MutableSet<out Element>? {
         val elements = parent.getElementsAnnotatedWith(a).toHashSet()
-        elements.addAll(resolveKotlinElements(a.getQualifiedName().toString()))
+        elements.addAll(resolveKotlinElements(a.qualifiedName.toString()))
         return elements
     }
 
     override fun getElementsAnnotatedWith(a: Class<out Annotation>): MutableSet<out Element>? {
         val elements = parent.getElementsAnnotatedWith(a).toHashSet()
-        elements.addAll(resolveKotlinElements(a.getName()))
+        elements.addAll(resolveKotlinElements(a.name))
         return elements
     }
 
@@ -37,24 +37,24 @@ internal class RoundEnvironmentWrapper(
     override fun errorRaised() = parent.errorRaised()
 
     private fun TypeElement.filterEnclosedElements(kind: ElementKind, name: String): List<Element> {
-        return getEnclosedElements().filter { it.getKind() == kind && it.getSimpleName().toString() == name }
+        return enclosedElements.filter { it.kind == kind && it.simpleName.toString() == name }
     }
 
     private fun TypeElement.filterEnclosedElements(kind: ElementKind): List<Element> {
-        return getEnclosedElements().filter { it.getKind() == kind }
+        return enclosedElements.filter { it.kind == kind }
     }
 
     private fun Element.hasAnnotation(annotationFqName: String): Boolean {
-        return getAnnotationMirrors().any { annotationFqName == it.getAnnotationType().asElement().toString() }
+        return annotationMirrors.any { annotationFqName == it.annotationType.asElement().toString() }
     }
 
     private fun TypeElement.hasInheritedAnnotation(annotationFqName: String): Boolean {
         if (hasAnnotation(annotationFqName)) return true
 
-        val superclassMirror = getSuperclass()
+        val superclassMirror = superclass
         if (superclassMirror is NoType) return false
 
-        val superClass = processingEnv.getTypeUtils().asElement(superclassMirror)
+        val superClass = processingEnv.typeUtils.asElement(superclassMirror)
         if (superClass !is TypeElement) return false
 
         return superClass.hasInheritedAnnotation(annotationFqName)
@@ -65,7 +65,7 @@ internal class RoundEnvironmentWrapper(
 
         val descriptors = kotlinAnnotationsProvider.annotatedKotlinElements.get(annotationFqName) ?: setOf()
         val descriptorsWithKotlin = descriptors.fold(hashSetOf<Element>()) { set, descriptor ->
-            val clazz = processingEnv.getElementUtils().getTypeElement(descriptor.classFqName) ?: return@fold set
+            val clazz = processingEnv.elementUtils.getTypeElement(descriptor.classFqName) ?: return@fold set
             when (descriptor) {
                 is AnnotatedClassDescriptor -> set.add(clazz)
                 is AnnotatedConstructorDescriptor -> {
@@ -85,12 +85,12 @@ internal class RoundEnvironmentWrapper(
         }
 
         if (kotlinAnnotationsProvider.supportInheritedAnnotations) {
-            val isInherited = processingEnv.getElementUtils().getTypeElement(annotationFqName)
-                    ?.hasAnnotation(Inherited::class.java.getCanonicalName()) ?: false
+            val isInherited = processingEnv.elementUtils.getTypeElement(annotationFqName)
+                    ?.hasAnnotation(Inherited::class.java.canonicalName) ?: false
 
             if (isInherited) {
                 kotlinAnnotationsProvider.kotlinClasses.forEach { classFqName ->
-                    val clazz = processingEnv.getElementUtils().getTypeElement(classFqName) ?: return@forEach
+                    val clazz = processingEnv.elementUtils.getTypeElement(classFqName) ?: return@forEach
                     if (clazz.hasInheritedAnnotation(annotationFqName)) {
                         descriptorsWithKotlin.add(clazz)
                     }

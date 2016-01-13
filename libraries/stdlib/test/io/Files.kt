@@ -20,16 +20,16 @@ class FilesTest {
     @test fun testCreateTempDir() {
         val dirSuf = System.currentTimeMillis().toString()
         val dir1 = createTempDir("temp", dirSuf)
-        assertTrue(dir1.exists() && dir1.isDirectory() && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
+        assertTrue(dir1.exists() && dir1.isDirectory && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
         assertFailsWith(IllegalArgumentException::class) {
             createTempDir("a")
         }
 
         val dir2 = createTempDir("temp")
-        assertTrue(dir2.exists() && dir2.isDirectory() && dir2.name.endsWith(".tmp"))
+        assertTrue(dir2.exists() && dir2.isDirectory && dir2.name.endsWith(".tmp"))
 
         val dir3 = createTempDir()
-        assertTrue(dir3.exists() && dir3.isDirectory())
+        assertTrue(dir3.exists() && dir3.isDirectory)
 
         dir1.delete()
         dir2.delete()
@@ -63,10 +63,10 @@ class FilesTest {
         createTempFile("temp3", ".kt", dir)
 
         // This line works only with Kotlin File.listFiles(filter)
-        val result = dir.listFiles { it -> it.getName().endsWith(".kt") } // todo ambiguity on SAM
+        val result = dir.listFiles { it -> it.name.endsWith(".kt") } // todo ambiguity on SAM
         assertEquals(2, result!!.size)
         // This line works both with Kotlin File.listFiles(filter) and the same Java function because of SAM
-        val result2 = dir.listFiles { it -> it.getName().endsWith(".kt") }
+        val result2 = dir.listFiles { it -> it.name.endsWith(".kt") }
         assertEquals(2, result2!!.size)
     }
 
@@ -410,7 +410,7 @@ class FilesTest {
     }
 
     @test fun copyToNameWithoutParent() {
-        val currentDir = File("").getAbsoluteFile()!!
+        val currentDir = File("").absoluteFile!!
         val srcFile = createTempFile()
         val dstFile = createTempFile(directory = currentDir)
         try {
@@ -474,7 +474,7 @@ class FilesTest {
             for (file in src.walkTopDown()) {
                 val dstFile = File(dst, file.relativeTo(src))
                 assertTrue(dstFile.exists())
-                if (dstFile.isFile()) {
+                if (dstFile.isFile) {
                     assertEquals(file.readText(), dstFile.readText())
                 }
 

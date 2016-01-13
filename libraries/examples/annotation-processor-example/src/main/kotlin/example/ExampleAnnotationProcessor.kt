@@ -11,7 +11,7 @@ import javax.tools.Diagnostic
 public class ExampleAnnotationProcessor : AbstractProcessor() {
 
     private companion object {
-        val ANNOTATION_FQ_NAME = ExampleAnnotation::class.java.getCanonicalName()
+        val ANNOTATION_FQ_NAME = ExampleAnnotation::class.java.canonicalName
         val SUFFIX_OPTION = "suffix"
         val GENERATE_KOTLIN_CODE_OPTION = "generate.kotlin.code"
         val KAPT_KOTLIN_GENERATED_OPTION = "kapt.kotlin.generated"
@@ -20,17 +20,17 @@ public class ExampleAnnotationProcessor : AbstractProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         val elements = roundEnv.getElementsAnnotatedWith(ExampleAnnotation::class.java)
 
-        val elementUtils = processingEnv.getElementUtils()
-        val filer = processingEnv.getFiler()
+        val elementUtils = processingEnv.elementUtils
+        val filer = processingEnv.filer
 
-        val options = processingEnv.getOptions()
+        val options = processingEnv.options
         val generatedFileSuffix = options[SUFFIX_OPTION] ?: "Generated"
         val generateKotlinCode = "true" == options[GENERATE_KOTLIN_CODE_OPTION]
         val kotlinGenerated = options[KAPT_KOTLIN_GENERATED_OPTION]
 
         for (element in elements) {
-            val packageName = elementUtils.getPackageOf(element).getQualifiedName().toString()
-            val simpleName = element.getSimpleName()
+            val packageName = elementUtils.getPackageOf(element).qualifiedName.toString()
+            val simpleName = element.simpleName
             val className = simpleName.toString().capitalize() + generatedFileSuffix
 
             filer.createSourceFile(className).openWriter().use { with(it) {
@@ -38,7 +38,7 @@ public class ExampleAnnotationProcessor : AbstractProcessor() {
                 appendln("public final class $className {}")
             }}
 
-            if (generateKotlinCode && kotlinGenerated != null && element.getKind() == ElementKind.CLASS) {
+            if (generateKotlinCode && kotlinGenerated != null && element.kind == ElementKind.CLASS) {
                 File(kotlinGenerated, "$simpleName.kt").writer().buffered().use {
                     it.appendln("package $packageName")
                     it.appendln("fun $simpleName.customToString() = \"$simpleName: \" + toString()")

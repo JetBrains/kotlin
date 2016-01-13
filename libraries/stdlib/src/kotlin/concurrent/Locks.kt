@@ -42,7 +42,7 @@ public inline fun <T> ReentrantReadWriteLock.read(action: () -> T): T {
 public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {
     val rl = readLock()
 
-    val readCount = if (getWriteHoldCount() == 0) getReadHoldCount() else 0
+    val readCount = if (writeHoldCount == 0) readHoldCount else 0
     repeat(readCount) { rl.unlock() }
 
     val wl = writeLock()
