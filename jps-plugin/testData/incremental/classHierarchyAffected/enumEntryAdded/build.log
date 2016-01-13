@@ -14,7 +14,7 @@ src/getRandomEnumEntry.kt
 src/use.kt
 End of files
 COMPILATION FAILED
-'when' expression must be exhaustive or contain an 'else' branch
+when expression must be exhaustive, add necessary 'C' branch or 'else' branch instead
 
 
 Cleaning output files:
