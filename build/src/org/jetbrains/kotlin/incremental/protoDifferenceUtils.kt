@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.incremental
 
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.*
+import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
+import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -28,13 +29,13 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.HashSetUtil
 import java.util.*
 
-public sealed class DifferenceKind() {
-    public object NONE: DifferenceKind()
-    public object CLASS_SIGNATURE: DifferenceKind()
-    public class MEMBERS(val names: Collection<String>): DifferenceKind()
+sealed class DifferenceKind() {
+    object NONE: DifferenceKind()
+    object CLASS_SIGNATURE: DifferenceKind()
+    class MEMBERS(val names: Collection<String>): DifferenceKind()
 }
 
-public fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
+fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
     if (oldData.isPackageFacade != newData.isPackageFacade) return DifferenceKind.CLASS_SIGNATURE
 
     val differenceObject =
@@ -81,7 +82,7 @@ private abstract class DifferenceCalculator() {
         val newMap =
                 newList.groupBy { it.getHashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) }) }
 
-        val hashes = oldMap.keySet() + newMap.keySet()
+        val hashes = oldMap.keys + newMap.keys
         for (hash in hashes) {
             val oldMembers = oldMap[hash]
             val newMembers = newMap[hash]
@@ -205,8 +206,6 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getFunctionList))
                 ProtoBufClassKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getPropertyList))
-                ProtoBufClassKind.ENUM_ENTRY_NAME_LIST ->
-                    names.addAll(calcDifferenceForNames(oldProto.enumEntryNameList, newProto.enumEntryNameList))
                 ProtoBufClassKind.ENUM_ENTRY_LIST ->
                     names.addAll(calcDifferenceForNames(oldProto.enumEntryList.map { it.name }, newProto.enumEntryList.map { it.name }))
                 ProtoBufClassKind.TYPE_TABLE -> {

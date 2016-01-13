@@ -47,11 +47,10 @@ import java.util.*
 
 val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
-@TestOnly
-public fun getCacheDirectoryName(): String =
+@TestOnly fun getCacheDirectoryName(): String =
         KOTLIN_CACHE_DIRECTORY_NAME
 
-public class BasicIncrementalCacheImpl<TargetId>(
+class BasicIncrementalCacheImpl<TargetId>(
         targetDataRoot: File,
         targetOutputDir: File,
         private val target: TargetId
@@ -100,18 +99,23 @@ public class BasicIncrementalCacheImpl<TargetId>(
     private val dependents = arrayListOf<BasicIncrementalCacheImpl<TargetId>>()
     private val outputDir = requireNotNull(targetOutputDir) { "Target is expected to have output directory: $target" }
 
-    private val dependentsWithThis: Iterable<BasicIncrementalCacheImpl<TargetId>>
-            get() = dependents + this
+    private val dependentsWithThis: Sequence<BasicIncrementalCacheImpl<TargetId>>
+            get() = sequenceOf(this).plus(dependents.asSequence())
+
+    val dependentCaches: Iterable<BasicIncrementalCacheImpl<TargetId>>
+            get() = dependents
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-        inlinedTo.add(fromPath, jvmSignature, toPath)
+        if (!IncrementalCompilation.isExperimental()) {
+            inlinedTo.add(fromPath, jvmSignature, toPath)
+        }
     }
 
-    public fun addDependentCache(cache: BasicIncrementalCacheImpl<TargetId>) {
+    fun addDependentCache(cache: BasicIncrementalCacheImpl<TargetId>) {
         dependents.add(cache)
     }
 
-    public fun markOutputClassesDirty(removedAndCompiledSources: List<File>) {
+    fun markOutputClassesDirty(removedAndCompiledSources: List<File>) {
         for (sourceFile in removedAndCompiledSources) {
             val classes = sourceToClassesMap[sourceFile]
             classes.forEach {
@@ -122,7 +126,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
         }
     }
 
-    public fun getFilesToReinline(): Collection<File> {
+    fun getFilesToReinline(): Collection<File> {
         val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
 
         for ((className, functions) in dirtyInlineFunctionsMap.getEntries()) {
@@ -137,7 +141,10 @@ public class BasicIncrementalCacheImpl<TargetId>(
         return result.map { File(it) }
     }
 
-    public fun cleanDirtyInlineFunctions() {
+    fun getSubtypesOf(className: FqName): Sequence<FqName> =
+            subtypesMap[className].asSequence()
+
+    fun cleanDirtyInlineFunctions() {
         dirtyInlineFunctionsMap.clean()
     }
 
@@ -145,7 +152,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
         return toSystemIndependentName(File(outputDir, "$internalClassName.class").canonicalPath)
     }
 
-    public fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): CompilationResult {
+    fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): CompilationResult {
         val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
         protoMap.process(jvmClassName, file.readBytes(), emptyArray<String>(), isPackage = false, checkChangesIsOpenPart = false)
         dirtyOutputClassesMap.notDirty(MODULE_MAPPING_FILE_NAME)
@@ -153,7 +160,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
         return CompilationResult.NO_CHANGES
     }
 
-    public fun saveFileToCache(generatedClass: GeneratedJvmClass<TargetId>): CompilationResult {
+    fun saveFileToCache(generatedClass: GeneratedJvmClass<TargetId>): CompilationResult {
         val sourceFiles: Collection<File> = generatedClass.sourceFiles
         val kotlinClass: LocalFileKotlinClass = generatedClass.outputClass
         val className = kotlinClass.className
@@ -166,7 +173,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
         val header = kotlinClass.classHeader
         val changesInfo = when {
             header.isCompatibleFileFacadeKind() -> {
-                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
+                assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
 
                 protoMap.process(kotlinClass, isPackage = true) +
@@ -183,7 +190,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
                 inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             header.isCompatibleMultifileClassPartKind() -> {
-                assert(sourceFiles.size() == 1) { "Multifile class part from several source files: $sourceFiles" }
+                assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
                 multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
 
@@ -211,7 +218,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
 //        KotlinBuilder.LOG.debug("$className is changed: $this")
     }
 
-    public fun clearCacheForRemovedClasses(): CompilationResult {
+    fun clearCacheForRemovedClasses(): CompilationResult {
 
         fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>) =
                 members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
@@ -243,8 +250,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
                                     ProtoBuf.Class::getConstructorList,
                                     ProtoBuf.Class::getFunctionList,
                                     ProtoBuf.Class::getPropertyList
-                            ) +
-                            classData.classProto.enumEntryNameList.map { classData.nameResolver.getString(it) }.toSet()
+                            ) + classData.classProto.enumEntryList.map { classData.nameResolver.getString(it.name) }
 
                     ChangeInfo.Removed(className.fqNameForClassNameWithoutDollars, memberNames)
                 }
@@ -320,26 +326,26 @@ public class BasicIncrementalCacheImpl<TargetId>(
         return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]?.bytes
     }
 
-    public override fun clean() {
+    override fun clean() {
         super.clean()
         normalCacheVersion(baseDir).clean()
         experimentalCacheVersion(baseDir).clean()
     }
 
-    public fun cleanExperimental() {
+    fun cleanExperimental() {
         experimentalCacheVersion(baseDir).clean()
         experimentalMaps.forEach { it.clean() }
     }
 
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
 
-        public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
+        fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
             val header = kotlinClass.classHeader
             val bytes = BitEncoding.decodeBytes(header.annotationData!!)
             return put(kotlinClass.className, bytes, header.strings!!, isPackage, checkChangesIsOpenPart = true)
         }
 
-        public fun process(className: JvmClassName, data: ByteArray, strings: Array<String>, isPackage: Boolean, checkChangesIsOpenPart: Boolean): CompilationResult {
+        fun process(className: JvmClassName, data: ByteArray, strings: Array<String>, isPackage: Boolean, checkChangesIsOpenPart: Boolean): CompilationResult {
             return put(className, data, strings, isPackage, checkChangesIsOpenPart)
         }
 
@@ -382,7 +388,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
         operator fun get(className: JvmClassName): ProtoMapValue? =
                 storage[className.internalName]
 
-        public fun remove(className: JvmClassName) {
+        fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
@@ -411,12 +417,12 @@ public class BasicIncrementalCacheImpl<TargetId>(
         operator fun contains(className: JvmClassName): Boolean =
                 className.internalName in storage
 
-        public fun process(kotlinClass: LocalFileKotlinClass): CompilationResult {
+        fun process(kotlinClass: LocalFileKotlinClass): CompilationResult {
             return put(kotlinClass.className, getConstantsMap(kotlinClass.fileContents))
         }
 
         private fun put(className: JvmClassName, constantsMap: Map<String, Any>?): CompilationResult {
-            val key = className.getInternalName()
+            val key = className.internalName
 
             val oldMap = storage[key]
             if (oldMap == constantsMap) return CompilationResult.NO_CHANGES
@@ -431,7 +437,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
             return CompilationResult(constantsChanged = true)
         }
 
-        public fun remove(className: JvmClassName) {
+        fun remove(className: JvmClassName) {
             put(className, null)
         }
 
@@ -467,7 +473,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
             return result
         }
 
-        public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
+        fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
             return put(kotlinClass.className, getInlineFunctionsMap(kotlinClass.fileContents), isPackage)
         }
 
@@ -477,7 +483,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
 
             val added = hashSetOf<String>()
             val changed = hashSetOf<String>()
-            val allFunctions = oldMap.keySet() + newMap.keySet()
+            val allFunctions = oldMap.keys + newMap.keys
 
             for (fn in allFunctions) {
                 val oldHash = oldMap[fn]
@@ -513,7 +519,7 @@ public class BasicIncrementalCacheImpl<TargetId>(
                                      changes = changes)
         }
 
-        public fun remove(className: JvmClassName) {
+        fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
@@ -522,28 +528,28 @@ public class BasicIncrementalCacheImpl<TargetId>(
     }
 
     private inner class PackagePartMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
-        public fun addPackagePart(className: JvmClassName) {
+        fun addPackagePart(className: JvmClassName) {
             storage[className.internalName] = true
         }
 
-        public fun remove(className: JvmClassName) {
+        fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
-        public fun isPackagePart(className: JvmClassName): Boolean =
+        fun isPackagePart(className: JvmClassName): Boolean =
                 className.internalName in storage
 
         override fun dumpValue(value: Boolean) = ""
     }
 
     private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
-        public fun add(facadeName: JvmClassName, partNames: Collection<String>) {
+        fun add(facadeName: JvmClassName, partNames: Collection<String>) {
             storage[facadeName.internalName] = partNames
         }
 
-        public fun getMultifileClassParts(facadeName: String): Collection<String>? = storage[facadeName]
+        fun getMultifileClassParts(facadeName: String): Collection<String>? = storage[facadeName]
 
-        public fun remove(className: JvmClassName) {
+        fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
@@ -551,15 +557,15 @@ public class BasicIncrementalCacheImpl<TargetId>(
     }
 
     private inner class MultifileClassPartMap(storageFile: File) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE) {
-        public fun add(partName: String, facadeName: String) {
+        fun add(partName: String, facadeName: String) {
             storage[partName] = facadeName
         }
 
-        public fun getFacadeName(partName: String): String? {
+        fun getFacadeName(partName: String): String? {
             return storage.get(partName)
         }
 
-        public fun remove(className: JvmClassName) {
+        fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
@@ -568,15 +574,15 @@ public class BasicIncrementalCacheImpl<TargetId>(
 
     // TODO: find how to deal with PathStringDescriptor - it seems too deeply rooted in jps
     private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, /* PathStringDescriptor.INSTANCE,*/ StringCollectionExternalizer) {
-        public fun clearOutputsForSource(sourceFile: File) {
+        fun clearOutputsForSource(sourceFile: File) {
             remove(sourceFile.absolutePath)
         }
 
-        public fun add(sourceFile: File, className: JvmClassName) {
-            storage.append(sourceFile.absolutePath, { out -> IOUtil.writeUTF(out, className.internalName) })
+        fun add(sourceFile: File, className: JvmClassName) {
+            storage.append(sourceFile.absolutePath, className.internalName)
         }
 
-        public operator fun get(sourceFile: File): Collection<JvmClassName> =
+        operator fun get(sourceFile: File): Collection<JvmClassName> =
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }
 
         override fun dumpValue(value: Collection<String>) = value.dumpCollection()
@@ -597,9 +603,14 @@ public class BasicIncrementalCacheImpl<TargetId>(
         val supertypes = classData.classProto.supertypes(TypeTable(classData.classProto.typeTable))
         val parents = supertypes.map { classData.nameResolver.getClassId(it.className).asSingleFqName() }
                                 .filter { it.asString() != "kotlin.Any" }
+                                .toSet()
         val child = kotlinClass.classId.asSingleFqName()
 
         parents.forEach { subtypesMap.add(it, child) }
+
+        val removedSupertypes = supertypesMap[child].filter { it !in parents }
+        removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
+
         supertypesMap[child] = parents
     }
 
@@ -631,28 +642,28 @@ public class BasicIncrementalCacheImpl<TargetId>(
     }
 
     private inner class DirtyOutputClassesMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
-        public fun markDirty(className: String) {
+        fun markDirty(className: String) {
             storage[className] = true
         }
 
-        public fun notDirty(className: String) {
+        fun notDirty(className: String) {
             storage.remove(className)
         }
 
-        public fun getDirtyOutputClasses(): Collection<String> =
+        fun getDirtyOutputClasses(): Collection<String> =
                 storage.keys
 
-        public fun isDirty(className: String): Boolean =
+        fun isDirty(className: String): Boolean =
                 storage.contains(className)
 
         override fun dumpValue(value: Boolean) = ""
     }
 
     private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
-        public fun getEntries(): Map<JvmClassName, Collection<String>> =
-            storage.keys.toMap(JvmClassName::byInternalName) { storage[it]!! }
+        fun getEntries(): Map<JvmClassName, Collection<String>> =
+                storage.keys.toMapBy(JvmClassName::byInternalName) { storage[it]!! }
 
-        public fun put(className: JvmClassName, changedFunctions: List<String>) {
+        fun put(className: JvmClassName, changedFunctions: List<String>) {
             storage[className.internalName] = changedFunctions
         }
 
@@ -669,14 +680,12 @@ public class BasicIncrementalCacheImpl<TargetId>(
      *  * target files - collection of files inlineFunction has been inlined to
      */
     private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathCollectionExternalizer) {
-        public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
+        fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val key = PathFunctionPair(sourcePath, jvmSignature)
-            storage.append(key) { out ->
-                IOUtil.writeUTF(out, targetPath)
-            }
+            storage.append(key, targetPath)
         }
 
-        public operator fun get(sourcePath: String, jvmSignature: String): Collection<String> {
+        operator fun get(sourcePath: String, jvmSignature: String): Collection<String> {
             val key = PathFunctionPair(sourcePath, jvmSignature)
             return storage[key] ?: emptySet()
         }
@@ -714,7 +723,7 @@ data class CompilationResult(
         val changes: Sequence<ChangeInfo> = emptySequence()
 ) {
     companion object {
-        public val NO_CHANGES: CompilationResult = CompilationResult()
+        val NO_CHANGES: CompilationResult = CompilationResult()
     }
 
     operator fun plus(other: CompilationResult): CompilationResult =
@@ -741,10 +750,10 @@ private fun ByteArray.md5(): Long {
 
 @TestOnly
 private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =
-        StringBuilder {
+        buildString {
             append("{")
-            for (key in keySet().sorted()) {
-                if (length() != 1) {
+            for (key in keys.sorted()) {
+                if (length != 1) {
                     append(", ")
                 }
 
@@ -752,8 +761,7 @@ private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): St
                 append("$key -> $value")
             }
             append("}")
-        }.toString()
+        }
 
-@TestOnly
-public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
+@TestOnly fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
         "[${sorted().joinToString(", ", transform = Any::toString)}]"

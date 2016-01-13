@@ -26,7 +26,7 @@ internal open class ClassOneToManyMap(
     override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
 
     fun add(key: FqName, value: FqName) {
-        storage.append(key.asString()) { out -> out.writeUTF(value.asString()) }
+        storage.append(key.asString(), value.asString())
     }
 
     operator fun get(key: FqName): Collection<FqName> =

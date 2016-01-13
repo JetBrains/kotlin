@@ -72,7 +72,7 @@ internal abstract class BasicStringMap<V>(
         keyDescriptor: KeyDescriptor<String>,
         valueExternalizer: DataExternalizer<V>
 ) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer) {
-    public constructor(
+    constructor(
             storageFile: File,
             valueExternalizer: DataExternalizer<V>
     ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer)
