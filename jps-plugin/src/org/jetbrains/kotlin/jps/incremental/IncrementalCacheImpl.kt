@@ -103,7 +103,7 @@ class IncrementalCacheImpl(
     private val supertypesMap = registerExperimentalMap(SupertypesMap(SUPERTYPES.storageFile))
 
     private val dependents = arrayListOf<IncrementalCacheImpl>()
-    private val outputDir = requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" }
+    private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" } }
 
     private val dependentsWithThis: Sequence<IncrementalCacheImpl>
             get() = sequenceOf(this).plus(dependents.asSequence())
