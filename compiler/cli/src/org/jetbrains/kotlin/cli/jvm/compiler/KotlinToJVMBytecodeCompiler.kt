@@ -16,11 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.google.common.base.Joiner
-import com.google.common.collect.Collections2
-import com.google.common.collect.Lists
-import com.google.common.collect.Maps
-import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -46,27 +41,22 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
-import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 
 object KotlinToJVMBytecodeCompiler {
 
     private fun getAbsolutePaths(directory: File, module: Module): List<String> {
-        val result = Lists.newArrayList<String>()
-
-        for (sourceFile in module.getSourceFiles()) {
+        return module.getSourceFiles().map { sourceFile ->
             var source = File(sourceFile)
             if (!source.isAbsolute) {
                 source = File(directory, sourceFile)
             }
-            result.add(source.absolutePath)
+            source.absolutePath
         }
-        return result
     }
 
     private fun writeOutput(
@@ -93,7 +83,7 @@ object KotlinToJVMBytecodeCompiler {
             jarPath: File?,
             friendPaths: List<String>,
             jarRuntime: Boolean): Boolean {
-        val outputFiles = Maps.newHashMap<Module, ClassFileFactory>()
+        val outputFiles = hashMapOf<Module, ClassFileFactory>()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -107,7 +97,7 @@ object KotlinToJVMBytecodeCompiler {
             moduleVisibilityManager.addFriendPath(path)
         }
 
-        val targetDescription = "in targets [" + Joiner.on(", ").join(Collections2.transform(chunk) { input -> if (input != null) input.getModuleName() + "-" + input.getModuleType() else "<null>" }) + "] "
+        val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType()  } + "]"
         val result = analyze(environment, targetDescription) ?: return false
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -153,27 +143,21 @@ object KotlinToJVMBytecodeCompiler {
             }
         }
 
-        for (module in chunk) {
-            configuration.add(JVMConfigurationKeys.MODULES, module)
-        }
+        configuration.addAll(JVMConfigurationKeys.MODULES, chunk)
 
         return configuration
     }
 
     private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
         val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext)
-        var mainClass: FqName? = null
-        for (file in files) {
-            if (mainFunctionDetector.hasMain(file.declarations)) {
-                if (mainClass != null) {
-                    // more than one main
-                    return null
+        return files.asSequence()
+                .map { file ->
+                    if (mainFunctionDetector.hasMain(file.declarations))
+                        JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
+                    else
+                        null
                 }
-                val fqName = file.packageFqName
-                mainClass = JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
-            }
-        }
-        return mainClass
+                .singleOrNull { it != null }
     }
 
     fun compileBunchOfSources(
@@ -211,7 +195,7 @@ object KotlinToJVMBytecodeCompiler {
         val scriptConstructor = getScriptConstructor(scriptClass)
 
         try {
-            scriptConstructor.newInstance(*arrayOf<Any>(ArrayUtil.toStringArray(scriptArgs)))
+            scriptConstructor.newInstance(*arrayOf<Any>(scriptArgs.toTypedArray()))
         }
         catch (e: Throwable) {
             reportExceptionFromScript(e)
@@ -228,22 +212,15 @@ object KotlinToJVMBytecodeCompiler {
             return
         }
         stream.println(cause)
-        val fullTrace = cause.getStackTrace()
-        val relevantEntries = fullTrace.size - exception.getStackTrace().size
+        val fullTrace = cause.stackTrace
+        val relevantEntries = fullTrace.size - exception.stackTrace.size
         for (i in 0..relevantEntries - 1) {
             stream.println("\tat " + fullTrace[i])
         }
     }
 
-    private fun getScriptConstructor(scriptClass: Class<*>): Constructor<*> {
-        try {
-            return scriptClass.getConstructor(Array<String>::class.java)
-        }
-        catch (e: NoSuchMethodException) {
-            throw rethrow(e)
-        }
-
-    }
+    private fun getScriptConstructor(scriptClass: Class<*>): Constructor<*> =
+            scriptClass.getConstructor(Array<String>::class.java)
 
     fun compileScript(
             configuration: CompilerConfiguration,
@@ -253,13 +230,9 @@ object KotlinToJVMBytecodeCompiler {
 
         val classLoader: GeneratedClassLoader
         try {
-            val classPaths = Lists.newArrayList(paths.runtimePath.toURI().toURL())
-            for (file in configuration.jvmClasspathRoots) {
-                classPaths.add(file.toURI().toURL())
-            }
-            //noinspection UnnecessaryFullyQualifiedName
-            classLoader = GeneratedClassLoader(state.factory,
-                                               URLClassLoader(classPaths.toArray<URL>(arrayOfNulls<URL>(classPaths.size)), null))
+            val classPaths = arrayListOf(paths.runtimePath.toURI().toURL())
+            configuration.jvmClasspathRoots.mapTo(classPaths) { it.toURI().toURL() }
+            classLoader = GeneratedClassLoader(state.factory, URLClassLoader(classPaths.toTypedArray(), null))
 
             val script = environment.getSourceFiles()[0].script
             assert(script != null) { "Script must be parsed" }
@@ -283,7 +256,7 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
-        val collector = environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
+        val collector = environment.messageCollector()
 
         val analysisStart = PerformanceCounter.currentTime()
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
@@ -382,8 +355,14 @@ object KotlinToJVMBytecodeCompiler {
                 FilteredJvmDiagnostics(
                         generationState.collectedExtraJvmDiagnostics,
                         result.bindingContext.diagnostics),
-                environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!)
+                environment.messageCollector())
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return generationState
+    }
+
+    fun KotlinCoreEnvironment.messageCollector(): MessageCollector {
+        val result = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        assert(result != null) { "Message collector not specified in compiler configuration" }
+        return result!!
     }
 }
