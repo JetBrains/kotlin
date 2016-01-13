@@ -12,6 +12,6 @@ import baz./*p:baz*/C
 }
 
 /*p:foo*/fun /*p:foo*/MyClass.extFunc(p: /**p:foo p:bar*//*p:foo*/Array</*p:foo p:bar*/B>, e: /*p:foo*/MyEnum, c: /**???*/C): /*p:foo*/MyInterface {
-    /*c:foo.MyClass c:foo.MyClass(getB) p:foo*/b
-    return /*c:foo.MyClass p:foo*/MyClass()
+    /*c:foo.MyClass c:foo.MyClass(getB) p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/b
+    return /*c:foo.MyClass p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/MyClass()
 }
