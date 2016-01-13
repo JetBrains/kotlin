@@ -50,8 +50,7 @@ class AddWhenRemainingBranchesFix(expression: KtWhenExpression) : KotlinQuickFix
 
         for (case in necessaryCases) {
             val entry = psiFactory.createWhenEntry("${case.branchConditionText} -> TODO()")
-            val insertedBranch = element.addBefore(entry, whenCloseBrace)
-            element.addAfter(psiFactory.createNewLine(), insertedBranch)
+            element.addBefore(entry, whenCloseBrace)
         }
     }
 

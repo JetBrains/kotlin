@@ -20,6 +20,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.ParserDefinition
+import com.intellij.lang.ParserDefinition.SpaceRequirements.*
 import com.intellij.lang.PsiParser
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
@@ -37,6 +38,8 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtWhenEntry
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
@@ -68,12 +71,23 @@ class KotlinParserDefinition : ParserDefinition {
 
     override fun createFile(fileViewProvider: FileViewProvider): PsiFile = KtFile(fileViewProvider, false)
 
-    override fun spaceExistanceTypeBetweenTokens(astNode: ASTNode, astNode1: ASTNode): ParserDefinition.SpaceRequirements {
-        val rightTokenType = astNode1.elementType
-        if (rightTokenType === KtTokens.GET_KEYWORD || rightTokenType === KtTokens.SET_KEYWORD) {
-            return ParserDefinition.SpaceRequirements.MUST_LINE_BREAK
+    override fun spaceExistanceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements {
+        val rightTokenType = right.elementType
+        // get/set from a new line
+        if (rightTokenType == KtTokens.GET_KEYWORD || rightTokenType == KtTokens.SET_KEYWORD) {
+            return MUST_LINE_BREAK
         }
-        return ParserDefinition.SpaceRequirements.MAY
+        val leftTokenType = left.elementType
+        // When entry from a new line
+        val rightWhenEntry = right.psi.getNonStrictParentOfType<KtWhenEntry>()
+        if (rightWhenEntry != null) {
+            val leftWhenEntry = left.psi.getNonStrictParentOfType<KtWhenEntry>()
+            if (leftWhenEntry != null && leftWhenEntry != rightWhenEntry && leftTokenType != KtTokens.SEMICOLON) {
+                return MUST_LINE_BREAK
+            }
+        }
+        // Default
+        return MAY
     }
 
     companion object {
