@@ -35,7 +35,9 @@ object JUnitAsserter : Asserter {
         Assert.assertNull(message ?: "actual value is not null", actual)
     }
 
-    override fun fail(message : String?) {
+    override fun fail(message : String?): Nothing {
         Assert.fail(message)
+        // should not get here
+        throw AssertionError(message)
     }
 }

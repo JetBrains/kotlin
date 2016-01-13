@@ -18,14 +18,23 @@ public var asserter: Asserter = QUnitAsserter()
 public class QUnitAsserter(): Asserter {
 
     public override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
-        QUnit.ok(actual, lazyMessage())
+        assertTrue(actual, lazyMessage())
     }
 
     public override fun assertTrue(message: String?, actual: Boolean) {
         QUnit.ok(actual, message)
+        if (!actual) failWithMessage(message)
     }
 
-    public override fun fail(message: String?) {
+    public override fun fail(message: String?): Nothing {
         QUnit.ok(false, message)
+        failWithMessage(message)
+    }
+
+    private fun failWithMessage(message: String?): Nothing {
+        if (message == null)
+            throw AssertionError()
+        else
+            throw AssertionError(message)
     }
 }

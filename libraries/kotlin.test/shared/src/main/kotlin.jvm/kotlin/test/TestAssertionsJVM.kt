@@ -22,11 +22,9 @@ fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, 
             return e as T
         }
         asserter.fail((message?.let { "$it. " } ?: "") + "Expected an exception of type $exceptionClass to be thrown, but was $e")
-        throw e
     }
     val msg = message?.let { "$it. " } ?: ""
     asserter.fail(msg + "Expected an exception of type $exceptionClass to be thrown, but was completed successfully.")
-    throw IllegalStateException(msg + "Should have failed.")
 }
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */

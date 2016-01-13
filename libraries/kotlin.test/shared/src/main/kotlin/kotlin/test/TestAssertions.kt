@@ -63,7 +63,7 @@ fun assertNull(actual: Any?, message: String? = null) {
 }
 
 /** Marks a test as having failed if this point in the execution path is reached, with an optional [message]. */
-fun fail(message: String? = null) {
+fun fail(message: String? = null): Nothing {
     asserter.fail(message)
 }
 
@@ -81,16 +81,13 @@ fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
 fun fails(block: () -> Unit): Throwable? = assertFails(block)
 
 /** Asserts that given function [block] fails by throwing an exception. */
-fun assertFails(block: () -> Unit): Throwable? {
-    var thrown: Throwable? = null
+fun assertFails(block: () -> Unit): Throwable {
     try {
         block()
     } catch (e: Throwable) {
-        thrown = e
+        return e
     }
-    if (thrown == null)
-        asserter.fail("Expected an exception to be thrown")
-    return thrown
+    asserter.fail("Expected an exception to be thrown")
 }
 
 /**
@@ -103,7 +100,7 @@ interface Asserter {
      *
      * @param message the message to report.
      */
-    fun fail(message: String?): Unit
+    fun fail(message: String?): Nothing
 
     /**
      * Asserts that the specified value is `true`.

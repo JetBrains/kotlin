@@ -5,7 +5,7 @@ package kotlin.test
  */
 class DefaultAsserter() : Asserter {
 
-    override fun fail(message: String?) {
+    override fun fail(message: String?): Nothing {
         if (message == null)
             throw AssertionError()
         else

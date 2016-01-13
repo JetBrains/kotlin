@@ -200,6 +200,7 @@
     Kotlin.UnsupportedOperationException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IndexOutOfBoundsException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IOException = createClassNowWithMessage(Kotlin.Exception);
+    Kotlin.AssertionError = createClassNowWithMessage(Kotlin.Error);
 
     Kotlin.throwNPE = function (message) {
         throw new Kotlin.NullPointerException(message);
