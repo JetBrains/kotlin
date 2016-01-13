@@ -18,13 +18,13 @@ val w = <!EXPRESSION_EXPECTED!>while (true) {}<!>
 
 fun foo() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>z<!> = 2
-    val r = {  // type fun(): Int is inferred
-        if (true) {
+    val r = {  // type fun(): Any is inferred
+        <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {
             2
         }
         else {
             z = 34
-        }
+        }<!>
     }
     val <!UNUSED_VARIABLE!>f<!>: ()-> Int = <!TYPE_MISMATCH!>r<!>
     val <!UNUSED_VARIABLE!>g<!>: ()-> Any = r
@@ -73,11 +73,11 @@ fun testCoercionToUnit() {
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 43
     val checkType = {
-        if (true) {
+        <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {
             x = 4
         } else {
             45
-        }
+        }<!>
     }
     val <!UNUSED_VARIABLE!>f<!> : () -> String = <!TYPE_MISMATCH!>checkType<!>
 }

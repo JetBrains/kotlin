@@ -162,12 +162,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             if (isExhaustive && expression.getElseExpression() == null && KotlinBuiltIns.isNothing(resultType)) {
                 context.trace.record(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, expression);
             }
+            resultType = components.dataFlowAnalyzer.checkType(resultType, expression, contextWithExpectedType);
         }
-        return TypeInfoFactoryKt.createTypeInfo(expressionTypes.isEmpty() ? null : components.dataFlowAnalyzer.checkType(
-                                                             components.dataFlowAnalyzer.checkImplicitCast(
-                                                                     resultType, expression,
-                                                                     contextWithExpectedType, isStatement),
-                                                             expression, contextWithExpectedType),
+        return TypeInfoFactoryKt.createTypeInfo(resultType,
                                                 commonDataFlowInfo,
                                                 loopBreakContinuePossible,
                                                 contextWithExpectedType.dataFlowInfo);
