@@ -26,13 +26,15 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
+import org.jetbrains.kotlin.load.java.components.IncompatibleVersionErrorData;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter;
-import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter.MetadataVersionErrorData;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.util.ArrayList;
@@ -146,12 +149,12 @@ public final class AnalyzerWithCompilerReport {
     }
 
     @NotNull
-    private List<MetadataVersionErrorData> getAbiVersionErrors() {
+    private List<IncompatibleVersionErrorData> getAbiVersionErrors() {
         assert analysisResult != null;
         BindingContext bindingContext = analysisResult.getBindingContext();
 
         Collection<String> errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.METADATA_VERSION_ERRORS);
-        List<MetadataVersionErrorData> result = new ArrayList<MetadataVersionErrorData>(errorClasses.size());
+        List<IncompatibleVersionErrorData> result = new ArrayList<IncompatibleVersionErrorData>(errorClasses.size());
         for (String kotlinClass : errorClasses) {
             result.add(bindingContext.get(TraceBasedErrorReporter.METADATA_VERSION_ERRORS, kotlinClass));
         }
@@ -159,16 +162,43 @@ public final class AnalyzerWithCompilerReport {
         return result;
     }
 
-    private void reportMetadataVersionErrors(@NotNull List<MetadataVersionErrorData> errors) {
-        for (MetadataVersionErrorData data : errors) {
-            String path = toSystemDependentName(data.getFilePath());
-            messageCollector.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Class '" + JvmClassName.byClassId(data.getClassId()) + "' was compiled with an incompatible version of Kotlin. " +
-                    "The binary version of its metadata is " + data.getActualVersion() +
-                    ", expected version is " + JvmMetadataVersion.INSTANCE,
-                    CompilerMessageLocation.create(path, -1, -1, null)
-            );
+    private void reportMetadataVersionErrors(@NotNull List<IncompatibleVersionErrorData> errors) {
+        for (IncompatibleVersionErrorData data : errors) {
+            reportIncompatibleBinaryVersion(messageCollector, data, JvmMetadataVersion.INSTANCE, "metadata", CompilerMessageSeverity.ERROR);
+        }
+    }
+
+    private static void reportIncompatibleBinaryVersion(
+            @NotNull MessageCollector messageCollector,
+            @NotNull IncompatibleVersionErrorData data,
+            @NotNull BinaryVersion expectedVersion,
+            @NotNull String versionSortText,
+            @NotNull CompilerMessageSeverity severity
+    ) {
+        messageCollector.report(
+                severity,
+                "Class '" + JvmClassName.byClassId(data.getClassId()) + "' was compiled with an incompatible version of Kotlin. " +
+                "The binary version of its " + versionSortText + " is " + data.getActualVersion() + ", " +
+                "expected version is " + expectedVersion,
+                CompilerMessageLocation.create(toSystemDependentName(data.getFilePath()), -1, -1, null)
+        );
+    }
+
+    public static void reportBytecodeVersionErrors(@NotNull BindingContext bindingContext, @NotNull MessageCollector messageCollector) {
+        // TODO: a -X command line option
+        CompilerMessageSeverity severity =
+                "true".equals(System.getProperty("kotlin.jvm.disable.bytecode.version.error"))
+                ? CompilerMessageSeverity.WARNING
+                : CompilerMessageSeverity.ERROR;
+
+        Collection<String> locations = bindingContext.getKeys(IncompatibleClassTrackerImpl.BYTECODE_VERSION_ERRORS);
+        if (locations.isEmpty()) return;
+
+        for (String location : locations) {
+            IncompatibleVersionErrorData data =
+                    bindingContext.get(IncompatibleClassTrackerImpl.BYTECODE_VERSION_ERRORS, location);
+            assert data != null : "Value is missing for key in binding context: " + location;
+            reportIncompatibleBinaryVersion(messageCollector, data, JvmBytecodeBinaryVersion.INSTANCE, "bytecode", severity);
         }
     }
 
@@ -266,7 +296,7 @@ public final class AnalyzerWithCompilerReport {
     public void analyzeAndReport(@NotNull Collection<KtFile> files, @NotNull Function0<AnalysisResult> analyzer) {
         analysisResult = analyzer.invoke();
         reportSyntaxErrors(files);
-        List<MetadataVersionErrorData> abiVersionErrors = getAbiVersionErrors();
+        List<IncompatibleVersionErrorData> abiVersionErrors = getAbiVersionErrors();
         reportDiagnostics(analysisResult.getBindingContext().getDiagnostics(), messageCollector, !abiVersionErrors.isEmpty());
         if (hasErrors()) {
             reportMetadataVersionErrors(abiVersionErrors);

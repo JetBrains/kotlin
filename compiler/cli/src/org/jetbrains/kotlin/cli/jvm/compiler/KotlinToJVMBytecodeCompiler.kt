@@ -363,8 +363,15 @@ object KotlinToJVMBytecodeCompiler {
         AnalyzerWithCompilerReport.reportDiagnostics(
                 FilteredJvmDiagnostics(
                         generationState.collectedExtraJvmDiagnostics,
-                        result.bindingContext.diagnostics),
-                environment.messageCollector())
+                        result.bindingContext.diagnostics
+                ),
+                environment.messageCollector()
+        )
+
+        AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
+                generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector()
+        );
+
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return generationState
     }

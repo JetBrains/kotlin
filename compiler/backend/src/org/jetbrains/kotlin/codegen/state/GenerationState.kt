@@ -95,7 +95,7 @@ class GenerationState @JvmOverloads constructor(
                 incrementalCompilationComponents.getIncrementalCache(targetId)
             else null
 
-    private val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
+    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
@@ -109,7 +109,10 @@ class GenerationState @JvmOverloads constructor(
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
     val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
     val bindingContext: BindingContext = bindingTrace.bindingContext
-    val typeMapper: JetTypeMapper = JetTypeMapper(this.bindingContext, classBuilderMode, fileClassesProvider, getIncrementalCacheForThisTarget(), this.moduleName)
+    val typeMapper: JetTypeMapper = JetTypeMapper(
+            this.bindingContext, classBuilderMode, fileClassesProvider, getIncrementalCacheForThisTarget(),
+            IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace), this.moduleName
+    )
     val intrinsics: IntrinsicMethods = IntrinsicMethods()
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)

@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/library/A.class: error: class 'library/A' was compiled with an incompatible version of Kotlin. The binary version of its bytecode is 42.0.0, expected version is $ABI_VERSION$
+$TESTDATA_DIR$/library/AKt.class: error: class 'library/AKt' was compiled with an incompatible version of Kotlin. The binary version of its bytecode is 42.0.0, expected version is $ABI_VERSION$
+COMPILATION_ERROR
