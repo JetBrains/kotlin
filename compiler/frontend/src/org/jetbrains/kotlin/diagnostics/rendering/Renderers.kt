@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
-import com.google.common.base.Strings
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.intellij.openapi.diagnostic.Logger
@@ -415,10 +414,9 @@ object Renderers {
 
     @JvmField val RENDER_WHEN_MISSING_CASES: Renderer<List<WhenMissingCase>> = Renderer {
         if (!it.hasUnknown) {
-            val list = it.take(WHEN_MISSING_LIMIT).map { "'$it'" }.joinToString(", ")
+            val list = it.joinToString(", ", limit = WHEN_MISSING_LIMIT) { "'$it'" }
             val branches = if (it.size > 1) "branches" else "branch"
-            val others = if (it.size > WHEN_MISSING_LIMIT) ", ..." else ""
-            "$list$others $branches or 'else' branch instead"
+            "$list $branches or 'else' branch instead"
         }
         else {
             "'else' branch"
