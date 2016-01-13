@@ -45,7 +45,7 @@ class AsmTypeRemapper(val typeRemapper: TypeRemapper, val isDefaultGeneration: B
                     return super.visitTypeVariable(mapping.newName)
                 }
                 // else TypeVariable is replaced by concrete type
-                SignatureReader(mapping.signature).accept(this)
+                SignatureReader(mapping.signature).accept(v)
             }
 
             override fun visitFormalTypeParameter(name: String) {
