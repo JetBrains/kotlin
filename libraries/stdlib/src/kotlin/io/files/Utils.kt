@@ -373,6 +373,7 @@ public fun File.deleteRecursively(): Boolean = walkBottomUp().fold(true, { res, 
  * Returns an array of files and directories in the directory that match the specified [filter]
  * or `null` if this file does not denote a directory.
  */
+@Deprecated("Provided for binary compatiblity", level = DeprecationLevel.HIDDEN)
 public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listFiles(FileFilter(filter))
 
 /**
