@@ -98,6 +98,11 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
 
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
 
+        // Special case for enum entry superclass references (they have empty text and don't need to be processed by the refactoring)
+        if (refExpr.textRange.isEmpty) {
+            return null
+        }
+
         val isCallable = descriptor is CallableDescriptor
         val isExtension = isCallable && declaration.isExtensionDeclaration()
 
