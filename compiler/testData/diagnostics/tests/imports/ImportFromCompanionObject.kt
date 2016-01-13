@@ -63,8 +63,8 @@ package b
 import a.C1.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>O<!>.*
 
 fun testErroneusAllUnderImportFromObject() {
-    A()
-    B
+    <!UNRESOLVED_REFERENCE!>A<!>()
+    <!UNRESOLVED_REFERENCE!>B<!>
     <!UNRESOLVED_REFERENCE!>bar<!>()
 }
 

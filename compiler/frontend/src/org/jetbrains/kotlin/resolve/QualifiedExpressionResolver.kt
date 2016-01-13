@@ -150,9 +150,12 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         if (importDirective.isAllUnder) {
             val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForCheck,
                                                                    scopeForFirstPart = null, position = QualifierPosition.IMPORT) ?: return null
+
             if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
                 trace.report(Errors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
+                return null
             }
+
             return AllUnderImportScope(packageOrClassDescriptor)
         }
         else {
