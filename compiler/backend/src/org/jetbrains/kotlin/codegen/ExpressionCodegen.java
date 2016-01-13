@@ -2459,7 +2459,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
 
-            KotlinType type = entry.getValue();
+            KotlinType type = TypeUtils.uncaptureTypeForInlineMapping(entry.getValue());
+
             TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
             if (parameterDescriptor == null) {
                 // type is not generic

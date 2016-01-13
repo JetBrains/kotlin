@@ -1429,6 +1429,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
+        @TestMetadata("inProjectionSubstitution.1.kt")
+        public void testInProjectionSubstitution() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/signature/inProjectionSubstitution.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("outProjectionSubstitution.1.kt")
+        public void testOutProjectionSubstitution() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/signature/outProjectionSubstitution.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("recursion.1.kt")
         public void testRecursion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/signature/recursion.1.kt");
@@ -1444,6 +1456,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("sameReifiedFormalParameterName.1.kt")
         public void testSameReifiedFormalParameterName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/signature/sameReifiedFormalParameterName.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("starProjectionSubstitution.1.kt")
+        public void testStarProjectionSubstitution() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/signature/starProjectionSubstitution.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
 

@@ -25,9 +25,12 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedType;
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -514,8 +517,22 @@ public class TypeUtils {
         return typeParameterDescriptor != null && typeParameterDescriptor.isReified();
     }
 
+    @NotNull
+    public static KotlinType uncaptureTypeForInlineMapping(@NotNull KotlinType type) {
+        TypeConstructor constructor = type.getConstructor();
+        if (constructor instanceof CapturedTypeConstructor) {
+            TypeProjection projection = ((CapturedTypeConstructor) constructor).getTypeProjection();
+            if (Variance.IN_VARIANCE == projection.getProjectionKind()) {
+                //in variance could be captured only for <T> or <T: Any?> declarations
+                return TypeUtilsKt.getBuiltIns(type).getNullableAnyType();
+            }
+            return uncaptureTypeForInlineMapping(projection.getType());
+        }
+        return type;
+    }
     @Nullable
     public static TypeParameterDescriptor getTypeParameterDescriptorOrNull(@NotNull KotlinType type) {
+        assert !(type instanceof CapturedType) : "Type should be non-captured " + type;
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return (TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor();
         }
