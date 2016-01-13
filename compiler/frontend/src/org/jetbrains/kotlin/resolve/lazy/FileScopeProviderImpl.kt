@@ -60,17 +60,26 @@ open class FileScopeProviderImpl(
 
         val imports = file.importDirectives
 
+        val aliasImportNames = imports.mapNotNull { if (it.aliasName != null) it.importedFqName else null }
+
         val packageView = moduleDescriptor.getPackage(file.packageFqName)
         val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
                 .sure { "Could not find fragment ${file.packageFqName} for file ${file.name}" }
 
         fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace)
-                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, trace, packageFragment)
+                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, aliasImportNames, trace, packageFragment)
 
-        val aliasImportResolver = createImportResolver(AliasImportsIndexed(imports), bindingTrace)
+        val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)
-        val defaultAliasImportResolver = createImportResolver(AliasImportsIndexed(defaultImports), tempTrace)
-        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImports), tempTrace)
+
+        val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization
+            defaultImports
+        }
+        else {
+            defaultImports.filter { it.isAllUnder || it.importedFqName !in aliasImportNames }
+        }
+        val defaultExplicitImportResolver = createImportResolver(ExplicitImportsIndexed(defaultImportsFiltered), tempTrace)
+        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace)
 
         var scope: ImportingScope
 
@@ -86,14 +95,14 @@ open class FileScopeProviderImpl(
         scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "All under imports in $debugName (visible classes)")
 
-        scope = LazyImportScope(scope, defaultAliasImportResolver, LazyImportScope.FilteringKind.ALL,
-                "Default alias imports in $debugName")
+        scope = LazyImportScope(scope, defaultExplicitImportResolver, LazyImportScope.FilteringKind.ALL,
+                "Default explicit imports in $debugName")
 
         scope = SubpackagesImportingScope(scope, moduleDescriptor, FqName.ROOT)
 
         scope = packageView.memberScope.memberScopeAsImportingScope(scope) //TODO: problems with visibility too
 
-        scope = LazyImportScope(scope, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
+        scope = LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
 
         val lexicalScope = LexicalScope.empty(scope, packageFragment)
 
@@ -101,7 +110,7 @@ open class FileScopeProviderImpl(
 
         val importResolver = object : ImportResolver {
             override fun forceResolveAllImports() {
-                aliasImportResolver.forceResolveAllImports()
+                explicitImportResolver.forceResolveAllImports()
                 allUnderImportResolver.forceResolveAllImports()
             }
 
@@ -110,7 +119,7 @@ open class FileScopeProviderImpl(
                     allUnderImportResolver.forceResolveImport(importDirective)
                 }
                 else {
-                    aliasImportResolver.forceResolveImport(importDirective)
+                    explicitImportResolver.forceResolveImport(importDirective)
                 }
             }
         }
