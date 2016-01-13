@@ -1084,7 +1084,7 @@ public abstract class Number {
     public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<N>
 }
 
-@kotlin.Deprecated(message = "Please use KProperty instead.", replaceWith = kotlin.ReplaceWith(expression = "KProperty<*>", imports = {"kotlin.reflect.KProperty"})) public interface PropertyMetadata {
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Please use KProperty instead.", replaceWith = kotlin.ReplaceWith(expression = "KProperty<*>", imports = {"kotlin.reflect.KProperty"})) internal interface PropertyMetadata {
     public abstract val name: kotlin.String
         public abstract fun <get-name>(): kotlin.String
 }

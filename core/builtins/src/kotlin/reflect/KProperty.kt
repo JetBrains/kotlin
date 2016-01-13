@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR", "EXPOSED_SUPER_INTERFACE", "INVISIBLE_REFERENCE", "INVISIBLE_MEMBER") // for PropertyMetadata inheritance
 package kotlin.reflect
 
 /**

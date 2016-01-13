@@ -16,13 +16,7 @@
 
 package kotlin
 
-/**
- * Represents a property in a Kotlin class.
- */
-@Deprecated("Please use KProperty instead.", ReplaceWith("KProperty<*>", "kotlin.reflect.KProperty"))
-public interface PropertyMetadata {
-    /**
-     * The name of the property.
-     */
-    public val name: String
+@Deprecated("Please use KProperty instead.", ReplaceWith("KProperty<*>", "kotlin.reflect.KProperty"), DeprecationLevel.ERROR)
+internal interface PropertyMetadata {
+    val name: String
 }
