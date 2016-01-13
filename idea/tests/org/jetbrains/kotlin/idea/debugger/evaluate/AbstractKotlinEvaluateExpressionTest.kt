@@ -348,7 +348,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = createContextElement(this)
 
-            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, evaluationContext.frameProxy)
+            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, this@AbstractKotlinEvaluateExpressionTest.evaluationContext.frameProxy)
 
             try {
 
@@ -360,7 +360,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
                 if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
 
-                val value = evaluator.evaluate(evaluationContext)
+                val value = evaluator.evaluate(this@AbstractKotlinEvaluateExpressionTest.evaluationContext)
                 val actualResult = value.asValue().asString()
 
                 Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)

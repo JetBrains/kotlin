@@ -261,7 +261,7 @@ class KotlinIntroduceParameterDialog private constructor(
                         var newArgumentValue = descriptor.newArgumentValue
                         var newReplacer = descriptor.occurrenceReplacer
 
-                        val startMarkAction = StartMarkAction.start(editor, myProject, commandName)
+                        val startMarkAction = StartMarkAction.start(editor, myProject, this@KotlinIntroduceParameterDialog.commandName)
 
                         lambdaExtractionDescriptor?.let { oldDescriptor ->
                             val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
@@ -318,7 +318,7 @@ class KotlinIntroduceParameterDialog private constructor(
 
                     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = BaseUsageViewDescriptor()
 
-                    override fun getCommandName(): String = commandName
+                    override fun getCommandName(): String = this@KotlinIntroduceParameterDialog.commandName
                 }
         )
     }

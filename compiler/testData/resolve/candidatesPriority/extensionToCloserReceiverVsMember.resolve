@@ -8,7 +8,7 @@ class B {
 fun test(a: A, b: B) {
     with (a) {
         with (b) {
-            `A.foo`foo()
+            `B.foo`foo()
         }
     }
 }
