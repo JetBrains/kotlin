@@ -30,7 +30,7 @@ fun test(a: A, b: B, c: C) {
 
     with(c) {
         with(a) {
-            foo checkType { _<C>() } // todo
+            foo checkType { _<A>() }
         }
     }
 }

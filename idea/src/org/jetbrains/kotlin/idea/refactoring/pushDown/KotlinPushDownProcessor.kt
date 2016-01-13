@@ -148,7 +148,7 @@ public class KotlinPushDownProcessor(
                             addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
                         }
                     } ?: addMemberToTarget(member, targetClass).apply {
-                        if (context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
+                        if (this@KotlinPushDownProcessor.context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
                             if (targetClassDescriptor.kind != ClassKind.INTERFACE && memberDescriptor.modality == Modality.ABSTRACT) {
                                 addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
                             }
