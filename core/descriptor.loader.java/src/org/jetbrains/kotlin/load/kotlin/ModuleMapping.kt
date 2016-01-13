@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
@@ -28,22 +27,22 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
     }
 
     companion object {
-        @JvmField val MAPPING_FILE_EXT: String = "kotlin_module"
+        @JvmField
+        val MAPPING_FILE_EXT: String = "kotlin_module"
 
-        @JvmField val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
+        @JvmField
+        val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
 
         fun create(proto: ByteArray? = null): ModuleMapping {
             if (proto == null) {
                 return EMPTY
             }
 
-            val inputStream = DataInputStream(ByteArrayInputStream(proto))
-            val size = inputStream.readInt()
-
-            val version = JvmBytecodeBinaryVersion.create((0..size - 1).map { inputStream.readInt() }.toIntArray())
+            val stream = DataInputStream(ByteArrayInputStream(proto))
+            val version = JvmMetadataVersion.create(IntArray(stream.readInt()) { stream.readInt() })
 
             if (version.isCompatible()) {
-                val parseFrom = JvmPackageTable.PackageTable.parseFrom(inputStream)
+                val parseFrom = JvmPackageTable.PackageTable.parseFrom(stream)
                 if (parseFrom != null) {
                     val packageFqNameParts = hashMapOf<String, PackageParts>()
                     parseFrom.packagePartsList.forEach {

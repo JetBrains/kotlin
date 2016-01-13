@@ -36,7 +36,7 @@ class LoggingErrorReporter(private val log: Logger) : ErrorReporter {
         log.error("Could not infer visibility for $descriptor")
     }
 
-    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
+    override fun reportIncompatibleMetadataVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
         log.error("Incompatible ABI version for class $classId, actual version: $actualVersion")
     }
 }

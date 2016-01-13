@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
-import kotlin.text.StringsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -224,7 +224,7 @@ public class JvmCodegenUtil {
     }
 
     public static void writeAbiVersion(@NotNull AnnotationVisitor av) {
-        av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmBytecodeBinaryVersion.INSTANCE.toArray());
+        av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmMetadataVersion.INSTANCE.toArray());
     }
 
     public static void writeModuleName(@NotNull AnnotationVisitor av, @NotNull GenerationState state) {

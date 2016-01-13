@@ -69,7 +69,7 @@ public class KotlinRuntimeLibraryUtil {
     @NotNull
     public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleKotlinClasses(@NotNull Project project) {
         return getLibraryRootsWithAbiIncompatibleVersion(
-                project, KotlinAbiVersionIndex.INSTANCE,
+                project, KotlinMetadataVersionIndex.INSTANCE,
                 new Function1<Module, Boolean>() {
                     @Override
                     public Boolean invoke(@Nullable Module module) {
