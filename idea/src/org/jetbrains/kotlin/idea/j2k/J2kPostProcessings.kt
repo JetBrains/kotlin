@@ -65,6 +65,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(SimplifyForIntention()) { applyTo(it) }
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
             val expression = RemoveUselessCastFix.invoke(element)

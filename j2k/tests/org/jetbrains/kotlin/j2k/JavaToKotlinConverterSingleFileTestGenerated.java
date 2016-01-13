@@ -2080,6 +2080,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("overMapEntries.java")
+        public void testOverMapEntries() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/overMapEntries.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("withContinue1.java")
         public void testWithContinue1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue1.java");
