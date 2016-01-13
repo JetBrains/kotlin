@@ -42,9 +42,6 @@ interface ScopeTower {
     val location: LookupLocation
 
     val dataFlowInfo: DataFlowDecorator
-
-    // The closest (the most local) levels goes first
-    val levels: List<ScopeTowerLevel>
 }
 
 interface DataFlowDecorator {

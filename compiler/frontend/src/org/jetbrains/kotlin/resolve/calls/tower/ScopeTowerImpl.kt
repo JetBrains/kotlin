@@ -51,37 +51,6 @@ internal class ScopeTowerImpl(
 
     override val implicitReceivers = resolutionContext.scope.getImplicitReceiversHierarchy().
             mapNotNull { it.value.check { !it.type.containsError() } }
-
-    override val levels: List<ScopeTowerLevel> = createLevels()
-
-    private fun createLevels(): List<ScopeTowerLevel> {
-        val result = ArrayList<ScopeTowerLevel>()
-
-        // locals win
-        lexicalScope.parentsWithSelf.
-                filterIsInstance<LexicalScope>().
-                filter { it.kind.withLocalDescriptors }.
-                mapTo(result) { ScopeBasedTowerLevel(this, it) }
-
-        var isFirstImportingScope = true
-        lexicalScope.parentsWithSelf.forEach { scope ->
-            if (scope is LexicalScope) {
-                if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
-
-                scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
-            }
-            else {
-                if (isFirstImportingScope) {
-                    isFirstImportingScope = false
-                    result.add(SyntheticScopeBasedTowerLevel(this, syntheticScopes))
-                }
-                result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
-            }
-        }
-
-        return result
-    }
-
 }
 
 private class DataFlowDecoratorImpl(private val resolutionContext: ResolutionContext<*>): DataFlowDecorator {
