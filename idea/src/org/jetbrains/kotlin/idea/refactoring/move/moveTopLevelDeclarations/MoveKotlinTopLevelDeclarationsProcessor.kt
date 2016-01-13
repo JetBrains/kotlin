@@ -47,10 +47,11 @@ import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.*
+import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.KtFile
@@ -139,7 +140,9 @@ class MoveKotlinTopLevelDeclarationsProcessor(
                     )
                 }
 
-                MoveClassHandler.EP_NAME.extensions.forEach { handler -> handler.preprocessUsages(results) }
+                MoveClassHandler.EP_NAME.extensions.forEach { handler ->
+                    if (handler !is MoveKotlinClassHandler) handler.preprocessUsages(results)
+                }
 
                 results
             }
