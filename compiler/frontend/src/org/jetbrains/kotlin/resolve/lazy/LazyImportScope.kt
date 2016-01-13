@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -46,7 +47,7 @@ class AllUnderImportsIndexed(allImports: Collection<KtImportDirective>) : Indexe
     override fun importsForName(name: Name) = imports
 }
 
-class AliasImportsIndexed(allImports: Collection<KtImportDirective>) : IndexedImports {
+class ExplicitImportsIndexed(allImports: Collection<KtImportDirective>) : IndexedImports {
     override val imports = allImports.filter { !it.isAllUnder() }
 
     private val nameToDirectives: ListMultimap<Name, KtImportDirective> by lazy {
@@ -74,13 +75,14 @@ class LazyImportResolver(
         val qualifiedExpressionResolver: QualifiedExpressionResolver,
         val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
+        aliasImportNames: Collection<FqName>,
         private val traceForImportResolve: BindingTrace,
         private val packageFragment: PackageFragmentDescriptor
 ) : ImportResolver {
     private val importedScopesProvider = storageManager.createMemoizedFunctionWithNullableValues {
         directive: KtImportDirective ->
             val directiveImportScope = qualifiedExpressionResolver.processImportReference(
-                    directive, moduleDescriptor, traceForImportResolve, packageFragment) ?: return@createMemoizedFunctionWithNullableValues null
+                    directive, moduleDescriptor, traceForImportResolve, aliasImportNames, packageFragment) ?: return@createMemoizedFunctionWithNullableValues null
 
             if (!directive.isAllUnder) {
                 PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(

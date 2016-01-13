@@ -134,6 +134,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             importDirective: KtImportDirective,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
+            aliasImportNames: Collection<FqName>,
             packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
     ): ImportingScope? { // null if some error happened
         val importedReference = importDirective.importedReference ?: return null
@@ -156,7 +157,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                 return null
             }
 
-            return AllUnderImportScope(packageOrClassDescriptor)
+            return AllUnderImportScope(packageOrClassDescriptor, aliasImportNames)
         }
         else {
             return processSingleImport(moduleDescriptor, trace, importDirective, path, lastPart, packageFragmentForCheck)
