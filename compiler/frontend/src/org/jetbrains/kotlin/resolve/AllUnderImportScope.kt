@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.utils.Printer
 
-class AllUnderImportsScope(descriptor: DeclarationDescriptor) : BaseImportingScope(null) {
+class AllUnderImportScope(descriptor: DeclarationDescriptor) : BaseImportingScope(null) {
     private val scopes: List<ResolutionScope> = if (descriptor is ClassDescriptor) {
         listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
     }

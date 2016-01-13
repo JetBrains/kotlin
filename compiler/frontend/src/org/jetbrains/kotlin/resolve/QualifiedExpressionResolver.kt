@@ -155,7 +155,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
             trace.report(Errors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
         }
-        return AllUnderImportsScope(packageOrClassDescriptor)
+        return AllUnderImportScope(packageOrClassDescriptor)
 }
 
     private fun processSingleImport(
