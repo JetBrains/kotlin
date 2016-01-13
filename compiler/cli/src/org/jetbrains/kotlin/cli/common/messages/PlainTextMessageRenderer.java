@@ -34,6 +34,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
     // TODO: investigate why ANSI escape codes on Windows only work in REPL for some reason
     private static final boolean COLOR_ENABLED =
             !SystemInfo.isWindows &&
+            !"false".equals(System.getProperty("kotlin.colors.enabled")) &&
             CLibrary.isatty(CLibrary.STDERR_FILENO) != 0;
 
     private static final String LINE_SEPARATOR = LineSeparator.getSystemLineSeparator().getSeparatorString();
