@@ -320,7 +320,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         else {
             constrainingTypeProjection
         }
-        val capturedType = createCapturedType(typeProjection, typeVariable.originalTypeParameter)
+        val capturedType = createCapturedType(typeProjection)
         addBound(typeVariable, capturedType, EXACT_BOUND, constraintContext)
     }
 

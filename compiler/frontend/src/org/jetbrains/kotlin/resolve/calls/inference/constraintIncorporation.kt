@@ -87,8 +87,8 @@ private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitut
 
     val substitutedType = when (substitution.kind) {
         EXACT_BOUND -> substitution.constrainingType
-        UPPER_BOUND -> CapturedType(TypeProjectionImpl(Variance.OUT_VARIANCE, substitution.constrainingType), substitution.typeVariable.originalTypeParameter)
-        LOWER_BOUND -> CapturedType(TypeProjectionImpl(Variance.IN_VARIANCE, substitution.constrainingType), substitution.typeVariable.originalTypeParameter)
+        UPPER_BOUND -> CapturedType(TypeProjectionImpl(Variance.OUT_VARIANCE, substitution.constrainingType))
+        LOWER_BOUND -> CapturedType(TypeProjectionImpl(Variance.IN_VARIANCE, substitution.constrainingType))
     }
 
     val newTypeProjection = TypeProjectionImpl(substitutedType)

@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class CapturedTypeConstructor(
-        val typeProjection: TypeProjection,
-        val typeParameterDescriptor: TypeParameterDescriptor
+        val typeProjection: TypeProjection
 ): TypeConstructor {
     init {
         assert(typeProjection.projectionKind != Variance.INVARIANT) {
@@ -48,7 +47,7 @@ class CapturedTypeConstructor(
 
     override fun isDenotable() = false
 
-    override fun getDeclarationDescriptor() = typeParameterDescriptor
+    override fun getDeclarationDescriptor() = null
 
     override fun getAnnotations() = Annotations.EMPTY
 
@@ -58,14 +57,13 @@ class CapturedTypeConstructor(
 }
 
 class CapturedType(
-        private val typeProjection: TypeProjection,
-        private val typeParameterDescriptor: TypeParameterDescriptor
+        private val typeProjection: TypeProjection
 ): DelegatingType(), SubtypingRepresentatives {
 
     private val delegateType = run {
         val scope = ErrorUtils.createErrorScope(
                 "No member resolution should be done on captured type, it used only during constraint system resolution", true)
-        KotlinTypeImpl.create(Annotations.EMPTY, CapturedTypeConstructor(typeProjection, typeParameterDescriptor), false, listOf(), scope)
+        KotlinTypeImpl.create(Annotations.EMPTY, CapturedTypeConstructor(typeProjection), false, listOf(), scope)
     }
 
     override fun getDelegate(): KotlinType = delegateType
@@ -95,8 +93,8 @@ class CapturedType(
     override fun toString() = "Captured($typeProjection)"
 }
 
-fun createCapturedType(typeProjection: TypeProjection, typeParameterDescriptor: TypeParameterDescriptor): KotlinType
-        = CapturedType(typeProjection, typeParameterDescriptor)
+fun createCapturedType(typeProjection: TypeProjection): KotlinType
+        = CapturedType(typeProjection)
 
 fun KotlinType.isCaptured(): Boolean = constructor is CapturedTypeConstructor
 
@@ -128,5 +126,5 @@ private fun TypeProjection.createCapturedIfNeeded(typeParameterDescriptor: TypeP
             TypeProjectionImpl(this@createCapturedIfNeeded.type)
     }
 
-    return TypeProjectionImpl(createCapturedType(this, typeParameterDescriptor))
+    return TypeProjectionImpl(createCapturedType(this))
 }
