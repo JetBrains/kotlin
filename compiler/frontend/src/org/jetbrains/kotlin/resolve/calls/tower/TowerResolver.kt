@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
@@ -69,6 +72,34 @@ class TowerResolver {
         return run(context, processor, false, AllCandidatesCollector(context))
     }
 
+    private fun ScopeTower.createLevels(): List<ScopeTowerLevel> {
+        val result = ArrayList<ScopeTowerLevel>()
+
+        // locals win
+        lexicalScope.parentsWithSelf.
+                filterIsInstance<LexicalScope>().
+                filter { it.kind.withLocalDescriptors }.
+                mapTo(result) { ScopeBasedTowerLevel(this, it) }
+
+        var isFirstImportingScope = true
+        lexicalScope.parentsWithSelf.forEach { scope ->
+            if (scope is LexicalScope) {
+                if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
+
+                scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
+            }
+            else {
+                if (isFirstImportingScope) {
+                    isFirstImportingScope = false
+                    result.add(SyntheticScopeBasedTowerLevel(this, syntheticScopes))
+                }
+                result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
+            }
+        }
+
+        return result
+    }
+
     private fun <C> run(
             context: TowerContext<C>,
             processor: ScopeTowerProcessor<C>,
@@ -96,7 +127,7 @@ class TowerResolver {
         // possible there is explicit member
         collectCandidates(TowerData.Empty)?.let { return it }
 
-        for (level in context.scopeTower.levels) {
+        for (level in context.scopeTower.createLevels()) {
             for (implicitReceiver in context.scopeTower.implicitReceivers) {
                 collectCandidates(TowerData.BothTowerLevelAndImplicitReceiver(level, implicitReceiver))?.let { return it }
             }
