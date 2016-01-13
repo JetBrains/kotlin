@@ -14,119 +14,77 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.parsing;
+package org.jetbrains.kotlin.parsing
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.PsiParser;
-import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtNodeType;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
-import org.jetbrains.kotlin.kdoc.parser.KDocElementType;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink;
-import org.jetbrains.kotlin.lexer.KotlinLexer;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ASTNode
+import com.intellij.lang.LanguageParserDefinitions
+import com.intellij.lang.ParserDefinition
+import com.intellij.lang.PsiParser
+import com.intellij.lexer.Lexer
+import com.intellij.openapi.project.Project
+import com.intellij.psi.FileViewProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.tree.IFileElementType
+import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.KtNodeType
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
+import org.jetbrains.kotlin.kdoc.parser.KDocElementType
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KotlinParserDefinition implements ParserDefinition {
-    public static final String STD_SCRIPT_SUFFIX = "kts";
-    public static final String STD_SCRIPT_EXT = "." + STD_SCRIPT_SUFFIX;
+class KotlinParserDefinition : ParserDefinition {
 
-    public KotlinParserDefinition() {
-        //todo: ApplicationManager.getApplication() is null during JetParsingTest setting up
+    override fun createLexer(project: Project): Lexer = KotlinLexer()
 
-        /*if (!ApplicationManager.getApplication().isCommandLine()) {
-        }*/
-    }
+    override fun createParser(project: Project): PsiParser = KotlinParser(project)
 
-    @NotNull
-    public static KotlinParserDefinition getInstance() {
-        return (KotlinParserDefinition)LanguageParserDefinitions.INSTANCE.forLanguage(KotlinLanguage.INSTANCE);
-    }
+    override fun getFileNodeType(): IFileElementType = KtStubElementTypes.FILE
 
-    @Override
-    @NotNull
-    public Lexer createLexer(Project project) {
-        return new KotlinLexer();
-    }
+    override fun getWhitespaceTokens(): TokenSet = KtTokens.WHITESPACES
 
-    @Override
-    public PsiParser createParser(Project project) {
-        return new KotlinParser(project);
-    }
+    override fun getCommentTokens(): TokenSet = KtTokens.COMMENTS
 
-    @Override
-    public IFileElementType getFileNodeType() {
-        return KtStubElementTypes.FILE;
-    }
+    override fun getStringLiteralElements(): TokenSet = KtTokens.STRINGS
 
-    @Override
-    @NotNull
-    public TokenSet getWhitespaceTokens() {
-        return KtTokens.WHITESPACES;
-    }
+    override fun createElement(astNode: ASTNode): PsiElement {
+        val elementType = astNode.elementType
 
-    @Override
-    @NotNull
-    public TokenSet getCommentTokens() {
-        return KtTokens.COMMENTS;
-    }
-
-    @Override
-    @NotNull
-    public TokenSet getStringLiteralElements() {
-        return KtTokens.STRINGS;
-    }
-
-    @Override
-    @NotNull
-    public PsiElement createElement(ASTNode astNode) {
-        IElementType elementType = astNode.getElementType();
-
-        if (elementType instanceof KtStubElementType) {
-            return ((KtStubElementType) elementType).createPsiFromAst(astNode);
-        }
-        else if (elementType == KtNodeTypes.TYPE_CODE_FRAGMENT ||
-                 elementType == KtNodeTypes.EXPRESSION_CODE_FRAGMENT ||
-                 elementType == KtNodeTypes.BLOCK_CODE_FRAGMENT) {
-            return new ASTWrapperPsiElement(astNode);
-        }
-        else if (elementType instanceof KDocElementType) {
-            return ((KDocElementType) elementType).createPsi(astNode);
-        }
-        else if (elementType == KDocTokens.MARKDOWN_LINK) {
-            return new KDocLink(astNode);
-        }
-        else {
-            return ((KtNodeType) elementType).createPsi(astNode);
+        return when (elementType) {
+            is KtStubElementType<*, *> -> elementType.createPsiFromAst(astNode)
+            KtNodeTypes.TYPE_CODE_FRAGMENT, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, KtNodeTypes.BLOCK_CODE_FRAGMENT -> ASTWrapperPsiElement(astNode)
+            is KDocElementType -> elementType.createPsi(astNode)
+            KDocTokens.MARKDOWN_LINK -> KDocLink(astNode)
+            else -> (elementType as KtNodeType).createPsi(astNode)
         }
     }
 
-    @Override
-    public PsiFile createFile(FileViewProvider fileViewProvider) {
-        return new KtFile(fileViewProvider, false);
+    override fun createFile(fileViewProvider: FileViewProvider): PsiFile = KtFile(fileViewProvider, false)
+
+    override fun spaceExistanceTypeBetweenTokens(astNode: ASTNode, astNode1: ASTNode): ParserDefinition.SpaceRequirements {
+        val rightTokenType = astNode1.elementType
+        if (rightTokenType === KtTokens.GET_KEYWORD || rightTokenType === KtTokens.SET_KEYWORD) {
+            return ParserDefinition.SpaceRequirements.MUST_LINE_BREAK
+        }
+        return ParserDefinition.SpaceRequirements.MAY
     }
 
-    @Override
-    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
-        IElementType rightTokenType = astNode1.getElementType();
-        if (rightTokenType == KtTokens.GET_KEYWORD || rightTokenType == KtTokens.SET_KEYWORD) {
-            return SpaceRequirements.MUST_LINE_BREAK;
-        }
-        return SpaceRequirements.MAY;
+    companion object {
+
+        @JvmField
+        val STD_SCRIPT_SUFFIX = "kts"
+
+        @JvmField
+        val STD_SCRIPT_EXT = "." + STD_SCRIPT_SUFFIX
+
+        val instance: KotlinParserDefinition
+            get() = LanguageParserDefinitions.INSTANCE.forLanguage(KotlinLanguage.INSTANCE) as KotlinParserDefinition
     }
 }
