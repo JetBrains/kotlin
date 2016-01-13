@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -35,6 +37,8 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -106,10 +110,11 @@ object KotlinToJVMBytecodeCompiler {
 
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val jetFiles = CompileEnvironmentUtil.getKtFiles(
+            val ktFiles = CompileEnvironmentUtil.getKtFiles(
                     environment.project, getAbsolutePaths(directory, module)) { s -> throw IllegalStateException("Should have been checked before: " + s) }
+            if (!checkKotlinPackageUsage(environment, ktFiles)) return false
             val moduleOutputDirectory = File(module.getOutputDirectory())
-            val generationState = generate(environment, result, jetFiles, module, moduleOutputDirectory,
+            val generationState = generate(environment, result, ktFiles, module, moduleOutputDirectory,
                                            module.getModuleName())
             outputFiles.put(module, generationState.factory)
         }
@@ -173,6 +178,7 @@ object KotlinToJVMBytecodeCompiler {
             moduleVisibilityManager.addFriendPath(path)
         }
 
+        if (!checkKotlinPackageUsage(environment, environment.getSourceFiles())) return false
         val generationState = analyzeAndGenerate(environment) ?: return false
 
         val mainClass = findMainClass(generationState, environment.getSourceFiles())
@@ -358,6 +364,23 @@ object KotlinToJVMBytecodeCompiler {
                 environment.messageCollector())
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return generationState
+    }
+
+    private fun checkKotlinPackageUsage(environment: KotlinCoreEnvironment, files: Collection<KtFile>): Boolean {
+        if (environment.configuration.get(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE) == true) {
+            return true
+        }
+        val messageCollector = environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        val kotlinPackage = FqName.topLevel(Name.identifier("kotlin"))
+        files.forEach {
+            if (it.packageFqName.isSubpackageOf(kotlinPackage)) {
+                messageCollector.report(CompilerMessageSeverity.ERROR,
+                                        "Only the Kotlin standard library is allowed to use the 'kotlin' package",
+                                        MessageUtil.psiElementToMessageLocation(it.packageDirective!!))
+                return false
+            }
+        }
+        return true
     }
 
     fun KotlinCoreEnvironment.messageCollector(): MessageCollector {

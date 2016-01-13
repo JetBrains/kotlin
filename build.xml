@@ -750,6 +750,7 @@
                 <arg value="${toString:classpath.path}"/>
                 <arg value="-module-name"/>
                 <arg value="@{moduleName}"/>
+                <arg value="-Xallow-kotlin-package"/>
             </java>
 
             <javac2 srcdir="${toString:src.dirset}" destdir="@{output}" debug="true" debuglevel="lines,vars,source"

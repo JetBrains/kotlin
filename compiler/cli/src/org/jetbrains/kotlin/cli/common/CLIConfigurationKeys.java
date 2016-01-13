@@ -26,6 +26,8 @@ public class CLIConfigurationKeys {
             CompilerConfigurationKey.create("message collector");
     public static final CompilerConfigurationKey<List<CompilerPlugin>> COMPILER_PLUGINS =
             CompilerConfigurationKey.create("compiler plugins");
+    public static final CompilerConfigurationKey<Boolean> ALLOW_KOTLIN_PACKAGE =
+            CompilerConfigurationKey.create("allow kotlin package");
 
     private CLIConfigurationKeys() {
     }

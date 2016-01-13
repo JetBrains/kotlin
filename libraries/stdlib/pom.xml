@@ -40,6 +40,7 @@
                  <configuration>
                      <args>
                          <arg>-Xmultifile-facades-open</arg>
+                         <arg>-Xallow-kotlin-package</arg>
                      </args>
                  </configuration>
 

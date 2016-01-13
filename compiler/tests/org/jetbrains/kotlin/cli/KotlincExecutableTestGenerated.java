@@ -133,6 +133,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("kotlinPackage.args")
+        public void testKotlinPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/kotlinPackage.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
