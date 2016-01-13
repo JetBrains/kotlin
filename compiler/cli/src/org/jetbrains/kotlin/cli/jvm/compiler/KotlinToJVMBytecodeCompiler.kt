@@ -14,418 +14,343 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler;
+package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.intellij.util.ArrayUtil;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics;
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.cli.common.CompilerPlugin;
-import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
-import org.jetbrains.kotlin.cli.jvm.config.ModuleNameKt;
-import org.jetbrains.kotlin.codegen.*;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.ContentRootsKt;
-import org.jetbrains.kotlin.context.ModuleContext;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.idea.MainFunctionDetector;
-import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
-import org.jetbrains.kotlin.modules.JavaRootPath;
-import org.jetbrains.kotlin.modules.Module;
-import org.jetbrains.kotlin.modules.TargetId;
-import org.jetbrains.kotlin.modules.TargetIdKt;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.util.PerformanceCounter;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.KotlinPaths;
+import com.google.common.base.Joiner
+import com.google.common.collect.Collections2
+import com.google.common.collect.Lists
+import com.google.common.collect.Maps
+import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CompilerPluginContext
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.rethrow
+import java.io.File
+import java.lang.reflect.Constructor
+import java.lang.reflect.InvocationTargetException
+import java.net.URL
+import java.net.URLClassLoader
+import java.util.concurrent.TimeUnit
 
-import java.io.File;
-import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+object KotlinToJVMBytecodeCompiler {
 
-public class KotlinToJVMBytecodeCompiler {
+    private fun getAbsolutePaths(directory: File, module: Module): List<String> {
+        val result = Lists.newArrayList<String>()
 
-    private KotlinToJVMBytecodeCompiler() {
-    }
-
-    @NotNull
-    private static List<String> getAbsolutePaths(@NotNull File directory, @NotNull Module module) {
-        List<String> result = Lists.newArrayList();
-
-        for (String sourceFile : module.getSourceFiles()) {
-            File source = new File(sourceFile);
-            if (!source.isAbsolute()) {
-                source = new File(directory, sourceFile);
+        for (sourceFile in module.getSourceFiles()) {
+            var source = File(sourceFile)
+            if (!source.isAbsolute) {
+                source = File(directory, sourceFile)
             }
-            result.add(source.getAbsolutePath());
+            result.add(source.absolutePath)
         }
-        return result;
+        return result
     }
 
-    private static void writeOutput(
-            @NotNull CompilerConfiguration configuration,
-            @NotNull ClassFileFactory outputFiles,
-            @Nullable File outputDir,
-            @Nullable File jarPath,
-            boolean jarRuntime,
-            @Nullable FqName mainClass
-    ) {
+    private fun writeOutput(
+            configuration: CompilerConfiguration,
+            outputFiles: ClassFileFactory,
+            outputDir: File?,
+            jarPath: File?,
+            jarRuntime: Boolean,
+            mainClass: FqName?) {
         if (jarPath != null) {
-            CompileEnvironmentUtil.writeToJar(jarPath, jarRuntime, mainClass, outputFiles);
+            CompileEnvironmentUtil.writeToJar(jarPath, jarRuntime, mainClass, outputFiles)
         }
         else {
-            MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
-            OutputUtilsKt.writeAll(outputFiles, outputDir == null ? new File(".") : outputDir, messageCollector);
+            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+            outputFiles.writeAll(outputDir ?: File("."), messageCollector)
         }
     }
 
-    public static boolean compileModules(
-            @NotNull KotlinCoreEnvironment environment,
-            @NotNull CompilerConfiguration configuration,
-            @NotNull List<Module> chunk,
-            @NotNull File directory,
-            @Nullable File jarPath,
-            @NotNull List<String> friendPaths,
-            boolean jarRuntime
-    ) {
-        Map<Module, ClassFileFactory> outputFiles = Maps.newHashMap();
+    fun compileModules(
+            environment: KotlinCoreEnvironment,
+            configuration: CompilerConfiguration,
+            chunk: List<Module>,
+            directory: File,
+            jarPath: File?,
+            friendPaths: List<String>,
+            jarRuntime: Boolean): Boolean {
+        val outputFiles = Maps.newHashMap<Module, ClassFileFactory>()
 
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        ModuleVisibilityManager moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.getProject());
+        val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
 
-        for (Module module: chunk) {
-            moduleVisibilityManager.addModule(module);
+        for (module in chunk) {
+            moduleVisibilityManager.addModule(module)
         }
 
-        for (String path : friendPaths) {
-            moduleVisibilityManager.addFriendPath(path);
+        for (path in friendPaths) {
+            moduleVisibilityManager.addFriendPath(path)
         }
 
-        String targetDescription = "in targets [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
-            @Override
-            public String apply(@Nullable Module input) {
-                return input != null ? input.getModuleName() + "-" + input.getModuleType() : "<null>";
-            }
-        })) + "] ";
-        AnalysisResult result = analyze(environment, targetDescription);
-        if (result == null) {
-            return false;
+        val targetDescription = "in targets [" + Joiner.on(", ").join(Collections2.transform(chunk) { input -> if (input != null) input.getModuleName() + "-" + input.getModuleType() else "<null>" }) + "] "
+        val result = analyze(environment, targetDescription) ?: return false
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        result.throwIfError()
+
+        for (module in chunk) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+            val jetFiles = CompileEnvironmentUtil.getKtFiles(
+                    environment.project, getAbsolutePaths(directory, module)) { s -> throw IllegalStateException("Should have been checked before: " + s) }
+            val moduleOutputDirectory = File(module.getOutputDirectory())
+            val generationState = generate(environment, result, jetFiles, module, moduleOutputDirectory,
+                                           module.getModuleName())
+            outputFiles.put(module, generationState.factory)
         }
 
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-
-        result.throwIfError();
-
-        for (Module module : chunk) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            List<KtFile> jetFiles = CompileEnvironmentUtil.getKtFiles(
-                    environment.getProject(), getAbsolutePaths(directory, module), new Function1<String, Unit>() {
-                        @Override
-                        public Unit invoke(String s) {
-                            throw new IllegalStateException("Should have been checked before: " + s);
-                        }
-                    }
-            );
-            File moduleOutputDirectory = new File(module.getOutputDirectory());
-            GenerationState generationState =
-                    generate(environment, result, jetFiles, module, moduleOutputDirectory,
-                             module.getModuleName());
-            outputFiles.put(module, generationState.getFactory());
+        for (module in chunk) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+            writeOutput(configuration, outputFiles[module]!!, File(module.getOutputDirectory()), jarPath, jarRuntime, null)
         }
-
-        for (Module module : chunk) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            writeOutput(configuration, outputFiles.get(module), new File(module.getOutputDirectory()), jarPath, jarRuntime, null);
-        }
-        return true;
+        return true
     }
 
-    @NotNull
-    public static CompilerConfiguration createCompilerConfiguration(
-            @NotNull CompilerConfiguration base,
-            @NotNull List<Module> chunk,
-            @NotNull File directory
-    ) {
-        CompilerConfiguration configuration = base.copy();
+    fun createCompilerConfiguration(
+            base: CompilerConfiguration,
+            chunk: List<Module>,
+            directory: File): CompilerConfiguration {
+        val configuration = base.copy()
 
-        for (Module module : chunk) {
-            ContentRootsKt.addKotlinSourceRoots(configuration, getAbsolutePaths(directory, module));
+        for (module in chunk) {
+            configuration.addKotlinSourceRoots(getAbsolutePaths(directory, module))
         }
 
-        for (Module module : chunk) {
-            for (JavaRootPath javaRootPath : module.getJavaSourceRoots()) {
-                JvmContentRootsKt.addJavaSourceRoot(configuration, new File(javaRootPath.getPath()), javaRootPath.getPackagePrefix());
+        for (module in chunk) {
+            for (javaRootPath in module.getJavaSourceRoots()) {
+                configuration.addJavaSourceRoot(File(javaRootPath.path), javaRootPath.packagePrefix)
             }
         }
 
-        for (Module module : chunk) {
-            for (String classpathRoot : module.getClasspathRoots()) {
-                JvmContentRootsKt.addJvmClasspathRoot(configuration, new File(classpathRoot));
+        for (module in chunk) {
+            for (classpathRoot in module.getClasspathRoots()) {
+                configuration.addJvmClasspathRoot(File(classpathRoot))
             }
         }
 
-        for (Module module : chunk) {
-            configuration.add(JVMConfigurationKeys.MODULES, module);
+        for (module in chunk) {
+            configuration.add(JVMConfigurationKeys.MODULES, module)
         }
 
-        return configuration;
+        return configuration
     }
 
-    @Nullable
-    private static FqName findMainClass(@NotNull GenerationState generationState, @NotNull List<KtFile> files) {
-        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(generationState.getBindingContext());
-        FqName mainClass = null;
-        for (KtFile file : files) {
-            if (mainFunctionDetector.hasMain(file.getDeclarations())) {
+    private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
+        val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext)
+        var mainClass: FqName? = null
+        for (file in files) {
+            if (mainFunctionDetector.hasMain(file.declarations)) {
                 if (mainClass != null) {
                     // more than one main
-                    return null;
+                    return null
                 }
-                FqName fqName = file.getPackageFqName();
-                mainClass = JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName();
+                val fqName = file.packageFqName
+                mainClass = JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
             }
         }
-        return mainClass;
+        return mainClass
     }
 
-    public static boolean compileBunchOfSources(
-            @NotNull KotlinCoreEnvironment environment,
-            @Nullable File jar,
-            @Nullable File outputDir,
-            @NotNull List<String> friendPaths,
-            boolean includeRuntime
-    ) {
+    fun compileBunchOfSources(
+            environment: KotlinCoreEnvironment,
+            jar: File?,
+            outputDir: File?,
+            friendPaths: List<String>,
+            includeRuntime: Boolean): Boolean {
 
-        ModuleVisibilityManager moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.getProject());
+        val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
 
-        for (String path : friendPaths) {
-            moduleVisibilityManager.addFriendPath(path);
+        for (path in friendPaths) {
+            moduleVisibilityManager.addFriendPath(path)
         }
 
-        GenerationState generationState = analyzeAndGenerate(environment);
-        if (generationState == null) {
-            return false;
-        }
+        val generationState = analyzeAndGenerate(environment) ?: return false
 
-        FqName mainClass = findMainClass(generationState, environment.getSourceFiles());
+        val mainClass = findMainClass(generationState, environment.getSourceFiles())
 
         try {
-            writeOutput(environment.getConfiguration(), generationState.getFactory(), outputDir, jar, includeRuntime, mainClass);
-            return true;
+            writeOutput(environment.configuration, generationState.factory, outputDir, jar, includeRuntime, mainClass)
+            return true
         }
         finally {
-            generationState.destroy();
+            generationState.destroy()
         }
     }
 
-    public static void compileAndExecuteScript(
-            @NotNull CompilerConfiguration configuration,
-            @NotNull KotlinPaths paths,
-            @NotNull KotlinCoreEnvironment environment,
-            @NotNull List<String> scriptArgs
-    ) {
-        Class<?> scriptClass = compileScript(configuration, paths, environment);
-        if (scriptClass == null) return;
-        Constructor<?> scriptConstructor = getScriptConstructor(scriptClass);
+    fun compileAndExecuteScript(
+            configuration: CompilerConfiguration,
+            paths: KotlinPaths,
+            environment: KotlinCoreEnvironment,
+            scriptArgs: List<String>) {
+        val scriptClass = compileScript(configuration, paths, environment) ?: return
+        val scriptConstructor = getScriptConstructor(scriptClass)
 
         try {
-            scriptConstructor.newInstance(new Object[] {ArrayUtil.toStringArray(scriptArgs)});
+            scriptConstructor.newInstance(*arrayOf<Any>(ArrayUtil.toStringArray(scriptArgs)))
         }
-        catch (Throwable e) {
-            reportExceptionFromScript(e);
+        catch (e: Throwable) {
+            reportExceptionFromScript(e)
         }
+
     }
 
-    private static void reportExceptionFromScript(@NotNull  Throwable exception) {
+    private fun reportExceptionFromScript(exception: Throwable) {
         // expecting InvocationTargetException from constructor invocation with cause that describes the actual cause
-        PrintStream stream = System.err;
-        Throwable cause = exception.getCause();
-        if (!(exception instanceof InvocationTargetException) || cause == null) {
-            exception.printStackTrace(stream);
-            return;
+        val stream = System.err
+        val cause = exception.cause
+        if (exception !is InvocationTargetException || cause == null) {
+            exception.printStackTrace(stream)
+            return
         }
-        stream.println(cause);
-        StackTraceElement[] fullTrace = cause.getStackTrace();
-        int relevantEntries = fullTrace.length - exception.getStackTrace().length;
-        for (int i = 0; i < relevantEntries; i++) {
-            stream.println("\tat " + fullTrace[i]);
-        }
-    }
-
-    @NotNull
-    private static Constructor<?> getScriptConstructor(Class<?> scriptClass) {
-        try {
-            return scriptClass.getConstructor(String[].class);
-        }
-        catch (NoSuchMethodException e) {
-            throw ExceptionUtilsKt.rethrow(e);
+        stream.println(cause)
+        val fullTrace = cause.getStackTrace()
+        val relevantEntries = fullTrace.size - exception.getStackTrace().size
+        for (i in 0..relevantEntries - 1) {
+            stream.println("\tat " + fullTrace[i])
         }
     }
 
-    @Nullable
-    public static Class<?> compileScript(
-            @NotNull CompilerConfiguration configuration,
-            @NotNull KotlinPaths paths,
-            @NotNull KotlinCoreEnvironment environment
-    ) {
-        GenerationState state = analyzeAndGenerate(environment);
-        if (state == null) {
-            return null;
+    private fun getScriptConstructor(scriptClass: Class<*>): Constructor<*> {
+        try {
+            return scriptClass.getConstructor(Array<String>::class.java)
+        }
+        catch (e: NoSuchMethodException) {
+            throw rethrow(e)
         }
 
-        GeneratedClassLoader classLoader;
+    }
+
+    fun compileScript(
+            configuration: CompilerConfiguration,
+            paths: KotlinPaths,
+            environment: KotlinCoreEnvironment): Class<*>? {
+        val state = analyzeAndGenerate(environment) ?: return null
+
+        val classLoader: GeneratedClassLoader
         try {
-            List<URL> classPaths = Lists.newArrayList(paths.getRuntimePath().toURI().toURL());
-            for (File file : JvmContentRootsKt.getJvmClasspathRoots(configuration)) {
-                classPaths.add(file.toURI().toURL());
+            val classPaths = Lists.newArrayList(paths.runtimePath.toURI().toURL())
+            for (file in configuration.jvmClasspathRoots) {
+                classPaths.add(file.toURI().toURL())
             }
             //noinspection UnnecessaryFullyQualifiedName
-            classLoader = new GeneratedClassLoader(state.getFactory(),
-                                                   new URLClassLoader(classPaths.toArray(new URL[classPaths.size()]), null)
-            );
+            classLoader = GeneratedClassLoader(state.factory,
+                                               URLClassLoader(classPaths.toArray<URL>(arrayOfNulls<URL>(classPaths.size)), null))
 
-            KtScript script = environment.getSourceFiles().get(0).getScript();
-            assert script != null : "Script must be parsed";
-            FqName nameForScript = script.getFqName();
-            return classLoader.loadClass(nameForScript.asString());
+            val script = environment.getSourceFiles()[0].script
+            assert(script != null) { "Script must be parsed" }
+            val nameForScript = script!!.fqName
+            return classLoader.loadClass(nameForScript.asString())
         }
-        catch (Exception e) {
-            throw new RuntimeException("Failed to evaluate script: " + e, e);
+        catch (e: Exception) {
+            throw RuntimeException("Failed to evaluate script: " + e, e)
         }
+
     }
 
-    @Nullable
-    public static GenerationState analyzeAndGenerate(@NotNull KotlinCoreEnvironment environment) {
-        AnalysisResult result = analyze(environment, null);
+    fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
+        val result = analyze(environment, null) ?: return null
 
-        if (result == null) {
-            return null;
-        }
+        if (!result.shouldGenerateCode) return null
 
-        if (!result.getShouldGenerateCode()) return null;
+        result.throwIfError()
 
-        result.throwIfError();
-
-        return generate(environment, result, environment.getSourceFiles(), null, null, null);
+        return generate(environment, result, environment.getSourceFiles(), null, null, null)
     }
 
-    @Nullable
-    private static AnalysisResult analyze(@NotNull final KotlinCoreEnvironment environment, @Nullable String targetDescription) {
-        MessageCollector collector = environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        assert collector != null;
+    private fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
+        val collector = environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
 
-        long analysisStart = PerformanceCounter.Companion.currentTime();
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(collector);
+        val analysisStart = PerformanceCounter.currentTime()
+        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
         analyzerWithCompilerReport.analyzeAndReport(
-                environment.getSourceFiles(), new Function0<AnalysisResult>() {
-                    @NotNull
-                    @Override
-                    public AnalysisResult invoke() {
-                        BindingTrace sharedTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-                        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
-                                                                                                                ModuleNameKt
-                                                                                                                        .getModuleName(environment));
+                environment.getSourceFiles(), {
+            val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+            val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project,
+                                                                                          environment.getModuleName())
 
-                        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                                moduleContext,
-                                environment.getSourceFiles(),
-                                sharedTrace,
-                                environment.getConfiguration().get(JVMConfigurationKeys.MODULES),
-                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-                                new JvmPackagePartProvider(environment)
-                        );
-                    }
-                }
-        );
-        long analysisNanos = PerformanceCounter.Companion.currentTime() - analysisStart;
-        String message = "ANALYZE: " + environment.getSourceFiles().size() + " files (" +
-                         environment.getSourceLinesOfCode() + " lines) " +
-                         (targetDescription != null ? targetDescription : "") +
-                         "in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms";
-        K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                    moduleContext,
+                    environment.getSourceFiles(),
+                    sharedTrace,
+                    environment.configuration.get(JVMConfigurationKeys.MODULES),
+                    environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+                    JvmPackagePartProvider(environment))
+        })
+        val analysisNanos = PerformanceCounter.currentTime() - analysisStart
+        val message = "ANALYZE: " + environment.getSourceFiles().size + " files (" +
+                      environment.sourceLinesOfCode + " lines) " +
+                      (targetDescription ?: "") +
+                      "in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms"
+        K2JVMCompiler.reportPerf(environment.configuration, message)
 
-        AnalysisResult result = analyzerWithCompilerReport.getAnalysisResult();
-        assert result != null : "AnalysisResult should be non-null, compiling: " + environment.getSourceFiles();
+        val result = analyzerWithCompilerReport.getAnalysisResult()
+        assert(result != null) { "AnalysisResult should be non-null, compiling: " + environment.getSourceFiles() }
 
-        CompilerPluginContext context = new CompilerPluginContext(environment.getProject(), result.getBindingContext(),
-                                                                  environment.getSourceFiles());
-        for (CompilerPlugin plugin : environment.getConfiguration().getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
-            plugin.processFiles(context);
+        val context = CompilerPluginContext(environment.project, result!!.bindingContext,
+                                            environment.getSourceFiles())
+        for (plugin in environment.configuration.getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
+            plugin.processFiles(context)
         }
 
-        return analyzerWithCompilerReport.hasErrors() ? null : result;
+        return if (analyzerWithCompilerReport.hasErrors()) null else result
     }
 
-    @NotNull
-    private static GenerationState generate(
-            @NotNull KotlinCoreEnvironment environment,
-            @NotNull AnalysisResult result,
-            @NotNull List<KtFile> sourceFiles,
-            @Nullable Module module,
-            File outputDirectory,
-            String moduleName
-    ) {
-        CompilerConfiguration configuration = environment.getConfiguration();
-        IncrementalCompilationComponents incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
+    private fun generate(
+            environment: KotlinCoreEnvironment,
+            result: AnalysisResult,
+            sourceFiles: List<KtFile>,
+            module: Module?,
+            outputDirectory: File?,
+            moduleName: String?): GenerationState {
+        val configuration = environment.configuration
+        val incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
 
-        Collection<FqName> packagesWithObsoleteParts;
-        List<FqName> obsoleteMultifileClasses;
-        TargetId targetId = null;
+        val packagesWithObsoleteParts = hashSetOf<FqName>()
+        val obsoleteMultifileClasses = arrayListOf<FqName>()
+        var targetId: TargetId? = null
 
-        if (module == null || incrementalCompilationComponents == null) {
-            packagesWithObsoleteParts = Collections.emptySet();
-            obsoleteMultifileClasses = Collections.emptyList();
-        }
-        else {
-            targetId = TargetIdKt.TargetId(module);
-            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId);
+        if (module != null && incrementalCompilationComponents != null) {
+            targetId = TargetId(module)
+            val incrementalCache = incrementalCompilationComponents.getIncrementalCache(targetId)
 
-            packagesWithObsoleteParts = new HashSet<FqName>();
-            for (String internalName : incrementalCache.getObsoletePackageParts()) {
-                packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).getPackageFqName());
+            for (internalName in incrementalCache.getObsoletePackageParts()) {
+                packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).packageFqName)
             }
 
-            obsoleteMultifileClasses = new ArrayList<FqName>();
-            for (String obsoleteFacadeInternalName : incrementalCache.getObsoleteMultifileClasses()) {
-                obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).getFqNameForClassNameWithoutDollars());
+            for (obsoleteFacadeInternalName in incrementalCache.getObsoleteMultifileClasses()) {
+                obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).fqNameForClassNameWithoutDollars)
             }
         }
-        GenerationState generationState = new GenerationState(
-                environment.getProject(),
+        val generationState = GenerationState(
+                environment.project,
                 ClassBuilderFactories.BINARIES,
-                result.getModuleDescriptor(),
-                result.getBindingContext(),
+                result.moduleDescriptor,
+                result.bindingContext,
                 sourceFiles,
                 configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
@@ -439,29 +364,26 @@ public class KotlinToJVMBytecodeCompiler {
                 moduleName,
                 outputDirectory,
                 incrementalCompilationComponents,
-                configuration.get(JVMConfigurationKeys.MULTIFILE_FACADES_OPEN, false)
-        );
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+                configuration.get(JVMConfigurationKeys.MULTIFILE_FACADES_OPEN, false))
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        long generationStart = PerformanceCounter.Companion.currentTime();
+        val generationStart = PerformanceCounter.currentTime()
 
-        KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
+        KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
-        long generationNanos = PerformanceCounter.Companion.currentTime() - generationStart;
-        String desc = module != null ? "target " + module.getModuleName() + "-" + module.getModuleType() + " " : "";
-        String message = "GENERATE: " + sourceFiles.size() + " files (" +
-                         environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
-        K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+        val generationNanos = PerformanceCounter.currentTime() - generationStart
+        val desc = if (module != null) "target " + module.getModuleName() + "-" + module.getModuleType() + " " else ""
+        val message = "GENERATE: " + sourceFiles.size + " files (" +
+                      environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms"
+        K2JVMCompiler.reportPerf(environment.configuration, message)
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         AnalyzerWithCompilerReport.reportDiagnostics(
-                new FilteredJvmDiagnostics(
-                        generationState.getCollectedExtraJvmDiagnostics(),
-                        result.getBindingContext().getDiagnostics()
-                ),
-                environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        );
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-        return generationState;
+                FilteredJvmDiagnostics(
+                        generationState.collectedExtraJvmDiagnostics,
+                        result.bindingContext.diagnostics),
+                environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!)
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+        return generationState
     }
 }
