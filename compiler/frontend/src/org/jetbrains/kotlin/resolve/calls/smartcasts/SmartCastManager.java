@@ -73,12 +73,12 @@ public class SmartCastManager {
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        final List<KotlinType> variants = getSmartCastVariants(receiverToCast, bindingContext,
-                                                               containingDeclarationOrModule, dataFlowInfo);
+        final List<KotlinType> variants = CollectionsKt.distinct(
+                getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo));
         return CollectionsKt.filter(variants, new Function1<KotlinType, Boolean>() {
             @Override
             public Boolean invoke(final KotlinType type) {
-                return !CollectionsKt.any(variants, new Function1<KotlinType, Boolean>() {
+                return CollectionsKt.none(variants, new Function1<KotlinType, Boolean>() {
                     @Override
                     public Boolean invoke(KotlinType another) {
                         return another != type && KotlinTypeChecker.DEFAULT.isSubtypeOf(another, type);
