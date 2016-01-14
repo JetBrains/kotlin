@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -62,4 +60,11 @@ fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
         return null
 
     return constant.value
+}
+
+private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.internal.InlineOnly")
+
+fun MemberDescriptor.isInlineOnly(): Boolean {
+    if (this !is FunctionDescriptor) return false
+    return typeParameters.any { it.isReified } || annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
 }
