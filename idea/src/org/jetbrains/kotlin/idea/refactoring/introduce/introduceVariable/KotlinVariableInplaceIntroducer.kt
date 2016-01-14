@@ -155,6 +155,12 @@ class KotlinVariableInplaceIntroducer(
                 it.replace(replacement)
             }
         }
-        postProcess(addedVariable)
+    }
+
+    override fun moveOffsetAfter(success: Boolean) {
+        super.moveOffsetAfter(success)
+        if (success) {
+            postProcess(addedVariable)
+        }
     }
 }
