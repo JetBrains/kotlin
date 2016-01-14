@@ -692,17 +692,17 @@ public class JetTypeMapper {
             @NotNull TypeMappingMode mode
     ) {
         Variance projectionKind = projection.getProjectionKind();
-
-        if (mode.getSkipDeclarationSiteWildcards() && projectionKind == Variance.INVARIANT) {
-            return Variance.INVARIANT;
-        }
-
         Variance parameterVariance = parameter.getVariance();
+
         if (parameterVariance == Variance.INVARIANT) {
             return projectionKind;
         }
 
-        if (projectionKind == Variance.INVARIANT) {
+        if (mode.getSkipDeclarationSiteWildcards()) {
+            return Variance.INVARIANT;
+        }
+
+        if (projectionKind == Variance.INVARIANT || projectionKind == parameterVariance) {
             if (mode.getSkipDeclarationSiteWildcardsIfPossible() && !projection.isStarProjection()) {
                 if (parameterVariance == Variance.OUT_VARIANCE && TypeMappingUtil.isMostPreciseCovariantArgument(projection.getType())){
                     return Variance.INVARIANT;
@@ -713,9 +713,6 @@ public class JetTypeMapper {
                     return Variance.INVARIANT;
                 }
             }
-            return parameterVariance;
-        }
-        if (parameterVariance == projectionKind) {
             return parameterVariance;
         }
 

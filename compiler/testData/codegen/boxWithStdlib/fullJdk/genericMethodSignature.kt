@@ -28,8 +28,8 @@ fun box(): String {
             Params(1, javaClass<Any>(), "T", "T"),
             Params(2, javaClass<Z<*>>(), "Z<T>", "Z<T>"),
             Params(3, javaClass<Z<*>>(), "Z<java.lang.String>", "Z<java.lang.String>"),
-            Params(4, javaClass<Any>(), "Zout<? extends java.lang.String>", "X"),
-            Params(5, javaClass<Any>(), "Zin<? super TParam>", "Y")
+            Params(4, javaClass<Any>(), "Zout<java.lang.String>", "X"),
+            Params(5, javaClass<Any>(), "Zin<TParam>", "Y")
     )
 
 

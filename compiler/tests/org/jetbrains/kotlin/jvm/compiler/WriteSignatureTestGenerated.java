@@ -355,6 +355,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             doTest(fileName);
         }
 
+        @TestMetadata("RedundantProjections.kt")
+        public void testRedundantProjections() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/RedundantProjections.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SuperClassWithVariance.kt")
         public void testSuperClassWithVariance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperClassWithVariance.kt");
