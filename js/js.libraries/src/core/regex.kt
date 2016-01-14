@@ -120,7 +120,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
             val foundMatch = match!!
             sb.append(input, lastStart, foundMatch.range.start)
             sb.append(transform(foundMatch))
-            lastStart = foundMatch.range.end + 1
+            lastStart = foundMatch.range.endInclusive + 1
             match = foundMatch.next()
         } while (lastStart < length && match != null)
 
@@ -154,7 +154,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
 
         for (match in matches) {
             result.add(input.subSequence(lastStart, match.range.start).toString())
-            lastStart = match.range.end + 1
+            lastStart = match.range.endInclusive + 1
         }
         result.add(input.subSequence(lastStart, input.length()).toString())
         return result
@@ -223,7 +223,7 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
                 return groupValues_!!
             }
 
-        override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.end + 1)
+        override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.endInclusive + 1)
     }
 }
 

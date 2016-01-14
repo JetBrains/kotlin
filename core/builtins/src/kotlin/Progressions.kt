@@ -24,13 +24,12 @@ import kotlin.internal.getProgressionLastElement
  * A progression of values of type `Char`.
  */
 public open class CharProgression
-    @Deprecated("This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", ReplaceWith("CharProgression.fromClosedRange(start, endInclusive, step)"))
-    public constructor
+    internal constructor
     (
             start: Char,
             endInclusive: Char,
             step: Int
-    ) : Progression<Char> /*, Iterable<Char> */ {
+    ) : Iterable<Char> {
     init {
         if (step == 0) throw IllegalArgumentException("Step must be non-zero")
     }
@@ -49,19 +48,6 @@ public open class CharProgression
      * The step of the progression.
      */
     public val step: Int = step
-
-    @Deprecated("Use 'first' property instead.", ReplaceWith("first"))
-    public override val start: Char get() = first
-
-    /**
-     * The end value of the progression (inclusive).
-     */
-    @Deprecated("Use 'last' property instead.")
-    public override val end: Char = endInclusive
-
-    @Deprecated("Use 'step' property instead.", ReplaceWith("step"))
-    public override val increment: Int get() = step
-
 
     override fun iterator(): CharIterator = CharProgressionIterator(first, last, step)
 
@@ -92,13 +78,12 @@ public open class CharProgression
  * A progression of values of type `Int`.
  */
 public open class IntProgression
-    @Deprecated("This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", ReplaceWith("IntProgression.fromClosedRange(start, endInclusive, step)"))
-    public constructor
+    internal constructor
     (
             start: Int,
             endInclusive: Int,
             step: Int
-    ) : Progression<Int> /*, Iterable<Int> */ {
+    ) : Iterable<Int> {
     init {
         if (step == 0) throw IllegalArgumentException("Step must be non-zero")
     }
@@ -117,19 +102,6 @@ public open class IntProgression
      * The step of the progression.
      */
     public val step: Int = step
-
-    @Deprecated("Use 'first' property instead.", ReplaceWith("first"))
-    public override val start: Int get() = first
-
-    /**
-     * The end value of the progression (inclusive).
-     */
-    @Deprecated("Use 'last' property instead.")
-    public override val end: Int = endInclusive
-
-    @Deprecated("Use 'step' property instead.", ReplaceWith("step"))
-    public override val increment: Int get() = step
-
 
     override fun iterator(): IntIterator = IntProgressionIterator(first, last, step)
 
@@ -160,13 +132,12 @@ public open class IntProgression
  * A progression of values of type `Long`.
  */
 public open class LongProgression
-    @Deprecated("This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", ReplaceWith("LongProgression.fromClosedRange(start, endInclusive, step)"))
-    public constructor
+    internal constructor
     (
             start: Long,
             endInclusive: Long,
             step: Long
-    ) : Progression<Long> /*, Iterable<Long> */ {
+    ) : Iterable<Long> {
     init {
         if (step == 0L) throw IllegalArgumentException("Step must be non-zero")
     }
@@ -185,19 +156,6 @@ public open class LongProgression
      * The step of the progression.
      */
     public val step: Long = step
-
-    @Deprecated("Use 'first' property instead.", ReplaceWith("first"))
-    public override val start: Long get() = first
-
-    /**
-     * The end value of the progression (inclusive).
-     */
-    @Deprecated("Use 'last' property instead.")
-    public override val end: Long = endInclusive
-
-    @Deprecated("Use 'step' property instead.", ReplaceWith("step"))
-    public override val increment: Long get() = step
-
 
     override fun iterator(): LongIterator = LongProgressionIterator(first, last, step)
 

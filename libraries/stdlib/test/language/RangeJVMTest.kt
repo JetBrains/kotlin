@@ -1,6 +1,7 @@
 @file: Suppress("DEPRECATION_ERROR")
 package language
 
+import kotlin.ranges.LongProgression.Companion
 import java.lang.Double as jDouble
 import java.lang.Float as jFloat
 import org.junit.Test as test
@@ -26,9 +27,9 @@ public class RangeJVMTest {
     @test fun illegalProgressionCreation() {
         fun assertFailsWithIllegalArgument(f: () -> Unit) = assertFailsWith(IllegalArgumentException::class, block = f)
         // create Progression explicitly with increment = 0
-        assertFailsWithIllegalArgument { IntProgression(0, 5, 0) }
-        assertFailsWithIllegalArgument { LongProgression(0, 5, 0) }
-        assertFailsWithIllegalArgument { CharProgression('a', 'z', 0) }
+        assertFailsWithIllegalArgument { IntProgression.fromClosedRange(0, 5, 0) }
+        assertFailsWithIllegalArgument { LongProgression.fromClosedRange(0, 5, 0) }
+        assertFailsWithIllegalArgument { CharProgression.fromClosedRange('a', 'z', 0) }
 
 
         assertFailsWithIllegalArgument { 0..5 step 0 }

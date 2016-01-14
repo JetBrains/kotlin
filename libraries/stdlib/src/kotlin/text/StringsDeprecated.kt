@@ -223,6 +223,7 @@ public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: Str
 public fun String.replaceRange(range: IntRange, replacement: String): String
         = replaceRange(range.start, range.end + 1, replacement)
 
+private val IntRange.end: Int get() = endInclusive
 
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.removePrefix(prefix: String): String = removePrefix(prefix)

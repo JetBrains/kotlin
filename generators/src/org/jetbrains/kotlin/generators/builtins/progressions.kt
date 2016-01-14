@@ -52,13 +52,12 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
  * A progression of values of type `$t`.
  */
 public open class $progression
-    @Deprecated("This constructor will become private soon. Use $progression.fromClosedRange() instead.", ReplaceWith("$progression.fromClosedRange(start, endInclusive, step)"))
-    public constructor
+    internal constructor
     (
             start: $t,
             endInclusive: $t,
             step: $incrementType
-    ) : Progression<$t> /*, Iterable<$t> */ {
+    ) : Iterable<$t> {
     init {
         $checkZero
     }
@@ -77,19 +76,6 @@ public open class $progression
      * The step of the progression.
      */
     public val step: $incrementType = step
-
-    @Deprecated("Use 'first' property instead.", ReplaceWith("first"))
-    public override val start: $t get() = first
-
-    /**
-     * The end value of the progression (inclusive).
-     */
-    @Deprecated("Use 'last' property instead.")
-    public override val end: $t = endInclusive
-
-    @Deprecated("Use 'step' property instead.", ReplaceWith("step"))
-    public override val increment: $incrementType get() = step
-
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(first, last, step)
 

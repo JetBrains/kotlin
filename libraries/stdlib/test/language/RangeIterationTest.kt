@@ -31,12 +31,6 @@ public open class RangeIterationTestBase {
                 last = sequence.last
                 increment = sequence.step
             }
-            // TODO: Drop this branch
-            is Progression -> {
-                first = sequence.start
-                last = sequence.end
-                increment = sequence.increment
-            }
             else -> throw IllegalArgumentException("Unsupported sequence type: $sequence")
         }
 

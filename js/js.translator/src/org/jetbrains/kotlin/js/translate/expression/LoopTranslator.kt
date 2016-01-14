@@ -183,9 +183,9 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
         fun getProperty(funName: String): JsExpression = JsNameRef(funName, rangeExpression.reference())
 
-        val start = context.declareTemporary(getProperty("start"))
-        val end = context.declareTemporary(getProperty("end"))
-        val increment = context.declareTemporary(getProperty("increment"))
+        val start = context.declareTemporary(getProperty("first"))
+        val end = context.declareTemporary(getProperty("last"))
+        val increment = context.declareTemporary(getProperty("step"))
 
         val body = translateBody(null)
         val initExpression = newVar(parameterName, start.reference())

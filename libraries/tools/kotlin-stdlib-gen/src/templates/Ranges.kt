@@ -13,15 +13,10 @@ fun ranges(): List<GenericFunction> {
     fun <T> Collection<T>.permutations(): List<Pair<T, T>> = flatMap { a -> map { b -> a to b } }
 
     templates add f("reversed()") {
-        only(RangesOfPrimitives, ProgressionsOfPrimitives)
+        only(ProgressionsOfPrimitives)
         only(rangePrimitives)
         doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range in the opposite direction with the same step." }
-        doc(RangesOfPrimitives) { "Returns a progression that goes over this range in reverse direction." }
         returns("TProgression")
-        deprecate(RangesOfPrimitives) { forBinaryCompatibility }
-        body(RangesOfPrimitives) {
-            "return TProgression.fromClosedRange(last, first, -ONE)"
-        }
         body(ProgressionsOfPrimitives) {
             "return TProgression.fromClosedRange(last, first, -step)"
         }
@@ -30,18 +25,10 @@ fun ranges(): List<GenericFunction> {
     templates add f("step(step: SUM)") {
         infix(true)
 
-        only(RangesOfPrimitives, ProgressionsOfPrimitives)
+        only(ProgressionsOfPrimitives)
         only(rangePrimitives)
         doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range with the given step." }
-        doc(RangesOfPrimitives) { "Returns a progression that goes over this range with given step." }
         returns("TProgression")
-        deprecate(RangesOfPrimitives) { forBinaryCompatibility }
-        body(RangesOfPrimitives) {
-            """
-            checkStepIsPositive(step > 0, step)
-            return TProgression.fromClosedRange(first, last, step)
-            """
-        }
         body(ProgressionsOfPrimitives) {
             """
             checkStepIsPositive(step > 0, step)

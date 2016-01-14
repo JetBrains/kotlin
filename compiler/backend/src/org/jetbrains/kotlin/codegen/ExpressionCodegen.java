@@ -1065,7 +1065,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Type asmLoopRangeType = asmType(loopRangeType);
 
             Collection<PropertyDescriptor> incrementProp =
-                    loopRangeType.getMemberScope().getContributedVariables(Name.identifier("increment"), NoLookupLocation.FROM_BACKEND);
+                    loopRangeType.getMemberScope().getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND);
             assert incrementProp.size() == 1 : loopRangeType + " " + incrementProp.size();
             incrementType = asmType(incrementProp.iterator().next().getType());
 

@@ -39,33 +39,30 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             val hashCode = when (kind) {
                 CHAR -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * start.toInt() + endInclusive.toInt())"
+                "        if (isEmpty()) -1 else (31 * first.toInt() + last.toInt())"
                 INT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * start + endInclusive)"
+                "        if (isEmpty()) -1 else (31 * first + last)"
                 LONG -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * ${hashLong("start")} + ${hashLong("endInclusive")}).toInt()"
+                "        if (isEmpty()) -1 else (31 * ${hashLong("first")} + ${hashLong("last")}).toInt()"
             }
 
-            val toString = "\"\$start..\$endInclusive\""
+            val toString = "\"\$first..\$last\""
 
             out.println(
 """/**
  * A range of values of type `$t`.
  */
 public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t> {
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    override val end: $t get() = endInclusive
-
     override val start: $t get() = first
     override val endInclusive: $t get() = last
 
-    override fun contains(value: $t): Boolean = start <= value && value <= endInclusive
+    override fun contains(value: $t): Boolean = first <= value && value <= last
 
-    override fun isEmpty(): Boolean = start > endInclusive
+    override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
         other is $range && (isEmpty() && other.isEmpty() ||
-        ${compare("start")} && ${compare("endInclusive")})
+        ${compare("first")} && ${compare("last")})
 
     override fun hashCode(): Int $hashCode
 

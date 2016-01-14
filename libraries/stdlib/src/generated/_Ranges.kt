@@ -411,30 +411,6 @@ public fun LongProgression.reversed(): LongProgression {
 }
 
 /**
- * Returns a progression that goes over this range in reverse direction.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun CharRange.reversed(): CharProgression {
-    return CharProgression.fromClosedRange(last, first, -1)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun IntRange.reversed(): IntProgression {
-    return IntProgression.fromClosedRange(last, first, -1)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun LongRange.reversed(): LongProgression {
-    return LongProgression.fromClosedRange(last, first, -1L)
-}
-
-/**
  * Returns a progression that goes over the same range with the given step.
  */
 public infix fun CharProgression.step(step: Int): CharProgression {
@@ -456,33 +432,6 @@ public infix fun IntProgression.step(step: Int): IntProgression {
 public infix fun LongProgression.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
     return LongProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public infix fun CharRange.step(step: Int): CharProgression {
-    checkStepIsPositive(step > 0, step)
-    return CharProgression.fromClosedRange(first, last, step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public infix fun IntRange.step(step: Int): IntProgression {
-    checkStepIsPositive(step > 0, step)
-    return IntProgression.fromClosedRange(first, last, step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public infix fun LongRange.step(step: Long): LongProgression {
-    checkStepIsPositive(step > 0, step)
-    return LongProgression.fromClosedRange(first, last, step)
 }
 
 /**

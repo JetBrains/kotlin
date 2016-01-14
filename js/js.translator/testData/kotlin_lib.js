@@ -859,18 +859,12 @@
             return [Kotlin.modules['builtins'].kotlin.collections.Iterable];
         },
         function (start, end, step) {
-            this.start = start;
-            this.endInclusive = end;
             this.first = start;
             this.last = getProgressionFinalElement(start, end, step);
             this.step = step;
-            this.increment = step;
             if (this.step === 0)
                 throw new Kotlin.IllegalArgumentException('Step must be non-zero');
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             iterator: function () {
                 return new Kotlin.RangeIterator(this.first, this.last, this.step);
             },
@@ -895,9 +889,6 @@
             this.start = start;
             this.endInclusive = endInclusive;
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             contains_htax2k$: function (item) {
                 return this.start <= item && item <= this.endInclusive;
             },
@@ -947,18 +938,12 @@
             return [Kotlin.modules['builtins'].kotlin.collections.Iterable];
         },
         function (start, end, step) {
-            this.start = start;
-            this.endInclusive = end;
             this.first = start;
             this.last = getProgressionFinalElementLong(start, end, step);
             this.step = step;
-            this.increment = step;
             if (this.step.isZero())
                 throw new Kotlin.IllegalArgumentException('Step must be non-zero');
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             iterator: function () {
                 return new Kotlin.LongRangeIterator(this.first, this.last, this.step);
             },
@@ -983,9 +968,6 @@
             this.start = start;
             this.endInclusive = endInclusive;
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             contains_htax2k$: function (item) {
                 return this.start.compareTo_za3rmp$(item) <= 0 && item.compareTo_za3rmp$(this.endInclusive) <= 0;
             },
@@ -1026,20 +1008,14 @@
             return [Kotlin.modules['builtins'].kotlin.collections.Iterable];
         },
         function (start, end, step) {
-            this.start = start;
-            this.endInclusive = end;
             this.first = start;
             this.startCode = start.charCodeAt(0);
             this.endCode = getProgressionFinalElement(this.startCode, end.charCodeAt(0), step);
             this.last = String.fromCharCode(this.endCode);
             this.step = step;
-            this.increment = step;
-            if (this.increment === 0)
+            if (this.step === 0)
                 throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             iterator: function () {
                 return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.step);
             },
@@ -1065,9 +1041,6 @@
             this.start = start;
             this.endInclusive = endInclusive;
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             contains_htax2k$: function (item) {
                 return this.start <= item && item <= this.endInclusive;
             },

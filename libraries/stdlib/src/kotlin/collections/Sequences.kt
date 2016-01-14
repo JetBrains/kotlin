@@ -28,14 +28,6 @@ public fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSeque
 public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpty()) emptySequence() else elements.asSequence()
 
 /**
- * Creates a sequence that returns all values in the specified [progression].
- */
-@Deprecated("Use progression.asSequence() instead.", ReplaceWith("progression.asSequence()"))
-public fun <T : Any> sequenceOf(progression: Progression<T>): Sequence<T> = object : Sequence<T> {
-    override fun iterator(): Iterator<T> = progression.iterator()
-}
-
-/**
  * Returns an empty sequence.
  */
 public fun <T> emptySequence(): Sequence<T> = EmptySequence
