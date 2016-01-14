@@ -7573,33 +7573,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/replaceSubstringWithDrop")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceSubstringWithDrop extends AbstractIntentionTest {
-        public void testAllFilesPresentInReplaceSubstringWithDrop() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithDrop"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-        }
-
-        @TestMetadata("replaceWithDrop.kt")
-        public void testReplaceWithDrop() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDrop/replaceWithDrop.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("semicolon.kt")
-        public void testSemicolon() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDrop/semicolon.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("substringWithTwoArguments.kt")
-        public void testSubstringWithTwoArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDrop/substringWithTwoArguments.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/replaceSubstringWithDropLast")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7611,6 +7584,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("immutableProperty.kt")
         public void testImmutableProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDropLast/immutableProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodCallReceiver.kt")
+        public void testMethodCallReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDropLast/methodCallReceiver.kt");
             doTest(fileName);
         }
 
@@ -7647,6 +7626,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("methodCallReceiver.kt")
+        public void testMethodCallReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringAfter/methodCallReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("replaceWithSubstringAfter.kt")
         public void testReplaceWithSubstringAfter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringAfter/replaceWithSubstringAfter.kt");
@@ -7671,6 +7656,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("immutableProperty.kt")
         public void testImmutableProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringBefore/immutableProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodCallReceiver.kt")
+        public void testMethodCallReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringBefore/methodCallReceiver.kt");
             doTest(fileName);
         }
 

@@ -25,17 +25,14 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 class ReplaceSubstringWithTakeIntention : ReplaceSubstringIntention("Replace 'substring' call with 'take' call") {
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {
         val arguments = element.callExpression?.valueArguments ?: return null
-        if (arguments.count() == 2 && element.isFirstArgumentZero()) {
+        if (arguments.size == 2 && element.isFirstArgumentZero()) {
             return getTextRange(element)
         }
         return null
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
-        val receiver = element.receiverExpression
         val argument = element.callExpression!!.valueArguments[1].getArgumentExpression()!!
-
-        val psiFactory = KtPsiFactory(element)
-        element.replace(psiFactory.createExpressionByPattern("$0.take($1)", receiver, argument))
+        element.replaceWith("$0.take($1)", argument)
     }
 }

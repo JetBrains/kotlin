@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 class ReplaceSubstringWithDropLastIntention : ReplaceSubstringIntention("Replace 'substring' call with 'dropLast' call") {
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {
         val arguments = element.callExpression?.valueArguments ?: return null
-        if (arguments.count() != 2 || !element.isFirstArgumentZero()) return null
+        if (arguments.size != 2 || !element.isFirstArgumentZero()) return null
 
         val secondArgumentExpression = arguments[1].getArgumentExpression()
 
@@ -39,12 +39,10 @@ class ReplaceSubstringWithDropLastIntention : ReplaceSubstringIntention("Replace
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
-        val receiver = element.receiverExpression
         val argument = element.callExpression!!.valueArguments[1].getArgumentExpression()!!
         val rightExpression = (argument as KtBinaryExpression).right!!
 
-        val psiFactory = KtPsiFactory(element)
-        element.replace(psiFactory.createExpressionByPattern("$0.dropLast($1)", receiver, rightExpression))
+        element.replaceWith("$0.dropLast($1)", rightExpression)
     }
 
     private fun isLengthAccess(expression: KtExpression?, expectedReceiver: KtExpression): Boolean {

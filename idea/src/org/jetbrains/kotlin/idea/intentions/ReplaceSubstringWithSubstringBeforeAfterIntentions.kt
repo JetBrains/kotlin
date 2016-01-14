@@ -27,7 +27,7 @@ class ReplaceSubstringWithSubstringAfterIntention : ReplaceSubstringIntention("R
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {
         val arguments = element.callExpression?.valueArguments ?: return null
 
-        if (arguments.count() == 1 && isIndexOfCall(arguments[0].getArgumentExpression(), element.receiverExpression)) {
+        if (arguments.size == 1 && isIndexOfCall(arguments[0].getArgumentExpression(), element.receiverExpression)) {
             return getTextRange(element)
         }
 
@@ -45,7 +45,7 @@ class ReplaceSubstringWithSubstringBeforeIntention : ReplaceSubstringIntention("
     override fun applicabilityRangeInner(element: KtDotQualifiedExpression): TextRange? {
         val arguments = element.callExpression?.valueArguments ?: return null
 
-        if (arguments.count() == 2
+        if (arguments.size == 2
             && element.isFirstArgumentZero()
             && isIndexOfCall(arguments[1].getArgumentExpression(), element.receiverExpression)) {
             return getTextRange(element)
@@ -61,21 +61,6 @@ class ReplaceSubstringWithSubstringBeforeIntention : ReplaceSubstringIntention("
     }
 }
 
-
-private fun KtDotQualifiedExpression.replaceWith(pattern: String, argument: KtExpression) {
-    val psiFactory = KtPsiFactory(this)
-    replace(psiFactory.createExpressionByPattern(pattern, receiverExpression, argument))
-}
-
 private fun KtDotQualifiedExpression.getArgumentExpression(index: Int): KtExpression {
     return callExpression!!.valueArguments[index].getArgumentExpression()!!
 }
-
-private fun isIndexOfCall(expression: KtExpression?, expectedReceiver: KtExpression): Boolean {
-    if (expression !is KtDotQualifiedExpression) return false
-    val resolvedCall = expression.toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
-    if (resolvedCall.resultingDescriptor.fqNameUnsafe.asString() != "kotlin.text.indexOf") return false
-    if (!expression.receiverExpression.evaluatesTo(expectedReceiver)) return false
-    return expression.callExpression!!.valueArguments.count() == 1
-}
-
