@@ -63,7 +63,7 @@ class AddNameToArgumentIntention
         val argumentList = argument.parent as? KtValueArgumentList ?: return null
         if (argument != argumentList.arguments.last { !it.isNamed() }) return null
 
-        val callExpr = argumentList.parent as? KtExpression ?: return null
+        val callExpr = argumentList.parent as? KtCallElement ?: return null
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze(BodyResolveMode.PARTIAL)) ?: return null
         val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return null
         if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return null

@@ -292,6 +292,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("superClassConstructor.kt")
+        public void testSuperClassConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/superClassConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("vararg1.kt")
         public void testVararg1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/vararg1.kt");
@@ -6971,6 +6977,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("star.kt")
         public void testStar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/star.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superClassConstructor.kt")
+        public void testSuperClassConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/superClassConstructor.kt");
             doTest(fileName);
         }
     }
