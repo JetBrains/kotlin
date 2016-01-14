@@ -25,12 +25,16 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
 
+private val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
+
 fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
-    return annotations.findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
+    return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
 }
 
+private val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
+
 fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
-    val jvmSyntheticName = FqName("kotlin.jvm.JvmSynthetic")
+    val jvmSyntheticName = JVM_SYNTHETIC_ANNOTATION_FQ_NAME
     return annotations.findAnnotation(jvmSyntheticName) != null ||
            Annotations.findUseSiteTargetedAnnotation(annotations, AnnotationUseSiteTarget.FIELD, jvmSyntheticName) != null
 }
