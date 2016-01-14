@@ -2,6 +2,6 @@ package java;
 
 public class JFirst {
     public void foo() {
-       new kotlin.KFirst().foo();
+       new myproject.kotlin.KFirst().foo();
     }
 }
