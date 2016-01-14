@@ -1069,6 +1069,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("classToPackageFacade")
+        public void testClassToPackageFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/classToPackageFacade/");
+            doTest(fileName);
+        }
+
         @TestMetadata("constructorVisibilityChanged")
         public void testConstructorVisibilityChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/constructorVisibilityChanged/");
@@ -1150,6 +1156,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("multiModuleSimple")
         public void testMultiModuleSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleSimple/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageFacadeToClass")
+        public void testPackageFacadeToClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/packageFacadeToClass/");
             doTest(fileName);
         }
 

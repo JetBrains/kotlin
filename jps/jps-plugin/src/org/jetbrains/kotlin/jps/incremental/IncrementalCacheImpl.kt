@@ -84,8 +84,8 @@ open class IncrementalCacheImpl(
     private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
     private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
     private val packagePartMap = registerMap(PackagePartMap(PACKAGE_PARTS.storageFile))
-    private val multifileClassFacadeMap = registerMap(MultifileClassFacadeMap(MULTIFILE_CLASS_FACADES.storageFile))
-    private val multifileClassPartMap = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
+    private val multifileFacadeToParts = registerMap(MultifileClassFacadeMap(MULTIFILE_CLASS_FACADES.storageFile))
+    private val partToMultifileFacade = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
     private val sourceToClassesMap = registerMap(SourceToClassesMap(SOURCE_TO_CLASSES.storageFile))
     private val dirtyOutputClassesMap = registerMap(DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile))
     private val subtypesMap = registerExperimentalMap(SubtypesMap(SUBTYPES.storageFile))
@@ -160,7 +160,12 @@ open class IncrementalCacheImpl(
             KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
                 val partNames = kotlinClass.classHeader.data?.toList()
                                 ?: throw AssertionError("Multifile class has no parts: ${kotlinClass.className}")
-                multifileClassFacadeMap.add(className, partNames)
+                multifileFacadeToParts[className] = partNames
+                // When a class is replaced with a facade with the same name,
+                // the class' proto wouldn't ever be deleted,
+                // because we don't write proto for multifile facades.
+                // As a workaround we can remove proto values for multifile facades.
+                protoMap.remove(className)
 
                 // TODO NO_CHANGES? (delegates only)
                 constantsMap.process(kotlinClass) +
@@ -169,7 +174,7 @@ open class IncrementalCacheImpl(
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
-                multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
+                partToMultifileFacade.set(className.internalName, header.multifileClassName!!)
 
                 protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
@@ -254,11 +259,31 @@ open class IncrementalCacheImpl(
             info + newInfo
         }
 
+        val facadesWithRemovedParts = hashMapOf<JvmClassName, MutableSet<String>>()
+        for (dirtyClass in dirtyClasses) {
+            val facade = partToMultifileFacade.get(dirtyClass.internalName) ?: continue
+            val facadeClassName = JvmClassName.byInternalName(facade)
+            val removedParts = facadesWithRemovedParts.getOrPut(facadeClassName) { hashSetOf() }
+            removedParts.add(dirtyClass.internalName)
+        }
+
+        for ((facade, removedParts) in facadesWithRemovedParts.entries) {
+            val allParts = multifileFacadeToParts[facade.internalName] ?: continue
+            val notRemovedParts = allParts.filter { it !in removedParts }
+
+            if (notRemovedParts.isEmpty()) {
+                multifileFacadeToParts.remove(facade)
+            }
+            else {
+                multifileFacadeToParts[facade] = notRemovedParts
+            }
+        }
+
         dirtyClasses.forEach {
             protoMap.remove(it)
             packagePartMap.remove(it)
-            multifileClassFacadeMap.remove(it)
-            multifileClassPartMap.remove(it)
+            multifileFacadeToParts.remove(it)
+            partToMultifileFacade.remove(it)
             constantsMap.remove(it)
         }
 
@@ -289,7 +314,7 @@ open class IncrementalCacheImpl(
     override fun getObsoleteMultifileClasses(): Collection<String> {
         val obsoleteMultifileClasses = linkedSetOf<String>()
         for (dirtyClass in dirtyOutputClassesMap.getDirtyOutputClasses()) {
-            val dirtyFacade = multifileClassPartMap.getFacadeName(dirtyClass) ?: continue
+            val dirtyFacade = partToMultifileFacade.get(dirtyClass) ?: continue
             obsoleteMultifileClasses.add(dirtyFacade)
         }
         KotlinBuilder.LOG.debug("Obsolete multifile class facades: $obsoleteMultifileClasses")
@@ -297,12 +322,12 @@ open class IncrementalCacheImpl(
     }
 
     override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? {
-        val partNames = multifileClassFacadeMap.getMultifileClassParts(facadeInternalName) ?: return null
+        val partNames = multifileFacadeToParts.get(facadeInternalName) ?: return null
         return partNames.filter { !dirtyOutputClassesMap.isDirty(it) }
     }
 
     override fun getMultifileFacade(partInternalName: String): String? {
-        return multifileClassPartMap.getFacadeName(partInternalName)
+        return partToMultifileFacade.get(partInternalName)
     }
 
     override fun getModuleMappingData(): ByteArray? {
@@ -443,11 +468,11 @@ open class IncrementalCacheImpl(
     }
 
     private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
-        fun add(facadeName: JvmClassName, partNames: Collection<String>) {
+        operator fun set(facadeName: JvmClassName, partNames: Collection<String>) {
             storage[facadeName.internalName] = partNames
         }
 
-        fun getMultifileClassParts(facadeName: String): Collection<String>? = storage[facadeName]
+        operator fun get(facadeName: String): Collection<String>? = storage[facadeName]
 
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
@@ -457,11 +482,11 @@ open class IncrementalCacheImpl(
     }
 
     private inner class MultifileClassPartMap(storageFile: File) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE) {
-        fun add(partName: String, facadeName: String) {
+        fun set(partName: String, facadeName: String) {
             storage[partName] = facadeName
         }
 
-        fun getFacadeName(partName: String): String? {
+        fun get(partName: String): String? {
             return storage.get(partName)
         }
 
