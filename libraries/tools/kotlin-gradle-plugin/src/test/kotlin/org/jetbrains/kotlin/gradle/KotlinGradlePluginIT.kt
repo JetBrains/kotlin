@@ -37,6 +37,17 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testKotlinOmitVersion() {
+        val project = Project("kotlinProjectOmitVersion", "1.6")
+
+        project.build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertContains(":compileKotlin", ":compileTestKotlin")
+        }
+    }
+
     // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
     // Setting user.variant to different value implies a new daemon process will be created.
     // In order to stop daemon process, special exit task is used ( System.exit(0) ).

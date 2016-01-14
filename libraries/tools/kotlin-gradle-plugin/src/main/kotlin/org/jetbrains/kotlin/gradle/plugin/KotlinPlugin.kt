@@ -1,40 +1,42 @@
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSet
-import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetImpl
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.internal.HasConvention
-import org.jetbrains.kotlin.gradle.internal.KotlinSourceSet
-import java.io.File
-import org.gradle.api.Action
-import org.gradle.api.tasks.compile.AbstractCompile
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
-import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.initialization.dsl.ScriptHandler
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
-import javax.inject.Inject
-import org.gradle.api.file.SourceDirectorySet
-import kotlin.properties.Delegates
-import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
+import org.gradle.api.Action
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import java.util.ServiceLoader
-import org.gradle.api.logging.*
-import org.gradle.api.plugins.*
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.initialization.dsl.ScriptHandler
+import org.gradle.api.internal.HasConvention
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
+import org.jetbrains.kotlin.gradle.internal.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetImpl
 import org.jetbrains.kotlin.gradle.internal.initKapt
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import java.io.File
 import java.net.URL
+import java.util.*
 import java.util.jar.Manifest
+import javax.inject.Inject
 
 val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
 
@@ -140,8 +142,7 @@ class Kotlin2JvmSourceSetProcessor(
         }
 
         val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
-            val projectVersion = loadKotlinVersionFromResource(project.getLogger())
-            val dep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
+            val dep = "org.jetbrains.kotlin:kotlin-annotation-processing"
             cachedKotlinAnnotationProcessingDep = dep
             dep
         }
@@ -238,6 +239,7 @@ abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: Scrip
         project.getPlugins().apply(javaClass<JavaPlugin>())
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
+        configureResolutionStrategy(project)
     }
 
     open protected fun configureSourceSetDefaults(project: ProjectInternal,
@@ -246,6 +248,18 @@ abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: Scrip
         javaPluginConvention.getSourceSets()?.all(Action<SourceSet> { sourceSet ->
             if (sourceSet != null) {
                 buildSourceSetProcessor(project, javaBasePlugin, sourceSet).run()
+            }
+        })
+    }
+
+    private fun configureResolutionStrategy(project: Project) {
+        val projectVersion = loadKotlinVersionFromResource(project.logger)
+        project.configurations.all(Action<Configuration> { configuration ->
+            configuration.resolutionStrategy.eachDependency { details ->
+                val requested = details.requested
+                if (requested.group.equals("org.jetbrains.kotlin") && requested.version.isEmpty()) {
+                    details.useTarget("${requested.group}:${requested.name}:$projectVersion")
+                }
             }
         })
     }
@@ -288,8 +302,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
         val aptConfigurations = hashMapOf<String, Configuration>()
 
-        val projectVersion = loadKotlinVersionFromResource(log)
-        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
+        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing"
 
         ext.getSourceSets().all(Action<AndroidSourceSet> { sourceSet ->
             if (sourceSet is HasConvention) {
