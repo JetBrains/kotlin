@@ -1003,6 +1003,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onField"), Pattern.compile("^(.*)\\.kts?$"), true);
                     }
 
+                    @TestMetadata("delegate.kt")
+                    public void testDelegate() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/targeted/onField/delegate.kt");
+                        doParsingTest(fileName);
+                    }
+
                     @TestMetadata("fqName.kt")
                     public void testFqName() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/targeted/onField/fqName.kt");

@@ -169,6 +169,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("TransientOnDelegate.kt")
+        public void testTransientOnDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/TransientOnDelegate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Volatile.kt")
         public void testVolatile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/Volatile.kt");

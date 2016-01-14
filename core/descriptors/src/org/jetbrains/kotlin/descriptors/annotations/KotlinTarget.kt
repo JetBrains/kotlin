@@ -57,12 +57,14 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     MEMBER_FUNCTION("member function", false),
     TOP_LEVEL_FUNCTION("top level function", false),
 
-    MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER, with and without field
-    MEMBER_PROPERTY_WITH_FIELD("member property with backing field", false),
-    MEMBER_PROPERTY_WITHOUT_FIELD("member property without backing field", false),
-    TOP_LEVEL_PROPERTY("top level property", false), // with and without field
-    TOP_LEVEL_PROPERTY_WITH_FIELD("top level property with backing field", false),
-    TOP_LEVEL_PROPERTY_WITHOUT_FIELD("top level property without backing field", false),
+    MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER, with and without field/delegate
+    MEMBER_PROPERTY_WITH_BACKING_FIELD("member property with backing field", false),
+    MEMBER_PROPERTY_WITH_DELEGATE("member property with delegate", false),
+    MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE("member property without backing field or delegate", false),
+    TOP_LEVEL_PROPERTY("top level property", false), // with and without field/delegate
+    TOP_LEVEL_PROPERTY_WITH_BACKING_FIELD("top level property with backing field", false),
+    TOP_LEVEL_PROPERTY_WITH_DELEGATE("top level property with delegate", false),
+    TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE("top level property without backing field or delegate", false),
 
     INITIALIZER("initializer", false),
     DESTRUCTURING_DECLARATION("destructuring declaration", false),
@@ -125,7 +127,8 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
                 AnnotationUseSiteTarget.PROPERTY_GETTER to PROPERTY_GETTER,
                 AnnotationUseSiteTarget.PROPERTY_SETTER to PROPERTY_SETTER,
                 AnnotationUseSiteTarget.RECEIVER to VALUE_PARAMETER,
-                AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER)
+                AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER,
+                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD to FIELD)
 
     }
 }

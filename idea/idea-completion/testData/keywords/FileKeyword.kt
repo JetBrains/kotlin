@@ -8,4 +8,5 @@
 // EXIST: { itemText: "setparam:" }
 // EXIST: { itemText: "property:" }
 // EXIST: { itemText: "receiver:" }
+// EXIST: { itemText: "delegate:" }
 // NOTHING_ELSE

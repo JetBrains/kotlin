@@ -1,17 +1,26 @@
 @kotlin.jvm.internal.KotlinClass
 public final class A {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private @AnnField field p: int
+    private final @AnnDelegate @org.jetbrains.annotations.NotNull field s$delegate: CustomDelegate
     private final @AnnField field x: int
     private field y: int
+    static method <clinit>(): void
     public method <init>(@AnnParam p0: int, @AnnParam p1: int): void
     public final @AnnGetter method getP(): int
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public final method getX(): int
     public final @AnnGetter method getY(): int
     private synthetic deprecated final static @AnnProp @AnnProp2 method p$annotations(): void
+    private synthetic deprecated final static @AnnProp @AnnProp2 @AnnDelegate method s$annotations(): void
     public final @AnnSetter method setP(@AnnParam p0: int): void
     public final @AnnSetter method setY(p0: int): void
     private synthetic deprecated final static @AnnProp2 method x$annotations(): void
 }
+
+@java.lang.annotation.Retention
+@kotlin.jvm.internal.KotlinClass
+public abstract class AnnDelegate
 
 @java.lang.annotation.Retention
 @kotlin.jvm.internal.KotlinClass
@@ -36,3 +45,9 @@ public abstract class AnnProp2
 @java.lang.annotation.Retention
 @kotlin.jvm.internal.KotlinClass
 public abstract class AnnSetter
+
+@kotlin.jvm.internal.KotlinClass
+public final class CustomDelegate {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+}

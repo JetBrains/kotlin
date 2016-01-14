@@ -1436,6 +1436,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("DelegateAnnotations.kt")
+                public void testDelegateAnnotations() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/DelegateAnnotations.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("FieldAnnotations.kt")
                 public void testFieldAnnotations() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/FieldAnnotations.kt");

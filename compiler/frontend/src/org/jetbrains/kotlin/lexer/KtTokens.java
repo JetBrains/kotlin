@@ -142,6 +142,7 @@ public interface KtTokens {
     KtKeywordToken RECEIVER_KEYWORD     = KtKeywordToken.softKeyword("receiver");
     KtKeywordToken PARAM_KEYWORD     = KtKeywordToken.softKeyword("param");
     KtKeywordToken SETPARAM_KEYWORD  = KtKeywordToken.softKeyword("setparam");
+    KtKeywordToken DELEGATE_KEYWORD  = KtKeywordToken.softKeyword("delegate");
     KtKeywordToken IMPORT_KEYWORD    = KtKeywordToken.softKeyword("import");
     KtKeywordToken WHERE_KEYWORD     = KtKeywordToken.softKeyword("where");
     KtKeywordToken BY_KEYWORD        = KtKeywordToken.softKeyword("by");
@@ -203,6 +204,7 @@ public interface KtTokens {
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
                                              DYNAMIC_KEYWORD, COMPANION_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD, SEALED_KEYWORD,
                                              FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD,
+                                             DELEGATE_KEYWORD,
                                              LATEINIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD

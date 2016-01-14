@@ -676,7 +676,7 @@ public class DescriptorResolver {
                             ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody))
                             : Modality.FINAL;
 
-        final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper();
+        final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(property);
 
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace);
         AnnotationSplitter annotationSplitter =
@@ -688,7 +688,7 @@ public class DescriptorResolver {
         });
 
         Annotations propertyAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
-                annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),
+                annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD, PROPERTY_DELEGATE_FIELD),
                 annotationSplitter.getOtherAnnotations()));
 
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
@@ -703,7 +703,7 @@ public class DescriptorResolver {
                 modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
                 modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD)
         );
-        wrapper.setProperty(propertyDescriptor);
+        wrapper.setDescriptor(propertyDescriptor);
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
         LexicalScope scopeWithTypeParameters;
@@ -938,7 +938,7 @@ public class DescriptorResolver {
             }
         }
 
-        final AnnotationSplitter.PropertyWrapper propertyWrapper = new AnnotationSplitter.PropertyWrapper();
+        final AnnotationSplitter.PropertyWrapper propertyWrapper = new AnnotationSplitter.PropertyWrapper(parameter);
         Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, parameter.getModifierList(), trace);
         AnnotationSplitter annotationSplitter =
                 new AnnotationSplitter(storageManager, allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
@@ -964,7 +964,7 @@ public class DescriptorResolver {
                 /* lateInit = */ false,
                 /* isConst = */ false
         );
-        propertyWrapper.setProperty(propertyDescriptor);
+        propertyWrapper.setDescriptor(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
                                    getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null);
 

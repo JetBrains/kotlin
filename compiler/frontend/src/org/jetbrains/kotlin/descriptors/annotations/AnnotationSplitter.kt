@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -54,22 +56,24 @@ class AnnotationSplitter(
         }
 
         @JvmStatic fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
-            val property = wrapper.property
-            assert(property != null)
-            val hasBackingField = context[BindingContext.BACKING_FIELD_REQUIRED, property] ?: false
-            return getTargetSet(parameter, property!!.isVar, hasBackingField)
+            val descriptor = wrapper.descriptor
+            assert(descriptor != null)
+            val hasBackingField = context[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
+            val hasDelegate = wrapper.declaration is KtProperty && wrapper.declaration.hasDelegate()
+            return getTargetSet(parameter, descriptor!!.isVar, hasBackingField, hasDelegate)
         }
 
-        @JvmStatic fun getTargetSet(parameter: Boolean, isVar: Boolean, hasBackingField: Boolean): Set<AnnotationUseSiteTarget> {
-            return hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
-                if (parameter) add(CONSTRUCTOR_PARAMETER)
-                if (hasBackingField) add(FIELD)
-                if (isVar) add(PROPERTY_SETTER)
-            }
+        @JvmStatic fun getTargetSet(
+                parameter: Boolean, isVar: Boolean, hasBackingField: Boolean, hasDelegate: Boolean
+        ): Set<AnnotationUseSiteTarget> = hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
+            if (parameter) add(CONSTRUCTOR_PARAMETER)
+            if (hasBackingField) add(FIELD)
+            if (isVar) add(PROPERTY_SETTER)
+            if (hasDelegate) add(PROPERTY_DELEGATE_FIELD)
         }
     }
 
-    class PropertyWrapper(var property: PropertyDescriptor? = null)
+    class PropertyWrapper @JvmOverloads constructor(val declaration: KtDeclaration, var descriptor: PropertyDescriptor? = null)
 
     private val splitAnnotations = storageManager.createLazyValue {
         val map = hashMapOf<AnnotationUseSiteTarget, MutableList<AnnotationWithTarget>>()

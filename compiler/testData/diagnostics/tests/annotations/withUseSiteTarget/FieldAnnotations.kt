@@ -18,7 +18,7 @@ class SomeClass {
     @field:[Ann]
     protected val simplePropertyWithAnnotationList: String = "text"
 
-    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
+    <!INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD!>@field:Ann<!>
     protected val delegatedProperty: String by CustomDelegate()
 
     <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>

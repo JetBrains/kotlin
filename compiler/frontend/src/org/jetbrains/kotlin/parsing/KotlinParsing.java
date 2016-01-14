@@ -64,7 +64,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET), MODIFIER_KEYWORDS);
     private static final TokenSet SOFT_KEYWORDS_AT_MEMBER_START = TokenSet.create(CONSTRUCTOR_KEYWORD, INIT_KEYWORD);
     private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
-            FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD);
+            FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD,
+            RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD, DELEGATE_KEYWORD);
 
     static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
         KotlinParsing jetParsing = new KotlinParsing(builder);
