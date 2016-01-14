@@ -104,6 +104,7 @@ public object Renderers {
     @JvmField
     public val RENDER_CLASS_OR_OBJECT_NAME: Renderer<ClassDescriptor> = Renderer { it.renderKindWithName() }
 
+    @JvmField
     public val RENDER_TYPE: Renderer<KotlinType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
 
     @JvmField

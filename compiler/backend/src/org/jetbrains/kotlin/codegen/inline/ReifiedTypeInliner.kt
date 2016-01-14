@@ -37,12 +37,12 @@ private class ParameterNameAndNullability(val name: String, val nullable: Boolea
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
     companion object {
-        public val NEW_ARRAY_MARKER_METHOD_NAME: String = "reifyNewArray"
-        public val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
-        public val SAFE_CHECKCAST_MARKER_METHOD_NAME: String = "reifySafeCheckcast"
-        public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
-        public val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
-        public val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME: String = "needClassReification"
+        @JvmField val NEW_ARRAY_MARKER_METHOD_NAME: String = "reifyNewArray"
+        @JvmField val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
+        @JvmField val SAFE_CHECKCAST_MARKER_METHOD_NAME: String = "reifySafeCheckcast"
+        @JvmField val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
+        @JvmField val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
+        @JvmField val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME: String = "needClassReification"
 
         private val PARAMETRISED_MARKERS = ImmutableSet.of(
                 NEW_ARRAY_MARKER_METHOD_NAME,

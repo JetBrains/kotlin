@@ -162,7 +162,7 @@ public class AnonymousObjectTransformer {
             }
             else {
                 //seems we can't do any clever mapping cause we don't know any about original class name
-                sourceMapper = IdenticalSourceMapper.INSTANCE$;
+                sourceMapper = IdenticalSourceMapper.INSTANCE;
             }
             if (sourceInfo != null && !InlineCodegenUtil.GENERATE_SMAP) {
                 classBuilder.visitSource(sourceInfo, debugInfo);
@@ -172,7 +172,7 @@ public class AnonymousObjectTransformer {
             if (sourceInfo != null) {
                 classBuilder.visitSource(sourceInfo, debugInfo);
             }
-            sourceMapper = IdenticalSourceMapper.INSTANCE$;
+            sourceMapper = IdenticalSourceMapper.INSTANCE;
         }
 
         ParametersBuilder allCapturedParamBuilder = ParametersBuilder.newBuilder();
