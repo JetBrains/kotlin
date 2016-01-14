@@ -7,7 +7,7 @@ class Test {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test, prop
-// FLAGS: ACC_STATIC, ACC_PROTECTED, ACC_DEPRECATED
+// FLAGS: ACC_STATIC, ACC_PRIVATE
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test$Companion, prop

@@ -5,7 +5,7 @@ public final class KotlinClass {
 
     public companion object Companion {
         private constructor Companion()
-        public final val FOO: kotlin.Int
+        public const final val FOO: kotlin.Int
     }
 }
 

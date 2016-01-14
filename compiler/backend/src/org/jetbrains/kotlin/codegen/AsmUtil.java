@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
@@ -61,6 +62,7 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -681,13 +683,13 @@ public class AsmUtil {
                isObject(propertyDescriptor.getContainingDeclaration());
     }
 
-    public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
+    public static int getVisibilityForBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
         if (isDelegate || isExtensionProperty) {
             return ACC_PRIVATE;
         }
         else {
-            return areBothAccessorDefault(propertyDescriptor)
+            return propertyDescriptor.isLateInit() || isConstOrHasJvmFieldAnnotation(propertyDescriptor)
                    ? getVisibilityAccessFlag(descriptorForVisibility(propertyDescriptor))
                    : ACC_PRIVATE;
         }
@@ -706,16 +708,7 @@ public class AsmUtil {
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
         return propertyDescriptor.isConst()
                && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
-               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
-    }
-
-    private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {
-        return isAccessorWithEmptyBody(propertyDescriptor.getGetter())
-               && (!propertyDescriptor.isVar() || isAccessorWithEmptyBody(propertyDescriptor.getSetter()));
-    }
-
-    private static boolean isAccessorWithEmptyBody(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
-        return accessorDescriptor == null || !accessorDescriptor.hasBody();
+               && getVisibilityForBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
     public static Type comparisonOperandType(Type left, Type right) {

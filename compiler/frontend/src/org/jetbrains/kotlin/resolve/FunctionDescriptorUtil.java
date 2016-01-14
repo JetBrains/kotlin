@@ -55,7 +55,7 @@ public class FunctionDescriptorUtil {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull List<KotlinType> typeArguments
     ) {
-        if (functionDescriptor.getTypeParameters().isEmpty()) return TypeSubstitution.getEMPTY();
+        if (functionDescriptor.getTypeParameters().isEmpty()) return TypeSubstitution.EMPTY;
 
         return new IndexedParametersSubstitution(functionDescriptor.getTypeParameters(), TypeUtilsKt.defaultProjections(typeArguments));
     }

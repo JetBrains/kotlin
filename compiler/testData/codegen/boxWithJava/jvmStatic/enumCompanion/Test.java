@@ -3,8 +3,8 @@ class Test {
         return A.foo;
     }
 
-    public static String bar() {
-        return A.bar;
+    public static String constBar() {
+        return A.constBar;
     }
 
     public static String getBar() {

@@ -58,7 +58,8 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -308,22 +309,9 @@ public class PropertyCodegen {
 
         ClassBuilder builder = v;
 
-        boolean hasJvmFieldAnnotation = hasJvmFieldAnnotation(propertyDescriptor);
-
         FieldOwnerContext backingFieldContext = context;
-        boolean takeVisibilityFromDescriptor = propertyDescriptor.isLateInit() || propertyDescriptor.isConst();
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
-
-            if (takeVisibilityFromDescriptor) {
-                modifiers |= getVisibilityAccessFlag(propertyDescriptor);
-            }
-            else if (hasJvmFieldAnnotation && !isDelegate) {
-                modifiers |= getDefaultVisibilityFlag(propertyDescriptor.getVisibility());
-            }
-            else {
-                modifiers |= getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
-            }
 
             if (JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
                 ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
@@ -331,23 +319,8 @@ public class PropertyCodegen {
                 backingFieldContext = codegen.context;
                 v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
-
-            if (isObject(propertyDescriptor.getContainingDeclaration()) &&
-                !hasJvmFieldAnnotation &&
-                !propertyDescriptor.isConst() &&
-                (modifiers & ACC_PRIVATE) == 0) {
-                modifiers |= ACC_DEPRECATED;
-            }
         }
-        else if (takeVisibilityFromDescriptor) {
-            modifiers |= getVisibilityAccessFlag(propertyDescriptor);
-        }
-        else if (!isDelegate && hasJvmFieldAnnotation) {
-            modifiers |= getDefaultVisibilityFlag(propertyDescriptor.getVisibility());
-        }
-        else {
-            modifiers |= ACC_PRIVATE;
-        }
+        modifiers |= getVisibilityForBackingField(propertyDescriptor, isDelegate);
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public abstract class TypeSubstitution {
     companion object {
-        @JvmStatic
+        @JvmField
         public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
             override fun get(key: KotlinType) = null
             override fun isEmpty() = true

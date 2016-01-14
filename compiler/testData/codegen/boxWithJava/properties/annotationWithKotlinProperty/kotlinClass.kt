@@ -1,7 +1,7 @@
 class KotlinClass {
     companion object {
-        val FOO_INT: Int = 10
-        val FOO_STRING: String = "OK"
+        const val FOO_INT: Int = 10
+        @JvmField val FOO_STRING: String = "OK"
     }
 }
 

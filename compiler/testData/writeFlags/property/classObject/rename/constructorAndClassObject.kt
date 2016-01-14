@@ -1,7 +1,7 @@
 class Test(val prop: String) {
 
   companion object {
-    public val prop : String = "CO";
+    public const val prop : String = "CO";
   }
 
 }
@@ -13,4 +13,4 @@ class Test(val prop: String) {
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: Test, prop
-// FLAGS: ACC_STATIC, ACC_PUBLIC, ACC_FINAL, ACC_DEPRECATED
+// FLAGS: ACC_STATIC, ACC_PUBLIC, ACC_FINAL
