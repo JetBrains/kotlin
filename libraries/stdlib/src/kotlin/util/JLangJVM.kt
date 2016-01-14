@@ -28,13 +28,6 @@ import kotlin.reflect.KClass
 public annotation class throws(public vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
- * Returns the runtime Java class of this object.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public val <T: Any> T.javaClass : Class<T>
-    get() = (this as java.lang.Object).getClass() as Class<T>
-
-/**
  * Returns the Java class for the specified type.
  */
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")

@@ -228,8 +228,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        body(Lists, CharSequences, Strings, ArraysOfPrimitives, ArraysOfObjects) {
+        body(Lists, CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
             """
             for (index in indices) {
                 if (predicate(this[index])) {
@@ -259,8 +258,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        body(Lists, CharSequences, Strings, ArraysOfPrimitives, ArraysOfObjects) {
+        body(Lists, CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
             """
             for (index in indices.reversed()) {
                 if (predicate(this[index])) {
@@ -289,8 +287,7 @@ fun elements(): List<GenericFunction> {
             return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return get(index)
             """
@@ -330,9 +327,8 @@ fun elements(): List<GenericFunction> {
             return defaultValue(index)
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        inline(true, CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
-        body(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        inline(true, CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
             """
@@ -343,8 +339,7 @@ fun elements(): List<GenericFunction> {
         doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
         returns("T")
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
-        only(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
@@ -386,8 +381,7 @@ fun elements(): List<GenericFunction> {
             return null
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else null
             """
@@ -397,8 +391,7 @@ fun elements(): List<GenericFunction> {
     templates add f("getOrNull(index: Int)") {
         doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
         returns("T?")
-        deprecate(Strings) { forBinaryCompatibility }
-        only(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -430,8 +423,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
                 throw NoSuchElementException("Collection is empty.")
@@ -468,8 +460,7 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (isEmpty()) null else this[0]
             """
@@ -487,8 +478,7 @@ fun elements(): List<GenericFunction> {
     templates add f("first(predicate: (T) -> Boolean)") {
         inline(true)
 
-        deprecate(Strings) { forBinaryCompatibility }
-        include(CharSequences, Strings)
+        include(CharSequences)
         doc { f -> """Returns the first ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
         returns("T")
@@ -503,8 +493,7 @@ fun elements(): List<GenericFunction> {
     templates add f("firstOrNull(predicate: (T) -> Boolean)") {
         inline(true)
 
-        deprecate(Strings) { forBinaryCompatibility }
-        include(CharSequences, Strings)
+        include(CharSequences)
         doc { f -> "Returns the first ${f.element} matching the given [predicate], or `null` if ${f.element} was not found." }
         returns("T?")
         body {
@@ -517,8 +506,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("find(predicate: (T) -> Boolean)") {
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
-        include(CharSequences, Strings)
+        include(CharSequences)
         doc { f -> "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
         body { "return firstOrNull(predicate)"}
@@ -560,8 +548,7 @@ fun elements(): List<GenericFunction> {
             return last
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
                 throw NoSuchElementException("Collection is empty.")
@@ -600,8 +587,7 @@ fun elements(): List<GenericFunction> {
             return last
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) {
+        body(CharSequences) {
             """
             return if (isEmpty()) null else this[length - 1]
             """
@@ -616,8 +602,7 @@ fun elements(): List<GenericFunction> {
     templates add f("last(predicate: (T) -> Boolean)") {
         inline(true)
 
-        deprecate(Strings) { forBinaryCompatibility }
-        include(CharSequences, Strings)
+        include(CharSequences)
         doc { f -> """Returns the last ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
         returns("T")
@@ -642,7 +627,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(CharSequences, Strings, ArraysOfPrimitives, ArraysOfObjects, Lists) {
+        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects, Lists) {
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]
@@ -655,8 +640,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("lastOrNull(predicate: (T) -> Boolean)") {
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
-        include(CharSequences, Strings)
+        include(CharSequences)
         doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
         body { f ->
@@ -677,7 +661,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(CharSequences, Strings, ArraysOfPrimitives, ArraysOfObjects, Lists) {
+        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects, Lists) {
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]
@@ -690,8 +674,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("findLast(predicate: (T) -> Boolean)") {
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
-        include(Lists, CharSequences, Strings)
+        include(Lists, CharSequences)
         doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
         body { "return lastOrNull(predicate)"}
@@ -731,8 +714,7 @@ fun elements(): List<GenericFunction> {
             return single
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) {
+        body(CharSequences) {
             """
             return when (length) {
                 0 -> throw NoSuchElementException("Collection is empty.")
@@ -782,8 +764,7 @@ fun elements(): List<GenericFunction> {
             return single
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) {
+        body(CharSequences) {
             """
             return if (length == 1) this[0] else null
             """
@@ -797,8 +778,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("single(predicate: (T) -> Boolean)") {
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
-        include(CharSequences, Strings)
+        include(CharSequences)
         doc { f -> "Returns the single ${f.element} matching the given [predicate], or throws exception if there is no or more than one matching ${f.element}." }
         returns("T")
         body {
@@ -820,8 +800,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("singleOrNull(predicate: (T) -> Boolean)") {
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
-        include(CharSequences, Strings)
+        include(CharSequences)
         doc { f -> "Returns the single ${f.element} matching the given [predicate], or `null` if ${f.element} was not found or more than one ${f.element} was found." }
         returns("T?")
         body {

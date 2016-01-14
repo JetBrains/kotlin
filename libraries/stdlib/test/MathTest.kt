@@ -1,6 +1,5 @@
 package test.collections
 
-import kotlin.math.*
 import java.math.BigInteger
 import java.math.BigDecimal
 
