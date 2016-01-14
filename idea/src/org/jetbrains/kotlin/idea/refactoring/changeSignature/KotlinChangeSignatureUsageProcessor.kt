@@ -831,9 +831,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
             if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true
 
-            val methodDescriptor = method.getJavaMethodDescriptor()
-            assert(methodDescriptor != null)
-            descriptorWrapper.originalJavaMethodDescriptor = KotlinChangeSignatureData(methodDescriptor!!, method, listOf(methodDescriptor))
+            val methodDescriptor = method.getJavaMethodDescriptor() ?: return false
+            descriptorWrapper.originalJavaMethodDescriptor = KotlinChangeSignatureData(methodDescriptor, method, listOf(methodDescriptor))
 
             // This change info is used as a placeholder before primary method update
             // It gets replaced with real change info afterwards
