@@ -12,9 +12,9 @@ enum class Family {
     Lists,
     Maps,
     Sets,
+    InvariantArraysOfObjects,
     ArraysOfObjects,
     ArraysOfPrimitives,
-    InvariantArraysOfObjects,
     CharSequences,
     Strings,
     Ranges,
@@ -175,7 +175,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     fun instantiate(vararg families: Family = Family.values()): List<ConcreteFunction> {
         return families
-                .sortedBy { it.name }
+                .sortedBy { if (it == InvariantArraysOfObjects) "ArraysOfObjectsInvariant" else it.name }
                 .filter { buildFamilies.contains(it) }
                 .flatMap { family -> instantiate(family) }
     }

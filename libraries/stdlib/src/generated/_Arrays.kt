@@ -11258,6 +11258,15 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
+@JvmName("mutableCopyOf")
+public fun <T> Array<T>.copyOf(): Array<T> {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.jvm.JvmVersion
 public fun BooleanArray.copyOf(): BooleanArray {
     return Arrays.copyOf(this, size)
 }
@@ -11323,8 +11332,8 @@ public fun ShortArray.copyOf(): ShortArray {
  */
 @kotlin.jvm.JvmVersion
 @JvmName("mutableCopyOf")
-public fun <T> Array<T>.copyOf(): Array<T> {
-    return Arrays.copyOf(this, size)
+public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+    return Arrays.copyOf(this, newSize)
 }
 
 /**
@@ -11392,12 +11401,12 @@ public fun ShortArray.copyOf(newSize: Int): ShortArray {
 }
 
 /**
- * Returns new array which is a copy of the original array.
+ * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-@JvmName("mutableCopyOf")
-public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
-    return Arrays.copyOf(this, newSize)
+@JvmName("mutableCopyOfRange")
+public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
@@ -11465,12 +11474,11 @@ public fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-@JvmName("mutableCopyOfRange")
-public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    return Arrays.copyOfRange(this, fromIndex, toIndex)
+public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
@@ -11538,14 +11546,6 @@ public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = si
 }
 
 /**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
  * Returns a list containing all elements that are instances of specified type parameter R.
  */
 @kotlin.jvm.JvmVersion
@@ -11577,6 +11577,17 @@ public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInst
 public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+@kotlin.jvm.JvmVersion
+public operator fun <T> Array<T>.plus(element: T): Array<T> {
+    val index = size
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
 }
 
 /**
@@ -11668,13 +11679,13 @@ public operator fun ShortArray.plus(element: Short): ShortArray {
 }
 
 /**
- * Returns an array containing all elements of the original array and then the given [element].
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(element: T): Array<T> {
-    val index = size
-    val result = Arrays.copyOf(this, index + 1)
-    result[index] = element
+public operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
+    var index = size
+    val result = Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
     return result
 }
 
@@ -11767,13 +11778,14 @@ public operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
 }
 
 /**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
-    var index = size
-    val result = Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
+public operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
     return result
 }
 
@@ -11866,18 +11878,6 @@ public operator fun LongArray.plus(elements: LongArray): LongArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun ShortArray.plus(elements: ShortArray): ShortArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-@kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
     val thisSize = size
     val arraySize = elements.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
