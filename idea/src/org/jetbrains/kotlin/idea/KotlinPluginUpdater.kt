@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManager
-import com.intellij.ide.plugins.PluginManagerMain
-import com.intellij.ide.plugins.RepositoryHelper
+import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.plugins.*
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
@@ -28,9 +26,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -43,6 +41,7 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.util.Alarm
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.VersionComparatorUtil
+import java.io.File
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
@@ -50,7 +49,7 @@ sealed class PluginUpdateStatus {
     object LatestVersionInstalled : PluginUpdateStatus()
 
     class Update(val newVersion: String,
-                 val descriptorToInstall: IdeaPluginDescriptor?,
+                 val descriptorToInstall: IdeaPluginDescriptor,
                  val hostToInstallFrom: String?) : PluginUpdateStatus()
 
     class CheckFailed(val message: String) : PluginUpdateStatus()
@@ -90,7 +89,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     private fun updateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         try {
             var (mainRepoUpdateSuccess, latestVersionInRepository) = getPluginVersionFromMainRepository()
-            var descriptorToInstall: IdeaPluginDescriptor? = null
+            var descriptorToInstall: IdeaPluginDescriptor? = initPluginDescriptor(latestVersionInRepository)
             var hostToInstallFrom: String? = null
 
             for (host in RepositoryHelper.getPluginHosts().filterNotNull()) {
@@ -98,11 +97,11 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                     RepositoryHelper.loadPlugins(host, null)
                 }
                 catch(e: Exception) {
-                    LOG.info("Checking custom plugin reposityory $host failed", e)
+                    LOG.info("Checking custom plugin repository $host failed", e)
                     continue
                 }
 
-                val kotlinPlugin = plugins.find { it.pluginId.toString() == "org.jetbrains.kotlin" }
+                val kotlinPlugin = plugins.find { it.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID }
                 if (kotlinPlugin != null && VersionComparatorUtil.compare(kotlinPlugin.version, latestVersionInRepository) > 0) {
                     latestVersionInRepository = kotlinPlugin.version
                     descriptorToInstall = kotlinPlugin
@@ -116,7 +115,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                 recordSuccessfulUpdateCheck()
                 if (latestVersionInRepository != null && VersionComparatorUtil.compare(latestVersionInRepository, KotlinPluginUtil.getPluginVersion()) > 0) {
                     ApplicationManager.getApplication().invokeLater({
-                        callback(PluginUpdateStatus.Update(latestVersionInRepository!!, descriptorToInstall, hostToInstallFrom))
+                        callback(PluginUpdateStatus.Update(latestVersionInRepository!!, descriptorToInstall!!, hostToInstallFrom))
                     }, ModalityState.any())
                 }
                 else {
@@ -140,6 +139,15 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
     }
 
+    private fun initPluginDescriptor(newVersion: String?): IdeaPluginDescriptor? {
+        if (newVersion == null) return null
+        val originalPlugin = PluginManager.getPlugin(KotlinPluginUtil.KOTLIN_PLUGIN_ID)!!
+        return PluginNode(KotlinPluginUtil.KOTLIN_PLUGIN_ID).apply {
+            version = newVersion
+            name = originalPlugin.name
+            description = originalPlugin.description
+        }
+    }
 
     data class RepositoryCheckResult(val success: Boolean, val newVersion: String?)
 
@@ -189,13 +197,15 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     fun installPluginUpdate(update: PluginUpdateStatus.Update,
                             cancelCallback: () -> Unit = {}) {
-        val descriptor = update.descriptorToInstall ?: PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin")) ?: return
+        val descriptor = update.descriptorToInstall
         val pluginDownloader = PluginDownloader.createDownloader(descriptor, update.hostToInstallFrom, null)
         ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
             override fun run(indicator: ProgressIndicator) {
+                var installed = false
                 if (pluginDownloader.prepareToInstall(indicator)) {
                     val pluginDescriptor = pluginDownloader.descriptor
                     if (pluginDescriptor != null) {
+                        installed = true
                         pluginDownloader.install()
 
                         ApplicationManager.getApplication().invokeLater {
@@ -203,12 +213,33 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                         }
                     }
                 }
+
+                if (!installed) {
+                    notifyNotInstalled()
+                }
             }
 
             override fun onCancel() {
                 cancelCallback()
             }
         })
+    }
+
+    private fun notifyNotInstalled() {
+        ApplicationManager.getApplication().invokeLater {
+            val notification = notificationGroup.createNotification(
+                    "Kotlin",
+                    "Plugin update was not installed. <a href=\"#\">See the log for more information</a>",
+                    NotificationType.INFORMATION) { notification, event ->
+
+                val logFile = File(PathManager.getLogPath(), "idea.log")
+                ShowFilePathAction.openFile(logFile)
+
+                notification.expire()
+            }
+
+            notification.notify(null)
+        }
     }
 
     override fun dispose() {
