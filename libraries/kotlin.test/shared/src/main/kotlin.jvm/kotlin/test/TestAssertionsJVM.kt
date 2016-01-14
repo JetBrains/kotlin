@@ -4,9 +4,6 @@ package kotlin.test
 
 import kotlin.reflect.*
 
-@Deprecated("Use assertFailsWith instead.", ReplaceWith("assertFailsWith(exceptionClass, block)"), kotlin.DeprecationLevel.ERROR)
-fun <T : Throwable> failsWith(exceptionClass: Class<T>, block: () -> Any): T = assertFailsWith(exceptionClass) { block() }
-
 /** Asserts that a [block] fails with a specific exception being thrown. */
 fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, block: () -> Unit): T {
     return assertFailsWith(exceptionClass, null, block)
