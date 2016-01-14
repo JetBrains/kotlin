@@ -697,6 +697,16 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         )
     }
 
+    fun testCodeInKotlinPackage() {
+        initProject()
+
+        val result = makeAll()
+        result.assertFailed()
+        val errors = result.getMessages(BuildMessage.Kind.ERROR)
+
+        Assert.assertEquals("Only the Kotlin standard library is allowed to use the 'kotlin' package", errors.single().messageText)
+    }
+
     fun testDoNotCreateUselessKotlinIncrementalCaches() {
         initProject()
         makeAll().assertSuccessful()
