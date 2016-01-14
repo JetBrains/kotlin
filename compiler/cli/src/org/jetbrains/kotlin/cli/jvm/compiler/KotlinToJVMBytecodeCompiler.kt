@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -196,8 +197,8 @@ object KotlinToJVMBytecodeCompiler {
             configuration: CompilerConfiguration,
             paths: KotlinPaths,
             environment: KotlinCoreEnvironment,
-            scriptArgs: List<String>) {
-        val scriptClass = compileScript(configuration, paths, environment) ?: return
+            scriptArgs: List<String>): ExitCode {
+        val scriptClass = compileScript(configuration, paths, environment) ?: return ExitCode.COMPILATION_ERROR
         val scriptConstructor = getScriptConstructor(scriptClass)
 
         try {
@@ -205,8 +206,10 @@ object KotlinToJVMBytecodeCompiler {
         }
         catch (e: Throwable) {
             reportExceptionFromScript(e)
+            return ExitCode.SCRIPT_EXECUTION_ERROR
         }
 
+        return ExitCode.OK
     }
 
     private fun reportExceptionFromScript(exception: Throwable) {

@@ -174,7 +174,7 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
-                KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs)
+                return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs)
             }
             else {
                 environment = createCoreEnvironment(rootDisposable, configuration)
