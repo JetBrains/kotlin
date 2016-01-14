@@ -42,7 +42,7 @@ fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.getModuleInfo { r
 }
 
 private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
-    if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement()
+    if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement(onFailure)
 
     val containingJetFile = (this as? KtElement)?.getContainingFile() as? KtFile
     val context = containingJetFile?.analysisContext
@@ -119,7 +119,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     return NotUnderContentRootModuleInfo
 }
 
-private fun KtLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo {
+private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
     val decompiledClass = this.getParentOfType<KtLightClassForDecompiledDeclaration>(strict = false)
     if (decompiledClass != null) {
         return getModuleInfoByVirtualFile(
@@ -131,7 +131,7 @@ private fun KtLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo 
     val element = getOrigin() ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KtLightClassForFacade -> this.files.first()
-        else -> throw IllegalStateException("Unknown light class without origin is referenced by IDE lazy resolve: $javaClass")
+        else -> return onFailure("Light element without origin is referenced by resolve:\n$this\n${this.getDelegate().text}")
     }
     return element.getModuleInfo()
 }
