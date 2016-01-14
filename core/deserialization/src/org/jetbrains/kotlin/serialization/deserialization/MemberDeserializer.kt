@@ -238,6 +238,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }
     }
 
+
     private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when(this) {
         is PackageFragmentDescriptor -> ProtoContainer(null, fqName, c.nameResolver, c.typeTable)
         is DeserializedClassDescriptor -> ProtoContainer(classProto, null, c.nameResolver, c.typeTable)

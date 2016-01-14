@@ -36,7 +36,7 @@ public fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
 }
 
 public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
-        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
+        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClassOrEnumClass(it) }
 
 public fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
         isPlatformStaticIn { DescriptorUtils.isCompanionObject(it) }

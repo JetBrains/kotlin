@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
-import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_ENTRY
-import org.jetbrains.kotlin.descriptors.ClassKind.OBJECT
+import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -109,11 +107,12 @@ public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
     }
 
 public fun ClassDescriptor.getSuperClassNotAny(): ClassDescriptor? {
-    for (supertype in getDefaultType().getConstructor().getSupertypes()) {
-        val superClassifier = supertype.getConstructor().getDeclarationDescriptor()
-        if (!KotlinBuiltIns.isAnyOrNullableAny(supertype) &&
-            (DescriptorUtils.isClass(superClassifier) || DescriptorUtils.isEnumClass(superClassifier))) {
-            return superClassifier as ClassDescriptor
+    for (supertype in defaultType.constructor.supertypes) {
+        if (!KotlinBuiltIns.isAnyOrNullableAny(supertype)) {
+            val superClassifier = supertype.constructor.declarationDescriptor
+            if (DescriptorUtils.isClassOrEnumClass(superClassifier)) {
+                return superClassifier as ClassDescriptor
+            }
         }
     }
     return null
