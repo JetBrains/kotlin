@@ -89,8 +89,9 @@ private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFac
         if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
 
         val cacheService = KotlinCacheService.getInstance(project)
+        val moduleInfo = this.getNullableModuleInfo() ?: return null
         @Suppress("DEPRECATION")
-        return (cacheService as? KotlinCacheServiceImpl)?.getProjectService(JvmPlatform, this.getModuleInfo(), JavaDescriptorResolver::class.java)
+        return (cacheService as? KotlinCacheServiceImpl)?.getProjectService(JvmPlatform, moduleInfo, JavaDescriptorResolver::class.java)
     }
 }
 
