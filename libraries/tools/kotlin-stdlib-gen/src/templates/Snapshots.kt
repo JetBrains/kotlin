@@ -110,13 +110,6 @@ fun snapshots(): List<GenericFunction> {
         body { "return this.toArrayList()" }
     }
 
-    templates add f("toLinkedList()") {
-        include(Strings)
-        doc { "Returns a [LinkedList] containing all elements." }
-        returns("LinkedList<T>")
-        deprecate { Deprecation("Use toCollection(LinkedList()) instead.", replaceWith = "toCollection(LinkedList())") }
-    }
-
     templates add f("toMap(selector: (T) -> K)") {
         inline(true)
         deprecate(Strings) { forBinaryCompatibility }

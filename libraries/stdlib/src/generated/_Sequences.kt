@@ -509,14 +509,6 @@ public fun <T> Sequence<T>.toHashSet(): HashSet<T> {
 }
 
 /**
- * Returns a [LinkedList] containing all elements.
- */
-@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
-public fun <T> Sequence<T>.toLinkedList(): LinkedList<T> {
-    return toCollection(LinkedList())
-}
-
-/**
  * Returns a [List] containing all elements.
  */
 public fun <T> Sequence<T>.toList(): List<T> {
