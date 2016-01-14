@@ -488,7 +488,7 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
     )
 
     val packageFromContextFile = containingContextFile?.packageName?.let {
-        if (it.isNotBlank()) "package $it" else ""
+        if (it.isNotBlank()) "package ${it.quoteIfNeeded()}" else ""
     } ?: ""
     fileText = fileText.replace("!PACKAGE!", packageFromContextFile)
 
