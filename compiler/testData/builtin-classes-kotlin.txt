@@ -578,16 +578,6 @@ public abstract class Number {
     public abstract fun toShort(): kotlin.Short
 }
 
-@kotlin.Deprecated(message = "This generic progression interface is not of much use and will be removed soon. Use concrete progression implementation instead: IntProgression, LongProgression or CharProgression.") public interface Progression</*0*/ out N : kotlin.Any> : kotlin.collections.Iterable<N> {
-    public abstract val end: N
-        public abstract fun <get-end>(): N
-    public abstract val increment: kotlin.Number
-        public abstract fun <get-increment>(): kotlin.Number
-    public abstract val start: N
-        public abstract fun <get-start>(): N
-    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<N>
-}
-
 @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Please use KProperty instead.", replaceWith = kotlin.ReplaceWith(expression = "KProperty<*>", imports = {"kotlin.reflect.KProperty"})) internal interface PropertyMetadata {
     public abstract val name: kotlin.String
         public abstract fun <get-name>(): kotlin.String
