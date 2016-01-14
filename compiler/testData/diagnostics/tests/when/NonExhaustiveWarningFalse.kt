@@ -3,11 +3,11 @@ enum class X { A, B, C, D }
 
 fun foo(arg: X): String {
     val res: String
-    when (arg) {
+    <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (arg) {
         X.A -> res = "A"
         X.B -> res = "B"
         X.C -> res = "C"
         X.D -> res = "D"
-    }
+    }<!>
     return res
 }

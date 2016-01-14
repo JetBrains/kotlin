@@ -135,6 +135,7 @@ public interface BindingContext {
     WritableSlice<KtExpression, KotlinType> IMPLICIT_RECEIVER_SMARTCAST = Slices.createSimpleSlice();
 
     WritableSlice<KtWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
+    WritableSlice<KtWhenExpression, Boolean> IMPLICIT_EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
 
     WritableSlice<KtElement, LexicalScope> LEXICAL_SCOPE = Slices.createSimpleSlice();
 

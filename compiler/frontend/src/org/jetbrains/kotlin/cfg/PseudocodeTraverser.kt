@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocodeTraverser
 
+import org.jetbrains.kotlin.cfg.ControlFlowInfo
 import org.jetbrains.kotlin.cfg.pseudocode.*
 import java.util.*
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
@@ -54,16 +55,16 @@ public fun <D> Pseudocode.traverse(
     }
 }
 
-public fun <D> Pseudocode.collectData(
+public fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
         traversalOrder: TraversalOrder,
         mergeDataWithLocalDeclarations: Boolean,
-        mergeEdges: (Instruction, Collection<D>) -> Edges<D>,
-        updateEdge: (Instruction, Instruction, D) -> D,
-        initialDataValue: D
-): Map<Instruction, Edges<D>> {
-    val edgesMap = LinkedHashMap<Instruction, Edges<D>>()
-    initializeEdgesMap(edgesMap, initialDataValue)
-    edgesMap.put(getStartInstruction(traversalOrder), Edges(initialDataValue, initialDataValue))
+        mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
+        updateEdge: (Instruction, Instruction, I) -> I,
+        initialInfo: I
+): Map<Instruction, Edges<I>> {
+    val edgesMap = LinkedHashMap<Instruction, Edges<I>>()
+    initializeEdgesMap(edgesMap, initialInfo)
+    edgesMap.put(getStartInstruction(traversalOrder), Edges(initialInfo, initialInfo))
 
     val changed = BooleanArray(1)
     changed[0] = true
@@ -76,26 +77,26 @@ public fun <D> Pseudocode.collectData(
     return edgesMap
 }
 
-private fun <D> Pseudocode.initializeEdgesMap(
-        edgesMap: MutableMap<Instruction, Edges<D>>,
-        initialDataValue: D
+private fun <I> Pseudocode.initializeEdgesMap(
+        edgesMap: MutableMap<Instruction, Edges<I>>,
+        initialInfo: I
 ) {
     val instructions = getInstructions()
-    val initialEdge = Edges(initialDataValue, initialDataValue)
+    val initialEdge = Edges(initialInfo, initialInfo)
     for (instruction in instructions) {
         edgesMap.put(instruction, initialEdge)
         if (instruction is LocalFunctionDeclarationInstruction) {
-            instruction.body.initializeEdgesMap(edgesMap, initialDataValue)
+            instruction.body.initializeEdgesMap(edgesMap, initialInfo)
         }
     }
 }
 
-private fun <D> Pseudocode.collectDataFromSubgraph(
+private fun <I : ControlFlowInfo<*>> Pseudocode.collectDataFromSubgraph(
         traversalOrder: TraversalOrder,
         mergeDataWithLocalDeclarations: Boolean,
-        edgesMap: MutableMap<Instruction, Edges<D>>,
-        mergeEdges: (Instruction, Collection<D>) -> Edges<D>,
-        updateEdge: (Instruction, Instruction, D) -> D,
+        edgesMap: MutableMap<Instruction, Edges<I>>,
+        mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
+        updateEdge: (Instruction, Instruction, I) -> I,
         previousSubGraphInstructions: Collection<Instruction>,
         changed: BooleanArray,
         isLocal: Boolean
@@ -120,8 +121,8 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
         val previousInstructions = getPreviousIncludingSubGraphInstructions()
 
         fun updateEdgeDataForInstruction(
-                previousValue: Edges<D>?,
-                newValue: Edges<D>?
+                previousValue: Edges<I>?,
+                newValue: Edges<I>?
         ) {
             if (previousValue != newValue && newValue != null) {
                 changed[0] = true
@@ -151,7 +152,7 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
         }
         val previousDataValue = edgesMap.get(instruction)
 
-        val incomingEdgesData = HashSet<D>()
+        val incomingEdgesData = HashSet<I>()
 
         for (previousInstruction in previousInstructions) {
             val previousData = edgesMap.get(previousInstruction)
@@ -167,6 +168,11 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
 
 data class Edges<T>(val incoming: T, val outgoing: T)
 
+enum class TraverseInstructionResult {
+    CONTINUE,
+    SKIP,
+    HALT
+}
 
 // returns false when interrupted by handler
 public fun traverseFollowingInstructions(
@@ -174,7 +180,7 @@ public fun traverseFollowingInstructions(
         visited: MutableSet<Instruction>,
         order: TraversalOrder,
         // true to continue traversal
-        handler: ((Instruction) -> Boolean)?
+        handler: ((Instruction) -> TraverseInstructionResult)?
 ): Boolean {
     val stack = ArrayDeque<Instruction>()
     stack.push(rootInstruction)
@@ -182,9 +188,11 @@ public fun traverseFollowingInstructions(
     while (!stack.isEmpty()) {
         val instruction = stack.pop()
         if (!visited.add(instruction)) continue
-        if (handler != null && !handler(instruction)) return false
-
-        instruction.getNextInstructions(order).forEach { stack.push(it) }
+        when (handler?.let { it(instruction) } ?: TraverseInstructionResult.CONTINUE) {
+            TraverseInstructionResult.CONTINUE -> instruction.getNextInstructions(order).forEach { stack.push(it) }
+            TraverseInstructionResult.SKIP -> {}
+            TraverseInstructionResult.HALT -> return false
+        }
     }
     return true
 }

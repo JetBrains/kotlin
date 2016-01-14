@@ -1,6 +1,9 @@
 package
 
+public val x: kotlin.Nothing
+public val y: kotlin.Nothing
 public fun bar(): kotlin.Nothing
 public fun baz(): kotlin.Nothing
+public fun check(): kotlin.Unit
 public fun foo(): kotlin.Nothing
 public fun gav(): kotlin.Any

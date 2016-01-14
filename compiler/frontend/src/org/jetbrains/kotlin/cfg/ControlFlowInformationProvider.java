@@ -28,8 +28,6 @@ import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
-import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
@@ -65,7 +63,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState.*;
+import static org.jetbrains.kotlin.cfg.VariableUseState.*;
 import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
@@ -303,7 +301,7 @@ public class ControlFlowInformationProvider {
         final boolean processClassOrObject = subroutine instanceof KtClassOrObject;
 
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
+        Map<Instruction, Edges<InitControlFlowInfo>> initializers =
                 pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariablesData.getLexicalScopeVariableInfo();
@@ -352,8 +350,7 @@ public class ControlFlowInformationProvider {
     public void recordInitializedVariables() {
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
-                pseudocodeVariablesData.getVariableInitializers();
+        Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         recordInitializedVariables(pseudocode, initializers);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             recordInitializedVariables(instruction.getBody(), initializers);
@@ -478,7 +475,7 @@ public class ControlFlowInformationProvider {
     }
 
     private boolean checkAssignmentBeforeDeclaration(@NotNull VariableInitContext ctxt, @NotNull KtExpression expression) {
-        if (!ctxt.enterInitState.isDeclared && !ctxt.exitInitState.isDeclared
+        if (!ctxt.enterInitState.isDeclared() && !ctxt.exitInitState.isDeclared()
             && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
             report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt);
             return true;
@@ -519,9 +516,9 @@ public class ControlFlowInformationProvider {
 
     private void recordInitializedVariables(
             @NotNull Pseudocode pseudocode,
-            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializersMap
+            @NotNull Map<Instruction, Edges<InitControlFlowInfo>> initializersMap
     ) {
-        Edges<Map<VariableDescriptor, VariableControlFlowState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
+        Edges<InitControlFlowInfo> initializers = initializersMap.get(pseudocode.getExitInstruction());
         if (initializers == null) return;
         Set<VariableDescriptor> declaredVariables = getPseudocodeVariablesData().getDeclaredVariables(pseudocode, false);
         for (VariableDescriptor variable : declaredVariables) {
@@ -538,8 +535,7 @@ public class ControlFlowInformationProvider {
 
     public void markUnusedVariables() {
         final PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusData =
-                pseudocodeVariablesData.getVariableUseStatusData();
+        Map<Instruction, Edges<UseControlFlowInfo>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>>() {
@@ -560,7 +556,7 @@ public class ControlFlowInformationProvider {
                                 || !ExpressionTypingUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) {
                             return;
                         }
-                        PseudocodeVariablesData.VariableUseState variableUseState = in.get(variableDescriptor);
+                        VariableUseState variableUseState = in.get(variableDescriptor);
                         if (instruction instanceof WriteValueInstruction) {
                             if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return;
                             KtElement element = ((WriteValueInstruction) instruction).getElement();
@@ -717,10 +713,28 @@ public class ControlFlowInformationProvider {
     }
 
     public void markWhenWithoutElse() {
+        final Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
+                        if (instruction instanceof MagicInstruction) {
+                            MagicInstruction magicInstruction = (MagicInstruction) instruction;
+                            if (magicInstruction.getKind() == MagicKind.EXHAUSTIVE_WHEN_ELSE) {
+                                Instruction next = magicInstruction.getNext();
+                                if (next instanceof MergeInstruction) {
+                                    MergeInstruction mergeInstruction = (MergeInstruction) next;
+                                    if (initializers.containsKey(mergeInstruction) && initializers.containsKey(magicInstruction)) {
+                                        InitControlFlowInfo mergeInfo = initializers.get(mergeInstruction).getIncoming();
+                                        InitControlFlowInfo magicInfo = initializers.get(magicInstruction).getOutgoing();
+                                        if (mergeInstruction.getElement() instanceof KtWhenExpression &&
+                                            magicInfo.checkDefiniteInitializationInWhen(mergeInfo)) {
+                                            trace.record(IMPLICIT_EXHAUSTIVE_WHEN, (KtWhenExpression) mergeInstruction.getElement());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         PseudoValue value = instruction instanceof InstructionWithValue
                                             ? ((InstructionWithValue) instruction).getOutputValue()
                                             : null;

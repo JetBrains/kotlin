@@ -35,6 +35,7 @@ import java.util.*;
 abstract public class SwitchCodegen {
     protected final KtWhenExpression expression;
     protected final boolean isStatement;
+    protected final boolean isExhaustive;
     protected final ExpressionCodegen codegen;
     protected final BindingContext bindingContext;
     protected final Type subjectType;
@@ -49,10 +50,11 @@ abstract public class SwitchCodegen {
 
     public SwitchCodegen(
             @NotNull KtWhenExpression expression, boolean isStatement,
-            @NotNull ExpressionCodegen codegen
+            boolean isExhaustive, @NotNull ExpressionCodegen codegen
     ) {
         this.expression = expression;
         this.isStatement = isStatement;
+        this.isExhaustive = isExhaustive;
         this.codegen = codegen;
         this.bindingContext = codegen.getBindingContext();
 
@@ -70,7 +72,7 @@ abstract public class SwitchCodegen {
         boolean hasElse = expression.getElseExpression() != null;
 
         // if there is no else-entry and it's statement then default --- endLabel
-        defaultLabel = (hasElse || !isStatement) ? elseLabel : endLabel;
+        defaultLabel = (hasElse || !isStatement || isExhaustive) ? elseLabel : endLabel;
 
         generateSubject();
 
@@ -79,9 +81,9 @@ abstract public class SwitchCodegen {
         generateEntries();
 
         // there is no else-entry but this is not statement, so we should return Unit
-        if (!hasElse && !isStatement) {
+        if (!hasElse && (!isStatement || isExhaustive)) {
             v.visitLabel(elseLabel);
-            codegen.putUnitInstanceOntoStackForNonExhaustiveWhen(expression);
+            codegen.putUnitInstanceOntoStackForNonExhaustiveWhen(expression, isStatement);
         }
 
         codegen.markLineNumber(expression, isStatement);

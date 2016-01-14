@@ -1,0 +1,17 @@
+package
+
+public fun bar1(/*0*/ x: Out<Out<*>>): kotlin.Unit
+public fun bar2(/*0*/ x: Out<*>): kotlin.Unit
+public fun foo(/*0*/ x: B<*>): kotlin.Unit
+
+public interface B</*0*/ T> : Out<Out<T>> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Out</*0*/ out F> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -20,10 +20,13 @@ import com.google.common.collect.*;
 import com.intellij.util.containers.BidirectionalMap;
 import kotlin.MapsKt;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.Label;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MergeInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction;
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterI
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.PseudocodeTraverserKt;
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult;
 import org.jetbrains.kotlin.psi.KtElement;
 
 import java.util.*;
@@ -421,7 +425,17 @@ public class PseudocodeImpl implements Pseudocode {
 
     private Set<Instruction> collectReachableInstructions() {
         Set<Instruction> visited = Sets.newHashSet();
-        PseudocodeTraverserKt.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD, null);
+        PseudocodeTraverserKt.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD,
+                                                            new Function1<Instruction, TraverseInstructionResult>() {
+            @Override
+            public TraverseInstructionResult invoke(Instruction instruction) {
+                if (instruction instanceof MagicInstruction &&
+                    ((MagicInstruction) instruction).getKind() == MagicKind.EXHAUSTIVE_WHEN_ELSE) {
+                    return TraverseInstructionResult.SKIP;
+                }
+                return TraverseInstructionResult.CONTINUE;
+            }
+        });
         if (!visited.contains(getExitInstruction())) {
             visited.add(getExitInstruction());
         }

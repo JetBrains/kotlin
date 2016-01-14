@@ -1,0 +1,12 @@
+package
+
+public fun test(/*0*/ clazz: Clazz<*>): kotlin.Unit
+
+public open class Clazz</*0*/ T : kotlin.Any!> {
+    public constructor Clazz</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getSuperClass(): Clazz<in T!>!
+    public open fun getT(): T!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

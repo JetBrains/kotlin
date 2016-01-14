@@ -34,8 +34,7 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
         val element = node.getElement()
         if (element !is KtClassOrObject) return listOf()
 
-        @Suppress("USELESS_CAST") // KT-3996 Workaround
-        val project = (element as NavigatablePsiElement).getProject()
+        val project = element.project
 
         val context = element.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element]

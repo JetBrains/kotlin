@@ -72,7 +72,7 @@ internal class ExpressionDecomposer private constructor(
     }
 
     // TODO: add test case (after KT-7371 fix): var a = foo(), b = foo() + inlineBar()
-    override fun visit(x: JsVars, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsVars, ctx: JsContext<JsNode>): Boolean {
         val vars = x.getVars()
         var prevVars = SmartList<JsVars.JsVar>()
 
@@ -91,12 +91,12 @@ internal class ExpressionDecomposer private constructor(
         return false
     }
 
-    override fun visit(x: JsWhile, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean {
         x.process(true)
         return false
     }
 
-    override fun visit(x: JsDoWhile, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean {
         x.process(false)
         return false
     }
@@ -126,7 +126,7 @@ internal class ExpressionDecomposer private constructor(
     }
 
     // TODO: comma operator?
-    override fun visit(x: JsBinaryOperation, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsBinaryOperation, ctx: JsContext<JsNode>): Boolean {
         x.arg1 = accept(x.arg1)
 
         when (x.operator) {
@@ -138,7 +138,7 @@ internal class ExpressionDecomposer private constructor(
         return false
     }
 
-    private fun JsBinaryOperation.processOrAnd(ctx: JsContext<*>) {
+    private fun JsBinaryOperation.processOrAnd(ctx: JsContext<JsNode>) {
         if (arg2 !in containsExtractable) return
 
         val tmp = Temporary(arg1)
@@ -176,13 +176,13 @@ internal class ExpressionDecomposer private constructor(
         arg2 = accept(arg2)
     }
 
-    override fun visit(x: JsArrayLiteral, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsArrayLiteral, ctx: JsContext<JsNode>): Boolean {
         val elements = x.getExpressions()
         processByIndices(elements, elements.indicesOfExtractable)
         return false
     }
 
-    override fun visit(x: JsArrayAccess, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsArrayAccess, ctx: JsContext<JsNode>): Boolean {
         x.process()
         return false
     }
@@ -197,12 +197,12 @@ internal class ExpressionDecomposer private constructor(
         index = accept(index)
     }
 
-    override fun visit(x: JsConditional, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsConditional, ctx: JsContext<JsNode>): Boolean {
         x.process(ctx)
         return false
     }
 
-    private fun JsConditional.process(ctx: JsContext<*>) {
+    private fun JsConditional.process(ctx: JsContext<JsNode>) {
         test = accept(test)
         if (then !in containsExtractable && otherwise !in containsExtractable) return
 
@@ -226,12 +226,12 @@ internal class ExpressionDecomposer private constructor(
         ctx.replaceMe(tmp.nameRef)
     }
 
-    override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsInvocation, ctx: JsContext<JsNode>): Boolean {
         CallableInvocationAdapter(x).process()
         return false
     }
 
-    override fun visit(x: JsNew, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsNew, ctx: JsContext<JsNode>): Boolean {
         CallableNewAdapter(x).process()
         return false
     }
@@ -339,69 +339,69 @@ internal class ExpressionDecomposer private constructor(
  */
 internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
 
-    override fun visit(x: JsBlock, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsTry, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsDebugger, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsLabel, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsObjectLiteral, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsPropertyInitializer, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsProgramFragment, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsProgram, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsParameter, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsCatch, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsBreak, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsContinue, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsCase, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsDefault, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsEmpty, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsLiteral.JsBooleanLiteral, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsLiteral.JsThisRef, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsNullLiteral, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsNumberLiteral, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsRegExp, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsStringLiteral, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsName, ctx: JsContext<*>): Boolean = false
+    override fun visit(x: JsBlock, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsTry, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsDebugger, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsFunction, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsObjectLiteral, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsPropertyInitializer, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsProgramFragment, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsProgram, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsParameter, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsCatch, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsBreak, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsContinue, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsCase, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsDefault, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsEmpty, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsLiteral.JsBooleanLiteral, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsLiteral.JsThisRef, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsNullLiteral, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsNumberLiteral, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsRegExp, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsStringLiteral, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsName, ctx: JsContext<JsNode>): Boolean = false
 
     // TODO: support these
     // Not generated by compiler now, (can be generated in future or used in js() block)
-    override fun visit(x: JsForIn, ctx: JsContext<*>): Boolean = false
-    override fun visit(x: JsSwitch, ctx: JsContext<*>): Boolean = false
+    override fun visit(x: JsForIn, ctx: JsContext<JsNode>): Boolean = false
+    override fun visit(x: JsSwitch, ctx: JsContext<JsNode>): Boolean = false
 
     // Compiler generates restricted version of for,
     // where init and test do not contain inline calls.
-    override fun visit(x: JsFor, ctx: JsContext<*>): Boolean = false
+    override fun visit(x: JsFor, ctx: JsContext<JsNode>): Boolean = false
 
-    override fun visit(x: JsIf, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsIf, ctx: JsContext<JsNode>): Boolean {
         val test = x.getIfExpression()
         x.setIfExpression(accept(test))
         return false
     }
 
-    override fun visit(x: JsWhile, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean {
         x.test = accept(x.test)
         return false
     }
 
-    override fun visit(x: JsDoWhile, ctx: JsContext<*>): Boolean {
+    override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean {
         x.test = accept(x.test)
         return false
     }
 
-    override fun visit(x: JsArrayAccess, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsArrayLiteral, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsBinaryOperation, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsConditional, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsNameRef, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsNew, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsPostfixOperation, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsPrefixOperation, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsExpressionStatement, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsReturn, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsThrow, ctx: JsContext<*>): Boolean = true
-    override fun visit(x: JsVars, ctx: JsContext<*>): Boolean = true
+    override fun visit(x: JsArrayAccess, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsArrayLiteral, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsBinaryOperation, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsConditional, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsInvocation, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsNameRef, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsNew, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsVars.JsVar, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsPostfixOperation, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsPrefixOperation, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsReturn, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsThrow, ctx: JsContext<JsNode>): Boolean = true
+    override fun visit(x: JsVars, ctx: JsContext<JsNode>): Boolean = true
 }
 
 /**
@@ -411,7 +411,7 @@ private fun JsNode.match(predicate: (JsNode) -> Boolean): Set<JsNode> {
     val visitor = object : JsExpressionVisitor() {
         val matched = IdentitySet<JsNode>()
 
-        override fun <R : JsNode> doTraverse(node: R, ctx: JsContext<*>?) {
+        override fun <R : JsNode> doTraverse(node: R, ctx: JsContext<JsNode>?) {
             super.doTraverse(node, ctx)
 
             if (node !in matched && predicate(node)) {
@@ -432,7 +432,7 @@ private fun JsNode.withParentsOfNodes(nodes: Set<JsNode>): Set<JsNode> {
         private val stack = SmartList<JsNode>()
         val matched = IdentitySet<JsNode>()
 
-        override fun <R : JsNode> doTraverse(node: R, ctx: JsContext<*>?) {
+        override fun <R : JsNode> doTraverse(node: R, ctx: JsContext<JsNode>?) {
             stack.add(node)
             super.doTraverse(node, ctx)
 

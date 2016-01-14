@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ T> magic(): T
+
+public final class Q {
+    public constructor Q()
+    private final var x: Q.foo.<anonymous>.C<kotlin.CharSequence>
+    private final var y: Q.foo.<anonymous>.C<kotlin.String>
+    public final fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    private final fun </*0*/ E> foo(): () -> Q.foo.<anonymous>.C<E>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

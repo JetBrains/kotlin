@@ -1051,9 +1051,27 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("exhaustiveWhenInitialization.kt")
+        public void testExhaustiveWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenInitialization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exhaustiveWhenReturn.kt")
+        public void testExhaustiveWhenReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("integralWhenWithNoInlinedConstants.kt")
         public void testIntegralWhenWithNoInlinedConstants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/integralWhenWithNoInlinedConstants.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedWhenInitialization.kt")
+        public void testSealedWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/sealedWhenInitialization.kt");
             doTest(fileName);
         }
     }

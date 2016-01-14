@@ -145,10 +145,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
+        boolean isExhaustive = WhenChecker.isWhenExhaustive(expression, context.trace);
         if (commonDataFlowInfo == null) {
             commonDataFlowInfo = context.dataFlowInfo;
         }
-        else if (expression.getElseExpression() == null && !WhenChecker.isWhenExhaustive(expression, context.trace)) {
+        else if (expression.getElseExpression() == null && !isExhaustive) {
             // Without else expression in non-exhaustive when, we *must* take initial data flow info into account,
             // because data flow can bypass all when branches in this case
             commonDataFlowInfo = commonDataFlowInfo.or(context.dataFlowInfo);
@@ -158,6 +159,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (resultType != null) {
             DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, resultType, context);
             commonDataFlowInfo = commonDataFlowInfo.assign(resultValue, whenValue);
+            if (isExhaustive && expression.getElseExpression() == null && KotlinBuiltIns.isNothing(resultType)) {
+                context.trace.record(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, expression);
+            }
         }
         return TypeInfoFactoryKt.createTypeInfo(expressionTypes.isEmpty() ? null : components.dataFlowAnalyzer.checkType(
                                                              components.dataFlowAnalyzer.checkImplicitCast(

@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.types.typeUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 public enum class TypeNullability {
@@ -62,39 +61,6 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
     return typeArg != null && KotlinBuiltIns.isNothingOrNullableNothing(typeArg)
 }
 
-private fun KotlinType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
-    val declarationDescriptor = getConstructor().getDeclarationDescriptor()
-    if (declarationDescriptor is TypeParameterDescriptor) return listOf(declarationDescriptor)
-
-    val flexibility = getCapability(javaClass<Flexibility>())
-    if (flexibility != null) {
-        return flexibility.lowerBound.getContainedTypeParameters() + flexibility.upperBound.getContainedTypeParameters()
-    }
-    return getArguments().filter { !it.isStarProjection() }.map { it.getType() }.flatMap { it.getContainedTypeParameters() }
-}
-
-fun DeclarationDescriptor.getCapturedTypeParameters(): Collection<TypeParameterDescriptor> {
-    val result = LinkedHashSet<TypeParameterDescriptor>()
-    val containingDeclaration = this.getContainingDeclaration()
-
-    if (containingDeclaration is ClassDescriptor) {
-        result.addAll(containingDeclaration.getDefaultType().getContainedTypeParameters())
-    }
-    else if (containingDeclaration is CallableDescriptor) {
-        result.addAll(containingDeclaration.getTypeParameters())
-    }
-    if (containingDeclaration != null) {
-        result.addAll(containingDeclaration.getCapturedTypeParameters())
-    }
-    return result
-}
-
-public fun KotlinType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
-    // todo type arguments (instead of type parameters) of the type of outer class must be considered; KT-6325
-    val capturedTypeParameters = getConstructor().getDeclarationDescriptor()?.getCapturedTypeParameters() ?: emptyList()
-    val typeParameters = getContainedTypeParameters() + capturedTypeParameters
-    return typeParameters.map { it.getTypeConstructor() }.toReadOnlyList()
-}
 
 public fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 

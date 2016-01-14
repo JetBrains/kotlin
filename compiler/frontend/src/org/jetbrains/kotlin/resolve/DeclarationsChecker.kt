@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.TYPE
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
+import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.TypeUtils
@@ -66,12 +67,23 @@ fun KtTypeReference.checkNotEnumEntry(trace: BindingTrace): Boolean {
     return result
 }
 
+internal class DeclarationsCheckerBuilder(
+        private val descriptorResolver: DescriptorResolver,
+        private val originalModifiersChecker: ModifiersChecker,
+        private val annotationChecker: AnnotationChecker,
+        private val identifierChecker: IdentifierChecker
+) {
+    fun withTrace(trace: BindingTrace) =
+            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace)
+}
+
 class DeclarationsChecker(
         private val descriptorResolver: DescriptorResolver,
         modifiersChecker: ModifiersChecker,
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
-        private val trace: BindingTrace) {
+        private val trace: BindingTrace
+) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
 
@@ -434,6 +446,7 @@ class DeclarationsChecker(
         checkTypeParameterConstraints(property)
         checkPropertyExposedType(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
+        checkImplicitCallableType(property, propertyDescriptor)
     }
 
     private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
@@ -610,7 +623,7 @@ class DeclarationsChecker(
         checkMemberReceiverExposedType(property.receiverTypeReference, propertyDescriptor)
     }
 
-    private fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
+    fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
         val typeParameterList = function.typeParameterList
         val nameIdentifier = function.nameIdentifier
         if (typeParameterList != null && nameIdentifier != null &&
@@ -648,12 +661,7 @@ class DeclarationsChecker(
         if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
-        functionDescriptor.returnType?.let {
-            if (it.isNothing() && !function.hasDeclaredReturnType()) {
-                trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(nameIdentifier ?: function))
-            }
-        }
-
+        checkImplicitCallableType(function, functionDescriptor)
         checkFunctionExposedType(function, functionDescriptor)
         checkVarargParameters(function, functionDescriptor)
     }
@@ -662,6 +670,22 @@ class DeclarationsChecker(
         val numberOfVarargParameters = callableDescriptor.valueParameters.count { it.varargElementType != null }
         if (numberOfVarargParameters > 1) {
             trace.report(MULTIPLE_VARARG_PARAMETERS.on(declaration))
+        }
+    }
+
+    private fun checkImplicitCallableType(declaration: KtCallableDeclaration, descriptor: CallableDescriptor) {
+        descriptor.returnType?.let {
+            if (declaration.typeReference == null) {
+                val target = declaration.nameIdentifier ?: declaration
+                if (it.isNothing()) {
+                    trace.report(
+                            (if (declaration is KtProperty) IMPLICIT_NOTHING_PROPERTY_TYPE else IMPLICIT_NOTHING_RETURN_TYPE).on(target)
+                    )
+                }
+                if (it.constructor is IntersectionTypeConstructor) {
+                    trace.report(IMPLICIT_INTERSECTION_TYPE.on(target, it))
+                }
+            }
         }
     }
 
@@ -748,6 +772,20 @@ class DeclarationsChecker(
         }
         else {
             assert(DescriptorUtils.isInterface(declaration)) { "Enum entry should be declared in enum class: " + classDescriptor }
+        }
+    }
+
+    private fun checkVarargParameters(trace: BindingTrace, callableDescriptor: CallableDescriptor) {
+        val numberOfVarargParameters = callableDescriptor.valueParameters.count { it.varargElementType != null }
+        if (numberOfVarargParameters > 1) {
+            for (parameter in callableDescriptor.valueParameters) {
+                if (parameter.varargElementType != null) {
+                    val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
+                    if (parameterDeclaration is KtParameter) {
+                        trace.report(MULTIPLE_VARARG_PARAMETERS.on(parameterDeclaration))
+                    }
+                }
+            }
         }
     }
 

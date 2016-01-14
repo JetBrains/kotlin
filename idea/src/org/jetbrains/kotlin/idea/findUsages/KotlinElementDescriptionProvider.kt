@@ -57,12 +57,8 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
 
         if (targetElement !is PsiNamedElement || targetElement !is KtElement) return null
 
-        // as is necessary because of ambiguity: see KT-3996
-        val name = (targetElement as PsiNamedElement).getName()
-
         return when(location) {
-            is UsageViewLongNameLocation ->
-                name
+            is UsageViewLongNameLocation -> targetElement.getName()
             is RefactoringDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 val descriptor = targetDescriptor() ?: return null

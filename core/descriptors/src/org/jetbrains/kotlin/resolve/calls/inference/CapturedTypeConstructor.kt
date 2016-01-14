@@ -68,10 +68,15 @@ public class CapturedType(
 
     override fun getDelegate(): KotlinType = delegateType
 
+    override fun getCapabilities(): TypeCapabilities = object : TypeCapabilities {
+        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>) =
+            this@CapturedType.getCapability(capabilityClass)
+    }
+
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
-        return if (capabilityClass == javaClass<SubtypingRepresentatives>()) this as T
-        else super<DelegatingType>.getCapability(capabilityClass)
+        return if (capabilityClass == SubtypingRepresentatives::class.java) this as T
+        else super.getCapability(capabilityClass)
     }
 
     override val subTypeRepresentative: KotlinType
@@ -91,3 +96,34 @@ public class CapturedType(
 public fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)
 
 public fun KotlinType.isCaptured(): Boolean = getConstructor() is CapturedTypeConstructor
+
+public fun TypeSubstitution.wrapWithCapturingSubstitution(): TypeSubstitution =
+    if (this is IndexedParametersSubstitution)
+        IndexedParametersSubstitution(
+                this.parameters,
+                this.arguments.zip(this.parameters).map {
+                    it.first.createCapturedIfNeeded(it.second)
+                }.toTypedArray(),
+                approximateCapturedTypes = true)
+    else
+        object : DelegatedTypeSubstitution(this@wrapWithCapturingSubstitution) {
+            override fun approximateContravariantCapturedTypes() = true
+            override fun get(key: KotlinType) = super.get(key)?.createCapturedIfNeeded(key.constructor.declarationDescriptor as? TypeParameterDescriptor)
+        }
+
+private fun TypeProjection.createCapturedIfNeeded(typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection {
+    if (typeParameterDescriptor == null || projectionKind == Variance.INVARIANT) return this
+
+    // Treat consistent projections as invariant
+    if (typeParameterDescriptor.variance == projectionKind) {
+        // TODO: Make star projection type lazy
+        return if (isStarProjection)
+            TypeProjectionImpl(object : DelegatingType() {
+                override fun getDelegate() = this@createCapturedIfNeeded.type
+            })
+        else
+            TypeProjectionImpl(this@createCapturedIfNeeded.type)
+    }
+
+    return TypeProjectionImpl(createCapturedType(this))
+}
