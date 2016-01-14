@@ -80,8 +80,11 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
     open protected fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
 
     fun annotateElement(element: PsiElement, holder: AnnotationHolder, diagnostics: Diagnostics) {
+        val diagnosticsForElement = diagnostics.forElement(element)
+        if (diagnosticsForElement.isEmpty()) return
+
         if (ProjectRootsUtil.isInProjectSource(element) || element.containingFile is KtCodeFragment) {
-            ElementAnnotator(element, holder, { param -> shouldSuppressUnusedParameter(param) }).registerDiagnosticsAnnotations(diagnostics.forElement(element))
+            ElementAnnotator(element, holder, { param -> shouldSuppressUnusedParameter(param) }).registerDiagnosticsAnnotations(diagnosticsForElement)
         }
     }
 
@@ -263,7 +266,7 @@ private class AnnotationPresentationInfo(
         val textAttributes: TextAttributesKey? = null) {
 
     fun create(diagnostic: Diagnostic, range: TextRange, holder: AnnotationHolder): Annotation {
-        val defaultMessage = nonDefaultMessage?: getDefaultMessage(diagnostic)
+        val defaultMessage = nonDefaultMessage ?: getDefaultMessage(diagnostic)
 
         val annotation = when (diagnostic.severity) {
             Severity.ERROR -> holder.createErrorAnnotation(range, defaultMessage)
