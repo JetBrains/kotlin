@@ -118,7 +118,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
 
-            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false);
+            CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false,
+                                                                     false);
 
             String outputDir = getAppOutputPath();
             String sourcesDir = modulePath + File.separator + "src";

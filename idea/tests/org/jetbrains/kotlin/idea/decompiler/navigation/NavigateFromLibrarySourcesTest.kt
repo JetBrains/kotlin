@@ -31,9 +31,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.sure
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     fun testJdkClass() {
@@ -73,7 +71,7 @@ class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromLibSource", true, true, false)
+        return JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromLibSource", true, true, false, false)
     }
 
     private fun checkNavigationElement(element: PsiElement, expectedFqName: String) {

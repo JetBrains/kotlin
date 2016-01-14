@@ -55,7 +55,7 @@ abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
 
     private fun getClassFileToDecompile(sourcePath: String): VirtualFile {
         val outDir = KotlinTestUtils.tmpDir("libForStubTest-" + sourcePath)
-        MockLibraryUtil.compileKotlin(sourcePath, outDir)
+        MockLibraryUtil.compileKotlin(sourcePath, outDir, true)
         val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outDir)!!
         return root.findClassFileByName(lastSegment(sourcePath))
     }

@@ -51,7 +51,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
 
         Assert.assertTrue("File doesn't exist $filePath", File(filePath).exists())
 
-        val libraryJar = MockLibraryUtil.compileLibraryToJar(filePath, libName(), false, false)
+        val libraryJar = MockLibraryUtil.compileLibraryToJar(filePath, libName(), false, false, false)
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)
     }

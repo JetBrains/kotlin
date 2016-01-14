@@ -71,7 +71,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     @NotNull
     private File compileLibrary(@NotNull String sourcePath, @NotNull String... extraClassPath) {
         return MockLibraryUtil.compileLibraryToJar(
-                new File(getTestDataDirectory(), sourcePath).getPath(), "customKotlinLib", false, extraClassPath
+                new File(getTestDataDirectory(), sourcePath).getPath(), "customKotlinLib", false, false, extraClassPath
         );
     }
 

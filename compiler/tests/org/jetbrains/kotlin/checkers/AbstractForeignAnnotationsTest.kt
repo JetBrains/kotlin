@@ -30,7 +30,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     override fun createCompilerConfiguration(javaFilesDir: File?): CompilerConfiguration {
         val annotationsFile = MockLibraryUtil.compileLibraryToJar(
                 "compiler/testData/foreignAnnotations/annotations",
-                "foreign-annotations", /* addSources = */false)
+                "foreign-annotations", /* addSources = */false, /* allowKotlinPackage =*/ false)
 
         return KotlinTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY,

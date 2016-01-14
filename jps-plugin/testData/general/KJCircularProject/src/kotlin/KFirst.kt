@@ -1,4 +1,4 @@
-package kotlin
+package myproject.kotlin
 
 class KFirst() {
     fun foo() {

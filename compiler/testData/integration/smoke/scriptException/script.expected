@@ -7,4 +7,4 @@ java.lang.IllegalStateException: my error
 	at Script.a(Unknown Source)
 	at Script.<init>(Unknown Source)
 
-Return code: 0
+Return code: 3
