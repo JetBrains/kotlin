@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmOverloadFilter
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
@@ -48,7 +49,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 TraitDefaultMethodCallChecker(),
                 JavaClassOnCompanionChecker(),
                 ProtectedInSuperClassCompanionCallChecker(),
-                UnsupportedSyntheticCallableReferenceChecker()
+                UnsupportedSyntheticCallableReferenceChecker(),
+                SuperCallWithDefaultArgumentsChecker()
         ),
 
         additionalTypeCheckers = listOf(

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -64,6 +65,11 @@ fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParameter(par
 fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valueArgument: ValueArgument?): ValueParameterDescriptor? {
     return (valueArgument?.let { getArgumentMapping(it) } as? ArgumentMatch)?.valueParameter
 }
+
+fun <D : CallableDescriptor> ResolvedCall<D>.usesDefaultArguments(): Boolean {
+    return valueArgumentsByIndex?.any { it is DefaultValueArgument } ?: false
+}
+
 
 // call
 

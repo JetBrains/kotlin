@@ -80,6 +80,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<PsiElement> UPPER_BOUND_CANNOT_BE_ARRAY = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory1<PsiElement, String> SUPER_CALL_WITH_DEFAULT_PARAMETERS = DiagnosticFactory1.create(ERROR);
+
     enum NullabilityInformationSource {
         KOTLIN {
             @NotNull

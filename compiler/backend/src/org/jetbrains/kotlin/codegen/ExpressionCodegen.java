@@ -2294,20 +2294,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             descriptor = originalIfSamAdapter;
         }
         // $default method is not private, so you need no accessor to call it
-        return usesDefaultArguments(resolvedCall)
+        return CallUtilKt.usesDefaultArguments(resolvedCall)
                ? descriptor
                : context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
-    }
-
-    private static boolean usesDefaultArguments(@NotNull ResolvedCall<?> resolvedCall) {
-        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
-        if (valueArguments == null) return false;
-
-        for (ResolvedValueArgument argument : valueArguments) {
-            if (argument instanceof DefaultValueArgument) return true;
-        }
-
-        return false;
     }
 
     @NotNull
