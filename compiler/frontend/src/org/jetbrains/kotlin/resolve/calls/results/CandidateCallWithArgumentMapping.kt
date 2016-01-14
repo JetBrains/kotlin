@@ -17,15 +17,12 @@
 package org.jetbrains.kotlin.resolve.calls.results
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.kotlin.types.BoundsSubstitutor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Variance
-
 
 class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constructor(
         val resolvedCall: MutableResolvedCall<D>,
@@ -35,8 +32,14 @@ class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constr
     override fun toString(): String =
             "${resolvedCall.call}: $parametersWithDefaultValuesCount defaults in ${resolvedCall.candidateDescriptor}"
 
-    val resultingDescriptor: D
-        get() = resolvedCall.resultingDescriptor
+    val candidateDescriptor: D
+        get() = resolvedCall.candidateDescriptor
+
+    val hasVarargs: Boolean
+        get() = candidateDescriptor.valueParameters.any { it.varargElementType != null }
+
+    val typeParameters: List<TypeParameterDescriptor>
+        get() = candidateDescriptor.original.typeParameters
 
     val argumentsCount: Int
         get() = argumentsToParameters.size
@@ -44,13 +47,10 @@ class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constr
     val argumentKeys: Collection<K>
         get() = argumentsToParameters.keys
 
-    val callElement: KtElement
-        get() = resolvedCall.call.callElement
-
-    val isGeneric: Boolean = resolvedCall.resultingDescriptor.original.typeParameters.isNotEmpty()
+    val isGeneric: Boolean = typeParameters.isNotEmpty()
 
     val extensionReceiverType: KotlinType?
-        get() = resultingDescriptor.extensionReceiverParameter?.type
+        get() = candidateDescriptor.extensionReceiverParameter?.type
 
     /**
      * Returns the type of a value that can be used in place of the corresponding parameter.
@@ -69,14 +69,14 @@ class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constr
             val argumentsToParameters = hashMapOf<K, ValueParameterDescriptor>()
             var parametersWithDefaultValuesCount = 0
 
-            for ((valueParameterDescriptor, resolvedValueArgument) in call.valueArguments.entries) {
+            for ((valueParameterDescriptor, resolvedValueArgument) in call.unsubstitutedValueArguments.entries) {
                 if (resolvedValueArgument is DefaultValueArgument) {
                     parametersWithDefaultValuesCount++
                 }
                 else {
                     val keys = resolvedArgumentToKeys(resolvedValueArgument)
                     for (argumentKey in keys) {
-                        argumentsToParameters[argumentKey] = valueParameterDescriptor
+                        argumentsToParameters[argumentKey] = valueParameterDescriptor.original
                     }
                 }
             }

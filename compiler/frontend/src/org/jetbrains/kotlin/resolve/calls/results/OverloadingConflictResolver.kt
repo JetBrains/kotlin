@@ -136,7 +136,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             call2: CandidateCallWithArgumentMapping<D, K>,
             discriminateGenerics: Boolean
     ): Boolean {
-        return tryCompareDescriptorsFromScripts(call1.resultingDescriptor, call2.resultingDescriptor) ?:
+        return tryCompareDescriptorsFromScripts(call1.candidateDescriptor, call2.candidateDescriptor) ?:
                compareCallsByUsedArguments(call1, call2, discriminateGenerics)
     }
 
@@ -159,7 +159,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             if (isGeneric1 && isGeneric2) return false
         }
 
-        val typeParameters = call2.resolvedCall.resultingDescriptor.typeParameters
+        val typeParameters = call2.typeParameters
         val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
         var hasConstraints = false
         val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(call1.resolvedCall.call.toHandle(), typeParameters)
@@ -219,8 +219,8 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             call1: CandidateCallWithArgumentMapping<D, K>,
             call2: CandidateCallWithArgumentMapping<D, K>
     ): Boolean {
-        val hasVarargs1 = call1.resultingDescriptor.hasVarargs
-        val hasVarargs2 = call2.resultingDescriptor.hasVarargs
+        val hasVarargs1 = call1.hasVarargs
+        val hasVarargs2 = call2.hasVarargs
         if (hasVarargs1 && !hasVarargs2) return false
         if (!hasVarargs1 && hasVarargs2) return true
 

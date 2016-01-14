@@ -17,8 +17,8 @@ val y2: B<Int> = B("")
 val y3: B<Int> = B<Int>(1)
 val y4: B<Int> = B<Int>("")
 
-val y5: B<String> = <!NONE_APPLICABLE!>B<!><String>(1)
-val y6: B<String> = <!OVERLOAD_RESOLUTION_AMBIGUITY!>B<!><String>("") // TODO: doesn't work here but ok on y8
+val y5: B<String> = B<String>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+val y6: B<String> = B<String>("")
 val y7: B<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>B(1)<!>
 val y8: B<String> = B("")
 

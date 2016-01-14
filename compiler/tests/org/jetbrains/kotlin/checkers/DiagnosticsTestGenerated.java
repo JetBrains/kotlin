@@ -13952,9 +13952,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("genericWithProjection.kt")
+                public void testGenericWithProjection() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/genericWithProjection.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt10472.kt")
                 public void testKt10472() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt10472.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt10640.kt")
+                public void testKt10640() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt10640.kt");
                     doTest(fileName);
                 }
 
