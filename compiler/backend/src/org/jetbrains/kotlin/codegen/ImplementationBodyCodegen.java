@@ -1025,7 +1025,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             parentCodegen.generateCompanionObjectInitializer(descriptor);
         }
 
-        if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+        if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
             final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override

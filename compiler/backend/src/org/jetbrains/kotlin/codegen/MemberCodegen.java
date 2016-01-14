@@ -621,7 +621,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     boolean syntheticBackingField = accessor instanceof AccessorForPropertyBackingFieldFromLocal;
-                    boolean forceField = (AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
+                    boolean forceField = (JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                           !isCompanionObject(accessor.getContainingDeclaration())) ||
                                          syntheticBackingField ||
                                          original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
