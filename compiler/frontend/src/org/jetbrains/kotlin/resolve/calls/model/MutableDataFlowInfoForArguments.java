@@ -20,18 +20,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 
-public interface MutableDataFlowInfoForArguments extends DataFlowInfoForArguments {
+public abstract class MutableDataFlowInfoForArguments implements DataFlowInfoForArguments {
 
-    void setInitialDataFlowInfo(@NotNull DataFlowInfo dataFlowInfo);
+    @NotNull protected final DataFlowInfo initialDataFlowInfo;
 
-    void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo);
+    public MutableDataFlowInfoForArguments(@NotNull DataFlowInfo initialDataFlowInfo) {
+        this.initialDataFlowInfo = initialDataFlowInfo;
+    }
 
-    class WithoutArgumentsCheck implements MutableDataFlowInfoForArguments {
-        private DataFlowInfo dataFlowInfo;
+    public abstract void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo);
 
-        @Override
-        public void setInitialDataFlowInfo(@NotNull DataFlowInfo dataFlowInfo) {
-            this.dataFlowInfo = dataFlowInfo;
+    @NotNull
+    @Override
+    public DataFlowInfo getResultInfo() {
+        return initialDataFlowInfo;
+    }
+
+    public static class WithoutArgumentsCheck extends MutableDataFlowInfoForArguments {
+
+        public WithoutArgumentsCheck(@NotNull DataFlowInfo dataFlowInfo) {
+            super(dataFlowInfo);
         }
 
         @Override
@@ -43,12 +51,6 @@ public interface MutableDataFlowInfoForArguments extends DataFlowInfoForArgument
         @Override
         public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
             throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public DataFlowInfo getResultInfo() {
-            return dataFlowInfo;
         }
     };
 }

@@ -125,7 +125,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         KtBlockExpression elseBlock = psiFactory.wrapInABlockWrapper(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
-                    createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
+                    createDataFlowInfoForArgumentsForIfCall(callForIf, conditionDataFlowInfo, thenInfo, elseInfo);
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 callForIf, ResolveConstruct.IF, Lists.newArrayList("thenBranch", "elseBranch"),
                 Lists.newArrayList(false, false),

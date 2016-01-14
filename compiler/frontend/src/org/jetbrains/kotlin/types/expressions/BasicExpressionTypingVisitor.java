@@ -564,7 +564,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 ResolvedCallImpl.create(resolutionCandidate,
                                         TemporaryBindingTrace.create(trace, "Fake trace for fake 'this' or 'super' resolved call"),
                                         TracingStrategy.EMPTY,
-                                        new DataFlowInfoForArgumentsImpl(call));
+                                        new DataFlowInfoForArgumentsImpl(context.dataFlowInfo, call));
         resolvedCall.markCallAsCompleted();
 
         trace.record(RESOLVED_CALL, call, resolvedCall);

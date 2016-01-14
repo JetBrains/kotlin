@@ -157,15 +157,10 @@ public class ControlStructureTypingUtils {
     }
 
     /*package*/ static MutableDataFlowInfoForArguments createIndependentDataFlowInfoForArgumentsForCall(
+            @NotNull DataFlowInfo initialDataFlowInfo,
             final Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap
     ) {
-        return new MutableDataFlowInfoForArguments() {
-            private DataFlowInfo initialDataFlowInfo;
-
-            @Override
-            public void setInitialDataFlowInfo(@NotNull DataFlowInfo dataFlowInfo) {
-                this.initialDataFlowInfo = dataFlowInfo;
-            }
+        return new MutableDataFlowInfoForArguments(initialDataFlowInfo) {
 
             @Override
             public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
@@ -177,25 +172,19 @@ public class ControlStructureTypingUtils {
             public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
                 return dataFlowInfoForArgumentsMap.get(valueArgument);
             }
-
-            @NotNull
-            @Override
-            public DataFlowInfo getResultInfo() {
-                //todo merge and use
-                return initialDataFlowInfo;
-            }
         };
     }
 
     public static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsForIfCall(
             @NotNull Call callForIf,
+            @NotNull DataFlowInfo conditionInfo,
             @NotNull DataFlowInfo thenInfo,
             @NotNull DataFlowInfo elseInfo
     ) {
         Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(0), thenInfo);
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(1), elseInfo);
-        return createIndependentDataFlowInfoForArgumentsForCall(dataFlowInfoForArgumentsMap);
+        return createIndependentDataFlowInfoForArgumentsForCall(conditionInfo, dataFlowInfoForArgumentsMap);
     }
 
     /*package*/ static Call createCallForSpecialConstruction(

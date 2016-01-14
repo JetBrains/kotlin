@@ -60,10 +60,10 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             this.dataFlowInfoForArguments = dataFlowInfoForArguments;
         }
         else if (checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
-            this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
+            this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(dataFlowInfo, call);
         }
         else {
-            this.dataFlowInfoForArguments = new MutableDataFlowInfoForArguments.WithoutArgumentsCheck();
+            this.dataFlowInfoForArguments = new MutableDataFlowInfoForArguments.WithoutArgumentsCheck(dataFlowInfo);
         }
     }
 
