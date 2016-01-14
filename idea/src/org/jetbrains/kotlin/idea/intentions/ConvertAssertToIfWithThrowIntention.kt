@@ -90,7 +90,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         )
         assertionErrorCall.valueArguments.single().getArgumentExpression()!!.replace(message)
 
-        simplifyConditionIfPossible(ifExpression)
+        simplifyConditionIfPossible(ifExpression, editor)
     }
 
     private fun extractMessageSingleExpression(functionLiteral: KtLambdaExpression, bindingContext: BindingContext): KtExpression? {
@@ -105,11 +105,11 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         return valParameters.size > 1 && !KotlinBuiltIns.isAny(valParameters[1].type)
     }
 
-    private fun simplifyConditionIfPossible(ifExpression: KtIfExpression) {
+    private fun simplifyConditionIfPossible(ifExpression: KtIfExpression, editor: Editor?) {
         val condition = ifExpression.condition as KtPrefixExpression
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
         if (simplifier.isApplicableTo(condition)) {
-            simplifier.applyTo(condition)
+            simplifier.applyTo(condition, editor)
         }
     }
 

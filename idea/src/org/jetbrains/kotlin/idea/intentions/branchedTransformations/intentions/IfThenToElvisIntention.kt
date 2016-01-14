@@ -57,11 +57,6 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val elvis = applyTo(element)
-        elvis.inlineLeftSideIfApplicableWithPrompt(editor)
-    }
-
-    fun applyTo(element: KtIfExpression): KtBinaryExpression {
         val condition = element.condition as KtBinaryExpression
 
         val thenClause = element.then!!
@@ -77,6 +72,10 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                 }
 
         val newExpr = element.replaced(KtPsiFactory(element).createExpressionByPattern("$0 ?: $1", left, right))
-        return KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
+        val elvis = KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
+
+        if (editor != null) {
+            elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+        }
     }
 }

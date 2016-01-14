@@ -48,11 +48,6 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val newElvis = applyTo(element)
-        editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
-    }
-
-    fun applyTo(element: KtIfExpression): KtBinaryExpression {
         val (initializer, declaration, ifNullExpr) = calcData(element)!!
         val factory = KtPsiFactory(element)
 
@@ -77,7 +72,7 @@ class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfE
             declaration.setType(explicitTypeToAdd)
         }
 
-        return newElvis
+        editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
     }
 
     private data class Data(

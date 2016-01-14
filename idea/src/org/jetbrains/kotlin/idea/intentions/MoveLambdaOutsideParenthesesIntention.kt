@@ -60,8 +60,4 @@ class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCallExpre
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         element.moveFunctionLiteralOutsideParentheses()
     }
-
-    fun applyTo(element: KtCallExpression) {
-        element.moveFunctionLiteralOutsideParentheses()
-    }
 }

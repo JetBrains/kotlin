@@ -29,10 +29,6 @@ class RemoveUnnecessaryParenthesesIntention : SelfTargetingRangeIntention<KtPare
     }
 
     override fun applyTo(element: KtParenthesizedExpression, editor: Editor?) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtParenthesizedExpression) {
         element.replace(element.expression!!)
     }
 }

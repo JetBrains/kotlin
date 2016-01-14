@@ -69,10 +69,6 @@ class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtP
     }
 
     override fun applyTo(element: KtPrefixExpression, editor: Editor?) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtPrefixExpression) {
         val expression = KtPsiUtil.deparenthesize(element.baseExpression)!!
         val operation = (expression as KtOperationExpression).operationReference.getReferencedNameElementType().negate()!!.value
 

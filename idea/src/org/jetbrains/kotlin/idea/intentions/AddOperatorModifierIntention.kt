@@ -33,10 +33,6 @@ class AddOperatorModifierIntention : SelfTargetingRangeIntention<KtNamedFunction
     }
 
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtNamedFunction) {
         element.addModifier(KtTokens.OPERATOR_KEYWORD)
     }
 }

@@ -48,10 +48,6 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
     }
 
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtNamedFunction) {
         val commentSaver = CommentSaver(element)
         val returnSaver = ReturnSaver(element)
 
@@ -95,7 +91,7 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
 
         val moveLambdaOutsideParenthesesIntention = MoveLambdaOutsideParenthesesIntention()
         if (moveLambdaOutsideParenthesesIntention.isApplicableTo(callExpression, replaced.textOffset)) {
-            moveLambdaOutsideParenthesesIntention.applyTo(callExpression)
+            moveLambdaOutsideParenthesesIntention.applyTo(callExpression, editor)
         }
     }
 }

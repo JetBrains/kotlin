@@ -51,11 +51,6 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val safeAccessExpr = applyTo(element)
-        safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
-    }
-
-    fun applyTo(element: KtIfExpression): KtSafeQualifiedExpression {
         val condition = element.condition as KtBinaryExpression
         val receiverExpression = condition.expressionComparedToNull()!!
 
@@ -69,7 +64,11 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
                 }
 
         val newExpr = KtPsiFactory(element).createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression) as KtSafeQualifiedExpression
-        return element.replaced(newExpr)
+        val safeAccessExpr = element.replaced(newExpr)
+
+        if (editor != null) {
+            safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
+        }
     }
 
     private fun clauseContainsAppropriateDotQualifiedExpression(clause: KtExpression, receiverExpression: KtExpression)

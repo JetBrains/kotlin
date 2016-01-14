@@ -56,17 +56,17 @@ object J2KPostProcessingRegistrar {
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(AccessorBodyToExpression())
 
-        registerIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker) { applyTo(it) }
-        registerIntentionBasedProcessing(AddOperatorModifierIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(SimplifyForIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(SimplifyAssertNotNullIntention()) { applyTo(it, null) }
+        registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
+        registerIntentionBasedProcessing(IfThenToElvisIntention())
+        registerIntentionBasedProcessing(IfNullToElvisIntention())
+        registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention())
+        registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker)
+        registerIntentionBasedProcessing(AddOperatorModifierIntention())
+        registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention())
+        registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention())
+        registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention())
+        registerIntentionBasedProcessing(SimplifyForIntention())
+        registerIntentionBasedProcessing(SimplifyAssertNotNullIntention())
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
             val expression = RemoveUselessCastFix.invoke(element)
@@ -106,17 +106,15 @@ object J2KPostProcessingRegistrar {
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
-            intention: TIntention,
-            crossinline apply: TIntention.(TElement) -> Unit
+            intention: TIntention
     ) {
         //TODO: replace with optional argument when supported for inline functions
-        return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true }, apply)
+        return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true })
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
-            noinline additionalChecker: (TElement) -> Boolean,
-            crossinline apply: TIntention.(TElement) -> Unit
+            noinline additionalChecker: (TElement) -> Boolean
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
@@ -124,7 +122,7 @@ object J2KPostProcessingRegistrar {
                 val tElement = element as TElement
                 if (intention.applicabilityRange(tElement) == null) return null
                 if (!additionalChecker(tElement)) return null
-                return { intention.apply(element) }
+                return { intention.applyTo(element, null) }
             }
         })
     }
@@ -172,7 +170,7 @@ object J2KPostProcessingRegistrar {
             if (element !is KtCallExpression) return null
             val literalArgument = element.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral() ?: return null
             if (!intention.isApplicableTo(element, literalArgument.textOffset)) return null
-            return { intention.applyTo(element) }
+            return { intention.applyTo(element, null) }
         }
     }
 
@@ -181,7 +179,7 @@ object J2KPostProcessingRegistrar {
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element is KtBinaryExpression && intention.isApplicableTo(element) && intention.shouldSuggestToConvert(element)) {
-                return { intention.applyTo(element) }
+                return { intention.applyTo(element, null) }
             }
             else {
                 return null

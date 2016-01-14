@@ -40,10 +40,6 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         "Simplify 'for'"
 ) {
     override fun applyTo(element: KtForExpression, editor: Editor?) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtForExpression) {
         val (propertiesToRemove, removeSelectorInLoopRange) = collectPropertiesToRemove(element) ?: return
 
         val loopRange = element.loopRange ?: return

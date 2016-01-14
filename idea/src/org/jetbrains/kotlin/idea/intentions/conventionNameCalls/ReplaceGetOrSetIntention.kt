@@ -87,10 +87,6 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtDotQualifiedExpression) {
         val isSet = element.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor.name == OperatorNameConventions.SET
         val allArguments = element.callExpression!!.valueArguments
         assert(allArguments.isNotEmpty())
