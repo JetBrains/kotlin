@@ -1,11 +1,11 @@
 == test ==
 fun test(s: IntProgression?) {
-    s?.start
+    s?.first
 }
 ---------------------
-               <v0>: {<: IntProgression?}     NEW: magic[FAKE_INITIALIZER](s: IntProgression?) -> <v0>
-s              <v1>: {<: Progression<Int>?}   NEW: r(s) -> <v1>                                       
-start          <v2>: *                        NEW: r(start|<v1>) -> <v2>                              
-s?.start       <v2>: *                        COPY                                                    
-{ s?.start }   <v2>: *                        COPY                                                    
+               <v0>: {<: IntProgression?}   NEW: magic[FAKE_INITIALIZER](s: IntProgression?) -> <v0>
+s              <v1>: {<: IntProgression?}   NEW: r(s) -> <v1>
+first          <v2>: *                      NEW: r(first|<v1>) -> <v2>
+s?.first       <v2>: *                      COPY
+{ s?.first }   <v2>: *                      COPY
 =====================

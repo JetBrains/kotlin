@@ -1,3 +1,3 @@
 fun test(s: IntProgression?) {
-    s?.start
+    s?.first
 }

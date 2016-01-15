@@ -1,6 +1,6 @@
 == test ==
 fun test(s: IntProgression?) {
-    s?.start
+    s?.first
 }
 ---------------------
 L0:
@@ -8,10 +8,10 @@ L0:
     v(s: IntProgression?)
     magic[FAKE_INITIALIZER](s: IntProgression?) -> <v0>
     w(s|<v0>)
-  2 mark({ s?.start })
-    mark(s?.start)
+  2 mark({ s?.first })
+    mark(s?.first)
     r(s) -> <v1>
-    r(start|<v1>) -> <v2>
+    r(first|<v1>) -> <v2>
 L1:
   1 <END>                                                  NEXT:[<SINK>]
 error:

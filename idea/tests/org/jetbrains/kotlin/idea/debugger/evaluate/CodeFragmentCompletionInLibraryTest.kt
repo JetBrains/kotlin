@@ -54,7 +54,7 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
     }
 
     fun testSecondCompletionInCustomLibrary() {
-        testCompletionInLibraryCodeFragment("Sh<caret>", "EXIST: ShortRange", "EXIST: Short", "INVOCATION_COUNT: 2")
+        testCompletionInLibraryCodeFragment("Ch<caret>", "EXIST: CharRange", "EXIST: Char", "INVOCATION_COUNT: 2")
     }
 
     fun testExtensionCompletionInCustomLibrary() {

@@ -11,12 +11,5 @@ fun box(): Boolean {
     val charProgression = CharProgression.fromClosedRange('a', 'z', 2)
     assertEquals('y', charProgression.last)
 
-    // deprecated
-    val byteProgression = ByteProgression.fromClosedRange(1, 127, 2)
-    assertEquals(127.toByte(), byteProgression.last)
-
-    val shortProgression = ShortProgression.fromClosedRange(1, 32767, 2)
-    assertEquals(32767.toShort(), shortProgression.last)
-
     return true
 }
