@@ -48,17 +48,17 @@ class BuiltInDecompilerTest : LightCodeInsightFixtureTestCase() {
         val stubTreeFromDecompiler = KotlinBuiltInStubBuilder().buildFileStub(FileContentImpl.createByFile(anyKotlinClass))!!
         myFixture.configureFromExistingVirtualFile(anyKotlinClass)
         val psiFile = myFixture.file
-        KotlinTestUtils.assertEqualsToFile(File(testDataPath + "$testDataName.text"), psiFile.text)
+        KotlinTestUtils.assertEqualsToFile(File(testDirPath + "$testDataName.text"), psiFile.text)
 
         val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(psiFile)
         val expectedText = stubTreeFromDecompiledText.serializeToString()
         Assert.assertEquals(expectedText, stubTreeFromDecompiler.serializeToString())
-        KotlinTestUtils.assertEqualsToFile(File(testDataPath + "$testDataName.stubs"), expectedText)
+        KotlinTestUtils.assertEqualsToFile(File(testDirPath + "$testDataName.stubs"), expectedText)
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     companion object {
-        private val testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/builtIns/"
+        private val testDirPath = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/builtIns/"
     }
 }

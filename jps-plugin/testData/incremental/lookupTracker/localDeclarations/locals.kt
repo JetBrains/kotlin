@@ -31,7 +31,7 @@ import bar.*
     }
 
     localFun()
-    1.localExtFun()
+    1./*c:kotlin.Int(getLocalExtFun) c:kotlin.Int(getLOCALExtFun)*/localExtFun()
 
     val c = LocalC()
     c.a

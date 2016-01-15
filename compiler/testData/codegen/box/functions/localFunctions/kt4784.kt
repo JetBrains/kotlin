@@ -1,6 +1,6 @@
 open class T(var value: Int) {}
 
-operator fun plusAssign(): T {
+fun plusAssign(): T {
 
     operator fun T.plusAssign(s: Int) {
         value += s

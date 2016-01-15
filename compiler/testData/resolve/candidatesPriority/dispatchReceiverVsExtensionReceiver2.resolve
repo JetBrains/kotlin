@@ -3,7 +3,7 @@ class A
 class B {
     ~foo~fun foo() = 2
 
-    fun A.bar() = `foo`foo()
+    fun A.bar() = `A.foo`foo()
 }
 
 ~A.foo~fun A.foo() = 1

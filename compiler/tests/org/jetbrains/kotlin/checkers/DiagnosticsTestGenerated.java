@@ -13949,9 +13949,51 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/priority"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("invokeExtensionVsOther.kt")
+                public void testInvokeExtensionVsOther() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/invokeExtensionVsOther.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("invokeExtensionVsOther2.kt")
+                public void testInvokeExtensionVsOther2() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/invokeExtensionVsOther2.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt10219.kt")
+                public void testKt10219() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/kt10219.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt10510.kt")
+                public void testKt10510() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/kt10510.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt9965.kt")
                 public void testKt9965() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/kt9965.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localExtVsNonLocalExt.kt")
+                public void testLocalExtVsNonLocalExt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/localExtVsNonLocalExt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberVsLocalExt.kt")
+                public void testMemberVsLocalExt() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/memberVsLocalExt.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("staticVsImplicitReceiverMember.kt")
+                public void testStaticVsImplicitReceiverMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/staticVsImplicitReceiverMember.kt");
                     doTest(fileName);
                 }
 

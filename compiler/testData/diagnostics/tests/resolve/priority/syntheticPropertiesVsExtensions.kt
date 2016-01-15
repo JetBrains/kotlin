@@ -21,9 +21,9 @@ class B {
     private val A.foo: B get() = this@B
 
     fun test(a: A) {
-        a.foo checkType { _<B>() } // todo
+        a.foo checkType { _<A>() }
         with(a) {
-            foo checkType { _<B>() } // todo
+            foo checkType { _<A>() }
         }
     }
 }

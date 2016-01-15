@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
@@ -69,38 +72,98 @@ class TowerResolver {
         return run(context, processor, false, AllCandidatesCollector(context))
     }
 
+    private fun ScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
+        val result = ArrayList<ScopeTowerLevel>()
+
+        lexicalScope.parentsWithSelf.forEach { scope ->
+            if (scope is LexicalScope) {
+                if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
+
+                scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
+            }
+            else {
+                result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
+            }
+        }
+
+        return result
+    }
+
+    private fun ScopeTower.createTowerDataList(): List<TowerData> = ArrayList<TowerData>().apply {
+        operator fun TowerData.unaryPlus() = add(this)
+
+        val localLevels = lexicalScope.parentsWithSelf.
+                filterIsInstance<LexicalScope>().filter { it.kind.withLocalDescriptors }.
+                map { ScopeBasedTowerLevel(this@createTowerDataList, it) }
+
+        val nonLocalLevels = createNonLocalLevels()
+        val syntheticLevel = SyntheticScopeBasedTowerLevel(this@createTowerDataList, syntheticScopes)
+
+        // possibly there is explicit member
+        + TowerData.Empty
+        // synthetic member for explicit receiver
+        + TowerData.TowerLevel(syntheticLevel)
+
+        // local non-extensions or extension for explicit receiver
+        for (localLevel in localLevels) {
+            + TowerData.TowerLevel(localLevel)
+        }
+
+        for (scope in lexicalScope.parentsWithSelf) {
+            if (scope is LexicalScope) {
+                // statics
+                if (!scope.kind.withLocalDescriptors) {
+                    + TowerData.TowerLevel(ScopeBasedTowerLevel(this@createTowerDataList, scope))
+                }
+
+                val implicitReceiver = scope.implicitReceiver?.value
+                if (implicitReceiver != null) {
+                    // members of implicit receiver or member extension for explicit receiver
+                    + TowerData.TowerLevel(ReceiverScopeTowerLevel(this@createTowerDataList, implicitReceiver))
+
+                    // synthetic members
+                    + TowerData.BothTowerLevelAndImplicitReceiver(syntheticLevel, implicitReceiver)
+
+                    // invokeExtension on local variable
+                    + TowerData.OnlyImplicitReceiver(implicitReceiver)
+
+                    // local extensions for implicit receiver
+                    for (localLevel in localLevels) {
+                        + TowerData.BothTowerLevelAndImplicitReceiver(localLevel, implicitReceiver)
+                    }
+
+                    // extension for implicit receiver
+                    for (nonLocalLevel in nonLocalLevels) {
+                        + TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver)
+                    }
+                }
+            }
+            else {
+                // functions with no receiver or extension for explicit receiver
+                + TowerData.TowerLevel(ImportingScopeBasedTowerLevel(this@createTowerDataList, scope as ImportingScope))
+            }
+        }
+    }
+
     private fun <C> run(
             context: TowerContext<C>,
             processor: ScopeTowerProcessor<C>,
             useOrder: Boolean,
             resultCollector: ResultCollector<C>
     ): Collection<C> {
-        fun collectCandidates(data: TowerData): Collection<C>? {
+
+        for (towerData in context.scopeTower.createTowerDataList()) {
             val candidatesGroups = if (useOrder) {
-                    processor.process(data)
-                }
-                else {
-                    listOf(processor.process(data).flatMap { it })
-                }
+                processor.process(towerData)
+            }
+            else {
+                listOf(processor.process(towerData).flatMap { it })
+            }
 
             for (candidatesGroup in candidatesGroups) {
                 resultCollector.pushCandidates(candidatesGroup)
                 resultCollector.getSuccessfulCandidates()?.let { return it }
             }
-            return null
-        }
-
-        for (implicitReceiver in context.scopeTower.implicitReceivers) {
-            collectCandidates(TowerData.OnlyImplicitReceiver(implicitReceiver))?.let { return it }
-        }
-        // possible there is explicit member
-        collectCandidates(TowerData.Empty)?.let { return it }
-
-        for (level in context.scopeTower.levels) {
-            for (implicitReceiver in context.scopeTower.implicitReceivers) {
-                collectCandidates(TowerData.BothTowerLevelAndImplicitReceiver(level, implicitReceiver))?.let { return it }
-            }
-            collectCandidates(TowerData.TowerLevel(level))?.let { return it }
         }
 
         return resultCollector.getFinalCandidates()
