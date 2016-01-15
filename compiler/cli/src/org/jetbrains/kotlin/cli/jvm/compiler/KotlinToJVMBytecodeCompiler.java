@@ -139,7 +139,7 @@ public class KotlinToJVMBytecodeCompiler {
             }
         })) + "] ";
         AnalysisResult result = analyze(environment, targetDescription);
-        if (result == null) {
+        if (result == null || !result.getShouldGenerateCode()) {
             return false;
         }
 
