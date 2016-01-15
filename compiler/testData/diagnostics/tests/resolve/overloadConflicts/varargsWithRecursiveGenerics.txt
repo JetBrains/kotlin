@@ -15,10 +15,10 @@ public open class J {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public open fun </*0*/ E : kotlin.Enum<E!>!> foo(/*0*/ e: E!): kotlin.String!
-    public open fun </*0*/ E : kotlin.Enum<E!>!> foo(/*0*/ e1: E!, /*1*/ e2: E!): kotlin.String!
-    public open fun </*0*/ E : kotlin.Enum<E!>!> foo(/*0*/ s1: E!, /*1*/ s2: E!, /*2*/ s3: E!): kotlin.String!
-    public open fun </*0*/ E : kotlin.Enum<E!>!> foo(/*0*/ vararg ss: E! /*kotlin.Array<(out) E!>!*/): kotlin.Int
+    public open fun </*0*/ E1 : kotlin.Enum<E1!>!> foo(/*0*/ e: E1!): kotlin.String!
+    public open fun </*0*/ E2 : kotlin.Enum<E2!>!> foo(/*0*/ e1: E2!, /*1*/ e2: E2!): kotlin.String!
+    public open fun </*0*/ E3 : kotlin.Enum<E3!>!> foo(/*0*/ s1: E3!, /*1*/ s2: E3!, /*2*/ s3: E3!): kotlin.String!
+    public open fun </*0*/ E4 : kotlin.Enum<E4!>!> foo(/*0*/ vararg ss: E4! /*kotlin.Array<(out) E4!>!*/): kotlin.Int
 }
 
 public final enum class X : kotlin.Enum<X> {

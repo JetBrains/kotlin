@@ -502,6 +502,7 @@ public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
  *
  * The sequence can be iterated multiple times, each time starting with the [initialValue].
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 public fun <T : Any> sequence(initialValue: T?, nextFunction: (T) -> T?): Sequence<T> =
     if (initialValue == null)
         EmptySequence

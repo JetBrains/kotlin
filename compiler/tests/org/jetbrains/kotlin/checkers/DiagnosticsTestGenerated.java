@@ -3318,6 +3318,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifInResultOfLambda.kt")
+            public void testIfInResultOfLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifInResultOfLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifWhenWithoutElse.kt")
             public void testIfWhenWithoutElse() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifWhenWithoutElse.kt");
@@ -3399,6 +3405,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("valVarLoopParameter.kt")
             public void testValVarLoopParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/valVarLoopParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenInResultOfLambda.kt")
+            public void testWhenInResultOfLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/whenInResultOfLambda.kt");
                 doTest(fileName);
             }
 
@@ -13892,15 +13904,15 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/overloadConflicts"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
-                @TestMetadata("extensionReceiverAndVarargs.kt")
-                public void testExtensionReceiverAndVarargs() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/extensionReceiverAndVarargs.kt");
+                @TestMetadata("allLambdas.kt")
+                public void testAllLambdas() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/allLambdas.kt");
                     doTest(fileName);
                 }
 
-                @TestMetadata("javaOverloadedVarargs.kt")
-                public void testJavaOverloadedVarargs() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/javaOverloadedVarargs.kt");
+                @TestMetadata("extensionReceiverAndVarargs.kt")
+                public void testExtensionReceiverAndVarargs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/extensionReceiverAndVarargs.kt");
                     doTest(fileName);
                 }
 
@@ -13922,6 +13934,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("varargWithMoreSpecificSignature.kt")
+                public void testVarargWithMoreSpecificSignature() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/varargWithMoreSpecificSignature.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("varargs.kt")
                 public void testVarargs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/varargs.kt");
@@ -13937,6 +13955,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("varargsMixed.kt")
                 public void testVarargsMixed() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/varargsMixed.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varargsWithRecursiveGenerics.kt")
+                public void testVarargsWithRecursiveGenerics() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/varargsWithRecursiveGenerics.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withVariance.kt")
+                public void testWithVariance() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/withVariance.kt");
                     doTest(fileName);
                 }
             }

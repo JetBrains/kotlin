@@ -49,29 +49,16 @@ class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constr
 
     val isGeneric: Boolean = resolvedCall.resultingDescriptor.original.typeParameters.isNotEmpty()
 
-    private val upperBoundsSubstitutor =
-            BoundsSubstitutor.createUpperBoundsSubstitutor(resolvedCall.resultingDescriptor)
-
-    fun getExtensionReceiverType(substituteUpperBounds: Boolean): KotlinType? =
-            resultingDescriptor.extensionReceiverParameter?.type?.let {
-                extensionReceiverType ->
-                if (substituteUpperBounds)
-                    upperBoundsSubstitutor.substitute(extensionReceiverType, Variance.INVARIANT)
-                else
-                    extensionReceiverType
-            }
+    val extensionReceiverType: KotlinType?
+        get() = resultingDescriptor.extensionReceiverParameter?.type
 
     /**
      * Returns the type of a value that can be used in place of the corresponding parameter.
      */
-    fun getValueParameterType(argumentKey: K, substituteUpperBounds: Boolean): KotlinType? =
+    fun getValueParameterType(argumentKey: K): KotlinType? =
             argumentsToParameters[argumentKey]?.let {
                 valueParameterDescriptor ->
-                val valueParameterType = valueParameterDescriptor.varargElementType ?: valueParameterDescriptor.type
-                if (substituteUpperBounds)
-                    upperBoundsSubstitutor.substitute(valueParameterType, Variance.INVARIANT)
-                else
-                    valueParameterType
+                valueParameterDescriptor.varargElementType ?: valueParameterDescriptor.type
             }
 
     companion object {

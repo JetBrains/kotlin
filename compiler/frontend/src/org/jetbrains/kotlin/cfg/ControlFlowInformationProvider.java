@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -701,15 +702,47 @@ public class ControlFlowInformationProvider {
                         for (KtElement element : instruction.getOwner().getValueElements(value)) {
                             if (!(element instanceof KtIfExpression)) continue;
                             KtIfExpression ifExpression = (KtIfExpression) element;
-                            if (ifExpression.getThen() != null && ifExpression.getElse() != null) continue;
 
                             if (BindingContextUtilsKt.isUsedAsExpression(ifExpression, trace.getBindingContext())) {
-                                trace.report(INVALID_IF_AS_EXPRESSION.on(ifExpression));
+                                KtExpression thenExpression = ifExpression.getThen();
+                                KtExpression elseExpression = ifExpression.getElse();
+
+                                if (thenExpression == null || elseExpression == null) {
+                                    trace.report(INVALID_IF_AS_EXPRESSION.on(ifExpression));
+                                }
+                                else {
+                                    checkImplicitCastOnConditionalExpression(ifExpression, ImmutableList.of(thenExpression, elseExpression));
+                                }
                             }
                         }
                     }
                 }
         );
+    }
+
+    private void checkImplicitCastOnConditionalExpression(
+            @NotNull KtExpression expression,
+            @NotNull Collection<KtExpression> branchExpressions
+    ) {
+        KotlinType expectedExpressionType = trace.get(EXPECTED_EXPRESSION_TYPE, expression);
+        if (expectedExpressionType != null) return;
+
+        KotlinType expressionType = trace.getType(expression);
+        if (expressionType == null) {
+            return;
+        }
+        if (KotlinBuiltIns.isAnyOrNullableAny(expressionType)) {
+            for (KtExpression branchExpression : branchExpressions) {
+                KotlinType branchType = trace.getType(branchExpression);
+                if (branchType == null || KotlinBuiltIns.isAnyOrNullableAny(branchType)) {
+                    return;
+                }
+            }
+            trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
+        }
+        else if (KotlinBuiltIns.isUnit(expressionType)) {
+            trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
+        }
     }
 
     public void markWhenWithoutElse() {
@@ -741,6 +774,18 @@ public class ControlFlowInformationProvider {
                         for (KtElement element : instruction.getOwner().getValueElements(value)) {
                             if (!(element instanceof KtWhenExpression)) continue;
                             KtWhenExpression whenExpression = (KtWhenExpression) element;
+
+                            if (BindingContextUtilsKt.isUsedAsExpression(whenExpression, trace.getBindingContext())) {
+                                List<KtExpression> branchExpressions = new ArrayList<KtExpression>(whenExpression.getEntries().size() + 1);
+                                for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
+                                    branchExpressions.add(whenEntry.getExpression());
+                                }
+                                if (whenExpression.getElseExpression() != null) {
+                                    branchExpressions.add(whenExpression.getElseExpression());
+                                }
+                                checkImplicitCastOnConditionalExpression(whenExpression, branchExpressions);
+                            }
+
                             if (whenExpression.getElseExpression() != null) continue;
 
                             if (WhenChecker.mustHaveElse(whenExpression, trace)) {
@@ -755,6 +800,8 @@ public class ControlFlowInformationProvider {
                                 }
                             }
                         }
+
+
                     }
                 }
         );

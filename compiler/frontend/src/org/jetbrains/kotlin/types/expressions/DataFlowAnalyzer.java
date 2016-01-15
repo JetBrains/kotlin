@@ -271,29 +271,6 @@ public class DataFlowAnalyzer {
         return builtIns.getUnitType();
     }
 
-    @Nullable
-    public KotlinType checkImplicitCast(@Nullable KotlinType expressionType, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
-        boolean isIfExpression = expression instanceof KtIfExpression;
-        if (expressionType != null
-            && (context.expectedType == NO_EXPECTED_TYPE || isIfExpression)
-            && context.contextDependency == INDEPENDENT && !isStatement
-            && (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isAnyOrNullableAny(expressionType))
-            && !DynamicTypesKt.isDynamic(expressionType)) {
-            if (isIfExpression && KotlinBuiltIns.isUnit(expressionType) || isIfExpression && context.expectedType != NO_EXPECTED_TYPE) {
-                return expressionType;
-            }
-            else {
-                context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
-            }
-        }
-        return expressionType;
-    }
-
-    @NotNull
-    public KotlinTypeInfo checkImplicitCast(@NotNull KotlinTypeInfo typeInfo, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
-        return typeInfo.replaceType(checkImplicitCast(typeInfo.getType(), expression, context, isStatement));
-    }
-
     @NotNull
     public KotlinTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
         facade.checkStatementType(

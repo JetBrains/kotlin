@@ -16,11 +16,11 @@ fun discriminateGeneric(a: Int, b: String = "") = ""
 fun <T: CharSequence> withDefaultGeneric(t: T, d: T? = null) = 1
 fun <T: Any> withDefaultGeneric(t: T, d: T? = null, a: Int = 1) = ""
 
-fun wrongTwoDefault(a: Any = 2) = 1
-fun wrongTwoDefault(a: Int = 2, b: String = "") = ""
+fun withDefaults(a: Any = 2) = 1
+fun withDefaults(a: Int = 2, b: String = "") = ""
 
-fun <T: Any> wrongWithDefaultGeneric(t: T, d: T? = null) = 1
-fun <T: CharSequence> wrongWithDefaultGeneric(t: T, d: T? = null, a: Int = 1) = ""
+fun <T: Any> withGenericDefaults(t: T, d: T? = null) = 1
+fun <T: CharSequence> withGenericDefaults(t: T, d: T? = null, a: Int = 1) = ""
 
 fun wrong(a: Int = 1) {}
 fun wrong(a: String = "", b: Int = 1) {}
@@ -50,10 +50,9 @@ fun test() {
     val h = withDefaultGeneric("")
     h checkType { _<Int>() }
 
+    withDefaults(1)
 
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>wrongTwoDefault<!>(1)
-
-    <!CANNOT_COMPLETE_RESOLVE!>wrongWithDefaultGeneric<!>("")
+    withGenericDefaults("")
 
     <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(<!>null!!<!UNREACHABLE_CODE!>)<!>
 }

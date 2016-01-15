@@ -2422,6 +2422,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
+
+        KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
+        if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
+            v.aconst(null);
+            v.athrow();
+        }
     }
 
     @NotNull

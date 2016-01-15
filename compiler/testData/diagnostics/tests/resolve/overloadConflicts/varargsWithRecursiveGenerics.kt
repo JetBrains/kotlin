@@ -3,10 +3,10 @@
 import java.util.*
 
 public class J {
-    public static <E extends Enum<E>> String foo(E e) { return ""; }
-    public static <E extends Enum<E>> String foo(E e1, E e2) { return ""; }
-    public static <E extends Enum<E>> String foo(E s1, E s2, E s3) { return ""; }
-    public static <E extends Enum<E>> int foo(E... ss) { return 0; }
+    public static <E1 extends Enum<E1>> String foo(E1 e) { return ""; }
+    public static <E2 extends Enum<E2>> String foo(E2 e1, E2 e2) { return ""; }
+    public static <E3 extends Enum<E3>> String foo(E3 s1, E3 s2, E3 s3) { return ""; }
+    public static <E4 extends Enum<E4>> int foo(E4... ss) { return 0; }
 }
 
 // FILE: test.kt

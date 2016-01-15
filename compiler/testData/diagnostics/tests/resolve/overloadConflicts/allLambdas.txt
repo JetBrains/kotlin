@@ -1,11 +1,8 @@
 package
 
-public val test1: [ERROR : Type for overloadedFun5("")]
-public val test2: [ERROR : Type for overloadedFun5("", "")]
-public val test3: X2
-public val test4: X1
-public fun overloadedFun5(/*0*/ vararg ss: kotlin.String /*kotlin.Array<out kotlin.String>*/): X1
-public fun overloadedFun5(/*0*/ s: kotlin.String, /*1*/ vararg ss: kotlin.String /*kotlin.Array<out kotlin.String>*/): X2
+public val test: X2
+public fun </*0*/ T2> foo(/*0*/ xf: () -> T2, /*1*/ f: (T2) -> T2): X2
+public fun </*0*/ T1> foo(/*0*/ x: T1, /*1*/ f: (T1) -> T1): X1
 
 public object X1 {
     private constructor X1()
