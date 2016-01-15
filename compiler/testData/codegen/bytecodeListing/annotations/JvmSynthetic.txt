@@ -8,8 +8,8 @@ public final class Example {
     public final @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
     public synthetic final method getProp2(): int
     public final method getUseSite(): int
-    public final method getUseSite2(): int
+    public synthetic final method getUseSite2(): int
     public synthetic final method job(): void
     public synthetic final method setProp2(p0: int): void
-    public final method setUseSite2(p0: int): void
+    public synthetic final method setUseSite2(p0: int): void
 }

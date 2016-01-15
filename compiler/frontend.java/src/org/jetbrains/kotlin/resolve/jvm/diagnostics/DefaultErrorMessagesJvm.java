@@ -102,6 +102,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(ErrorsJvm.INAPPLICABLE_JVM_FIELD, "{0}", Renderers.TO_STRING);
 
+        MAP.put(ErrorsJvm.JVM_SYNTHETIC_ON_DELEGATE, "''@JvmSynthetic'' annotation cannot be used on delegated properties");
+
         MAP.put(ErrorsJvm.SUPER_CALL_WITH_DEFAULT_PARAMETERS, "Super-calls with default arguments are not allowed. Please specify all arguments of ''super.{0}'' explicitly", Renderers.TO_STRING);
     }
 
