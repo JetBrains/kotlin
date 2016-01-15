@@ -46,7 +46,7 @@ class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, fa
             saveSettings()
             form.updateCheckProgressIcon.resume()
             resetUpdateStatus()
-            KotlinPluginUpdater.getInstance().queueUpdateCheck() { pluginUpdateStatus ->
+            KotlinPluginUpdater.getInstance().runUpdateCheck{ pluginUpdateStatus ->
                 form.updateCheckProgressIcon.suspend()
                 when (pluginUpdateStatus) {
                     PluginUpdateStatus.LatestVersionInstalled ->
@@ -55,7 +55,7 @@ class ConfigurePluginUpdatesDialog(project: Project) : DialogWrapper(project, fa
                     is PluginUpdateStatus.Update -> {
                         update = pluginUpdateStatus
                         form.installButton.isVisible = true
-                        form.updateStatusLabel.text = "A new version ${pluginUpdateStatus.newVersion} is available"
+                        form.updateStatusLabel.text = "A new version ${pluginUpdateStatus.pluginDescriptor.version} is available"
                     }
 
                     is PluginUpdateStatus.CheckFailed ->
