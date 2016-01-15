@@ -20,14 +20,18 @@ import com.intellij.navigation.ChooseByNameContributor
 import com.intellij.navigation.GotoClassContributor
 import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInClassFileType
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import java.util.*
 
 class KotlinGotoClassContributor : GotoClassContributor {
     override fun getQualifiedName(item: NavigationItem): String? {
@@ -51,10 +55,18 @@ class KotlinGotoClassContributor : GotoClassContributor {
     }
 }
 
-
+/*
+* Logic in IDEA that adds classes to "go to symbol" popup result goes around GotoClassContributor.
+* For Kotlin classes it works using light class generation.
+* We have to process Kotlin builtIn classes separately since no light classes are built for them.
+* */
 class KotlinGotoSymbolContributor : ChooseByNameContributor {
     override fun getNames(project: Project, includeNonProjectItems: Boolean): Array<String> {
-        return listOf(KotlinFunctionShortNameIndex.getInstance(), KotlinPropertyShortNameIndex.getInstance()).flatMap {
+        return listOf(
+                KotlinFunctionShortNameIndex.getInstance(),
+                KotlinPropertyShortNameIndex.getInstance(),
+                KotlinClassShortNameIndex.getInstance()
+        ).flatMap {
             StubIndex.getInstance().getAllKeys(it.key, project)
         }.toTypedArray()
     }
@@ -63,9 +75,17 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
         val baseScope = if (includeNonProjectItems) GlobalSearchScope.allScope(project) else GlobalSearchScope.projectScope(project)
         val noLibrarySourceScope = KotlinSourceFilterScope.sourceAndClassFiles(baseScope, project)
 
-        val functions = KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
-        val properties = KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
+        val result = ArrayList<NavigationItem>()
+        result += KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
+        result += KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope)
+        result += KotlinClassShortNameIndex.getInstance().get(name, project, BuiltInClassesScope(noLibrarySourceScope))
 
-        return functions.plus<NavigationItem>(properties).filterNotNull().toTypedArray()
+        return result.toTypedArray()
+    }
+}
+
+private class BuiltInClassesScope(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
+    override fun contains(file: VirtualFile): Boolean {
+        return file.fileType == KotlinBuiltInClassFileType && file in myBaseScope
     }
 }
