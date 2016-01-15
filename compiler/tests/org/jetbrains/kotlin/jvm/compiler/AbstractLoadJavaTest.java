@@ -242,10 +242,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                     }
                 });
 
-        KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                getTestRootDisposable(), ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK
-        );
-
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, ConfigurationKind.ALL
         );
