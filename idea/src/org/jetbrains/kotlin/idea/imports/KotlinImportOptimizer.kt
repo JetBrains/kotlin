@@ -23,14 +23,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -256,7 +256,7 @@ class KotlinImportOptimizer() : ImportOptimizer {
             for (import in imports) {
                 val path = import.importPath ?: continue
                 val aliasName = path.alias
-                if (aliasName != null) {
+                if (aliasName != null && aliasName != path.fqnPart().shortName() /* we do not keep trivial aliases */) {
                     aliasImports.put(aliasName, path.fqnPart())
                 }
             }
