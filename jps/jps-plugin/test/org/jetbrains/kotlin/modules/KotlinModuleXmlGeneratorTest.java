@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.modules;
 
 import junit.framework.TestCase;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
-import org.jetbrains.kotlin.jps.build.JvmSourceRoot;
+import org.jetbrains.kotlin.build.JvmSourceRoot;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -33,7 +33,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.singletonList(new JvmSourceRoot(new File("java"), null)),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                JavaModuleBuildTargetType.PRODUCTION,
+                JavaModuleBuildTargetType.PRODUCTION.getTypeId(),
+                JavaModuleBuildTargetType.PRODUCTION.isTests(),
                 Collections.<File>emptySet(),
                 Collections.<File>emptyList()
         ).asText().toString();
@@ -47,7 +48,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                JavaModuleBuildTargetType.PRODUCTION,
+                JavaModuleBuildTargetType.PRODUCTION.getTypeId(),
+                JavaModuleBuildTargetType.PRODUCTION.isTests(),
                 Collections.singleton(new File("cp1")),
                 Collections.<File>emptyList()
         ).asText().toString();
@@ -62,7 +64,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
-                JavaModuleBuildTargetType.PRODUCTION,
+                JavaModuleBuildTargetType.PRODUCTION.getTypeId(),
+                JavaModuleBuildTargetType.PRODUCTION.isTests(),
                 Collections.singleton(new File("cp1")),
                 Collections.<File>emptyList()
         );
@@ -72,7 +75,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s12"), new File("s22")),
                 Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp12"), new File("cp22")),
-                JavaModuleBuildTargetType.TEST,
+                JavaModuleBuildTargetType.TEST.getTypeId(),
+                JavaModuleBuildTargetType.TEST.isTests(),
                 Collections.singleton(new File("cp12")),
                 Collections.<File>emptyList()
         );
