@@ -180,6 +180,9 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
                     trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.asString(), right.getText()));
                 }
             }
+            else if (isCallForImplicitInvoke) {
+                trace.report(UNSAFE_IMPLICIT_INVOKE_CALL.on(reference, type));
+            }
             else {
                 trace.report(UNSAFE_CALL.on(reference, type));
             }

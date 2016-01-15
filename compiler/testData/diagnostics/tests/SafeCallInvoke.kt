@@ -13,7 +13,7 @@ fun foo() {
     rule?.apply?.invoke()
 
     // this should be an error
-    rule?.<!UNSAFE_CALL!>apply<!>()
+    rule?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>apply<!>()
 
     // these both also ok (with smart cast / unnecessary safe call)
     if (rule != null) {
