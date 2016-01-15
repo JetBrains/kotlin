@@ -4421,6 +4421,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/defaultArguments/kt5232.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("superCall.kt")
+            public void testSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/defaultArguments/superCall.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/delegatedProperty")
