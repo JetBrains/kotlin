@@ -493,6 +493,7 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         doc { f -> "Performs the given [action] on each ${f.element}." }
+        annotations(Iterables, Maps) { "@kotlin.internal.HidesMembers" }
         returns("Unit")
         body {
             """
