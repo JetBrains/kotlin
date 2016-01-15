@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.*
@@ -35,7 +36,6 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -43,14 +43,12 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -246,11 +244,31 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
-        return !ReferencesSearch.search(declaration, useScope).forEach(Processor {
-            assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() })
-            declaration.isAncestor(it.element) ||
-            it.element.parent is KtValueArgumentName ||
-            it.element.getParentOfType<KtImportDirective>(false) != null
+        return !ReferencesSearch.search(declaration, useScope).forEach(fun (ref: PsiReference): Boolean {
+            if (declaration.isAncestor(ref.element)) return true // usages inside element's declaration are not counted
+
+            if (ref.element.parent is KtValueArgumentName) return true // usage of parameter in form of named argument is not counted
+
+            val import = ref.element.getParentOfType<KtImportDirective>(false)
+            if (import != null) {
+                // check if we import member(s) from object or enum and search for their usages
+                if (declaration is KtObjectDeclaration || (declaration is KtClass && declaration.isEnum())) {
+                    if (import.isAllUnder) {
+                        val importedFrom = import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve()
+                                                   as? KtClassOrObject ?: return true
+                        return importedFrom.declarations.none { it is KtNamedDeclaration && hasNonTrivialUsages(it) }
+                    }
+                    else {
+                        if (import.importedFqName != declaration.fqName) {
+                            val importedDeclaration = import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration
+                            return importedDeclaration == null || !hasNonTrivialUsages(importedDeclaration)
+                        }
+                    }
+                }
+                return true
+            }
+
+            return false
         })
     }
 
