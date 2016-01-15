@@ -23,10 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.*;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
+import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -307,8 +304,17 @@ public class InlineCodegen extends CallGenerator {
     }
 
     private InlineCallSiteInfo getInlineCallSiteInfo() {
-        MemberCodegen<?> parentCodegen = codegen.getParentCodegen();
         MethodContext context = codegen.getContext();
+        MemberCodegen<?> parentCodegen = codegen.getParentCodegen();
+        while (context instanceof InlineLambdaContext) {
+            CodegenContext closureContext = context.getParentContext();
+            assert closureContext instanceof ClosureContext : "Parent context of inline lambda should be closure context";
+            assert closureContext.getParentContext() instanceof MethodContext : "Closure context should appear in method context";
+            context = (MethodContext) closureContext.getParentContext();
+            assert parentCodegen instanceof FakeMemberCodegen : "Parent codegen of inlined lambda should be FakeMemberCodegen";
+            parentCodegen = ((FakeMemberCodegen) parentCodegen).delegate;
+        }
+
         JvmMethodSignature signature = typeMapper.mapSignature(context.getFunctionDescriptor(), context.getContextKind());
         return new InlineCallSiteInfo(parentCodegen.getClassName(), signature.getAsmMethod().getName(), signature.getAsmMethod().getDescriptor());
     }
@@ -389,7 +395,7 @@ public class InlineCodegen extends CallGenerator {
 
     private static class FakeMemberCodegen extends MemberCodegen {
 
-        private final MemberCodegen delegate;
+        @NotNull final MemberCodegen delegate;
         @NotNull private final String className;
 
         public FakeMemberCodegen(@NotNull MemberCodegen wrapped, @NotNull KtElement declaration, @NotNull FieldOwnerContext codegenContext, @NotNull String className) {
