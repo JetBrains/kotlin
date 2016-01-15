@@ -64,6 +64,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "''@JvmName'' annotation is not applicable to this declaration");
         MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name");
         MAP.put(ErrorsJvm.VOLATILE_ON_VALUE, "''@Volatile'' annotation cannot be used on immutable properties");
+        MAP.put(ErrorsJvm.VOLATILE_ON_DELEGATE, "''@Volatile'' annotation cannot be used on delegated properties");
         MAP.put(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT, "''@Synchronized'' annotation cannot be used on abstract functions");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, "External declaration can not be abstract");
         MAP.put(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, "External declaration can not have a body");

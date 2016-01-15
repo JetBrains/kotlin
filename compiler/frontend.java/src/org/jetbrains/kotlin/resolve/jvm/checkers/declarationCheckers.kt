@@ -143,9 +143,15 @@ class VolatileAnnotationChecker : DeclarationChecker {
                        bindingContext: BindingContext
     ) {
         val volatileAnnotation = DescriptorUtils.getVolatileAnnotation(descriptor)
-        if (volatileAnnotation != null && descriptor is PropertyDescriptor && !descriptor.isVar) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
-            diagnosticHolder.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
+        if (volatileAnnotation != null) {
+            if (descriptor is PropertyDescriptor && !descriptor.isVar) {
+                val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
+                diagnosticHolder.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
+            }
+            if (declaration is KtProperty && declaration.hasDelegate()) {
+                val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
+                diagnosticHolder.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
+            }
         }
     }
 }
