@@ -21,7 +21,7 @@ import com.google.common.hash.Hashing
 import com.google.common.io.Files
 import com.google.protobuf.ExtensionRegistry
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
