@@ -1,32 +1,25 @@
 package
 
-public fun </*0*/ T> c(): C<T>
-public fun foo(/*0*/ x: MC<out Open>): kotlin.Unit
-public fun </*0*/ T> mc(): MC<T>
+public fun test(/*0*/ a: A<out kotlin.CharSequence>, /*1*/ y: Out<kotlin.CharSequence>): kotlin.Unit
 
-public interface C</*0*/ out T> {
+public interface A</*0*/ E> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): In<E>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class Derived : Open {
-    public constructor Derived()
+public final class In</*0*/ in T> {
+    public constructor In</*0*/ in T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun invoke1(/*0*/ x: T): kotlin.Unit
+    public final fun invoke2(/*0*/ x: Out<T>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface MC</*0*/ T> : C<T> {
-    public abstract fun addAll(/*0*/ x: C<T>): kotlin.Boolean
-    public abstract fun addAllInv(/*0*/ x: MC<T>): kotlin.Boolean
-    public abstract fun addAllMC(/*0*/ x: MC<out T>): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public interface Open {
+public final class Out</*0*/ out T> {
+    public constructor Out</*0*/ out T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

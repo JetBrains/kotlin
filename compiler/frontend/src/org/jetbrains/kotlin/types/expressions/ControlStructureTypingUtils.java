@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsUtil;
@@ -386,7 +387,7 @@ public class ControlStructureTypingUtils {
 
             @Override
             public void typeInferenceFailed(
-                    @NotNull BindingTrace trace, @NotNull InferenceErrorData data
+                    @NotNull ResolutionContext<?> context, @NotNull InferenceErrorData data
             ) {
                 ConstraintSystem constraintSystem = data.constraintSystem;
                 ConstraintSystemStatus status = constraintSystem.getStatus();
@@ -398,7 +399,7 @@ public class ControlStructureTypingUtils {
                 KtExpression expression = (KtExpression) call.getCallElement();
                 if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()
                         || status.hasTypeInferenceIncorporationError()) { // todo after KT-... remove this line
-                    expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
+                    expression.accept(checkTypeVisitor, new CheckTypeContext(context.trace, data.expectedType));
                     return;
                 }
                 KtDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, KtNamedDeclaration.class);
@@ -455,7 +456,10 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void wrongReceiverType(
-                @NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor receiverParameter, @NotNull ReceiverValue receiverArgument
+                @NotNull BindingTrace trace,
+                @NotNull ReceiverParameterDescriptor receiverParameter,
+                @NotNull ReceiverValue receiverArgument,
+                @NotNull ResolutionContext<?> c
         ) {
             logError();
         }
@@ -532,7 +536,7 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void typeInferenceFailed(
-                @NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData
+                @NotNull ResolutionContext<?> context, @NotNull InferenceErrorData inferenceErrorData
         ) {
             logError();
         }

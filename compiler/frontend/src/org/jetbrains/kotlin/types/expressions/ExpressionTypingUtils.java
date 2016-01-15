@@ -124,8 +124,7 @@ public class ExpressionTypingUtils {
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
                 DiagnosticFactory<?> factory = diagnostic.getFactory();
-                if ((factory == TYPE_MISMATCH || factory == CONSTANT_EXPECTED_TYPE_MISMATCH || factory == NULL_FOR_NONNULL_TYPE)
-                    && diagnostic.getPsiElement() == expressionToWatch) {
+                if (Errors.TYPE_MISMATCH_ERRORS.contains(factory) && diagnostic.getPsiElement() == expressionToWatch) {
                     mismatchFound[0] = true;
                 }
                 if (TYPE_INFERENCE_ERRORS.contains(factory) &&

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -714,6 +715,8 @@ public interface Errors {
     // Type mismatch
 
     DiagnosticFactory2<KtExpression, KotlinType, KotlinType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory1<KtElement, TypeMismatchDueToTypeProjectionsData> TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<KtElement, CallableDescriptor, KotlinType> MEMBER_PROJECTED_OUT = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<KtExpression, KotlinType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, KotlinType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtBinaryExpression, KotlinType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
@@ -785,6 +788,9 @@ public interface Errors {
     ImmutableSet<? extends DiagnosticFactory<?>> MUST_BE_INITIALIZED_DIAGNOSTICS = ImmutableSet.of(
             MUST_BE_INITIALIZED, MUST_BE_INITIALIZED_OR_BE_ABSTRACT
     );
+    ImmutableSet<? extends DiagnosticFactory<?>> TYPE_MISMATCH_ERRORS = ImmutableSet.of(
+            TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH, NULL_FOR_NONNULL_TYPE, TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS,
+            MEMBER_PROJECTED_OUT);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

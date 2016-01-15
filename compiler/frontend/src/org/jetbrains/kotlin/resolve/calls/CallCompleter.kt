@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariabl
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
@@ -68,7 +69,6 @@ class CallCompleter(
         // for the case 'foo(a)' where 'foo' is a variable, the call 'foo.invoke(a)' shouldn't be completed separately,
         // it's completed when the outer (variable as function call) is completed
         if (!isInvokeCallOnVariable(context.call)) {
-
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
 
             completeResolvedCallAndArguments(resolvedCall, results, context.replaceBindingTrace(temporaryTrace), tracing)
@@ -222,7 +222,7 @@ class CallCompleter(
                 candidateDescriptor, constraintSystem!!, valueArgumentsCheckingResult.argumentTypes,
                 receiverType, context.expectedType, context.call
         )
-        tracing.typeInferenceFailed(context.trace, errorData)
+        tracing.typeInferenceFailed(context, errorData)
 
         addStatus(ResolutionStatus.OTHER_ERROR)
     }
@@ -247,11 +247,16 @@ class CallCompleter(
 
         for (valueArgument in context.call.valueArguments) {
             val argumentMapping = getArgumentMapping(valueArgument!!)
-            val expectedType = when (argumentMapping) {
-                is ArgumentMatch -> getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument)
-                else -> TypeUtils.NO_EXPECTED_TYPE
+            val (expectedType, callPosition) = when (argumentMapping) {
+                is ArgumentMatch -> Pair(
+                        getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument),
+                        CallPosition.ValueArgumentPosition(results.resultingCall, argumentMapping.valueParameter, valueArgument))
+                else -> Pair(TypeUtils.NO_EXPECTED_TYPE, CallPosition.Unknown)
             }
-            val newContext = context.replaceDataFlowInfo(getDataFlowInfoForArgument(valueArgument)).replaceExpectedType(expectedType)
+            val newContext =
+                    context.replaceDataFlowInfo(getDataFlowInfoForArgument(valueArgument))
+                            .replaceExpectedType(expectedType)
+                            .replaceCallPosition(callPosition)
             completeOneArgument(valueArgument, newContext)
         }
     }
@@ -306,7 +311,7 @@ class CallCompleter(
         val (cachedResolutionResults, cachedContext, tracing) = cachedData
 
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)
-                .replaceExpectedType(context.expectedType).replaceCollectAllCandidates(false)
+                .replaceExpectedType(context.expectedType).replaceCollectAllCandidates(false).replaceCallPosition(context.callPosition)
 
         return completeCall(contextForArgument, cachedResolutionResults, tracing)
     }

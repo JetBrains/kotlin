@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -117,7 +118,7 @@ class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("missingReceiver")
     }
 
-    override fun wrongReceiverType(trace: BindingTrace, receiverParameter: ReceiverParameterDescriptor, receiverArgument: ReceiverValue) {
+    override fun wrongReceiverType(trace: BindingTrace, receiverParameter: ReceiverParameterDescriptor, receiverArgument: ReceiverValue, c: ResolutionContext<*>) {
         unexpectedError("wrongReceiverType")
     }
 
@@ -129,7 +130,7 @@ class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("wrongNumberOfTypeArguments")
     }
 
-    override fun typeInferenceFailed(trace: BindingTrace, data: InferenceErrorData) {
+    override fun typeInferenceFailed(context: ResolutionContext<*>, data: InferenceErrorData) {
         unexpectedError("typeInferenceFailed")
     }
 

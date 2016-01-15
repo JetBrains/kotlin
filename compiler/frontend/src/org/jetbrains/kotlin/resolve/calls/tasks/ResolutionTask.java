@@ -58,10 +58,11 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull StatementFilter statementFilter,
             @NotNull Collection<MutableResolvedCall<F>> resolvedCalls,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            @NotNull CallPosition callPosition
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates);
+              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
         this.lazyCandidates = lazyCandidates;
         this.resolvedCalls = resolvedCalls;
         this.tracing = tracing;
@@ -78,7 +79,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.resolutionResultsCache, context.dataFlowInfoForArguments,
              context.callChecker,
              context.statementFilter, new SmartList<MutableResolvedCall<F>>(),
-             context.isAnnotationContext, context.collectAllCandidates);
+             context.isAnnotationContext, context.collectAllCandidates, context.callPosition);
     }
 
     @NotNull
@@ -104,14 +105,15 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            @NotNull CallPosition callPosition
     ) {
         return new ResolutionTask<D, F>(
                 lazyCandidates, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments,
                 callChecker,
                 statementFilter, resolvedCalls,
-                isAnnotationContext, collectAllCandidates);
+                isAnnotationContext, collectAllCandidates, callPosition);
     }
 
     @Override

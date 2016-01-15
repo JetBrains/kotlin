@@ -449,7 +449,9 @@ class CandidateResolver(
                 receiverArgument, receiverParameter.type, this)
 
         if (!isSubtypeBySmartCastIgnoringNullability) {
-            tracing.wrongReceiverType(trace, receiverParameter, receiverArgument)
+            tracing.wrongReceiverType(
+                    trace, receiverParameter, receiverArgument,
+                    this.replaceCallPosition(CallPosition.ExtensionReceiverPosition(candidateCall)))
             return OTHER_ERROR
         }
 

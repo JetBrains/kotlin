@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -52,7 +53,12 @@ public interface TracingStrategy {
         public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor expectedReceiver) {}
 
         @Override
-        public void wrongReceiverType(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor receiverParameter, @NotNull ReceiverValue receiverArgument) {}
+        public void wrongReceiverType(
+                @NotNull BindingTrace trace,
+                @NotNull ReceiverParameterDescriptor receiverParameter,
+                @NotNull ReceiverValue receiverArgument,
+                @NotNull ResolutionContext<?> c
+        ) {}
 
         @Override
         public void noReceiverAllowed(@NotNull BindingTrace trace) {}
@@ -95,7 +101,7 @@ public interface TracingStrategy {
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {}
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
+        public void typeInferenceFailed(@NotNull ResolutionContext<?> context, @NotNull InferenceErrorData inferenceErrorData) {}
 
         @Override
         public void nonExtensionFunctionCalledAsExtension(@NotNull BindingTrace trace) { }
@@ -115,7 +121,12 @@ public interface TracingStrategy {
 
     void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor expectedReceiver);
 
-    void wrongReceiverType(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor receiverParameter, @NotNull ReceiverValue receiverArgument);
+    void wrongReceiverType(
+            @NotNull BindingTrace trace,
+            @NotNull ReceiverParameterDescriptor receiverParameter,
+            @NotNull ReceiverValue receiverArgument,
+            @NotNull ResolutionContext<?> c
+    );
 
     void noReceiverAllowed(@NotNull BindingTrace trace);
 
@@ -146,7 +157,7 @@ public interface TracingStrategy {
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 
-    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
+    void typeInferenceFailed(@NotNull ResolutionContext<?> context, @NotNull InferenceErrorData inferenceErrorData);
 
     void nonExtensionFunctionCalledAsExtension(@NotNull BindingTrace trace);
 }

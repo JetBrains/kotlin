@@ -101,6 +101,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("expectedNothingDueToProjections.kt")
+    public void testExpectedNothingDueToProjections() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/expectedNothingDueToProjections.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("extensionInClassReference.kt")
     public void testExtensionInClassReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/extensionInClassReference.kt");
@@ -176,6 +182,24 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("typeInferenceExpectedTypeMismatch.kt")
     public void testTypeInferenceExpectedTypeMismatch() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeInferenceExpectedTypeMismatch.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeMismatchDueToProjections.kt")
+    public void testTypeMismatchDueToProjections() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchDueToProjections.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeMismatchDueToProjectionsIn.kt")
+    public void testTypeMismatchDueToProjectionsIn() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchDueToProjectionsIn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeMismatchDueToProjectionsTxt.kt")
+    public void testTypeMismatchDueToProjectionsTxt() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchDueToProjectionsTxt.kt");
         doTest(fileName);
     }
 

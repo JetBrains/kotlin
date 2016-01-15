@@ -25,6 +25,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.TypeMismatchDueToTypeProjectionsData;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtTypeConstraint;
@@ -126,6 +127,22 @@ public class DefaultErrorMessages {
         MAP.put(ACCESSOR_PARAMETER_NAME_SHADOWING, "Accessor parameter name 'field' is shadowed by backing field variable");
 
         MAP.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS,
+                "Type mismatch: inferred type is {1} but {0} was expected. Projected type {2} restricts use of {3}",
+                new MultiRenderer<TypeMismatchDueToTypeProjectionsData>() {
+                    @NotNull
+                    @Override
+                    public String[] render(@NotNull TypeMismatchDueToTypeProjectionsData object) {
+                        return new String[] {
+                                RENDER_TYPE.render(object.getExpectedType()),
+                                RENDER_TYPE.render(object.getExpressionType()),
+                                RENDER_TYPE.render(object.getReceiverType()),
+                                DescriptorRenderer.FQ_NAMES_IN_TYPES.render(object.getCallableDescriptor())
+                        };
+                    }
+                });
+
+        MAP.put(MEMBER_PROJECTED_OUT, "Out-projected type ''{1}'' prohibits the use of ''{0}''", DescriptorRenderer.FQ_NAMES_IN_TYPES, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
