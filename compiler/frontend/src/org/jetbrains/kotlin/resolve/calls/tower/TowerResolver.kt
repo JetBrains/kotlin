@@ -97,8 +97,11 @@ class TowerResolver {
                 map { ScopeBasedTowerLevel(this@createTowerDataList, it) }
 
         val nonLocalLevels = createNonLocalLevels()
+        val hidesMembersLevel = HidesMembersTowerLevel(this@createTowerDataList)
         val syntheticLevel = SyntheticScopeBasedTowerLevel(this@createTowerDataList, syntheticScopes)
 
+        // hides members extensions for explicit receiver
+        + TowerData.TowerLevel(hidesMembersLevel)
         // possibly there is explicit member
         + TowerData.Empty
         // synthetic member for explicit receiver
@@ -118,6 +121,9 @@ class TowerResolver {
 
                 val implicitReceiver = scope.implicitReceiver?.value
                 if (implicitReceiver != null) {
+                    // hides members extensions
+                    + TowerData.BothTowerLevelAndImplicitReceiver(hidesMembersLevel, implicitReceiver)
+
                     // members of implicit receiver or member extension for explicit receiver
                     + TowerData.TowerLevel(ReceiverScopeTowerLevel(this@createTowerDataList, implicitReceiver))
 
