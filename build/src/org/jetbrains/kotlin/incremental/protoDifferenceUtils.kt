@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental
+package org.jetbrains.kotlin.incremental
 
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.jps.incremental.ProtoCompareGenerated.ProtoBufClassKind
-import org.jetbrains.kotlin.jps.incremental.ProtoCompareGenerated.ProtoBufPackageKind
-import org.jetbrains.kotlin.jps.incremental.storage.ProtoMapValue
+import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
+import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
+import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.Deserialization

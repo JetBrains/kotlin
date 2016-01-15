@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental.storage
+package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.DataExternalizer
@@ -22,7 +22,6 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import gnu.trove.THashSet
-import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
@@ -122,6 +121,27 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
 
     override fun writeValue(output: DataOutput, value: Long) {
         output.writeLong(value)
+    }
+}
+
+
+object PathStringCollectionExternalizer : DataExternalizer<Collection<String>> {
+    override fun save(output: DataOutput, value: Collection<String>) {
+        for (str in value) {
+            IOUtil.writeUTF(output, str)
+        }
+    }
+
+    override fun read(input: DataInput): Collection<String> {
+        val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
+        val stream = input as DataInputStream
+
+        while (stream.available() > 0) {
+            val str = IOUtil.readUTF(stream)
+            result.add(str)
+        }
+
+        return result
     }
 }
 
@@ -227,7 +247,5 @@ open class CollectionExternalizer<T>(
 }
 
 object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
-
-object PathCollectionExternalizer : CollectionExternalizer<String>(PathStringDescriptor(), { THashSet(FileUtil.PATH_HASHING_STRATEGY) })
 
 object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })

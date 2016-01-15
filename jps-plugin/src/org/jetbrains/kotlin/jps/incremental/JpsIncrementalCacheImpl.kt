@@ -24,8 +24,10 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
-import org.jetbrains.kotlin.jps.incremental.storage.*
+import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
@@ -34,7 +36,7 @@ import java.util.*
 class JpsIncrementalCacheImpl(
         target: ModuleBuildTarget,
         paths: BuildDataPaths
-) : IncrementalCacheImpl(target, paths), StorageOwner {
+) : IncrementalCacheImpl<ModuleBuildTarget>(paths.getTargetDataRoot(target), target.outputDir, target), StorageOwner {
 
     private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
     private val dirtyInlineFunctionsMap = registerMap(DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile))
@@ -44,6 +46,10 @@ class JpsIncrementalCacheImpl(
         if (!IncrementalCompilation.isExperimental()) {
             inlinedTo.add(fromPath, jvmSignature, toPath)
         }
+    }
+
+    override fun debugLog(message: String) {
+        KotlinBuilder.LOG.debug(message)
     }
 
     override fun additionalProcessChangedClass(kotlinClass: LocalFileKotlinClass, isPackage: Boolean) =
@@ -173,7 +179,7 @@ class JpsIncrementalCacheImpl(
      *  * inlineFunction - jvmSignature of some inline function in source file
      *  * target files - collection of files inlineFunction has been inlined to
      */
-    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathCollectionExternalizer) {
+    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathStringCollectionExternalizer) {
         fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val key = PathFunctionPair(sourcePath, jvmSignature)
             storage.append(key, targetPath)

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jps.build
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
-import org.jetbrains.kotlin.jps.incremental.KOTLIN_CACHE_DIRECTORY_NAME
+import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import java.io.File
 
 private val HAS_KOTLIN_MARKER_FILE_NAME = "has-kotlin-marker.txt"

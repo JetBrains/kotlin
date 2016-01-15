@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental.storage
+package org.jetbrains.kotlin.incremental.storage
 
-import org.jetbrains.kotlin.jps.incremental.dumpCollection
+import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental.storage
+package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
@@ -28,7 +28,7 @@ import java.io.IOException
 /**
  * It's lazy in a sense that PersistentHashMap is created only on write
  */
-internal class LazyStorage<K, V>(
+class LazyStorage<K, V>(
         private val storageFile: File,
         private val keyDescriptor: KeyDescriptor<K>,
         private val valueExternalizer: DataExternalizer<V>

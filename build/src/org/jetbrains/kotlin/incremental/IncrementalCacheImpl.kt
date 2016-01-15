@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental
+package org.jetbrains.kotlin.incremental
 
 import com.google.protobuf.MessageLite
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
@@ -22,13 +22,9 @@ import com.intellij.util.SmartList
 import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jps.builders.storage.BuildDataPaths
-import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.jps.incremental.storage.PathStringDescriptor
+import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
-import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.jps.incremental.storage.*
+import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -51,9 +47,10 @@ import java.util.*
 
 val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
-open class IncrementalCacheImpl(
-        private val target: ModuleBuildTarget,
-        paths: BuildDataPaths
+open class IncrementalCacheImpl<Target>(
+        private val targetDataRoot: File,
+        targetOutputDir: File?,
+        target: Target
 ) : BasicMapsOwner(), IncrementalCache {
     companion object {
         private val PROTO_MAP = "proto"
@@ -69,8 +66,7 @@ open class IncrementalCacheImpl(
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
-    private val baseDir = File(paths.getTargetDataRoot(target), KOTLIN_CACHE_DIRECTORY_NAME)
-    private val cacheVersionProvider = CacheVersionProvider(paths)
+    private val baseDir = File(targetDataRoot, KOTLIN_CACHE_DIRECTORY_NAME)
     private val experimentalMaps = arrayListOf<BasicMap<*, *>>()
 
     private fun <K, V, M : BasicMap<K, V>> registerExperimentalMap(map: M): M {
@@ -91,19 +87,22 @@ open class IncrementalCacheImpl(
     private val subtypesMap = registerExperimentalMap(SubtypesMap(SUBTYPES.storageFile))
     private val supertypesMap = registerExperimentalMap(SupertypesMap(SUPERTYPES.storageFile))
 
-    private val dependents = arrayListOf<IncrementalCacheImpl>()
-    private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" } }
+    private val dependents = arrayListOf<IncrementalCacheImpl<Target>>()
+    private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory: $target" } }
 
-    protected val dependentsWithThis: Sequence<IncrementalCacheImpl>
+    // TODO: review
+    val dependentsWithThis: Sequence<IncrementalCacheImpl<Target>>
         get() = sequenceOf(this).plus(dependents.asSequence())
 
-    internal val dependentCaches: Iterable<IncrementalCacheImpl>
+    internal val dependentCaches: Iterable<IncrementalCacheImpl<Target>>
         get() = dependents
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
     }
 
-    fun addDependentCache(cache: IncrementalCacheImpl) {
+    protected open fun debugLog(message: String) {}
+
+    fun addDependentCache(cache: IncrementalCacheImpl<Target>) {
         dependents.add(cache)
     }
 
@@ -133,7 +132,7 @@ open class IncrementalCacheImpl(
         return CompilationResult.NO_CHANGES
     }
 
-    fun saveFileToCache(generatedClass: GeneratedJvmClass): CompilationResult {
+    fun saveFileToCache(generatedClass: GeneratedJvmClass<Target>): CompilationResult {
         val sourceFiles: Collection<File> = generatedClass.sourceFiles
         val kotlinClass: LocalFileKotlinClass = generatedClass.outputClass
         val className = kotlinClass.className
@@ -199,7 +198,7 @@ open class IncrementalCacheImpl(
     private fun CompilationResult.logIfSomethingChanged(className: JvmClassName) {
         if (this == CompilationResult.NO_CHANGES) return
 
-        KotlinBuilder.LOG.debug("$className is changed: $this")
+        debugLog("$className is changed: $this")
     }
 
     fun clearCacheForRemovedClasses(): CompilationResult {
@@ -301,7 +300,7 @@ open class IncrementalCacheImpl(
     override fun getObsoletePackageParts(): Collection<String> {
         val obsoletePackageParts =
                 dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
-        KotlinBuilder.LOG.debug("Obsolete package parts: ${obsoletePackageParts}")
+        debugLog("Obsolete package parts: ${obsoletePackageParts}")
         return obsoletePackageParts
     }
 
@@ -317,7 +316,7 @@ open class IncrementalCacheImpl(
             val dirtyFacade = partToMultifileFacade.get(dirtyClass) ?: continue
             obsoleteMultifileClasses.add(dirtyFacade)
         }
-        KotlinBuilder.LOG.debug("Obsolete multifile class facades: $obsoleteMultifileClasses")
+        debugLog("Obsolete multifile class facades: $obsoleteMultifileClasses")
         return obsoleteMultifileClasses
     }
 
@@ -336,12 +335,12 @@ open class IncrementalCacheImpl(
 
     override fun clean() {
         super.clean()
-        cacheVersionProvider.normalVersion(target).clean()
-        cacheVersionProvider.experimentalVersion(target).clean()
+        normalCacheVersion(targetDataRoot).clean()
+        experimentalCacheVersion(targetDataRoot).clean()
     }
 
     fun cleanExperimental() {
-        cacheVersionProvider.experimentalVersion(target).clean()
+        experimentalCacheVersion(targetDataRoot).clean()
         experimentalMaps.forEach { it.clean() }
     }
 
@@ -497,7 +496,8 @@ open class IncrementalCacheImpl(
         override fun dumpValue(value: String): String = value
     }
 
-    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor.INSTANCE, StringCollectionExternalizer) {
+    // TODO: find how to deal with PathStringDescriptor - it seems too deeply rooted in jps
+    inner class SourceToClassesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, /* PathStringDescriptor.INSTANCE,*/ StringCollectionExternalizer) {
         fun clearOutputsForSource(sourceFile: File) {
             remove(sourceFile.absolutePath)
         }
@@ -614,10 +614,10 @@ data class CompilationResult(
 
     operator fun plus(other: CompilationResult): CompilationResult =
             CompilationResult(protoChanged || other.protoChanged,
-                        constantsChanged || other.constantsChanged,
-                        inlineChanged || other.inlineChanged,
-                        inlineAdded || other.inlineAdded,
-                        changes + other.changes)
+                              constantsChanged || other.constantsChanged,
+                              inlineChanged || other.inlineChanged,
+                              inlineAdded || other.inlineAdded,
+                              changes + other.changes)
 }
 
 fun ByteArray.md5(): Long {

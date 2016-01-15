@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental
+package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.jps.incremental.storage.*
+import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
 
-object LookupStorageProvider : StorageProvider<LookupStorage>() {
-    override fun createStorage(targetDataDir: File): LookupStorage = LookupStorage(targetDataDir)
-}
 
-class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
+open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
         private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000

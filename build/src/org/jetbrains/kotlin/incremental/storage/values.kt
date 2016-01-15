@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental.storage
+package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.openapi.util.io.FileUtil
 

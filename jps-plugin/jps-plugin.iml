@@ -10,6 +10,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="idea-jps-common" />
     <orderEntry type="module" module-name="cli-common" />
+    <orderEntry type="module" module-name="build" />
     <orderEntry type="library" name="jps" level="project" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />

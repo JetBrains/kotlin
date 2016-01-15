@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental.storage
+package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-internal abstract class BasicMap<K : Comparable<K>, V>(
+abstract class BasicMap<K : Comparable<K>, V>(
         storageFile: File,
         keyDescriptor: KeyDescriptor<K>,
         valueExternalizer: DataExternalizer<V>
@@ -67,7 +67,7 @@ internal abstract class BasicMap<K : Comparable<K>, V>(
     protected abstract fun dumpValue(value: V): String
 }
 
-internal abstract class BasicStringMap<V>(
+abstract class BasicStringMap<V>(
         storageFile: File,
         keyDescriptor: KeyDescriptor<String>,
         valueExternalizer: DataExternalizer<V>
