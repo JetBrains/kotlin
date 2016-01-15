@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
@@ -487,8 +488,8 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
             importsFromContextFile + codeFragment.importsToString().split(KtCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
     )
 
-    val packageFromContextFile = containingContextFile?.packageName?.let {
-        if (it.isNotBlank()) "package ${it.quoteIfNeeded()}" else ""
+    val packageFromContextFile = containingContextFile?.packageFqName?.let {
+        if (!it.isRoot) "package ${it.quoteSegmentsIfNeeded()}" else ""
     } ?: ""
     fileText = fileText.replace("!PACKAGE!", packageFromContextFile)
 
