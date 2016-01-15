@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.*;
@@ -574,7 +575,7 @@ public class CallResolver {
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> checkArgumentTypesAndFail(BasicCallResolutionContext context) {
-        argumentTypeResolver.checkTypesWithNoCallee(context);
+        argumentTypeResolver.checkTypesWithNoCallee(context, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS);
         return OverloadResolutionResultsImpl.nameNotFound();
     }
 
