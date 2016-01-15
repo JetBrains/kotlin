@@ -399,7 +399,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             // getJavaSources should return the Java sources used for compilation
             // We want to collect only generated files, like R-class output dir
             // Actual java sources will be collected later
-            val additionalSourceFiles = variantData.getJavaSources().filterIsInstance(javaClass<File>())
+            val additionalSourceFiles = AndroidGradleWrapper.getGeneratedSourceDirs(variantData)
             for (file in additionalSourceFiles) {
                 kotlinTask.source(file)
                 logger.kotlinDebug("Source directory with generated files ${file.getAbsolutePath()} was added to kotlin source for $kotlinTaskName")

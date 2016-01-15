@@ -28,9 +28,11 @@ import java.util.Arrays;
 
 public class KotlinPluginUtil {
 
+    public static final PluginId KOTLIN_PLUGIN_ID = PluginId.getId("org.jetbrains.kotlin");
+
     @NotNull
     public static String getPluginVersion() {
-        IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"));
+        IdeaPluginDescriptor plugin = PluginManager.getPlugin(KOTLIN_PLUGIN_ID);
         assert plugin != null : "Kotlin plugin not found: " + Arrays.toString(PluginManagerCore.getPlugins());
         return plugin.getVersion();
     }
