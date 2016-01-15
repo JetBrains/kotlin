@@ -108,6 +108,7 @@ object ExpectedCompletionUtils {
     private val NUMBER_JAVA_LINE_PREFIX = "NUMBER_JAVA:"
 
     private val NOTHING_ELSE_PREFIX = "NOTHING_ELSE"
+    private val RUN_HIGHLIGHTING_BEFORE_PREFIX = "RUN_HIGHLIGHTING_BEFORE"
 
     private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
     private val WITH_ORDER_PREFIX = "WITH_ORDER"
@@ -131,6 +132,7 @@ object ExpectedCompletionUtils {
             WITH_ORDER_PREFIX,
             AUTOCOMPLETE_SETTING_PREFIX,
             NOTHING_ELSE_PREFIX,
+            RUN_HIGHLIGHTING_BEFORE_PREFIX,
             RUNTIME_TYPE,
             COMPLETION_TYPE_PREFIX,
             LightClassComputationControl.LIGHT_CLASS_DIRECTIVE,
@@ -190,7 +192,11 @@ object ExpectedCompletionUtils {
     }
 
     fun isNothingElseExpected(fileText: String): Boolean {
-        return !InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, NOTHING_ELSE_PREFIX).isEmpty()
+        return InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, NOTHING_ELSE_PREFIX).isNotEmpty()
+    }
+
+    fun shouldRunHighlightingBeforeCompletion(fileText: String): Boolean {
+        return InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, RUN_HIGHLIGHTING_BEFORE_PREFIX).isNotEmpty()
     }
 
     fun getInvocationCount(fileText: String): Int? {

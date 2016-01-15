@@ -46,16 +46,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.util.supertypesWithAny
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class BasicCompletionSession(
         configuration: CompletionSessionConfiguration,
         parameters: CompletionParameters,
-        toFromOriginalFileMapper: ToFromOriginalFileMapper,
+        private val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         resultSet: CompletionResultSet
 ) : CompletionSession(configuration, parameters, resultSet) {
 
@@ -88,14 +90,9 @@ class BasicCompletionSession(
     private fun detectCompletionKind(): CompletionKind {
         if (nameExpression == null) {
             return when  {
-                (position.parent as? KtParameter)?.nameIdentifier == position ->
-                    PARAMETER_NAME
+                (position.parent as? KtNamedDeclaration)?.nameIdentifier == position -> DECLARATION_NAME
 
-                (position.parent as? KtClassOrObject)?.nameIdentifier == position && position.parent.parent is KtFile ->
-                    TOP_LEVEL_CLASS_NAME
-
-                else ->
-                    KEYWORDS_ONLY
+                else -> KEYWORDS_ONLY
             }
         }
 
@@ -158,6 +155,20 @@ class BasicCompletionSession(
         }
 
         override fun doComplete() {
+            val declaration = isStartOfExtensionReceiverFor()
+            if (declaration != null) {
+                completeDeclarationNameFromUnresolved(declaration)
+
+                // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
+                if (parameters.invocationCount == 0) {
+                    val suppressOtherCompletion = when (declaration) {
+                        is KtNamedFunction -> prefixMatcher.prefix.let { it.isEmpty() || it[0].isLowerCase() /* function name usually starts with lower case letter */ }
+                        else -> true
+                    }
+                    if (suppressOtherCompletion) return
+                }
+            }
+
             fun completeWithSmartCompletion(lookupElementFactory: LookupElementFactory) {
                 if (smartCompletion != null) {
                     val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
@@ -274,6 +285,19 @@ class BasicCompletionSession(
                 else {
                     collector.advertiseSecondCompletion()
                 }
+            }
+        }
+
+        private fun isStartOfExtensionReceiverFor(): KtCallableDeclaration? {
+            val userType = nameExpression!!.parent as? KtUserType ?: return null
+            if (userType.qualifier != null) return null
+            val typeRef = userType.parent as? KtTypeReference ?: return null
+            if (userType != typeRef.typeElement) return null
+            val parent = typeRef.parent
+            return when (parent) {
+                is KtNamedFunction -> parent.check { typeRef == it.receiverTypeReference }
+                is KtProperty -> parent.check { typeRef == it.receiverTypeReference }
+                else -> null
             }
         }
     }
@@ -414,45 +438,42 @@ class BasicCompletionSession(
         }
     }
 
-    private val PARAMETER_NAME = object : CompletionKind {
+    private val DECLARATION_NAME = object : CompletionKind {
         override val descriptorKindFilter: DescriptorKindFilter?
             get() = null
 
         override fun doComplete() {
+            val declaration = declaration()
+            if (declaration is KtParameter && !shouldCompleteParameterNameAndType()) return // do not complete also keywords and from unresolved references in such case
+
+            collector.addLookupElementPostProcessor { lookupElement ->
+                lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+                lookupElement
+            }
+
             KEYWORDS_ONLY.doComplete()
 
-            if (shouldCompleteParameterNameAndType()) {
-                val parameterNameAndTypeCompletion = ParameterNameAndTypeCompletion(collector, basicLookupElementFactory, prefixMatcher, resolutionFacade)
+            completeDeclarationNameFromUnresolved(declaration)
 
-                // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
-                val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
-                    override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
-                })
-                collector.restartCompletionOnPrefixChange(prefixPattern)
+            when (declaration) {
+                is KtParameter ->
+                    completeParameterNameAndType()
 
-                collector.addLookupElementPostProcessor { lookupElement ->
-                    lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
-                    lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
-                    lookupElement
+                is KtClassOrObject -> {
+                    if (declaration.isTopLevel()) {
+                        completeTopLevelClassName()
+                    }
                 }
-
-                parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
-                flushToResultSet()
-
-                parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilterCheckAlways)
-                flushToResultSet()
-
-                parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper(false))
             }
         }
 
         override fun shouldDisableAutoPopup(): Boolean {
-            if (!shouldCompleteParameterNameAndType() || TemplateManager.getInstance(project).getActiveTemplate(parameters.editor) != null) {
-                return true
-            }
+            if (TemplateManager.getInstance(project).getActiveTemplate(parameters.editor) != null) return true
 
-            if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
-                return true
+            if (declaration() is KtParameter) {
+                if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
+                    return true
+                }
             }
 
             return false
@@ -465,8 +486,41 @@ class BasicCompletionSession(
             return sorter
         }
 
+        private fun completeParameterNameAndType() {
+            val parameterNameAndTypeCompletion = ParameterNameAndTypeCompletion(collector, basicLookupElementFactory, prefixMatcher, resolutionFacade)
+
+            // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
+            val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
+                override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
+            })
+            collector.restartCompletionOnPrefixChange(prefixPattern)
+
+            collector.addLookupElementPostProcessor { lookupElement ->
+                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
+                lookupElement
+            }
+
+            parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
+            flushToResultSet()
+
+            parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilterCheckAlways)
+            flushToResultSet()
+
+            parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper(false))
+        }
+
+        private fun completeTopLevelClassName() {
+            val name = parameters.originalFile.virtualFile.nameWithoutExtension
+            if (!(Name.isValidIdentifier(name) && Name.identifier(name).render() == name && name[0].isUpperCase())) return
+            if ((parameters.originalFile as KtFile).declarations.any { it is KtClassOrObject && it.name == name }) return
+
+            collector.addElement(LookupElementBuilder.create(name))
+        }
+
+        private fun declaration() = position.parent as KtNamedDeclaration
+
         private fun shouldCompleteParameterNameAndType(): Boolean {
-            val parameter = position.getNonStrictParentOfType<KtParameter>()!!
+            val parameter = declaration() as? KtParameter ?: return false
             val list = parameter.parent as? KtParameterList ?: return false
             val owner = list.parent
             return when (owner) {
@@ -475,21 +529,6 @@ class BasicCompletionSession(
                 is KtPrimaryConstructor -> !owner.getContainingClassOrObject().isAnnotation()
                 else -> true
             }
-        }
-    }
-
-    private val TOP_LEVEL_CLASS_NAME = object : CompletionKind {
-        override val descriptorKindFilter: DescriptorKindFilter?
-            get() = null
-
-        override fun doComplete() {
-            val name = parameters.originalFile.virtualFile.nameWithoutExtension
-            if (!(Name.isValidIdentifier(name) && Name.identifier(name).render() == name && name[0].isUpperCase())) return
-            if ((parameters.originalFile as KtFile).declarations.any { it is KtClassOrObject && it.name == name }) return
-
-            val lookupElement = LookupElementBuilder.create(name)
-            lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
-            collector.addElement(lookupElement)
         }
     }
 
@@ -511,6 +550,37 @@ class BasicCompletionSession(
             superClasses
                     .map { basicLookupElementFactory.createLookupElement(it, qualifyNestedClasses = true, includeClassTypeArguments = false) }
                     .forEach { collector.addElement(it) }
+        }
+    }
+
+    private fun completeDeclarationNameFromUnresolved(declaration: KtNamedDeclaration) {
+        val referenceScope = referenceScope(declaration) ?: return
+        val originalScope = toFromOriginalFileMapper.toOriginalFile(referenceScope) ?: return
+        val afterOffset = if (referenceScope is KtBlockExpression) parameters.offset else null
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+        FromUnresolvedNamesCompletion(collector, prefixMatcher).addNameSuggestions(originalScope, afterOffset, descriptor)
+    }
+
+    private fun referenceScope(declaration: KtNamedDeclaration): KtElement? {
+        val parent = declaration.parent
+        when (parent) {
+            is KtParameterList -> return parent.parent as KtElement
+
+            is KtClassBody -> {
+                val classOrObject = parent.parent as KtClassOrObject
+                if (classOrObject is KtObjectDeclaration && classOrObject.isCompanion()) {
+                    return classOrObject.containingClassOrObject
+                }
+                else {
+                    return classOrObject
+                }
+            }
+
+            is KtFile -> return parent
+
+            is KtBlockExpression -> return parent
+
+            else -> return null
         }
     }
 }

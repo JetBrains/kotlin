@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 var KtFile.doNotComplete: Boolean? by UserDataProperty(Key.create("DO_NOT_COMPLETE"))
@@ -365,31 +364,7 @@ class KotlinCompletionContributor : CompletionContributor() {
         // no completion auto-popup after integer and dot
         if (invocationCount == 0 && prefixMatcher.prefix.isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
 
-        // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
-        if (invocationCount == 0) {
-            val callable = isInExtensionReceiverOf(position)
-            if (callable != null) {
-                return when (callable) {
-                    is KtNamedFunction -> prefixMatcher.prefix.let { it.isEmpty() || it[0].isLowerCase() /* function name usually starts with lower case letter */ }
-                    else -> true
-                }
-            }
-        }
-
         return false
-    }
-
-    private fun isInExtensionReceiverOf(position: PsiElement): KtCallableDeclaration? {
-        val nameRef = position.parent as? KtNameReferenceExpression ?: return null
-        val userType = nameRef.parent as? KtUserType ?: return null
-        val typeRef = userType.parent as? KtTypeReference ?: return null
-        if (userType != typeRef.typeElement) return null
-        val parent = typeRef.parent
-        return when (parent) {
-            is KtNamedFunction -> parent.check { typeRef == it.receiverTypeReference }
-            is KtProperty -> parent.check { typeRef == it.receiverTypeReference }
-            else -> null
-        }
     }
 
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {

@@ -264,6 +264,8 @@ class TypeInstantiationItems(
                 other.renderElement(presentation2)
                 return presentation1.itemText == presentation2.itemText && presentation1.tailText == presentation2.tailText
             }
+
+            override fun hashCode() = lookupString.hashCode()
         }
 
         return InstantiationLookupElement(lookupElement).addTail(tail)
@@ -307,7 +309,7 @@ class TypeInstantiationItems(
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
                 val descriptor = inheritor.resolveToDescriptor(
                         resolutionFacade,
-                        { toFromOriginalFileMapper.toSyntheticFile(it) as KtClassOrObject? }
+                        { toFromOriginalFileMapper.toSyntheticFile(it) }
                 ) ?: continue
                 if (!visibilityFilter(descriptor)) continue
 

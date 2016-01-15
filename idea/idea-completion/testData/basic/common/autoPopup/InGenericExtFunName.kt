@@ -5,4 +5,5 @@ class Outer {
 fun <T> Outer.<caret>
 
 // INVOCATION_COUNT: 0
-// NUMBER: 0
+// EXIST: Nested
+// NOTHING_ELSE

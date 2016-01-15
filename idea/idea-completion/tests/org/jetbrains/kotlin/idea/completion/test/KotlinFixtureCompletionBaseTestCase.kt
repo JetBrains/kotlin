@@ -37,6 +37,11 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
         setUpFixture(testPath)
 
         val fileText = FileUtil.loadFile(File(testPath), true)
+
+        if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
+            myFixture.doHighlighting()
+        }
+
         testCompletion(fileText, getPlatform(), { completionType, count -> complete(completionType, count) }, defaultCompletionType(), defaultInvocationCount())
     }
 

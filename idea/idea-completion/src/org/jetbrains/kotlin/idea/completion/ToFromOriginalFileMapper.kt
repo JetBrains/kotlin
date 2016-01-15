@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtDeclaration
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ToFromOriginalFileMapper(
@@ -63,15 +63,15 @@ class ToFromOriginalFileMapper(
         }
     }
 
-    fun toOriginalFile(declaration: KtDeclaration): KtDeclaration? {
-        if (declaration.containingFile != syntheticFile) return declaration
-        val offset = toOriginalFile(declaration.startOffset) ?: return null
-        return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, KtDeclaration::class.java, true)
+    fun <TElement : PsiElement> toOriginalFile(element: TElement): TElement? {
+        if (element.containingFile != syntheticFile) return element
+        val offset = toOriginalFile(element.startOffset) ?: return null
+        return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, element.javaClass, true)
     }
 
-    fun toSyntheticFile(declaration: KtDeclaration): KtDeclaration? {
-        if (declaration.containingFile != originalFile) return declaration
-        val offset = toSyntheticFile(declaration.startOffset) ?: return null
-        return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, KtDeclaration::class.java, true)
+    fun <TElement : PsiElement> toSyntheticFile(element: TElement): TElement? {
+        if (element.containingFile != originalFile) return element
+        val offset = toSyntheticFile(element.startOffset) ?: return null
+        return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, element.javaClass, true)
     }
 }
