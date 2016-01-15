@@ -56,9 +56,11 @@ class FrameVisitor(context: EvaluationContextImpl) {
                 else -> {
                     if (isInsideInlineFunctionBody(frame.visibleVariables())) {
                         val number = numberOfInlinedFunctions(frame.visibleVariables())
-                        val inlineFunVar = findLocalVariableForInlineArgument(name, number, asmType, true)
-                        if (inlineFunVar != null) {
-                            return inlineFunVar
+                        for (inlineFunctionIndex in number downTo 1) {
+                            val inlineFunVar = findLocalVariableForInlineArgument(name, inlineFunctionIndex, asmType, true)
+                            if (inlineFunVar != null) {
+                                return inlineFunVar
+                            }
                         }
                     }
 

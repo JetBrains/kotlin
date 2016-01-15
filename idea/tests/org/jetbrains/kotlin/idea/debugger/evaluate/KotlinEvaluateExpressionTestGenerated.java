@@ -513,6 +513,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
 
+            @TestMetadata("frameInlineArgumentInsideInlineFun.kt")
+            public void testFrameInlineArgumentInsideInlineFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameInlineArgumentInsideInlineFun.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("frameInlineFun.kt")
             public void testFrameInlineFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/frameInlineFun.kt");
