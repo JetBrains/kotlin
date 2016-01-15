@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -40,7 +41,8 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         LATEINIT("JvmField cannot be applied to lateinit property"),
         CONST("JvmField cannot be applied to const property"),
         INSIDE_COMPANION_OF_INTERFACE("JvmField cannot be applied to a property defined in companion object of interface"),
-        TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE("JvmField cannot be applied to top level property of a file annotated with ${JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT}")
+        TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE("JvmField cannot be applied to top level property of a file annotated with ${JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT}"),
+        DELEGATE("JvmField cannot be applied to delegated property")
     }
 
     override fun check(
@@ -54,6 +56,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         val problem = when {
             // First two cases just prevent duplication of WRONG_ANNOTATION_TARGET
             descriptor !is PropertyDescriptor -> return
+            declaration is KtProperty && declaration.hasDelegate() -> DELEGATE
             !descriptor.hasBackingField(bindingContext) -> return
             descriptor.isOverridable -> NOT_FINAL
             Visibilities.isPrivate(descriptor.visibility) -> PRIVATE

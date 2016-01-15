@@ -27,20 +27,7 @@ fun DeclarationDescriptor.hasJvmOverloadsAnnotation(): Boolean {
     return annotations.findAnnotation(FqName("kotlin.jvm.JvmOverloads")) != null
 }
 
-fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? {
-    val fqName = FqName("kotlin.jvm.JvmField")
-    val annotation = annotations.findAnnotation(fqName)
-    if (annotation != null) {
-        return annotation;
-    }
-
-    return annotations.getUseSiteTargetedAnnotations().asSequence().filter {
-        it.target == AnnotationUseSiteTarget.FIELD
-    }.map { it.annotation }.firstOrNull {
-        val descriptor = it.type.constructor.declarationDescriptor
-        descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
-    }
-}
+fun DeclarationDescriptor.findJvmFieldAnnotation() = DescriptorUtils.getAnnotationByFqName(annotations, FqName("kotlin.jvm.JvmField"))
 
 fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean {
     return findJvmFieldAnnotation() != null
