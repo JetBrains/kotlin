@@ -286,8 +286,8 @@
     <internalFileTemplate name="Kotlin Enum"/>
     <internalFileTemplate name="Kotlin Interface"/>
 
-    <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.caches.KotlinGotoSymbolContributor"/>
-    <gotoClassContributor implementation="org.jetbrains.kotlin.idea.caches.KotlinGotoClassContributor"/>
+    <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoSymbolContributor"/>
+    <gotoClassContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoClassContributor"/>
     <lang.importOptimizer language="kotlin" implementationClass="org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer"/>
     <lang.namesValidator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinNamesValidator"/>
 
