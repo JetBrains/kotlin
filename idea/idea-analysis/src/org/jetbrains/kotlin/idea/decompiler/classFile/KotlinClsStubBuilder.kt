@@ -138,9 +138,11 @@ class AnnotationLoaderForClassFileStubBuilder(
         return null
     }
 
-    override fun loadPropertyAnnotations(propertyAnnotations: List<ClassId>, fieldAnnotations: List<ClassId>): List<ClassIdWithTarget> {
+    override fun loadPropertyAnnotations(
+            propertyAnnotations: List<ClassId>, fieldAnnotations: List<ClassId>, fieldUseSiteTarget: AnnotationUseSiteTarget
+    ): List<ClassIdWithTarget> {
         return propertyAnnotations.map { ClassIdWithTarget(it, null) } +
-               fieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.FIELD) }
+               fieldAnnotations.map { ClassIdWithTarget(it, fieldUseSiteTarget ) }
     }
 
     override fun transformAnnotations(annotations: List<ClassId>) = annotations.map { ClassIdWithTarget(it, null) }

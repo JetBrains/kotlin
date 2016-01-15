@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
 // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
 // into a map indexed by these signatures
-internal data class MemberSignature private constructor(private val signature: String) {
+internal data class MemberSignature private constructor(internal val signature: String) {
     companion object {
         @JvmStatic
         fun fromMethod(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): MemberSignature {
