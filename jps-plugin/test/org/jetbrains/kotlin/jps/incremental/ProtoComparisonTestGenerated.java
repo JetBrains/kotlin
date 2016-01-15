@@ -159,6 +159,12 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             doTest(fileName);
         }
 
+        @TestMetadata("membersFlagsChanged")
+        public void testMembersFlagsChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged/");
+            doTest(fileName);
+        }
+
         @TestMetadata("sealedClassImplAdded")
         public void testSealedClassImplAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded/");
@@ -173,6 +179,12 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     public static class PackageMembers extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInPackageMembers() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("membersFlagsChanged")
+        public void testMembersFlagsChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/membersFlagsChanged/");
+            doTest(fileName);
         }
 
         @TestMetadata("packageFacadeMultifileClassChanged")
