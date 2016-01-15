@@ -43,6 +43,8 @@ import static org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
 import static org.jetbrains.kotlin.resolve.BindingContext.IMPLICIT_RECEIVER_SMARTCAST;
 import static org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST;
 
+// We do not want to make methods static to keep SmartCastManager as a component
+@SuppressWarnings("MethodMayBeStatic")
 public class SmartCastManager {
 
     @NotNull
