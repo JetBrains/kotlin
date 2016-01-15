@@ -49,6 +49,7 @@ import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.jar.Attributes
 
@@ -109,6 +110,8 @@ object KotlinToJVMBytecodeCompiler {
 
         result.throwIfError()
 
+        val generationStates = ArrayList<GenerationState>();
+
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             val ktFiles = CompileEnvironmentUtil.getKtFiles(
@@ -118,13 +121,21 @@ object KotlinToJVMBytecodeCompiler {
             val generationState = generate(environment, result, ktFiles, module, moduleOutputDirectory,
                                            module.getModuleName())
             outputFiles.put(module, generationState.factory)
+            generationStates.add(generationState);
         }
 
-        for (module in chunk) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            writeOutput(configuration, outputFiles[module]!!, File(module.getOutputDirectory()), jarPath, jarRuntime, null)
+        try {
+            for (module in chunk) {
+                ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+                writeOutput(configuration, outputFiles[module]!!, File(module.getOutputDirectory()), jarPath, jarRuntime, null)
+            }
+            return true
         }
-        return true
+        finally {
+            for (generationState in generationStates) {
+                generationState.destroy();
+            }
+        }
     }
 
     fun createCompilerConfiguration(
