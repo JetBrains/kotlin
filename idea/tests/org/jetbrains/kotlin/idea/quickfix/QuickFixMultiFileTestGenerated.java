@@ -1139,6 +1139,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Imports extends AbstractQuickFixMultiFileTest {
+            @TestMetadata("addImportForOperator.before.Main.kt")
+            public void testAddImportForOperator() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImportForOperator.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+
             @TestMetadata("addImportFromSamePackage.before.Main.kt")
             public void testAddImportFromSamePackage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImportFromSamePackage.before.Main.kt");

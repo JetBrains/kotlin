@@ -3931,21 +3931,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
-        @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Imports extends AbstractQuickFixTest {
-            @TestMetadata("addImportRuntime.kt")
-            public void testAddImportRuntime() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImportRuntime.kt");
-                doTest(fileName);
-            }
-
-            public void testAllFilesPresentInImports() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/imports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
