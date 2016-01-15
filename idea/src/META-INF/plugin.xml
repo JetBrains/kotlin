@@ -1169,7 +1169,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyAssertNotNullInspection"
-                     displayName="Replace assert with '!!' or '?:'"
+                     displayName="‘assert’ calls that can be replaced with ‘!!’ or ‘?:'"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
