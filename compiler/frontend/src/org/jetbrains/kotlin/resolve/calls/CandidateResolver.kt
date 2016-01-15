@@ -464,6 +464,7 @@ class CandidateResolver(
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
         val nullability = dataFlowInfo.getPredictableNullability(dataFlowValue)
         var nullableImplicitInvokeReceiver = false
+        var receiverArgumentType = receiverArgument.type
         if (implicitInvokeCheck && call is CallForImplicitInvoke && call.isSafeCall()) {
             val outerCallReceiver = call.outerCall.explicitReceiver
             if (outerCallReceiver != call.explicitReceiver && outerCallReceiver is ReceiverValue) {
@@ -471,6 +472,7 @@ class CandidateResolver(
                 val outerReceiverNullability = dataFlowInfo.getPredictableNullability(outerReceiverDataFlowValue)
                 if (outerReceiverNullability.canBeNull() && !TypeUtils.isNullableType(expectedReceiverParameterType)) {
                     nullableImplicitInvokeReceiver = true
+                    receiverArgumentType = TypeUtils.makeNullable(receiverArgumentType)
                 }
             }
         }
@@ -498,8 +500,6 @@ class CandidateResolver(
                 return OTHER_ERROR
             }
         }
-
-        val receiverArgumentType = receiverArgument.type
 
         if (reportUnsafeCall || nullableImplicitInvokeReceiver) {
             tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)

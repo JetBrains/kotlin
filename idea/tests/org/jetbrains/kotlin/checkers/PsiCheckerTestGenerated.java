@@ -295,6 +295,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SafeInvoke.kt")
+        public void testSafeInvoke() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/SafeInvoke.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Shadowing.kt")
         public void testShadowing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/Shadowing.kt");
