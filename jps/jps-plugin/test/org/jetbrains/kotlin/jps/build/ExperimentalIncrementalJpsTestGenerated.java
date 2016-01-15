@@ -1039,6 +1039,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/classHierarchyAffected"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
+        @TestMetadata("annotationFlagRemoved")
+        public void testAnnotationFlagRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/annotationFlagRemoved/");
+            doTest(fileName);
+        }
+
         @TestMetadata("annotationListChanged")
         public void testAnnotationListChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/annotationListChanged/");
