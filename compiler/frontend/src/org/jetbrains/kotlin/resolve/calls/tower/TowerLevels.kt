@@ -21,13 +21,17 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
+import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -179,6 +183,28 @@ internal class SyntheticScopeBasedTowerLevel(
 
         val extensionReceiverTypes = scopeTower.dataFlowInfo.getAllPossibleTypes(extensionReceiver)
         return syntheticScopes.collectSyntheticExtensionFunctions(extensionReceiverTypes, name, location).map {
+            createCandidateDescriptor(it, dispatchReceiver = null)
+        }
+    }
+}
+
+internal class HidesMembersTowerLevel(scopeTower: ScopeTower): AbstractScopeTowerLevel(scopeTower) {
+    override fun getVariables(name: Name, extensionReceiver: ReceiverValue?)
+            = getCandidates(name, extensionReceiver, LexicalScope::collectVariables)
+
+    override fun getFunctions(name: Name, extensionReceiver: ReceiverValue?)
+            = getCandidates(name, extensionReceiver, LexicalScope::collectFunctions)
+
+    private fun <T: CallableDescriptor> getCandidates(
+            name: Name,
+            extensionReceiver: ReceiverValue?,
+            collectCandidates: LexicalScope.(Name, LookupLocation) -> Collection<T>
+    ): Collection<CandidateWithBoundDispatchReceiver<T>> {
+        if (extensionReceiver == null || name !in HIDES_MEMBERS_NAME_LIST) return emptyList()
+
+        return scopeTower.lexicalScope.collectCandidates(name, location).filter {
+            it.extensionReceiverParameter != null && it.hasHidesMembersAnnotation()
+        }.map {
             createCandidateDescriptor(it, dispatchReceiver = null)
         }
     }

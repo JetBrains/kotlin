@@ -1021,6 +1021,18 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("hidesMembers.kt")
+        public void testHidesMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/hidesMembers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hidesMembers2.kt")
+        public void testHidesMembers2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/hidesMembers2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("javaPackageMembers.kt")
         public void testJavaPackageMembers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/javaPackageMembers.kt");
