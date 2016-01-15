@@ -54,6 +54,12 @@
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-plugin</artifactId>
 
+                        <configuration>
+                            <args>
+                                <arg>-Xallow-kotlin-package</arg>
+                            </args>
+                        </configuration>
+
                         <executions>
                             <execution>
                                 <id>test-compile-js</id>
@@ -111,6 +117,12 @@
                     <plugin>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-plugin</artifactId>
+
+                        <configuration>
+                            <args>
+                                <arg>-Xallow-kotlin-package</arg>
+                            </args>
+                        </configuration>
 
                         <executions>
                             <execution>
