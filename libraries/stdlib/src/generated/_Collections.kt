@@ -1391,6 +1391,7 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
 /**
  * Performs the given [action] on each element.
  */
+@kotlin.internal.HidesMembers
 public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
     for (element in this) action(element)
 }
