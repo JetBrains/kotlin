@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.modules
 
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.text.StringUtil.escapeXml
-import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
+import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser.*
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.build.JvmSourceRoot
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -37,24 +36,20 @@ class KotlinModuleXmlBuilder {
     fun addModule(
             moduleName: String,
             outputDir: String,
-            sourceFiles: List<File>,
-            javaSourceRoots: List<JvmSourceRoot>,
-            classpathRoots: Collection<File>,
-            targetType: JavaModuleBuildTargetType,
+            sourceFiles: Iterable<File>,
+            javaSourceRoots: Iterable<JvmSourceRoot>,
+            classpathRoots: Iterable<File>,
+            targetTypeId: String,
+            isTests: Boolean,
             directoriesToFilterOut: Set<File>,
-            friendDirs: List<File>): KotlinModuleXmlBuilder {
+            friendDirs: Iterable<File>): KotlinModuleXmlBuilder {
         assert(!done) { "Already done" }
 
-        if (targetType.isTests) {
-            p.println("<!-- Module script for tests -->")
-        }
-        else {
-            p.println("<!-- Module script for production -->")
-        }
+        p.println("<!-- Module script for ${if (isTests) "tests" else "production"} -->")
 
         p.println("<", MODULE, " ",
                   NAME, "=\"", escapeXml(moduleName), "\" ",
-                  TYPE, "=\"", escapeXml(targetType.typeId), "\" ",
+                  TYPE, "=\"", escapeXml(targetTypeId), "\" ",
                   OUTPUT_DIR, "=\"", getEscapedPath(File(outputDir)), "\">")
         p.pushIndent()
 
@@ -74,7 +69,7 @@ class KotlinModuleXmlBuilder {
     }
 
     private fun processClasspath(
-            files: Collection<File>,
+            files: Iterable<File>,
             directoriesToFilterOut: Set<File>) {
         p.println("<!-- Classpath -->")
         for (file in files) {
@@ -97,7 +92,7 @@ class KotlinModuleXmlBuilder {
         }
     }
 
-    private fun processJavaSourceRoots(roots: List<JvmSourceRoot>) {
+    private fun processJavaSourceRoots(roots: Iterable<JvmSourceRoot>) {
         p.println("<!-- Java source roots -->")
         for (root in roots) {
             p.print("<")

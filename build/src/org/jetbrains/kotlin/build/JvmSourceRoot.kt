@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build
+package org.jetbrains.kotlin.build
 
 import java.io.File
 
