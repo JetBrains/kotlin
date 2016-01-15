@@ -1,0 +1,32 @@
+Cleaning output files:
+out/production/module/Ann1.class
+End of files
+Compiling files:
+src/Ann1.kt
+End of files
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UseAnn1.class
+out/production/module/UseAnn1FunKt.class
+out/production/module/UseAnn1ValKt.class
+End of files
+Compiling files:
+src/UseAnn1Class.kt
+src/useAnn1Fun.kt
+src/useAnn1Val.kt
+End of files
+COMPILATION FAILED
+'Ann1' is not an annotation class
+'Ann1' is not an annotation class
+'Ann1' is not an annotation class
+
+
+Cleaning output files:
+out/production/module/Ann1.class
+End of files
+Compiling files:
+src/Ann1.kt
+src/UseAnn1Class.kt
+src/useAnn1Fun.kt
+src/useAnn1Val.kt
+End of files
