@@ -35,6 +35,11 @@ fun main(args: Array<String>) {
     else {
         foo { test(1) }
     }
+
+    // Reified function call in if condition
+    if (reified(1) != 1) {
+        val a = 1
+    }
 }
 
 inline fun foo(f: () -> Int): Int {
@@ -44,4 +49,9 @@ inline fun foo(f: () -> Int): Int {
 
 fun test(i: Int) = 1
 
-// STEP_OVER: 22
+inline fun <reified T> reified(f: T): Int {
+    val a = 1
+    return 1
+}
+
+// STEP_OVER: 25
