@@ -56,7 +56,7 @@ class SetOperationsTest {
         assertEquals(setOf("a", "foo", "beer", "cheese", "bar"), set)
         assertTrue(set !== setOriginal)
 
-        val mset = hashSetOf("a")
+        val mset = mutableSetOf("a")
         mset += "foo"
         mset += listOf("beer", "a")
         mset += arrayOf("cheese", "beer")

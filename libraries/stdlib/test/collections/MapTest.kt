@@ -209,6 +209,12 @@ class MapTest {
         assertEquals(2, map["b"])
     }
 
+    @test fun createMutableMap() {
+        val map = mutableMapOf("b" to 1, "c" to 2)
+        map.put("a", 3)
+        assertEquals(listOf("b" to 1, "c" to 2, "a" to 3), map.toList())
+    }
+
     @test fun createLinkedMap() {
         val map = linkedMapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
         assertEquals(1, map["a"])

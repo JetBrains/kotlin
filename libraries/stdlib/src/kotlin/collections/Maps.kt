@@ -47,6 +47,14 @@ public fun <K, V> mapOf(): Map<K, V> = emptyMap()
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = Collections.singletonMap(pair.first, pair.second)
 
 /**
+ * Returns a new [MutableMap] with the specified contents, given as a list of pairs
+ * where the first component is the key and the second is the value.
+ * This map preserves insertion order so iterating through the map's entries will be in the same order.
+ */
+public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
+        = LinkedHashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
+
+/**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
  * where the first component is the key and the second is the value.
  *
