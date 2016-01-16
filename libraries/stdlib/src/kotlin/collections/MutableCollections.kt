@@ -40,53 +40,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAl
  */
 public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).retainAll(elements)
 
-
-@Deprecated("Use operator 'get' instead", ReplaceWith("this[index]"))
-public fun CharSequence.charAt(index: Int): Char = this[index]
-
-@Deprecated("Use property 'size' instead", ReplaceWith("size"))
-public inline fun Collection<*>.size() = size
-
-@Deprecated("Use property 'size' instead", ReplaceWith("size"))
-public inline fun Map<*, *>.size() = size
-
-@Deprecated("Use property 'key' instead", ReplaceWith("key"))
-public fun <K, V> Map.Entry<K, V>.getKey(): K = key
-
-
-@Deprecated("Use property 'value' instead.", ReplaceWith("value"))
-public fun <K, V> Map.Entry<K, V>.getValue(): V = value
-
-@Deprecated("Use 'removeAt' instead.", ReplaceWith("removeAt(index)"))
-public fun <E> MutableList<E>.remove(index: Int): E = removeAt(index)
-
-
-
-
-@Deprecated("Use property 'length' instead.", ReplaceWith("length"))
-public fun CharSequence.length(): Int = length
-
-@Deprecated("Use property 'keys' instead.", ReplaceWith("keys"))
-public inline fun <K, V> Map<K, V>.keySet(): Set<K> = keys
-
-@kotlin.jvm.JvmName("mutableKeys")
-@Deprecated("Use property 'keys' instead.", ReplaceWith("keys"))
-public fun <K, V> MutableMap<K, V>.keySet(): MutableSet<K> = keys
-
-@Deprecated("Use property 'entries' instead.", ReplaceWith("entries"))
-public inline fun <K, V> Map<K, V>.entrySet(): Set<Map.Entry<K, V>> = entries
-
-@kotlin.jvm.JvmName("mutableEntrySet")
-@Deprecated("Use property 'entries' instead.", ReplaceWith("entries"))
-public fun <K, V> MutableMap<K, V>.entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = entries
-
-@Deprecated("Use property 'values' instead.", ReplaceWith("values"))
-public inline fun <K, V> Map<K, V>.values(): Collection<V> = values
-
-@kotlin.jvm.JvmName("mutableValues")
-@Deprecated("Use property 'values' instead.", ReplaceWith("values"))
-public fun <K, V> MutableMap<K, V>.values(): MutableCollection<V> = values
-
 /**
  * Adds the specified [element] to this mutable collection.
  */

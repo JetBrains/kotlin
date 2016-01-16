@@ -102,20 +102,7 @@ public fun Char.toTitleCase(): Char = Character.toTitleCase(this)
 /**
  * Returns a value indicating a character's general category.
  */
-@Deprecated("Use 'category' property instead.", ReplaceWith("category"))
-public fun Char.category(): CharCategory = category
-
-/**
- * Returns a value indicating a character's general category.
- */
 public val Char.category: CharCategory get() = CharCategory.valueOf(Character.getType(this))
-
-
-/**
- * Returns the Unicode directionality property for the given character.
- */
-@Deprecated("Use 'directionality' property instead.", ReplaceWith("directionality"))
-public fun Char.directionality(): CharDirectionality = directionality
 
 /**
  * Returns the Unicode directionality property for the given character.

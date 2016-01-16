@@ -17,16 +17,16 @@
 package java.util
 
 public fun <E> HashSet(c: Collection<E>): HashSet<E>
-        = HashSet<E>(c.size()).apply { addAll(c) }
+        = HashSet<E>(c.size).apply { addAll(c) }
 
 public fun <E> LinkedHashSet(c: Collection<E>): HashSet<E>
-        = LinkedHashSet<E>(c.size()).apply { addAll(c) }
+        = LinkedHashSet<E>(c.size).apply { addAll(c) }
 
 public fun <K, V> HashMap(m: Map<K, V>): HashMap<K, V>
-        = HashMap<K, V>(m.size()).apply { putAll(m) }
+        = HashMap<K, V>(m.size).apply { putAll(m) }
 
 public fun <K, V> LinkedHashMap(m: Map<K, V>): LinkedHashMap<K, V>
-        = LinkedHashMap<K, V>(m.size()).apply { putAll(m) }
+        = LinkedHashMap<K, V>(m.size).apply { putAll(m) }
 
 public fun <E> ArrayList(c: Collection<E>): ArrayList<E>
         = ArrayList<E>().apply { asDynamic().array = c.toTypedArray<Any?>() } // black dynamic magic

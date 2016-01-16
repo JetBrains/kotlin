@@ -180,7 +180,7 @@ internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?):
 
 internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>): dynamic {
     val result = array.slice(0)
-    result.length += collection.size()
+    result.length += collection.size
     var index: Int = array.length
     for (element in collection) result[index++] = element
     return result

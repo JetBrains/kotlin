@@ -12,7 +12,7 @@ public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boole
     if (!ignoreCase)
         return nativeStartsWith(prefix, 0)
     else
-        return regionMatches(0, prefix, 0, prefix.length(), ignoreCase)
+        return regionMatches(0, prefix, 0, prefix.length, ignoreCase)
 }
 
 /**
@@ -22,7 +22,7 @@ public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolea
     if (!ignoreCase)
         return nativeStartsWith(prefix, startIndex)
     else
-        return regionMatches(startIndex, prefix, 0, prefix.length(), ignoreCase)
+        return regionMatches(startIndex, prefix, 0, prefix.length, ignoreCase)
 }
 
 /**
@@ -32,17 +32,17 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
     if (!ignoreCase)
         return nativeEndsWith(suffix)
     else
-        return regionMatches(length() - suffix.length(), suffix, 0, suffix.length(), ignoreCase)
+        return regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 }
 
 
 
 public inline fun String.matches(regex : String) : Boolean {
     val result = this.match(regex)
-    return result != null && result.size() > 0
+    return result != null && result.size > 0
 }
 
-public fun CharSequence.isBlank(): Boolean = length() == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
+public fun CharSequence.isBlank(): Boolean = length == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
 
 public fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean =
         if (this == null)

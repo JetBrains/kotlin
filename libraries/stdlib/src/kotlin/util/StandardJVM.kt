@@ -31,13 +31,6 @@ public fun Throwable.printStackTrace(stream: PrintStream): Unit {
 }
 
 /**
- * Returns the list of stack trace elements in a Kotlin stack trace.
- */
-@Deprecated("Use 'stackTrace' property instead.", ReplaceWith("stackTrace"))
-@JvmName("getStackTraceDeprecated")
-public inline fun Throwable.getStackTrace(): Array<StackTraceElement> = stackTrace
-
-/**
  * Returns an array of stack trace elements representing the stack trace
  * pertaining to this throwable.
  */
