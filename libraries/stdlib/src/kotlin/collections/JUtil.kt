@@ -5,6 +5,7 @@ package kotlin.collections
 
 import java.io.Serializable
 import java.util.*
+import kotlin.comparisons.compareValues
 
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
