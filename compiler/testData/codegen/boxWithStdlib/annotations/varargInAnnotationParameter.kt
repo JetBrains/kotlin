@@ -16,25 +16,25 @@ annotation class Ann(vararg val p: Int)
 @Ann(p = *intArrayOf(1, 2)) class MyClass10
 
 fun box(): String {
-    test(javaClass<MyClass1>(), "")
-    test(javaClass<MyClass2>(), "1")
-    test(javaClass<MyClass3>(), "12")
+    test(MyClass1::class.java, "")
+    test(MyClass2::class.java, "1")
+    test(MyClass3::class.java, "12")
 
-    test(javaClass<MyClass4>(), "")
-    test(javaClass<MyClass5>(), "1")
-    test(javaClass<MyClass6>(), "12")
+    test(MyClass4::class.java, "")
+    test(MyClass5::class.java, "1")
+    test(MyClass6::class.java, "12")
 
-    test(javaClass<MyClass7>(), "1")
+    test(MyClass7::class.java, "1")
 
-    test(javaClass<MyClass8>(), "")
-    test(javaClass<MyClass9>(), "1")
-    test(javaClass<MyClass10>(), "12")
+    test(MyClass8::class.java, "")
+    test(MyClass9::class.java, "1")
+    test(MyClass10::class.java, "12")
 
     return "OK"
 }
 
 fun test(klass: Class<*>, expected: String) {
-    val ann = klass.getAnnotation(javaClass<Ann>())
+    val ann = klass.getAnnotation(Ann::class.java)
     if (ann == null) throw AssertionError("fail: cannot find Ann on ${klass}")
 
     var result = ""

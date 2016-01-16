@@ -3,7 +3,7 @@ import kotlin.test.assertEquals
 
 class C(var state: String) {
     var String.prop: String
-        get() = length().toString()
+        get() = length.toString()
         set(value) { state = this + value }
 }
 

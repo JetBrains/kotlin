@@ -2,7 +2,7 @@
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 class Test(val a: Int)

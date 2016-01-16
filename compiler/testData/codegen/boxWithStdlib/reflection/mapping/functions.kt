@@ -2,10 +2,10 @@ import kotlin.reflect.*
 import kotlin.reflect.jvm.*
 
 class K {
-    fun foo(s: String): Int = s.length()
+    fun foo(s: String): Int = s.length
 }
-fun bar(s: String): Int = s.length()
-fun String.baz(): Int = this.length()
+fun bar(s: String): Int = s.length
+fun String.baz(): Int = this.length
 
 fun check(f: KFunction<Int>) {
     assert(f.javaConstructor == null) { "Fail f constructor" }

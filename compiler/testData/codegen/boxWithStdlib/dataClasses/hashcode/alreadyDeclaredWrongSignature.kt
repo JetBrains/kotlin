@@ -7,11 +7,11 @@ data class B(val x: Int) {
 }
 
 fun box(): String {
-  javaClass<A>().getDeclaredMethod("hashCode")
-  javaClass<A>().getDeclaredMethod("hashCode", javaClass<Any>())
+  A::class.java.getDeclaredMethod("hashCode")
+  A::class.java.getDeclaredMethod("hashCode", Any::class.java)
 
-  javaClass<B>().getDeclaredMethod("hashCode")
-  javaClass<B>().getDeclaredMethod("hashCode", javaClass<B>(), javaClass<Any>())
+  B::class.java.getDeclaredMethod("hashCode")
+  B::class.java.getDeclaredMethod("hashCode", B::class.java, Any::class.java)
 
   return "OK"
 }

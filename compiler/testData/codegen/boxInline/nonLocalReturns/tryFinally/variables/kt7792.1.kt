@@ -20,7 +20,7 @@ public class ClassA {
 
             result = name + name2
 
-            val length = name.length()
+            val length = name.length
         }
     }
 }

@@ -27,7 +27,7 @@ fun box(): String {
     if (!ok2.identityEquals(ok)) return "ok2 not identity equal ok"
 
 
-    if (EmptyEnum.values().size() != 0) return "EmptyEnum.values().size != 0"
+    if (EmptyEnum.values().size != 0) return "EmptyEnum.values().size != 0"
 
     if (A.values() != arrayOf(A.a, A.b, A.c)) return "Wrong A.values(): " + A.values().toString()
 

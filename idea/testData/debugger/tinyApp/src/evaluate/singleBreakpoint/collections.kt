@@ -3,7 +3,7 @@ package collections
 fun main(args: Array<String>) {
     val ar = intArrayOf(1, 2, 100, 200)
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: arrayListOf(1, 2).map { it.toString() }
@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
 // EXPRESSION: arrayListOf(1, 2).count()
 // RESULT: 2: I
 
-// EXPRESSION: arrayListOf(1, 2).size()
+// EXPRESSION: arrayListOf(1, 2).size
 // RESULT: 2: I
 
 // EXPRESSION: arrayListOf(1, 2).drop(1)

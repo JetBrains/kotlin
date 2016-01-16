@@ -47,7 +47,7 @@ public class GenerateRangesCodegenTestData {
     public static final String LITERAL_TEMPLATE =    "    val $LIST = ArrayList<$TYPE>()\n" +
                                                      "    for (i in $RANGE_EXPR) {\n" +
                                                      "        $LIST.add(i)\n" +
-                                                     "        if ($LIST.size() > 23) break\n" +
+                                                     "        if ($LIST.size > 23) break\n" +
                                                      "    }\n" +
                                                      "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
                                                      "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
@@ -58,7 +58,7 @@ public class GenerateRangesCodegenTestData {
                                                      "    val $RANGE = $RANGE_EXPR\n" +
                                                      "    for (i in $RANGE) {\n" +
                                                      "        $LIST.add(i)\n" +
-                                                     "        if ($LIST.size() > 23) break\n" +
+                                                     "        if ($LIST.size > 23) break\n" +
                                                      "    }\n" +
                                                      "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
                                                      "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +

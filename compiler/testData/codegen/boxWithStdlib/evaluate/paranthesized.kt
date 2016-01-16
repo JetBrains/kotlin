@@ -18,7 +18,7 @@ val prop6: Float = (1.toFloat() + 2) * 2
 @Ann((1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1.0 + 2) * 2, (1.toFloat() + 2) * 2) class MyClass
 
 fun box(): String {
-    val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!
+    val annotation = MyClass::class.java.getAnnotation(Ann::class.java)!!
     if (annotation.p1 != prop1) return "fail 1, expected = ${prop1}, actual = ${annotation.p1}"
     if (annotation.p2 != prop2) return "fail 2, expected = ${prop2}, actual = ${annotation.p2}"
     if (annotation.p3 != prop3) return "fail 3, expected = ${prop3}, actual = ${annotation.p3}"

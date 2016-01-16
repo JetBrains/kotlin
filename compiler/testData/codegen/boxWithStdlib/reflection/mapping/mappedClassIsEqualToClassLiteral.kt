@@ -1,7 +1,7 @@
 class A
 
 fun box(): String {
-    val a1 = javaClass<A>().kotlin
+    val a1 = A::class.java.kotlin
     val a2 = A::class
 
     if (a1 != a2) return "Fail equals"

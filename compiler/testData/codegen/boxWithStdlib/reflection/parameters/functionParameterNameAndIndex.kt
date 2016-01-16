@@ -1,7 +1,7 @@
 import kotlin.reflect.*
 import kotlin.test.assertEquals
 
-fun foo(bar: String): Int = bar.length()
+fun foo(bar: String): Int = bar.length
 
 class A(val c: String) {
     fun foz(baz: Int) {}

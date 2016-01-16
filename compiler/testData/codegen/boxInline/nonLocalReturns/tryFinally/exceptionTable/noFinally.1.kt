@@ -76,8 +76,8 @@ fun test5(h: Holder): String {
 
         return localResult;
     } catch (e: RuntimeException) {
-        if (e.getMessage() != "EXCEPTION") {
-            return "FAIL in exception: " + e.getMessage()
+        if (e.message != "EXCEPTION") {
+            return "FAIL in exception: " + e.message
         } else {
             return "CATCHED_EXCEPTION"
         }

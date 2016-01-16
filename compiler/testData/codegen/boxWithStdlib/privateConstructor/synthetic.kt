@@ -19,7 +19,7 @@ fun check(klass: Class<*>) {
 }
 
 fun box(): String {
-    check(javaClass<PrivateConstructor>())
+    check(PrivateConstructor::class.java)
     // Also check that synthetic accessors really work
     PrivateConstructor.Nested()
     return "OK"

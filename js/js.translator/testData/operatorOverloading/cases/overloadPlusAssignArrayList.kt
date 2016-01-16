@@ -24,5 +24,5 @@ fun box(): String {
     v1.add("foo")
     v2.add("bar")
     v1 += v2
-    return if (v1.contents.size() == 2) "OK" else "fail"
+    return if (v1.contents.size == 2) "OK" else "fail"
 }

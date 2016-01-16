@@ -6,9 +6,9 @@ import kotlin.test.assertTrue
 import java.security.KeyPair
 
 
-fun <T> testCollectionSize(c: Collection<T>) = assertEquals(0, c.size())
+fun <T> testCollectionSize(c: Collection<T>) = assertEquals(0, c.size)
 fun <T> testCollectionIsEmpty(c: Collection<T>) = assertTrue(c.isEmpty())
-fun <T> testCollectionContains(c: Collection<T>) = assertTrue(c.contains(1))
+fun <T> testCollectionContains(c: Collection<T>) = assertTrue(c.contains(1 as Any?))
 fun <T> testCollectionIterator(c: Collection<T>) {
     val it = c.iterator()
     while (it.hasNext()) {
@@ -18,12 +18,12 @@ fun <T> testCollectionIterator(c: Collection<T>) {
 fun <T> testCollectionContainsAll(c: Collection<T>) = assertTrue(c.containsAll(c))
 fun <T> testMutableCollectionAdd(c: MutableCollection<T>, t: T) {
     c.add(t)
-    assertEquals(1, c.size())
+    assertEquals(1, c.size)
     assertTrue(c.contains(t))
 }
 fun <T> testMutableCollectionRemove(c: MutableCollection<T>, t: T) {
     c.remove(t)
-    assertEquals(0, c.size())
+    assertEquals(0, c.size)
     assertFalse(c.contains(t))
 }
 fun <T> testMutableCollectionIterator(c: MutableCollection<T>, t: T) {
@@ -33,7 +33,7 @@ fun <T> testMutableCollectionIterator(c: MutableCollection<T>, t: T) {
         it.next()
         it.remove()
     }
-    assertEquals(0, c.size())
+    assertEquals(0, c.size)
 }
 fun <T> testMutableCollectionAddAll(c: MutableCollection<T>, t1: T, t2: T) {
     c.addAll(arrayListOf(t1, t2))
@@ -114,16 +114,16 @@ fun testList() {
 }
 
 fun <K, V> testMapContainsKey(map: Map<K, V>, k: K) = assertTrue(map.containsKey(k))
-fun <K, V> testMapKeys(map: Map<K, V>, k1: K, k2: K) = assertEqualCollections(hashSetOf(k1, k2), map.keySet())
-fun <K, V> testMapValues(map: Map<K, V>, v1: V, v2: V) = assertEqualCollections(hashSetOf(v1, v2), map.values())
+fun <K, V> testMapKeys(map: Map<K, V>, k1: K, k2: K) = assertEqualCollections(hashSetOf(k1, k2), map.keys)
+fun <K, V> testMapValues(map: Map<K, V>, v1: V, v2: V) = assertEqualCollections(hashSetOf(v1, v2), map.values)
 fun <K, V> testMapEntrySet(map: Map<K, V>, k : K, v: V) {
-    for (entry in map.entrySet()) {
+    for (entry in map.entries) {
         assertEquals(k, entry.key)
         assertEquals(v, entry.value)
     }
 }
 fun <K, V> testMutableMapEntry(map: MutableMap<K, V>, k1 : K, v: V) {
-    for (entry in map.entrySet()) {
+    for (entry in map.entries) {
         entry.setValue(v)
     }
     assertEquals(hashMapOf(k1 to v), map)

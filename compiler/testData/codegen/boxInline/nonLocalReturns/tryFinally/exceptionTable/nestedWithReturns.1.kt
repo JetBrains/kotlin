@@ -56,9 +56,9 @@ fun test0(
                 }, res)
         return localResult;
     } catch(e: Exception1) {
-        return e.getMessage()!!
+        return e.message!!
     } catch(e: Exception2) {
-        return e.getMessage()!!
+        return e.message!!
     }
 }
 

@@ -56,7 +56,7 @@ fun testSpreadOperatorWithSureCall(a: Bar?, vararg args: Int): Boolean {
 
 fun testCallOrder(vararg args: Int) =
         Bar.startNewTest() &&
-        Bar(args.size(), 0).test(1, 1, *args) && Bar(args.size(), 2).test(3, 1, *args) &&
+        Bar(args.size, 0).test(1, 1, *args) && Bar(args.size, 2).test(3, 1, *args) &&
         !Bar.hasOrderProblem
 
 @native
@@ -105,7 +105,7 @@ fun box(): String {
     if (!spreadInPackageMethodCall(2, 1, 2))
         return "failed when call package method using spread operator"
 
-    if (!(testNativeVarargWithFunLit(1, 2, 3) { args -> args.size() == 3 }))
+    if (!(testNativeVarargWithFunLit(1, 2, 3) { args -> args.size == 3 }))
         return "failed when call native function with vararg and fun literal"
 
     if (!(testSpreadOperatorWithSafeCall(null, null)))
@@ -141,9 +141,9 @@ fun box(): String {
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5), *intArrayOf(6, 7, 8, 9)) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4), 5, 6, *intArrayOf(7, 8, 9)) { 2*it })
 
-    assertEquals(2, idArrayVarArg(arrayOf(1), *arrayOf(arrayOf(2, 3, 4))).size())
-    assertEquals(3, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6))).size())
-    assertEquals(6, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6)), arrayOf(7), *arrayOf(arrayOf(8, 9), arrayOf(10, 11))).size())
+    assertEquals(2, idArrayVarArg(arrayOf(1), *arrayOf(arrayOf(2, 3, 4))).size)
+    assertEquals(3, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6))).size)
+    assertEquals(6, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6)), arrayOf(7), *arrayOf(arrayOf(8, 9), arrayOf(10, 11))).size)
 
     return "OK"
 }

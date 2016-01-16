@@ -5,7 +5,7 @@ import kotlin.test.*
 
 class C {
     companion object {
-        @static fun foo(s: String): Int = s.length()
+        @static fun foo(s: String): Int = s.length
     }
 }
 
@@ -19,12 +19,12 @@ fun box(): String {
     assertEquals(3, k.call(C, "def"))
 
 
-    val staticMethod = javaClass<C>().getDeclaredMethod("foo", javaClass<String>())
+    val staticMethod = C::class.java.getDeclaredMethod("foo", String::class.java)
     val k2 = staticMethod.kotlinFunction ?:
              return "Fail: no Kotlin function found for static bridge for @JvmStatic method in companion object C::foo"
     assertEquals(3, k2.call(C, "ghi"))
 
-    assertFailsWith(javaClass<NullPointerException>()) { k2.call(null, "")!! }
+    assertFailsWith(NullPointerException::class.java) { k2.call(null, "")!! }
 
     val j2 = k2.javaMethod
     assertEquals(j, j2)

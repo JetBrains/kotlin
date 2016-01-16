@@ -13,6 +13,6 @@ fun box(): String {
 }
 
 fun localUse(): Boolean {
-    val c = javaClass<Runnable>()
+    val c = Runnable::class.java
     return (c.getName()!! == "java.lang.Runnable")
 }

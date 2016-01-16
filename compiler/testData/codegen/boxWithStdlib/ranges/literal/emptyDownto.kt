@@ -5,7 +5,7 @@ fun box(): String {
     val list1 = ArrayList<Int>()
     for (i in 5 downTo 10) {
         list1.add(i)
-        if (list1.size() > 23) break
+        if (list1.size > 23) break
     }
     if (list1 != listOf<Int>()) {
         return "Wrong elements for 5 downTo 10: $list1"
@@ -14,7 +14,7 @@ fun box(): String {
     val list2 = ArrayList<Int>()
     for (i in 5.toByte() downTo 10.toByte()) {
         list2.add(i)
-        if (list2.size() > 23) break
+        if (list2.size > 23) break
     }
     if (list2 != listOf<Int>()) {
         return "Wrong elements for 5.toByte() downTo 10.toByte(): $list2"
@@ -23,7 +23,7 @@ fun box(): String {
     val list3 = ArrayList<Int>()
     for (i in 5.toShort() downTo 10.toShort()) {
         list3.add(i)
-        if (list3.size() > 23) break
+        if (list3.size > 23) break
     }
     if (list3 != listOf<Int>()) {
         return "Wrong elements for 5.toShort() downTo 10.toShort(): $list3"
@@ -32,7 +32,7 @@ fun box(): String {
     val list4 = ArrayList<Long>()
     for (i in 5.toLong() downTo 10.toLong()) {
         list4.add(i)
-        if (list4.size() > 23) break
+        if (list4.size > 23) break
     }
     if (list4 != listOf<Long>()) {
         return "Wrong elements for 5.toLong() downTo 10.toLong(): $list4"
@@ -41,7 +41,7 @@ fun box(): String {
     val list5 = ArrayList<Char>()
     for (i in 'a' downTo 'z') {
         list5.add(i)
-        if (list5.size() > 23) break
+        if (list5.size > 23) break
     }
     if (list5 != listOf<Char>()) {
         return "Wrong elements for 'a' downTo 'z': $list5"

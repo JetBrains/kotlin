@@ -4,7 +4,7 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 extractLocalVariables.kt:7
 Compile bytecode for a
 Compile bytecode for klass.f1(1)
-Compile bytecode for args.size()
+Compile bytecode for args.size
 Compile bytecode for klass.b
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

@@ -4,7 +4,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 open class A private constructor(x: Int) {
-    public constructor(s: String): this(s.length())
+    public constructor(s: String): this(s.length)
     constructor(): this("")
 }
 
@@ -16,14 +16,14 @@ class C {
 }
 
 fun box(): String {
-    assertEquals(3, A::class.constructors.size())
-    assertEquals(1, B::class.constructors.size())
+    assertEquals(3, A::class.constructors.size)
+    assertEquals(1, B::class.constructors.size)
 
     assertTrue(Collections.disjoint(A::class.members, A::class.constructors))
     assertTrue(Collections.disjoint(B::class.members, B::class.constructors))
 
-    assertEquals(1, C.Nested::class.constructors.size())
-    assertEquals(1, C.Inner::class.constructors.size())
+    assertEquals(1, C.Nested::class.constructors.size)
+    assertEquals(1, C.Inner::class.constructors.size)
 
     return "OK"
 }

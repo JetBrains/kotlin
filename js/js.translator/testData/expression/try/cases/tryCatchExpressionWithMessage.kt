@@ -7,7 +7,7 @@ fun box(): String {
     try {
         throw Exception("Exception")
     } catch (e: Throwable) {
-        s = "Throwable:" + e.getMessage()!!
+        s = "Throwable:" + e.message!!
     }
     assertEquals("Throwable:Exception", s)
 
@@ -15,7 +15,7 @@ fun box(): String {
     try {
         throw Exception("Exception")
     } catch (e: Exception) {
-        s = "Exception:" + e.getMessage()!!
+        s = "Exception:" + e.message!!
     }
     assertEquals("Exception:Exception", s)
 
@@ -23,7 +23,7 @@ fun box(): String {
     try {
         throw RuntimeException("RuntimeException")
     } catch (e: Exception) {
-        s = "Exception:" + e.getMessage()!!
+        s = "Exception:" + e.message!!
     }
     assertEquals("Exception:RuntimeException", s)
 
@@ -31,7 +31,7 @@ fun box(): String {
     try {
         throw NullPointerException("NullPointerException")
     } catch (e: Exception) {
-        s = "Exception:" + e.getMessage()!!
+        s = "Exception:" + e.message!!
     }
     assertEquals("Exception:NullPointerException", s)
 
@@ -39,18 +39,18 @@ fun box(): String {
     try {
         throw IndexOutOfBoundsException("IndexOutOfBoundsException")
     } catch (e: NullPointerException) {
-        s = "NullPointerException:" + e.getMessage()!!
+        s = "NullPointerException:" + e.message!!
     } catch (e: RuntimeException) {
-        s = "RuntimeException:" + e.getMessage()!!
+        s = "RuntimeException:" + e.message!!
     } catch (e: Exception) {
-        s = "Exception:" + e.getMessage()!!
+        s = "Exception:" + e.message!!
     }
     assertEquals("RuntimeException:IndexOutOfBoundsException", s)
 
     try {
         throw RuntimeException()
     } catch (e: Exception) {
-        assertEquals(null, e.getMessage())
+        assertEquals(null, e.message)
     }
 
    return "OK"

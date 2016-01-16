@@ -4,18 +4,18 @@ import java.util.HashMap
 
 
 operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
-    val entrySet = this.entrySet()
+    val entrySet = this.entries
     return entrySet.iterator()
 }
 
 /** Returns the key of the entry */
 operator fun <K, V> Map.Entry<K, V>.component1(): K {
-    return getKey()
+    return key
 }
 
 /** Returns the value of the entry */
 operator fun <K, V> Map.Entry<K, V>.component2(): V {
-    return getValue()
+    return value
 }
 
 fun box(): String {

@@ -2,11 +2,11 @@
 @JavaAnn2 class MyClass2
 
 fun box(): String {
-    val ann = javaClass<MyClass>().getAnnotation(javaClass<JavaAnn>())
+    val ann = MyClass::class.java.getAnnotation(JavaAnn::class.java)
     if (ann == null) return "fail: cannot find Ann on MyClass}"
     if (ann.value != "default") return "fail: annotation parameter i should be 'default', but was ${ann.value}"
 
-    val ann2 = javaClass<MyClass2>().getAnnotation(javaClass<JavaAnn2>())
+    val ann2 = MyClass2::class.java.getAnnotation(JavaAnn2::class.java)
     if (ann2 == null) return "fail: cannot find Ann on MyClass}"
     if (ann2.a != 1) return "fail for a: expected = 1, but was ${ann2.a}"
     if (ann2.b != 1.toByte()) return "fail for b: expected = 1, but was ${ann2.b}"

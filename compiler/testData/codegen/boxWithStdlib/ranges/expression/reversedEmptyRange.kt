@@ -6,7 +6,7 @@ fun box(): String {
     val range1 = (5..3).reversed()
     for (i in range1) {
         list1.add(i)
-        if (list1.size() > 23) break
+        if (list1.size > 23) break
     }
     if (list1 != listOf<Int>()) {
         return "Wrong elements for (5..3).reversed(): $list1"
@@ -16,7 +16,7 @@ fun box(): String {
     val range2 = (5.toByte()..3.toByte()).reversed()
     for (i in range2) {
         list2.add(i)
-        if (list2.size() > 23) break
+        if (list2.size > 23) break
     }
     if (list2 != listOf<Int>()) {
         return "Wrong elements for (5.toByte()..3.toByte()).reversed(): $list2"
@@ -26,7 +26,7 @@ fun box(): String {
     val range3 = (5.toShort()..3.toShort()).reversed()
     for (i in range3) {
         list3.add(i)
-        if (list3.size() > 23) break
+        if (list3.size > 23) break
     }
     if (list3 != listOf<Int>()) {
         return "Wrong elements for (5.toShort()..3.toShort()).reversed(): $list3"
@@ -36,7 +36,7 @@ fun box(): String {
     val range4 = (5.toLong()..3.toLong()).reversed()
     for (i in range4) {
         list4.add(i)
-        if (list4.size() > 23) break
+        if (list4.size > 23) break
     }
     if (list4 != listOf<Long>()) {
         return "Wrong elements for (5.toLong()..3.toLong()).reversed(): $list4"
@@ -46,7 +46,7 @@ fun box(): String {
     val range5 = ('c'..'a').reversed()
     for (i in range5) {
         list5.add(i)
-        if (list5.size() > 23) break
+        if (list5.size > 23) break
     }
     if (list5 != listOf<Char>()) {
         return "Wrong elements for ('c'..'a').reversed(): $list5"

@@ -10,7 +10,7 @@ class ArrayWrapper<T>() {
     operator fun unaryMinus(): ArrayWrapper<T> {
         val result = ArrayWrapper<T>()
         result.contents.addAll(contents)
-        var i = contents.size();
+        var i = contents.size;
         for (a in contents) {
             result.contents[--i] = a;
         }

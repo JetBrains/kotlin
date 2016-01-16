@@ -3,7 +3,7 @@ import kotlin.test.assertEquals
 inline fun <reified T : Any, reified R : Any> foo(): Array<String> {
     val x = object {
         inline fun <reified T1 : Any, reified T : Any> bar(): Array<String> = arrayOf(
-                javaClass<T1>().getName(), javaClass<T>().getName(), javaClass<R>().getName()
+                T1::class.java.getName(), T::class.java.getName(), R::class.java.getName()
         )
         fun f1() = bar<T, R>()
         fun f2() = bar<R, T>()

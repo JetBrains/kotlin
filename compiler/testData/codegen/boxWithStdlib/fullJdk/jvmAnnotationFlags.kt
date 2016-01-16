@@ -15,7 +15,7 @@ class C {
 }
 
 fun box(): String {
-    val c = javaClass<C>()
+    val c = C::class.java
 
     if (c.getDeclaredField("vol").getModifiers() and Modifier.VOLATILE == 0) return "Fail: volatile"
     if (c.getDeclaredField("tra").getModifiers() and Modifier.TRANSIENT == 0) return "Fail: transient"

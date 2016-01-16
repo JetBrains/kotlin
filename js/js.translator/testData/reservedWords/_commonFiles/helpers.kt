@@ -9,7 +9,7 @@ fun test(keyword: String, expectedRenamed: Boolean, f: Any) {
     val fs = f.toString().replace("while (false)", "")
     val matches = Regex("[\\w$]*$keyword[\\w_$]*").matchAll(fs).map { it.value }.toList()
 
-    assertNotEquals(0, matches.size(), "matches is empty for fs = $fs")
+    assertNotEquals(0, matches.size, "matches is empty for fs = $fs")
 
     val actual = matches.last()
 

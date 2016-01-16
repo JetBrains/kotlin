@@ -8,13 +8,13 @@ class A(d: Double, s: String, parent: A?) {
 }
 
 fun box(): String {
-    assertEquals(listOf(java.lang.Double.TYPE, javaClass<String>(), javaClass<A>()), ::A.parameters.map { it.type.javaType })
-    assertEquals(listOf(javaClass<A>()), A::Nested.parameters.map { it.type.javaType })
-    assertEquals(listOf(javaClass<A>(), javaClass<A.Nested>()), A::Inner.parameters.map { it.type.javaType })
+    assertEquals(listOf(java.lang.Double.TYPE, String::class.java, A::class.java), ::A.parameters.map { it.type.javaType })
+    assertEquals(listOf(A::class.java), A::Nested.parameters.map { it.type.javaType })
+    assertEquals(listOf(A::class.java, A.Nested::class.java), A::Inner.parameters.map { it.type.javaType })
 
-    assertEquals(javaClass<A>(), ::A.returnType.javaType)
-    assertEquals(javaClass<A.Nested>(), A::Nested.returnType.javaType)
-    assertEquals(javaClass<A.Inner>(), A::Inner.returnType.javaType)
+    assertEquals(A::class.java, ::A.returnType.javaType)
+    assertEquals(A.Nested::class.java, A::Nested.returnType.javaType)
+    assertEquals(A.Inner::class.java, A::Inner.returnType.javaType)
 
     return "OK"
 }

@@ -36,7 +36,7 @@ class Test<T>(val constructorProperty: T) {
 }
 
 fun box(): String {
-    val clz = javaClass<Test<*>>()
+    val clz = Test::class.java
 
     val constructorProperty = clz.getDeclaredField("constructorProperty");
 

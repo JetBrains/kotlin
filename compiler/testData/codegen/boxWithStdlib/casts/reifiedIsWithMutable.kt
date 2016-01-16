@@ -99,7 +99,7 @@ fun box(): String {
     val mentry = MME()
 
     hashMap[""] = ""
-    val hashMapEntry = hashMap.entrySet().first()
+    val hashMapEntry = hashMap.entries.first()
 
     assert(reifiedIsNot<MutableMap.MutableEntry<*, *>>(entry)) { "reifiedIsNot<MutableMap.MutableEntry<*, *>>(entry)"}
     assert(reifiedIs<MutableMap.MutableEntry<*, *>>(mentry)) { "reifiedIs<MutableMap.MutableEntry<*, *>>(mentry)"}

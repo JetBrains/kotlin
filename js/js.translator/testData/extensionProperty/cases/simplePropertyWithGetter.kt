@@ -1,7 +1,7 @@
 package foo
 
 val String.prop: Int
-    get() = length()
+    get() = length
 
 val Int.quadruple: Int
     get() = this * 4

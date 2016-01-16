@@ -12,14 +12,14 @@ inline fun doWorkInline(block: () -> String) = block()
 fun box(): String {
     val x = object {
         inline fun <reified T : Any> bar1(): A = object : A {
-            override fun f1(): String = javaClass<T>().getName()
-            override fun f2(): String = doWork { javaClass<T>().getName() }
-            override fun f3(): String = doWorkInline { javaClass<T>().getName() }
+            override fun f1(): String = T::class.java.getName()
+            override fun f2(): String = doWork { T::class.java.getName() }
+            override fun f3(): String = doWorkInline { T::class.java.getName() }
         }
 
-        inline fun <reified T : Any> bar2() = javaClass<T>().getName()
-        inline fun <reified T : Any> bar3() = doWork { javaClass<T>().getName() }
-        inline fun <reified T : Any> bar4() = doWorkInline { javaClass<T>().getName() }
+        inline fun <reified T : Any> bar2() = T::class.java.getName()
+        inline fun <reified T : Any> bar3() = doWork { T::class.java.getName() }
+        inline fun <reified T : Any> bar4() = doWorkInline { T::class.java.getName() }
     }
 
     val y: A = x.bar1<String>()

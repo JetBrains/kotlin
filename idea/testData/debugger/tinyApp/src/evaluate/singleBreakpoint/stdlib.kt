@@ -2,7 +2,7 @@ package stdlib
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: arrayOf(100, 101)
@@ -14,10 +14,10 @@ fun main(args: Array<String>) {
 // EXPRESSION: intArrayOf(1, 2)
 // RESULT: instance of int[2] (id=ID): [I
 
-// EXPRESSION: javaClass<String>()
+// EXPRESSION: String::class.java
 // RESULT: instance of java.lang.Class(reflected class=java.lang.String, id=ID): Ljava/lang/Class;
 
-// EXPRESSION: javaClass<Int>()
+// EXPRESSION: Int::class.java
 // RESULT: instance of java.lang.Class(reflected class=int, id=ID): Ljava/lang/Class;
 
 // EXPRESSION: 100.toInt()
@@ -26,5 +26,5 @@ fun main(args: Array<String>) {
 // EXPRESSION: 100.toLong()
 // RESULT: 100: J
 
-// EXPRESSION: args.sortedBy { it }.size()
+// EXPRESSION: args.sortedBy { it }.size
 // RESULT: 0: I

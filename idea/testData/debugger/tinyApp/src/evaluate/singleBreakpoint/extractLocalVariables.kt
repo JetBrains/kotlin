@@ -18,7 +18,7 @@ class MyClass {
 // EXPRESSION: klass.f1(1)
 // RESULT: 1: I
 
-// EXPRESSION: args.size()
+// EXPRESSION: args.size
 // RESULT: 0: I
 
 // EXPRESSION: klass.b

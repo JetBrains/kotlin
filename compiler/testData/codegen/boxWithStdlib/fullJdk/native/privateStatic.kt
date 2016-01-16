@@ -16,7 +16,7 @@ fun box(): String {
         return "Link error expected"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.getMessage() != "C.foo()V") return "Fail 1: " + e.getMessage()
+        if (e.message != "C.foo()V") return "Fail 1: " + e.message
     }
 
     return "OK"

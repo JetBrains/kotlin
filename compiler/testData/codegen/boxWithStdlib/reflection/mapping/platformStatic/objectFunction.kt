@@ -4,7 +4,7 @@ import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
 object O {
-    @static fun foo(s: String): Int = s.length()
+    @static fun foo(s: String): Int = s.length
 }
 
 fun box(): String {

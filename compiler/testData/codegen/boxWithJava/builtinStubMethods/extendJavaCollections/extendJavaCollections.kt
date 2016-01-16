@@ -5,8 +5,8 @@ class MyMapEntry : Test.MapEntryImpl()
 fun box(): String {
 
     val b = MyMapEntry()
-    b.getKey()
-    b.getValue()
+    b.key
+    b.value
     b.setValue(null)
 
     return "OK"

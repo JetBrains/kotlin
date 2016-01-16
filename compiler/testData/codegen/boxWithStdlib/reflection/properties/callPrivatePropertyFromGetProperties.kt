@@ -4,7 +4,7 @@ import kotlin.reflect.jvm.*
 class K(private val value: String)
 
 fun box(): String {
-    val p = javaClass<K>().kotlin.memberProperties.single() as KProperty1<K, String>
+    val p = K::class.java.kotlin.memberProperties.single() as KProperty1<K, String>
 
     try {
         return p.get(K("Fail: private property should not be accessible by default"))

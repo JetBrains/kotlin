@@ -10,7 +10,7 @@ fun box(): String {
     try {
         ::fail.call("OK")
     } catch (e: InvocationTargetException) {
-        return e.getTargetException().getMessage().toString()
+        return e.getTargetException().message.toString()
     }
 
     return "Fail: no exception was thrown"

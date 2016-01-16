@@ -4,7 +4,7 @@ fun main(args: Array<String>) {
     val d1 = 1.0
     val d2 = 3.0
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: d1 + d2

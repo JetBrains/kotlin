@@ -7,11 +7,11 @@ data class B(val x: Int) {
 }
 
 fun box(): String {
-  javaClass<A>().getDeclaredMethod("toString")
-  javaClass<A>().getDeclaredMethod("toString", javaClass<Any>())
+  A::class.java.getDeclaredMethod("toString")
+  A::class.java.getDeclaredMethod("toString", Any::class.java)
 
-  javaClass<B>().getDeclaredMethod("toString")
-  javaClass<B>().getDeclaredMethod("toString", javaClass<B>(), javaClass<Any>())
+  B::class.java.getDeclaredMethod("toString")
+  B::class.java.getDeclaredMethod("toString", B::class.java, Any::class.java)
 
   return "OK"
 }

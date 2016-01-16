@@ -56,7 +56,7 @@ class TestLocal(val name: String, val executionType: ExecutionType) : Callable<S
     fun nonLocalSimple(): String {
         synchronized(mutex) {
             underMutexFun()
-            return executionType.name()
+            return executionType.name
         }
         return "fail"
     }
@@ -65,9 +65,9 @@ class TestLocal(val name: String, val executionType: ExecutionType) : Callable<S
         synchronized(mutex) {
             try {
                 underMutexFun()
-                throw MyException(executionType.name())
+                throw MyException(executionType.name)
             } catch (e: MyException) {
-                return e.getMessage()!!
+                return e.message!!
             }
         }
         return "fail"
@@ -79,7 +79,7 @@ class TestLocal(val name: String, val executionType: ExecutionType) : Callable<S
                 underMutexFun()
                 return "fail"
             } finally {
-                return executionType.name()
+                return executionType.name
             }
         }
         return "fail"
@@ -89,9 +89,9 @@ class TestLocal(val name: String, val executionType: ExecutionType) : Callable<S
         synchronized(mutex) {
             try {
                 underMutexFun()
-                throw MyException(executionType.name())
+                throw MyException(executionType.name)
             } catch (e: MyException) {
-                return e.getMessage()!!
+                return e.message!!
             } finally {
                 "123"
             }
@@ -103,11 +103,11 @@ class TestLocal(val name: String, val executionType: ExecutionType) : Callable<S
         synchronized(mutex) {
             try {
                 underMutexFun()
-                throw MyException(executionType.name())
+                throw MyException(executionType.name)
             } catch (e: MyException) {
                 return "fail1"
             } finally {
-                return executionType.name()
+                return executionType.name
             }
         }
         return "fail"
@@ -118,11 +118,11 @@ class TestLocal(val name: String, val executionType: ExecutionType) : Callable<S
             try {
                 try {
                     underMutexFun()
-                    throw MyException(executionType.name())
+                    throw MyException(executionType.name)
                 } catch (e: MyException) {
                     return "fail1"
                 } finally {
-                    return executionType.name()
+                    return executionType.name
                 }
             } finally {
                 val p = 1 + 1
@@ -150,7 +150,7 @@ fun testTemplate(type: ExecutionType, producer: (Int) -> Callable<String>): Stri
         }
 
         for (f in futures) {
-            if (f.get() != type.name()) return "failed result ${f.get()} != ${type.name()}"
+            if (f.get() != type.name) return "failed result ${f.get()} != ${type.name}"
         }
     } finally {
 

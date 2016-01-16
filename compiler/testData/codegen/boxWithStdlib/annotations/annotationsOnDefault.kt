@@ -15,18 +15,18 @@ fun test(name: String, annotations: Array<out Annotation>) {
 }
 
 fun box(): String {
-    val foo = javaClass<A>().getDeclaredMethods().first { it.getName() == "foo" }
+    val foo = A::class.java.getDeclaredMethods().first { it.getName() == "foo" }
     test("foo", foo.getDeclaredAnnotations())
 
-    val fooDefault = javaClass<A>().getDeclaredMethods().first { it.getName() == "foo\$default" }
+    val fooDefault = A::class.java.getDeclaredMethods().first { it.getName() == "foo\$default" }
     test("foo", foo.getDeclaredAnnotations())
 
-    val (secondary, secondaryDefault) = javaClass<A>().getDeclaredConstructors().partition { it.getParameterTypes().size() == 3 }
+    val (secondary, secondaryDefault) = A::class.java.getDeclaredConstructors().partition { it.getParameterTypes().size == 3 }
 
     test("secondary", secondary[0].getDeclaredAnnotations())
     test("secondary\$default", secondaryDefault[0].getDeclaredAnnotations())
 
-    val (primary, primaryDefault) = javaClass<B>().getConstructors().partition { it.getParameterTypes().size() == 3 }
+    val (primary, primaryDefault) = B::class.java.getConstructors().partition { it.getParameterTypes().size == 3 }
 
     test("primary", primary[0].getDeclaredAnnotations())
     test("primary\$default", primaryDefault[0].getDeclaredAnnotations())

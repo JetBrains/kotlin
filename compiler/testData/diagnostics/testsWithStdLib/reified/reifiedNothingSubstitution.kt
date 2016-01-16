@@ -2,6 +2,8 @@
 
 inline fun<reified T> foo(block: () -> T): String = block().toString()
 
+inline fun <reified T: Any> javaClass(): Class<T> = T::class.java
+
 fun box() {
     val a = <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>arrayOf<!>(null!!)<!>
     val b = <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Array<!><Nothing?>(5) { null!! }<!>

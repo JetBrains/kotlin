@@ -10,7 +10,7 @@ fun myParseInt(str: String): Int? {
 }
 
 fun main(args: Array<String>) {
-    if (args.size() < 2) {
+    if (args.size < 2) {
         print("No number supplied");
     }
     else {

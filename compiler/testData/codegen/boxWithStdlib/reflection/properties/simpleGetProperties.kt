@@ -11,7 +11,7 @@ class A(param: String) {
 }
 
 fun box(): String {
-    val klass = javaClass<A>().kotlin
+    val klass = A::class.java.kotlin
 
     val props = klass.memberProperties
 

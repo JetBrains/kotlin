@@ -35,26 +35,26 @@ class Luhny() {
         // }
 
         if (it.isDigit()) {
-            digits.push(it.toInt() - '0'.toInt())
+            digits.push(it - '0')
         } else if (it == ' ' || it == '-') {
         } else {
             printAll()
             digits.clear()
         }
 
-        if (digits.size() > 16)
+        if (digits.size > 16)
           printOneDigit()
         check()
     }
 
     fun check() {
-        if (digits.size() < 14) return
+        if (digits.size < 14) return
         val sum = digits.sum { i, d ->
             if (i % 2 != 0)
                 d * 2 / 10 +  d * 2 % 10
             else d
         }
-        if (sum % 10 == 0) toBeMasked = digits.size()
+        if (sum % 10 == 0) toBeMasked = digits.size
     }
 
     fun printOneDigit() {
@@ -97,7 +97,7 @@ fun LinkedList<Int>.sum(f : (Int, Int) -> Int) : Int {
 fun <T> List<T>.backwards() : Iterable<T> = object : Iterable<T> {
   override fun iterator() : Iterator<T> =
       object : Iterator<T> {
-          var current = size()
+          var current = size
           override fun next() : T = get(--current)
           override fun hasNext() : Boolean = current > 0
       }

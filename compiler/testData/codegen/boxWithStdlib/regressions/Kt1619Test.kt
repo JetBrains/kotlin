@@ -3,7 +3,7 @@ package regressions
 class Kt1619Test {
 
     fun doSomething(list: List<String?>): Int {
-        return list.size()
+        return list.size
     }
 
     fun testCollectionNotNullCanBeUsedForNullables(): Int {

@@ -12,5 +12,5 @@ fun box(): Boolean {
     for (a in arr) {
         sum += a;
     }
-    return (sum == 55) && (arr.size() == 10)
+    return (sum == 55) && (arr.size == 10)
 }

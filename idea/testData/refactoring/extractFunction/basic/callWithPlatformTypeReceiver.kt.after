@@ -6,4 +6,4 @@ fun test() {
     J.getMap().filter { b(it) }
 }
 
-private fun b(it: Map.Entry<Boolean, Boolean>): Boolean? = it.getKey()
+private fun b(it: Map.Entry<Boolean, Boolean>): Boolean? = it.key

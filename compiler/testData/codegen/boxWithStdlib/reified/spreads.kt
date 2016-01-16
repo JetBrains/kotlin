@@ -1,6 +1,6 @@
 import kotlin.test.assertEquals
 
-fun <T> foo(vararg a: T) = a.size()
+fun <T> foo(vararg a: T) = a.size
 
 inline fun <reified T> bar(a: Array<T>, block: () -> T): Array<T> {
     assertEquals(4, foo(*a, block(), block()))

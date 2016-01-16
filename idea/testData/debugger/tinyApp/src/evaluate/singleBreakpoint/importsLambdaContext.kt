@@ -7,7 +7,7 @@ import java.util.HashMap as JHashMap
 
 fun main(args: Array<String>) {
     //Breakpoint! (lambdaOrdinal = 0)
-    arrayOf(1).map { args.size() }
+    arrayOf(1).map { args.size }
 }
 
 // EXPRESSION: Collections.emptyList<String>()

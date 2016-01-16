@@ -4,7 +4,7 @@ inline fun <T> bar(arg: String, action: () -> T) {
     try {
         action()
     } finally {
-        arg.length()
+        arg.length
     }
 }
 

@@ -18,7 +18,7 @@ fun test11(): Int {
                 }
             },
             { ex, thizz ->
-                if (ex.getMessage() == "2") {
+                if (ex.message == "2") {
                     thizz.value
                 } else {
                     -11111
@@ -66,7 +66,7 @@ fun test3(): Int {
                 })
         return res
     } catch (e: RuntimeException) {
-        return e.getMessage()?.toInt2()!!
+        return e.message?.toInt2()!!
     }
 }
 
@@ -81,7 +81,7 @@ fun test33(): Int {
                     }
                 },
                 { ex, thizz ->
-                    if (ex.getMessage() == "-2") {
+                    if (ex.message == "-2") {
                         throw RuntimeException("-3")
                     } else {
                         -11111
@@ -89,7 +89,7 @@ fun test33(): Int {
                 })
         return res
     } catch (e: RuntimeException) {
-        return e.getMessage()!!.toInt2()!!
+        return e.message!!.toInt2()!!
     }
 }
 

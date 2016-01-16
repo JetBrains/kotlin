@@ -32,8 +32,8 @@ fun test0(h: Holder): String {
         return localResult;
     }
     catch (e: RuntimeException) {
-        if (e.getMessage() != "FINALLY") {
-            return "FAIL in exception: " + e.getMessage()
+        if (e.message != "FINALLY") {
+            return "FAIL in exception: " + e.message
         }
         else {
             return "CATCHED_EXCEPTION"

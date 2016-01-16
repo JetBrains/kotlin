@@ -29,9 +29,9 @@ fun check(klass: Class<*>) {
 }
 
 fun box(): String {
-    check(javaClass<PrivatePropertyGet>())
-    check(javaClass<PrivatePropertySet>())
-    check(javaClass<PrivateMethod>())
+    check(PrivatePropertyGet::class.java)
+    check(PrivatePropertySet::class.java)
+    check(PrivateMethod::class.java)
 
     // Also check that synthetic accessors really work
     PrivatePropertyGet().Inner()

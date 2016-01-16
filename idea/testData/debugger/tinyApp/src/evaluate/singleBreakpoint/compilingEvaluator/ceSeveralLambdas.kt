@@ -2,7 +2,7 @@ package ceSeveralLambdas
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 fun foo(p: () -> Int) = p()

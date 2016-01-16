@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 
 fun <T> test(a: List<T>, b: List<T>, removed: Boolean, expected: List<T>): String? {
-    val t = ArrayList<T>(a.size())
+    val t = ArrayList<T>(a.size)
     t.addAll(a)
 
     if (t.removeAll(b) != removed) return "$a.removeAll($b) != $removed, result list: $t"

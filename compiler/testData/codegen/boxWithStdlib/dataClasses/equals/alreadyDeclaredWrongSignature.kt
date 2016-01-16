@@ -16,17 +16,17 @@ data class E(val x: Int) {
 }
 
 fun box(): String {
-  javaClass<B>().getDeclaredMethod("equals", javaClass<Any>())
-  javaClass<B>().getDeclaredMethod("equals", javaClass<B>())
+  B::class.java.getDeclaredMethod("equals", Any::class.java)
+  B::class.java.getDeclaredMethod("equals", B::class.java)
 
-  javaClass<C>().getDeclaredMethod("equals", javaClass<Any>())
-  javaClass<C>().getDeclaredMethod("equals")
+  C::class.java.getDeclaredMethod("equals", Any::class.java)
+  C::class.java.getDeclaredMethod("equals")
 
-  javaClass<D>().getDeclaredMethod("equals", javaClass<Any>())
-  javaClass<D>().getDeclaredMethod("equals", javaClass<Any>(), javaClass<String>())
+  D::class.java.getDeclaredMethod("equals", Any::class.java)
+  D::class.java.getDeclaredMethod("equals", Any::class.java, String::class.java)
 
-  javaClass<E>().getDeclaredMethod("equals", javaClass<Any>())
-  javaClass<E>().getDeclaredMethod("equals", javaClass<E>())
+  E::class.java.getDeclaredMethod("equals", Any::class.java)
+  E::class.java.getDeclaredMethod("equals", E::class.java)
 
   return "OK"
 }

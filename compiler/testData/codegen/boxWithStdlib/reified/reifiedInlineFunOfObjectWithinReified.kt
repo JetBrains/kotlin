@@ -2,7 +2,7 @@ import kotlin.test.assertEquals
 
 fun foo(block: () -> String) = block()
 
-inline fun <reified T : Any> className(): String = javaClass<T>().getName()
+inline fun <reified T : Any> className(): String = T::class.java.getName()
 
 inline fun <reified T : Any> lambdaShouldBeReified(): String = foo { className<T>() }
 

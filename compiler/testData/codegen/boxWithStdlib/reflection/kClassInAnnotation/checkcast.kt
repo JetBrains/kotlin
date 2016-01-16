@@ -2,7 +2,7 @@ import kotlin.reflect.KClass
 
 fun box(): String {
     try {
-        javaClass<String>() as KClass<String>
+        String::class.java as KClass<String>
     } catch (e: Exception) {
         return "OK"
     }

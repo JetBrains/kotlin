@@ -13,6 +13,6 @@ annotation class RuntimeAnno
 @BinaryAnno
 @RuntimeAnno
 fun box(): String {
-    assertEquals(listOf(javaClass<RuntimeAnno>()), ::box.annotations.map { it.annotationType() })
+    assertEquals(listOf(RuntimeAnno::class.java), ::box.annotations.map { it.annotationClass.java })
     return "OK"
 }

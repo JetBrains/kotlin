@@ -34,24 +34,24 @@ class Luhny() {
         // }
 
         if (it.isDigit()) {
-            digits.addLast(it.toInt() - '0'.toInt())
+            digits.addLast(it - '0')
         } else if (it == ' ' || it == '-') {
         } else {
             printAll()
             digits.clear()
         }
 
-        if (digits.size() > 16)
+        if (digits.size > 16)
           printOneDigit()
         check()
     }
 
     fun check() {
-        if (digits.size() < 14) return
+        if (digits.size < 14) return
         print("check")
         val sum = digits.sum { i, d ->
 //            println("$i -> $d")
-            if (i % 2 == digits.size()) {
+            if (i % 2 == digits.size) {
                 val f = d * 2 / 10
                 val s = d * 2 % 10
 //                println("$d: f = $f, s = $s")
@@ -61,7 +61,7 @@ class Luhny() {
             } else d
         }
 //        println(sum)
-        if (sum % 10 == 0) {print("s"); toBeMasked = digits.size()}
+        if (sum % 10 == 0) {print("s"); toBeMasked = digits.size}
     }
 
     fun printOneDigit() {
@@ -98,8 +98,8 @@ fun <T> T.pr(f : (T) -> Unit) : T {
 
 fun LinkedList<Int>.sum(f : (Int, Int )-> Int): Int {
     var sum = 0
-    for (i in 1..size()) {
-        val j = size() - i
+    for (i in 1..size) {
+        val j = size - i
         sum += f(j, get(j))
     }
     return sum

@@ -3,7 +3,7 @@ package `package`
 // Check that package fq-name is correctly escaped
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: 1

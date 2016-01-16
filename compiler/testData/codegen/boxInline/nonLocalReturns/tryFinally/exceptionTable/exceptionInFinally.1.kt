@@ -29,7 +29,7 @@ class Test() : MCloseable {
                 throw MyException("exception")
             }
             catch (e: MyException) {
-                status += e.getMessage()
+                status += e.message
                 return status
             }
             finally {

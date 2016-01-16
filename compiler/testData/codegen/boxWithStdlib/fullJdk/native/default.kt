@@ -18,7 +18,7 @@ fun box(): String {
         return "Link error expected on object"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.getMessage() != "foo.ObjWithNative.bar(JLjava/lang/String;)D") return "Fail 1: " + e.getMessage()
+        if (e.message != "foo.ObjWithNative.bar(JLjava/lang/String;)D") return "Fail 1: " + e.message
     }
 
     try {
@@ -26,7 +26,7 @@ fun box(): String {
         return "Link error expected on object"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.getMessage() != "foo.ObjWithNative.foo(I)D") return "Fail 2: " + e.getMessage()
+        if (e.message != "foo.ObjWithNative.foo(I)D") return "Fail 2: " + e.message
     }
 
     try {
@@ -34,7 +34,7 @@ fun box(): String {
         return "Link error expected on object"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.getMessage() != "foo.DefaultKt.topLevel(I)D") return "Fail 3: " + e.getMessage()
+        if (e.message != "foo.DefaultKt.topLevel(I)D") return "Fail 3: " + e.message
     }
     return "OK"
 }

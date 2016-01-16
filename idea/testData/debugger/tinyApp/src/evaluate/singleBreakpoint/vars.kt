@@ -4,7 +4,7 @@ fun main(args: Array<String>) {
     var a = 1
     a += 1
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: a

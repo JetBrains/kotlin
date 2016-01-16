@@ -5,7 +5,7 @@ enum class A {
 }
 
 fun box(): String {
-    for (field in javaClass<A>().getDeclaredFields()) {
+    for (field in A::class.java.getDeclaredFields()) {
         val prop = field.kotlin
         if (prop != null) return "Fail, property found: $prop"
     }

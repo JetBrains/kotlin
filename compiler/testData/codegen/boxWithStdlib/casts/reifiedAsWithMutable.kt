@@ -118,7 +118,7 @@ fun box(): String {
     val mentry = MME()
 
     hashMap[""] = ""
-    val hashMapEntry = hashMap.entrySet().first()
+    val hashMapEntry = hashMap.entries.first()
 
     reifiedAsFailsWithCCE<MutableMap.MutableEntry<*, *>>(entry, "reifiedAs<MutableMap.MutableEntry<*, *>>(entry)")
     reifiedAsSucceeds<MutableMap.MutableEntry<*, *>>(mentry, "reifiedAs<MutableMap.MutableEntry<*, *>>(mentry)")

@@ -45,8 +45,8 @@ fun checkHashMap(obj: Any) {
     assertTrue(obj is HashMap<*, *>, "checkHashMap: is HashMap")
     assertTrue(obj is MutableMap<*, *>, "checkHashMap: is MutableMap")
     assertTrue(obj is Map<*, *>, "checkHashMap: is Map")
-    assertTrue((obj as Map<*, *>).values() is Collection, "checkHashMap: values() is Collection")
-    assertTrue((obj as Map<*, *>).keySet() is Set, "checkHashMap: keySet() is Set")
+    assertTrue((obj as Map<*, *>).values is Collection, "checkHashMap: values is Collection")
+    assertTrue((obj as Map<*, *>).keys is Set, "checkHashMap: keys is Set")
 }
 
 fun checkLinkedHashMap(obj: Any) {
