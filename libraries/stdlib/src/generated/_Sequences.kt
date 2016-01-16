@@ -21,26 +21,6 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.contains(ele
 }
 
 /**
- * Returns `true` if [element] is found in the collection.
- */
-@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as T)"))
-@kotlin.jvm.JvmName("containsAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-public operator fun <T> Sequence<T>.contains(element: T): Boolean {
-    return contains(element as T)
-}
-
-/**
- * Returns `true` if [element] is found in the sequence.
- * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
- */
-@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Sequence<*>.containsRaw(element: Any?): Boolean {
-    return contains(element as Any?)
-}
-
-/**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this sequence.
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
@@ -145,17 +125,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): 
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element.
- */
-@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
-@kotlin.jvm.JvmName("indexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-@Suppress("NOTHING_TO_INLINE")
-public fun <T> Sequence<T>.indexOf(element: T): Int {
-    return indexOf(element as T)
-}
-
-/**
  * Returns index of the first element matching the given [predicate], or -1 if the sequence does not contain such element.
  */
 public inline fun <T> Sequence<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
@@ -180,16 +149,6 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
         index++
     }
     return lastIndex
-}
-
-/**
- * Returns first index of [element], or -1 if the sequence does not contain element.
- * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
- */
-@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Sequence<*>.indexOfRaw(element: Any?): Int {
-    return indexOf(element as Any?)
 }
 
 /**
@@ -235,27 +194,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: 
         index++
     }
     return lastIndex
-}
-
-/**
- * Returns last index of [element], or -1 if the collection does not contain element.
- */
-@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
-@kotlin.jvm.JvmName("lastIndexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-@Suppress("NOTHING_TO_INLINE")
-public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element as T)
-}
-
-/**
- * Returns last index of [element], or -1 if the sequence does not contain element.
- * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
- */
-@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Sequence<*>.lastIndexOfRaw(element: Any?): Int {
-    return lastIndexOf(element as Any?)
 }
 
 /**

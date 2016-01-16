@@ -29,33 +29,6 @@ fun elements(): List<GenericFunction> {
     }
 
 
-    templates add f("contains(element: T)") {
-        operator(true)
-        only(Iterables, Sequences, ArraysOfObjects)
-        doc { "Returns `true` if [element] is found in the collection." }
-        returns("Boolean")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as T)") } }
-        annotations("""
-            @kotlin.jvm.JvmName("containsAny")
-            @kotlin.internal.LowPriorityInOverloadResolution
-        """.trimIndent())
-    }
-
-    templates add f("containsRaw(element: Any?)") {
-        only(Iterables, Sequences, ArraysOfObjects)
-        doc { f ->
-            """
-            Returns `true` if [element] is found in the ${f.collection}.
-            Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
-            """
-        }
-        receiverAsterisk(Iterables, Sequences) { true }
-        inline(true)
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as Any?)") } }
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        returns("Boolean")
-    }
-
     templates add f("indexOf(element: T)") {
         only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
         doc { f -> "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
@@ -103,34 +76,6 @@ fun elements(): List<GenericFunction> {
            """
         }
         body(Lists) { "return indexOf(element)" }
-    }
-
-    templates add f("indexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, Lists)
-        doc { "Returns first index of [element], or -1 if the collection does not contain element." }
-        returns("Int")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as T)") } }
-        annotations("""
-            @kotlin.jvm.JvmName("indexOfAny")
-            @kotlin.internal.LowPriorityInOverloadResolution
-            @Suppress("NOTHING_TO_INLINE")
-        """.trimIndent())
-    }
-
-    templates add f("indexOfRaw(element: Any?)") {
-        only(Iterables, Sequences, ArraysOfObjects, Lists)
-        doc { f ->
-            """
-            Returns first index of [element], or -1 if the ${f.collection} does not contain element.
-            Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
-            """
-        }
-        receiverAsterisk(Iterables, Sequences) { true }
-        inline(true)
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as Any?)") } }
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        returns("Int")
-        body(Lists) { "return (this as List<Any?>).indexOf(element)" }
     }
 
     templates add f("lastIndexOf(element: T)") {
@@ -181,34 +126,6 @@ fun elements(): List<GenericFunction> {
            """
         }
         body(Lists) { "return lastIndexOf(element)" }
-    }
-
-    templates add f("lastIndexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, Lists)
-        doc { "Returns last index of [element], or -1 if the collection does not contain element." }
-        returns("Int")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as T)") } }
-        annotations("""
-            @kotlin.jvm.JvmName("lastIndexOfAny")
-            @kotlin.internal.LowPriorityInOverloadResolution
-            @Suppress("NOTHING_TO_INLINE")
-        """.trimIndent())
-    }
-
-    templates add f("lastIndexOfRaw(element: Any?)") {
-        only(Iterables, Sequences, ArraysOfObjects, Lists)
-        doc { f ->
-            """
-            Returns last index of [element], or -1 if the ${f.collection} does not contain element.
-            Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
-            """
-        }
-        receiverAsterisk(Iterables, Sequences) { true }
-        inline(true)
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as Any?)") } }
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
-        returns("Int")
-        body(Lists) { "return (this as List<Any?>).lastIndexOf(element)" }
     }
 
     templates add f("indexOfFirst(predicate: (T) -> Boolean)") {

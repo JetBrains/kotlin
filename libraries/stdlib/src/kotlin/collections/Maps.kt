@@ -112,24 +112,11 @@ public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contain
 public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get(key: K): V? = (this as Map<K, V>).get(key)
 
 /**
- * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
- *
- * Allows to overcome type-safety restriction of `get` that requires to pass a key of type `K`.
- */
-@Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as Any?)"))
-public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = get(key)
-
-/**
  * Returns `true` if the map contains the specified [key].
  *
  * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `K`.
  */
 public fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(key: K): Boolean = (this as Map<K, *>).containsKey(key)
-
-@Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("containsKey(key as Any?)"))
-public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = containsKey(key)
 
 /**
  * Returns `true` if the map maps one or more keys to the specified [value].
@@ -137,10 +124,6 @@ public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = containsKey
  * Allows to overcome type-safety restriction of `containsValue` that requires to pass a value of type `V`.
  */
 public fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue(value: V): Boolean = this.containsValue(value)
-
-@Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and value have incompatible types. Upcast value to Any? if you're sure.", ReplaceWith("containsValue(value as Any?)"))
-public inline fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = containsValue(value)
 
 
 /**
@@ -267,15 +250,6 @@ public inline fun <K, V, R, C : MutableMap<R, V>> Map<K, V>.mapKeysTo(destinatio
         destination.put(newKey, e.value)
     }
     return destination
-}
-
-/**
- * Puts all the given [pairs] into this [MutableMap] with the first component in the pair being the key and the second the value.
- */
-@kotlin.jvm.JvmName("putAllVararg")
-@Deprecated("Use an overload without vararg", ReplaceWith("putAll(pairs)"))
-public fun <K, V> MutableMap<K, V>.putAll(vararg pairs: Pair<K, V>): Unit {
-    putAll(pairs)
 }
 
 /**
