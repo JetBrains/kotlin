@@ -2,7 +2,7 @@ import java.util.*
 fun foo() {
     val al = ArrayList<String>()
     al.size
-    al.<!DEPRECATION!>contains<!>(1)
+    al.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     al.contains("")
 
     al.remove("")
@@ -10,7 +10,7 @@ fun foo() {
 
     val hs = HashSet<String>()
     hs.size
-    hs.<!DEPRECATION!>contains<!>(1)
+    hs.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     hs.contains("")
 
     hs.remove("")
@@ -18,10 +18,10 @@ fun foo() {
 
     val hm = HashMap<String, Int>()
     hm.size
-    hm.<!DEPRECATION!>containsKey<!>(1)
+    hm.containsKey(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
     hm.containsKey("")
 
-    <!DEPRECATION!>hm[1]<!>
+    hm[<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>]
     hm[""]
 
     hm.remove("")
