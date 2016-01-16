@@ -17,20 +17,6 @@ public fun assert(value: Boolean) {
 }
 
 /**
-* Throws an [AssertionError] with an optional [message] if the [value] is false
-* and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
-*/
-@Deprecated("Use assert with lazy message instead.", ReplaceWith("assert(value) { message }"), DeprecationLevel.ERROR)
-public fun assert(value: Boolean, message: Any = "Assertion failed") {
-    @Suppress("DEPRECATION")
-    if (ASSERTIONS_ENABLED) {
-        if (!value) {
-            throw AssertionError(message)
-        }
-    }
-}
-
-/**
  * Throws an [AssertionError] calculated by [lazyMessage] if the [value] is false
  * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
  */
