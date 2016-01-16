@@ -12,6 +12,7 @@ import java.util.*
  *
  * @throws NoSuchElementException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
  */
+@Deprecated("This function is used to support property delegation to map with defaults and will become internal soon.")
 public fun <K, V: Any> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)
@@ -20,7 +21,7 @@ public fun <K, V: Any> Map<K, V>.getOrImplicitDefault(key: K): V {
 }
 
 @kotlin.jvm.JvmName("getOrImplicitDefaultNullable")
-@Deprecated("This function will change its behavior soon not to distinguish missing keys and keys mapped to nulls.")
+@Deprecated("This function is used to support property delegation to map with defaults and will become internal soon.")
 public fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)
