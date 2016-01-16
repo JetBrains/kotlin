@@ -6,6 +6,7 @@ import org.junit.Test as test
 import test.collections.behaviors.*
 import test.compare.STRING_CASE_INSENSITIVE_ORDER
 import java.io.Serializable
+import kotlin.comparisons.*
 
 class CollectionTest {
 

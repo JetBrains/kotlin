@@ -2,6 +2,7 @@ package test.collections.binarySearch
 
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.comparisons.*
 
 class ListBinarySearchTest {
 

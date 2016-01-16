@@ -5,6 +5,7 @@ import java.util.ArrayList
 
 import kotlin.test.*
 import org.junit.Test as test
+import kotlin.comparisons.*
 
 fun <T> List<T>.toArrayList() = this.toCollection(ArrayList<T>())
 

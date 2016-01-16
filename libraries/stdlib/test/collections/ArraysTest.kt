@@ -5,6 +5,7 @@ import test.compare.STRING_CASE_INSENSITIVE_ORDER
 import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
+import kotlin.comparisons.*
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
 fun assertArrayNotSameButEquals(expected: IntArray, actual: IntArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
