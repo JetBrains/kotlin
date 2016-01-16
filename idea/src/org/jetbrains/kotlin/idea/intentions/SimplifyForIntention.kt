@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.chooseApplicableComponentFunctions
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import kotlin.collections.forEach as forEachStdLib
 
 class SimplifyForInspection : IntentionBasedInspection<KtForExpression>(SimplifyForIntention())
 
@@ -50,7 +50,7 @@ class SimplifyForIntention : SelfTargetingRangeIntention<KtForExpression>(
         val loopParameter = element.loopParameter ?: return
 
         loopParameter.replace(KtPsiFactory(element).createDestructuringDeclarationInFor("(${propertiesToRemove.joinToString { it.name!! }})"))
-        propertiesToRemove.forEach { p -> p.delete() }
+        propertiesToRemove.forEachStdLib { p -> p.delete() }
 
         if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
             loopRange.replace(loopRange.receiverExpression)
