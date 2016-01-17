@@ -134,12 +134,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             }
             else if (METADATA_VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
-                    metadataVersion = JvmMetadataVersion.create((int[]) value);
+                    metadataVersion = new JvmMetadataVersion((int[]) value);
                 }
             }
             else if (BYTECODE_VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
-                    bytecodeVersion = JvmBytecodeBinaryVersion.create((int[]) value);
+                    bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
                 }
             }
             else if (SYNTHETIC_CLASS_KIND_FIELD_NAME.equals(string)) {
@@ -212,11 +212,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             String string = name.asString();
             if (VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
-                    metadataVersion = JvmMetadataVersion.create((int[]) value);
+                    metadataVersion = new JvmMetadataVersion((int[]) value);
 
                     // If there's no bytecode binary version in the class file, we assume it to be equal to the metadata version
                     if (bytecodeVersion == null) {
-                        bytecodeVersion = JvmBytecodeBinaryVersion.create((int[]) value);
+                        bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
                     }
                 }
             }

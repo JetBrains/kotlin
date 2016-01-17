@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVersionIndex>(
-        KotlinMetadataVersionIndex::class.java, { JvmMetadataVersion.create(it) }
+        KotlinMetadataVersionIndex::class.java, { JvmMetadataVersion(*it) }
 ) {
     override fun getIndexer() = INDEXER
 
@@ -61,7 +61,7 @@ object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVers
                     return object : AnnotationVisitor(Opcodes.ASM5) {
                         override fun visit(name: String, value: Any) {
                             if (name == VERSION_FIELD_NAME && value is IntArray) {
-                                version = JvmMetadataVersion.create(value)
+                                version = JvmMetadataVersion(*value)
                             }
                         }
                     }

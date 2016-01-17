@@ -39,7 +39,7 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
             }
 
             val stream = DataInputStream(ByteArrayInputStream(proto))
-            val version = JvmMetadataVersion.create(IntArray(stream.readInt()) { stream.readInt() })
+            val version = JvmMetadataVersion(*IntArray(stream.readInt()) { stream.readInt() })
 
             if (version.isCompatible()) {
                 val parseFrom = JvmPackageTable.PackageTable.parseFrom(stream)

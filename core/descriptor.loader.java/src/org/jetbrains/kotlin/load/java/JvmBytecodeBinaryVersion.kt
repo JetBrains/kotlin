@@ -22,22 +22,14 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
  * The version of conventions used in bytecode of generated .class files, such as default method naming & signatures,
  * internal member name mangling specifics, property getter/setter names, etc.
  */
-class JvmBytecodeBinaryVersion protected constructor(
-        major: Int, minor: Int, patch: Int, rest: List<Int>
-) : BinaryVersion(major, minor, patch, rest) {
+class JvmBytecodeBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatible() = this.isCompatibleTo(INSTANCE)
 
     companion object {
         @JvmField
-        val INSTANCE = create(1, 0, 2)
+        val INSTANCE = JvmBytecodeBinaryVersion(1, 0, 2)
 
         @JvmField
-        val INVALID_VERSION = JvmBytecodeBinaryVersion.create(IntArray(0))
-
-        @JvmStatic
-        fun create(version: IntArray) = create(version, ::JvmBytecodeBinaryVersion)
-
-        @JvmStatic
-        fun create(major: Int, minor: Int, patch: Int) = create(major, minor, patch, ::JvmBytecodeBinaryVersion)
+        val INVALID_VERSION = JvmBytecodeBinaryVersion()
     }
 }

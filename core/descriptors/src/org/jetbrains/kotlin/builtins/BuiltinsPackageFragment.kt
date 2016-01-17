@@ -36,7 +36,7 @@ class BuiltinsPackageFragment(
 ) : DeserializedPackageFragment(fqName, storageManager, module, BuiltInsSerializedResourcePaths, loadResource) {
     val builtinsMessage = loadResource(BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName))?.let { stream ->
         val dataInput = DataInputStream(stream)
-        val version = BuiltInsBinaryVersion.create((1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
+        val version = BuiltInsBinaryVersion(*(1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
 
         if (!version.isCompatible()) {
             // TODO: report a proper diagnostic

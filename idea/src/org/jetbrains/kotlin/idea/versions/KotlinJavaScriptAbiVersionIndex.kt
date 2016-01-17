@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
 object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(
-        KotlinJavaScriptAbiVersionIndex::class.java, { JsBinaryVersion.create(it) }
+        KotlinJavaScriptAbiVersionIndex::class.java, { JsBinaryVersion(*it) }
 ) {
     override fun getIndexer() = INDEXER
 
@@ -47,7 +47,7 @@ object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScr
             KotlinJavascriptMetadataUtils.parseMetadata(text, metadataList)
             for (metadata in metadataList) {
                 val version = if (KotlinJavascriptMetadataUtils.isAbiVersionCompatible(metadata.abiVersion)) {
-                    JsBinaryVersion.create(0, metadata.abiVersion, 0)
+                    JsBinaryVersion(0, metadata.abiVersion, 0)
                 }
                 else {
                     // Version is set to something weird

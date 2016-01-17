@@ -22,22 +22,14 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
  * The version of the metadata serialized by the compiler and deserialized by the compiler and reflection.
  * This version includes the version of the core protobuf messages (descriptors.proto) as well as JVM extensions (jvm_descriptors.proto).
  */
-class JvmMetadataVersion protected constructor(
-        major: Int, minor: Int, patch: Int, rest: List<Int>
-) : BinaryVersion(major, minor, patch, rest) {
+class JvmMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatible() = this.isCompatibleTo(INSTANCE)
 
     companion object {
         @JvmField
-        val INSTANCE = create(1, 0, 2)
+        val INSTANCE = JvmMetadataVersion(1, 0, 2)
 
         @JvmField
-        val INVALID_VERSION = JvmMetadataVersion.create(IntArray(0))
-
-        @JvmStatic
-        fun create(version: IntArray) = create(version, ::JvmMetadataVersion)
-
-        @JvmStatic
-        fun create(major: Int, minor: Int, patch: Int) = create(major, minor, patch, ::JvmMetadataVersion)
+        val INVALID_VERSION = JvmMetadataVersion()
     }
 }

@@ -22,19 +22,11 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
  * The version of the format in which the .kotlin_builtins file is stored. This version also includes the version
  * of the core protobuf messages (descriptors.proto).
  */
-class BuiltInsBinaryVersion protected constructor(
-        major: Int, minor: Int, patch: Int, rest: List<Int>
-) : BinaryVersion(major, minor, patch, rest) {
+class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatible() = this.isCompatibleTo(INSTANCE)
 
     companion object {
         @JvmField
-        val INSTANCE = create(1, 0, 0)
-
-        @JvmStatic
-        fun create(version: IntArray) = create(version, ::BuiltInsBinaryVersion)
-
-        @JvmStatic
-        fun create(major: Int, minor: Int, patch: Int) = create(major, minor, patch, ::BuiltInsBinaryVersion)
+        val INSTANCE = BuiltInsBinaryVersion(1, 0, 0)
     }
 }

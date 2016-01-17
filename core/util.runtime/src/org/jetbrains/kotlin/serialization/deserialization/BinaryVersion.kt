@@ -25,16 +25,15 @@ package org.jetbrains.kotlin.serialization.deserialization
  * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
  *   make a change to binaries which is both forward- and backward compatible.
  */
-abstract class BinaryVersion protected constructor(
-        val major: Int,
-        val minor: Int,
-        val patch: Int,
-        val rest: List<Int>
-) {
+abstract class BinaryVersion(vararg val numbers: Int) {
+    val major: Int = numbers.getOrNull(0) ?: UNKNOWN
+    val minor: Int = numbers.getOrNull(1) ?: UNKNOWN
+    val patch: Int = numbers.getOrNull(2) ?: UNKNOWN
+    val rest: List<Int> = if (numbers.size > 3) numbers.asList().subList(3, numbers.size).toList() else emptyList()
+
     abstract fun isCompatible(): Boolean
 
-    fun toArray(): IntArray =
-            intArrayOf(major, minor, patch, *rest.toIntArray())
+    fun toArray(): IntArray = numbers
 
     /**
      * Returns true if this version of some format loaded from some binaries is compatible
@@ -66,23 +65,5 @@ abstract class BinaryVersion protected constructor(
 
     companion object {
         private val UNKNOWN = -1
-
-        @JvmStatic
-        fun <T : BinaryVersion> create(
-                version: IntArray,
-                factory: (major: Int, minor: Int, patch: Int, rest: List<Int>) -> T
-        ): T {
-            return factory(
-                    version.getOrNull(0) ?: UNKNOWN,
-                    version.getOrNull(1) ?: UNKNOWN,
-                    version.getOrNull(2) ?: UNKNOWN,
-                    if (version.size > 3) version.asList().subList(3, version.size).toList() else emptyList()
-            )
-        }
-
-        @JvmStatic
-        fun <T : BinaryVersion> create(
-                major: Int, minor: Int, patch: Int, factory: (major: Int, minor: Int, patch: Int, rest: List<Int>) -> T
-        ): T = factory(major, minor, patch, emptyList())
     }
 }
