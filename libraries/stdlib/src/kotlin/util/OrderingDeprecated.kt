@@ -194,16 +194,11 @@ inline public fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<i
     }
 }
 
-
 /**
  * Creates a comparator using the function to calculate a result of comparison.
  */
-@Deprecated("Use comparator function from kotlin.comparisons package.", ReplaceWith("comparator(comparison)", "kotlin.comparisons.comparator"))
-inline public fun <T> comparator(crossinline comparison: (T, T) -> Int): Comparator<T> {
-    return object : Comparator<T> {
-        public override fun compare(a: T, b: T): Int = comparison(a, b)
-    }
-}
+@Deprecated("Use Comparator SAM-constructor instead.", ReplaceWith("Comparator(comparison)", "java.util.Comparator"))
+inline public fun <T> comparator(crossinline comparison: (T, T) -> Int) = Comparator<T> { a, b -> comparison(a, b) }
 
 /**
  * Creates a comparator using the primary comparator and function to calculate a result of comparison.

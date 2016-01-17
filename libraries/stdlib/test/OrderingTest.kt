@@ -53,7 +53,7 @@ class OrderingTest {
 
     @Test
     fun sortComparatorThenComparator() {
-        val comparator = comparator<Item> { a, b -> a.name.compareTo(b.name) }.thenComparator { a, b -> a.rating.compareTo(b.rating) }
+        val comparator = Comparator<Item> { a, b -> a.name.compareTo(b.name) }.thenComparator { a, b -> a.rating.compareTo(b.rating) }
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff > 0)
