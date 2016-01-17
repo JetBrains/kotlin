@@ -61,7 +61,6 @@ internal annotation class Metadata(
          *
          * 1 Anonymous class for a lambda or a function reference
          * 2 Local class or anonymous object literal
-         * 3 Implicit nested DefaultImpls class for an interface
          *
          * A value other than this (e.g. 0) or a missing value means this is a synthetic class of some other sort.
          * This kind has no effect on the compiler because it doesn't read synthetic class metadata. It may be used in IDEs and tools.

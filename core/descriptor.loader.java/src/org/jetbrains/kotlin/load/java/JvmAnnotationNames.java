@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -36,7 +35,6 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_MULTIFILE_CLASS_PART = new FqName("kotlin.jvm.internal.KotlinMultifileClassPart");
     public static final FqName KOTLIN_SYNTHETIC_CLASS = new FqName("kotlin.jvm.internal.KotlinSyntheticClass");
     public static final FqName KOTLIN_FUNCTION = new FqName("kotlin.jvm.internal.KotlinFunction");
-    public static final FqName KOTLIN_INTERFACE_DEFAULT_IMPLS = new FqName("kotlin.jvm.internal.KotlinInterfaceDefaultImpls");
     public static final FqName KOTLIN_LOCAL_CLASS = new FqName("kotlin.jvm.internal.KotlinLocalClass");
 
     public static final String VERSION_FIELD_NAME = "version";
@@ -75,9 +73,7 @@ public final class JvmAnnotationNames {
     private static final Set<JvmClassName> NULLABILITY_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> SPECIAL_META_ANNOTATIONS = new HashSet<JvmClassName>();
     static {
-        for (FqName fqName : Arrays.asList(
-                METADATA, KOTLIN_CLASS, KOTLIN_SYNTHETIC_CLASS, KOTLIN_INTERFACE_DEFAULT_IMPLS, KOTLIN_LOCAL_CLASS
-        )) {
+        for (FqName fqName : Arrays.asList(METADATA, KOTLIN_CLASS, KOTLIN_SYNTHETIC_CLASS, KOTLIN_LOCAL_CLASS)) {
             SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
 

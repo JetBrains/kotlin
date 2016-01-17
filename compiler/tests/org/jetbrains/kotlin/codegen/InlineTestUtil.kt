@@ -171,7 +171,7 @@ object InlineTestUtil {
     }
 
     private fun isClassOrPackagePartKind(header: KotlinClassHeader): Boolean {
-        return (header.kind == KotlinClassHeader.Kind.CLASS && !header.isLocalClass) || header.isInterfaceDefaultImpls
+        return header.kind == KotlinClassHeader.Kind.CLASS && !header.isLocalClass
     }
 
     private fun getClassHeader(file: OutputFile): KotlinClassHeader {

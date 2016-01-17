@@ -138,7 +138,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
         override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
             val name = Type.getType(desc).className
-            classAnnotations.add("@$name ")
+            classAnnotations.add("@$name")
             return super.visitAnnotation(desc, visible)
         }
 

@@ -118,7 +118,6 @@ public abstract class A8 {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-@kotlin.jvm.internal.KotlinInterfaceDefaultImpls
 @kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
 public final class I1$DefaultImpls {
@@ -137,7 +136,6 @@ public abstract class I1 {
     public abstract method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-@kotlin.jvm.internal.KotlinInterfaceDefaultImpls
 @kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
 public final class I2$DefaultImpls {

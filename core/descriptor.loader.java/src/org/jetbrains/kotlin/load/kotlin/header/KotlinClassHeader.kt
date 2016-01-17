@@ -26,7 +26,6 @@ class KotlinClassHeader(
         val data: Array<String>?,
         val strings: Array<String>?,
         val multifileClassName: String?,
-        val isInterfaceDefaultImpls: Boolean,
         val isLocalClass: Boolean
 ) {
     // See kotlin.Metadata
@@ -48,8 +47,7 @@ class KotlinClassHeader(
 
     enum class SyntheticClassKind(val id: Int) {
         FUNCTION(1),
-        LOCAL_CLASS(2),
-        INTERFACE_DEFAULT_IMPLS(3);
+        LOCAL_CLASS(2);
 
         companion object {
             private val entryById = values().toMapBy(SyntheticClassKind::id)

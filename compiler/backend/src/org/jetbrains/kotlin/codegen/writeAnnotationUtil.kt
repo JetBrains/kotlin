@@ -31,10 +31,8 @@ fun writeKotlinMetadata(cb: ClassBuilder, kind: KotlinClassHeader.Kind, action: 
     av.visitEnd()
 }
 
-fun writeSyntheticClassMetadata(cb: ClassBuilder, kind: KotlinClassHeader.SyntheticClassKind?) {
+fun writeSyntheticClassMetadata(cb: ClassBuilder) {
     writeKotlinMetadata(cb, KotlinClassHeader.Kind.SYNTHETIC_CLASS) { av ->
-        if (kind != null) {
-            av.visit(JvmAnnotationNames.SYNTHETIC_CLASS_KIND_FIELD_NAME, kind.id)
-        }
+        // Do nothing
     }
 }

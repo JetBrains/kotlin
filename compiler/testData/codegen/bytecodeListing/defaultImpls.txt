@@ -14,7 +14,6 @@ public abstract class C {
     public abstract method getBar(): int
 }
 
-@kotlin.jvm.internal.KotlinInterfaceDefaultImpls
 @kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
 public final class D$DefaultImpls {

@@ -60,7 +60,7 @@ public class MappingClassesForWhenByEnumCodegen {
 
         writeKotlinSyntheticClassAnnotation(cb, state);
 
-        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb, null);
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb);
 
         cb.done();
     }

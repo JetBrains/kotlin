@@ -54,7 +54,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
     private KotlinClassHeader.SyntheticClassKind syntheticClassKind = null;
-    private boolean isInterfaceDefaultImpls = false;
     private boolean isLocalClass = false;
 
     @Nullable
@@ -79,7 +78,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 data,
                 strings,
                 multifileClassName,
-                isInterfaceDefaultImpls || syntheticClassKind == KotlinClassHeader.SyntheticClassKind.INTERFACE_DEFAULT_IMPLS,
                 isLocalClass || syntheticClassKind == KotlinClassHeader.SyntheticClassKind.LOCAL_CLASS
         );
     }
@@ -100,11 +98,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         if (IGNORE_OLD_METADATA) return null;
 
-        if (KOTLIN_INTERFACE_DEFAULT_IMPLS.equals(fqName)) {
-            isInterfaceDefaultImpls = true;
-            return null;
-        }
-        else if (KOTLIN_LOCAL_CLASS.equals(fqName)) {
+        if (KOTLIN_LOCAL_CLASS.equals(fqName)) {
             isLocalClass = true;
             return null;
         }
