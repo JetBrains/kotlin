@@ -143,11 +143,11 @@ open class IncrementalCacheImpl(
             sourceToClassesMap.add(it, className)
         }
 
-        val header = kotlinClass.classHeader
-        if (header.isLocalClass) {
+        if (kotlinClass.classId.isLocal) {
             return CompilationResult.NO_CHANGES
         }
 
+        val header = kotlinClass.classHeader
         val changesInfo = when (header.kind) {
             KotlinClassHeader.Kind.FILE_FACADE -> {
                 assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
