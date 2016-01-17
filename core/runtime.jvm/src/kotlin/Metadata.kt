@@ -60,7 +60,6 @@ internal annotation class Metadata(
          * An extra integer. For a synthetic class, the specific kind of this class which is one of the following:
          *
          * 1 Anonymous class for a lambda or a function reference
-         * 2 Local class or anonymous object literal
          *
          * A value other than this (e.g. 0) or a missing value means this is a synthetic class of some other sort.
          * This kind has no effect on the compiler because it doesn't read synthetic class metadata. It may be used in IDEs and tools.

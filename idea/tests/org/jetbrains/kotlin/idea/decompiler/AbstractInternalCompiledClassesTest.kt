@@ -22,19 +22,20 @@ import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.ClassId
 import org.junit.Assert
 
 abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
-    private fun isFileWithHeader(predicate: (KotlinClassHeader) -> Boolean) : VirtualFile.() -> Boolean = {
-        val header = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(this)?.classHeader
-        header != null && predicate(header)
+    private fun isFileWithHeader(predicate: (KotlinClassHeader, ClassId) -> Boolean) : VirtualFile.() -> Boolean = {
+        val info = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(this)
+        info != null && predicate(info.classHeader, info.classId)
     }
 
     protected fun isSyntheticClass(): VirtualFile.() -> Boolean =
-            isFileWithHeader { it.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
+            isFileWithHeader { header, classId -> header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
 
     protected fun doTestNoPsiFilesAreBuiltForLocalClass(): Unit =
-            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { it.isLocalClass })
+            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { header, classId -> classId.isLocal })
 
     protected fun doTestNoPsiFilesAreBuiltForSyntheticClasses(): Unit =
             doTestNoPsiFilesAreBuiltFor("synthetic", isSyntheticClass())

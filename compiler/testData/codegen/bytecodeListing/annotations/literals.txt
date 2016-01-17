@@ -41,7 +41,6 @@ final class LiteralsKt$foo$2 {
     public synthetic method invoke(): java.lang.Object
 }
 
-@kotlin.jvm.internal.KotlinLocalClass
 @kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public final class LiteralsKt$foo$3 {

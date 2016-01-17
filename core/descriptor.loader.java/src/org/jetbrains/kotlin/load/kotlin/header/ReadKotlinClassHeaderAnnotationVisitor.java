@@ -53,8 +53,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] data = null;
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
-    private KotlinClassHeader.SyntheticClassKind syntheticClassKind = null;
-    private boolean isLocalClass = false;
 
     @Nullable
     public KotlinClassHeader createHeader() {
@@ -77,8 +75,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
                 data,
                 strings,
-                multifileClassName,
-                isLocalClass || syntheticClassKind == KotlinClassHeader.SyntheticClassKind.LOCAL_CLASS
+                multifileClassName
         );
     }
 
@@ -97,11 +94,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (IGNORE_OLD_METADATA) return null;
-
-        if (KOTLIN_LOCAL_CLASS.equals(fqName)) {
-            isLocalClass = true;
-            return null;
-        }
 
         if (headerKind != null) {
             // Ignore all Kotlin annotations except the first found
@@ -140,11 +132,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if (BYTECODE_VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
                     bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
-                }
-            }
-            else if (SYNTHETIC_CLASS_KIND_FIELD_NAME.equals(string)) {
-                if (value instanceof Integer) {
-                    syntheticClassKind = KotlinClassHeader.SyntheticClassKind.getById((Integer) value);
                 }
             }
             else if (METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {

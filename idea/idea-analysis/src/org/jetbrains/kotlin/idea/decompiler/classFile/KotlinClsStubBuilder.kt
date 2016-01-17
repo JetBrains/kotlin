@@ -81,7 +81,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         }
         return when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
-                if (header.isLocalClass) return null
+                if (classId.isLocal) return null
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
                 createTopLevelClassStub(classId, classProto, context)

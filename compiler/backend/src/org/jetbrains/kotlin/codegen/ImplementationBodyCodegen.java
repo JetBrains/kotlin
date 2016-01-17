@@ -247,10 +247,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (!isTopLevelOrInnerClass(descriptor)) {
-            v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_LOCAL_CLASS), true).visitEnd();
-        }
-
         final DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
 
@@ -260,9 +256,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Override
             public Unit invoke(AnnotationVisitor av) {
                 writeAnnotationData(av, serializer, classProto, false);
-                if (!isTopLevelOrInnerClass(descriptor)) {
-                    av.visit(JvmAnnotationNames.SYNTHETIC_CLASS_KIND_FIELD_NAME, KotlinClassHeader.SyntheticClassKind.LOCAL_CLASS.getId());
-                }
                 return Unit.INSTANCE;
             }
         });

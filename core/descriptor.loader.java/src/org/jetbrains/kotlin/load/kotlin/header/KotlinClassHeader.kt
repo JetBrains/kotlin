@@ -25,8 +25,7 @@ class KotlinClassHeader(
         val bytecodeVersion: JvmBytecodeBinaryVersion,
         val data: Array<String>?,
         val strings: Array<String>?,
-        val multifileClassName: String?,
-        val isLocalClass: Boolean
+        val multifileClassName: String?
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {
@@ -47,15 +46,7 @@ class KotlinClassHeader(
 
     enum class SyntheticClassKind(val id: Int) {
         FUNCTION(1),
-        LOCAL_CLASS(2);
-
-        companion object {
-            private val entryById = values().toMapBy(SyntheticClassKind::id)
-
-            @JvmStatic
-            fun getById(id: Int) = entryById[id]
-        }
     }
 
-    override fun toString() = "$kind " + (if (isLocalClass) "(local) " else "") + "version=$metadataVersion"
+    override fun toString() = "$kind version=$metadataVersion"
 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -55,7 +56,7 @@ object InlineTestUtil {
 
     private fun obtainInlineInfo(files: Iterable<OutputFile>): InlineInfo {
         val inlineMethods = HashSet<MethodInfo>()
-        val classHeaders = hashMapOf<String, KotlinClassHeader>()
+        val binaryClasses = hashMapOf<String, KotlinJvmBinaryClass>()
 
         for (file in files) {
             val bytes = file.asByteArray()
@@ -76,10 +77,10 @@ object InlineTestUtil {
             }
 
             cr.accept(classVisitor, 0)
-            classHeaders.put(classVisitor.className, getClassHeader(file))
+            binaryClasses.put(classVisitor.className, loadBinaryClass(file))
         }
 
-        return InlineInfo(inlineMethods, classHeaders)
+        return InlineInfo(inlineMethods, binaryClasses)
     }
 
     private fun checkInlineMethodNotInvoked(files: Iterable<OutputFile>, inlinedMethods: Set<MethodInfo>): List<NotInlinedCall> {
@@ -127,7 +128,7 @@ object InlineTestUtil {
         val inlinedMethods = inlineInfo.inlineMethods
         val notInlinedParameters = ArrayList<NotInlinedParameter>()
         for (file in files) {
-            if (!isClassOrPackagePartKind(getClassHeader(file))) continue
+            if (!isClassOrPackagePartKind(loadBinaryClass(file))) continue
 
             ClassReader(file.asByteArray()).accept(object : ClassVisitorWithName() {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
@@ -167,15 +168,15 @@ object InlineTestUtil {
         if (classInternalName.startsWith("kotlin/jvm/internal/"))
             return true
 
-        return isClassOrPackagePartKind(inlineInfo.classHeaders[classInternalName]!!)
+        return isClassOrPackagePartKind(inlineInfo.binaryClasses[classInternalName]!!)
     }
 
-    private fun isClassOrPackagePartKind(header: KotlinClassHeader): Boolean {
-        return header.kind == KotlinClassHeader.Kind.CLASS && !header.isLocalClass
+    private fun isClassOrPackagePartKind(klass: KotlinJvmBinaryClass): Boolean {
+        return klass.classHeader.kind == KotlinClassHeader.Kind.CLASS && !klass.classId.isLocal
     }
 
-    private fun getClassHeader(file: OutputFile): KotlinClassHeader {
-        return FileBasedKotlinClass.create(file.asByteArray()) {
+    private fun loadBinaryClass(file: OutputFile): KotlinJvmBinaryClass {
+        val klass = FileBasedKotlinClass.create(file.asByteArray()) {
             className, classHeader, innerClasses ->
             object : FileBasedKotlinClass(className, classHeader, innerClasses) {
                 override fun getLocation(): String = throw UnsupportedOperationException()
@@ -184,10 +185,11 @@ object InlineTestUtil {
                 override fun equals(other: Any?): Boolean = throw UnsupportedOperationException()
                 override fun toString(): String = throw UnsupportedOperationException()
             }
-        }!!.classHeader
+        }!!
+        return klass
     }
 
-    private class InlineInfo(val inlineMethods: Set<MethodInfo>, val classHeaders: Map<String, KotlinClassHeader>)
+    private class InlineInfo(val inlineMethods: Set<MethodInfo>, val binaryClasses: Map<String, KotlinJvmBinaryClass>)
 
     private data class NotInlinedCall(val fromCall: MethodInfo, val inlineMethod: MethodInfo)
 
