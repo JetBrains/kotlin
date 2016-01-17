@@ -160,10 +160,7 @@ public object LightClassUtil {
         }
 
         if (declaration is KtPropertyAccessor) {
-            val propertyParent = declaration.parent
-            assert(propertyParent is KtProperty) { "JetProperty is expected to be parent of accessor" }
-
-            declaration = propertyParent as KtProperty
+            declaration = declaration.property
         }
 
         if (declaration is KtConstructor<*>) {

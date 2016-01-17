@@ -1,8 +1,8 @@
 val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
-val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>)<!> <!SYNTAX!>-><!> }
+val receiverWithParameter = { Int.<!ILLEGAL_SELECTOR!>(<!UNRESOLVED_REFERENCE!>a<!>)<!> <!SYNTAX!>-><!> }
 
 val receiverAndReturnType = { Int.(<!SYNTAX!><!>)<!SYNTAX!>: Int ->  5<!> }
-val receiverAndReturnTypeWithParameter = { Int.(<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!><!SYNTAX!><!SYNTAX!><!>: Int): Int ->  5<!> }
+val receiverAndReturnTypeWithParameter = { Int.(<!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!><!SYNTAX!><!>: Int): Int ->  5<!> }
 
 val returnType = { (<!SYNTAX!><!>)<!SYNTAX!>: Int -> 5<!> }
 val returnTypeWithParameter = { (<!UNRESOLVED_REFERENCE!>b<!><!SYNTAX!><!SYNTAX!><!>: Int): Int -> 5<!> }

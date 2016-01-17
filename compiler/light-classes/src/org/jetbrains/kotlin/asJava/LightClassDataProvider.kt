@@ -70,6 +70,13 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
     abstract val isLocal: Boolean
 
     override fun compute(): CachedValueProvider.Result<T>? {
+        return CachedValueProvider.Result.create(
+                computeLightClassData(),
+                if (isLocal) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+        )
+    }
+
+    private fun computeLightClassData(): T {
         val packageFqName = packageFqName
         val files = files
 
@@ -110,6 +117,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
             }
 
             ServiceManager.getService(project, StubComputationTracker::class.java)?.onStubComputed(javaFileStub)
+            return createLightClassData(javaFileStub, bindingContext, state.collectedExtraJvmDiagnostics)
         }
         catch (e: ProcessCanceledException) {
             throw e
@@ -118,11 +126,6 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
             logErrorWithOSInfo(e, packageFqName, null)
             throw e
         }
-
-        return CachedValueProvider.Result.create(
-                createLightClassData(javaFileStub, bindingContext, state.collectedExtraJvmDiagnostics),
-                if (isLocal) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
-        )
     }
 
     private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
@@ -167,7 +170,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
 }
 
 class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassOrObject) :
-        LightClassDataProvider<OutermostKotlinClassLightClassData>(classOrObject.project) {
+        LightClassDataProvider<WithFileStubAndExtraDiagnostics>(classOrObject.project) {
 
     private val file: KtFile
         get() = classOrObject.getContainingKtFile()
@@ -181,10 +184,8 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
     override fun createLightClassData(
             javaFileStub: PsiJavaFileStub,
             bindingContext: BindingContext,
-            extraDiagnostics: Diagnostics): OutermostKotlinClassLightClassData {
-        val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject) ?: return OutermostKotlinClassLightClassData(
-                javaFileStub, extraDiagnostics, FqName.ROOT, classOrObject,
-                emptyMap<KtClassOrObject, InnerKotlinClassLightClassData>())
+            extraDiagnostics: Diagnostics): WithFileStubAndExtraDiagnostics {
+        val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassData
 
         val fqName = predictClassFqName(bindingContext, classDescriptor)
         val allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor)

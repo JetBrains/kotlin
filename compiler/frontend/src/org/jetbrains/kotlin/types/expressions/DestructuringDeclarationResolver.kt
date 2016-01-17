@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorResolver
+import org.jetbrains.kotlin.resolve.LocalVariableResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 public class DestructuringDeclarationResolver(
         private val fakeCallResolver: FakeCallResolver,
-        private val descriptorResolver: DescriptorResolver,
+        private val localVariableResolver: LocalVariableResolver,
         private val typeResolver: TypeResolver,
         private val symbolUsageValidator: SymbolUsageValidator
 ) {
@@ -72,7 +72,7 @@ public class DestructuringDeclarationResolver(
             if (componentType == null) {
                 componentType = ErrorUtils.createErrorType("$componentName() return type")
             }
-            val variableDescriptor = descriptorResolver.resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace)
+            val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace)
 
             ExpressionTypingUtils.checkVariableShadowing(writableScope, context.trace, variableDescriptor)
 

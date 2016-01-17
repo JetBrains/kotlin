@@ -148,6 +148,7 @@ public class KotlinChangeSignature(project: Project,
             toString()
         }
         val dummyFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, dummyFileText).toPsiFile(project) as KtFile
+        dummyFile.analysisContext = originalMethod
         val dummyDeclaration = (dummyFile.declarations.first() as KtClass).getBody()!!.declarations.first()
 
         // Convert to PsiMethod which can be used in Change Signature dialog

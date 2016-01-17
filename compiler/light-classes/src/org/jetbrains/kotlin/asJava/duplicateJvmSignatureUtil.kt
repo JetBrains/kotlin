@@ -39,7 +39,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
     }
 
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
-        return KtLightClassForExplicitDeclaration.getLightClassData(ktClassOrObject).extraDiagnostics
+        return (KtLightClassForExplicitDeclaration.getLightClassData(ktClassOrObject) as? OutermostKotlinClassLightClassData)?.extraDiagnostics ?: Diagnostics.EMPTY
     }
 
     fun doGetDiagnostics(): Diagnostics? {

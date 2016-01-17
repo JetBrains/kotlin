@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -172,7 +174,11 @@ public open class KtLightClassForExplicitDeclaration(
     }
 
     private fun getLightClassData(): OutermostKotlinClassLightClassData {
-        return getLightClassData(classOrObject)
+        val lightClassData = getLightClassData(classOrObject)
+        if (lightClassData !is OutermostKotlinClassLightClassData) {
+            LOG.error("Invalid light class data for existing light class:\n$lightClassData\n${classOrObject.getElementTextWithContext()}")
+        }
+        return lightClassData as OutermostKotlinClassLightClassData
     }
 
     private val _containingFile: PsiFile by lazy {
@@ -380,7 +386,7 @@ public open class KtLightClassForExplicitDeclaration(
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 
     companion object {
-        private val JAVA_API_STUB = Key.create<CachedValue<OutermostKotlinClassLightClassData>>("JAVA_API_STUB")
+        private val JAVA_API_STUB = Key.create<CachedValue<WithFileStubAndExtraDiagnostics>>("JAVA_API_STUB")
 
         private val jetTokenToPsiModifier = listOf(
                 PUBLIC_KEYWORD to PsiModifier.PUBLIC,
@@ -408,11 +414,11 @@ public open class KtLightClassForExplicitDeclaration(
             return if (internalName == null) null else JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
         }
 
-        public fun getLightClassData(classOrObject: KtClassOrObject): OutermostKotlinClassLightClassData {
+        public fun getLightClassData(classOrObject: KtClassOrObject): LightClassData {
             return getLightClassCachedValue(classOrObject).value
         }
 
-        public fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<OutermostKotlinClassLightClassData> {
+        public fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<WithFileStubAndExtraDiagnostics> {
             val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
             var value = outermostClassOrObject.getUserData(JAVA_API_STUB)
             if (value == null) {
@@ -424,7 +430,7 @@ public open class KtLightClassForExplicitDeclaration(
         }
 
         private fun getLightClassDataExactly(classOrObject: KtClassOrObject): LightClassDataForKotlinClass? {
-            val data = getLightClassData(classOrObject)
+            val data = getLightClassData(classOrObject) as? OutermostKotlinClassLightClassData ?: return null
             return data.dataForClass(classOrObject)
         }
 
@@ -462,5 +468,7 @@ public open class KtLightClassForExplicitDeclaration(
 
             return false
         }
+
+        private val LOG = Logger.getInstance(KtLightClassForExplicitDeclaration::class.java)
     }
 }

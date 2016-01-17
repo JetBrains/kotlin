@@ -143,4 +143,9 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     public boolean hasInitializer() {
         return getInitializer() != null;
     }
+
+    @NotNull
+    public KtProperty getProperty() {
+        return (KtProperty) getParent();
+    }
 }
