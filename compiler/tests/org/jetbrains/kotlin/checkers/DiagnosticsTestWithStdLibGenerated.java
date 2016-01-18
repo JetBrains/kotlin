@@ -119,6 +119,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("RenameOnImportHidesDefaultImport.kt")
+    public void testRenameOnImportHidesDefaultImport() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/RenameOnImportHidesDefaultImport.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

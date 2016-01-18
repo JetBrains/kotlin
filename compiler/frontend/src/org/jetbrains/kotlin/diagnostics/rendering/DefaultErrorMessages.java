@@ -213,7 +213,7 @@ public class DefaultErrorMessages {
         MAP.put(SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY, "Setter visibility must be the same as lateinit property visibility");
         MAP.put(SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, "Setter visibility must be the same or less permissive than property visibility");
         MAP.put(PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, "Private setters are not allowed for abstract properties");
-        MAP.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are deprecated for open properties");
+        MAP.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are not allowed for open properties");
         MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
@@ -470,6 +470,7 @@ public class DefaultErrorMessages {
         MAP.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic");
         MAP.put(REDUNDANT_NULLABLE, "Redundant '?'");
         MAP.put(UNSAFE_CALL, "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}", RENDER_TYPE);
+        MAP.put(UNSAFE_IMPLICIT_INVOKE_CALL, "Reference has a nullable type {0}, use explicit '?.invoke()' to make function-like call instead", RENDER_TYPE);
         MAP.put(AMBIGUOUS_LABEL, "Ambiguous label");
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", STRING);
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);

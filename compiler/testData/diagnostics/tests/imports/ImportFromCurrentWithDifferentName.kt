@@ -2,4 +2,7 @@ package a
 
 import a.A as ER
 
-class A()
+interface A {
+    val a: A
+    val b: ER
+}

@@ -313,7 +313,6 @@ public class ArgumentTypeResolver {
     ) {
         MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
         Call call = context.call;
-        infoForArguments.setInitialDataFlowInfo(context.dataFlowInfo);
 
         for (ValueArgument argument : call.getValueArguments()) {
             KtExpression expression = argument.getArgumentExpression();

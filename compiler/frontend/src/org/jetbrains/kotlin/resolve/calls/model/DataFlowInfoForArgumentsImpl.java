@@ -27,15 +27,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArguments {
-    @NotNull  private final Call call; //for better debug messages only
+public class DataFlowInfoForArgumentsImpl extends MutableDataFlowInfoForArguments {
     @Nullable private Map<ValueArgument, DataFlowInfo> infoMap = null;
     @Nullable private Map<ValueArgument, ValueArgument> nextArgument = null;
-    @Nullable private DataFlowInfo initialInfo;
     @Nullable private DataFlowInfo resultInfo;
 
-    public DataFlowInfoForArgumentsImpl(@NotNull Call call) {
-        this.call = call;
+    public DataFlowInfoForArgumentsImpl(@NotNull DataFlowInfo initialInfo, @NotNull Call call) {
+        super(initialInfo);
         initNextArgMap(call.getValueArguments());
     }
 
@@ -54,21 +52,14 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
         }
     }
 
-    @Override
-    public void setInitialDataFlowInfo(@NotNull DataFlowInfo dataFlowInfo) {
-        //TODO assert initialInfo == null
-        initialInfo = dataFlowInfo;
-    }
-
     @NotNull
     @Override
     public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
-        assert initialInfo != null : "Initial data flow info was not set for call: " + call;
         DataFlowInfo infoForArgument = infoMap == null ? null : infoMap.get(valueArgument);
         if (infoForArgument == null) {
-            return initialInfo;
+            return initialDataFlowInfo;
         }
-        return initialInfo.and(infoForArgument);
+        return initialDataFlowInfo.and(infoForArgument);
     }
 
     @Override
@@ -88,8 +79,7 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
     @NotNull
     @Override
     public DataFlowInfo getResultInfo() {
-        assert initialInfo != null : "Initial data flow info was not set for call: " + call;
-        if (resultInfo == null) return initialInfo;
-        return initialInfo.and(resultInfo);
+        if (resultInfo == null) return initialDataFlowInfo;
+        return initialDataFlowInfo.and(resultInfo);
     }
 }

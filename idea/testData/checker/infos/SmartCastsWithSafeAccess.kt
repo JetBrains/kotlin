@@ -20,7 +20,7 @@ fun test(a: A?) {
     }
 
     if (a is B? && a is C?) {
-        <info descr="Smart cast to B">a</info><info>?.</info>bar()
+        <info descr="Smart cast to B?">a</info><info>?.</info>bar()
     }
 
     a<info>?.</info>foo()

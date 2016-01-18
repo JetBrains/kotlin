@@ -1,0 +1,12 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun foo(): kotlin.Unit
+
+public final class Rule {
+    public constructor Rule(/*0*/ apply: () -> kotlin.Unit)
+    public final val apply: () -> kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

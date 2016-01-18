@@ -245,7 +245,7 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
-    public SmartCastResult checkPossibleCast(
+    public static SmartCastResult checkPossibleCast(
             @NotNull KotlinType expressionType,
             @NotNull KtExpression expression,
             @NotNull ResolutionContext c
@@ -272,7 +272,7 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public KotlinTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
+    public static KotlinTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
         facade.checkStatementType(
                 expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
@@ -280,7 +280,7 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public Collection<KotlinType> getAllPossibleTypes(
+    public static Collection<KotlinType> getAllPossibleTypes(
             @NotNull KtExpression expression,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KotlinType type,
