@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinIconProvider
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -39,9 +40,9 @@ class KotlinProjectViewProvider(private val myProject: Project) : SelectableTree
         val result = ArrayList<AbstractTreeNode<out Any>>()
 
         for (child in children) {
-            val childValue = child.value
+            val childValue = child.value.asKtFile()
 
-            if (childValue is KtFile) {
+            if (childValue != null) {
                 val declarations = childValue.declarations
 
                 val mainClass = KotlinIconProvider.getMainClass(childValue)
@@ -59,6 +60,12 @@ class KotlinProjectViewProvider(private val myProject: Project) : SelectableTree
         }
 
         return result
+    }
+
+    private fun Any.asKtFile(): KtFile? = when(this) {
+        is KtFile -> this
+        is KtLightClass -> getOrigin()?.containingFile as? KtFile
+        else -> null
     }
 
     override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? {
