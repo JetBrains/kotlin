@@ -386,6 +386,51 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/arrayConvention")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ArrayConvention extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInArrayConvention() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("simpleAccess.1.kt")
+        public void testSimpleAccess() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/arrayConvention/simpleAccess.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleAccessInClass.1.kt")
+        public void testSimpleAccessInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessInClass.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleAccessWithDefault.1.kt")
+        public void testSimpleAccessWithDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithDefault.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleAccessWithDefaultInClass.1.kt")
+        public void testSimpleAccessWithDefaultInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithDefaultInClass.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleAccessWithLambda.1.kt")
+        public void testSimpleAccessWithLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithLambda.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleAccessWithLambdaInClass.1.kt")
+        public void testSimpleAccessWithLambdaInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/arrayConvention/simpleAccessWithLambdaInClass.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/builders")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

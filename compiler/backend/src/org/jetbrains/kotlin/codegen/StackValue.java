@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.psi.tree.IElementType;
-import kotlin.collections.ArraysKt;
 import kotlin.Unit;
+import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -768,13 +769,14 @@ public abstract class StackValue {
         private final Callable callable;
         private final boolean isGetter;
         private final ExpressionCodegen codegen;
-        private final ArgumentGenerator argumentGenerator;
         private final List<ResolvedValueArgument> valueArguments;
         private final FrameMap frame;
         private final StackValue receiver;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
         private DefaultCallMask mask;
+        private CallGenerator callGenerator;
+        boolean isComplexOperationWithDup;
 
         public CollectionElementReceiver(
                 @NotNull Callable callable,
@@ -783,7 +785,6 @@ public abstract class StackValue {
                 ResolvedCall<FunctionDescriptor> resolvedSetCall,
                 boolean isGetter,
                 @NotNull ExpressionCodegen codegen,
-                ArgumentGenerator argumentGenerator,
                 List<ResolvedValueArgument> valueArguments
         ) {
             super(OBJECT_TYPE);
@@ -793,7 +794,6 @@ public abstract class StackValue {
             this.receiver = receiver;
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
-            this.argumentGenerator = argumentGenerator;
             this.valueArguments = valueArguments;
             this.codegen = codegen;
             this.frame = codegen.myFrameMap;
@@ -803,8 +803,25 @@ public abstract class StackValue {
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             ResolvedCall<?> call = isGetter ? resolvedGetCall : resolvedSetCall;
             StackValue newReceiver = StackValue.receiver(call, receiver, codegen, callable);
+            ArgumentGenerator generator = createArgumentGenerator();
             newReceiver.put(newReceiver.type, v);
-            mask = argumentGenerator.generate(valueArguments, valueArguments);
+            callGenerator.putHiddenParams();
+
+            mask = generator.generate(valueArguments, valueArguments);
+        }
+
+        private ArgumentGenerator createArgumentGenerator() {
+            assert callGenerator == null :
+                    "'putSelector' and 'createArgumentGenerator' methods should be called once for CollectionElementReceiver: " + callable;
+            ResolvedCall<FunctionDescriptor> resolvedCall = isGetter ? resolvedGetCall : resolvedSetCall;
+            assert resolvedCall != null : "Resolved call should be non-null: " + callable;
+            callGenerator =
+                    !isComplexOperationWithDup ? codegen.getOrCreateCallGenerator(resolvedCall) : codegen.defaultCallGenerator;
+            return new CallBasedArgumentGenerator(
+                    codegen,
+                    callGenerator,
+                    resolvedCall.getResultingDescriptor().getValueParameters(), callable.getValueParameterTypes()
+            );
         }
 
         @Override
@@ -932,7 +949,7 @@ public abstract class StackValue {
             if (getter == null) {
                 throw new UnsupportedOperationException("no getter specified");
             }
-            CallGenerator callGenerator = codegen.defaultCallGenerator;
+            CallGenerator callGenerator = getCallGenerator();
             callGenerator.genCall(getter, resolvedGetCall, genDefaultMaskIfPresent(callGenerator), codegen);
             coerceTo(type, v);
         }
@@ -940,6 +957,14 @@ public abstract class StackValue {
         private boolean genDefaultMaskIfPresent(CallGenerator callGenerator) {
             DefaultCallMask mask = ((CollectionElementReceiver) receiver).mask;
             return mask.generateOnStackIfNeeded(callGenerator);
+        }
+
+        private CallGenerator getCallGenerator() {
+            CallGenerator generator = ((CollectionElementReceiver) receiver).callGenerator;
+            assert generator != null :
+                    "CollectionElementReceiver should be putted on stack before CollectionElement:" +
+                    " getCall = " + resolvedGetCall + ",  setCall = " + resolvedSetCall;
+            return generator;
         }
 
         @Override
@@ -991,8 +1016,13 @@ public abstract class StackValue {
 
             Type lastParameterType = ArraysKt.last(setter.getParameterTypes());
             coerce(topOfStackType, lastParameterType, v);
-            //*Convention setter couldn't have default parameters, just getter can have it at last positions
+
+            getCallGenerator().afterParameterPut(lastParameterType, StackValue.onStack(lastParameterType),
+                                                 CollectionsKt.getLastIndex(setter.getValueParameterTypes()));
+
+            //Convention setter couldn't have default parameters, just getter can have it at last positions
             //We should remove default parameters of getter from stack*/
+            //Note that it works only for non-inline case
             CollectionElementReceiver collectionElementReceiver = (CollectionElementReceiver) receiver;
             if (collectionElementReceiver.isGetter) {
                 List<ResolvedValueArgument> arguments = collectionElementReceiver.valueArguments;
@@ -1007,7 +1037,7 @@ public abstract class StackValue {
                 }
             }
 
-            codegen.defaultCallGenerator.genCall(setter, resolvedSetCall, false, codegen);
+            getCallGenerator().genCall(setter, resolvedSetCall, false, codegen);
             Type returnType = setter.getReturnType();
             if (returnType != Type.VOID_TYPE) {
                 pop(v, returnType);
@@ -1529,6 +1559,11 @@ public abstract class StackValue {
             super(value.type, value.receiver.canHaveSideEffects());
             this.originalValueWithReceiver = value;
             this.isReadOperations = isReadOperations;
+            if (value instanceof CollectionElement) {
+                if (value.receiver instanceof CollectionElementReceiver) {
+                    ((CollectionElementReceiver) value.receiver).isComplexOperationWithDup = true;
+                }
+            }
         }
 
         @Override
