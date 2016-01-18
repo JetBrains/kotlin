@@ -590,7 +590,8 @@ class DeclarationsChecker(
             }
         }
         else {
-            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && java.lang.Boolean.TRUE == trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor)) {
+            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit &&
+                trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor) ?: false) {
                 if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
                     trace.report(MUST_BE_INITIALIZED.on(property))
                 }
