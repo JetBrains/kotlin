@@ -19,7 +19,6 @@
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
@@ -39,7 +38,6 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
  */
 fun <R> Function<R>.reflect(): KFunction<R>? {
     val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
-    if (annotation.xi != KotlinClassHeader.SyntheticClassKind.FUNCTION.id) return null
     val input = BitEncoding.decodeBytes(annotation.d1).inputStream()
     val nameResolver = JvmNameResolver(
             JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY), annotation.d2

@@ -231,7 +231,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             @Override
             public Unit invoke(AnnotationVisitor av) {
                 writeAnnotationData(av, serializer, functionProto, false);
-                av.visit(JvmAnnotationNames.SYNTHETIC_CLASS_KIND_FIELD_NAME, KotlinClassHeader.SyntheticClassKind.FUNCTION.getId());
                 return Unit.INSTANCE;
             }
         });

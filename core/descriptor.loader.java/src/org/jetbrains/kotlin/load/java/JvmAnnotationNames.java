@@ -44,7 +44,6 @@ public final class JvmAnnotationNames {
     public static final String KIND_FIELD_NAME = "k";
     public static final String METADATA_DATA_FIELD_NAME = "d1";
     public static final String METADATA_STRINGS_FIELD_NAME = "d2";
-    public static final String SYNTHETIC_CLASS_KIND_FIELD_NAME = "xi";
     public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = "xs";
     public static final String DATA_FIELD_NAME = "data";
     public static final String STRINGS_FIELD_NAME = "strings";

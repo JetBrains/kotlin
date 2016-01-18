@@ -44,9 +44,5 @@ class KotlinClassHeader(
         }
     }
 
-    enum class SyntheticClassKind(val id: Int) {
-        FUNCTION(1),
-    }
-
     override fun toString() = "$kind version=$metadataVersion"
 }
