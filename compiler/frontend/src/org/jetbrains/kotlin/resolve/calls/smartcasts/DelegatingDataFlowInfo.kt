@@ -14,375 +14,284 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls.smartcasts;
+package org.jetbrains.kotlin.resolve.calls.smartcasts
 
-import com.google.common.collect.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
+import com.google.common.collect.*
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.*
 
-import java.util.*;
+import java.util.*
 
-import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
-/* package */ class DelegatingDataFlowInfo implements DataFlowInfo {
-    private static final ImmutableMap<DataFlowValue, Nullability> EMPTY_NULLABILITY_INFO = ImmutableMap.of();
-    private static final SetMultimap<DataFlowValue, KotlinType> EMPTY_TYPE_INFO = newTypeInfo();
+internal class DelegatingDataFlowInfo @JvmOverloads constructor(
+        private val parent: DataFlowInfo?,
+        private val nullabilityInfo: ImmutableMap<DataFlowValue, Nullability>,
+        // Also immutable
+        private val typeInfo: SetMultimap<DataFlowValue, KotlinType>,
+        /**
+         * Value for which type info was cleared or reassigned at this point
+         * so parent type info should not be in use
+         */
+        private val valueWithGivenTypeInfo: DataFlowValue? = null
+) : DataFlowInfo {
 
-    @Nullable
-    private final DataFlowInfo parent;
-
-    @NotNull
-    private final ImmutableMap<DataFlowValue, Nullability> nullabilityInfo;
-
-    // Also immutable
-    @NotNull
-    private final SetMultimap<DataFlowValue, KotlinType> typeInfo;
-
-    /**
-     * Value for which type info was cleared or reassigned at this point
-     * so parent type info should not be in use
-     */
-    @Nullable
-    private final DataFlowValue valueWithGivenTypeInfo;
-
-    /* package */ DelegatingDataFlowInfo(
-            @Nullable DataFlowInfo parent,
-            @NotNull ImmutableMap<DataFlowValue, Nullability> nullabilityInfo,
-            @NotNull SetMultimap<DataFlowValue, KotlinType> typeInfo
-    ) {
-        this(parent, nullabilityInfo, typeInfo, null);
-    }
-
-    /* package */ DelegatingDataFlowInfo(
-            @Nullable DataFlowInfo parent,
-            @NotNull ImmutableMap<DataFlowValue, Nullability> nullabilityInfo,
-            @NotNull SetMultimap<DataFlowValue, KotlinType> typeInfo,
-            @Nullable DataFlowValue valueWithGivenTypeInfo
-    ) {
-        this.parent = parent;
-        this.nullabilityInfo = nullabilityInfo;
-        this.typeInfo = typeInfo;
-        this.valueWithGivenTypeInfo = valueWithGivenTypeInfo;
-    }
-
-    @Override
-    @NotNull
-    public Map<DataFlowValue, Nullability> getCompleteNullabilityInfo() {
-        Map<DataFlowValue, Nullability> result = Maps.newHashMap();
-        DelegatingDataFlowInfo info = this;
+    override fun getCompleteNullabilityInfo(): Map<DataFlowValue, Nullability> {
+        val result = Maps.newHashMap<DataFlowValue, Nullability>()
+        var info: DelegatingDataFlowInfo? = this
         while (info != null) {
-            for (Map.Entry<DataFlowValue, Nullability> entry : info.nullabilityInfo.entrySet()) {
-                DataFlowValue key = entry.getKey();
-                Nullability value = entry.getValue();
+            for ((key, value) in info.nullabilityInfo) {
                 if (!result.containsKey(key)) {
-                    result.put(key, value);
+                    result.put(key, value)
                 }
             }
-            info = (DelegatingDataFlowInfo) info.parent;
+            info = info.parent as DelegatingDataFlowInfo?
         }
-        return result;
+        return result
     }
 
-    @Override
-    @NotNull
-    public SetMultimap<DataFlowValue, KotlinType> getCompleteTypeInfo() {
-        SetMultimap<DataFlowValue, KotlinType> result = newTypeInfo();
-        Set<DataFlowValue> withGivenTypeInfo = new HashSet<DataFlowValue>();
-        DelegatingDataFlowInfo info = this;
+    override fun getCompleteTypeInfo(): SetMultimap<DataFlowValue, KotlinType> {
+        val result = newTypeInfo()
+        val withGivenTypeInfo = HashSet<DataFlowValue>()
+        var info: DelegatingDataFlowInfo? = this
         while (info != null) {
-            for (DataFlowValue key : info.typeInfo.keySet()) {
+            for (key in info.typeInfo.keySet()) {
                 if (!withGivenTypeInfo.contains(key)) {
-                    result.putAll(key, info.typeInfo.get(key));
+                    result.putAll(key, info.typeInfo.get(key))
                 }
             }
-            if (info.valueWithGivenTypeInfo != null) {
-                withGivenTypeInfo.add(info.valueWithGivenTypeInfo);
+            info.valueWithGivenTypeInfo?.let { withGivenTypeInfo.add(it) }
+            info = info.parent as DelegatingDataFlowInfo?
+        }
+        return result
+    }
+
+    override fun getCollectedNullability(key: DataFlowValue) = getNullability(key, false)
+
+    override fun getPredictableNullability(key: DataFlowValue) = getNullability(key, true)
+
+    private fun getNullability(key: DataFlowValue, predictableOnly: Boolean) =
+            if (predictableOnly && !key.isPredictable) {
+                key.immanentNullability
             }
-            info = (DelegatingDataFlowInfo) info.parent;
-        }
-        return result;
+            else {
+                nullabilityInfo[key] ?: if (parent != null) {
+                    parent.getCollectedNullability(key)
+                }
+                else {
+                    key.immanentNullability
+                }
+            }
+
+    private fun putNullability(map: MutableMap<DataFlowValue, Nullability>, value: DataFlowValue, nullability: Nullability): Boolean {
+        map.put(value, nullability)
+        return nullability != getCollectedNullability(value)
     }
 
-    @Override
-    @NotNull
-    public Nullability getCollectedNullability(@NotNull DataFlowValue key) {
-        return getNullability(key, false);
-    }
+    override fun getCollectedTypes(key: DataFlowValue) = getCollectedTypes(key, true)
 
-    @Override
-    @NotNull
-    public Nullability getPredictableNullability(@NotNull DataFlowValue key) {
-        return getNullability(key, true);
-    }
-
-    @NotNull
-    private Nullability getNullability(@NotNull DataFlowValue key, boolean predictableOnly) {
-        if (predictableOnly && !key.isPredictable()) return key.getImmanentNullability();
-        Nullability nullability = nullabilityInfo.get(key);
-        return nullability != null ? nullability :
-               parent != null ? parent.getCollectedNullability(key) :
-               key.getImmanentNullability();
-    }
-
-    private boolean putNullability(
-            @NotNull Map<DataFlowValue, Nullability> map,
-            @NotNull DataFlowValue value,
-            @NotNull Nullability nullability
-    ) {
-        map.put(value, nullability);
-        return nullability != getCollectedNullability(value);
-    }
-
-    @Override
-    @NotNull
-    public Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key) {
-        return getCollectedTypes(key, true);
-    }
-
-    @NotNull
-    private Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
-        Set<KotlinType> types = collectTypesFromMeAndParents(key);
+    private fun getCollectedTypes(key: DataFlowValue, enrichWithNotNull: Boolean): Set<KotlinType> {
+        val types = collectTypesFromMeAndParents(key)
         if (!enrichWithNotNull || getCollectedNullability(key).canBeNull()) {
-            return types;
+            return types
         }
 
-        Set<KotlinType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
-        KotlinType originalType = key.getType();
-        if (originalType.isMarkedNullable()) {
-            enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
+        val enrichedTypes = Sets.newHashSetWithExpectedSize<KotlinType>(types.size + 1)
+        val originalType = key.type
+        if (originalType.isMarkedNullable) {
+            enrichedTypes.add(TypeUtils.makeNotNullable(originalType))
         }
-        for (KotlinType type : types) {
-            enrichedTypes.add(TypeUtils.makeNotNullable(type));
+        for (type in types) {
+            enrichedTypes.add(TypeUtils.makeNotNullable(type))
         }
 
-        return enrichedTypes;
+        return enrichedTypes
     }
 
-    @Override
-    @NotNull
-    public Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key) {
-        return getPredictableTypes(key, true);
-    }
+    override fun getPredictableTypes(key: DataFlowValue) = getPredictableTypes(key, true)
 
-    @NotNull
-    private Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
-        if (!key.isPredictable()) {
-            return new LinkedHashSet<KotlinType>();
-        }
-        return getCollectedTypes(key, enrichWithNotNull);
-    }
+    private fun getPredictableTypes(key: DataFlowValue, enrichWithNotNull: Boolean) =
+            if (!key.isPredictable) LinkedHashSet() else getCollectedTypes(key, enrichWithNotNull)
 
     /**
      * Call this function to clear all data flow information about
      * the given data flow value.
-     *
+
      * @param value
      */
-    @Override
-    @NotNull
-    public DataFlowInfo clearValueInfo(@NotNull DataFlowValue value) {
-        Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        putNullability(builder, value, Nullability.UNKNOWN);
-        return new DelegatingDataFlowInfo(
-                       this,
-                       ImmutableMap.copyOf(builder),
-                       EMPTY_TYPE_INFO,
-                       value
-               );
+    override fun clearValueInfo(value: DataFlowValue): DataFlowInfo {
+        val builder = Maps.newHashMap<DataFlowValue, Nullability>()
+        putNullability(builder, value, Nullability.UNKNOWN)
+        return DelegatingDataFlowInfo(
+                this,
+                ImmutableMap.copyOf(builder),
+                EMPTY_TYPE_INFO,
+                value)
     }
 
-    @Override
-    @NotNull
-    public DataFlowInfo assign(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
-        Map<DataFlowValue, Nullability> nullability = Maps.newHashMap();
-        Nullability nullabilityOfB = getPredictableNullability(b);
-        putNullability(nullability, a, nullabilityOfB);
+    override fun assign(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
+        val nullability = Maps.newHashMap<DataFlowValue, Nullability>()
+        val nullabilityOfB = getPredictableNullability(b)
+        putNullability(nullability, a, nullabilityOfB)
 
-        SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        Set<KotlinType> typesForB = getPredictableTypes(b);
+        val newTypeInfo = newTypeInfo()
+        var typesForB = getPredictableTypes(b)
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A or it's null, there is no reason to do it
         // because usually null type or own type are not saved in this set
-        if (nullabilityOfB.canBeNonNull() && !a.getType().equals(b.getType())) {
-            typesForB.add(b.getType());
+        if (nullabilityOfB.canBeNonNull() && a.type != b.type) {
+            typesForB += b.type
         }
-        newTypeInfo.putAll(a, typesForB);
+        newTypeInfo.putAll(a, typesForB)
 
-        return new DelegatingDataFlowInfo(
-                       this,
-                       ImmutableMap.copyOf(nullability),
-                       newTypeInfo.isEmpty() ? EMPTY_TYPE_INFO : newTypeInfo,
-                       a
-               );
+        return DelegatingDataFlowInfo(
+                this,
+                ImmutableMap.copyOf(nullability),
+                if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo,
+                a)
     }
 
-    @Override
-    @NotNull
-    public DataFlowInfo equate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
-        Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        Nullability nullabilityOfA = getPredictableNullability(a);
-        Nullability nullabilityOfB = getPredictableNullability(b);
+    override fun equate(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
+        val builder = Maps.newHashMap<DataFlowValue, Nullability>()
+        val nullabilityOfA = getPredictableNullability(a)
+        val nullabilityOfB = getPredictableNullability(b)
 
-        boolean changed = false;
-        changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
-        changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
+        var changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB)) or
+                      putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA))
 
-        SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        newTypeInfo.putAll(a, getPredictableTypes(b, false));
-        newTypeInfo.putAll(b, getPredictableTypes(a, false));
-        if (!a.getType().equals(b.getType())) {
+        val newTypeInfo = newTypeInfo()
+        newTypeInfo.putAll(a, getPredictableTypes(b, false))
+        newTypeInfo.putAll(b, getPredictableTypes(a, false))
+        if (a.type != b.type) {
             // To avoid recording base types of own type
-            if (!TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
-                newTypeInfo.put(a, b.getType());
+            if (!a.type.isSubtypeOf(b.type)) {
+                newTypeInfo.put(a, b.type)
             }
-            if (!TypeUtilsKt.isSubtypeOf(b.getType(), a.getType())) {
-                newTypeInfo.put(b, a.getType());
+            if (!b.type.isSubtypeOf(a.type)) {
+                newTypeInfo.put(b, a.type)
             }
         }
-        changed |= !newTypeInfo.isEmpty();
+        changed = changed or !newTypeInfo.isEmpty
 
-        return !changed
-                    ? this
-                    : new DelegatingDataFlowInfo(
-                            this,
-                            ImmutableMap.copyOf(builder),
-                            newTypeInfo.isEmpty() ? EMPTY_TYPE_INFO : newTypeInfo
-                    );
+        return if (!changed) {
+            this
+        }
+        else {
+            DelegatingDataFlowInfo(this, ImmutableMap.copyOf(builder), if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo)
+        }
     }
 
-    @NotNull
-    private Set<KotlinType> collectTypesFromMeAndParents(@NotNull DataFlowValue value) {
-        Set<KotlinType> types = new LinkedHashSet<KotlinType>();
+    private fun collectTypesFromMeAndParents(value: DataFlowValue): Set<KotlinType> {
+        val types = LinkedHashSet<KotlinType>()
 
-        DataFlowInfo current = this;
+        var current: DataFlowInfo? = this
         while (current != null) {
-            if (current instanceof DelegatingDataFlowInfo) {
-                DelegatingDataFlowInfo delegatingInfo = (DelegatingDataFlowInfo) current;
-                types.addAll(delegatingInfo.typeInfo.get(value));
-                if (value.equals(delegatingInfo.valueWithGivenTypeInfo)) {
-                    current = null;
+            if (current is DelegatingDataFlowInfo) {
+                types.addAll(current.typeInfo.get(value))
+                if (value == current.valueWithGivenTypeInfo) {
+                    current = null
                 }
                 else {
-                    current = delegatingInfo.parent;
+                    current = current.parent
                 }
             }
             else {
-                types.addAll(current.getCollectedTypes(value));
-                break;
+                types.addAll(current.getCollectedTypes(value))
+                break
             }
         }
 
-        return types;
+        return types
     }
 
-    @Override
-    @NotNull
-    public DataFlowInfo disequate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
-        Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        Nullability nullabilityOfA = getPredictableNullability(a);
-        Nullability nullabilityOfB = getPredictableNullability(b);
+    override fun disequate(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
+        val builder = Maps.newHashMap<DataFlowValue, Nullability>()
+        val nullabilityOfA = getPredictableNullability(a)
+        val nullabilityOfB = getPredictableNullability(b)
 
-        boolean changed = false;
-        changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert()));
-        changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA.invert()));
-        return changed ? new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(builder), EMPTY_TYPE_INFO) : this;
+        var changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert())) or
+                      putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA.invert()))
+        return if (changed) DelegatingDataFlowInfo(this, ImmutableMap.copyOf(builder), EMPTY_TYPE_INFO) else this
     }
 
-    @Override
-    @NotNull
-    public DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull KotlinType type) {
-        if (value.getType().equals(type)) return this;
-        if (getCollectedTypes(value).contains(type)) return this;
-        if (!FlexibleTypesKt.isFlexible(value.getType()) && TypeUtilsKt.isSubtypeOf(value.getType(), type)) return this;
-        ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
-                type.isMarkedNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
-        SetMultimap<DataFlowValue, KotlinType> newTypeInfo = ImmutableSetMultimap.of(value, type);
-        return new DelegatingDataFlowInfo(this, newNullabilityInfo, newTypeInfo);
+    override fun establishSubtyping(value: DataFlowValue, type: KotlinType): DataFlowInfo {
+        if (value.type == type) return this
+        if (getCollectedTypes(value).contains(type)) return this
+        if (!value.type.isFlexible() && value.type.isSubtypeOf(type)) return this
+        val newNullabilityInfo = if (type.isMarkedNullable) EMPTY_NULLABILITY_INFO else ImmutableMap.of(value, NOT_NULL)
+        val newTypeInfo = ImmutableSetMultimap.of(value, type)
+        return DelegatingDataFlowInfo(this, newNullabilityInfo, newTypeInfo)
     }
 
-    @NotNull
-    @Override
-    public DataFlowInfo and(@NotNull DataFlowInfo otherInfo) {
-        if (otherInfo == EMPTY) return this;
-        if (this == EMPTY) return otherInfo;
-        if (this == otherInfo) return this;
+    override fun and(otherInfo: DataFlowInfo): DataFlowInfo {
+        if (otherInfo === DataFlowInfo.EMPTY) return this
+        if (this === DataFlowInfo.EMPTY) return otherInfo
+        if (this === otherInfo) return this
 
-        assert otherInfo instanceof DelegatingDataFlowInfo : "Unknown DataFlowInfo type: " + otherInfo;
-        DelegatingDataFlowInfo other = (DelegatingDataFlowInfo) otherInfo;
+        assert(otherInfo is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + otherInfo }
+        val other = otherInfo as DelegatingDataFlowInfo
 
-        Map<DataFlowValue, Nullability> nullabilityMapBuilder = Maps.newHashMap();
-        for (Map.Entry<DataFlowValue, Nullability> entry : other.getCompleteNullabilityInfo().entrySet()) {
-            DataFlowValue key = entry.getKey();
-            Nullability otherFlags = entry.getValue();
-            Nullability thisFlags = getCollectedNullability(key);
-            Nullability flags = thisFlags.and(otherFlags);
+        val nullabilityMapBuilder = Maps.newHashMap<DataFlowValue, Nullability>()
+        for ((key, otherFlags) in other.completeNullabilityInfo) {
+            val thisFlags = getCollectedNullability(key)
+            val flags = thisFlags.and(otherFlags)
             if (flags != thisFlags) {
-                nullabilityMapBuilder.put(key, flags);
+                nullabilityMapBuilder.put(key, flags)
             }
         }
 
-        SetMultimap<DataFlowValue, KotlinType> myTypeInfo = getCompleteTypeInfo();
-        SetMultimap<DataFlowValue, KotlinType> otherTypeInfo = other.getCompleteTypeInfo();
+        val myTypeInfo = completeTypeInfo
+        val otherTypeInfo = other.completeTypeInfo
         if (nullabilityMapBuilder.isEmpty() && containsAll(myTypeInfo, otherTypeInfo)) {
-            return this;
+            return this
         }
 
-        return new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(nullabilityMapBuilder), otherTypeInfo);
+        return DelegatingDataFlowInfo(this, ImmutableMap.copyOf(nullabilityMapBuilder), otherTypeInfo)
     }
 
-    private static boolean containsAll(SetMultimap<DataFlowValue, KotlinType> first, SetMultimap<DataFlowValue, KotlinType> second) {
-        return first.entries().containsAll(second.entries());
+    override fun or(otherInfo: DataFlowInfo): DataFlowInfo {
+        if (otherInfo === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
+        if (this === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
+        if (this === otherInfo) return this
+
+        assert(otherInfo is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + otherInfo }
+        val other = otherInfo as DelegatingDataFlowInfo
+
+        val nullabilityMapBuilder = Maps.newHashMap<DataFlowValue, Nullability>()
+        for ((key, otherFlags) in other.completeNullabilityInfo) {
+            val thisFlags = getCollectedNullability(key)
+            nullabilityMapBuilder.put(key, thisFlags.or(otherFlags))
+        }
+
+        val myTypeInfo = completeTypeInfo
+        val otherTypeInfo = other.completeTypeInfo
+        val newTypeInfo = newTypeInfo()
+
+        for (key in Sets.intersection(myTypeInfo.keySet(), otherTypeInfo.keySet())) {
+            val thisTypes = myTypeInfo.get(key)
+            val otherTypes = otherTypeInfo.get(key)
+            newTypeInfo.putAll(key, Sets.intersection(thisTypes, otherTypes))
+        }
+
+        if (nullabilityMapBuilder.isEmpty() && newTypeInfo.isEmpty) {
+            return DataFlowInfo.EMPTY
+        }
+
+        return DelegatingDataFlowInfo(null, ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo)
     }
 
-    @NotNull
-    @Override
-    public DataFlowInfo or(@NotNull DataFlowInfo otherInfo) {
-        if (otherInfo == EMPTY) return EMPTY;
-        if (this == EMPTY) return EMPTY;
-        if (this == otherInfo) return this;
+    override fun toString() = if (typeInfo.isEmpty && nullabilityInfo.isEmpty()) "EMPTY" else "Non-trivial DataFlowInfo"
 
-        assert otherInfo instanceof DelegatingDataFlowInfo : "Unknown DataFlowInfo type: " + otherInfo;
-        DelegatingDataFlowInfo other = (DelegatingDataFlowInfo) otherInfo;
+    companion object {
+        private val EMPTY_NULLABILITY_INFO = ImmutableMap.of<DataFlowValue, Nullability>()
+        private val EMPTY_TYPE_INFO = newTypeInfo()
 
-        Map<DataFlowValue, Nullability> nullabilityMapBuilder = Maps.newHashMap();
-        for (Map.Entry<DataFlowValue, Nullability> entry : other.getCompleteNullabilityInfo().entrySet()) {
-            DataFlowValue key = entry.getKey();
-            Nullability otherFlags = entry.getValue();
-            Nullability thisFlags = getCollectedNullability(key);
-            nullabilityMapBuilder.put(key, thisFlags.or(otherFlags));
-        }
+        private fun containsAll(first: SetMultimap<DataFlowValue, KotlinType>, second: SetMultimap<DataFlowValue, KotlinType>) =
+                first.entries().containsAll(second.entries())
 
-        SetMultimap<DataFlowValue, KotlinType> myTypeInfo = getCompleteTypeInfo();
-        SetMultimap<DataFlowValue, KotlinType> otherTypeInfo = other.getCompleteTypeInfo();
-        SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-
-        for (DataFlowValue key : Sets.intersection(myTypeInfo.keySet(), otherTypeInfo.keySet())) {
-            Set<KotlinType> thisTypes = myTypeInfo.get(key);
-            Set<KotlinType> otherTypes = otherTypeInfo.get(key);
-            newTypeInfo.putAll(key, Sets.intersection(thisTypes, otherTypes));
-        }
-
-        if (nullabilityMapBuilder.isEmpty() && newTypeInfo.isEmpty()) {
-            return EMPTY;
-        }
-
-        return new DelegatingDataFlowInfo(null, ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
-    }
-
-    @NotNull
-    /* package */ static SetMultimap<DataFlowValue, KotlinType> newTypeInfo() {
-        return LinkedHashMultimap.create();
-    }
-
-    @Override
-    public String toString() {
-        if (typeInfo.isEmpty() && nullabilityInfo.isEmpty()) {
-            return "EMPTY";
-        }
-        return "Non-trivial DataFlowInfo";
+        @JvmStatic
+        fun newTypeInfo(): SetMultimap<DataFlowValue, KotlinType> = LinkedHashMultimap.create<DataFlowValue, KotlinType>()
     }
 }
