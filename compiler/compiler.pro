@@ -15,7 +15,7 @@
 !org/jdom/xpath/Jaxen*,
 !org/mozilla/javascript/xml/impl/xmlbeans/**,
 !META-INF/maven**,
-**.class,**.properties,**.kt,**.kotlin_*,
+**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
 messages/**)
 
