@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -167,6 +168,8 @@ class TowerResolver {
     ): Collection<C> {
 
         for (towerData in context.scopeTower.createTowerDataList()) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
             val candidatesGroups = if (useOrder) {
                 processor.process(towerData)
             }
