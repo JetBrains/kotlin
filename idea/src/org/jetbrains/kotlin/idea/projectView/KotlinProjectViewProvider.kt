@@ -14,115 +14,106 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.projectView;
+package org.jetbrains.kotlin.idea.projectView
 
-import com.intellij.ide.projectView.SelectableTreeStructureProvider;
-import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.idea.KotlinIconProvider;
-import org.jetbrains.kotlin.psi.KtClassBody;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
+import com.intellij.ide.projectView.SelectableTreeStructureProvider
+import com.intellij.ide.projectView.ViewSettings
+import com.intellij.ide.util.treeView.AbstractTreeNode
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinIconProvider
+import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+class KotlinProjectViewProvider(private val myProject: Project) : SelectableTreeStructureProvider, DumbAware {
 
-public class KotlinProjectViewProvider implements SelectableTreeStructureProvider, DumbAware {
-    private final Project myProject;
+    override fun modify(parent: AbstractTreeNode<Any>,
+                        children: Collection<AbstractTreeNode<Any>>,
+                        settings: ViewSettings): Collection<AbstractTreeNode<out Any>> {
+        val result = ArrayList<AbstractTreeNode<out Any>>()
 
-    public KotlinProjectViewProvider(Project project) {
-        myProject = project;
-    }
+        for (child in children) {
+            val childValue = child.value
 
-    @Override
-    public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings) {
-        List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+            if (childValue is KtFile) {
+                val declarations = childValue.declarations
 
-        for (AbstractTreeNode child : children) {
-            Object childValue = child.getValue();
-
-            if (childValue instanceof KtFile) {
-                KtFile file = (KtFile) childValue;
-                List<KtDeclaration> declarations = file.getDeclarations();
-
-                KtClassOrObject mainClass = KotlinIconProvider.getMainClass(file);
-                if (mainClass != null && declarations.size() == 1) {
-                    result.add(new KtClassOrObjectTreeNode(file.getProject(), mainClass, settings));
+                val mainClass = KotlinIconProvider.getMainClass(childValue)
+                if (mainClass != null && declarations.size == 1) {
+                    result.add(KtClassOrObjectTreeNode(childValue.project, mainClass, settings))
                 }
                 else {
-                    result.add(new KtFileTreeNode(file.getProject(), file, settings));
+                    result.add(KtFileTreeNode(childValue.project, childValue, settings))
                 }
             }
             else {
-                result.add(child);
+                result.add(child)
             }
 
         }
 
-        return result;
+        return result
     }
 
-    @Override
-    public Object getData(Collection<AbstractTreeNode> selected, String dataName) {
-        return null;
+    override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? {
+        return null
     }
 
-    @Override
-    public PsiElement getTopLevelElement(PsiElement element) {
-        PsiFile file = element.getContainingFile();
-        if (file == null || !(file instanceof KtFile)) return null;
+    override fun getTopLevelElement(element: PsiElement): PsiElement? {
+        val file = element.containingFile
+        if (file == null || file !is KtFile) return null
 
-        VirtualFile virtualFile = file.getVirtualFile();
-        if (!fileInRoots(virtualFile)) return file;
+        val virtualFile = file.virtualFile
+        if (!fileInRoots(virtualFile)) return file
 
-        PsiElement current = element;
+        var current: PsiElement? = element
         while (current != null) {
-            if (isSelectable(current)) break;
-            current = current.getParent();
+            if (isSelectable(current)) break
+            current = current.parent
         }
 
-        if (current instanceof KtFile) {
-            List<KtDeclaration> declarations = ((KtFile) current).getDeclarations();
-            String nameWithoutExtension = virtualFile != null ? virtualFile.getNameWithoutExtension() : file.getName();
-            if (declarations.size() == 1 && declarations.get(0) instanceof KtClassOrObject &&
-                nameWithoutExtension.equals(declarations.get(0).getName())) {
-                current = declarations.get(0);
+        if (current is KtFile) {
+            val declarations = current.declarations
+            val nameWithoutExtension = if (virtualFile != null) virtualFile.nameWithoutExtension else file.name
+            if (declarations.size == 1 && declarations[0] is KtClassOrObject &&
+                nameWithoutExtension == declarations[0].name) {
+                current = declarations[0]
             }
         }
 
-        return current != null ? current : file;
+        return if (current != null) current else file
     }
 
-    private static boolean isSelectable(PsiElement element) {
-        if (element instanceof KtFile) return true;
-        if (element instanceof KtDeclaration) {
-            PsiElement parent = element.getParent();
-            if (parent instanceof KtFile) {
-                return true;
+    private fun isSelectable(element: PsiElement): Boolean {
+        if (element is KtFile) return true
+        if (element is KtDeclaration) {
+            var parent = element.getParent()
+            if (parent is KtFile) {
+                return true
             }
-            else if (parent instanceof KtClassBody) {
-                parent = parent.getParent();
-                if (parent instanceof KtClassOrObject) {
-                    return isSelectable(parent);
+            else if (parent is KtClassBody) {
+                parent = parent.getParent()
+                if (parent is KtClassOrObject) {
+                    return isSelectable(parent)
                 }
-                else return false;
+                else
+                    return false
             }
-            else return false;
+            else
+                return false
         }
-        else return false;
+        else
+            return false
     }
 
-    private boolean fileInRoots(VirtualFile file) {
-        ProjectFileIndex index = ProjectRootManager.getInstance(myProject).getFileIndex();
-        return file != null && (index.isInSourceContent(file) || index.isInLibraryClasses(file) || index.isInLibrarySource(file));
+    private fun fileInRoots(file: VirtualFile?): Boolean {
+        val index = ProjectRootManager.getInstance(myProject).fileIndex
+        return file != null && (index.isInSourceContent(file) || index.isInLibraryClasses(file) || index.isInLibrarySource(file))
     }
 }
