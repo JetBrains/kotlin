@@ -77,6 +77,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("InaccessibleInternalClass.kt")
+    public void testInaccessibleInternalClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/InaccessibleInternalClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("instar.kt")
     public void testInstar() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/instar.kt");

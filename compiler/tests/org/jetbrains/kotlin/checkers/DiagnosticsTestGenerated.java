@@ -7653,6 +7653,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("InaccessiblePrivateClass.kt")
+            public void testInaccessiblePrivateClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/InaccessiblePrivateClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("JavaPackageLocalClassNotImported.kt")
             public void testJavaPackageLocalClassNotImported() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/JavaPackageLocalClassNotImported.kt");
@@ -19003,7 +19009,7 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class IIImpoiVararg extends AbstractDiagnosticsTest {
+        public static class Vararg extends AbstractDiagnosticsTest {
             public void testAllFilesPresentInVararg() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }

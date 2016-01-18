@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -29,9 +30,12 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 open class FileScopeProviderImpl(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
@@ -81,6 +85,8 @@ open class FileScopeProviderImpl(
         val defaultExplicitImportResolver = createImportResolver(ExplicitImportsIndexed(defaultImportsFiltered), tempTrace)
         val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace)
 
+        val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
+
         var scope: ImportingScope
 
         scope = LazyImportScope(null, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
@@ -88,6 +94,9 @@ open class FileScopeProviderImpl(
 
         scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "All under imports in $debugName (invisible classes only)")
+
+        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.INVISIBLE_CLASSES)
+                .memberScopeAsImportingScope(scope)
 
         scope = LazyImportScope(scope, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "Default all under imports in $debugName (visible classes)")
@@ -100,7 +109,8 @@ open class FileScopeProviderImpl(
 
         scope = SubpackagesImportingScope(scope, moduleDescriptor, FqName.ROOT)
 
-        scope = packageMemberScopeWithAliasedNamesExcluded(packageView, aliasImportNames).memberScopeAsImportingScope(scope) //TODO: problems with visibility too
+        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.VISIBLE_CLASSES)
+                .memberScopeAsImportingScope(scope)
 
         scope = LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
 
@@ -127,36 +137,74 @@ open class FileScopeProviderImpl(
         return FileData(lexicalScope, importResolver)
     }
 
-    private fun packageMemberScopeWithAliasedNamesExcluded(packageView: PackageViewDescriptor, aliasImportNames: Collection<FqName>): MemberScope {
-        val scope = packageView.memberScope
-        if (aliasImportNames.isEmpty()) return scope
+    // we use this dummy implementation of DeclarationDescriptor to check accessibility of symbols from the current package
+    private class DummyContainerDescriptor(private val file: KtFile, private val packageFragment: PackageFragmentDescriptor) : DeclarationDescriptorNonRoot {
+        private val sourceElement = KotlinSourceElement(file)
 
+        override fun getContainingDeclaration() = packageFragment
+
+        override fun getSource() = sourceElement
+
+        override fun getOriginal() = this
+        override fun getAnnotations() = Annotations.EMPTY
+        override fun substitute(substitutor: TypeSubstitutor) = this
+
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+            throw UnsupportedOperationException()
+        }
+
+        override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+            throw UnsupportedOperationException()
+        }
+
+        override fun getName(): Name {
+            throw UnsupportedOperationException()
+        }
+    }
+
+    private enum class FilteringKind {
+        VISIBLE_CLASSES, INVISIBLE_CLASSES
+    }
+
+    private fun currentPackageScope(
+            packageView: PackageViewDescriptor,
+            aliasImportNames: Collection<FqName>,
+            fromDescriptor: DummyContainerDescriptor,
+            filteringKind: FilteringKind
+    ): MemberScope {
+        val scope = packageView.memberScope
         val packageName = packageView.fqName
         val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
-        if (excludedNames.isEmpty()) return scope
 
         return object: MemberScope {
             override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
                 if (name in excludedNames) return null
-                return scope.getContributedClassifier(name, location)
+                val classifier = scope.getContributedClassifier(name, location) ?: return null
+                val visible = Visibilities.isVisibleWithIrrelevantReceiver(classifier as ClassDescriptor, fromDescriptor)
+                return classifier.check { filteringKind == if (visible) FilteringKind.VISIBLE_CLASSES else FilteringKind.INVISIBLE_CLASSES }
             }
 
             override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
                 if (name in excludedNames) return emptyList()
                 return scope.getContributedVariables(name, location)
             }
 
             override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
                 if (name in excludedNames) return emptyList()
                 return scope.getContributedFunctions(name, location)
             }
 
             override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
                 return scope.getContributedDescriptors(kindFilter, { name -> name !in excludedNames && nameFilter(name) })
             }
 
+            override fun toString() = "Scope for current package (${filteringKind.name})"
+
             override fun printScopeStructure(p: Printer) {
-                return scope.printScopeStructure(p)
+                p.println(this.toString())
             }
         }
     }
