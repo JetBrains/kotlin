@@ -14,133 +14,123 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.modules;
+package org.jetbrains.kotlin.modules
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
-import org.jetbrains.kotlin.config.IncrementalCompilation;
-import org.jetbrains.kotlin.jps.build.JvmSourceRoot;
-import org.jetbrains.kotlin.utils.Printer;
+import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
+import com.intellij.openapi.util.text.StringUtil.escapeXml
+import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
+import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser.*
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.jps.build.JvmSourceRoot
+import org.jetbrains.kotlin.utils.Printer
+import java.io.File
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+class KotlinModuleXmlBuilder {
+    private val xml = StringBuilder()
+    private val p = Printer(xml)
+    private var done = false
 
-import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
-import static com.intellij.openapi.util.text.StringUtil.escapeXml;
-import static org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser.*;
-
-public class KotlinModuleXmlBuilder {
-    private final StringBuilder xml = new StringBuilder();
-    private final Printer p = new Printer(xml);
-    private boolean done = false;
-
-    public KotlinModuleXmlBuilder() {
-        openTag(p, MODULES);
+    init {
+        openTag(p, MODULES)
     }
 
-    public KotlinModuleXmlBuilder addModule(
-            String moduleName,
-            String outputDir,
-            List<File> sourceFiles,
-            List<JvmSourceRoot> javaSourceRoots,
-            Collection<File> classpathRoots,
-            JavaModuleBuildTargetType targetType,
-            Set<File> directoriesToFilterOut,
-            @NotNull List<File> friendDirs
-    ) {
-        assert !done : "Already done";
+    fun addModule(
+            moduleName: String,
+            outputDir: String,
+            sourceFiles: List<File>,
+            javaSourceRoots: List<JvmSourceRoot>,
+            classpathRoots: Collection<File>,
+            targetType: JavaModuleBuildTargetType,
+            directoriesToFilterOut: Set<File>,
+            friendDirs: List<File>): KotlinModuleXmlBuilder {
+        assert(!done) { "Already done" }
 
-        if (targetType.isTests()) {
-            p.println("<!-- Module script for tests -->");
+        if (targetType.isTests) {
+            p.println("<!-- Module script for tests -->")
         }
         else {
-            p.println("<!-- Module script for production -->");
+            p.println("<!-- Module script for production -->")
         }
 
         p.println("<", MODULE, " ",
                   NAME, "=\"", escapeXml(moduleName), "\" ",
-                  TYPE, "=\"", escapeXml(targetType.getTypeId()), "\" ",
-                  OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\">"
-        );
-        p.pushIndent();
+                  TYPE, "=\"", escapeXml(targetType.typeId), "\" ",
+                  OUTPUT_DIR, "=\"", getEscapedPath(File(outputDir)), "\">")
+        p.pushIndent()
 
-        for (File friendDir : friendDirs) {
-            p.println("<", FRIEND_DIR, " ", PATH, "=\"", getEscapedPath(friendDir), "\"/>");
+        for (friendDir in friendDirs) {
+            p.println("<", FRIEND_DIR, " ", PATH, "=\"", getEscapedPath(friendDir), "\"/>")
         }
 
-        for (File sourceFile : sourceFiles) {
-            p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>");
+        for (sourceFile in sourceFiles) {
+            p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>")
         }
 
-        processJavaSourceRoots(javaSourceRoots);
-        processClasspath(classpathRoots, directoriesToFilterOut);
+        processJavaSourceRoots(javaSourceRoots)
+        processClasspath(classpathRoots, directoriesToFilterOut)
 
-        closeTag(p, MODULE);
-        return this;
+        closeTag(p, MODULE)
+        return this
     }
 
-    private void processClasspath(
-            @NotNull Collection<File> files,
-            @NotNull Set<File> directoriesToFilterOut
-    ) {
-        p.println("<!-- Classpath -->");
-        for (File file : files) {
-            boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.isEnabled();
+    private fun processClasspath(
+            files: Collection<File>,
+            directoriesToFilterOut: Set<File>) {
+        p.println("<!-- Classpath -->")
+        for (file in files) {
+            val isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.isEnabled()
             if (isOutput) {
                 // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                 // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
                 // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
-                p.println("<!-- Output directory, commented out -->");
-                p.println("<!-- ");
-                p.pushIndent();
+                p.println("<!-- Output directory, commented out -->")
+                p.println("<!-- ")
+                p.pushIndent()
             }
 
-            p.println("<", CLASSPATH, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
+            p.println("<", CLASSPATH, " ", PATH, "=\"", getEscapedPath(file), "\"/>")
 
             if (isOutput) {
-                p.popIndent();
-                p.println("-->");
+                p.popIndent()
+                p.println("-->")
             }
         }
     }
 
-    private void processJavaSourceRoots(@NotNull List<JvmSourceRoot> roots) {
-        p.println("<!-- Java source roots -->");
-        for (JvmSourceRoot root : roots) {
-            p.print("<");
-            p.printWithNoIndent(JAVA_SOURCE_ROOTS, " ", PATH, "=\"", getEscapedPath(root.getFile()), "\"");
+    private fun processJavaSourceRoots(roots: List<JvmSourceRoot>) {
+        p.println("<!-- Java source roots -->")
+        for (root in roots) {
+            p.print("<")
+            p.printWithNoIndent(JAVA_SOURCE_ROOTS, " ", PATH, "=\"", getEscapedPath(root.file), "\"")
 
-            if (root.getPackagePrefix() != null) {
-                p.printWithNoIndent(" ", JAVA_SOURCE_PACKAGE_PREFIX, "=\"", root.getPackagePrefix(), "\"");
+            if (root.packagePrefix != null) {
+                p.printWithNoIndent(" ", JAVA_SOURCE_PACKAGE_PREFIX, "=\"", root.packagePrefix, "\"")
             }
 
-            p.printWithNoIndent("/>");
-            p.println();
+            p.printWithNoIndent("/>")
+            p.println()
         }
     }
 
-    public CharSequence asText() {
+    fun asText(): CharSequence {
         if (!done) {
-            closeTag(p, MODULES);
-            done = true;
+            closeTag(p, MODULES)
+            done = true
         }
-        return xml;
+        return xml
     }
 
-    private static void openTag(Printer p, String tag) {
-        p.println("<" + tag + ">");
-        p.pushIndent();
+    private fun openTag(p: Printer, tag: String) {
+        p.println("<$tag>")
+        p.pushIndent()
     }
 
-    private static void closeTag(Printer p, String tag) {
-        p.popIndent();
-        p.println("</" + tag + ">");
+    private fun closeTag(p: Printer, tag: String) {
+        p.popIndent()
+        p.println("</$tag>")
     }
 
-    private static String getEscapedPath(File sourceFile) {
-        return escapeXml(toSystemIndependentName(sourceFile.getPath()));
+    private fun getEscapedPath(sourceFile: File): String {
+        return escapeXml(toSystemIndependentName(sourceFile.path))
     }
 }
