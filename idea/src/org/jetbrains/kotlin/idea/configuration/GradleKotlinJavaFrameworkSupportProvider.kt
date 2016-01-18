@@ -43,7 +43,6 @@ class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvide
         var kotlinVersion = KotlinRuntimeLibraryUtil.bundledRuntimeVersion()
         if (kotlinVersion == "@snapshot@") {
             kotlinVersion = "0.1-SNAPSHOT"
-            buildScriptData.addBuildscriptRepositoriesDefinition("mavenCentral()")
 
             val snapshotRepository = KotlinWithGradleConfigurator.SNAPSHOT_REPOSITORY.replace('\n', ' ')
             buildScriptData.addBuildscriptRepositoriesDefinition(snapshotRepository)
@@ -54,6 +53,8 @@ class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvide
 
         buildScriptData
                 .addPluginDefinition(KotlinGradleModuleConfigurator.APPLY_KOTLIN)
+
+                .addBuildscriptRepositoriesDefinition("mavenCentral()")
 
                 // TODO: once IDEA-148110 is fixed, define kotlin_version property in buildscript
                 .addDependencyNotation(KotlinWithGradleConfigurator.LIBRARY.replace("\$kotlin_version", kotlinVersion))
