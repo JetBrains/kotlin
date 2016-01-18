@@ -8389,6 +8389,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("typeDisjunction.kt")
+        public void testTypeDisjunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/typeDisjunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("whenArgumentIsEvaluatedOnlyOnce.kt")
         public void testWhenArgumentIsEvaluatedOnlyOnce() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/whenArgumentIsEvaluatedOnlyOnce.kt");

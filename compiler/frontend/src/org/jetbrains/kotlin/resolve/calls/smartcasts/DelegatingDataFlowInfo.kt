@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import com.google.common.collect.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -251,6 +252,13 @@ internal class DelegatingDataFlowInfo @JvmOverloads constructor(
         return DelegatingDataFlowInfo(this, ImmutableMap.copyOf(nullabilityMapBuilder), otherTypeInfo)
     }
 
+    private fun Set<KotlinType>.containsNothing() = any { KotlinBuiltIns.isNothing(it) }
+
+    private fun Set<KotlinType>.intersect(other: Set<KotlinType>) =
+            if (other.containsNothing()) this
+            else if (this.containsNothing()) other
+            else Sets.intersection(this, other)
+
     override fun or(otherInfo: DataFlowInfo): DataFlowInfo {
         if (otherInfo === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
         if (this === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
@@ -270,9 +278,7 @@ internal class DelegatingDataFlowInfo @JvmOverloads constructor(
         val newTypeInfo = newTypeInfo()
 
         for (key in Sets.intersection(myTypeInfo.keySet(), otherTypeInfo.keySet())) {
-            val thisTypes = myTypeInfo.get(key)
-            val otherTypes = otherTypeInfo.get(key)
-            newTypeInfo.putAll(key, Sets.intersection(thisTypes, otherTypes))
+            newTypeInfo.putAll(key, myTypeInfo[key].intersect(otherTypeInfo[key]))
         }
 
         if (nullabilityMapBuilder.isEmpty() && newTypeInfo.isEmpty) {

@@ -18617,6 +18617,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/When.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("WhenTypeDisjunctions.kt")
+            public void testWhenTypeDisjunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt");
+                doTest(fileName);
+            }
         }
     }
 
