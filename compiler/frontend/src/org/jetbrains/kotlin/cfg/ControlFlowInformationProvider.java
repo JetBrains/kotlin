@@ -744,7 +744,8 @@ public class ControlFlowInformationProvider {
             for (KtExpression branchExpression : branchExpressions) {
                 if (branchExpression == null) continue;
                 KotlinType branchType = trace.getType(branchExpression);
-                assert branchType != null : "Branch expression type should be non-null";
+                if (branchType == null) continue;
+                if (KotlinBuiltIns.isNothing(branchType)) continue;
                 trace.report(IMPLICIT_CAST_TO_ANY.on(getResultingExpression(branchExpression), branchType, expressionType));
             }
         }
