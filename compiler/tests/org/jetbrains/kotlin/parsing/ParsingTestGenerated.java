@@ -727,18 +727,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
-        @TestMetadata("TypeDef.kt")
-        public void testTypeDef() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeDef.kt");
-            doParsingTest(fileName);
-        }
-
-        @TestMetadata("TypeDef_ERR.kt")
-        public void testTypeDef_ERR() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeDef_ERR.kt");
-            doParsingTest(fileName);
-        }
-
         @TestMetadata("TypeExpressionAmbiguities_ERR.kt")
         public void testTypeExpressionAmbiguities_ERR() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeExpressionAmbiguities_ERR.kt");
@@ -840,12 +828,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("ShortAnnotations.kt")
             public void testShortAnnotations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/ShortAnnotations.kt");
-                doParsingTest(fileName);
-            }
-
-            @TestMetadata("TypeAnnotations.kt")
-            public void testTypeAnnotations() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/TypeAnnotations.kt");
                 doParsingTest(fileName);
             }
 

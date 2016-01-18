@@ -3,46 +3,6 @@ JetFile: Comparison.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  TYPEDEF
-    PsiElement(typealias)('typealias')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('Comparison')
-    TYPE_PARAMETER_LIST
-      PsiElement(LT)('<')
-      TYPE_PARAMETER
-        MODIFIER_LIST
-          PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('T')
-      PsiElement(GT)('>')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
-    TYPE_REFERENCE
-      FUNCTION_TYPE
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          VALUE_PARAMETER
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(ARROW)('->')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
-  PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
@@ -229,46 +189,6 @@ JetFile: Comparison.kt
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('MatchableComparison')
-    TYPE_PARAMETER_LIST
-      PsiElement(LT)('<')
-      TYPE_PARAMETER
-        MODIFIER_LIST
-          PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('T')
-      PsiElement(GT)('>')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
-    TYPE_REFERENCE
-      FUNCTION_TYPE
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          VALUE_PARAMETER
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('T')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(ARROW)('->')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('ComparisonResult')
   PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')

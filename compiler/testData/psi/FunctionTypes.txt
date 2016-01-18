@@ -3,13 +3,12 @@ JetFile: FunctionTypes.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -40,13 +39,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -65,13 +63,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -96,13 +93,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -116,13 +112,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -156,13 +151,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -185,13 +179,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -205,13 +198,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -225,13 +217,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -283,13 +274,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -319,13 +309,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -368,13 +357,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('b')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
@@ -427,13 +415,12 @@ JetFile: FunctionTypes.kt
   PsiWhiteSpace('\n\n')
   PsiComment(EOL_COMMENT)('//type f =  (ref foo, ref a :  (ref a) -> b) ->  () -> Unit')
   PsiWhiteSpace('\n\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         FUNCTION_TYPE_RECEIVER
@@ -453,13 +440,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         FUNCTION_TYPE_RECEIVER
@@ -483,13 +469,12 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         FUNCTION_TYPE_RECEIVER
@@ -536,12 +521,11 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
@@ -573,12 +557,11 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE
@@ -614,12 +597,11 @@ JetFile: FunctionTypes.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       FUNCTION_TYPE

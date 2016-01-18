@@ -3,13 +3,12 @@ JetFile: FunctionTypes_ERR.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  TYPEDEF
-    PsiElement(typealias)('typealias')
+  PROPERTY
+    PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
+    PsiElement(IDENTIFIER)('v')
+    PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace('  ')
     TYPE_REFERENCE
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST

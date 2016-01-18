@@ -53,17 +53,5 @@ JetFile: SimpleClassMembers_ERR.kt
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace('\n\n    ')
-      TYPEDEF
-        PsiElement(typealias)('typealias')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          PsiErrorElement:Type expected
-            <empty list>
-        PsiElement(SEMICOLON)(';')
-      PsiWhiteSpace('\n\n')
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

@@ -18061,21 +18061,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
-        @TestMetadata("compiler/testData/diagnostics/tests/typedefs")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Typedefs extends AbstractDiagnosticsTest {
-            public void testAllFilesPresentInTypedefs() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/typedefs"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("TypedefsUnsupported.kt")
-            public void testTypedefsUnsupported() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typedefs/TypedefsUnsupported.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("compiler/testData/diagnostics/tests/unit")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
