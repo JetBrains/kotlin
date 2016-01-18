@@ -2404,7 +2404,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             List<JvmMethodParameterSignature> callableParameters = ((CallableMethod) callableMethod).getValueParameters();
             for (JvmMethodParameterSignature parameter: callableParameters) {
                 if (parameter.getKind() == JvmMethodParameterKind.CONSTRUCTOR_MARKER) {
-                    callGenerator.putValueIfNeeded(null, parameter.getAsmType(), StackValue.constant(null, parameter.getAsmType()));
+                    callGenerator.putValueIfNeeded(parameter.getAsmType(), StackValue.constant(null, parameter.getAsmType()));
                 }
             }
         }

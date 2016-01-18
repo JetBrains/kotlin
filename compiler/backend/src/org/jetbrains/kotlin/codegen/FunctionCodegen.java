@@ -732,7 +732,7 @@ public class FunctionCodegen {
                 iv.mark(loadArg);
             }
 
-            generator.putValueIfNeeded(parameterDescriptor, type, StackValue.local(parameterIndex, type));
+            generator.putValueIfNeeded(type, StackValue.local(parameterIndex, type));
         }
 
         CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
@@ -781,14 +781,14 @@ public class FunctionCodegen {
     ) {
         int var = 0;
         if (!isStatic) {
-            callGenerator.putValueIfNeeded(null, ownerType, StackValue.local(var, ownerType));
+            callGenerator.putValueIfNeeded(ownerType, StackValue.local(var, ownerType));
             var += ownerType.getSize();
         }
 
         for (JvmMethodParameterSignature parameterSignature : signature.getValueParameters()) {
             if (parameterSignature.getKind() != JvmMethodParameterKind.VALUE) {
                 Type type = parameterSignature.getAsmType();
-                callGenerator.putValueIfNeeded(null, type, StackValue.local(var, type));
+                callGenerator.putValueIfNeeded(type, StackValue.local(var, type));
                 var += type.getSize();
             }
         }

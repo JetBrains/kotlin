@@ -75,10 +75,9 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         pushDefaultValueOnStack(type, codegen.v);
-        callGenerator.afterParameterPut(type, null, parameter, i);
+        callGenerator.afterParameterPut(type, null, i);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
         codegen.genVarargs(argument, parameter.getType());
-        callGenerator.afterParameterPut(type, null, parameter, i);
+        callGenerator.afterParameterPut(type, null, i);
     }
 
     @Override

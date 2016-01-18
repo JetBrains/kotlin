@@ -437,7 +437,6 @@ public class InlineCodegen extends CallGenerator {
     public void afterParameterPut(
             @NotNull Type type,
             @Nullable StackValue stackValue,
-            @Nullable ValueParameterDescriptor valueParameterDescriptor,
             int parameterIndex
     ) {
         putArgumentOrCapturedToLocalVal(type, stackValue, -1, parameterIndex);
@@ -664,21 +663,19 @@ public class InlineCodegen extends CallGenerator {
         }
         else {
             StackValue value = codegen.gen(argumentExpression);
-            putValueIfNeeded(valueParameterDescriptor, parameterType, value, valueParameterDescriptor.getIndex());
+            putValueIfNeeded(parameterType, value, valueParameterDescriptor.getIndex());
         }
     }
 
     @Override
     public void putValueIfNeeded(
-            @Nullable ValueParameterDescriptor valueParameterDescriptor,
             @NotNull Type parameterType,
             @NotNull StackValue value
     ) {
-        putValueIfNeeded(valueParameterDescriptor, parameterType, value, -1);
+        putValueIfNeeded(parameterType, value, -1);
     }
 
     private void putValueIfNeeded(
-            @Nullable ValueParameterDescriptor valueParameterDescriptor,
             @NotNull Type parameterType,
             @NotNull StackValue value,
             int index
@@ -686,7 +683,7 @@ public class InlineCodegen extends CallGenerator {
         if (shouldPutValue(parameterType, value)) {
             value.put(parameterType, codegen.v);
         }
-        afterParameterPut(parameterType, value, valueParameterDescriptor, index);
+        afterParameterPut(parameterType, value, index);
     }
 
     @Override
