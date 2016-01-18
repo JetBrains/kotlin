@@ -137,7 +137,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
-    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ find(input, startIndex) }, { match -> match.next() })
+    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
 
     @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"), DeprecationLevel.ERROR)
     public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
