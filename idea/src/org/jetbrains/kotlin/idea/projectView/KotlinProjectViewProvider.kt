@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
 class KotlinProjectViewProvider(private val myProject: Project) : SelectableTreeStructureProvider, DumbAware {
@@ -68,55 +69,33 @@ class KotlinProjectViewProvider(private val myProject: Project) : SelectableTree
         else -> null
     }
 
-    override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? {
-        return null
-    }
+    override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? = null
 
     override fun getTopLevelElement(element: PsiElement): PsiElement? {
-        val file = element.containingFile
-        if (file == null || file !is KtFile) return null
+        val file = element.containingFile as? KtFile ?: return null
 
         val virtualFile = file.virtualFile
         if (!fileInRoots(virtualFile)) return file
 
-        var current: PsiElement? = element
-        while (current != null) {
-            if (isSelectable(current)) break
-            current = current.parent
-        }
+        var current = element.parentsWithSelf.firstOrNull() { it.isSelectable() }
 
         if (current is KtFile) {
-            val declarations = current.declarations
+            val declaration = current.declarations.singleOrNull()
             val nameWithoutExtension = if (virtualFile != null) virtualFile.nameWithoutExtension else file.name
-            if (declarations.size == 1 && declarations[0] is KtClassOrObject &&
-                nameWithoutExtension == declarations[0].name) {
-                current = declarations[0]
+            if (declaration is KtClassOrObject && nameWithoutExtension == declaration.name) {
+                current = declaration
             }
         }
 
-        return if (current != null) current else file
+        return current ?: file
     }
 
-    private fun isSelectable(element: PsiElement): Boolean {
-        if (element is KtFile) return true
-        if (element is KtDeclaration) {
-            var parent = element.getParent()
-            if (parent is KtFile) {
-                return true
-            }
-            else if (parent is KtClassBody) {
-                parent = parent.getParent()
-                if (parent is KtClassOrObject) {
-                    return isSelectable(parent)
-                }
-                else
-                    return false
-            }
-            else
-                return false
-        }
-        else
-            return false
+    private fun PsiElement.isSelectable(): Boolean = when(this) {
+        is KtFile -> true
+        is KtDeclaration ->
+            parent is KtFile ||
+            ((parent as? KtClassBody)?.parent as? KtClassOrObject)?.isSelectable() ?: false
+        else -> false
     }
 
     private fun fileInRoots(file: VirtualFile?): Boolean {
