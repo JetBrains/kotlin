@@ -19003,7 +19003,7 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Vararg extends AbstractDiagnosticsTest {
+        public static class IIImpoiVararg extends AbstractDiagnosticsTest {
             public void testAllFilesPresentInVararg() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }

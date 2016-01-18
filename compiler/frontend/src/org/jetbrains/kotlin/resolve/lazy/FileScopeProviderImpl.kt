@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportsFactory
@@ -25,13 +27,11 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.utils.Printer
 
 open class FileScopeProviderImpl(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
@@ -100,7 +100,7 @@ open class FileScopeProviderImpl(
 
         scope = SubpackagesImportingScope(scope, moduleDescriptor, FqName.ROOT)
 
-        scope = packageView.memberScope.memberScopeAsImportingScope(scope) //TODO: problems with visibility too
+        scope = packageMemberScopeWithAliasedNamesExcluded(packageView, aliasImportNames).memberScopeAsImportingScope(scope) //TODO: problems with visibility too
 
         scope = LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
 
@@ -125,5 +125,39 @@ open class FileScopeProviderImpl(
         }
 
         return FileData(lexicalScope, importResolver)
+    }
+
+    private fun packageMemberScopeWithAliasedNamesExcluded(packageView: PackageViewDescriptor, aliasImportNames: Collection<FqName>): MemberScope {
+        val scope = packageView.memberScope
+        if (aliasImportNames.isEmpty()) return scope
+
+        val packageName = packageView.fqName
+        val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
+        if (excludedNames.isEmpty()) return scope
+
+        return object: MemberScope {
+            override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+                if (name in excludedNames) return null
+                return scope.getContributedClassifier(name, location)
+            }
+
+            override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+                if (name in excludedNames) return emptyList()
+                return scope.getContributedVariables(name, location)
+            }
+
+            override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+                if (name in excludedNames) return emptyList()
+                return scope.getContributedFunctions(name, location)
+            }
+
+            override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+                return scope.getContributedDescriptors(kindFilter, { name -> name !in excludedNames && nameFilter(name) })
+            }
+
+            override fun printScopeStructure(p: Printer) {
+                return scope.printScopeStructure(p)
+            }
+        }
     }
 }
