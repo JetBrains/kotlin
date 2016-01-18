@@ -115,12 +115,12 @@ public class KotlinBuilderModuleScriptGenerator {
     }
 
     @Nullable
-    public static File getFriendDirSafe(@NotNull ModuleBuildTarget target) throws ProjectBuildException {
+    private static File getFriendDirSafe(@NotNull ModuleBuildTarget target) throws ProjectBuildException {
         if (!target.isTests()) return null;
 
         File outputDirForProduction = JpsJavaExtensionService.getInstance().getOutputDirectory(target.getModule(), false);
         if (outputDirForProduction == null) {
-            throw new ProjectBuildException("No output production directory found for " + target);
+            return null;
         }
         return outputDirForProduction;
     }

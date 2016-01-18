@@ -717,6 +717,25 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())
     }
 
+    fun testKotlinProjectWithEmptyProductionOutputDir() {
+        initProject()
+        val result = makeAll()
+        result.assertFailed()
+        result.checkErrors()
+    }
+
+    fun testKotlinProjectWithEmptyTestOutputDir() {
+        doTest()
+    }
+
+    fun testKotlinProjectWithEmptyProductionOutputDirWithoutSrcDir() {
+        doTest()
+    }
+
+    fun testKotlinProjectWithEmptyOutputDirInSomeModules() {
+        doTest()
+    }
+
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
                 .map { it as CompilerMessage }
