@@ -695,7 +695,7 @@ private fun processChanges(
         compiledFiles: Set<File>,
         allCompiledFiles: MutableSet<File>,
         dataManager: BuildDataManager,
-        caches: Collection<IncrementalCacheImpl>,
+        caches: Collection<JpsIncrementalCacheImpl>,
         compilationResult: CompilationResult,
         fsOperations: FSOperationsHelper
 ) {
@@ -710,7 +710,7 @@ private fun processChanges(
 private fun CompilationResult.doProcessChanges(
         compiledFiles: Set<File>,
         allCompiledFiles: MutableSet<File>,
-        caches: Collection<IncrementalCacheImpl>,
+        caches: Collection<JpsIncrementalCacheImpl>,
         fsOperations: FSOperationsHelper
 ) {
     KotlinBuilder.LOG.debug("compilationResult = $this")
@@ -826,7 +826,7 @@ private fun getLookupTracker(project: JpsProject): LookupTracker {
     return lookupTracker
 }
 
-private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, IncrementalCacheImpl> {
+private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, JpsIncrementalCacheImpl> {
     val dependentTargets = getDependentTargets(chunk, context)
 
     val dataManager = context.projectDescriptor.dataManager
