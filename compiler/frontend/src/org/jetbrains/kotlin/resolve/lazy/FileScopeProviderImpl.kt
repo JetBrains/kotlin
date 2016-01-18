@@ -64,7 +64,7 @@ open class FileScopeProviderImpl(
 
         val packageView = moduleDescriptor.getPackage(file.packageFqName)
         val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
-                .sure { "Could not find fragment ${file.packageFqName} for file ${file.name}" }
+                ?: error("Could not find fragment ${file.packageFqName} for file ${file.name}")
 
         fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace)
                 = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, aliasImportNames, trace, packageFragment)
