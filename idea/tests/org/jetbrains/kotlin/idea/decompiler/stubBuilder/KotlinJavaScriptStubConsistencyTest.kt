@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.asJava.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptStubBuilder
 import org.jetbrains.kotlin.idea.decompiler.js.buildDecompiledTextFromJsMetadata
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 
