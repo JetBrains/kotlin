@@ -2,6 +2,7 @@ package java.util
 
 import java.lang.*
 import java.util.*
+import kotlin.comparisons.*
 
 public object Collections {
     @Deprecated("Use collection.maxWith(comparator) instead.", ReplaceWith("col.maxWith(comp)"))

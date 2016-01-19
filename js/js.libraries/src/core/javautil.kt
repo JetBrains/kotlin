@@ -11,6 +11,10 @@ public interface Comparator<T> {
     public fun compare(obj1: T, obj2: T): Int;
 }
 
+public inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Comparator<T> = object : Comparator<T> {
+    override fun compare(obj1: T, obj2: T): Int = comparison(obj1, obj2)
+}
+
 @library
 public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun isEmpty(): Boolean = noImpl

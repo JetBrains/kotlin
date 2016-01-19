@@ -471,6 +471,7 @@ public fun CharSequence.repeat(n: Int): String {
  * Appends the contents of this char sequence, excluding the first characters that satisfy the given [predicate],
  * to the given Appendable.
  */
+@Deprecated("This function will be removed soon.", ReplaceWith("result.append(this.dropWhile(predicate))"))
 public inline fun <T : Appendable> CharSequence.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
     var start = true
     for (element in this) {
@@ -487,6 +488,7 @@ public inline fun <T : Appendable> CharSequence.dropWhileTo(result: T, predicate
 /**
  * Appends the first characters from this char sequence that satisfy the given [predicate] to the given Appendable.
  */
+@Deprecated("This function will be removed soon.", ReplaceWith("result.append(this.takeWhile(predicate))"))
 public inline fun <T : Appendable> CharSequence.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
     for (c in this) if (predicate(c)) result.append(c) else break
     return result

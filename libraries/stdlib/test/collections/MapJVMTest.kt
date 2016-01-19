@@ -6,6 +6,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.expect
 import org.junit.Test as test
+import kotlin.comparisons.*
 
 class MapJVMTest {
     @test fun createSortedMap() {

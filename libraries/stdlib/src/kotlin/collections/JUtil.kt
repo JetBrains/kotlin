@@ -5,6 +5,7 @@ package kotlin.collections
 
 import java.io.Serializable
 import java.util.*
+import kotlin.comparisons.compareValues
 
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
@@ -74,8 +75,17 @@ public fun <T> listOf(element: T): List<T> = Collections.singletonList(element)
 
 /** Returns a new [LinkedList] with the given elements. */
 @JvmVersion
+@Deprecated("Use LinkedList constructor.", ReplaceWith("LinkedList(listOf(*elements))", "java.util.LinkedList"))
 public fun <T> linkedListOf(vararg elements: T): LinkedList<T>
         = if (elements.size == 0) LinkedList() else LinkedList(ArrayAsCollection(elements))
+
+@Deprecated("Use LinkedList constructor.", ReplaceWith("LinkedList<T>()", "java.util.LinkedList"))
+public fun <T> linkedListOf() = LinkedList<T>()
+
+
+/** Returns a new [MutableList] with the given elements. */
+public fun <T> mutableListOf(vararg elements: T): MutableList<T>
+        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements))
 
 /** Returns a new [ArrayList] with the given elements. */
 public fun <T> arrayListOf(vararg elements: T): ArrayList<T>

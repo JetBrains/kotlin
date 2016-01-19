@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlin.test.*
-
+import kotlin.comparisons.*
 import java.util.*
 
 import org.junit.Test as test
@@ -47,13 +47,13 @@ class CollectionJVMTest {
 
     @test fun filterIntoLinkedList() {
         val data = listOf("foo", "bar")
-        val foo = data.filterTo(linkedListOf<String>()) { it.startsWith("f") }
+        val foo = data.filterTo(LinkedList<String>()) { it.startsWith("f") }
 
         assertTrue {
             foo.all { it.startsWith("f") }
         }
         assertEquals(1, foo.size)
-        assertEquals(linkedListOf("foo"), foo)
+        assertEquals(listOf("foo"), foo)
 
         assertTrue {
             foo is LinkedList<String>
@@ -62,13 +62,13 @@ class CollectionJVMTest {
 
     @test fun filterNotIntoLinkedListOf() {
         val data = listOf("foo", "bar")
-        val foo = data.filterNotTo(linkedListOf<String>()) { it.startsWith("f") }
+        val foo = data.filterNotTo(LinkedList<String>()) { it.startsWith("f") }
 
         assertTrue {
             foo.all { !it.startsWith("f") }
         }
         assertEquals(1, foo.size)
-        assertEquals(linkedListOf("bar"), foo)
+        assertEquals(listOf("bar"), foo)
 
         assertTrue {
             foo is LinkedList<String>
@@ -77,10 +77,10 @@ class CollectionJVMTest {
 
     @test fun filterNotNullIntoLinkedListOf() {
         val data = listOf(null, "foo", null, "bar")
-        val foo = data.filterNotNullTo(linkedListOf<String>())
+        val foo = data.filterNotNullTo(LinkedList<String>())
 
         assertEquals(2, foo.size)
-        assertEquals(linkedListOf("foo", "bar"), foo)
+        assertEquals(LinkedList(listOf("foo", "bar")), foo)
 
         assertTrue {
             foo is LinkedList<String>
@@ -105,15 +105,15 @@ class CollectionJVMTest {
         val data = listOf("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, listOf(15, 19, 20, 25).last())
-        assertEquals('a', linkedListOf('a').last())
+        assertEquals('a', LinkedList(listOf('a')).last())
     }
 
     @test fun lastException() {
-        assertFails { linkedListOf<String>().last() }
+        assertFails { LinkedList<String>().last() }
     }
 
     @test fun contains() {
-        assertTrue(linkedListOf(15, 19, 20).contains(15))
+        assertTrue(LinkedList(listOf(15, 19, 20)).contains(15))
     }
 
     @test fun toArray() {
