@@ -188,7 +188,6 @@ class QuickFixRegistrar : QuickFixContributor {
         BREAK_OR_CONTINUE_IN_WHEN.registerFactory(AddLoopLabelFix)
 
         NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFix.IsExpressionFactory)
-        WRONG_NUMBER_OF_TYPE_ARGUMENTS.registerFactory(AddStarProjectionsFix.JavaClassFactory)
 
         TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.registerFactory(RemovePsiElementSimpleFix.RemoveTypeArgumentsFactory)
 

@@ -442,39 +442,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
-        @TestMetadata("idea/testData/quickfix/addStarProjections/javaClass")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class JavaClass extends AbstractQuickFixTest {
-            public void testAllFilesPresentInJavaClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/javaClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("fooOfC2.kt")
-            public void testFooOfC2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/javaClass/fooOfC2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("javaClassOfC1Runtime.kt")
-            public void testJavaClassOfC1Runtime() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/javaClass/javaClassOfC1Runtime.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("javaClassOfC2Runtime.kt")
-            public void testJavaClassOfC2Runtime() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/javaClass/javaClassOfC2Runtime.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("javaClassOfCRuntime.kt")
-            public void testJavaClassOfCRuntime() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/javaClass/javaClassOfCRuntime.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/addStarProjections/when")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

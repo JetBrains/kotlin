@@ -48,29 +48,4 @@ open class AddStarProjectionsFix private constructor(element: KtUserType,
             return AddStarProjectionsFix(unwrappedType, diagnosticWithParameters.a)
         }
     }
-
-    object JavaClassFactory : KotlinSingleIntentionActionFactory() {
-        public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val diagnosticWithParameters = Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.cast(diagnostic)
-            val size = diagnosticWithParameters.a
-            val userType = QuickFixUtil.getParentElementOfType(diagnostic, KtUserType::class.java) ?: return null
-            return object : AddStarProjectionsFix(userType, size) {
-                override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-                    // We are looking for the occurrence of Type in javaClass<Type>()
-                    return super.isAvailable(project, editor, file) && isZeroTypeArguments && isInsideJavaClassCall
-                }
-
-                private val isZeroTypeArguments: Boolean
-                    get() = element.typeArguments.isEmpty()
-
-                // Resolve is expensive so we use a heuristic here: the case is rare enough not to be annoying
-                private val isInsideJavaClassCall: Boolean
-                    get() {
-                        val call = element.parent.parent.parent.parent as? KtCallExpression
-                        val callee = call?.calleeExpression as? KtSimpleNameExpression
-                        return callee?.getReferencedName() == "javaClass"
-                    }
-            }
-        }
-    }
 }
