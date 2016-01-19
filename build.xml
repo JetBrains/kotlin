@@ -1077,4 +1077,5 @@
     <target name="build-bootstrap-artifacts" depends="dist,zip-compiler"/>
 
     <target name="build-artifacts" depends="dist,zip-compiler,kotlin-for-upsource,zip-test-data"/>
+    <!-- Dummy change to see build in TeamCity dependencies -->
 </project>
