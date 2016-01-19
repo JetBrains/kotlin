@@ -487,30 +487,35 @@ public operator fun <K, V> MutableMap<K, V>.plusAssign(map: Map<K, V>) {
 /**
  * Creates a new read-only map by removing a [key] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(key: K): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(key) }
 
 /**
  * Creates a new read-only map by removing a collection of [keys] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(keys: Iterable<K>): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(keys) }
 
 /**
  * Creates a new read-only map by removing a array of [keys] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(keys: Array<K>): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(keys) }
 
 /**
  * Creates a new read-only map by removing a sequence of [keys] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(keys: Sequence<K>): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(keys) }
 
 /**
  * Removes the given [key] from this mutable map.
  */
+@Deprecated("This operation will be removed soon, use remove(key) instead.", ReplaceWith("this.keys -= key"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(key: K) {
     remove(key)
 }
@@ -518,6 +523,7 @@ public operator fun <K, V> MutableMap<K, V>.minusAssign(key: K) {
 /**
  * Removes all the given [keys] from this mutable map.
  */
+@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Iterable<K>) {
     for (key in keys) remove(key)
 }
@@ -525,6 +531,7 @@ public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Iterable<K>) {
 /**
  * Removes all the given [keys] from this mutable map.
  */
+@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Array<K>) {
     for (key in keys) remove(key)
 }
@@ -532,6 +539,7 @@ public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Array<K>) {
 /**
  * Removes all the given [keys] from this mutable map.
  */
+@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Sequence<K>) {
     for (key in keys) remove(key)
 }

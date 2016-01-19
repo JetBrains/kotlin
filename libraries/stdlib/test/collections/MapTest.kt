@@ -357,16 +357,18 @@ class MapTest {
         assertEquals("A" to 1, original.entries.single().toPair())
     }
 
+/*
     @test fun minusAssign() = testMinusAssign {
-        it -= "B"
-        it -= "C"
+        it.keys -= "B"
+        it.keys -= "C"
     }
 
-    @test fun minusAssignList() = testMinusAssign { it -= listOf("B", "C") }
+    @test fun minusAssignList() = testMinusAssign { it.keys -= listOf("B", "C") }
 
-    @test fun minusAssignArray() = testMinusAssign { it -= arrayOf("B", "C") }
+    @test fun minusAssignArray() = testMinusAssign { it.keys -= arrayOf("B", "C") }
 
-    @test fun minusAssignSequence() = testMinusAssign { it -= sequenceOf("B", "C") }
+    @test fun minusAssignSequence() = testMinusAssign { it.keys -= sequenceOf("B", "C") }
+*/
 
 
     fun testIdempotent(operation: (Map<String, Int>) -> Map<String, Int>) {
@@ -383,16 +385,16 @@ class MapTest {
 
 
     @test fun plusEmptyList() = testIdempotent { it + listOf() }
-    @test fun minusEmptyList() = testIdempotent { it - listOf() }
+//    @test fun minusEmptyList() = testIdempotent { it - listOf() }
 
     @test fun plusEmptySet() = testIdempotent { it + setOf() }
-    @test fun minusEmptySet() = testIdempotent { it - setOf() }
+//    @test fun minusEmptySet() = testIdempotent { it - setOf() }
 
     @test fun plusAssignEmptyList() = testIdempotentAssign { it += listOf() }
-    @test fun minusAssignEmptyList() = testIdempotentAssign { it -= listOf() }
+//    @test fun minusAssignEmptyList() = testIdempotentAssign { it -= listOf() }
 
     @test fun plusAssignEmptySet() = testIdempotentAssign { it += setOf() }
-    @test fun minusAssignEmptySet() = testIdempotentAssign { it -= setOf() }
+//    @test fun minusAssignEmptySet() = testIdempotentAssign { it -= setOf() }
 
 
 }
