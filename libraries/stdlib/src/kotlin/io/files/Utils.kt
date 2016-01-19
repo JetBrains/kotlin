@@ -245,7 +245,7 @@ public fun File.copyRecursively(dst: File,
     }
     try {
         // We cannot break for loop from inside a lambda, so we have to use an exception here
-        for (src in walkTopDown().fail { f, e -> if (onError(f, e) == OnErrorAction.TERMINATE) throw TerminateException(f) }) {
+        for (src in walkTopDown().onFail { f, e -> if (onError(f, e) == OnErrorAction.TERMINATE) throw TerminateException(f) }) {
             if (!src.exists()) {
                 if (onError(src, NoSuchFileException(file = src, reason = "The source file doesn't exist")) ==
                         OnErrorAction.TERMINATE)
