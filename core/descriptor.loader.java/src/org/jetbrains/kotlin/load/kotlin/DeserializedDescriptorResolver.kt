@@ -14,114 +14,93 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin;
+package org.jetbrains.kotlin.load.kotlin
 
-import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
-import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.serialization.ClassData;
-import org.jetbrains.kotlin.serialization.ClassDataWithSource;
-import org.jetbrains.kotlin.serialization.PackageData;
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents;
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.ClassDataWithSource
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import java.util.*
+import javax.inject.Inject
 
-import javax.inject.Inject;
-import java.util.*;
-
-import static kotlin.collections.SetsKt.setOf;
-import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
-
-public final class DeserializedDescriptorResolver {
-    private final ErrorReporter errorReporter;
-    private DeserializationComponents components;
-
-    public static final Set<KotlinClassHeader.Kind> KOTLIN_CLASS = setOf(CLASS);
-    public static final Set<KotlinClassHeader.Kind> KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART = setOf(FILE_FACADE, MULTIFILE_CLASS_PART);
-
-    public DeserializedDescriptorResolver(@NotNull ErrorReporter errorReporter) {
-        this.errorReporter = errorReporter;
-    }
+class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
+    private var components: DeserializationComponents? = null
 
     // component dependency cycle
     @Inject
-    public void setComponents(@NotNull DeserializationComponentsForJava context) {
-        this.components = context.getComponents();
+    fun setComponents(context: DeserializationComponentsForJava) {
+        this.components = context.components
     }
 
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass, KOTLIN_CLASS);
+    fun resolveClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor? {
+        val data = readData(kotlinClass, KOTLIN_CLASS)
         if (data != null) {
-            String[] strings = kotlinClass.getClassHeader().getStrings();
-            assert strings != null : "String table not found in " + kotlinClass;
-            ClassData classData = JvmProtoBufUtil.readClassDataFrom(data, strings);
-            KotlinJvmBinarySourceElement sourceElement = new KotlinJvmBinarySourceElement(kotlinClass);
-            return components.getClassDeserializer().deserializeClass(
-                    kotlinClass.getClassId(),
-                    new ClassDataWithSource(classData, sourceElement)
-            );
+            val strings = kotlinClass.classHeader.strings
+            assert(strings != null) { "String table not found in " + kotlinClass }
+            val classData = JvmProtoBufUtil.readClassDataFrom(data, strings)
+            val sourceElement = KotlinJvmBinarySourceElement(kotlinClass)
+            return components!!.classDeserializer.deserializeClass(
+                    kotlinClass.classId,
+                    ClassDataWithSource(classData, sourceElement))
         }
-        return null;
+        return null
     }
 
-    @Nullable
-    public MemberScope createKotlinPackagePartScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART);
+    fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
+        val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART)
         if (data != null) {
-            String[] strings = kotlinClass.getClassHeader().getStrings();
-            assert strings != null : "String table not found in " + kotlinClass;
-            PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
-            JvmPackagePartSource source = new JvmPackagePartSource(kotlinClass.getClassId());
-            return new DeserializedPackageMemberScope(
-                    descriptor, packageData.getPackageProto(), packageData.getNameResolver(), source, components,
-                    new Function0<Collection<Name>>() {
-                        @Override
-                        public Collection<Name> invoke() {
-                            // All classes are included into Java scope
-                            return Collections.emptyList();
-                        }
-                    }
-            );
+            val strings = kotlinClass.classHeader.strings
+            assert(strings != null) { "String table not found in " + kotlinClass }
+            val packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+            val source = JvmPackagePartSource(kotlinClass.classId)
+            return DeserializedPackageMemberScope(
+                    descriptor, packageData.packageProto, packageData.nameResolver, source, components
+            ) {
+                // All classes are included into Java scope
+                emptyList()
+            }
         }
-        return null;
+        return null
     }
 
-    @NotNull
-    public MemberScope createKotlinPackageScope(
-            @NotNull PackageFragmentDescriptor descriptor,
-            @NotNull List<KotlinJvmBinaryClass> packageParts
-    ) {
-        List<MemberScope> list = new ArrayList<MemberScope>(packageParts.size());
-        for (KotlinJvmBinaryClass callable : packageParts) {
-            MemberScope scope = createKotlinPackagePartScope(descriptor, callable);
+    fun createKotlinPackageScope(
+            descriptor: PackageFragmentDescriptor,
+            packageParts: List<KotlinJvmBinaryClass>): MemberScope {
+        val list = ArrayList<MemberScope>(packageParts.size)
+        for (callable in packageParts) {
+            val scope = createKotlinPackagePartScope(descriptor, callable)
             if (scope != null) {
-                list.add(scope);
+                list.add(scope)
             }
         }
         if (list.isEmpty()) {
-            return MemberScope.Empty.INSTANCE;
+            return MemberScope.Empty
         }
-        return new ChainedMemberScope("Member scope for union of package parts data", list);
+        return ChainedMemberScope("Member scope for union of package parts data", list)
     }
 
-    @Nullable
-    public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull Set<KotlinClassHeader.Kind> expectedKinds) {
-        KotlinClassHeader header = kotlinClass.getClassHeader();
-        if (!header.getMetadataVersion().isCompatible()) {
-            errorReporter.reportIncompatibleMetadataVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.getMetadataVersion());
+    fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
+        val header = kotlinClass.classHeader
+        if (!header.metadataVersion.isCompatible()) {
+            errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
         }
-        else if (expectedKinds.contains(header.getKind())) {
-            return header.getData();
+        else if (expectedKinds.contains(header.kind)) {
+            return header.data
         }
 
-        return null;
+        return null
+    }
+
+    companion object {
+
+        val KOTLIN_CLASS: Set<KotlinClassHeader.Kind> = setOf<Kind>(CLASS)
+        val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART: Set<KotlinClassHeader.Kind> = setOf<Kind>(FILE_FACADE, MULTIFILE_CLASS_PART)
     }
 }
