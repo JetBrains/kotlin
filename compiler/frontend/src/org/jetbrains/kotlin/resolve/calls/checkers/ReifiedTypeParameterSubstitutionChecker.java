@@ -53,6 +53,10 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
                     context.trace.report(
                             Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getElementToReport(context, parameter.getIndex()), argument));
                 }
+                else if (TypeUtilsKt.unsafeAsReifiedArgument(argument)) {
+                    context.trace.report(
+                            Errors.REIFIED_TYPE_UNSAFE_SUBSTITUTION.on(getElementToReport(context, parameter.getIndex()), argument));
+                }
             }
         }
     }

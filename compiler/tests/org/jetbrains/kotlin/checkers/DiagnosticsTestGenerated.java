@@ -7382,6 +7382,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("GenericAsReifiedArgument.kt")
+                public void testGenericAsReifiedArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/GenericAsReifiedArgument.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("InConstructor.kt")
                 public void testInConstructor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified/InConstructor.kt");
