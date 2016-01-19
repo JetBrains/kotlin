@@ -46,66 +46,10 @@ public fun createTempFile(prefix: String = "tmp", suffix: String? = null, direct
 }
 
 /**
- * Returns this if this file is a directory, or the parent if it is a file inside a directory.
- */
-@Deprecated("This property has unclear semantics and will be removed soon.")
-public val File.directory: File
-    get() = if (isDirectory) this else parentFile!!
-
-/**
- * Returns parent of this abstract path name, or `null` if it has no parent.
- */
-@Deprecated("Use 'parentFile' property instead.", ReplaceWith("parentFile"), DeprecationLevel.ERROR)
-public val File.parent: File?
-    get() = parentFile
-
-/**
  * Returns the extension of this file (not including the dot), or an empty string if it doesn't have one.
  */
 public val File.extension: String
     get() = name.substringAfterLast('.', "")
-
-/**
- * Replaces all separators in the string used to separate directories with system ones and returns the resulting string.
- *
- * @return the pathname with system separators.
- */
-@Deprecated("Use File.path instead", ReplaceWith("File(this).path", "java.io.File"))
-public fun String.separatorsToSystem(): String {
-    val otherSep = if (File.separator == "/") "\\" else "/"
-    return replace(otherSep, File.separator)
-}
-
-/**
- * Replaces all path separators in the string with system ones and returns the resulting string.
- *
- * @return the pathname with system separators.
- */
-@Deprecated("This function is deprecated")
-public fun String.pathSeparatorsToSystem(): String {
-    val otherSep = if (File.pathSeparator == ":") ";" else ":"
-    return replace(otherSep, File.pathSeparator)
-}
-
-/**
- * Replaces path and directories separators with corresponding system ones and returns the resulting string.
- *
- * @return the pathname with system separators.
- */
-@Deprecated("This function is deprecated")
-public fun String.allSeparatorsToSystem(): String {
-    return separatorsToSystem().pathSeparatorsToSystem()
-}
-
-/**
- * Returns a pathname of this file with all path separators replaced with File.pathSeparator.
- *
- * @return the pathname with system separators.
- */
-@Deprecated("File has already system separators.")
-public fun File.separatorsToSystem(): String {
-    return toString().separatorsToSystem()
-}
 
 /**
  * Returns [path] of this File using the invariant separator '/' to
@@ -119,20 +63,6 @@ public val File.invariantSeparatorsPath: String
  */
 public val File.nameWithoutExtension: String
     get() = name.substringBeforeLast(".")
-
-/**
- * Calculates the relative path for this file from [base] file.
- * Note that the [base] file is treated as a directory.
- * If this file matches the [base] file, then an empty string will be returned.
- *
- * @return relative path from [base] to this.
-*
- * @throws IllegalArgumentException if this and base paths have different roots.
- */
-@Deprecated("This function will change return type to File soon. Use toRelativeString instead.", ReplaceWith("toRelativeString(base)"))
-public fun File.relativeTo(base: File): String
-        = toRelativeString(base)
-
 
 /**
  * Calculates the relative path for this file from [base] file.
@@ -155,8 +85,10 @@ public fun File.toRelativeString(base: File): String
  *
  * @throws IllegalArgumentException if this and base paths have different roots.
  */
-@Deprecated("This function will be renamed to relativeTo soon.")
-public fun File.relativeToFile(base: File): File = File(this.relativeTo(base))
+public fun File.relativeTo(base: File): File = File(this.toRelativeString(base))
+
+@Deprecated("Use relativeTo instead.", ReplaceWith("this.relativeTo(base)"), level = DeprecationLevel.WARNING)
+public fun File.relativeToFile(base: File): File = File(this.toRelativeString(base))
 
 
 /**
@@ -225,25 +157,6 @@ private fun File.toRelativeStringOrNull(base: File): String? {
     return res.toString()
 }
 
-/**
- * Calculates the relative path for this file from [descendant] file.
- * Note that the [descendant] file is treated as a directory.
- * If this file matches the [descendant] directory or does not belong to it,
- * then an empty string will be returned.
- */
-@Deprecated("Use relativeTo() function instead")
-public fun File.relativePath(descendant: File): String {
-    val prefix = directory.canonicalPath
-    val answer = descendant.canonicalPath
-    return if (answer.startsWith(prefix)) {
-        val prefixSize = prefix.length
-        if (answer.length > prefixSize) {
-            answer.substring(prefixSize + 1)
-        } else ""
-    } else {
-        answer
-    }
-}
 
 /**
  * Copies this file to the given output [dst], returning the number of bytes copied.
@@ -338,7 +251,7 @@ public fun File.copyRecursively(dst: File,
                         OnErrorAction.TERMINATE)
                     return false
             } else {
-                val relPath = src.relativeTo(this)
+                val relPath = src.toRelativeString(this)
                 val dstFile = File(dst, relPath)
                 if (dstFile.exists() && !(src.isDirectory && dstFile.isDirectory)) {
                     if (onError(dstFile, FileAlreadyExistsException(file = src,
@@ -368,13 +281,6 @@ public fun File.copyRecursively(dst: File,
  * @return `true` if the file or directory is successfully deleted, `false` otherwise.
  */
 public fun File.deleteRecursively(): Boolean = walkBottomUp().fold(true, { res, it -> (it.delete() || !it.exists()) && res })
-
-/**
- * Returns an array of files and directories in the directory that match the specified [filter]
- * or `null` if this file does not denote a directory.
- */
-@Deprecated("Provided for binary compatiblity", level = DeprecationLevel.HIDDEN)
-public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listFiles(FileFilter(filter))
 
 /**
  * Determines whether this file belongs to the same root as [other]

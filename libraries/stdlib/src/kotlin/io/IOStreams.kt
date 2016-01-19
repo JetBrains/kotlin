@@ -6,9 +6,6 @@ import java.io.*
 import java.nio.charset.Charset
 import java.util.NoSuchElementException
 
-@Deprecated("It's not recommended to iterate through input stream of bytes unless it's buffered. Use buffered() extension on stream to make it buffered.", ReplaceWith("this.buffered().iterator()"))
-public operator fun InputStream.iterator(): ByteIterator = buffered().iterator()
-
 /** Returns an [Iterator] of bytes read from this input stream. */
 public operator fun BufferedInputStream.iterator(): ByteIterator =
         object : ByteIterator() {

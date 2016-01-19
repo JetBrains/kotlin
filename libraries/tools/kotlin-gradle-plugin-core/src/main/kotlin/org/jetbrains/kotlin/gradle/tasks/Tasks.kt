@@ -268,7 +268,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
             get() = kotlinOptions.outputFile
 
     public val sourceMapDestinationDir: File
-            get() = File(outputFile).directory
+            get() = File(outputFile).let { if (it.isDirectory) it else it.parentFile!! }
 
     public val sourceMap: Boolean
             get() = kotlinOptions.sourceMap
@@ -298,7 +298,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
             throw GradleException("$name.kotlinOptions.outputFile should be specified.")
         }
 
-        val outputDir = File(args.outputFile).directory
+        val outputDir = File(args.outputFile).let { if (it.isDirectory) it else it.parentFile!! }
         if (!outputDir.exists()) {
             if (!outputDir.mkdirs()) {
                 throw GradleException("Failed to create output directory ${outputDir} or one of its ancestors")

@@ -188,14 +188,14 @@ class FileTreeWalkTest {
     private fun compareWalkResults(expected: Set<String>, basedir: File, filter: (File) -> Boolean) {
         val namesTopDown = HashSet<String>()
         for (file in basedir.walkTopDown().treeFilter { filter(it) }) {
-            val name = file.relativeTo(basedir)
+            val name = file.toRelativeString(basedir)
             assertFalse(namesTopDown.contains(name), "$name is visited twice")
             namesTopDown.add(name)
         }
         assertEquals(expected, namesTopDown, "Top-down walk results differ")
         val namesBottomUp = HashSet<String>()
         for (file in basedir.walkBottomUp().treeFilter { filter(it) }) {
-            val name = file.relativeTo(basedir)
+            val name = file.toRelativeString(basedir)
             assertFalse(namesBottomUp.contains(name), "$name is visited twice")
             namesBottomUp.add(name)
         }

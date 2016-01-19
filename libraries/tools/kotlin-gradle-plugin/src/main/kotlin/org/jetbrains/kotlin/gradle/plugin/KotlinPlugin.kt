@@ -199,7 +199,7 @@ class Kotlin2JsSourceSetProcessor(
 
     val defaultKotlinDestinationDir = File(project.buildDir, "kotlin2js/${sourceSetName}")
     private fun kotlinTaskDestinationDir(): File? = kotlinTask.property("kotlinDestinationDir") as File?
-    private fun kotlinJsDestinationDir(): File? = (kotlinTask.property("outputFile") as String).let { File(it).directory }
+    private fun kotlinJsDestinationDir(): File? = (kotlinTask.property("outputFile") as String).let { File(it) }.let { if (it.isDirectory) it else it.parentFile }
 
     private fun kotlinSourcePathsForSourceMap() = sourceSet.getAllSource()
             .map { it.path }
