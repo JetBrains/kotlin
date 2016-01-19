@@ -291,9 +291,8 @@ object KotlinToJVMBytecodeCompiler {
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
         val result = analyzerWithCompilerReport.analysisResult
-        assert(result != null) { "AnalysisResult should be non-null, compiling: " + environment.getSourceFiles() }
 
-        val context = CompilerPluginContext(environment.project, result!!.bindingContext,
+        val context = CompilerPluginContext(environment.project, result.bindingContext,
                                             environment.getSourceFiles())
         for (plugin in environment.configuration.getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
             plugin.processFiles(context)

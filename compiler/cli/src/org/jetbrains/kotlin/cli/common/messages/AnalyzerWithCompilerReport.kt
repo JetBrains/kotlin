@@ -45,12 +45,10 @@ import java.util.*
 class AnalyzerWithCompilerReport(collector: MessageCollector) {
     private val messageCollector: MessageSeverityCollector = MessageSeverityCollector(collector)
 
-    var analysisResult: AnalysisResult? = null
-        private set
+    lateinit var analysisResult: AnalysisResult
 
     private fun reportIncompleteHierarchies() {
-        assert(analysisResult != null)
-        val bindingContext = analysisResult!!.bindingContext
+        val bindingContext = analysisResult.bindingContext
         val classes = bindingContext.getKeys(TraceBasedErrorReporter.INCOMPLETE_HIERARCHY)
         if (!classes.isEmpty()) {
             val message = StringBuilder("Supertypes of the following classes cannot be resolved. " + "Please make sure you have the required dependencies in the classpath:\n")
@@ -65,8 +63,7 @@ class AnalyzerWithCompilerReport(collector: MessageCollector) {
     }
 
     private fun reportAlternativeSignatureErrors() {
-        assert(analysisResult != null)
-        val bc = analysisResult!!.bindingContext
+        val bc = analysisResult.bindingContext
         val descriptorsWithErrors = bc.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS)
         if (!descriptorsWithErrors.isEmpty()) {
             val message = StringBuilder("The following Java entities have annotations with wrong Kotlin signatures:\n")
@@ -90,8 +87,7 @@ class AnalyzerWithCompilerReport(collector: MessageCollector) {
 
     private val abiVersionErrors: List<IncompatibleVersionErrorData>
         get() {
-            assert(analysisResult != null)
-            val bindingContext = analysisResult!!.bindingContext
+            val bindingContext = analysisResult.bindingContext
 
             val errorClasses = bindingContext.getKeys(TraceBasedErrorReporter.METADATA_VERSION_ERRORS)
             val result = ArrayList<IncompatibleVersionErrorData>(errorClasses.size)
@@ -120,11 +116,11 @@ class AnalyzerWithCompilerReport(collector: MessageCollector) {
         return messageCollector.anyReported(CompilerMessageSeverity.ERROR)
     }
 
-    fun analyzeAndReport(files: Collection<KtFile>, analyzer: Function0<AnalysisResult>) {
+    fun analyzeAndReport(files: Collection<KtFile>, analyzer: () -> AnalysisResult) {
         analysisResult = analyzer.invoke()
         reportSyntaxErrors(files)
         val abiVersionErrors = abiVersionErrors
-        reportDiagnostics(analysisResult!!.bindingContext.diagnostics, messageCollector, !abiVersionErrors.isEmpty())
+        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, !abiVersionErrors.isEmpty())
         if (hasErrors()) {
             reportMetadataVersionErrors(abiVersionErrors)
         }
