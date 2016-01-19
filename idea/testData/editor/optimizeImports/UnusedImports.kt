@@ -8,7 +8,7 @@ import kotlin.test.asserter
 import kotlin.test.Asserter
 import kotlin.Charsets
 import kotlin.Assertions
-import kotlin.util.measureTimeMillis
+import kotlin.system.measureTimeMillis
 
 class Action {
     fun test() {

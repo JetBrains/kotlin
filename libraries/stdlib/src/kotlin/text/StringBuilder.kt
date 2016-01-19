@@ -4,12 +4,6 @@
 package kotlin.text
 
 /**
- * Builds newly created StringBuilder using provided body.
- */
-@Deprecated("Use StringBuilder().apply { body } or use buildString { body } if you need String as a result.", ReplaceWith("StringBuilder().apply(body)"))
-public inline fun StringBuilder(body: StringBuilder.() -> Unit): StringBuilder = StringBuilder().apply(body)
-
-/**
  * Builds new string by populating newly created [StringBuilder] using provided [builderAction] and then converting it to [String].
  */
 public inline fun buildString(builderAction: StringBuilder.() -> Unit): String = StringBuilder().apply(builderAction).toString()

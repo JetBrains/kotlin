@@ -111,17 +111,11 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
     /** The set of options that were used to create this regular expression.  */
     public val options: Set<RegexOption> = fromInt(nativePattern.flags())
 
-    @Deprecated("To get the Matcher from java.util.regex.Pattern use toPattern to convert string to Pattern, or migrate to Regex API", ReplaceWith("toPattern().matcher(input)"), DeprecationLevel.ERROR)
-    public fun matcher(input: CharSequence): Matcher = nativePattern.matcher(input)
-
     /** Indicates whether the regular expression matches the entire [input]. */
     public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
     public fun containsMatchIn(input: CharSequence): Boolean = nativePattern.matcher(input).find()
-
-    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"), DeprecationLevel.ERROR)
-    public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
 
     /**
      * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
@@ -131,16 +125,10 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      */
     public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
 
-    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"), DeprecationLevel.ERROR)
-    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = find(input, startIndex)
-
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
     public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
-
-    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"), DeprecationLevel.ERROR)
-    public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.

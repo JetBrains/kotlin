@@ -2,8 +2,6 @@ package foo
 
 import java.util.*;
 
-import kotlin.util.*
-
 fun box() : String {
     val a = ArrayList<Int>();
     a.add(1)

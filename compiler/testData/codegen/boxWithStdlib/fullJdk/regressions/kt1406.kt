@@ -3,8 +3,6 @@ package pack
 import java.util.ArrayList
 import java.util.regex.Pattern
 
-import kotlin.util.*
-
 class C{
     public fun foo(){
         val items : Collection<Item> = java.util.Collections.singleton(Item())!!

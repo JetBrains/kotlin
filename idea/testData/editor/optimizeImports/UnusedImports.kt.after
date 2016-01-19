@@ -1,6 +1,6 @@
 import java.util.ArrayList
 import java.util.HashMap
-import kotlin.util.measureTimeMillis
+import kotlin.system.measureTimeMillis
 
 class Action {
     fun test() {

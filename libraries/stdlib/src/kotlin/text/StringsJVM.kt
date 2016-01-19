@@ -291,17 +291,6 @@ public fun String.contentEquals(charSequence: CharSequence): Boolean = (this as 
 public fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as java.lang.String).contentEquals(stringBuilder)
 
 /**
- * Copies the characters from a substring of this string into the specified character array.
- * @param srcBegin the start offset (inclusive) of the substring to copy.
- * @param srcEnd the end offset (exclusive) of the substring to copy.
- * @param dst the array to copy to.
- * @param dstBegin the position in the array to copy to.
- */
-@Deprecated("Use toCharArray() instead.", ReplaceWith("toCharArray(dst, dstBegin, srcBegin, srcEnd)"))
-public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
-
-
-/**
  * Returns a canonical representation for this string object.
  */
 public fun String.intern(): String = (this as java.lang.String).intern()
@@ -393,21 +382,6 @@ public fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
-
-/**
- * Returns the list of all characters in this string.
- */
-@Deprecated("Use toList() instead.", ReplaceWith("toList()"))
-public fun String.toCharList(): List<Char> = toCharArray().toList()
-
-/**
- * Returns a subsequence of this char sequence.
- *
- * @param start the start index (inclusive).
- * @param end the end index (exclusive).
- */
-@Deprecated("Use subSequence(start, end) instead.", ReplaceWith("subSequence(start, end)"))
-public operator fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
