@@ -750,8 +750,13 @@ private fun CompilationResult.doProcessChangesUsingLookups(
     KotlinBuilder.LOG.debug("Start processing changes")
 
     for (change in changes) {
+        KotlinBuilder.LOG.debug("Process $change")
+
         if (change is ChangeInfo.SignatureChanged) {
             for (classFqName in withSubtypes(change.fqName, allCaches)) {
+
+                assert(!classFqName.isRoot) { "classFqName is root when processing $change" }
+
                 val scope = classFqName.parent().asString()
                 val name = classFqName.shortName().identifier
                 dirtyLookupSymbols.add(LookupSymbol(name, scope))
