@@ -18,8 +18,8 @@ package kotlin
 
 /**
  * Represents an array (specifically, a Java array when targeting the JVM platform).
- * Array instances can be created using the [array] and [arrayOfNulls] standard
- * library functions.
+ * Array instances can be created using the [arrayOf], [arrayOfNulls] and [emptyArray]
+ * standard library functions.
  * See [Kotlin language documentation](http://kotlinlang.org/docs/reference/basic-types.html#arrays)
  * for more information on arrays.
  */
