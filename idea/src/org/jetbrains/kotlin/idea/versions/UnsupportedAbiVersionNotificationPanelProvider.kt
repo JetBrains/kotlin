@@ -23,6 +23,7 @@ import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.DumbService
@@ -41,7 +42,6 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.configuration.isModuleConfigured
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import java.text.MessageFormat
@@ -66,7 +66,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         })
     }
 
-    private fun doCreate(badRoots: Collection<VirtualFile>): EditorNotificationPanel {
+    private fun doCreate(module: Module, badRoots: Collection<VirtualFile>): EditorNotificationPanel {
         val answer = ErrorNotificationPanel()
 
         val kotlinLibraries = findAllUsedLibraries(project).keySet()
@@ -89,7 +89,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             answer.setText(text)
             answer.createActionLabel(actionLabelText) { updateLibraries(project, badRuntimeLibraries) }
             if (otherBadRootsCount > 0) {
-                createShowPathsActionLabel(answer, "Show all")
+                createShowPathsActionLabel(module, answer, "Show all")
             }
         }
         else if (badRoots.size == 1) {
@@ -101,16 +101,16 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         }
         else {
             answer.setText("Some Kotlin libraries attached to this project have unsupported format. Please update the libraries or the plugin")
-            createShowPathsActionLabel(answer, "Show paths")
+            createShowPathsActionLabel(module, answer, "Show paths")
         }
         return answer
     }
 
-    private fun createShowPathsActionLabel(answer: EditorNotificationPanel, labelText: String) {
+    private fun createShowPathsActionLabel(module: Module, answer: EditorNotificationPanel, labelText: String) {
         val label: Ref<HyperlinkLabel> = Ref.create()
         val action = Runnable {
             DumbService.getInstance(project).tryRunReadActionInSmartMode({
-                val badRoots = collectBadRoots(project)
+                val badRoots = collectBadRoots(module)
                 assert(!badRoots.isEmpty()) { "This action should only be called when bad roots are present" }
 
                 val listPopupModel = LibraryRootsPopupModel("Unsupported format", project, badRoots)
@@ -135,15 +135,27 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
             val module = ModuleUtilCore.findModuleForFile(file, project) ?: return null
 
-            if (!isModuleConfigured(module)) return null
-
-            return checkAndCreate(project)
+            return checkAndCreate(module)
         }
         catch (e: ProcessCanceledException) {
             // Ignore
         }
         catch (e: IndexNotReadyException) {
             DumbService.getInstance(project).runWhenSmart(updateNotifications)
+        }
+
+        return null
+    }
+
+    fun checkAndCreate(module: Module): EditorNotificationPanel? {
+        val state = ServiceManager.getService(project, SuppressNotificationState::class.java).state
+        if (state != null && state.isSuppressed) {
+            return null
+        }
+
+        val badRoots = collectBadRoots(module)
+        if (!badRoots.isEmpty()) {
+            return doCreate(module, badRoots)
         }
 
         return null
@@ -191,27 +203,13 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
     companion object {
         private val KEY = Key.create<EditorNotificationPanel>("unsupported.abi.version")
 
-        fun checkAndCreate(project: Project): EditorNotificationPanel? {
-            val state = ServiceManager.getService(project, SuppressNotificationState::class.java).state
-            if (state != null && state.isSuppressed) {
-                return null
-            }
-
-            val badRoots = collectBadRoots(project)
-            if (!badRoots.isEmpty()) {
-                return UnsupportedAbiVersionNotificationPanelProvider(project).doCreate(badRoots)
-            }
-
-            return null
-        }
-
         private fun navigateToLibraryRoot(project: Project, root: VirtualFile) {
             OpenFileDescriptor(project, root).navigate(true)
         }
 
-        private fun collectBadRoots(project: Project): Collection<VirtualFile> {
-            val badJVMRoots = getLibraryRootsWithAbiIncompatibleKotlinClasses(project)
-            val badJSRoots = getLibraryRootsWithAbiIncompatibleForKotlinJs(project)
+        private fun collectBadRoots(module: Module): Collection<VirtualFile> {
+            val badJVMRoots = getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
+            val badJSRoots = getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
 
             if (badJVMRoots.isEmpty() && badJSRoots.isEmpty()) return emptyList()
 

@@ -20,6 +20,7 @@ import com.google.common.collect.Sets
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -31,13 +32,10 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ProjectScope
-import com.intellij.util.CommonProcessors
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.PathUtil.getLocalPath
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
-import com.intellij.util.indexing.ID
 import com.intellij.util.indexing.ScalarIndexExtension
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
@@ -46,25 +44,21 @@ import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.IOException
-import java.util.*
 
-fun getLibraryRootsWithAbiIncompatibleKotlinClasses(project: Project): Collection<VirtualFile> {
+fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<VirtualFile> {
     return getLibraryRootsWithAbiIncompatibleVersion(
-            project, KotlinMetadataVersionIndex,
-            { module -> ProjectStructureUtil.isJavaKotlinModule(module) },
+            module, KotlinMetadataVersionIndex,
             { version -> !version.isCompatible() })
 }
 
-fun getLibraryRootsWithAbiIncompatibleForKotlinJs(project: Project): Collection<VirtualFile> {
+fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<VirtualFile> {
     return getLibraryRootsWithAbiIncompatibleVersion(
-            project, KotlinJavaScriptAbiVersionIndex,
-            { module -> ProjectStructureUtil.isJsKotlinModule(module) },
+            module, KotlinJavaScriptAbiVersionIndex,
             { version ->  !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.minor) })       // TODO: support major.minor.patch version in JS metadata
 }
 
@@ -217,25 +211,23 @@ internal fun replaceFile(updatedFile: File, replacedJarFile: VirtualFile) {
 }
 
 private fun getLibraryRootsWithAbiIncompatibleVersion(
-        project: Project,
+        module: Module,
         index: ScalarIndexExtension<BinaryVersion>,
-        checkModule: (Module) -> Boolean,
         checkVersion: (BinaryVersion) -> Boolean): Collection<VirtualFile> {
     val id = index.name
 
-    val modules = ModuleManager.getInstance(project).modules
+    val moduleWithAllDependencies = setOf(module) + ModuleUtil.getAllDependentModules(module)
+    val moduleWithAllDependentLibraries = GlobalSearchScope.union(
+            moduleWithAllDependencies.map { it.moduleWithLibrariesScope }.toTypedArray())
 
-    val modulesToCheck = modules.filter(checkModule)
-    if (modulesToCheck.isEmpty()) return emptyList()
-
-    val versions = collectAllKeys(id, modulesToCheck)
-    val badVersions = versions.filter(checkVersion).toHashSet()
+    val allVersions = FileBasedIndex.getInstance().getAllKeys(id, module.project)
+    val badVersions = allVersions.filter(checkVersion).toHashSet()
     val badRoots = Sets.newHashSet<VirtualFile>()
-    val fileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+    val fileIndex = ProjectFileIndex.SERVICE.getInstance(module.project)
 
     for (version in badVersions) {
         val indexedFiles = FileBasedIndex.getInstance().getContainingFiles(
-                id, version, ProjectScope.getLibrariesScope(project))
+                id, version, moduleWithAllDependentLibraries)
 
         for (indexedFile in indexedFiles) {
             val libraryRoot = fileIndex.getClassRootForFile(indexedFile)
@@ -245,17 +237,6 @@ private fun getLibraryRootsWithAbiIncompatibleVersion(
     }
 
     return badRoots
-}
-
-private fun <T> collectAllKeys(id: ID<T, Void>, modules: List<Module>): Collection<T> {
-    val allKeys = HashSet<T>()
-
-    for (module in modules) {
-        val scope = GlobalSearchScope.moduleWithLibrariesScope(module)
-        FileBasedIndex.getInstance().processAllKeys(id, CommonProcessors.CollectProcessor(allKeys), scope, null)
-    }
-
-    return allKeys
 }
 
 fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
