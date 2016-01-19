@@ -181,7 +181,7 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
  * @param length the number of bytes to be converted.
  * @param charsetName the name of the character set to use.
  */
-@Deprecated("Use String(bytes, offset, length, Charset) instead.", ReplaceWith("String(bytes, offset, length, charset(charsetName))"))
+@Deprecated("Use String(bytes, offset, length, Charset) instead.", ReplaceWith("String(bytes, offset, length, charset(charsetName))"), level = DeprecationLevel.ERROR)
 public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: String): String = java.lang.String(bytes, offset, length, charsetName) as String
 
 /**
@@ -199,7 +199,7 @@ public fun String(bytes: ByteArray, offset: Int, length: Int, charset: Charset):
  * Converts the data from the specified array of bytes to characters using the specified character set
  * and returns the conversion result as a string.
  */
-@Deprecated("Use String(bytes, Charset) instead.", ReplaceWith("String(bytes, charset(charsetName))"))
+@Deprecated("Use String(bytes, Charset) instead.", ReplaceWith("String(bytes, charset(charsetName))"), level = DeprecationLevel.ERROR)
 public fun String(bytes: ByteArray, charsetName: String): String = java.lang.String(bytes, charsetName) as String
 
 /**
@@ -412,7 +412,7 @@ public operator fun CharSequence.get(start: Int, end: Int): CharSequence = subSe
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
  */
-@Deprecated("Use String.toByteArray(Charset) instead.", ReplaceWith("this.toByteArray(charset(charset))"))
+@Deprecated("Use String.toByteArray(Charset) instead.", ReplaceWith("this.toByteArray(charset(charset))"), level = DeprecationLevel.ERROR)
 public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 
 /**

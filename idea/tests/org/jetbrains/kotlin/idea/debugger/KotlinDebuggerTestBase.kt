@@ -406,7 +406,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val sourceFiles = runReadAction {
             FilenameIndex.getAllFilesByExt(project, "kt").filter {
                 it.name.contains(fileName) &&
-                it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
+                it.contentsToByteArray().toString(Charsets.UTF_8).contains(lineMarker)
             }
         }
 

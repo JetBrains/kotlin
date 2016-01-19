@@ -352,19 +352,19 @@ class FilesTest {
     @test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
-        srcFile.writeText("Hello, World!", "UTF8")
+        srcFile.writeText("Hello, World!")
         assertFailsWith(FileAlreadyExistsException::class) {
             srcFile.copyTo(dstFile)
         }
 
         var len = srcFile.copyTo(dstFile, overwrite = true)
         assertEquals(13L, len)
-        assertEquals(srcFile.readText(), dstFile.readText("UTF8"))
+        assertEquals(srcFile.readText(), dstFile.readText(Charsets.UTF_8))
 
         assertTrue(dstFile.delete())
         len = srcFile.copyTo(dstFile)
         assertEquals(13L, len)
-        assertEquals(srcFile.readText("UTF8"), dstFile.readText())
+        assertEquals(srcFile.readText(Charsets.UTF_8), dstFile.readText())
 
         assertTrue(dstFile.delete())
         dstFile.mkdir()
@@ -395,7 +395,7 @@ class FilesTest {
         val srcFile = createTempFile()
         val dstFile = createTempFile(directory = currentDir)
         try {
-            srcFile.writeText("Hello, World!", "UTF8")
+            srcFile.writeText("Hello, World!", Charsets.UTF_8)
             dstFile.delete()
 
             val dstRelative = File(dstFile.name)
