@@ -29,6 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope.sourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -362,10 +364,24 @@ class KtFileClassProviderImpl(val lightClassGenerationSupport: LightClassGenerat
         file.declarations.filterIsInstance<KtClassOrObject>().map { lightClassGenerationSupport.getPsiClass(it) }.filterNotNullTo(result)
 
         val moduleInfo = file.getModuleInfo()
+        val jvmClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
         val fileClassFqName = file.javaFileFacadeFqName
-        lightClassGenerationSupport.getFacadeClasses(fileClassFqName, moduleInfo.contentScope()).filterTo(result) {
+
+        val facadeClasses = when {
+            jvmClassInfo.withJvmMultifileClass ->
+                lightClassGenerationSupport.getFacadeClasses(fileClassFqName, moduleInfo.contentScope())
+
+            PackagePartClassUtils.fileHasTopLevelCallables(file) ->
+                (lightClassGenerationSupport as IDELightClassGenerationSupport).createLightClassForFileFacade(
+                        fileClassFqName, listOf(file), moduleInfo)
+
+            else -> emptyList<PsiClass>()
+        }
+
+        facadeClasses.filterTo(result) {
             it is KtLightClassForFacade && file in it.files
         }
+
         return result.toTypedArray()
     }
 }

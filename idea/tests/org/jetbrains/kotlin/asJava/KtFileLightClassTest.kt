@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 
 class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -37,5 +38,16 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
         val classes = file.classes
         assertEquals(1, classes.size)
         assertEquals("AKt", classes[0].qualifiedName)
+    }
+
+    fun testMultifileClass() {
+        val file = myFixture.configureByFiles("multifile1.kt", "multifile2.kt")[0] as KtFile
+        val aClass = file.classes.single()
+        assertEquals(1, aClass.findMethodsByName("foo", false).size)
+        assertEquals(1, aClass.findMethodsByName("bar", false).size)
+    }
+
+    override fun getTestDataPath(): String? {
+        return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
 }
