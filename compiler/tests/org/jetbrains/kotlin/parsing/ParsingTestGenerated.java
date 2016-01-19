@@ -739,6 +739,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("TypealiasIsKeyword.kt")
+        public void testTypealiasIsKeyword() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypealiasIsKeyword.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("When.kt")
         public void testWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/When.kt");
