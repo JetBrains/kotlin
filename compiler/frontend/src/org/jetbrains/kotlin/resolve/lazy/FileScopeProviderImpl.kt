@@ -95,8 +95,7 @@ open class FileScopeProviderImpl(
         scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "All under imports in $debugName (invisible classes only)")
 
-        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.INVISIBLE_CLASSES)
-                .memberScopeAsImportingScope(scope)
+        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.INVISIBLE_CLASSES, scope)
 
         scope = LazyImportScope(scope, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "Default all under imports in $debugName (visible classes)")
@@ -109,8 +108,7 @@ open class FileScopeProviderImpl(
 
         scope = SubpackagesImportingScope(scope, moduleDescriptor, FqName.ROOT)
 
-        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.VISIBLE_CLASSES)
-                .memberScopeAsImportingScope(scope)
+        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.VISIBLE_CLASSES, scope)
 
         scope = LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
 
@@ -145,13 +143,18 @@ open class FileScopeProviderImpl(
             packageView: PackageViewDescriptor,
             aliasImportNames: Collection<FqName>,
             fromDescriptor: DummyContainerDescriptor,
-            filteringKind: FilteringKind
-    ): MemberScope {
+            filteringKind: FilteringKind,
+            parentScope: ImportingScope
+    ): ImportingScope {
         val scope = packageView.memberScope
         val packageName = packageView.fqName
         val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
 
-        return object: MemberScope {
+        return object: ImportingScope {
+            override val parent: ImportingScope? = parentScope
+
+            override fun getContributedPackage(name: Name) = null
+
             override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
                 if (name in excludedNames) return null
                 val classifier = scope.getContributedClassifier(name, location) ?: return null
@@ -179,7 +182,7 @@ open class FileScopeProviderImpl(
 
             override fun toString() = "Scope for current package (${filteringKind.name})"
 
-            override fun printScopeStructure(p: Printer) {
+            override fun printStructure(p: Printer) {
                 p.println(this.toString())
             }
         }
