@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention()), CleanupLocalInspectionTool
 
@@ -95,6 +96,14 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, resolutionFacade)) return null
 
         val isSetUsage = callExpression.valueArguments.size == 1
+
+        if (isSetUsage && bindingContext[BindingContext.USED_AS_EXPRESSION, qualifiedExpression] == true) {
+            // call to the setter used as expression can be converted in the only case when it's used as body expression for some declaration and its type is Unit
+            val parent = qualifiedExpression.parent
+            if (parent !is KtDeclarationWithBody || qualifiedExpression != parent.bodyExpression) return null
+            if (function.returnType?.isUnit() != true) return null
+        }
+
         if (isSetUsage && property.type != function.valueParameters.single().type) {
             val qualifiedExpressionCopy = qualifiedExpression.copied()
             val callExpressionCopy = ((qualifiedExpressionCopy as? KtQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as KtCallExpression
@@ -157,7 +166,6 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         return callExpression.replaced(newExpression)
     }
 
-    //TODO: what if it was used as expression (of type Unit)?
     private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name): KtExpression {
         val call = callExpression.getQualifiedExpressionForSelector() ?: callExpression
         val callParent = call.parent

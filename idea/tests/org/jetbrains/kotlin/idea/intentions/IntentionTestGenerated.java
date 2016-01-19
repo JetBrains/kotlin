@@ -9059,6 +9059,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nonVoidSetter1.kt")
+        public void testNonVoidSetter1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/nonVoidSetter1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonVoidSetter2.kt")
+        public void testNonVoidSetter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/nonVoidSetter2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyTypeIsMoreSpecific1.kt")
         public void testPropertyTypeIsMoreSpecific1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/propertyTypeIsMoreSpecific1.kt");

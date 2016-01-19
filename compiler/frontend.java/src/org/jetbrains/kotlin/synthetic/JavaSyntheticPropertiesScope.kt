@@ -155,7 +155,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         return parameter.varargElementType == null
                && descriptor.typeParameters.isEmpty()
-               && descriptor.returnType?.let { it.isUnit() } ?: false
                && descriptor.visibility.isVisibleOutside()
     }
 

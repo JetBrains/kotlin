@@ -353,6 +353,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("SyntheticExtensionNonVoidSetter")
+    public void testSyntheticExtensionNonVoidSetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/SyntheticExtensionNonVoidSetter/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelFunction")
     public void testTopLevelFunction() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/TopLevelFunction/");

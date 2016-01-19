@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
 class ReferenceVariantsHelper(
@@ -92,7 +92,11 @@ class ReferenceVariantsHelper(
         for (variant in variants) {
             if (variant is SyntheticJavaPropertyDescriptor) {
                 accessorMethodsToRemove.add(variant.getMethod.original)
-                accessorMethodsToRemove.addIfNotNull(variant.setMethod?.original)
+
+                val setter = variant.setMethod
+                if (setter != null && setter.returnType?.isUnit() == true) { // we do not filter out non-Unit setters
+                    accessorMethodsToRemove.add(setter.original)
+                }
             }
         }
 

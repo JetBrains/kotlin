@@ -4,8 +4,7 @@ fun foo(javaClass: JavaClass) {
     <!VAL_REASSIGNMENT!>javaClass.something2<!>++
     <!VAL_REASSIGNMENT!>javaClass.something3<!>++
     <!VAL_REASSIGNMENT!>javaClass.something4<!>++
-    <!VAL_REASSIGNMENT!>javaClass.something5<!>++
-    <!VAL_REASSIGNMENT!>javaClass.something6<!> = null
+    <!VAL_REASSIGNMENT!>javaClass.something5<!> = null
 }
 
 // FILE: JavaClass.java
@@ -17,14 +16,11 @@ public class JavaClass {
     public void setSomething2(String value) { }
 
     public int getSomething3() { return 1; }
-    public int setSomething3(int value) { return value; }
+    public <T> void setSomething3(int value) { return value; }
 
     public int getSomething4() { return 1; }
-    public <T> void setSomething4(int value) { return value; }
+    public static void setSomething4(int value) { }
 
-    public int getSomething5() { return 1; }
-    public static void setSomething5(int value) { }
-
-    public int[] getSomething6() { return null; }
-    public void setSomething6(int... value) { }
+    public int[] getSomething5() { return null; }
+    public void setSomething5(int... value) { }
 }
