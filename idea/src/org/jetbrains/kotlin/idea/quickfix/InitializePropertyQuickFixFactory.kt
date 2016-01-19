@@ -61,6 +61,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
             if (editor != null) {
                 PsiDocumentManager.getInstance(project).commitDocument(editor.document)
                 editor.selectionModel.setSelection(initializer.startOffset, initializer.endOffset)
+                editor.caretModel.moveToOffset(initializer.endOffset)
             }
         }
     }

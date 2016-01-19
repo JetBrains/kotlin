@@ -1,3 +1,3 @@
 // "Add initializer" "true"
-<caret>var n: Int = <selection>0</selection>
+var n: Int = <selection>0</selection><caret>
     get() = 1
