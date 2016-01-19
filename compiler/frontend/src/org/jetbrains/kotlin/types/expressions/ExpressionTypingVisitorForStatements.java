@@ -147,12 +147,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
-    public KotlinTypeInfo visitTypedef(@NotNull KtTypedef typedef, ExpressionTypingContext context) {
-        context.trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"));
-        return super.visitTypedef(typedef, context);
-    }
-
-    @Override
     public KotlinTypeInfo visitDeclaration(@NotNull KtDeclaration dcl, ExpressionTypingContext context) {
         return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(dcl, context), context);
     }

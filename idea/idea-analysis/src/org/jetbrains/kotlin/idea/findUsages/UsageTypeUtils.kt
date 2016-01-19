@@ -87,9 +87,6 @@ object UsageTypeUtils {
                 || refExpr.getParentOfTypeAndBranch<KtSuperTypeListEntry>(){ typeReference } != null ->
                     SUPER_TYPE
 
-                refExpr.getParentOfTypeAndBranch<KtTypedef>(){ typeReference } != null ->
-                    TYPE_DEFINITION
-
                 refExpr.getParentOfTypeAndBranch<KtParameter>(){ typeReference } != null ->
                     VALUE_PARAMETER_TYPE
 
@@ -215,7 +212,6 @@ enum class UsageTypeEnum {
     NON_LOCAL_PROPERTY_TYPE,
     FUNCTION_RETURN_TYPE,
     SUPER_TYPE,
-    TYPE_DEFINITION,
     IS,
     CLASS_OBJECT_ACCESS,
     COMPANION_OBJECT_ACCESS,

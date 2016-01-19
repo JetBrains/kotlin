@@ -158,10 +158,6 @@ class LazyTopDownAnalyzer(
                     c.anonymousInitializers.put(initializer, containerDescriptor)
                 }
 
-                override fun visitTypedef(typedef: KtTypedef) {
-                    trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"))
-                }
-
                 override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
                     // Ignore: multi-declarations are only allowed locally
                 }

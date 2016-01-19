@@ -54,7 +54,7 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
                 val scriptInfo = KtScriptInfo(declaration)
                 classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
             }
-            else if (declaration is KtParameter || declaration is KtTypedef || declaration is KtDestructuringDeclaration) {
+            else if (declaration is KtParameter || declaration is KtDestructuringDeclaration) {
                 // Do nothing, just put it into allDeclarations is enough
             }
             else {
