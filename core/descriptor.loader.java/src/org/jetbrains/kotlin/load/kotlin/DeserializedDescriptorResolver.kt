@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import com.google.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -41,7 +42,9 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
     fun resolveClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor? {
         val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
         val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
-        val classData = JvmProtoBufUtil.readClassDataFrom(data, strings)
+        val classData = parseProto(kotlinClass) {
+            JvmProtoBufUtil.readClassDataFrom(data, strings)
+        }
         val sourceElement = KotlinJvmBinarySourceElement(kotlinClass)
         return components.classDeserializer.deserializeClass(
                 kotlinClass.classId,
@@ -52,7 +55,9 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
     private fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
         val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART) ?: return null
         val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
-        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+        val (nameResolver, packageProto) = parseProto(kotlinClass) {
+            JvmProtoBufUtil.readPackageDataFrom(data, strings)
+        }
         val source = JvmPackagePartSource(kotlinClass.classId)
         return DeserializedPackageMemberScope(descriptor, packageProto, nameResolver, source, components) {
             // All classes are included into Java scope
@@ -83,6 +88,15 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
         }
 
         return null
+    }
+
+    private inline fun <T> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T {
+        try {
+            return block()
+        }
+        catch (e: InvalidProtocolBufferException) {
+            throw IllegalStateException("Could not read data from ${klass.location}", e)
+        }
     }
 
     companion object {
