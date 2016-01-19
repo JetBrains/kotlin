@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
@@ -27,66 +26,54 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import java.util.*
+import org.jetbrains.kotlin.utils.sure
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
-    private var components: DeserializationComponents? = null
+    lateinit var components: DeserializationComponents
 
     // component dependency cycle
     @Inject
-    fun setComponents(context: DeserializationComponentsForJava) {
-        this.components = context.components
+    fun setComponents(components: DeserializationComponentsForJava) {
+        this.components = components.components
     }
 
     fun resolveClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor? {
-        val data = readData(kotlinClass, KOTLIN_CLASS)
-        if (data != null) {
-            val strings = kotlinClass.classHeader.strings
-            assert(strings != null) { "String table not found in " + kotlinClass }
-            val classData = JvmProtoBufUtil.readClassDataFrom(data, strings)
-            val sourceElement = KotlinJvmBinarySourceElement(kotlinClass)
-            return components!!.classDeserializer.deserializeClass(
-                    kotlinClass.classId,
-                    ClassDataWithSource(classData, sourceElement))
-        }
-        return null
+        val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
+        val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
+        val classData = JvmProtoBufUtil.readClassDataFrom(data, strings)
+        val sourceElement = KotlinJvmBinarySourceElement(kotlinClass)
+        return components.classDeserializer.deserializeClass(
+                kotlinClass.classId,
+                ClassDataWithSource(classData, sourceElement)
+        )
     }
 
-    fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
-        val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART)
-        if (data != null) {
-            val strings = kotlinClass.classHeader.strings
-            assert(strings != null) { "String table not found in " + kotlinClass }
-            val packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings)
-            val source = JvmPackagePartSource(kotlinClass.classId)
-            return DeserializedPackageMemberScope(
-                    descriptor, packageData.packageProto, packageData.nameResolver, source, components
-            ) {
-                // All classes are included into Java scope
-                emptyList()
-            }
+    private fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
+        val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART) ?: return null
+        val strings = kotlinClass.classHeader.strings.sure { "String table not found in $kotlinClass" }
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+        val source = JvmPackagePartSource(kotlinClass.classId)
+        return DeserializedPackageMemberScope(descriptor, packageProto, nameResolver, source, components) {
+            // All classes are included into Java scope
+            emptyList()
         }
-        return null
     }
 
     fun createKotlinPackageScope(
             descriptor: PackageFragmentDescriptor,
-            packageParts: List<KotlinJvmBinaryClass>): MemberScope {
-        val list = ArrayList<MemberScope>(packageParts.size)
-        for (callable in packageParts) {
-            val scope = createKotlinPackagePartScope(descriptor, callable)
-            if (scope != null) {
-                list.add(scope)
-            }
+            packageParts: List<KotlinJvmBinaryClass>
+    ): MemberScope {
+        val scopes = packageParts.mapNotNull { callable ->
+            createKotlinPackagePartScope(descriptor, callable)
         }
-        if (list.isEmpty()) {
+        if (scopes.isEmpty()) {
             return MemberScope.Empty
         }
-        return ChainedMemberScope("Member scope for union of package parts data", list)
+        return ChainedMemberScope("Member scope for union of package parts data", scopes)
     }
 
-    fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
+    internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader
         if (!header.metadataVersion.isCompatible()) {
             errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
@@ -99,8 +86,9 @@ class DeserializedDescriptorResolver(private val errorReporter: ErrorReporter) {
     }
 
     companion object {
+        internal val KOTLIN_CLASS = setOf(KotlinClassHeader.Kind.CLASS)
 
-        val KOTLIN_CLASS: Set<KotlinClassHeader.Kind> = setOf<Kind>(CLASS)
-        val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART: Set<KotlinClassHeader.Kind> = setOf<Kind>(FILE_FACADE, MULTIFILE_CLASS_PART)
+        private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
+                setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
     }
 }
