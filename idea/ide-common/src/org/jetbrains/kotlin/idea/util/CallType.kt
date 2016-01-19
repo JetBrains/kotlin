@@ -62,7 +62,7 @@ sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: Descript
 
     object TYPE : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry)
 
-    object DELEGATE : CallType<KtExpression?>(DescriptorKindFilter.FUNCTIONS)
+    object DELEGATE : CallType<KtExpression?>(DescriptorKindFilter.FUNCTIONS exclude NonOperatorExclude)
 
     object ANNOTATION : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude)
 

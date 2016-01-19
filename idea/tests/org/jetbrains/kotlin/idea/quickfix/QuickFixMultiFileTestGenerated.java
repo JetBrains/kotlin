@@ -101,6 +101,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("delegateNoOperator.test")
+        public void testDelegateNoOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/delegateNoOperator.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("divOperator.before.Main.kt")
         public void testDivOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/divOperator.before.Main.kt");

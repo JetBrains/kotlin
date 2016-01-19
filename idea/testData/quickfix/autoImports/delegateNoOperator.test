@@ -1,0 +1,20 @@
+// FILE: first.before.kt
+// "Import" "false"
+// ERROR: Missing 'getValue(kotlin.Nothing?, kotlin.reflect.KProperty<*>)' method on delegate of type 'kotlin.String'
+
+package b
+
+val x: String by "<caret>"  // <--- should not propose to auto-import a.getValue,
+                            // because that would not fix the error
+
+// FILE: second.kt
+package a
+
+import kotlin.reflect.KProperty
+
+fun String.getValue(x: Any?, y: KProperty<*>) = ""
+
+
+
+// FILE: first.after.kt
+// Should not be checked
