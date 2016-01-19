@@ -71,4 +71,10 @@ open class KotlinSerializerExtensionBase(private val protocol: SerializerExtensi
             proto.addExtension(protocol.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
+
+    override fun serializeTypeParameter(typeParameter: TypeParameterDescriptor, proto: ProtoBuf.TypeParameter.Builder) {
+        for (annotation in typeParameter.annotations) {
+            proto.addExtension(protocol.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+    }
 }
