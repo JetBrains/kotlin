@@ -241,8 +241,8 @@ message Function {
     isTailrec
     isExternal
   */
-  optional int32 flags = 1 [default = 6];
-  optional int32 new_flags = 9 [default = 6 /* public final function, no annotations */];
+  optional int32 flags = 9 [default = 6 /* public final function, no annotations */];
+  optional int32 old_flags = 1 [default = 6];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -274,8 +274,8 @@ message Property {
     lateinit
     hasConstant
   */
-  optional int32 flags = 1 [default = 262];
-  optional int32 new_flags = 11 [default = 518 /* public (6) final property with getter (512) */];
+  optional int32 flags = 11 [default = 518 /* public (6) final property with getter (512) */];
+  optional int32 old_flags = 1 [default = 2054];
 
   required int32 name = 2 [(name_id_in_table) = true];
 

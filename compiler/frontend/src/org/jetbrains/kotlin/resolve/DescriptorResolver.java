@@ -877,7 +877,7 @@ public class DescriptorResolver {
         return setterDescriptor;
     }
 
-    @Nullable
+    @NotNull
     private PropertyGetterDescriptorImpl resolvePropertyGetterDescriptor(
             @NotNull LexicalScope scopeWithTypeParameters,
             @NotNull KtProperty property,

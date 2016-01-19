@@ -15800,9 +15800,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Function> {
 
-    // optional int32 flags = 1 [default = 6];
+    // optional int32 flags = 9 [default = 6];
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -15819,7 +15819,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -15836,15 +15836,15 @@ public final class DebugProtoBuf {
      */
     int getFlags();
 
-    // optional int32 new_flags = 9 [default = 6];
+    // optional int32 old_flags = 1 [default = 6];
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    boolean hasNewFlags();
+    boolean hasOldFlags();
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    int getNewFlags();
+    int getOldFlags();
 
     // required int32 name = 2;
     /**
@@ -16020,8 +16020,8 @@ public final class DebugProtoBuf {
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
-              flags_ = input.readInt32();
+              bitField0_ |= 0x00000002;
+              oldFlags_ = input.readInt32();
               break;
             }
             case 16: {
@@ -16082,8 +16082,8 @@ public final class DebugProtoBuf {
               break;
             }
             case 72: {
-              bitField0_ |= 0x00000002;
-              newFlags_ = input.readInt32();
+              bitField0_ |= 0x00000001;
+              flags_ = input.readInt32();
               break;
             }
             case 242: {
@@ -16145,11 +16145,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 6];
-    public static final int FLAGS_FIELD_NUMBER = 1;
+    // optional int32 flags = 9 [default = 6];
+    public static final int FLAGS_FIELD_NUMBER = 9;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -16168,7 +16168,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -16187,20 +16187,20 @@ public final class DebugProtoBuf {
       return flags_;
     }
 
-    // optional int32 new_flags = 9 [default = 6];
-    public static final int NEW_FLAGS_FIELD_NUMBER = 9;
-    private int newFlags_;
+    // optional int32 old_flags = 1 [default = 6];
+    public static final int OLD_FLAGS_FIELD_NUMBER = 1;
+    private int oldFlags_;
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    public boolean hasNewFlags() {
+    public boolean hasOldFlags() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    public int getNewFlags() {
-      return newFlags_;
+    public int getOldFlags() {
+      return oldFlags_;
     }
 
     // required int32 name = 2;
@@ -16391,7 +16391,7 @@ public final class DebugProtoBuf {
 
     private void initFields() {
       flags_ = 6;
-      newFlags_ = 6;
+      oldFlags_ = 6;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       returnTypeId_ = 0;
@@ -16454,8 +16454,8 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Function>.ExtensionWriter extensionWriter =
           newExtensionWriter();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, flags_);
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(2, name_);
@@ -16478,8 +16478,8 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeInt32(8, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(9, newFlags_);
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(9, flags_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeMessage(30, typeTable_);
@@ -16494,9 +16494,9 @@ public final class DebugProtoBuf {
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, flags_);
+          .computeInt32Size(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -16526,9 +16526,9 @@ public final class DebugProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(8, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(9, newFlags_);
+          .computeInt32Size(9, flags_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += com.google.protobuf.CodedOutputStream
@@ -16658,7 +16658,7 @@ public final class DebugProtoBuf {
         super.clear();
         flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
-        newFlags_ = 6;
+        oldFlags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000002);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -16731,7 +16731,7 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.newFlags_ = newFlags_;
+        result.oldFlags_ = oldFlags_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
@@ -16805,8 +16805,8 @@ public final class DebugProtoBuf {
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
-        if (other.hasNewFlags()) {
-          setNewFlags(other.getNewFlags());
+        if (other.hasOldFlags()) {
+          setOldFlags(other.getOldFlags());
         }
         if (other.hasName()) {
           setName(other.getName());
@@ -16944,10 +16944,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 6];
+      // optional int32 flags = 9 [default = 6];
       private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -16966,7 +16966,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -16985,7 +16985,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -17007,7 +17007,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -17029,35 +17029,35 @@ public final class DebugProtoBuf {
         return this;
       }
 
-      // optional int32 new_flags = 9 [default = 6];
-      private int newFlags_ = 6;
+      // optional int32 old_flags = 1 [default = 6];
+      private int oldFlags_ = 6;
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public boolean hasNewFlags() {
+      public boolean hasOldFlags() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public int getNewFlags() {
-        return newFlags_;
+      public int getOldFlags() {
+        return oldFlags_;
       }
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public Builder setNewFlags(int value) {
+      public Builder setOldFlags(int value) {
         bitField0_ |= 0x00000002;
-        newFlags_ = value;
+        oldFlags_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public Builder clearNewFlags() {
+      public Builder clearOldFlags() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        newFlags_ = 6;
+        oldFlags_ = 6;
         onChanged();
         return this;
       }
@@ -18007,9 +18007,9 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage.
           ExtendableMessageOrBuilder<Property> {
 
-    // optional int32 flags = 1 [default = 262];
+    // optional int32 flags = 11 [default = 518];
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -18027,7 +18027,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -18045,15 +18045,15 @@ public final class DebugProtoBuf {
      */
     int getFlags();
 
-    // optional int32 new_flags = 11 [default = 518];
+    // optional int32 old_flags = 1 [default = 2054];
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    boolean hasNewFlags();
+    boolean hasOldFlags();
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    int getNewFlags();
+    int getOldFlags();
 
     // required int32 name = 2;
     /**
@@ -18242,8 +18242,8 @@ public final class DebugProtoBuf {
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
-              flags_ = input.readInt32();
+              bitField0_ |= 0x00000002;
+              oldFlags_ = input.readInt32();
               break;
             }
             case 16: {
@@ -18319,8 +18319,8 @@ public final class DebugProtoBuf {
               break;
             }
             case 88: {
-              bitField0_ |= 0x00000002;
-              newFlags_ = input.readInt32();
+              bitField0_ |= 0x00000001;
+              flags_ = input.readInt32();
               break;
             }
           }
@@ -18366,11 +18366,11 @@ public final class DebugProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 262];
-    public static final int FLAGS_FIELD_NUMBER = 1;
+    // optional int32 flags = 11 [default = 518];
+    public static final int FLAGS_FIELD_NUMBER = 11;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -18390,7 +18390,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -18410,20 +18410,20 @@ public final class DebugProtoBuf {
       return flags_;
     }
 
-    // optional int32 new_flags = 11 [default = 518];
-    public static final int NEW_FLAGS_FIELD_NUMBER = 11;
-    private int newFlags_;
+    // optional int32 old_flags = 1 [default = 2054];
+    public static final int OLD_FLAGS_FIELD_NUMBER = 1;
+    private int oldFlags_;
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    public boolean hasNewFlags() {
+    public boolean hasOldFlags() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    public int getNewFlags() {
-      return newFlags_;
+    public int getOldFlags() {
+      return oldFlags_;
     }
 
     // required int32 name = 2;
@@ -18627,8 +18627,8 @@ public final class DebugProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 262;
-      newFlags_ = 518;
+      flags_ = 518;
+      oldFlags_ = 2054;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
       returnTypeId_ = 0;
@@ -18686,8 +18686,8 @@ public final class DebugProtoBuf {
       com.google.protobuf.GeneratedMessage
         .ExtendableMessage<org.jetbrains.kotlin.serialization.DebugProtoBuf.Property>.ExtensionWriter extensionWriter =
           newExtensionWriter();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, flags_);
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(2, name_);
@@ -18716,8 +18716,8 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeInt32(10, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(11, newFlags_);
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(11, flags_);
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -18729,9 +18729,9 @@ public final class DebugProtoBuf {
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, flags_);
+          .computeInt32Size(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -18769,9 +18769,9 @@ public final class DebugProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(10, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(11, newFlags_);
+          .computeInt32Size(11, flags_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -18894,9 +18894,9 @@ public final class DebugProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 262;
+        flags_ = 518;
         bitField0_ = (bitField0_ & ~0x00000001);
-        newFlags_ = 518;
+        oldFlags_ = 2054;
         bitField0_ = (bitField0_ & ~0x00000002);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -18967,7 +18967,7 @@ public final class DebugProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.newFlags_ = newFlags_;
+        result.oldFlags_ = oldFlags_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
@@ -19040,8 +19040,8 @@ public final class DebugProtoBuf {
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
-        if (other.hasNewFlags()) {
-          setNewFlags(other.getNewFlags());
+        if (other.hasOldFlags()) {
+          setOldFlags(other.getOldFlags());
         }
         if (other.hasName()) {
           setName(other.getName());
@@ -19153,10 +19153,10 @@ public final class DebugProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 262];
-      private int flags_ = 262;
+      // optional int32 flags = 11 [default = 518];
+      private int flags_ = 518;
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -19176,7 +19176,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -19196,7 +19196,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -19219,7 +19219,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -19237,40 +19237,40 @@ public final class DebugProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 262;
+        flags_ = 518;
         onChanged();
         return this;
       }
 
-      // optional int32 new_flags = 11 [default = 518];
-      private int newFlags_ = 518;
+      // optional int32 old_flags = 1 [default = 2054];
+      private int oldFlags_ = 2054;
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public boolean hasNewFlags() {
+      public boolean hasOldFlags() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public int getNewFlags() {
-        return newFlags_;
+      public int getOldFlags() {
+        return oldFlags_;
       }
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public Builder setNewFlags(int value) {
+      public Builder setOldFlags(int value) {
         bitField0_ |= 0x00000002;
-        newFlags_ = value;
+        oldFlags_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public Builder clearNewFlags() {
+      public Builder clearOldFlags() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        newFlags_ = 518;
+        oldFlags_ = 2054;
         onChanged();
         return this;
       }
@@ -21802,7 +21802,7 @@ public final class DebugProtoBuf {
       "\n\005flags\030\001 \001(\005:\0016\022K\n\017value_parameter\030\002 \003(" +
       "\01322.org.jetbrains.kotlin.serialization.V" +
       "alueParameter*\005\010d\020\310\001\"\332\003\n\010Function\022\020\n\005fla" +
-      "gs\030\001 \001(\005:\0016\022\024\n\tnew_flags\030\t \001(\005:\0016\022\022\n\004nam" +
+      "gs\030\t \001(\005:\0016\022\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004nam" +
       "e\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \001(\0132(.org" +
       ".jetbrains.kotlin.serialization.Type\022\026\n\016" +
       "return_type_id\030\007 \001(\005\022I\n\016type_parameter\030\004" +
@@ -21813,32 +21813,32 @@ public final class DebugProtoBuf {
       "meter\030\006 \003(\01322.org.jetbrains.kotlin.seria" +
       "lization.ValueParameter\022A\n\ntype_table\030\036 " +
       "\001(\0132-.org.jetbrains.kotlin.serialization" +
-      ".TypeTable*\005\010d\020\310\001\"\316\003\n\010Property\022\022\n\005flags\030" +
-      "\001 \001(\005:\003262\022\026\n\tnew_flags\030\013 \001(\005:\003518\022\022\n\004na" +
-      "me\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \001(\0132(.or" +
-      "g.jetbrains.kotlin.serialization.Type\022\026\n",
-      "\016return_type_id\030\t \001(\005\022I\n\016type_parameter\030" +
-      "\004 \003(\01321.org.jetbrains.kotlin.serializati" +
-      "on.TypeParameter\022?\n\rreceiver_type\030\005 \001(\0132" +
-      "(.org.jetbrains.kotlin.serialization.Typ" +
-      "e\022\030\n\020receiver_type_id\030\n \001(\005\022R\n\026setter_va" +
-      "lue_parameter\030\006 \001(\01322.org.jetbrains.kotl" +
-      "in.serialization.ValueParameter\022\024\n\014gette" +
-      "r_flags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005*\005\010d\020" +
-      "\310\001\"\355\001\n\016ValueParameter\022\020\n\005flags\030\001 \001(\005:\0010\022" +
-      "\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0226\n\004type\030\003 \001(\0132(.org.",
-      "jetbrains.kotlin.serialization.Type\022\017\n\007t" +
-      "ype_id\030\005 \001(\005\022E\n\023vararg_element_type\030\004 \001(" +
-      "\0132(.org.jetbrains.kotlin.serialization.T" +
-      "ype\022\036\n\026vararg_element_type_id\030\006 \001(\005*\005\010d\020" +
-      "\310\001\"&\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d\020" +
-      "\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010A" +
-      "BSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010I" +
-      "NTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n" +
-      "\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020" +
-      "\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE",
-      "_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZ" +
-      "ED\020\003B\022B\rDebugProtoBuf\210\001\000"
+      ".TypeTable*\005\010d\020\310\001\"\317\003\n\010Property\022\022\n\005flags\030" +
+      "\013 \001(\005:\003518\022\027\n\told_flags\030\001 \001(\005:\0042054\022\022\n\004n" +
+      "ame\030\002 \002(\005B\004\210\265\030\001\022=\n\013return_type\030\003 \001(\0132(.o" +
+      "rg.jetbrains.kotlin.serialization.Type\022\026",
+      "\n\016return_type_id\030\t \001(\005\022I\n\016type_parameter" +
+      "\030\004 \003(\01321.org.jetbrains.kotlin.serializat" +
+      "ion.TypeParameter\022?\n\rreceiver_type\030\005 \001(\013" +
+      "2(.org.jetbrains.kotlin.serialization.Ty" +
+      "pe\022\030\n\020receiver_type_id\030\n \001(\005\022R\n\026setter_v" +
+      "alue_parameter\030\006 \001(\01322.org.jetbrains.kot" +
+      "lin.serialization.ValueParameter\022\024\n\014gett" +
+      "er_flags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005*\005\010d" +
+      "\020\310\001\"\355\001\n\016ValueParameter\022\020\n\005flags\030\001 \001(\005:\0010" +
+      "\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0226\n\004type\030\003 \001(\0132(.org",
+      ".jetbrains.kotlin.serialization.Type\022\017\n\007" +
+      "type_id\030\005 \001(\005\022E\n\023vararg_element_type\030\004 \001" +
+      "(\0132(.org.jetbrains.kotlin.serialization." +
+      "Type\022\036\n\026vararg_element_type_id\030\006 \001(\005*\005\010d" +
+      "\020\310\001\"&\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d" +
+      "\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010" +
+      "ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010" +
+      "INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n" +
+      "\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL" +
+      "\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAK",
+      "E_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESI" +
+      "ZED\020\003B\022B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -21928,13 +21928,13 @@ public final class DebugProtoBuf {
           internal_static_org_jetbrains_kotlin_serialization_Function_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Function_descriptor,
-              new java.lang.String[] { "Flags", "NewFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "ValueParameter", "TypeTable", });
+              new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "ValueParameter", "TypeTable", });
           internal_static_org_jetbrains_kotlin_serialization_Property_descriptor =
             getDescriptor().getMessageTypes().get(10);
           internal_static_org_jetbrains_kotlin_serialization_Property_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Property_descriptor,
-              new java.lang.String[] { "Flags", "NewFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "SetterValueParameter", "GetterFlags", "SetterFlags", });
+              new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "SetterValueParameter", "GetterFlags", "SetterFlags", });
           internal_static_org_jetbrains_kotlin_serialization_ValueParameter_descriptor =
             getDescriptor().getMessageTypes().get(11);
           internal_static_org_jetbrains_kotlin_serialization_ValueParameter_fieldAccessorTable = new

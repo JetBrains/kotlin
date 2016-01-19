@@ -185,9 +185,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.flags != new.flags) return false
         }
 
-        if (old.hasNewFlags() != new.hasNewFlags()) return false
-        if (old.hasNewFlags()) {
-            if (old.newFlags != new.newFlags) return false
+        if (old.hasOldFlags() != new.hasOldFlags()) return false
+        if (old.hasOldFlags()) {
+            if (old.oldFlags != new.oldFlags) return false
         }
 
         if (!checkStringEquals(old.name, new.name)) return false
@@ -235,9 +235,9 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.flags != new.flags) return false
         }
 
-        if (old.hasNewFlags() != new.hasNewFlags()) return false
-        if (old.hasNewFlags()) {
-            if (old.newFlags != new.newFlags) return false
+        if (old.hasOldFlags() != new.hasOldFlags()) return false
+        if (old.hasOldFlags()) {
+            if (old.oldFlags != new.oldFlags) return false
         }
 
         if (!checkStringEquals(old.name, new.name)) return false
@@ -893,8 +893,8 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + flags
     }
 
-    if (hasNewFlags()) {
-        hashCode = 31 * hashCode + newFlags
+    if (hasOldFlags()) {
+        hashCode = 31 * hashCode + oldFlags
     }
 
     hashCode = 31 * hashCode + stringIndexes(name)
@@ -941,8 +941,8 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + flags
     }
 
-    if (hasNewFlags()) {
-        hashCode = 31 * hashCode + newFlags
+    if (hasOldFlags()) {
+        hashCode = 31 * hashCode + oldFlags
     }
 
     hashCode = 31 * hashCode + stringIndexes(name)

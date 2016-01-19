@@ -11965,9 +11965,9 @@ public final class ProtoBuf {
        com.google.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Function> {
 
-    // optional int32 flags = 1 [default = 6];
+    // optional int32 flags = 9 [default = 6];
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -11984,7 +11984,7 @@ public final class ProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -12001,15 +12001,15 @@ public final class ProtoBuf {
      */
     int getFlags();
 
-    // optional int32 new_flags = 9 [default = 6];
+    // optional int32 old_flags = 1 [default = 6];
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    boolean hasNewFlags();
+    boolean hasOldFlags();
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    int getNewFlags();
+    int getOldFlags();
 
     // required int32 name = 2;
     /**
@@ -12145,8 +12145,8 @@ public final class ProtoBuf {
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
-              flags_ = input.readInt32();
+              bitField0_ |= 0x00000002;
+              oldFlags_ = input.readInt32();
               break;
             }
             case 16: {
@@ -12207,8 +12207,8 @@ public final class ProtoBuf {
               break;
             }
             case 72: {
-              bitField0_ |= 0x00000002;
-              newFlags_ = input.readInt32();
+              bitField0_ |= 0x00000001;
+              flags_ = input.readInt32();
               break;
             }
             case 242: {
@@ -12257,11 +12257,11 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 6];
-    public static final int FLAGS_FIELD_NUMBER = 1;
+    // optional int32 flags = 9 [default = 6];
+    public static final int FLAGS_FIELD_NUMBER = 9;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -12280,7 +12280,7 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1 [default = 6];</code>
+     * <code>optional int32 flags = 9 [default = 6];</code>
      *
      * <pre>
      *
@@ -12299,20 +12299,20 @@ public final class ProtoBuf {
       return flags_;
     }
 
-    // optional int32 new_flags = 9 [default = 6];
-    public static final int NEW_FLAGS_FIELD_NUMBER = 9;
-    private int newFlags_;
+    // optional int32 old_flags = 1 [default = 6];
+    public static final int OLD_FLAGS_FIELD_NUMBER = 1;
+    private int oldFlags_;
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    public boolean hasNewFlags() {
+    public boolean hasOldFlags() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 new_flags = 9 [default = 6];</code>
+     * <code>optional int32 old_flags = 1 [default = 6];</code>
      */
-    public int getNewFlags() {
-      return newFlags_;
+    public int getOldFlags() {
+      return oldFlags_;
     }
 
     // required int32 name = 2;
@@ -12485,7 +12485,7 @@ public final class ProtoBuf {
 
     private void initFields() {
       flags_ = 6;
-      newFlags_ = 6;
+      oldFlags_ = 6;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       returnTypeId_ = 0;
@@ -12548,8 +12548,8 @@ public final class ProtoBuf {
       com.google.protobuf.GeneratedMessageLite
         .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.Function>.ExtensionWriter extensionWriter =
           newExtensionWriter();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, flags_);
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(2, name_);
@@ -12572,8 +12572,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeInt32(8, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(9, newFlags_);
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(9, flags_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeMessage(30, typeTable_);
@@ -12587,9 +12587,9 @@ public final class ProtoBuf {
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, flags_);
+          .computeInt32Size(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -12619,9 +12619,9 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(8, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(9, newFlags_);
+          .computeInt32Size(9, flags_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += com.google.protobuf.CodedOutputStream
@@ -12720,7 +12720,7 @@ public final class ProtoBuf {
         super.clear();
         flags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000001);
-        newFlags_ = 6;
+        oldFlags_ = 6;
         bitField0_ = (bitField0_ & ~0x00000002);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -12768,7 +12768,7 @@ public final class ProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.newFlags_ = newFlags_;
+        result.oldFlags_ = oldFlags_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
@@ -12812,8 +12812,8 @@ public final class ProtoBuf {
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
-        if (other.hasNewFlags()) {
-          setNewFlags(other.getNewFlags());
+        if (other.hasOldFlags()) {
+          setOldFlags(other.getOldFlags());
         }
         if (other.hasName()) {
           setName(other.getName());
@@ -12918,10 +12918,10 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 6];
+      // optional int32 flags = 9 [default = 6];
       private int flags_ = 6;
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -12940,7 +12940,7 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -12959,7 +12959,7 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -12981,7 +12981,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 6];</code>
+       * <code>optional int32 flags = 9 [default = 6];</code>
        *
        * <pre>
        *
@@ -13003,35 +13003,35 @@ public final class ProtoBuf {
         return this;
       }
 
-      // optional int32 new_flags = 9 [default = 6];
-      private int newFlags_ = 6;
+      // optional int32 old_flags = 1 [default = 6];
+      private int oldFlags_ = 6;
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public boolean hasNewFlags() {
+      public boolean hasOldFlags() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public int getNewFlags() {
-        return newFlags_;
+      public int getOldFlags() {
+        return oldFlags_;
       }
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public Builder setNewFlags(int value) {
+      public Builder setOldFlags(int value) {
         bitField0_ |= 0x00000002;
-        newFlags_ = value;
+        oldFlags_ = value;
         
         return this;
       }
       /**
-       * <code>optional int32 new_flags = 9 [default = 6];</code>
+       * <code>optional int32 old_flags = 1 [default = 6];</code>
        */
-      public Builder clearNewFlags() {
+      public Builder clearOldFlags() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        newFlags_ = 6;
+        oldFlags_ = 6;
         
         return this;
       }
@@ -13583,9 +13583,9 @@ public final class ProtoBuf {
        com.google.protobuf.GeneratedMessageLite.
             ExtendableMessageOrBuilder<Property> {
 
-    // optional int32 flags = 1 [default = 262];
+    // optional int32 flags = 11 [default = 518];
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -13603,7 +13603,7 @@ public final class ProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -13621,15 +13621,15 @@ public final class ProtoBuf {
      */
     int getFlags();
 
-    // optional int32 new_flags = 11 [default = 518];
+    // optional int32 old_flags = 1 [default = 2054];
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    boolean hasNewFlags();
+    boolean hasOldFlags();
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    int getNewFlags();
+    int getOldFlags();
 
     // required int32 name = 2;
     /**
@@ -13788,8 +13788,8 @@ public final class ProtoBuf {
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
-              flags_ = input.readInt32();
+              bitField0_ |= 0x00000002;
+              oldFlags_ = input.readInt32();
               break;
             }
             case 16: {
@@ -13865,8 +13865,8 @@ public final class ProtoBuf {
               break;
             }
             case 88: {
-              bitField0_ |= 0x00000002;
-              newFlags_ = input.readInt32();
+              bitField0_ |= 0x00000001;
+              flags_ = input.readInt32();
               break;
             }
           }
@@ -13899,11 +13899,11 @@ public final class ProtoBuf {
     }
 
     private int bitField0_;
-    // optional int32 flags = 1 [default = 262];
-    public static final int FLAGS_FIELD_NUMBER = 1;
+    // optional int32 flags = 11 [default = 518];
+    public static final int FLAGS_FIELD_NUMBER = 11;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -13923,7 +13923,7 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1 [default = 262];</code>
+     * <code>optional int32 flags = 11 [default = 518];</code>
      *
      * <pre>
      *
@@ -13943,20 +13943,20 @@ public final class ProtoBuf {
       return flags_;
     }
 
-    // optional int32 new_flags = 11 [default = 518];
-    public static final int NEW_FLAGS_FIELD_NUMBER = 11;
-    private int newFlags_;
+    // optional int32 old_flags = 1 [default = 2054];
+    public static final int OLD_FLAGS_FIELD_NUMBER = 1;
+    private int oldFlags_;
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    public boolean hasNewFlags() {
+    public boolean hasOldFlags() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 new_flags = 11 [default = 518];</code>
+     * <code>optional int32 old_flags = 1 [default = 2054];</code>
      */
-    public int getNewFlags() {
-      return newFlags_;
+    public int getOldFlags() {
+      return oldFlags_;
     }
 
     // required int32 name = 2;
@@ -14142,8 +14142,8 @@ public final class ProtoBuf {
     }
 
     private void initFields() {
-      flags_ = 262;
-      newFlags_ = 518;
+      flags_ = 518;
+      oldFlags_ = 2054;
       name_ = 0;
       returnType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
       returnTypeId_ = 0;
@@ -14201,8 +14201,8 @@ public final class ProtoBuf {
       com.google.protobuf.GeneratedMessageLite
         .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.Property>.ExtensionWriter extensionWriter =
           newExtensionWriter();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, flags_);
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeInt32(2, name_);
@@ -14231,8 +14231,8 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeInt32(10, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(11, newFlags_);
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(11, flags_);
       }
       extensionWriter.writeUntil(200, output);
     }
@@ -14243,9 +14243,9 @@ public final class ProtoBuf {
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, flags_);
+          .computeInt32Size(1, oldFlags_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -14283,9 +14283,9 @@ public final class ProtoBuf {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(10, receiverTypeId_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(11, newFlags_);
+          .computeInt32Size(11, flags_);
       }
       size += extensionsSerializedSize();
       memoizedSerializedSize = size;
@@ -14378,9 +14378,9 @@ public final class ProtoBuf {
 
       public Builder clear() {
         super.clear();
-        flags_ = 262;
+        flags_ = 518;
         bitField0_ = (bitField0_ & ~0x00000001);
-        newFlags_ = 518;
+        oldFlags_ = 2054;
         bitField0_ = (bitField0_ & ~0x00000002);
         name_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -14430,7 +14430,7 @@ public final class ProtoBuf {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.newFlags_ = newFlags_;
+        result.oldFlags_ = oldFlags_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
@@ -14477,8 +14477,8 @@ public final class ProtoBuf {
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
-        if (other.hasNewFlags()) {
-          setNewFlags(other.getNewFlags());
+        if (other.hasOldFlags()) {
+          setOldFlags(other.getOldFlags());
         }
         if (other.hasName()) {
           setName(other.getName());
@@ -14573,10 +14573,10 @@ public final class ProtoBuf {
       }
       private int bitField0_;
 
-      // optional int32 flags = 1 [default = 262];
-      private int flags_ = 262;
+      // optional int32 flags = 11 [default = 518];
+      private int flags_ = 518;
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -14596,7 +14596,7 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -14616,7 +14616,7 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -14639,7 +14639,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1 [default = 262];</code>
+       * <code>optional int32 flags = 11 [default = 518];</code>
        *
        * <pre>
        *
@@ -14657,40 +14657,40 @@ public final class ProtoBuf {
        */
       public Builder clearFlags() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        flags_ = 262;
+        flags_ = 518;
         
         return this;
       }
 
-      // optional int32 new_flags = 11 [default = 518];
-      private int newFlags_ = 518;
+      // optional int32 old_flags = 1 [default = 2054];
+      private int oldFlags_ = 2054;
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public boolean hasNewFlags() {
+      public boolean hasOldFlags() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public int getNewFlags() {
-        return newFlags_;
+      public int getOldFlags() {
+        return oldFlags_;
       }
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public Builder setNewFlags(int value) {
+      public Builder setOldFlags(int value) {
         bitField0_ |= 0x00000002;
-        newFlags_ = value;
+        oldFlags_ = value;
         
         return this;
       }
       /**
-       * <code>optional int32 new_flags = 11 [default = 518];</code>
+       * <code>optional int32 old_flags = 1 [default = 2054];</code>
        */
-      public Builder clearNewFlags() {
+      public Builder clearOldFlags() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        newFlags_ = 518;
+        oldFlags_ = 2054;
         
         return this;
       }
