@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeVariableKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -141,7 +142,7 @@ public class DelegatedPropertyResolver {
         TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 traceToResolvePDMethod, delegateFunctionsScope,
-                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
+                DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
         List<KtExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
@@ -242,7 +243,7 @@ public class DelegatedPropertyResolver {
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, delegateFunctionsScope,
-                DataFlowInfo.EMPTY, expectedType);
+                DataFlowInfoFactory.EMPTY, expectedType);
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
 

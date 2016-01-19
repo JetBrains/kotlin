@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
@@ -132,7 +132,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
             KtNamedFunction function = (KtNamedFunction) declarations.get(0);
             SimpleFunctionDescriptor functionDescriptor =
                     functionDescriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function,
-                                                                         KotlinTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
+                                                                         KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
         }
@@ -144,7 +144,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
+                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
@@ -157,7 +157,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
+                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();

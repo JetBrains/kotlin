@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -170,7 +170,7 @@ public class BindingContextUtils {
         if (!context.get(BindingContext.PROCESSED, expression)) return null;
         // NB: should never return null if expression is already processed
         KotlinTypeInfo result = context.get(BindingContext.EXPRESSION_TYPE_INFO, expression);
-        return result != null ? result : TypeInfoFactoryKt.noTypeInfo(DataFlowInfo.EMPTY);
+        return result != null ? result : TypeInfoFactoryKt.noTypeInfo(DataFlowInfoFactory.EMPTY);
     }
 
     public static boolean isExpressionWithValidReference(

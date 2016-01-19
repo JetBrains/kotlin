@@ -27,7 +27,7 @@ import java.util.*
 
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
-internal class DelegatingDataFlowInfo @JvmOverloads constructor(
+internal class DelegatingDataFlowInfo(
         private val parent: DataFlowInfo?,
         private val nullabilityInfo: ImmutableMap<DataFlowValue, Nullability>,
         // Also immutable
@@ -39,35 +39,37 @@ internal class DelegatingDataFlowInfo @JvmOverloads constructor(
         private val valueWithGivenTypeInfo: DataFlowValue? = null
 ) : DataFlowInfo {
 
-    override fun getCompleteNullabilityInfo(): Map<DataFlowValue, Nullability> {
-        val result = Maps.newHashMap<DataFlowValue, Nullability>()
-        var info: DelegatingDataFlowInfo? = this
-        while (info != null) {
-            for ((key, value) in info.nullabilityInfo) {
-                if (!result.containsKey(key)) {
-                    result.put(key, value)
+    override val completeNullabilityInfo: Map<DataFlowValue, Nullability>
+        get() {
+            val result = Maps.newHashMap<DataFlowValue, Nullability>()
+            var info: DelegatingDataFlowInfo? = this
+            while (info != null) {
+                for ((key, value) in info.nullabilityInfo) {
+                    if (!result.containsKey(key)) {
+                        result.put(key, value)
+                    }
                 }
+                info = info.parent as DelegatingDataFlowInfo?
             }
-            info = info.parent as DelegatingDataFlowInfo?
+            return result
         }
-        return result
-    }
 
-    override fun getCompleteTypeInfo(): SetMultimap<DataFlowValue, KotlinType> {
-        val result = newTypeInfo()
-        val withGivenTypeInfo = HashSet<DataFlowValue>()
-        var info: DelegatingDataFlowInfo? = this
-        while (info != null) {
-            for (key in info.typeInfo.keySet()) {
-                if (!withGivenTypeInfo.contains(key)) {
-                    result.putAll(key, info.typeInfo.get(key))
+    override val completeTypeInfo: SetMultimap<DataFlowValue, KotlinType>
+        get() {
+            val result = newTypeInfo()
+            val withGivenTypeInfo = HashSet<DataFlowValue>()
+            var info: DelegatingDataFlowInfo? = this
+            while (info != null) {
+                for (key in info.typeInfo.keySet()) {
+                    if (!withGivenTypeInfo.contains(key)) {
+                        result.putAll(key, info.typeInfo.get(key))
+                    }
                 }
+                info.valueWithGivenTypeInfo?.let { withGivenTypeInfo.add(it) }
+                info = info.parent as DelegatingDataFlowInfo?
             }
-            info.valueWithGivenTypeInfo?.let { withGivenTypeInfo.add(it) }
-            info = info.parent as DelegatingDataFlowInfo?
+            return result
         }
-        return result
-    }
 
     override fun getCollectedNullability(key: DataFlowValue) = getNullability(key, false)
 
@@ -226,13 +228,12 @@ internal class DelegatingDataFlowInfo @JvmOverloads constructor(
         return DelegatingDataFlowInfo(this, newNullabilityInfo, newTypeInfo)
     }
 
-    override fun and(otherInfo: DataFlowInfo): DataFlowInfo {
-        if (otherInfo === DataFlowInfo.EMPTY) return this
-        if (this === DataFlowInfo.EMPTY) return otherInfo
-        if (this === otherInfo) return this
+    override fun and(other: DataFlowInfo): DataFlowInfo {
+        if (other === DataFlowInfo.EMPTY) return this
+        if (this === DataFlowInfo.EMPTY) return other
+        if (this === other) return this
 
-        assert(otherInfo is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + otherInfo }
-        val other = otherInfo as DelegatingDataFlowInfo
+        assert(other is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + other }
 
         val nullabilityMapBuilder = Maps.newHashMap<DataFlowValue, Nullability>()
         for ((key, otherFlags) in other.completeNullabilityInfo) {
@@ -259,13 +260,12 @@ internal class DelegatingDataFlowInfo @JvmOverloads constructor(
             else if (this.containsNothing()) other
             else Sets.intersection(this, other)
 
-    override fun or(otherInfo: DataFlowInfo): DataFlowInfo {
-        if (otherInfo === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
+    override fun or(other: DataFlowInfo): DataFlowInfo {
+        if (other === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
         if (this === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
-        if (this === otherInfo) return this
+        if (this === other) return this
 
-        assert(otherInfo is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + otherInfo }
-        val other = otherInfo as DelegatingDataFlowInfo
+        assert(other is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + other }
 
         val nullabilityMapBuilder = Maps.newHashMap<DataFlowValue, Nullability>()
         for ((key, otherFlags) in other.completeNullabilityInfo) {
@@ -297,7 +297,6 @@ internal class DelegatingDataFlowInfo @JvmOverloads constructor(
         private fun containsAll(first: SetMultimap<DataFlowValue, KotlinType>, second: SetMultimap<DataFlowValue, KotlinType>) =
                 first.entries().containsAll(second.entries())
 
-        @JvmStatic
         fun newTypeInfo(): SetMultimap<DataFlowValue, KotlinType> = LinkedHashMultimap.create<DataFlowValue, KotlinType>()
     }
 }
