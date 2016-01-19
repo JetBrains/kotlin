@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.ProjectTopics
 import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -27,6 +28,9 @@ import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.PopupStep
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -36,8 +40,10 @@ import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
+import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
 
-// Code is very same to com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
+// Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
 class KotlinSetupSDKNotificationProvider(
         private val myProject: Project,
         notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
@@ -63,17 +69,21 @@ class KotlinSetupSDKNotificationProvider(
         }
 
         val module = ModuleUtilCore.findModuleForPsiElement(psiFile) ?: return null
-        if (ModuleRootManager.getInstance(module).sdk != null) {
-            return null
+        if (ModuleRootManager.getInstance(module).sdk == null) {
+            return createSetupSdkPanel(myProject, psiFile)
         }
 
-        return createPanel(myProject, psiFile)
+        if (!isModuleConfigured(module) && UnsupportedAbiVersionNotificationPanelProvider.collectBadRoots(module).isEmpty()) {
+            return createKotlinNotConfiguredPanel(module)
+        }
+
+        return null
     }
 
     companion object {
         private val KEY = Key.create<EditorNotificationPanel>("Setup SDK")
 
-        private fun createPanel(project: Project, file: PsiFile): EditorNotificationPanel {
+        private fun createSetupSdkPanel(project: Project, file: PsiFile): EditorNotificationPanel {
             return EditorNotificationPanel().apply {
                 setText(ProjectBundle.message("project.sdk.not.defined"))
                 createActionLabel(ProjectBundle.message("project.sdk.setup")) {
@@ -84,6 +94,30 @@ class KotlinSetupSDKNotificationProvider(
                         if (module != null) {
                             ModuleRootModificationUtil.setSdkInherited(module)
                         }
+                    }
+                }
+            }
+        }
+
+        private fun createKotlinNotConfiguredPanel(module: Module): EditorNotificationPanel {
+            return EditorNotificationPanel().apply {
+                setText("Kotlin not configured")
+                val configurators = getApplicableConfigurators(module).toList()
+                if (!configurators.isEmpty()) {
+                    createComponentActionLabel("Configure") { label ->
+                        val step = object : BaseListPopupStep<KotlinProjectConfigurator>("Choose Configurator", configurators) {
+                            override fun getTextFor(value: KotlinProjectConfigurator?): String {
+                                return value?.presentableText ?: "<none>"
+                            }
+
+                            override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
+                                selectedValue?.let {
+                                    it.configure(module.project, emptyList())
+                                }
+                                return null
+                            }
+                        }
+                        JBPopupFactory.getInstance().createListPopup(step).showUnderneathOf(label)
                     }
                 }
             }

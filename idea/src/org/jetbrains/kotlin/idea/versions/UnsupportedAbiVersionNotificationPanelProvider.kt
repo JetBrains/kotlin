@@ -107,20 +107,18 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
     }
 
     private fun createShowPathsActionLabel(module: Module, answer: EditorNotificationPanel, labelText: String) {
-        val label: Ref<HyperlinkLabel> = Ref.create()
-        val action = Runnable {
+        answer.createComponentActionLabel(labelText) { label ->
             DumbService.getInstance(project).tryRunReadActionInSmartMode({
                 val badRoots = collectBadRoots(module)
                 assert(!badRoots.isEmpty()) { "This action should only be called when bad roots are present" }
 
                 val listPopupModel = LibraryRootsPopupModel("Unsupported format", project, badRoots)
                 val popup = JBPopupFactory.getInstance().createListPopup(listPopupModel)
-                popup.showUnderneathOf(label.get())
+                popup.showUnderneathOf(label)
 
                 null
             }, "Can't show all paths during index update")
         }
-        label.set(answer.createActionLabel(labelText, action))
     }
 
     override fun getKey(): Key<EditorNotificationPanel> = KEY
@@ -207,7 +205,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             OpenFileDescriptor(project, root).navigate(true)
         }
 
-        private fun collectBadRoots(module: Module): Collection<VirtualFile> {
+        fun collectBadRoots(module: Module): Collection<VirtualFile> {
             val badJVMRoots = getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
             val badJSRoots = getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
 
@@ -216,4 +214,12 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             return (badJVMRoots + badJSRoots).toHashSet()
         }
     }
+}
+
+fun EditorNotificationPanel.createComponentActionLabel(labelText: String, callback: (HyperlinkLabel) -> Unit) {
+    val label: Ref<HyperlinkLabel> = Ref.create()
+    val action = Runnable {
+        callback(label.get())
+    }
+    label.set(createActionLabel(labelText, action))
 }
