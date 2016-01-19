@@ -20,24 +20,25 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.context.TypeLazinessToken
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
-import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
-import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -196,18 +197,61 @@ class TypeResolver(
             }
 
             override fun visitFunctionType(type: KtFunctionType) {
-                val receiverTypeRef = type.getReceiverTypeReference()
-                type.parameters.forEach { identifierChecker.checkDeclaration(it, c.trace) }
+                val receiverTypeRef = type.receiverTypeReference
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
-                type.parameters.forEach { checkParameterInFunctionType(it) }
-                val parameterTypes = type.getParameters().map { resolveType(c.noBareTypes(), it.getTypeReference()!!) }
+                val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
 
-                val returnTypeRef = type.getReturnTypeReference()
-                val returnType = if (returnTypeRef != null)
-                                     resolveType(c.noBareTypes(), returnTypeRef)
+                val returnTypeRef = type.returnTypeReference
+                val returnType = if (returnTypeRef != null) resolveType(c.noBareTypes(), returnTypeRef)
                                  else moduleDescriptor.builtIns.unitType
-                result = type(moduleDescriptor.builtIns.getFunctionType(annotations, receiverType, parameterTypes, returnType))
+
+                result = type(
+                        moduleDescriptor.builtIns.getFunctionType(
+                                annotations, receiverType, parameterDescriptors.map { it.type }, returnType
+                        )
+                )
+            }
+
+            private fun resolveParametersOfFunctionType(parameters: List<KtParameter>): List<VariableDescriptor> {
+                class ParameterOfFunctionTypeDescriptor(
+                        containingDeclaration: DeclarationDescriptor,
+                        annotations: Annotations,
+                        name: Name,
+                        type: KotlinType,
+                        source: SourceElement
+                ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
+                    override fun getVisibility() = Visibilities.LOCAL
+
+                    override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
+                        throw UnsupportedOperationException("Should not be called for descriptor of type $javaClass")
+                    }
+
+                    override fun isVar() = false
+
+                    override fun getCompileTimeInitializer() = null
+
+                    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
+                        return visitor.visitVariableDescriptor(this, data)
+                    }
+                }
+
+                parameters.forEach {
+                    identifierChecker.checkDeclaration(it, c.trace)
+                    checkParameterInFunctionType(it)
+                }
+                return parameters.map { parameter ->
+                    val parameterType = resolveType(c.noBareTypes(), parameter.typeReference!!)
+                    val descriptor = ParameterOfFunctionTypeDescriptor(
+                            c.scope.ownerDescriptor,
+                            Annotations.EMPTY,
+                            parameter.nameAsSafeName,
+                            parameterType,
+                            parameter.toSourceElement()
+                    )
+                    c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
+                    descriptor
+                }
             }
 
             override fun visitDynamicType(type: KtDynamicType) {

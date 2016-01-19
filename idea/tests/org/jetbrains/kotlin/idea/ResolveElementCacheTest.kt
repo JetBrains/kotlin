@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -299,5 +301,20 @@ class C(param1: String = "", param2: Int = 0) {
 
         val fileAnnotationList = file.fileAnnotationList!!
         fileAnnotationList.analyze(BodyResolveMode.PARTIAL)
+    }
+
+    fun testNamedParametersInFunctionType() {
+        val file = myFixture.configureByText("Test.kt", """
+        fun <K, V> intercept(block: (key: K, next: (K) -> V, K) -> V) {}
+        """) as KtFile
+
+        val function = file.declarations[0] as KtNamedFunction
+        val functionType = function.valueParameters.first().typeReference!!.typeElement as KtFunctionType
+        val descriptorsForParameters = functionType.parameters.map { it.resolveToDescriptor() }
+
+        assert(
+                listOf("key", "next", SpecialNames.NO_NAME_PROVIDED.asString()) ==
+                        descriptorsForParameters.map { it.name.asString() }
+        )
     }
 }
