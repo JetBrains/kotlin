@@ -250,7 +250,7 @@ internal class DescriptorRendererImpl(
     private fun renderDefaultType(type: KotlinType): String {
         val sb = StringBuilder()
 
-        renderAnnotations(type, sb, /* needBrackets = */ true)
+        renderAnnotations(type, sb)
 
         if (type.isError) {
             sb.append(type.constructor.toString()) // Debug name of an error type is more informative
@@ -366,7 +366,7 @@ internal class DescriptorRendererImpl(
             builder.append(if (fqName.isRoot) "root package" else renderFqName(fqName))
         }
     }
-    private fun renderAnnotations(annotated: Annotated, builder: StringBuilder, needBrackets: Boolean = false) {
+    private fun renderAnnotations(annotated: Annotated, builder: StringBuilder) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is KotlinType) excludedTypeAnnotationClasses else excludedAnnotationClasses
@@ -537,6 +537,9 @@ internal class DescriptorRendererImpl(
         if (!variance.isEmpty()) {
             builder.append(renderKeyword(variance)).append(" ")
         }
+
+        renderAnnotations(typeParameter, builder)
+
         renderName(typeParameter, builder)
         val upperBoundsCount = typeParameter.upperBounds.size
         if ((upperBoundsCount > 1 && !topLevel) || upperBoundsCount == 1) {
@@ -846,7 +849,7 @@ internal class DescriptorRendererImpl(
             val primaryConstructor = klass.unsubstitutedPrimaryConstructor
             if (primaryConstructor != null) {
                 builder.append(" ")
-                renderAnnotations(primaryConstructor, builder, true)
+                renderAnnotations(primaryConstructor, builder)
                 renderVisibility(primaryConstructor.visibility, builder)
                 builder.append("constructor")
                 renderValueParameters(primaryConstructor.valueParameters, primaryConstructor.hasSynthesizedParameterNames(), builder)
