@@ -21,6 +21,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.FileASTNode;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.psi.*;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -167,13 +168,18 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
         KtFileClassProvider fileClassProvider = ServiceManager.getService(getProject(), KtFileClassProvider.class);
         // TODO We don't currently support finding light classes for scripts
         if (fileClassProvider != null && !isScript()) {
-            return fileClassProvider.getFileClasses(this);
+            try {
+                return fileClassProvider.getFileClasses(this);
+            }
+            catch (IndexNotReadyException ignored) {
+            }
         }
         return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
-    public void setPackageName(String packageName) { }
+    public void setPackageName(String packageName) {
+    }
 
     @Nullable
     public KtScript getScript() {
@@ -249,11 +255,11 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
     public List<KtAnnotationEntry> getDanglingAnnotations() {
         KotlinFileStub stub = getStub();
         KtModifierList[] danglingModifierLists = stub == null
-                                                  ? findChildrenByClass(KtModifierList.class)
-                                                  : stub.getChildrenByType(
-                                                          KtStubElementTypes.MODIFIER_LIST,
-                                                          KtStubElementTypes.MODIFIER_LIST.getArrayFactory()
-                                                  );
+                                                 ? findChildrenByClass(KtModifierList.class)
+                                                 : stub.getChildrenByType(
+                                                         KtStubElementTypes.MODIFIER_LIST,
+                                                         KtStubElementTypes.MODIFIER_LIST.getArrayFactory()
+                                                 );
         return ArraysKt.flatMap(
                 danglingModifierLists,
                 new Function1<KtModifierList, Iterable<KtAnnotationEntry>>() {
