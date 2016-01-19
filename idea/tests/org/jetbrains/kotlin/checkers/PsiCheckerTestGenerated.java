@@ -394,6 +394,18 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("AnnotationOnNamedParameterOfFunctionType.kt")
+        public void testAnnotationOnNamedParameterOfFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/AnnotationOnNamedParameterOfFunctionType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AnnotationOnParameterOfFunctionType.kt")
+        public void testAnnotationOnParameterOfFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/AnnotationOnParameterOfFunctionType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AssignmentsUnderOperators.kt")
         public void testAssignmentsUnderOperators() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/AssignmentsUnderOperators.kt");

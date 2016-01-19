@@ -244,7 +244,7 @@ class TypeResolver(
                     val parameterType = resolveType(c.noBareTypes(), parameter.typeReference!!)
                     val descriptor = ParameterOfFunctionTypeDescriptor(
                             c.scope.ownerDescriptor,
-                            Annotations.EMPTY,
+                            annotationResolver.resolveAnnotationsWithoutArguments(c.scope, parameter.modifierList, c.trace),
                             parameter.nameAsSafeName,
                             parameterType,
                             parameter.toSourceElement()
