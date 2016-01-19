@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
@@ -66,7 +67,8 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
 
 fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
-fun KotlinType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
+fun KotlinType.cannotBeReified(): Boolean =
+        KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic() || this.isCaptured()
 fun KotlinType.unsafeAsReifiedArgument(): Boolean = arguments.any { !it.isStarProjection }
 
 fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypeProjection {
