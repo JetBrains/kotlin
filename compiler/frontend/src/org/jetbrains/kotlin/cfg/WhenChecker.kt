@@ -330,11 +330,9 @@ object WhenChecker {
                 false
             }
 
-    @JvmStatic
     fun containsNullCase(expression: KtWhenExpression, context: BindingContext) =
             WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, null, true).isEmpty()
 
-    @JvmStatic
     fun checkDeprecatedWhenSyntax(trace: BindingTrace, expression: KtWhenExpression) {
         if (expression.subjectExpression != null) return
 
@@ -351,7 +349,6 @@ object WhenChecker {
         }
     }
 
-    @JvmStatic
     fun checkReservedPrefix(trace: BindingTrace, expression: KtWhenExpression) {
         checkReservedPrefixWord(trace, expression.whenKeyword, "sealed", TokenSet.EMPTY, "sealed when")
     }
