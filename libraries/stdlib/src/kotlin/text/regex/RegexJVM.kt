@@ -263,8 +263,8 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
         get() {
             if (groupValues_ == null) {
                 groupValues_ = object : AbstractList<String>() {
-                    override val size: Int get() = matchResult.groupCount()
-                    override fun get(index: Int): String = matchResult.group(index + 1) ?: ""
+                    override val size: Int get() = matchResult.groupCount() + 1
+                    override fun get(index: Int): String = matchResult.group(index) ?: ""
                 }
             }
             return groupValues_!!

@@ -216,8 +216,8 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
             get() {
                 if (groupValues_ == null) {
                     groupValues_ = object : java.util.AbstractList<String>() {
-                        override val size: Int get() = match.size - 1
-                        override fun get(index: Int): String = match[index + 1] ?: ""
+                        override val size: Int get() = match.size
+                        override fun get(index: Int): String = match[index] ?: ""
                     }
                 }
                 return groupValues_!!
@@ -225,4 +225,19 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
 
         override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.end + 1)
     }
+}
+
+// TODO: Move into MatchResult after KT-4124 is implemented
+public class Destructured internal constructor(public val match: MatchResult) {
+    public operator inline fun component1():  String = match.groupValues[1]
+    public operator inline fun component2():  String = match.groupValues[2]
+    public operator inline fun component3():  String = match.groupValues[3]
+    public operator inline fun component4():  String = match.groupValues[4]
+    public operator inline fun component5():  String = match.groupValues[5]
+    public operator inline fun component6():  String = match.groupValues[6]
+    public operator inline fun component7():  String = match.groupValues[7]
+    public operator inline fun component8():  String = match.groupValues[8]
+    public operator inline fun component9():  String = match.groupValues[9]
+    public operator inline fun component10(): String = match.groupValues[10]
+    public fun toList(): List<String> = match.groupValues.drop(1)
 }
