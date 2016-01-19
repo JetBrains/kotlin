@@ -6,7 +6,7 @@ fun <A> main() {
     <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>C<!>()
 
     val <!UNUSED_VARIABLE!>a<!>: C<A> = <!TYPE_PARAMETER_AS_REIFIED!>C<!>()
-    <!TYPE_PARAMETER_AS_REIFIED!>C<!><A>()
+    C<<!TYPE_PARAMETER_AS_REIFIED!>A<!>>()
 
     val <!UNUSED_VARIABLE!>b<!>: C<Int> = C()
     C<Int>()

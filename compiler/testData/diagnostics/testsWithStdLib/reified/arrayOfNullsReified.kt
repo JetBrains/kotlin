@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun <T> foo() {
-    val x = <!TYPE_PARAMETER_AS_REIFIED!>arrayOfNulls<!><T>(5)
+    val x = arrayOfNulls<<!TYPE_PARAMETER_AS_REIFIED!>T<!>>(5)
 }
 
 inline fun <reified T> bar() {

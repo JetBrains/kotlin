@@ -46,18 +46,22 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
                     !((TypeParameterDescriptor) argumentDeclarationDescription).isReified()
                 ) {
                     context.trace.report(
-                            Errors.TYPE_PARAMETER_AS_REIFIED.on(getCallElement(context), parameter)
+                            Errors.TYPE_PARAMETER_AS_REIFIED.on(getElementToReport(context, parameter.getIndex()), parameter)
                     );
                 }
                 else if (TypeUtilsKt.cannotBeReified(argument)) {
-                    context.trace.report(Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getCallElement(context), argument));
+                    context.trace.report(
+                            Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getElementToReport(context, parameter.getIndex()), argument));
                 }
             }
         }
     }
 
     @NotNull
-    private static PsiElement getCallElement(@NotNull BasicCallResolutionContext context) {
+    private static PsiElement getElementToReport(@NotNull BasicCallResolutionContext context, int parameterIndex) {
+        if (context.call.getTypeArguments().size() > parameterIndex) {
+            return context.call.getTypeArguments().get(parameterIndex);
+        }
         KtExpression callee = context.call.getCalleeExpression();
         return callee != null ? callee : context.call.getCallElement();
     }
