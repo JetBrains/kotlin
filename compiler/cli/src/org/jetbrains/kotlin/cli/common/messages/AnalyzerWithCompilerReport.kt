@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.util.*
 
+
 class AnalyzerWithCompilerReport(collector: MessageCollector) {
     private val messageCollector: MessageSeverityCollector = MessageSeverityCollector(collector)
 
@@ -51,7 +52,8 @@ class AnalyzerWithCompilerReport(collector: MessageCollector) {
         val bindingContext = analysisResult.bindingContext
         val classes = bindingContext.getKeys(TraceBasedErrorReporter.INCOMPLETE_HIERARCHY)
         if (!classes.isEmpty()) {
-            val message = StringBuilder("Supertypes of the following classes cannot be resolved. " + "Please make sure you have the required dependencies in the classpath:\n")
+            val message = StringBuilder("Supertypes of the following classes cannot be resolved. " +
+                                        "Please make sure you have the required dependencies in the classpath:\n")
             for (descriptor in classes) {
                 val fqName = DescriptorUtils.getFqName(descriptor).asString()
                 val unresolved = bindingContext.get(TraceBasedErrorReporter.INCOMPLETE_HIERARCHY, descriptor)
@@ -116,9 +118,19 @@ class AnalyzerWithCompilerReport(collector: MessageCollector) {
         return messageCollector.anyReported(CompilerMessageSeverity.ERROR)
     }
 
-    fun analyzeAndReport(files: Collection<KtFile>, analyzer: () -> AnalysisResult) {
-        analysisResult = analyzer.invoke()
+    interface Analyzer {
+        fun analyze(): AnalysisResult
+
+        fun reportEnvironmentErrors() {
+        }
+    }
+
+    fun analyzeAndReport(files: Collection<KtFile>, analyzer: Analyzer) {
+        analysisResult = analyzer.analyze()
         reportSyntaxErrors(files)
+        if (analysisResult.bindingContext.diagnostics.any { it.isValid && it.severity == Severity.ERROR }) {
+            analyzer.reportEnvironmentErrors()
+        }
         val abiVersionErrors = abiVersionErrors
         reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, !abiVersionErrors.isEmpty())
         if (hasErrors()) {

@@ -161,6 +161,11 @@
                                 <exclude>kotlin/internal/OnlyInputTypes*</exclude>
                                 <exclude>kotlin/internal</exclude>
                             </excludes>
+                            <archive>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -73,6 +73,18 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("conflictingRuntimeVersion.args")
+        public void testConflictingRuntimeVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/conflictingRuntimeVersion.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("conflictingRuntimeVersionNoError.args")
+        public void testConflictingRuntimeVersionNoError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/conflictingRuntimeVersionNoError.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("diagnosticsOrder.args")
         public void testDiagnosticsOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/diagnosticsOrder.args");

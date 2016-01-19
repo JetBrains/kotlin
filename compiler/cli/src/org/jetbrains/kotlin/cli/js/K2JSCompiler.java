@@ -25,7 +25,6 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -232,10 +231,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static AnalyzerWithCompilerReport analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
             @NotNull final List<KtFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
-        analyzerWithCompilerReport.analyzeAndReport(sources, new Function0<AnalysisResult>() {
+        analyzerWithCompilerReport.analyzeAndReport(sources, new AnalyzerWithCompilerReport.Analyzer() {
+            @NotNull
             @Override
-            public AnalysisResult invoke() {
+            public AnalysisResult analyze() {
                 return TopDownAnalyzerFacadeForJS.analyzeFiles(sources, config);
+            }
+
+            @Override
+            public void reportEnvironmentErrors() {
             }
         });
         return analyzerWithCompilerReport;

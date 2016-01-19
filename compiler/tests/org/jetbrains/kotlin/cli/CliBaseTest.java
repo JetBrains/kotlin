@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
@@ -83,6 +84,7 @@ public class CliBaseTest {
     ) {
         String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
+                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
                 .replace("expected version is " + version, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
                 .replace(KotlinVersion.VERSION, "$VERSION$");

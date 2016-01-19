@@ -16,15 +16,13 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.openapi.util.io.JarUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -46,11 +44,13 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
+import java.util.jar.Attributes
 
 object KotlinToJVMBytecodeCompiler {
 
@@ -102,7 +102,7 @@ object KotlinToJVMBytecodeCompiler {
             moduleVisibilityManager.addFriendPath(path)
         }
 
-        val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType()  } + "]"
+        val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
         val result = analyze(environment, targetDescription) ?: return false
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -270,18 +270,24 @@ object KotlinToJVMBytecodeCompiler {
         val analysisStart = PerformanceCounter.currentTime()
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
         analyzerWithCompilerReport.analyzeAndReport(
-                environment.getSourceFiles(), {
-            val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
-            val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project,
-                                                                                          environment.getModuleName())
+                environment.getSourceFiles(), object : AnalyzerWithCompilerReport.Analyzer {
+            override fun analyze(): AnalysisResult {
+                val sharedTrace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+                val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project,
+                                                                                              environment.getModuleName())
 
-            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    moduleContext,
-                    environment.getSourceFiles(),
-                    sharedTrace,
-                    environment.configuration.get(JVMConfigurationKeys.MODULES),
-                    environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
-                    JvmPackagePartProvider(environment))
+                return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
+                        moduleContext,
+                        environment.getSourceFiles(),
+                        sharedTrace,
+                        environment.configuration.get(JVMConfigurationKeys.MODULES),
+                        environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+                        JvmPackagePartProvider(environment))
+            }
+
+            override fun reportEnvironmentErrors() {
+                reportRuntimeConflicts(collector, environment.configuration.jvmClasspathRoots)
+            }
         })
         val analysisNanos = PerformanceCounter.currentTime() - analysisStart
         val message = "ANALYZE: " + environment.getSourceFiles().size + " files (" +
@@ -397,4 +403,24 @@ object KotlinToJVMBytecodeCompiler {
         assert(result != null) { "Message collector not specified in compiler configuration" }
         return result!!
     }
+
+    private fun reportRuntimeConflicts(messageCollector: MessageCollector, jvmClasspathRoots: List<File>) {
+        fun String.removeIdeaVersionSuffix(): String {
+            val versionIndex = indexOfAny(arrayListOf("-IJ", "-Idea"))
+            return if (versionIndex >= 0) substring(0, versionIndex) else this
+        }
+
+        val runtimes = jvmClasspathRoots.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
+
+        val runtimeVersions = runtimes.map {
+            JarUtil.getJarAttribute(it, Attributes.Name.IMPLEMENTATION_VERSION).orEmpty().removeIdeaVersionSuffix()
+        }
+
+        if (runtimeVersions.toSet().size > 1) {
+            messageCollector.report(CompilerMessageSeverity.ERROR,
+                                    "Conflicting versions of Kotlin runtime on classpath: " + runtimes.joinToString { it.path },
+                                    CompilerMessageLocation.NO_LOCATION)
+        }
+    }
 }
+
