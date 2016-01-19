@@ -137,31 +137,6 @@ open class FileScopeProviderImpl(
         return FileData(lexicalScope, importResolver)
     }
 
-    // we use this dummy implementation of DeclarationDescriptor to check accessibility of symbols from the current package
-    private class DummyContainerDescriptor(private val file: KtFile, private val packageFragment: PackageFragmentDescriptor) : DeclarationDescriptorNonRoot {
-        private val sourceElement = KotlinSourceElement(file)
-
-        override fun getContainingDeclaration() = packageFragment
-
-        override fun getSource() = sourceElement
-
-        override fun getOriginal() = this
-        override fun getAnnotations() = Annotations.EMPTY
-        override fun substitute(substitutor: TypeSubstitutor) = this
-
-        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
-            throw UnsupportedOperationException()
-        }
-
-        override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
-            throw UnsupportedOperationException()
-        }
-
-        override fun getName(): Name {
-            throw UnsupportedOperationException()
-        }
-    }
-
     private enum class FilteringKind {
         VISIBLE_CLASSES, INVISIBLE_CLASSES
     }
@@ -197,6 +172,7 @@ open class FileScopeProviderImpl(
             }
 
             override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+                // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
                 if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
                 return scope.getContributedDescriptors(kindFilter, { name -> name !in excludedNames && nameFilter(name) })
             }
@@ -206,6 +182,31 @@ open class FileScopeProviderImpl(
             override fun printScopeStructure(p: Printer) {
                 p.println(this.toString())
             }
+        }
+    }
+
+    // we use this dummy implementation of DeclarationDescriptor to check accessibility of symbols from the current package
+    private class DummyContainerDescriptor(private val file: KtFile, private val packageFragment: PackageFragmentDescriptor) : DeclarationDescriptorNonRoot {
+        private val sourceElement = KotlinSourceElement(file)
+
+        override fun getContainingDeclaration() = packageFragment
+
+        override fun getSource() = sourceElement
+
+        override fun getOriginal() = this
+        override fun getAnnotations() = Annotations.EMPTY
+        override fun substitute(substitutor: TypeSubstitutor) = this
+
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+            throw UnsupportedOperationException()
+        }
+
+        override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+            throw UnsupportedOperationException()
+        }
+
+        override fun getName(): Name {
+            throw UnsupportedOperationException()
         }
     }
 }
