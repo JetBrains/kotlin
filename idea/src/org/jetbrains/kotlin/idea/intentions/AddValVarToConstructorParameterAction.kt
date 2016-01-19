@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
     companion object {
@@ -54,6 +55,8 @@ interface AddValVarToConstructorParameterAction {
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
             it.element
         } ?: return
+
+        editor.caretModel.moveToOffset(parameter.startOffset)
 
         TemplateBuilderImpl(parameter)
                 .apply { replaceElement(parameter.valOrVarKeyword!!, ValVarExpression) }
