@@ -32,53 +32,92 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinNestedClassesToUpperLevelDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.*
 
 class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
-    private fun getSourceDirectories(elements: Array<out PsiElement>) = elements.mapTo(LinkedHashSet()) { it.containingFile?.parent }
+    private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
+        val getContainer: (PsiElement) -> PsiElement? =
+                if (elements.any { it.parent !is KtFile }) { e ->
+                    (e as? KtNamedDeclaration)?.containingClassOrObject
+                }
+                else { e ->
+                    e.containingFile?.parent
+                }
+        return elements.mapNotNullTo(LinkedHashSet(), getContainer).singleOrNull()
+    }
+
+    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal() else parent is KtFile
 
     private fun doMoveWithCheck(
             project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?
     ): Boolean {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
-        if (getSourceDirectories(elements).singleOrNull() == null) {
+
+        val container = getUniqueContainer(elements)
+        if (container == null) {
             CommonRefactoringUtil.showErrorHint(
-                    project, editor, "All declarations must belong to the same directory", MOVE_DECLARATIONS, null
+                    project, editor, "All declarations must belong to the same directory or class", MOVE_DECLARATIONS, null
             )
             return false
         }
 
         val elementsToSearch = elements.mapTo(LinkedHashSet()) { it as KtNamedDeclaration }
 
-        if (elementsToSearch.any { it.parent !is KtFile }) {
-            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations")
+        // todo: allow moving companion object
+        if (elementsToSearch.any { it is KtObjectDeclaration && it.isCompanion() }) {
+            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for companion objects")
             CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
 
-        val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
-        val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
-        val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
-        val searchInText = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_FOR_TEXT
-        val targetFile = targetContainer as? KtFile
-        val moveToPackage = targetContainer !is KtFile
+        if (elementsToSearch.any { !it.canMove() }) {
+            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations and nested classes")
+            CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            return true
+        }
 
-        MoveKotlinTopLevelDeclarationsDialog(
-                project, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
-        ).show()
+        when (container) {
+            is PsiDirectory, is PsiPackage, is KtFile -> {
+                val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
+                val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
+                val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
+                val searchInText = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_FOR_TEXT
+                val targetFile = targetContainer as? KtFile
+                val moveToPackage = targetContainer !is KtFile
+
+                MoveKotlinTopLevelDeclarationsDialog(
+                        project, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
+                ).show()
+            }
+
+            is KtClassOrObject -> {
+                if (elementsToSearch.size > 1) return false
+
+                val outerClass = container.parent as KtClassOrObject
+                val newContainer = targetContainer
+                                   ?: outerClass.containingClassOrObject
+                                   ?: outerClass.containingFile.let { it.containingDirectory ?: it }
+                MoveKotlinNestedClassesToUpperLevelDialog(project, elementsToSearch.first() as KtClassOrObject, newContainer).show()
+            }
+
+            else -> throw AssertionError("Unexpected container: ${container.getElementTextWithContext()}")
+        }
 
         return true
     }
 
     private fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?, editorMode: Boolean): Boolean {
         if (!super.canMove(elements, targetContainer)) return false
-        if (getSourceDirectories(elements).singleOrNull() == null) return false
+        if (getUniqueContainer(elements) == null) return false
 
         return elements.all { e ->
             if (e is KtClass || (e is KtObjectDeclaration && !e.isObjectLiteral()) || e is KtNamedFunction || e is KtProperty) {
-                (editorMode || e.parent is KtFile) && e.canRefactor()
+                (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
             }
             else false
         }
