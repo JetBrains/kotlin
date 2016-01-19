@@ -187,7 +187,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        AnalyzerWithCompilerReport.reportDiagnostics(translationResult.getDiagnostics(), messageSeverityCollector);
+        AnalyzerWithCompilerReport.Companion.reportDiagnostics(translationResult.getDiagnostics(), messageSeverityCollector);
 
         if (!(translationResult instanceof TranslationResult.Success)) return ExitCode.COMPILATION_ERROR;
 

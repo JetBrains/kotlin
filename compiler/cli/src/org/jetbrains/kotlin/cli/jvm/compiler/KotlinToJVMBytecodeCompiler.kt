@@ -290,7 +290,7 @@ object KotlinToJVMBytecodeCompiler {
                       "in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms"
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
-        val result = analyzerWithCompilerReport.getAnalysisResult()
+        val result = analyzerWithCompilerReport.analysisResult
         assert(result != null) { "AnalysisResult should be non-null, compiling: " + environment.getSourceFiles() }
 
         val context = CompilerPluginContext(environment.project, result!!.bindingContext,
