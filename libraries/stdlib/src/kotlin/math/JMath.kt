@@ -72,3 +72,5 @@ public operator fun BigDecimal.mod(other: BigDecimal) : BigDecimal = this.remain
  */
 @Deprecated("Provided for binary compatibility", ReplaceWith("this.unaryMinus(other)"), level = DeprecationLevel.HIDDEN)
 public operator fun BigDecimal.unaryMinus() : BigDecimal = this.negate()
+
+public fun Number.toBigInteger() = BigInteger.valueOf(this.toLong())
