@@ -242,6 +242,6 @@ private fun globalResolveSessionProvider(
             AnalyzerFacadeProvider.getAnalyzerFacade(platform),
             syntheticFiles, delegateResolverForProject, moduleFilter
     )
-    val allDependencies = dependencies + listOf(moduleResolverProvider.exceptionTracker)
+    val allDependencies = dependencies + moduleResolverProvider.exceptionTracker
     return CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)
 }

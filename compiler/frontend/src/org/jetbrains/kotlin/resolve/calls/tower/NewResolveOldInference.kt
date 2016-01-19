@@ -232,7 +232,7 @@ class NewResolveOldInference(
 
             val diagnostics = (towerCandidate.diagnostics +
                                checkInfixAndOperator(basicCallContext.call, towerCandidate.descriptor) +
-                               createPreviousResolveError(candidateCall.status)).filterNotNull() // todo
+                               listOfNotNull(createPreviousResolveError(candidateCall.status))) // todo
             return Candidate(ResolutionCandidateStatus(diagnostics), candidateCall)
         }
 

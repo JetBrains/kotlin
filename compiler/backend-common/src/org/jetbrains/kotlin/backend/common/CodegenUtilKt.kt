@@ -57,7 +57,8 @@ object CodegenUtilKt {
                                 val name = overriddenDescriptor.name
 
                                 // this is the actual member of delegateExpressionType that we are delegating to
-                                (scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND) + scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND))
+                                (scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND) as Collection<CallableMemberDescriptor> +
+                                 scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND))
                                         .firstOrNull {
                                             (listOf(it) + DescriptorUtils.getAllOverriddenDescriptors(it))
                                                     .map { it.original }

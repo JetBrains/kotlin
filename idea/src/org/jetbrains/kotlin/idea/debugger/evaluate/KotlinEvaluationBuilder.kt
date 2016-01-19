@@ -229,7 +229,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
-                                val allRequests = virtualMachine.eventRequestManager().breakpointRequests() +
+                                val allRequests = virtualMachine.eventRequestManager().breakpointRequests() as List<EventRequest> +
                                                   virtualMachine.eventRequestManager().classPrepareRequests()
                                 allRequests.forEach { it.disable() }
 
