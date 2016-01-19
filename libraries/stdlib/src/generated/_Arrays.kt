@@ -12056,7 +12056,8 @@ public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destinat
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(element: T): Array<T> {
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<T>.plus(element: T): Array<T> {
     val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -12155,7 +12156,7 @@ public operator fun ShortArray.plus(element: Short): ShortArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<T>.plus(elements: Collection<T>): Array<T> {
     var index = size
     val result = Arrays.copyOf(this, index + elements.size)
     for (element in elements) result[index++] = element
@@ -12254,7 +12255,7 @@ public operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<T>.plus(elements: Array<out T>): Array<T> {
     val thisSize = size
     val arraySize = elements.size
     val result = Arrays.copyOf(this, thisSize + arraySize)

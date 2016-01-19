@@ -284,8 +284,9 @@ public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArr
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
-public inline operator fun <T> Array<out T>.plus(element: T): Array<T> {
+public inline operator fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.plus(element: T): Array<T> {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -356,7 +357,7 @@ public inline operator fun ShortArray.plus(element: Short): ShortArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public operator fun <T> Array<out T>.plus(elements: Collection<T>): Array<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.plus(elements: Collection<T>): Array<T> {
     return arrayPlusCollection(this, elements)
 }
 
@@ -420,7 +421,7 @@ public operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<T> {
+public inline operator fun <@kotlin.internal.OnlyInputTypes T> Array<T>.plus(elements: Array<out T>): Array<T> {
     return this.asDynamic().concat(elements)
 }
 

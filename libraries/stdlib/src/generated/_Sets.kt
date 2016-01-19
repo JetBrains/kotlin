@@ -16,7 +16,8 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns a set containing all elements of the original set except the given [element].
  */
-public operator fun <T> Set<T>.minus(element: T): Set<T> {
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.minus(element: T): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(size))
     var removed = false
     return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
@@ -25,7 +26,7 @@ public operator fun <T> Set<T>.minus(element: T): Set<T> {
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [elements] array.
  */
-public operator fun <T> Set<T>.minus(elements: Array<out T>): Set<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.minus(elements: Array<out T>): Set<T> {
     val result = LinkedHashSet<T>(this)
     result.removeAll(elements)
     return result
@@ -34,7 +35,7 @@ public operator fun <T> Set<T>.minus(elements: Array<out T>): Set<T> {
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [elements] collection.
  */
-public operator fun <T> Set<T>.minus(elements: Iterable<T>): Set<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.minus(elements: Iterable<T>): Set<T> {
     val other = elements.convertToSetForSetOperationWith(this)
     if (other.isEmpty())
         return this.toSet()
@@ -48,7 +49,7 @@ public operator fun <T> Set<T>.minus(elements: Iterable<T>): Set<T> {
 /**
  * Returns a set containing all elements of the original set except the elements contained in the given [elements] sequence.
  */
-public operator fun <T> Set<T>.minus(elements: Sequence<T>): Set<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.minus(elements: Sequence<T>): Set<T> {
     val result = LinkedHashSet<T>(this)
     result.removeAll(elements)
     return result
@@ -57,7 +58,8 @@ public operator fun <T> Set<T>.minus(elements: Sequence<T>): Set<T> {
 /**
  * Returns a set containing all elements of the original set and then the given [element].
  */
-public operator fun <T> Set<T>.plus(element: T): Set<T> {
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.plus(element: T): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(size + 1))
     result.addAll(this)
     result.add(element)
@@ -67,7 +69,7 @@ public operator fun <T> Set<T>.plus(element: T): Set<T> {
 /**
  * Returns a set containing all elements both of the original set and the given [elements] array.
  */
-public operator fun <T> Set<T>.plus(elements: Array<out T>): Set<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.plus(elements: Array<out T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(this.size + elements.size))
     result.addAll(this)
     result.addAll(elements)
@@ -77,7 +79,7 @@ public operator fun <T> Set<T>.plus(elements: Array<out T>): Set<T> {
 /**
  * Returns a set containing all elements both of the original set and the given [elements] collection.
  */
-public operator fun <T> Set<T>.plus(elements: Iterable<T>): Set<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.plus(elements: Iterable<T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(elements.collectionSizeOrNull()?.let { this.size + it } ?: this.size * 2))
     result.addAll(this)
     result.addAll(elements)
@@ -87,7 +89,7 @@ public operator fun <T> Set<T>.plus(elements: Iterable<T>): Set<T> {
 /**
  * Returns a set containing all elements both of the original set and the given [elements] sequence.
  */
-public operator fun <T> Set<T>.plus(elements: Sequence<T>): Set<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Set<T>.plus(elements: Sequence<T>): Set<T> {
     val result = LinkedHashSet<T>(mapCapacity(this.size * 2))
     result.addAll(this)
     result.addAll(elements)

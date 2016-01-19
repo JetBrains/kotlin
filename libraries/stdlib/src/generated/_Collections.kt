@@ -1564,7 +1564,8 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
-public operator fun <T> Iterable<T>.minus(element: T): List<T> {
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.minus(element: T): List<T> {
     val result = ArrayList<T>(collectionSizeOrDefault(10))
     var removed = false
     return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
@@ -1573,7 +1574,7 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
  */
-public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.minus(elements: Array<out T>): List<T> {
     if (elements.isEmpty()) return this.toList()
     val other = elements.toHashSet()
     return this.filterNot { it in other }
@@ -1582,7 +1583,7 @@ public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
  */
-public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
     val other = elements.convertToSetForSetOperationWith(this)
     if (other.isEmpty())
         return this.toList()
@@ -1592,7 +1593,7 @@ public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
  */
-public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
     val other = elements.toHashSet()
     if (other.isEmpty())
         return this.toList()
@@ -1620,7 +1621,8 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public operator fun <T> Collection<T>.plus(element: T): List<T> {
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.plus(element: T): List<T> {
     val result = ArrayList<T>(size + 1)
     result.addAll(this)
     result.add(element)
@@ -1630,7 +1632,8 @@ public operator fun <T> Collection<T>.plus(element: T): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public operator fun <T> Iterable<T>.plus(element: T): List<T> {
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.plus(element: T): List<T> {
     if (this is Collection) return this.plus(element)
     val result = ArrayList<T>()
     result.addAll(this)
@@ -1641,7 +1644,7 @@ public operator fun <T> Iterable<T>.plus(element: T): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.plus(elements: Array<out T>): List<T> {
     val result = ArrayList<T>(this.size + elements.size)
     result.addAll(this)
     result.addAll(elements)
@@ -1651,7 +1654,7 @@ public operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.plus(elements: Array<out T>): List<T> {
     if (this is Collection) return this.plus(elements)
     val result = ArrayList<T>()
     result.addAll(this)
@@ -1662,7 +1665,7 @@ public operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
  */
-public operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.plus(elements: Iterable<T>): List<T> {
     if (elements is Collection) {
         val result = ArrayList<T>(this.size + elements.size)
         result.addAll(this)
@@ -1678,7 +1681,7 @@ public operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
  */
-public operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
     if (this is Collection) return this.plus(elements)
     val result = ArrayList<T>()
     result.addAll(this)
@@ -1689,7 +1692,7 @@ public operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
  */
-public operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.plus(elements: Sequence<T>): List<T> {
     val result = ArrayList<T>(this.size + 10)
     result.addAll(this)
     result.addAll(elements)
@@ -1699,7 +1702,7 @@ public operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
  */
-public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
     val result = ArrayList<T>()
     result.addAll(this)
     result.addAll(elements)
