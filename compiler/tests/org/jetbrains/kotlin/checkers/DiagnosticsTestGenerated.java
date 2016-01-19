@@ -7599,6 +7599,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ImportNestedWithDifferentName.kt")
+            public void testImportNestedWithDifferentName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportNestedWithDifferentName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportObjectAndUseAsSupertype.kt")
             public void testImportObjectAndUseAsSupertype() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/ImportObjectAndUseAsSupertype.kt");
