@@ -27,17 +27,19 @@ import java.util.*
 
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
-internal class DelegatingDataFlowInfo(
-        private val parent: DataFlowInfo?,
-        private val nullabilityInfo: ImmutableMap<DataFlowValue, Nullability>,
+internal class DelegatingDataFlowInfo private constructor(
+        private val parent: DataFlowInfo? = null,
+        private val nullabilityInfo: ImmutableMap<DataFlowValue, Nullability> = ImmutableMap.of(),
         // Also immutable
-        private val typeInfo: SetMultimap<DataFlowValue, KotlinType>,
+        private val typeInfo: SetMultimap<DataFlowValue, KotlinType> = newTypeInfo(),
         /**
          * Value for which type info was cleared or reassigned at this point
          * so parent type info should not be in use
          */
         private val valueWithGivenTypeInfo: DataFlowValue? = null
 ) : DataFlowInfo {
+
+    constructor(): this(null)
 
     override val completeNullabilityInfo: Map<DataFlowValue, Nullability>
         get() {

@@ -98,7 +98,5 @@ interface DataFlowInfo {
 
 object DataFlowInfoFactory {
     @JvmField
-    val EMPTY: DataFlowInfo = DelegatingDataFlowInfo(
-            null, ImmutableMap.of<DataFlowValue, Nullability>(), DelegatingDataFlowInfo.newTypeInfo()
-    )
+    val EMPTY: DataFlowInfo = DelegatingDataFlowInfo()
 }
