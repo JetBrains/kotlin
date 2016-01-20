@@ -562,6 +562,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("TabReplace1.kt")
+        public void testTabReplace1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/TabReplace1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TabReplace2.kt")
+        public void testTabReplace2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/TabReplace2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeParameter.kt")
         public void testTypeParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/TypeParameter.kt");

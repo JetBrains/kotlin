@@ -108,9 +108,9 @@ class KotlinCompletionContributor : CompletionContributor() {
                     ?: DEFAULT_DUMMY_IDENTIFIER
         }
 
-        if (context.completionType == CompletionType.SMART && !isAtEndOfLine(offset, context.editor.document) /* do not use parent expression if we are at the end of line - it's probably parsed incorrectly */) {
-            val tokenAt = psiFile.findElementAt(Math.max(0, offset))
-            if (tokenAt != null) {
+        val tokenAt = psiFile.findElementAt(Math.max(0, offset))
+        if (tokenAt != null) {
+            if (context.completionType == CompletionType.SMART && !isAtEndOfLine(offset, context.editor.document) /* do not use parent expression if we are at the end of line - it's probably parsed incorrectly */) {
                 var parent = tokenAt.parent
                 if (parent is KtExpression && parent !is KtBlockExpression) {
                     // search expression to be replaced - go up while we are the first child of parent expression
@@ -131,11 +131,19 @@ class KotlinCompletionContributor : CompletionContributor() {
                     val argumentList = (expression.parent as? KtValueArgument)?.parent as? KtValueArgumentList
                     if (argumentList != null) {
                         context.offsetMap.addOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET,
-                                                         argumentList.rightParenthesis?.textRange?.startOffset ?: argumentList.endOffset)
+                                                    argumentList.rightParenthesis?.textRange?.startOffset ?: argumentList.endOffset)
                     }
                 }
             }
+
+            if (tokenAt.node.elementType == KtTokens.IDENTIFIER) {
+                val parameter = tokenAt.parent as? KtParameter
+                if (parameter != null) {
+                    context.offsetMap.addOffset(ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET, parameter.endOffset)
+                }
+            }
         }
+
     }
 
     private fun replacementOffsetByExpression(expression: KtExpression): Int {

@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionInitializationContext
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProgressManager
@@ -30,9 +27,12 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.NameUtil
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.completion.handlers.isCharAt
+import org.jetbrains.kotlin.idea.completion.handlers.skipSpaces
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -206,6 +206,22 @@ class ParameterNameAndTypeCompletion(
         }
 
         override fun handleInsert(context: InsertionContext) {
+            if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
+                val replacementOffset = context.offsetMap.getOffset(REPLACEMENT_OFFSET)
+                if (replacementOffset != -1) {
+                    val tailOffset = context.tailOffset
+                    context.document.deleteString(tailOffset, replacementOffset)
+
+                    val chars = context.document.charsSequence
+                    var offset = chars.skipSpaces(tailOffset)
+                    if (chars.isCharAt(offset, ',')) {
+                        offset++
+                        offset = chars.skipSpaces(offset)
+                        context.editor.moveCaret(offset)
+                    }
+                }
+            }
+
             val settings = CodeStyleSettingsManager.getInstance(context.project).currentSettings.getCustomSettings(KotlinCodeStyleSettings::class.java)
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
@@ -224,8 +240,10 @@ class ParameterNameAndTypeCompletion(
         override fun hashCode() = parameterName.hashCode()
     }
 
-    private companion object {
-        val PRIORITY_KEY = Key<Int>("ParameterNameAndTypeCompletion.PRIORITY_KEY")
+    companion object {
+        private val PRIORITY_KEY = Key<Int>("ParameterNameAndTypeCompletion.PRIORITY_KEY")
+
+        val REPLACEMENT_OFFSET = OffsetKey.create("ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET")
     }
 
     object Weigher : LookupElementWeigher("kotlin.parameterNameAndTypePriority") {
