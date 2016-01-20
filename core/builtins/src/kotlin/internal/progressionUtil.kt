@@ -36,10 +36,6 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
     return mod(mod(a, c) - mod(b, c), c)
 }
 
-
-@Deprecated("This function supports the compiler infrastructure and is not intended to be used directly from user code. It may become internal soon.")
-public fun getProgressionFinalElement(start: Int, end: Int, increment: Int): Int = getProgressionLastElement(start, end, increment)
-
 /**
  * Calculates the final element of a bounded arithmetic progression, i.e. the last element of the progression which is in the range
  * from [start] to [end] in case of a positive [step], or from [end] to [start] in case of a negative
@@ -65,8 +61,6 @@ internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
     }
 }
 
-@Deprecated("This function supports the compiler infrastructure and is not intended to be used directly from user code. It may become internal soon.")
-public fun getProgressionFinalElement(start: Long, end: Long, increment: Long): Long = getProgressionLastElement(start, end, increment)
 /**
  * Calculates the final element of a bounded arithmetic progression, i.e. the last element of the progression which is in the range
  * from [start] to [end] in case of a positive [step], or from [end] to [start] in case of a negative

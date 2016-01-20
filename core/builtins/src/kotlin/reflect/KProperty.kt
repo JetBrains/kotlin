@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR", "EXPOSED_SUPER_INTERFACE", "INVISIBLE_REFERENCE", "INVISIBLE_MEMBER") // for PropertyMetadata inheritance
 package kotlin.reflect
 
 /**
@@ -25,7 +24,7 @@ package kotlin.reflect
  *
  * @param R the type of the property.
  */
-public interface KProperty<out R> : KCallable<R>, PropertyMetadata {
+public interface KProperty<out R> : KCallable<R> {
     /** The getter of this property, used to obtain the value of the property. */
     public val getter: Getter<R>
 
