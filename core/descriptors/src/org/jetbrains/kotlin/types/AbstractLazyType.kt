@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.StorageManager
 
 abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), LazyType {
 
@@ -56,13 +56,11 @@ abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlin
 
     override fun getAnnotations() = Annotations.EMPTY
 
-    override fun toString(): String {
-        if (!typeConstructor.isComputed()) {
-            return "Type constructor is not computed"
-        }
-        if (!arguments.isComputed()) {
-            return "" + constructor + "<arguments are not computed>"
-        }
-        return super<AbstractKotlinType>.toString()
+    override fun toString() = when {
+        !typeConstructor.isComputed() -> "[Not-computed]"
+        !arguments.isComputed() ->
+            if (constructor.parameters.isEmpty()) constructor.toString()
+            else "$constructor<not-computed>"
+        else -> super.toString()
     }
 }
