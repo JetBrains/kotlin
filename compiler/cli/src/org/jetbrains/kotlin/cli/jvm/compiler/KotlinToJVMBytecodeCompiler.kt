@@ -289,11 +289,17 @@ object KotlinToJVMBytecodeCompiler {
                 reportRuntimeConflicts(collector, environment.configuration.jvmClasspathRoots)
             }
         })
+
         val analysisNanos = PerformanceCounter.currentTime() - analysisStart
-        val message = "ANALYZE: " + environment.getSourceFiles().size + " files (" +
-                      environment.sourceLinesOfCode + " lines) " +
-                      (targetDescription ?: "") +
-                      "in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms"
+
+        val sourceLinesOfCode = environment.sourceLinesOfCode
+        val numberOfFiles = environment.getSourceFiles().size
+        val time = TimeUnit.NANOSECONDS.toMillis(analysisNanos)
+        val speed = sourceLinesOfCode.toFloat() * 1000 / time
+
+        val message = "ANALYZE: $numberOfFiles files ($sourceLinesOfCode lines) ${targetDescription ?: ""}" +
+                      "in $time ms - ${"%.3f".format(speed)} loc/s"
+
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
         val result = analyzerWithCompilerReport.analysisResult
@@ -360,8 +366,12 @@ object KotlinToJVMBytecodeCompiler {
 
         val generationNanos = PerformanceCounter.currentTime() - generationStart
         val desc = if (module != null) "target " + module.getModuleName() + "-" + module.getModuleType() + " " else ""
-        val message = "GENERATE: " + sourceFiles.size + " files (" +
-                      environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms"
+        val numberOfSourceFiles = sourceFiles.size
+        val numberOfLines = environment.countLinesOfCode(sourceFiles)
+        val time = TimeUnit.NANOSECONDS.toMillis(generationNanos)
+        val speed = numberOfLines.toFloat() * 1000 / time
+        val message = "GENERATE: $numberOfSourceFiles files ($numberOfLines lines) ${desc}in $time ms - ${"%.3f".format(speed)} loc/s"
+
         K2JVMCompiler.reportPerf(environment.configuration, message)
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
