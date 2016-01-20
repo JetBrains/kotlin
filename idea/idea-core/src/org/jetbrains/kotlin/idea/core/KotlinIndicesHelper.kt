@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.codeInsight.JavaProjectCodeInsightSettings
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiModifier
@@ -302,9 +303,7 @@ class KotlinIndicesHelper(
 
     private fun isExcludedFromAutoImport(descriptor: DeclarationDescriptor): Boolean {
         val fqName = descriptor.importableFqName?.asString() ?: return false
-
-        return CodeInsightSettings.getInstance().EXCLUDED_PACKAGES
-                .any { excluded -> fqName == excluded || (fqName.startsWith(excluded) && fqName[excluded.length] == '.') }
+        return JavaProjectCodeInsightSettings.getSettings(project).isExcluded(fqName)
     }
 
     private fun KtCallableDeclaration.resolveToDescriptorsWithHack(): Collection<CallableDescriptor> {
