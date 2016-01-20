@@ -7357,6 +7357,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericSet.kt")
+        public void testGenericSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/genericSet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("implicitExtensionReceiver.kt")
         public void testImplicitExtensionReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/implicitExtensionReceiver.kt");

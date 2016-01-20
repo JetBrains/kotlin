@@ -15615,6 +15615,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericSet.kt")
+            public void testGenericSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/genericSet.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifCascadeExprNotNull.kt")
             public void testIfCascadeExprNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/ifCascadeExprNotNull.kt");
