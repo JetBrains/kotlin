@@ -22,7 +22,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
@@ -77,8 +76,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         val parameterInfoUIContext = MockParameterInfoUIContext(parameterOwner, updateContext.currentParameter)
 
         for (item in mockCreateParameterInfoContext.itemsToShow) {
-            //noinspection unchecked
-            handler.updateUI(item as FunctionDescriptor, parameterInfoUIContext)
+            handler.updateUI(item, parameterInfoUIContext)
         }
         Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
     }

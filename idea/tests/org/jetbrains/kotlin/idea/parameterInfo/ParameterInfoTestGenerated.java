@@ -304,4 +304,61 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/parameterInfo/typeArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeArguments extends AbstractParameterInfoTest {
+        public void testAllFilesPresentInTypeArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/parameterInfo/typeArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("BaseClass.kt")
+        public void testBaseClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/BaseClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Constraints.kt")
+        public void testConstraints() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/Constraints.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ConstructorCall.kt")
+        public void testConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/ConstructorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionCall.kt")
+        public void testFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/FunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("JavaClass.kt")
+        public void testJavaClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/JavaClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Overloads.kt")
+        public void testOverloads() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/Overloads.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Reified.kt")
+        public void testReified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/Reified.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("VariableType.kt")
+        public void testVariableType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/typeArguments/VariableType.kt");
+            doTest(fileName);
+        }
+    }
 }
