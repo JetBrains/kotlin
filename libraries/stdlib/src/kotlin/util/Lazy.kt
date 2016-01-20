@@ -10,11 +10,15 @@ import kotlin.reflect.KProperty
  *
  * To create an instance of [Lazy] use the [lazy] function.
  */
-public abstract class Lazy<out T> internal constructor() {
-    /** Gets the lazily initialized value of the current Lazy instance. */
-    public abstract  val value: T
-    /** Returns `true` if a value for this Lazy instance has been already initialized, and `false` otherwise.
-     *  Once this function has returned `true` it stays `true` for the rest of lifetime of this Lazy instance.
+public interface Lazy<out T> {
+    /**
+     * Gets the lazily initialized value of the current Lazy instance.
+     * Once the value was initialized it must not change during the rest of lifetime of this Lazy instance.
+     */
+    public abstract val value: T
+    /**
+     * Returns `true` if a value for this Lazy instance has been already initialized, and `false` otherwise.
+     * Once this function has returned `true` it stays `true` for the rest of lifetime of this Lazy instance.
      */
     public abstract fun isInitialized(): Boolean
 }
@@ -103,7 +107,7 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
-private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>(), Serializable {
+private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
     // final field is required to enable safe publication of constructed instance
@@ -138,7 +142,7 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
 }
 
 // internal to be called from lazy in JS
-internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
+internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
     private var _value: Any? = UNINITIALIZED_VALUE
 
@@ -158,7 +162,7 @@ internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializ
     private fun writeReplace(): Any = InitializedLazyImpl(value)
 }
 
-private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>(), Serializable {
+private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>, Serializable {
 
     override fun isInitialized(): Boolean = true
 
@@ -167,7 +171,7 @@ private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>(), Ser
 }
 
 @kotlin.jvm.JvmVersion
-private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
+private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
     // this final field is required to enable safe publication of constructed instance
