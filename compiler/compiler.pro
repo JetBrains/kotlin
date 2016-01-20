@@ -46,6 +46,7 @@ messages/**)
 -dontobfuscate
 
 -keep class org.fusesource.** { *; }
+-keep class com.sun.jna.** { *; }
 -keep class org.jdom.input.JAXPParserFactory { *; }
 
 -keep class org.jetbrains.annotations.** {
