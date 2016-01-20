@@ -28,8 +28,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
-import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.psi.KtElement
@@ -46,7 +44,7 @@ class KotlinPositionManagerCache(private val project: Project) {
 
     private val cachedTypeMappers = CachedValuesManager.getManager(project).createCachedValue(
             {
-                CachedValueProvider.Result<HashMap<String, JetTypeMapper>>(
+                CachedValueProvider.Result<HashMap<PsiElement, JetTypeMapper>>(
                         hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
@@ -72,29 +70,33 @@ class KotlinPositionManagerCache(private val project: Project) {
                 val typeMappersCache = cache.cachedTypeMappers.value
 
                 val file = psiElement.containingFile as KtFile
-                val key = createKeyForTypeMapper(file)
-
-                val cachedValue = typeMappersCache[key]
-                if (cachedValue != null) return cachedValue
-
                 val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+
                 if (!isInLibrary) {
+                    // Key = file
+                    val cachedValue = typeMappersCache[file]
+                    if (cachedValue != null) return cachedValue
+
                     val newValue = createTypeMapperForSourceFile(file)
-                    typeMappersCache[key] = newValue
+                    typeMappersCache[file] = newValue
                     return newValue
                 }
                 else {
-                    return createTypeMapperForLibraryFile(psiElement, file)
+                    // key = KtElement
+                    val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
+                    val cachedValue = typeMappersCache[psiElement]
+                    if (cachedValue != null) return cachedValue
+
+                    val newValue = createTypeMapperForLibraryFile(element, file)
+                    typeMappersCache[psiElement] = newValue
+                    return newValue
                 }
             }
         }
 
         private fun getInstance(project: Project) = ServiceManager.getService(project, KotlinPositionManagerCache::class.java)!!
 
-        private fun createKeyForTypeMapper(file: KtFile) = NoResolveFileClassesProvider.getFileClassInternalName(file)
-
-        private fun createTypeMapperForLibraryFile(notPositionedElement: PsiElement?, file: KtFile): JetTypeMapper {
-            val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
+        private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): JetTypeMapper {
             val analysisResult = element.analyzeAndGetResult()
 
             val state = GenerationState(
@@ -125,9 +127,7 @@ class KotlinPositionManagerCache(private val project: Project) {
         }
 
         @TestOnly fun addTypeMapper(file: KtFile, typeMapper: JetTypeMapper) {
-            val cache = getInstance(file.project)
-            val key = createKeyForTypeMapper(file)
-            cache.cachedTypeMappers.value[key] = typeMapper
+            getInstance(file.project).cachedTypeMappers.value[file] = typeMapper
         }
     }
 }
