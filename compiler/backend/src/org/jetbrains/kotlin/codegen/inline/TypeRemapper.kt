@@ -52,7 +52,7 @@ class TypeRemapper private constructor(private val typeMapping: MutableMap<Strin
     }
 
     fun registerTypeParameter(mapping: TypeParameterMapping) {
-        typeParametersMapping[mapping.name] = TypeParameter(mapping.name, mapping.newName, mapping.isReified, mapping.signature)
+        typeParametersMapping[mapping.name] = TypeParameter(mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature)
     }
 
     fun mapTypeParameter(name: String): TypeParameter? {

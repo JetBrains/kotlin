@@ -4674,6 +4674,51 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/varargs.kt");
             doTestWithStdlib(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reified/arraysReification")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ArraysReification extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInArraysReification() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reified/arraysReification"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("instanceOf.kt")
+            public void testInstanceOf() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/arraysReification/instanceOf.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("instanceOfArrays.kt")
+            public void testInstanceOfArrays() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/arraysReification/instanceOfArrays.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("jClass.kt")
+            public void testJClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/arraysReification/jClass.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("jaggedArray.kt")
+            public void testJaggedArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/arraysReification/jaggedArray.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("jaggedArrayOfNulls.kt")
+            public void testJaggedArrayOfNulls() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/arraysReification/jaggedArrayOfNulls.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("jaggedDeep.kt")
+            public void testJaggedDeep() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/arraysReification/jaggedDeep.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/storeStackBeforeInline")

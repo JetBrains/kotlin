@@ -22,14 +22,39 @@ import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.makeNullableIfNeeded
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
-private class ParameterNameAndNullability(val name: String, val nullable: Boolean)
+class ReificationArgument(
+        val parameterName: String, val nullable: Boolean, val arrayDepth: Int
+) {
+    fun asString() = "[".repeat(arrayDepth) + parameterName + (if (nullable) "?" else "")
+    fun combine(replacement: ReificationArgument) =
+            ReificationArgument(
+                    replacement.parameterName,
+                    this.nullable || (replacement.nullable && this.arrayDepth == 0),
+                    this.arrayDepth + replacement.arrayDepth)
+
+    fun reify(replacementAsmType: Type, kotlinType: KotlinType) =
+            Pair(Type.getType("[".repeat(arrayDepth) + replacementAsmType), kotlinType.arrayOf(arrayDepth).makeNullableIfNeeded(nullable))
+
+    private fun KotlinType.arrayOf(arrayDepth: Int): KotlinType {
+        val builtins = this.builtIns
+        var currentType = this
+
+        repeat(arrayDepth) {
+            currentType = builtins.getArrayType(Variance.INVARIANT, currentType)
+        }
+
+        return currentType
+    }
+}
 
 class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) {
 
@@ -37,7 +62,6 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
 
         val id: Int get() = ordinal
-        val isTypeNullabilityAware: Boolean get() = this == AS || this == IS
     }
 
     companion object {
@@ -98,20 +122,15 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
      */
     private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): String? {
         val operationKind = insn.operationKind ?: return null
-        val parameter = insn.parameterNameAndNullability ?: return null
-        val mapping = parametersMapping?.get(parameter.name) ?: return null
-        val kotlinType =
-                if (operationKind.isTypeNullabilityAware && parameter.nullable)
-                    TypeUtils.makeNullable(mapping.type)
-                else
-                    mapping.type
+        val reificationArgument = insn.reificationArgument ?: return null
+        val mapping = parametersMapping?.get(reificationArgument.parameterName) ?: return null
 
-
-        val asmType = mapping.asmType
-        if (asmType != null) {
+        if (mapping.asmType != null) {
             // process* methods return false if marker should be reified further
             // or it's invalid (may be emitted explicitly in code)
             // they return true if instruction is reified and marker can be deleted
+            val (asmType, kotlinType) = reificationArgument.reify(mapping.asmType, mapping.type)
+
             if (when (operationKind) {
                 OperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
                 OperationKind.AS -> processAs(insn, instructions, kotlinType, asmType, safe = false)
@@ -126,9 +145,9 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
 
             return null
         } else {
-            val nullableSuffix = if (operationKind.isTypeNullabilityAware && kotlinType.isMarkedNullable) "?" else ""
-            instructions.set(insn.previous!!, LdcInsnNode(mapping.newName + nullableSuffix))
-            return mapping.newName
+            val newReificationArgument = reificationArgument.combine(mapping.reificationArgument!!)
+            instructions.set(insn.previous!!, LdcInsnNode(newReificationArgument.asString()))
+            return mapping.reificationArgument.parameterName
         }
     }
 
@@ -198,17 +217,20 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
 
 }
 
-private val MethodInsnNode.parameterNameAndNullability: ParameterNameAndNullability?
+private val MethodInsnNode.reificationArgument: ReificationArgument?
     get() {
         val prev = previous!!
 
-        val parameterNameWithFlag = when (prev.opcode) {
+        val reificationArgumentRaw = when (prev.opcode) {
             Opcodes.LDC -> (prev as LdcInsnNode).cst as String
             else -> return null
         }
 
-        val parameterName = if (parameterNameWithFlag.endsWith("?")) parameterNameWithFlag.dropLast(1) else parameterNameWithFlag
-        return ParameterNameAndNullability(parameterName, parameterName !== parameterNameWithFlag)
+        val arrayDepth = reificationArgumentRaw.indexOfFirst { it != '[' }
+        val parameterName = reificationArgumentRaw.substring(arrayDepth).removeSuffix("?")
+        val nullable = reificationArgumentRaw.endsWith('?')
+
+        return ReificationArgument(parameterName, nullable, arrayDepth)
     }
 
 private val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind? get() =
@@ -219,12 +241,12 @@ private val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind? get(
 class TypeParameterMappings() {
     private val mappingsByName = hashMapOf<String, TypeParameterMapping>()
 
-    public fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String, isReified: Boolean) {
-        mappingsByName[name] =  TypeParameterMapping(name, type, asmType, newName = null, signature = signature, isReified = isReified)
+    fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String, isReified: Boolean) {
+        mappingsByName[name] =  TypeParameterMapping(name, type, asmType, reificationArgument = null, signature = signature, isReified = isReified)
     }
 
-    public fun addParameterMappingToNewParameter(name: String, type: KotlinType, newName: String, isReified: Boolean) {
-        mappingsByName[name] = TypeParameterMapping(name, type, asmType = null, newName = newName, signature = null, isReified = isReified)
+    fun addParameterMappingForFurtherReification(name: String, type: KotlinType, reificationArgument: ReificationArgument, isReified: Boolean) {
+        mappingsByName[name] = TypeParameterMapping(name, type, asmType = null, reificationArgument = reificationArgument, signature = null, isReified = isReified)
     }
 
     operator fun get(name: String): TypeParameterMapping? {
@@ -239,7 +261,11 @@ class TypeParameterMappings() {
 }
 
 class TypeParameterMapping(
-        val name: String, val type: KotlinType, val asmType: Type?, val newName: String?, val signature: String?, val isReified: Boolean
+        val name: String, val type: KotlinType,
+        val asmType: Type?,
+        val reificationArgument: ReificationArgument?,
+        val signature: String?,
+        val isReified: Boolean
 )
 
 class ReifiedTypeParametersUsages {

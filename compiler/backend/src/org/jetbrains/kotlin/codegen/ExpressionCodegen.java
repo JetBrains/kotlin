@@ -24,6 +24,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
+import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -2450,8 +2451,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             KotlinType type = TypeUtils.uncaptureTypeForInlineMapping(entry.getValue());
 
-            TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
-            if (parameterDescriptor == null) {
+            Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
+            if (typeParameterAndReificationArgument == null) {
                 // type is not generic
                 BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
                 Type asmType = typeMapper.mapTypeParameter(type, signatureWriter);
@@ -2464,14 +2465,32 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         key.isReified());
             }
             else {
-                mappings.addParameterMappingToNewParameter(
+                mappings.addParameterMappingForFurtherReification(
                         key.getName().getIdentifier(), type,
-                        parameterDescriptor.getName().getIdentifier(), key.isReified());
+                        typeParameterAndReificationArgument.getSecond(), key.isReified());
             }
         }
         return getOrCreateCallGenerator(
                 resolvedCall.getResultingDescriptor(), resolvedCall.getCall().getCallElement(), mappings
         );
+    }
+
+
+    @Nullable
+    private static Pair<TypeParameterDescriptor, ReificationArgument> extractReificationArgument(@NotNull KotlinType type) {
+        int arrayDepth = 0;
+        boolean isNullable = type.isMarkedNullable();
+        while (KotlinBuiltIns.isArray(type)) {
+            arrayDepth++;
+            type = type.getArguments().get(0).getType();
+        }
+
+        TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
+        if (parameterDescriptor == null) return null;
+
+        return new Pair<TypeParameterDescriptor, ReificationArgument>(
+                parameterDescriptor,
+                new ReificationArgument(parameterDescriptor.getName().asString(), isNullable, arrayDepth));
     }
 
     @NotNull
@@ -3746,15 +3765,15 @@ The "returned" value of try expression with no finally is either the last expres
     public void putReifiedOperationMarkerIfTypeIsReifiedParameter(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind
     ) {
-        TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
-        if (typeParameterDescriptor != null && typeParameterDescriptor.isReified()) {
+        Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
+        if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.getFirst().isReified()) {
+            TypeParameterDescriptor typeParameterDescriptor = typeParameterAndReificationArgument.getFirst();
             if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
                 parentCodegen.getReifiedTypeParametersUsages().
                         addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
             }
             v.iconst(operationKind.getId());
-            boolean putNullableFlag = operationKind.isTypeNullabilityAware() && type.isMarkedNullable();
-            v.visitLdcInsn(typeParameterDescriptor.getName().asString() + (putNullableFlag ? "?" : ""));
+            v.visitLdcInsn(typeParameterAndReificationArgument.getSecond().asString());
             v.invokestatic(
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.REIFIED_OPERATION_MARKER_METHOD_NAME,
                     Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, Type.getType(String.class)), false
