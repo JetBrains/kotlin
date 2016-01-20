@@ -258,6 +258,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerCache"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService"
                     serviceImplementation="org.jetbrains.kotlin.idea.stubindex.resolve.PluginDeclarationProviderFactoryService"/>
 

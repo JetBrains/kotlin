@@ -259,7 +259,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
     private fun classNamesForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
         val result = hashSetOf<String>()
-        val names = classNamesForPosition(sourcePosition, true)
+        val names = classNamesForPosition(sourcePosition)
         result.addAll(names)
 
         val lambdas = findLambdas(sourcePosition)
@@ -280,21 +280,24 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
     }
 
-    fun classNamesForPosition(sourcePosition: SourcePosition, withInlines: Boolean): Collection<String> {
+    fun classNamesForPosition(sourcePosition: SourcePosition): Collection<String> {
         val psiElement = runReadAction { sourcePosition.elementAt } ?: return emptyList()
-        return classNamesForPosition(psiElement, withInlines)
+        return classNamesForPosition(psiElement)
     }
 
-    private fun classNamesForPosition(element: PsiElement, withInlines: Boolean): Collection<String> {
+    private fun classNamesForPosition(element: PsiElement): Collection<String> {
         return runReadAction {
             if (DumbService.getInstance(element.project).isDumb) {
                 emptySet()
             }
             else {
-                val file = element.containingFile as KtFile
-                val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
-                val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
-                getInternalClassNameForElement(element, typeMapper, file, isInLibrary, withInlines)
+                KotlinPositionManagerCache.getOrComputeClassNames(element) {
+                    element ->
+                    val file = element.containingFile as KtFile
+                    val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+                    val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
+                    getInternalClassNameForElement(element, typeMapper, file, isInLibrary)
+                }
             }
         }
     }
@@ -360,8 +363,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             notPositionedElement: PsiElement?,
             typeMapper: JetTypeMapper,
             file: KtFile,
-            isInLibrary: Boolean,
-            withInlines: Boolean = true
+            isInLibrary: Boolean
     ): Collection<String> {
         val element = getElementToCalculateClassName(notPositionedElement)
 
@@ -370,7 +372,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             is KtFunction -> {
                 val descriptor = InlineUtil.getInlineArgumentDescriptor(element, typeMapper.bindingContext)
                 if (descriptor != null) {
-                    val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary, withInlines)
+                    val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                     if (descriptor.isCrossinline) {
                         return findCrossInlineArguments(element, descriptor, typeMapper.bindingContext) + classNamesForParent
                     }
@@ -393,9 +395,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 val parent = getElementToCalculateClassName(element.parent)
                 // Class-object initializer
                 if (parent is KtObjectDeclaration && parent.isCompanion()) {
-                    return getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary, withInlines)
+                    return getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary)
                 }
-                return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary, withInlines)
+                return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
             }
             element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
                 if (isInPropertyAccessor(notPositionedElement)) {
@@ -407,7 +409,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
                 val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
                 if (descriptor !is PropertyDescriptor) {
-                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary, withInlines)
+                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
 
                 return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toSet()
@@ -424,8 +426,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 else {
                     NoResolveFileClassesProvider.getFileClassInternalName(file)
                 }
-
-                if (!withInlines) return parentInternalName.toSet()
 
                 val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
                 return inlinedCalls + parentInternalName.toSet()
@@ -497,7 +497,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                         val usage = it.element
                         if (usage is KtElement) {
                             //TODO recursive search
-                            val names = classNamesForPosition(usage, false)
+                            val names = classNamesForPosition(usage)
                             result.addAll(names)
                         }
                     }
