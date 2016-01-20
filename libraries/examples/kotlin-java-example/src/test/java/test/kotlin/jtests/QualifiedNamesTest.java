@@ -3,6 +3,7 @@ package test.kotlin.jtests;
 import junit.framework.TestCase;
 import java.util.*;
 import kotlin.*;
+import kotlin.collections.*;
 import kotlin.jvm.functions.Function0;
 
 public class QualifiedNamesTest  extends TestCase {
