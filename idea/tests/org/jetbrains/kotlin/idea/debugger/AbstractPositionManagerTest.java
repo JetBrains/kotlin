@@ -93,7 +93,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
         assertNotNull(positionManager);
 
         for (KtFile file : files) {
-            positionManager.addTypeMapper(file, state.getTypeMapper());
+            KotlinPositionManagerCache.Companion.addTypeMapper(file, state.getTypeMapper());
         }
 
         return positionManager;

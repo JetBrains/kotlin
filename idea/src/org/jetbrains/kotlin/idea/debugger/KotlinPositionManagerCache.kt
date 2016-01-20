@@ -18,10 +18,22 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
+import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
 class KotlinPositionManagerCache(private val project: Project) {
@@ -29,6 +41,12 @@ class KotlinPositionManagerCache(private val project: Project) {
     private val cachedClassNames = CachedValuesManager.getManager(project).createCachedValue(
             {
                 CachedValueProvider.Result<HashMap<PsiElement, Collection<String>>>(
+                        hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
+            }, false)
+
+    private val cachedTypeMappers = CachedValuesManager.getManager(project).createCachedValue(
+            {
+                CachedValueProvider.Result<HashMap<String, JetTypeMapper>>(
                         hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
@@ -48,6 +66,68 @@ class KotlinPositionManagerCache(private val project: Project) {
             }
         }
 
+        fun getOrCreateTypeMapper(psiElement: PsiElement): JetTypeMapper {
+            val cache = getInstance(psiElement.project)
+            synchronized(cache.cachedTypeMappers) {
+                val typeMappersCache = cache.cachedTypeMappers.value
+
+                val file = psiElement.containingFile as KtFile
+                val key = createKeyForTypeMapper(file)
+
+                val cachedValue = typeMappersCache[key]
+                if (cachedValue != null) return cachedValue
+
+                val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+                if (!isInLibrary) {
+                    val newValue = createTypeMapperForSourceFile(file)
+                    typeMappersCache[key] = newValue
+                    return newValue
+                }
+                else {
+                    return createTypeMapperForLibraryFile(psiElement, file)
+                }
+            }
+        }
+
         private fun getInstance(project: Project) = ServiceManager.getService(project, KotlinPositionManagerCache::class.java)!!
+
+        private fun createKeyForTypeMapper(file: KtFile) = NoResolveFileClassesProvider.getFileClassInternalName(file)
+
+        private fun createTypeMapperForLibraryFile(notPositionedElement: PsiElement?, file: KtFile): JetTypeMapper {
+            val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
+            val analysisResult = element.analyzeAndGetResult()
+
+            val state = GenerationState(
+                    file.project,
+                    ClassBuilderFactories.THROW_EXCEPTION,
+                    analysisResult.moduleDescriptor,
+                    analysisResult.bindingContext,
+                    listOf(file))
+            state.beforeCompile()
+            return state.typeMapper
+        }
+
+        private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
+                if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!!
+
+        private fun createTypeMapperForSourceFile(file: KtFile): JetTypeMapper {
+            val analysisResult = file.analyzeFullyAndGetResult()
+            analysisResult.throwIfError()
+
+            val state = GenerationState(
+                    file.project,
+                    ClassBuilderFactories.THROW_EXCEPTION,
+                    analysisResult.moduleDescriptor,
+                    analysisResult.bindingContext,
+                    listOf(file))
+            state.beforeCompile()
+            return state.typeMapper
+        }
+
+        @TestOnly fun addTypeMapper(file: KtFile, typeMapper: JetTypeMapper) {
+            val cache = getInstance(file.project)
+            val key = createKeyForTypeMapper(file)
+            cache.cachedTypeMappers.value[key] = typeMapper
+        }
     }
 }
