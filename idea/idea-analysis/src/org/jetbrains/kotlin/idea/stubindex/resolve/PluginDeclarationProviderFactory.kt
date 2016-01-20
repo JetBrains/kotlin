@@ -58,4 +58,24 @@ class PluginDeclarationProviderFactory(
         throw IllegalStateException("Cannot find package fragment for file ${file.name} with package ${file.packageFqName}, " +
                                     "vFile ${file.virtualFile}, nonIndexed ${file in nonIndexedFiles}")
     }
+
+    // trying to diagnose org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException in completion
+    private val onCreationDebugInfo = debugInfo()
+
+    fun debugToString(): String {
+        return "PluginDeclarationProviderFactory\nOn failure:\n${debugInfo()}On creation:\n$onCreationDebugInfo"
+    }
+
+    private fun debugInfo(): String {
+        if (nonIndexedFiles.isEmpty()) return "-no synthetic files-\n"
+
+        return buildString {
+            nonIndexedFiles.forEach {
+                append(it.name)
+                append(" isPhysical=${it.isPhysical}")
+                append(" modStamp=${it.modificationStamp}")
+                appendln()
+            }
+        }
+    }
 }

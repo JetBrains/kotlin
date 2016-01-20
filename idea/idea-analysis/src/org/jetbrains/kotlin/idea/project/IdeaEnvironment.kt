@@ -24,5 +24,6 @@ object IdeaEnvironment : TargetEnvironment("Idea") {
     override fun configure(container: StorageComponentContainer) {
         container.useImpl<ResolveElementCache>()
         container.useImpl<IdeaLocalDescriptorResolver>()
+        container.useImpl<IdeaAbsentDescriptorHandler>()
     }
 }
