@@ -28,6 +28,7 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 /**
  * Tested in OutOfBlockModificationTestGenerated
@@ -112,6 +113,7 @@ class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTr
 
             //TODO: other types
             val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
+            if (blockDeclaration.parents.any { it !is KtClassBody && it !is KtClassOrObject && it !is KtFile }) return false // should not be local declaration
 
             when (blockDeclaration) {
                 is KtNamedFunction -> {
