@@ -240,7 +240,15 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (typeParameterProto.reified) {
             modifiers.add(KtTokens.REIFIED_KEYWORD)
         }
-        createModifierListStub(typeParameterStub, modifiers)
+
+        val modifierList = createModifierListStub(typeParameterStub, modifiers)
+
+        val annotations = c.components.annotationLoader.loadTypeParameterAnnotations(typeParameterProto, c.nameResolver)
+        if (annotations.isNotEmpty()) {
+            createAnnotationStubs(
+                    annotations,
+                    modifierList ?: createEmptyModifierListStub(typeParameterStub))
+        }
     }
 
     private fun Type.isDefaultUpperBound(): Boolean {

@@ -151,6 +151,29 @@ PsiJetFileStubImpl[package=]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
+      FUN:[fqName=Annotations.inlineFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, name=inlineFun]
+        MODIFIER_LIST:[public final inline]
+        TYPE_PARAMETER_LIST:
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            MODIFIER_LIST:[reified]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=a]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=F]
+            MODIFIER_LIST:[]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=a]
+        VALUE_PARAMETER_LIST:
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Unit]
       FUN:[fqName=Annotations.types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=types]
         MODIFIER_LIST:[public final]
         VALUE_PARAMETER_LIST:
