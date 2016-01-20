@@ -105,7 +105,7 @@ private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let 
 
 private fun getIndentFunction(indent: String) = when {
     indent.isEmpty() -> { line: String -> line }
-    else -> { line: String -> indent.concat(line) }
+    else -> { line: String -> indent + line }
 }
 
 private inline fun List<String>.reindent(resultSizeEstimate: Int, indentAddFunction: (String) -> String, indentCutFunction: (String) -> String?): String {

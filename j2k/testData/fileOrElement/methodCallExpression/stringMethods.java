@@ -32,7 +32,6 @@ class A {
         s.codePointCount(0, s.length());
         s.offsetByCodePoints(0, 4);
         s.compareTo("test 2");
-        s.concat(" another");
         s.contains("seq");
         s.contentEquals(new StringBuilder(s));
         s.contentEquals(new StringBuffer(s));
@@ -79,6 +78,7 @@ class A {
         int limit = 5;
         useSplit(s.split("\\s+", limit));
         s.trim();
+        s.concat(" another");
 
         s.getBytes();
         s.getBytes(Charset.forName("utf-8"));

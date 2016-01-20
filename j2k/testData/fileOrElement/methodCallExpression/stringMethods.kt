@@ -1,3 +1,5 @@
+// ERROR: Using 'String(ByteArray, String): String' is an error. Use String(bytes, Charset) instead.
+// ERROR: Using 'String(ByteArray, Int, Int, String): String' is an error. Use String(bytes, offset, length, Charset) instead.
 import java.nio.charset.Charset
 import java.util.*
 
@@ -33,7 +35,6 @@ internal class A {
         s.codePointCount(0, s.length)
         s.offsetByCodePoints(0, 4)
         s.compareTo("test 2")
-        s.concat(" another")
         s.contains("seq")
         s.contentEquals(StringBuilder(s))
         s.contentEquals(StringBuffer(s))
@@ -81,6 +82,7 @@ internal class A {
         val limit = 5
         useSplit(s.split("\\s+".toRegex(), limit.coerceAtLeast(0)).toTypedArray())
         s.trim { it <= ' ' }
+        s + " another"
 
         s.toByteArray()
         s.toByteArray(Charset.forName("utf-8"))

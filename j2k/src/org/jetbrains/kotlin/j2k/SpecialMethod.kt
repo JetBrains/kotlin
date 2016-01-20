@@ -316,6 +316,10 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
         }
     },
 
+    STRING_CONCAT(JAVA_LANG_STRING, "concat", 1) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = BinaryExpression(codeConverter.convertExpression(qualifier), codeConverter.convertExpression(arguments.single()), Operator(JavaTokenType.PLUS).assignNoPrototype())
+    },
 
     STRING_COMPARE_TO_IGNORE_CASE(JAVA_LANG_STRING, "compareToIgnoreCase", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)

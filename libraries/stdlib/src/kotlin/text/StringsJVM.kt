@@ -277,7 +277,7 @@ public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
 /**
  * Returns a new string obtained by concatenating this string and the specified string.
  */
-// TODO: Deprecated in favor of operator plus, when it would be as efficient as concat
+@Deprecated("Use this + other, eventually it will be optimized as concat.", ReplaceWith("this + other"), level = DeprecationLevel.ERROR)
 public fun String.concat(other: String): String = (this as java.lang.String).concat(other)
 
 /**
