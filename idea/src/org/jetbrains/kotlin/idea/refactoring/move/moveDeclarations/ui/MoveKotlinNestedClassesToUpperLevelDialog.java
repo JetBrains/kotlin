@@ -370,6 +370,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             );
             moveTarget = new KotlinMoveTargetForDeferredFile(
                     targetPackageFqName,
+                    targetDir,
                     new Function1<KtFile, KtFile>() {
                         @Override
                         public KtFile invoke(@NotNull KtFile originalFile) {

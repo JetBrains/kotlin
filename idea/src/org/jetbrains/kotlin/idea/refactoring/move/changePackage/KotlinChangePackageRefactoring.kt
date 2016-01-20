@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
@@ -40,8 +41,10 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
                 project,
                 MoveDeclarationsDescriptor(
                         elementsToMove = file.declarations.filterIsInstance<KtNamedDeclaration>(),
-                        moveTarget = object: KotlinMoveTarget {
+                        moveTarget = object: KotlinDirectoryBasedMoveTarget {
                             override val targetContainerFqName = newFqName
+
+                            override val directory: PsiDirectory = file.containingDirectory!!
 
                             override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile as? KtFile
 

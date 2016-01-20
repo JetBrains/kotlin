@@ -95,7 +95,9 @@ internal class ResolutionFacadeImpl(
     //TODO: ideally we would like to store moduleDescriptor once and for all
     // but there are some usages that use resolutionFacade and mutate the psi leading to recomputation of underlying structures
     override val moduleDescriptor: ModuleDescriptor
-        get() = projectFacade.findModuleDescriptor(moduleInfo)
+        get() = findModuleDescriptor(moduleInfo)
+
+    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo) = projectFacade.findModuleDescriptor(ideaModuleInfo)
 
     override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
         val resolveElementCache = getFrontendService(element, ResolveElementCache::class.java)
@@ -128,4 +130,8 @@ internal class ResolutionFacadeImpl(
         return projectFacade.resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
     }
 
+}
+
+fun ResolutionFacade.findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor? {
+    return (this as? ResolutionFacadeImpl)?.findModuleDescriptor(ideaModuleInfo)
 }

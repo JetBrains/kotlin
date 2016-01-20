@@ -39,7 +39,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtClass -> if (targetElement.isInterface()) "interface" else "class"
             is KtObjectDeclaration -> "object"
             is KtNamedFunction -> "function"
-            is KtSecondaryConstructor -> "constructor"
+            is KtPrimaryConstructor, is KtSecondaryConstructor -> "constructor"
             is KtProperty -> if (targetElement.isLocal) "variable" else "property"
             is KtTypeParameter -> "type parameter"
             is KtParameter -> "parameter"

@@ -29,13 +29,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 sealed class MoveDeclarationsDelegate {
-    abstract fun getOriginalContainerFqName(descriptor: MoveDeclarationsDescriptor, originalFile: KtFile): FqName
     abstract fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo
     abstract fun findUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo>
     abstract fun collectConflicts(usages: MutableList<UsageInfo>, conflicts: MultiMap<PsiElement, String>)
@@ -43,8 +41,6 @@ sealed class MoveDeclarationsDelegate {
     abstract fun preprocessUsages(project: Project, usages: List<UsageInfo>)
 
     object TopLevel : MoveDeclarationsDelegate() {
-        override fun getOriginalContainerFqName(descriptor: MoveDeclarationsDescriptor, originalFile: KtFile) = originalFile.packageFqName
-
         override fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo {
             return ContainerChangeInfo(ContainerInfo.Package(originalDeclaration.getContainingKtFile().packageFqName),
                                        ContainerInfo.Package(moveTarget.targetContainerFqName!!))
@@ -69,10 +65,6 @@ sealed class MoveDeclarationsDelegate {
             val newClassName: String? = null,
             val outerInstanceParameterName: String? = null
     ) : MoveDeclarationsDelegate() {
-        override fun getOriginalContainerFqName(descriptor: MoveDeclarationsDescriptor, originalFile: KtFile): FqName {
-            return descriptor.elementsToMove.first().containingClassOrObject!!.fqName!!
-        }
-
         override fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo {
             val originalInfo = ContainerInfo.Class(originalDeclaration.containingClassOrObject!!.fqName!!)
             val movingToClass = (moveTarget as? KotlinMoveTargetForExistingElement)?.targetElement is KtClassOrObject

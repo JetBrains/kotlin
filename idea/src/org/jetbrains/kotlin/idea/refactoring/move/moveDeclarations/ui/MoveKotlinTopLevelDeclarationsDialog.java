@@ -489,7 +489,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         PsiDirectory sourceDirectory = getSourceDirectory(sourceFiles);
 
         if (isMoveToPackage()) {
-            final MoveDestination moveDestination = selectPackageBasedMoveDestination(true);
+            MoveDestination moveDestination = selectPackageBasedMoveDestination(true);
             if (moveDestination == null) return null;
 
             final String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
@@ -532,14 +532,16 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 if (ret != Messages.YES) return null;
             }
 
+            // All source files must be in the same directory
+            final PsiDirectory targetDir = moveDestination.getTargetDirectory(sourceFiles.get(0));
             return new KotlinMoveTargetForDeferredFile(
                     new FqName(getTargetPackage()),
+                    targetDir,
                     new Function1<KtFile, KtFile>() {
                         @Override
                         public KtFile invoke(@NotNull KtFile originalFile) {
                             return JetRefactoringUtilKt.getOrCreateKotlinFile(
-                                    targetFileName != null ? targetFileName : originalFile.getName(),
-                                    moveDestination.getTargetDirectory(originalFile)
+                                    targetFileName != null ? targetFileName : originalFile.getName(), targetDir
                             );
                         }
                     }
@@ -570,6 +572,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         return new KotlinMoveTargetForDeferredFile(
                 new FqName(psiPackage.getQualifiedName()),
+                psiDirectory,
                 new Function1<KtFile, KtFile>() {
                     @Override
                     public KtFile invoke(@NotNull KtFile originalFile) {

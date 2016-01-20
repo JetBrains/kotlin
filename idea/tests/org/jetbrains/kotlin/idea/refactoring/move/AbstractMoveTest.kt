@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -249,8 +250,8 @@ enum class MoveAction {
             val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtNamedDeclaration>()!!
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
-                KotlinMoveTargetForDeferredFile(FqName(packageName)) {
-                    val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
+                val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
+                KotlinMoveTargetForDeferredFile(FqName(packageName), moveDestination.getTargetIfExists(mainFile)) {
                     createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
@@ -296,8 +297,9 @@ enum class MoveAction {
                     else {
                         val fileName = (delegate.newClassName ?: elementToMove.name!!) + ".kt"
                         val targetPackageFqName = (mainFile as KtFile).packageFqName
-                        KotlinMoveTargetForDeferredFile(targetPackageFqName) {
-                            createKotlinFile(fileName, mainFile.containingDirectory!!, targetPackageFqName.asString())
+                        val targetDir = mainFile.containingDirectory!!
+                        KotlinMoveTargetForDeferredFile(targetPackageFqName, targetDir) {
+                            createKotlinFile(fileName, targetDir, targetPackageFqName.asString())
                         }
                     }
             val descriptor = MoveDeclarationsDescriptor(listOf(elementToMove), moveTarget, delegate)

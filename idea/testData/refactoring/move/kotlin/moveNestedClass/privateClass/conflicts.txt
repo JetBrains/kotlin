@@ -1,0 +1,2 @@
+Class B uses constructor C() which will be inaccessible after move
+Property a uses class B which will be inaccessible after move

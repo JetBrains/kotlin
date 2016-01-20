@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.name.FqName
@@ -31,6 +32,10 @@ interface KotlinMoveTarget {
 
     // Check possible errors and return corresponding message, or null if no errors are detected
     fun verify(file: PsiFile): String?
+}
+
+interface KotlinDirectoryBasedMoveTarget : KotlinMoveTarget {
+    val directory: PsiDirectory?
 }
 
 object EmptyKotlinMoveTarget: KotlinMoveTarget {
@@ -53,8 +58,9 @@ class KotlinMoveTargetForExistingElement(val targetElement: KtElement): KotlinMo
 
 class KotlinMoveTargetForDeferredFile(
         override val targetContainerFqName: FqName,
+        override val directory: PsiDirectory?,
         private val createFile: (KtFile) -> KtFile?
-): KotlinMoveTarget {
+): KotlinDirectoryBasedMoveTarget {
     private val createdFiles = HashMap<KtFile, KtFile?>()
 
     override fun getOrCreateTargetPsi(originalPsi: PsiElement): KtElement? {
