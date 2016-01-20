@@ -449,34 +449,6 @@ PsiJetFileStubImpl[package=kotlin]
         USER_TYPE:[isAbsoluteInRootPackage=false]
           REFERENCE_EXPRESSION:[referencedName=kotlin]
         REFERENCE_EXPRESSION:[referencedName=ShortArray]
-  FUN:[fqName=kotlin.identityEquals, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, name=identityEquals]
-    MODIFIER_LIST:[public]
-      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Deprecated]
-        CONSTRUCTOR_CALLEE:
-          TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=kotlin]
-              REFERENCE_EXPRESSION:[referencedName=Deprecated]
-    TYPE_REFERENCE:
-      NULLABLE_TYPE:
-        USER_TYPE:[isAbsoluteInRootPackage=false]
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            REFERENCE_EXPRESSION:[referencedName=kotlin]
-          REFERENCE_EXPRESSION:[referencedName=Any]
-    VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
-        TYPE_REFERENCE:
-          NULLABLE_TYPE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=kotlin]
-              REFERENCE_EXPRESSION:[referencedName=Any]
-    TYPE_REFERENCE:
-      USER_TYPE:[isAbsoluteInRootPackage=false]
-        USER_TYPE:[isAbsoluteInRootPackage=false]
-          REFERENCE_EXPRESSION:[referencedName=kotlin]
-        REFERENCE_EXPRESSION:[referencedName=Boolean]
   FUN:[fqName=kotlin.plus, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, name=plus]
     MODIFIER_LIST:[public operator]
     TYPE_REFERENCE:

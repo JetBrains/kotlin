@@ -20,7 +20,6 @@ public fun floatArrayOf(/*0*/ vararg elements: kotlin.Float /*kotlin.FloatArray*
 public fun intArrayOf(/*0*/ vararg elements: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
 public fun longArrayOf(/*0*/ vararg elements: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray
 public fun shortArrayOf(/*0*/ vararg elements: kotlin.Short /*kotlin.ShortArray*/): kotlin.ShortArray
-@kotlin.Deprecated(message = "This function is deprecated, use === instead", replaceWith = kotlin.ReplaceWith(expression = "this === other", imports = {})) public fun kotlin.Any?.identityEquals(/*0*/ other: kotlin.Any?): kotlin.Boolean
 public operator fun kotlin.String?.plus(/*0*/ other: kotlin.Any?): kotlin.String
 public fun kotlin.Any?.toString(): kotlin.String
 
@@ -313,10 +312,6 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @ExtensionFunctionType instead.", replaceWith = kotlin.ReplaceWith(expression = "@ExtensionFunctionType", imports = {})) public final annotation class Extension : kotlin.Annotation {
-    /*primary*/ public constructor Extension()
-}
-
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() public final annotation class ExtensionFunctionType : kotlin.Annotation {
     /*primary*/ public constructor ExtensionFunctionType()
 }
@@ -397,10 +392,6 @@ public final class FloatArray : kotlin.Cloneable {
 }
 
 public interface Function</*0*/ out R> {
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @Deprecated("...", level = DeprecationLevel.HIDDEN) instead", replaceWith = kotlin.ReplaceWith(expression = "@Deprecated(, level = DeprecationLevel.HIDDEN)", imports = {})) public final annotation class HiddenDeclaration : kotlin.Annotation {
-    /*primary*/ public constructor HiddenDeclaration()
 }
 
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
@@ -576,11 +567,6 @@ public abstract class Number {
     public abstract fun toInt(): kotlin.Int
     public abstract fun toLong(): kotlin.Long
     public abstract fun toShort(): kotlin.Short
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Please use KProperty instead.", replaceWith = kotlin.ReplaceWith(expression = "KProperty<*>", imports = {"kotlin.reflect.KProperty"})) internal interface PropertyMetadata {
-    public abstract val name: kotlin.String
-        public abstract fun <get-name>(): kotlin.String
 }
 
 @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented() public final annotation class ReplaceWith : kotlin.Annotation {

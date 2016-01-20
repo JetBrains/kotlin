@@ -43,8 +43,6 @@ public fun longArrayOf(vararg elements: kotlin.Long): kotlin.LongArray { /* comp
 
 public fun shortArrayOf(vararg elements: kotlin.Short): kotlin.ShortArray { /* compiled code */ }
 
-@kotlin.Deprecated public fun kotlin.Any?.identityEquals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
-
 public operator fun kotlin.String?.plus(other: kotlin.Any?): kotlin.String { /* compiled code */ }
 
 public fun kotlin.Any?.toString(): kotlin.String { /* compiled code */ }
