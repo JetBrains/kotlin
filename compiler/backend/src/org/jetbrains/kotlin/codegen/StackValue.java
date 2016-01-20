@@ -1168,6 +1168,11 @@ public abstract class StackValue {
             else {
                 coerce(topOfStackType, ArraysKt.last(setter.getParameterTypes()), v);
                 setter.genInvokeInstruction(v);
+
+                Type returnType = setter.getReturnType();
+                if (returnType != Type.VOID_TYPE) {
+                    pop(v, returnType);
+                }
             }
         }
 
