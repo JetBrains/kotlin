@@ -65,7 +65,7 @@ fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
     return constant.value
 }
 
-private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.internal.InlineOnly")
+private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
 fun MemberDescriptor.isInlineOnly(): Boolean {
     if (this !is FunctionDescriptor) return false
