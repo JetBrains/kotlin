@@ -110,7 +110,7 @@ public enum class CharDirectionality(public val value: Int) {
 
 
     public companion object {
-        private val directionalityMap by lazy { CharDirectionality.values().toMapBy { it.value } }
+        private val directionalityMap by lazy { CharDirectionality.values().associateBy { it.value } }
 
         public fun valueOf(directionality: Int): CharDirectionality = directionalityMap[directionality] ?: throw IllegalArgumentException("Directionality #$directionality is not defined.")
     }

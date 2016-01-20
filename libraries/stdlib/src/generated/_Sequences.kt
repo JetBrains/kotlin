@@ -423,6 +423,43 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
+    val result = LinkedHashMap<K, V>()
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given sequence indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
+    val result = LinkedHashMap<K, T>()
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given sequence.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
+    val result = LinkedHashMap<K, V>()
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
  * Returns an [ArrayList] of all elements.
  */
 public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
@@ -457,47 +494,25 @@ public fun <T> Sequence<T>.toList(): List<T> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given sequence.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <T, K, V> Sequence<T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
-    val result = LinkedHashMap<K, V>()
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing the elements from the given sequence indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <T, K> Sequence<T>.toMapBy(selector: (T) -> K): Map<K, T> {
-    val result = LinkedHashMap<K, T>()
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Sequence<T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    val result = LinkedHashMap<K, V>()
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
 /**
