@@ -418,6 +418,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("delegationComplex.kt")
+        public void testDelegationComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/delegationComplex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegationComplexWithList.kt")
+        public void testDelegationComplexWithList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/delegationComplexWithList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegationProperty.kt")
         public void testDelegationProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/delegationProperty.kt");

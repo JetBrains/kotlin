@@ -916,7 +916,7 @@ public class FunctionCodegen {
                             @NotNull MethodContext context,
                             @NotNull MemberCodegen<?> parentCodegen
                     ) {
-                        Method delegateToMethod = typeMapper.mapSignature(delegatedTo).getAsmMethod();
+                        Method delegateToMethod = typeMapper.mapToCallableMethod(delegatedTo, /* superCall = */ false).getAsmMethod();
                         Method delegateMethod = typeMapper.mapSignature(delegateFunction).getAsmMethod();
 
                         Type[] argTypes = delegateMethod.getArgumentTypes();
