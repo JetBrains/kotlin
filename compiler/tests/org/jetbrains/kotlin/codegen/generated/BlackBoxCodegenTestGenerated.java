@@ -2778,6 +2778,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("covariantOverride.kt")
+            public void testCovariantOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/function/covariantOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("covariantOverrideGeneric.kt")
+            public void testCovariantOverrideGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/function/covariantOverrideGeneric.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionFunctionManyArgs.kt")
             public void testExtensionFunctionManyArgs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/function/extensionFunctionManyArgs.kt");
