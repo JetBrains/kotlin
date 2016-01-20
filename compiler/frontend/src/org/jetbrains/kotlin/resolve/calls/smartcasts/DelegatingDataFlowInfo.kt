@@ -144,9 +144,10 @@ internal class DelegatingDataFlowInfo private constructor(
         val newTypeInfo = newTypeInfo()
         var typesForB = getPredictableTypes(b)
         // Own type of B must be recorded separately, e.g. for a constant
-        // But if its type is the same as A or it's null, there is no reason to do it
-        // because usually null type or own type are not saved in this set
-        if (nullabilityOfB.canBeNonNull() && a.type != b.type) {
+        // But if its type is the same as A, there is no reason to do it
+        // because own type is not saved in this set
+        // Error types are also not saved
+        if (!b.type.isError && a.type != b.type) {
             typesForB += b.type
         }
         newTypeInfo.putAll(a, typesForB)
