@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.util.*
 
@@ -61,11 +62,16 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         }
     }
 
-    fun add(lookupSymbol: LookupSymbol, containingPaths: Collection<String>) {
-        val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
-        val fileIds = containingPaths.map { addFileIfNeeded(File(it)) }.toHashSet()
-        fileIds.addAll(lookupMap[key] ?: emptySet())
-        lookupMap[key] = fileIds
+    fun addAll(lookups: Set<Map.Entry<LookupSymbol, Collection<String>>>) {
+        val allPaths = lookups.flatMapTo(HashSet<String>()) { it.value }
+        val pathToId = allPaths.keysToMap { addFileIfNeeded(File(it)) }
+
+        for ((lookupSymbol, paths) in lookups) {
+            val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
+            val fileIds = paths.mapTo(HashSet<Int>()) { pathToId[it]!! }
+            fileIds.addAll(lookupMap[key] ?: emptySet())
+            lookupMap[key] = fileIds
+        }
     }
 
     fun removeLookupsFrom(file: File) {
