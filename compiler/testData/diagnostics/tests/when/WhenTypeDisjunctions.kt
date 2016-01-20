@@ -1,11 +1,11 @@
 fun foo(s: Any): String {
     val x = when (s) {
-        is String -> s
+        is String -> <!DEBUG_INFO_SMARTCAST!>s<!>
         is Int -> "$s"
         else -> return ""
     }
 
-    val y: String = <!DEBUG_INFO_SMARTCAST!>x<!> // should be Ok
+    val y: String = x // should be Ok
     return y
 }
 

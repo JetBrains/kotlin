@@ -1,11 +1,10 @@
 fun foo(s: Any?): String {
     val t = when {
         // To resolve: String U Nothing? = String?
-        s is String -> s
+        s is String -> <!DEBUG_INFO_SMARTCAST!>s<!>
         else -> null
     } ?: ""
-    // Ideally we should have smart cast to String here
-    return <!TYPE_MISMATCH!>t<!>
+    return t
 }
 
 fun bar(s: Any?): String {
@@ -24,10 +23,10 @@ fun bar(s: Any?): String {
 
 fun baz(s: String?, r: String?): String {
     val t = r ?: when {
-        s != null -> s
+        s != null -> <!DEBUG_INFO_SMARTCAST!>s<!>
         else -> ""
     }
-    return <!DEBUG_INFO_SMARTCAST!>t<!>
+    return t
 }
 
 fun withNull(s: String?): String {

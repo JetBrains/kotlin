@@ -1102,6 +1102,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("kt10463.kt")
+        public void testKt10463() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/kt10463.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lazyDeclaresAndModifies.kt")
         public void testLazyDeclaresAndModifies() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/lazyDeclaresAndModifies.kt");

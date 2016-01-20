@@ -1,15 +1,15 @@
 fun foo(s: String) = s.length
 
 fun baz(s: String?, r: String?): Int {
-    return foo(<!DEBUG_INFO_SMARTCAST!>r ?: when {
-        s != null -> s
+    return foo(r ?: when {
+        s != null -> <!DEBUG_INFO_SMARTCAST!>s<!>
         else -> ""
-    }<!>)
+    })
 }
 
 fun bar(s: String?, r: String?): Int {
-    return <!DEBUG_INFO_SMARTCAST!>(r ?: when {
-        s != null -> s
+    return (r ?: when {
+        s != null -> <!DEBUG_INFO_SMARTCAST!>s<!>
         else -> ""
-    })<!>.length
+    }).length
 }

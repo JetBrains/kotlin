@@ -65,7 +65,7 @@ public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
 
     public enum ResolveConstruct {
-        IF("if"), ELVIS("elvis"), EXCL_EXCL("ExclExcl");
+        IF("if"), ELVIS("elvis"), EXCL_EXCL("ExclExcl"), WHEN("when");
 
         private final String name;
 
@@ -186,6 +186,20 @@ public class ControlStructureTypingUtils {
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(0), thenInfo);
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(1), elseInfo);
         return createIndependentDataFlowInfoForArgumentsForCall(conditionInfo, dataFlowInfoForArgumentsMap);
+    }
+
+    public static MutableDataFlowInfoForArguments createDataFlowInfoForArgumentsOfWhenCall(
+            @NotNull Call callForWhen,
+            @NotNull DataFlowInfo subjectDataFlowInfo,
+            @NotNull List<DataFlowInfo> entryDataFlowInfos
+    ) {
+        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
+        int i = 0;
+        for (ValueArgument argument : callForWhen.getValueArguments()) {
+            DataFlowInfo entryDataFlowInfo = entryDataFlowInfos.get(i++);
+            dataFlowInfoForArgumentsMap.put(argument, entryDataFlowInfo);
+        }
+        return createIndependentDataFlowInfoForArgumentsForCall(subjectDataFlowInfo, dataFlowInfoForArgumentsMap);
     }
 
     /*package*/ static Call createCallForSpecialConstruction(
@@ -318,6 +332,19 @@ public class ControlStructureTypingUtils {
                 boolean errorWasReported = checkExpressionTypeRecursively(firstSub, firstContext);
                 errorWasReported |= checkExpressionTypeRecursively(secondSub, secondContext);
                 return errorWasReported || checkExpressionType(expression, context);
+            }
+
+            @Override
+            public Boolean visitWhenExpression(@NotNull KtWhenExpression whenExpression, CheckTypeContext c) {
+                boolean errorWasReported = false;
+                for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
+                    KtExpression entryExpression = whenEntry.getExpression();
+                    if (entryExpression != null) {
+                        errorWasReported |= checkExpressionTypeRecursively(entryExpression, c);
+                    }
+                }
+                errorWasReported |= checkExpressionType(whenExpression, c);
+                return errorWasReported;
             }
 
             @Override

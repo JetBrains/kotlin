@@ -22,7 +22,7 @@ val wxx1 = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx2: Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
 val wxx3 = idAny(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
 val wxx4 = id(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
-val wxx5 = idUnit(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
+val wxx5 = idUnit(<!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> })
 val wxx6 = null ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx7 = "" + <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 
