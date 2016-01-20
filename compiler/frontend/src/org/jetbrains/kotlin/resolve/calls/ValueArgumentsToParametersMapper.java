@@ -86,6 +86,7 @@ public class ValueArgumentsToParametersMapper {
         private final Call call;
         private final TracingStrategy tracing;
         private final MutableResolvedCall<D> candidateCall;
+        private final List<ValueParameterDescriptor> parameters;
 
         private final Map<Name,ValueParameterDescriptor> parameterByName;
         private Map<Name,ValueParameterDescriptor> parameterByNameInOverriddenMethods;
@@ -99,9 +100,10 @@ public class ValueArgumentsToParametersMapper {
             this.call = call;
             this.tracing = tracing;
             this.candidateCall = candidateCall;
+            this.parameters = candidateCall.getCandidateDescriptor().getValueParameters();
 
             this.parameterByName = Maps.newHashMap();
-            for (ValueParameterDescriptor valueParameter : candidateCall.getCandidateDescriptor().getValueParameters()) {
+            for (ValueParameterDescriptor valueParameter : parameters) {
                 parameterByName.put(valueParameter.getName(), valueParameter);
             }
         }
@@ -110,7 +112,7 @@ public class ValueArgumentsToParametersMapper {
         private ValueParameterDescriptor getParameterByNameInOverriddenMethods(Name name) {
             if (parameterByNameInOverriddenMethods == null) {
                 parameterByNameInOverriddenMethods = Maps.newHashMap();
-                for (ValueParameterDescriptor valueParameter : candidateCall.getCandidateDescriptor().getValueParameters()) {
+                for (ValueParameterDescriptor valueParameter : parameters) {
                     for (ValueParameterDescriptor parameterDescriptor : valueParameter.getOverriddenDescriptors()) {
                         parameterByNameInOverriddenMethods.put(parameterDescriptor.getName(), valueParameter);
                     }
@@ -125,15 +127,14 @@ public class ValueArgumentsToParametersMapper {
             private int currentParameter = 0;
 
             private int numberOfParametersForPositionedArguments() {
-                int size = candidateCall.getCandidateDescriptor().getValueParameters().size();
-                return call.getCallType() == Call.CallType.ARRAY_SET_METHOD ? size - 1 : size;
+                return call.getCallType() == Call.CallType.ARRAY_SET_METHOD ? parameters.size() - 1 : parameters.size();
             }
 
             @Nullable
             public ValueParameterDescriptor nextValueParameter() {
                 if (currentParameter >= numberOfParametersForPositionedArguments()) return null;
 
-                ValueParameterDescriptor head = candidateCall.getCandidateDescriptor().getValueParameters().get(currentParameter);
+                ValueParameterDescriptor head = parameters.get(currentParameter);
 
                 // If we found a vararg parameter, we are stuck with it forever
                 if (head.getVarargElementType() == null) {
@@ -156,7 +157,7 @@ public class ValueArgumentsToParametersMapper {
 
             @Override
             public ProcessorState processArraySetRHS(@NotNull ValueArgument argument) {
-                processArgument(argument, CollectionsKt.lastOrNull(candidateCall.getCandidateDescriptor().getValueParameters()));
+                processArgument(argument, CollectionsKt.lastOrNull(parameters));
                 return positionedOnly;
             }
 
@@ -274,46 +275,40 @@ public class ValueArgumentsToParametersMapper {
         }
 
         private void processFunctionLiteralArguments() {
-            D candidate = candidateCall.getCandidateDescriptor();
-            List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
-
             List<? extends LambdaArgument> functionLiteralArguments = call.getFunctionLiteralArguments();
-            if (!functionLiteralArguments.isEmpty()) {
-                LambdaArgument lambdaArgument = functionLiteralArguments.get(0);
-                KtExpression possiblyLabeledFunctionLiteral = lambdaArgument.getArgumentExpression();
+            if (functionLiteralArguments.isEmpty()) return;
 
-                if (valueParameters.isEmpty()) {
-                    report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
+            LambdaArgument lambdaArgument = functionLiteralArguments.get(0);
+            KtExpression possiblyLabeledFunctionLiteral = lambdaArgument.getArgumentExpression();
+
+            if (parameters.isEmpty()) {
+                report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidateCall.getCandidateDescriptor()));
+                setStatus(ERROR);
+            }
+            else {
+                ValueParameterDescriptor lastParameter = CollectionsKt.last(parameters);
+                if (lastParameter.getVarargElementType() != null) {
+                    report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
                     setStatus(ERROR);
                 }
-                else {
-                    ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                    if (valueParameterDescriptor.getVarargElementType() != null) {
-                        report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
-                        setStatus(ERROR);
-                    }
-                    else {
-                        if (!usedParameters.add(valueParameterDescriptor)) {
-                            report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
-                            setStatus(WEAK_ERROR);
-                        }
-                        else {
-                            putVararg(valueParameterDescriptor, lambdaArgument);
-                        }
-                    }
-                }
-
-                for (int i = 1; i < functionLiteralArguments.size(); i++) {
-                    KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
-                    report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
+                else if (!usedParameters.add(lastParameter)) {
+                    report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidateCall.getCandidateDescriptor()));
                     setStatus(WEAK_ERROR);
                 }
+                else {
+                    putVararg(lastParameter, lambdaArgument);
+                }
+            }
+
+            for (int i = 1; i < functionLiteralArguments.size(); i++) {
+                KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
+                report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
+                setStatus(WEAK_ERROR);
             }
         }
 
         private void reportUnmappedParameters() {
-            List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
-            for (ValueParameterDescriptor valueParameter : valueParameters) {
+            for (ValueParameterDescriptor valueParameter : parameters) {
                 if (!usedParameters.contains(valueParameter)) {
                     if (DescriptorUtilsKt.hasDefaultValue(valueParameter)) {
                         candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
@@ -329,10 +324,7 @@ public class ValueArgumentsToParametersMapper {
             }
         }
 
-        private void putVararg(
-                ValueParameterDescriptor valueParameterDescriptor,
-                ValueArgument valueArgument
-        ) {
+        private void putVararg(ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument) {
             if (valueParameterDescriptor.getVarargElementType() != null) {
                 VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
                 if (vararg == null) {
