@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.generators.builtins.arrays
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
-import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.*
+import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
 import java.io.PrintWriter
 
 class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
@@ -27,12 +27,18 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (kind in PrimitiveType.values()) {
             val typeLower = kind.name.toLowerCase()
             val s = kind.capitalized
-            val defaultValue = when(kind) { PrimitiveType.BOOLEAN -> "false"; else -> "zero" }
+            val defaultValue = if (kind == PrimitiveType.BOOLEAN) "false" else "zero"
             out.println("/**")
-            out.println(" * An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as `${typeLower}[]`.")
-            out.println(" * @constructor Creates a new array of the specified [size], with all elements initialized to ${defaultValue}.")
+            out.println(" * An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as `$typeLower[]`.")
+            out.println(" * @constructor Creates a new array of the specified [size], with all elements initialized to $defaultValue.")
             out.println(" */")
             out.println("public class ${s}Array(size: Int) : Cloneable {")
+            out.println("    /**")
+            out.println("     * Creates a new array of the specified [size], where each element is calculated by calling the specified")
+            out.println("     * [init] function. The [init] function returns an array element given its index.")
+            out.println("     */")
+            out.println("    public constructor(size: Int, init: (Int) -> $s)")
+            out.println()
             out.println("    /** Returns the array element at the given [index]. This method can be called using the index operator. */")
             out.println("    public operator fun get(index: Int): $s")
             out.println("    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */")

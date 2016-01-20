@@ -25,8 +25,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
 import kotlin.Pair;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.jvm.bindingContextSlices.BindingContextSlicesKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -78,11 +80,13 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
+import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -97,8 +101,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
@@ -3345,7 +3348,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type type = expressionType(expression);
         if (type.getSort() == Type.ARRAY) {
             //noinspection ConstantConditions
-            return generateNewArray(expression, bindingContext.getType(expression));
+            return generateNewArray(expression, bindingContext.getType(expression), resolvedCall);
         }
 
         return generateConstructorCall(resolvedCall, type);
@@ -3391,20 +3394,54 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         });
     }
 
-    public StackValue generateNewArray(@NotNull KtCallExpression expression, @NotNull final KotlinType arrayType) {
-        assert expression.getValueArguments().size() == 1 : "Size argument expected";
+    public StackValue generateNewArray(
+            @NotNull KtCallExpression expression, @NotNull final KotlinType arrayType, @NotNull ResolvedCall<?> resolvedCall
+    ) {
+        List<KtValueArgument> args = expression.getValueArguments();
+        assert args.size() == 1 || args.size() == 2 : "Unknown constructor called: " + args.size() + " arguments";
 
-        final KtExpression sizeExpression = expression.getValueArguments().get(0).getArgumentExpression();
-        Type type = typeMapper.mapType(arrayType);
+        if (args.size() == 1) {
+            final KtExpression sizeExpression = args.get(0).getArgumentExpression();
+            return StackValue.operation(typeMapper.mapType(arrayType), new Function1<InstructionAdapter, Unit>() {
+                @Override
+                public Unit invoke(InstructionAdapter v) {
+                    gen(sizeExpression, Type.INT_TYPE);
+                    newArrayInstruction(arrayType);
+                    return Unit.INSTANCE;
+                }
+            });
+        }
 
-        return StackValue.operation(type, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                gen(sizeExpression, Type.INT_TYPE);
-                newArrayInstruction(arrayType);
-                return Unit.INSTANCE;
+        final ConstructorDescriptor constructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
+
+        final ClassDescriptor intrinsicConstructors =
+                FindClassInModuleKt.findClassAcrossModuleDependencies(
+                        getContainingModule(context.getContextDescriptor()),
+                        ClassId.topLevel(new FqName("kotlin.jvm.internal.IntrinsicArrayConstructors"))
+                );
+        // TODO: do not depend on a class from the runtime
+        assert intrinsicConstructors != null : "Class IntrinsicArrayConstructors is not found";
+
+        ResolvedCall<?> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {
+            private final CallableDescriptor descriptor;
+
+            {
+                Collection<FunctionDescriptor> functions = intrinsicConstructors.getUnsubstitutedMemberScope().getContributedFunctions(
+                        constructor.getContainingDeclaration().getName(), NoLookupLocation.FROM_BACKEND);
+                assert functions.size() == 1
+                        : "IntrinsicArrayConstructors does not have a single constructor for " +
+                          constructor.getContainingDeclaration().getName() + ":\n" + StringsKt.join(functions, "\n");
+                descriptor = CollectionsKt.single(functions);
             }
-        });
+
+            @NotNull
+            @Override
+            public CallableDescriptor getResultingDescriptor() {
+                return descriptor;
+            }
+        };
+
+        return invokeFunction(fakeResolvedCall, StackValue.singleton(intrinsicConstructors, typeMapper));
     }
 
     public void newArrayInstruction(@NotNull KotlinType arrayType) {

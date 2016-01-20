@@ -15,132 +15,33 @@ public inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
 }
 
 /**
- * Returns an array of [Double] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun DoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
-    val result = DoubleArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
- * Returns an array of [Float] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun FloatArray(size: Int, init: (Int) -> Float): FloatArray {
-    val result = FloatArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
- * Returns an array of [Long] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun LongArray(size: Int, init: (Int) -> Long): LongArray {
-    val result = LongArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
- * Returns an array of [Int] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun IntArray(size: Int, init: (Int) -> Int): IntArray {
-    val result = IntArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
- * Returns an array of [Char] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun CharArray(size: Int, init: (Int) -> Char): CharArray {
-    val result = CharArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
- * Returns an array of [Short] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun ShortArray(size: Int, init: (Int) -> Short): ShortArray {
-    val result = ShortArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
- * Returns an array of [Byte] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun ByteArray(size: Int, init: (Int) -> Byte): ByteArray {
-    val result = ByteArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
- * Returns an array of [Boolean] numbers with the specified [size],
- * where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun BooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray {
-    val result = BooleanArray(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result
-}
-
-/**
  * Returns an empty array of the specified type [T].
  */
 public inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
 
-
 @library
 public fun <T> arrayOf(vararg elements: T): Array<T> = noImpl
 
-// "constructors" for primitive types array
+@library
+public fun doubleArrayOf(vararg elements: Double): DoubleArray = noImpl
 
 @library
-public fun doubleArrayOf(vararg elements: Double): DoubleArray    = noImpl
+public fun floatArrayOf(vararg elements: Float): FloatArray = noImpl
 
 @library
-public fun floatArrayOf(vararg elements: Float): FloatArray       = noImpl
+public fun longArrayOf(vararg elements: Long): LongArray = noImpl
 
 @library
-public fun longArrayOf(vararg elements: Long): LongArray          = noImpl
+public fun intArrayOf(vararg elements: Int): IntArray = noImpl
 
 @library
-public fun intArrayOf(vararg elements: Int): IntArray             = noImpl
+public fun charArrayOf(vararg elements: Char): CharArray = noImpl
 
 @library
-public fun charArrayOf(vararg elements: Char): CharArray          = noImpl
+public fun shortArrayOf(vararg elements: Short): ShortArray = noImpl
 
 @library
-public fun shortArrayOf(vararg elements: Short): ShortArray       = noImpl
-
-@library
-public fun byteArrayOf(vararg elements: Byte): ByteArray          = noImpl
+public fun byteArrayOf(vararg elements: Byte): ByteArray = noImpl
 
 @library
 public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = noImpl
