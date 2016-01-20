@@ -96,6 +96,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
         KtExpression condition = ifExpression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(context.scope, condition, context);
+        boolean loopBreakContinuePossibleInCondition = condition != null && containsJumpOutOfLoop(condition, context);
 
         KtExpression elseBranch = ifExpression.getElse();
         KtExpression thenBranch = ifExpression.getThen();
@@ -150,7 +151,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue);
         }
 
-        boolean loopBreakContinuePossible = thenTypeInfo.getJumpOutPossible() || elseTypeInfo.getJumpOutPossible();
+        boolean loopBreakContinuePossible = loopBreakContinuePossibleInCondition ||
+                thenTypeInfo.getJumpOutPossible() || elseTypeInfo.getJumpOutPossible();
 
         boolean jumpInThen = thenType != null && KotlinBuiltIns.isNothing(thenType);
         boolean jumpInElse = elseType != null && KotlinBuiltIns.isNothing(elseType);
@@ -170,7 +172,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // If break or continue was possible, take condition check info as the jump info
-        return TypeInfoFactoryKt.createTypeInfo(resultType, resultDataFlowInfo, loopBreakContinuePossible, conditionDataFlowInfo);
+        return TypeInfoFactoryKt.createTypeInfo(resultType, resultDataFlowInfo, loopBreakContinuePossible,
+                                                loopBreakContinuePossibleInCondition ? context.dataFlowInfo : conditionDataFlowInfo);
     }
 
     @NotNull
@@ -253,16 +256,17 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 .replaceDataFlowInfo(dataFlowInfo);
     }
 
-    private boolean containsJumpOutOfLoop(final KtLoopExpression loopExpression, final ExpressionTypingContext context) {
+    private boolean containsJumpOutOfLoop(@NotNull final KtExpression expression, final ExpressionTypingContext context) {
         final boolean[] result = new boolean[1];
         result[0] = false;
         //todo breaks in inline function literals
-        loopExpression.accept(new KtTreeVisitor<List<KtLoopExpression>>() {
+        expression.accept(new KtTreeVisitor<List<KtLoopExpression>>() {
             @Override
             public Void visitBreakExpression(@NotNull KtBreakExpression breakExpression, List<KtLoopExpression> outerLoops) {
                 KtSimpleNameExpression targetLabel = breakExpression.getTargetLabel();
                 PsiElement element = targetLabel != null ? context.trace.get(LABEL_TARGET, targetLabel) : null;
-                if (element == loopExpression || (targetLabel == null && outerLoops.get(outerLoops.size() - 1) == loopExpression)) {
+                if (outerLoops.isEmpty() || element == expression ||
+                    (targetLabel == null && outerLoops.get(outerLoops.size() - 1) == expression)) {
                     result[0] = true;
                 }
                 return null;
@@ -287,7 +291,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 newOuterLoops.add(loopExpression);
                 return super.visitLoopExpression(loopExpression, newOuterLoops);
             }
-        }, Lists.newArrayList(loopExpression));
+        }, expression instanceof KtLoopExpression
+           ? Lists.newArrayList((KtLoopExpression) expression)
+           : Lists.<KtLoopExpression>newArrayList());
 
         return result[0];
     }
