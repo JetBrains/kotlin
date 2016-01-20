@@ -23,6 +23,12 @@ package kotlin
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class ByteArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Byte)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Byte
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -42,6 +48,12 @@ public class ByteArray(size: Int) : Cloneable {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class CharArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Char)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Char
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -61,6 +73,12 @@ public class CharArray(size: Int) : Cloneable {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class ShortArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Short)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Short
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -80,6 +98,12 @@ public class ShortArray(size: Int) : Cloneable {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class IntArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Int)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Int
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -99,6 +123,12 @@ public class IntArray(size: Int) : Cloneable {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class LongArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Long)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Long
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -118,6 +148,12 @@ public class LongArray(size: Int) : Cloneable {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class FloatArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Float)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Float
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -137,6 +173,12 @@ public class FloatArray(size: Int) : Cloneable {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class DoubleArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Double)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Double
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
@@ -156,6 +198,12 @@ public class DoubleArray(size: Int) : Cloneable {
  * @constructor Creates a new array of the specified [size], with all elements initialized to false.
  */
 public class BooleanArray(size: Int) : Cloneable {
+    /**
+     * Creates a new array of the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public constructor(size: Int, init: (Int) -> Boolean)
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Boolean
     /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */

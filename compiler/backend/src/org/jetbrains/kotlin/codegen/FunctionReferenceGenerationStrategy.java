@@ -110,7 +110,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         if (referencedFunction instanceof ConstructorDescriptor) {
             if (returnType.getSort() == Type.ARRAY) {
                 //noinspection ConstantConditions
-                result = codegen.generateNewArray(fakeExpression, referencedFunction.getReturnType());
+                result = codegen.generateNewArray(fakeExpression, referencedFunction.getReturnType(), fakeResolvedCall);
             }
             else {
                 result = codegen.generateConstructorCall(fakeResolvedCall, returnType);
