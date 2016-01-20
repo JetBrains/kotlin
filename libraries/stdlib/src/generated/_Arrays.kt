@@ -5414,6 +5414,366 @@ public fun Array<out Short>.toShortArray(): ShortArray {
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Boolean>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Byte>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Double>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Float>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Int>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Long>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(keySelector(element), valueTransform(element))
+    }
+    return result
+}
+
+/**
  * Returns an [ArrayList] of all elements.
  */
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
@@ -5712,450 +6072,225 @@ public fun ShortArray.toList(): List<Short> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <T, K, V> Array<out T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> BooleanArray.toMap(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> ByteArray.toMap(transform: (Byte) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> CharArray.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> DoubleArray.toMap(transform: (Double) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> FloatArray.toMap(transform: (Float) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> IntArray.toMap(transform: (Int) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> LongArray.toMap(transform: (Long) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> ShortArray.toMap(transform: (Short) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boolean> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Boolean>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Byte>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Double> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Double>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Float>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Int>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Long>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> ShortArray.toMapBy(selector: (Short) -> K): Map<K, Short> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Array<out T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> BooleanArray.toMapBy(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ByteArray.toMapBy(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> CharArray.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> DoubleArray.toMapBy(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> FloatArray.toMapBy(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> IntArray.toMapBy(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> LongArray.toMapBy(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ShortArray.toMapBy(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
 /**
