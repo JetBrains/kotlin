@@ -184,14 +184,14 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             }
         }
         masks.add(mask)
+
         for (m in masks) {
             v.iconst(m)
         }
 
-        // constructors with default arguments has last synthetic argument of specific type
-        if (functionDescriptor is ConstructorDescriptor) {
-            v.aconst(null)
-        }
+        // for default constructors: just marks default constructor (see DEFAULT_CONSTRUCTOR_MARKER)
+        // for default methods: contains MethodHandle for super calls ('null' cause not super call)
+        v.aconst(null)
 
         val defaultMethod = typeMapper.mapDefaultMethod(delegateFunctionDescriptor, contextKind)
         if (functionDescriptor is ConstructorDescriptor) {

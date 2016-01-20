@@ -107,10 +107,8 @@ internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
 
         arguments.addAll(masks)
 
-        if (caller is FunctionCaller.Constructor) {
-            // DefaultConstructorMarker
-            arguments.add(null)
-        }
+        // DefaultConstructorMarker or MethodHandle
+        arguments.add(null)
 
         @Suppress("UNCHECKED_CAST")
         return reflectionCall {

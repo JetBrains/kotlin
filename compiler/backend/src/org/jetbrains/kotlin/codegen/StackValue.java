@@ -774,7 +774,7 @@ public abstract class StackValue {
         private final StackValue receiver;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
-        private DefaultCallMask mask;
+        private DefaultCallArgs defaultArgs;
         private CallGenerator callGenerator;
         boolean isComplexOperationWithDup;
 
@@ -807,7 +807,7 @@ public abstract class StackValue {
             newReceiver.put(newReceiver.type, v);
             callGenerator.putHiddenParams();
 
-            mask = generator.generate(valueArguments, valueArguments);
+            defaultArgs = generator.generate(valueArguments, valueArguments);
         }
 
         private ArgumentGenerator createArgumentGenerator() {
@@ -955,8 +955,8 @@ public abstract class StackValue {
         }
 
         private boolean genDefaultMaskIfPresent(CallGenerator callGenerator) {
-            DefaultCallMask mask = ((CollectionElementReceiver) receiver).mask;
-            return mask.generateOnStackIfNeeded(callGenerator);
+            DefaultCallArgs defaultArgs = ((CollectionElementReceiver) receiver).defaultArgs;
+            return defaultArgs.generateOnStackIfNeeded(callGenerator, true);
         }
 
         private CallGenerator getCallGenerator() {

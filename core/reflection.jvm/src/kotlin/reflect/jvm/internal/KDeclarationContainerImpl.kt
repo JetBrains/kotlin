@@ -170,7 +170,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         if (isMember) {
             parameterTypes.add(jClass)
         }
-        addParametersAndMasks(parameterTypes, desc)
+        addParametersAndMasks(parameterTypes, desc, false)
 
         return jClass.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, declared)
     }
@@ -181,18 +181,18 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     fun findDefaultConstructor(desc: String, declared: Boolean): Constructor<*>? {
         val parameterTypes = arrayListOf<Class<*>>()
-        addParametersAndMasks(parameterTypes, desc)
-        parameterTypes.add(DEFAULT_CONSTRUCTOR_MARKER)
+        addParametersAndMasks(parameterTypes, desc, true)
 
         return jClass.tryGetConstructor(parameterTypes, declared)
     }
 
-    private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String) {
+    private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String, isConstructor: Boolean) {
         val valueParameters = loadParameterTypes(desc)
         result.addAll(valueParameters)
         repeat((valueParameters.size + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
+        result.add(if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else Any::class.java)
     }
 
     private fun loadParameterTypes(desc: String): List<Class<*>> {

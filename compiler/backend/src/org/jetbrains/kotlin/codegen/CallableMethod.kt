@@ -62,7 +62,6 @@ class CallableMethod(
         val method = getAsmMethod()
 
         if ("<init>".equals(method.name)) {
-            v.aconst(null)
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.internalName, "<init>", defaultMethodDesc, false)
         }
         else {

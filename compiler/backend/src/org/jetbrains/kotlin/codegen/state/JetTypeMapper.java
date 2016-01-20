@@ -88,6 +88,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationCons
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -1104,9 +1105,7 @@ public class JetTypeMapper {
         }
         int maskArgumentsCount = (argumentsCount + Integer.SIZE - 1) / Integer.SIZE;
         String additionalArgs = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
-        if (isConstructor(method)) {
-            additionalArgs += DEFAULT_CONSTRUCTOR_MARKER.getDescriptor();
-        }
+        additionalArgs += (isConstructor(method) ? DEFAULT_CONSTRUCTOR_MARKER : OBJECT_TYPE).getDescriptor();
         String result = descriptor.replace(")", additionalArgs + ")");
         if (dispatchReceiverDescriptor != null && !isConstructor(method)) {
             return result.replace("(", "(" + dispatchReceiverDescriptor);

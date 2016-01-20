@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
-class DefaultCallMask(val size: Int) {
+class DefaultCallArgs(val size: Int) {
 
     val bits: BitSet = BitSet(size)
 
@@ -50,10 +51,15 @@ class DefaultCallMask(val size: Int) {
         return masks
     }
 
-    fun generateOnStackIfNeeded(callGenerator: CallGenerator): Boolean {
+    fun generateOnStackIfNeeded(callGenerator: CallGenerator, isConstructor: Boolean): Boolean {
         val toInts = toInts()
-        for (mask in toInts) {
-            callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE))
+        if (!toInts.isEmpty()) {
+            for (mask in toInts) {
+                callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE))
+            }
+
+            val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
+            callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType))
         }
         return toInts.isNotEmpty();
     }

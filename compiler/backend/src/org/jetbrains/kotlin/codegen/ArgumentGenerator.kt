@@ -31,7 +31,7 @@ abstract class ArgumentGenerator {
      *
      * @see kotlin.reflect.jvm.internal.KCallableImpl.callBy
      */
-    open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>): DefaultCallMask {
+    open fun generate(valueArgumentsByIndex: List<ResolvedValueArgument>, actualArgs: List<ResolvedValueArgument>): DefaultCallArgs {
         assert(valueArgumentsByIndex.size == actualArgs.size) {
             "Value arguments collection should have same size, but ${valueArgumentsByIndex.size} != ${actualArgs.size}"
         }
@@ -48,7 +48,7 @@ abstract class ArgumentGenerator {
             }
         }
 
-        val masks = DefaultCallMask(valueArgumentsByIndex.size)
+        val defaultArgs = DefaultCallArgs(valueArgumentsByIndex.size)
 
         for (argumentWithDeclIndex in actualArgsWithDeclIndex) {
             val argument = argumentWithDeclIndex.arg
@@ -59,7 +59,7 @@ abstract class ArgumentGenerator {
                     generateExpression(declIndex, argument)
                 }
                 is DefaultValueArgument -> {
-                    masks.mark(declIndex)
+                    defaultArgs.mark(declIndex)
                     generateDefault(declIndex, argument)
                 }
                 is VarargValueArgument -> {
@@ -73,7 +73,7 @@ abstract class ArgumentGenerator {
 
         reorderArgumentsIfNeeded(actualArgsWithDeclIndex)
 
-        return masks
+        return defaultArgs
     }
 
     protected open fun generateExpression(i: Int, argument: ExpressionValueArgument) {

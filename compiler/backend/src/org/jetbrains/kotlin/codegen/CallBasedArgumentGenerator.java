@@ -51,15 +51,15 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @NotNull
     @Override
-    public DefaultCallMask generate(
+    public DefaultCallArgs generate(
             @NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex,
             @NotNull List<? extends ResolvedValueArgument> valueArgs
     ) {
         boolean shouldMarkLineNumbers = this.codegen.isShouldMarkLineNumbers();
         this.codegen.setShouldMarkLineNumbers(false);
-        DefaultCallMask masks = super.generate(valueArgumentsByIndex, valueArgs);
+        DefaultCallArgs defaultArgs = super.generate(valueArgumentsByIndex, valueArgs);
         this.codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
-        return masks;
+        return defaultArgs;
     }
 
     @Override

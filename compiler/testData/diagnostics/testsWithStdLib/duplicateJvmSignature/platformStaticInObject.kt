@@ -2,7 +2,7 @@
 import kotlin.jvm.JvmStatic
 
 open class Base {
-    fun `foo$default`(i: Int, mask: Int) {}
+    fun `foo$default`(i: Int, mask: Int, mh: Any) {}
 }
 
 object Derived : Base() {
