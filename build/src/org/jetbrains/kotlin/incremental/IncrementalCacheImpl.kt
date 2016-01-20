@@ -496,8 +496,7 @@ open class IncrementalCacheImpl<Target>(
         override fun dumpValue(value: String): String = value
     }
 
-    // TODO: find how to deal with PathStringDescriptor - it seems too deeply rooted in jps
-    inner class SourceToClassesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, /* PathStringDescriptor.INSTANCE,*/ StringCollectionExternalizer) {
+    inner class SourceToClassesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
         fun clearOutputsForSource(sourceFile: File) {
             remove(sourceFile.absolutePath)
         }
