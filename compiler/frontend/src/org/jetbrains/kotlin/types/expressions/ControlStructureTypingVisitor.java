@@ -470,9 +470,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         List<KtCatchClause> catchClauses = expression.getCatchClauses();
         KtFinallySection finallyBlock = expression.getFinallyBlock();
         List<KotlinType> types = new ArrayList<KotlinType>();
+        boolean nothingInAllCatchBranches = true;
         for (KtCatchClause catchClause : catchClauses) {
             KtParameter catchParameter = catchClause.getCatchParameter();
             KtExpression catchBody = catchClause.getCatchBody();
+            boolean nothingInCatchBranch = false;
             if (catchParameter != null) {
                 components.identifierChecker.checkDeclaration(catchParameter, context.trace);
                 ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
@@ -494,18 +496,28 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     KotlinType type = facade.getTypeInfo(catchBody, context.replaceScope(catchScope)).getType();
                     if (type != null) {
                         types.add(type);
+                        if (KotlinBuiltIns.isNothing(type)) {
+                            nothingInCatchBranch = true;
+                        }
                     }
                 }
+            }
+            if (!nothingInCatchBranch) {
+                nothingInAllCatchBranches =  false;
             }
         }
 
         KotlinTypeInfo result = TypeInfoFactoryKt.noTypeInfo(context);
+        KotlinTypeInfo tryResult = facade.getTypeInfo(tryBlock, context);
         if (finallyBlock != null) {
             result = facade.getTypeInfo(finallyBlock.getFinalExpression(),
                                         context.replaceExpectedType(NO_EXPECTED_TYPE));
         }
+        else if (nothingInAllCatchBranches) {
+            result = tryResult;
+        }
 
-        KotlinType type = facade.getTypeInfo(tryBlock, context).getType();
+        KotlinType type = tryResult.getType();
         if (type != null) {
             types.add(type);
         }

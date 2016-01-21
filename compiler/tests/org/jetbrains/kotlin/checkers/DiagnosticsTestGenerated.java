@@ -17066,6 +17066,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("initInTryReturnInCatch.kt")
+                public void testInitInTryReturnInCatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/initInTryReturnInCatch.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("initialization.kt")
                 public void testInitialization() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/initialization.kt");
