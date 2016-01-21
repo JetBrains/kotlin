@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import com.intellij.openapi.util.io.FileUtil
-
 data class LookupSymbolKey(val nameHash: Int, val scopeHash: Int) : Comparable<LookupSymbolKey> {
     constructor(name: String, scope: String) : this(name.hashCode(), scope.hashCode())
 
@@ -28,29 +26,6 @@ data class LookupSymbolKey(val nameHash: Int, val scopeHash: Int) : Comparable<L
 
         return scopeHash.compareTo(other.scopeHash)
     }
-}
-
-class PathFunctionPair(
-        val path: String,
-        val function: String
-): Comparable<PathFunctionPair> {
-    override fun compareTo(other: PathFunctionPair): Int {
-        val pathComp = FileUtil.comparePaths(path, other.path)
-
-        if (pathComp != 0) return pathComp
-
-        return function.compareTo(other.function)
-    }
-
-    override fun equals(other: Any?): Boolean =
-            when (other) {
-                is PathFunctionPair ->
-                    FileUtil.pathsEqual(path, other.path) && function == other.function
-                else ->
-                    false
-            }
-
-    override fun hashCode(): Int = 31 * FileUtil.pathHashCode(path) + function.hashCode()
 }
 
 data class ProtoMapValue(val isPackageFacade: Boolean, val bytes: ByteArray, val strings: Array<String>)

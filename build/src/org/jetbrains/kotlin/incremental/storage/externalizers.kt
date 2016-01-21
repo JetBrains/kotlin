@@ -21,7 +21,6 @@ import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import gnu.trove.THashSet
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
@@ -45,25 +44,6 @@ object LookupSymbolKeyDescriptor : KeyDescriptor<LookupSymbolKey> {
 
     override fun isEqual(val1: LookupSymbolKey, val2: LookupSymbolKey): Boolean = val1 == val2
 }
-
-
-object PathFunctionPairKeyDescriptor : KeyDescriptor<PathFunctionPair> {
-    override fun read(input: DataInput): PathFunctionPair {
-        val path = IOUtil.readUTF(input)
-        val function = IOUtil.readUTF(input)
-        return PathFunctionPair(path, function)
-    }
-
-    override fun save(output: DataOutput, value: PathFunctionPair) {
-        IOUtil.writeUTF(output, value.path)
-        IOUtil.writeUTF(output, value.function)
-    }
-
-    override fun getHashCode(value: PathFunctionPair): Int = value.hashCode()
-
-    override fun isEqual(val1: PathFunctionPair, val2: PathFunctionPair): Boolean = val1 == val2
-}
-
 
 object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
     override fun save(output: DataOutput, value: ProtoMapValue) {
@@ -121,27 +101,6 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
 
     override fun writeValue(output: DataOutput, value: Long) {
         output.writeLong(value)
-    }
-}
-
-
-object PathStringCollectionExternalizer : DataExternalizer<Collection<String>> {
-    override fun save(output: DataOutput, value: Collection<String>) {
-        for (str in value) {
-            IOUtil.writeUTF(output, str)
-        }
-    }
-
-    override fun read(input: DataInput): Collection<String> {
-        val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
-        val stream = input as DataInputStream
-
-        while (stream.available() > 0) {
-            val str = IOUtil.readUTF(stream)
-            result.add(str)
-        }
-
-        return result
     }
 }
 
@@ -228,7 +187,7 @@ object FileKeyDescriptor : KeyDescriptor<File> {
 
 open class CollectionExternalizer<T>(
         private val elementExternalizer: DataExternalizer<T>,
-        private val newCollection: ()->MutableCollection<T>
+        private val newCollection: () -> MutableCollection<T>
 ) : DataExternalizer<Collection<T>> {
     override fun read(input: DataInput): Collection<T> {
         val result = newCollection()
