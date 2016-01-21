@@ -23,7 +23,7 @@ fun box() : String {
 
     val y: Int? = 1000
     val z: Int? = 1000
-    val res = y.identityEquals(z)
+    val res = y === z
 
     val c1: Any = if (1 == 1) 0 else "abc"
     val c2: Any = if (1 != 1) 0 else "abc"

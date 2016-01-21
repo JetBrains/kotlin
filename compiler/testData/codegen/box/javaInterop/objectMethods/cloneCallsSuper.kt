@@ -6,6 +6,6 @@ fun box(): String {
     val a = A(42)
     val b = a.clone()
     if (a != b) return "Fail equals"
-    if (a.identityEquals(b)) return "Fail identity"
+    if (a === b) return "Fail identity"
     return "OK"
 }

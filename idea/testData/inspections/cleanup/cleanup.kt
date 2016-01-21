@@ -16,8 +16,6 @@ fun foo() {
     oldFun1(oldFun2(10))
 
     oldFun2()
-
-    1.identityEquals(2)
 }
 
 fun unnecessarySafeCall(x: String) {

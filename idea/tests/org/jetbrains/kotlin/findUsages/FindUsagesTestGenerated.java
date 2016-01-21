@@ -126,12 +126,6 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("identityEquals.0.kt")
-            public void testIdentityEquals() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/identityEquals.0.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("inc.0.kt")
             public void testInc() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/inc.0.kt");

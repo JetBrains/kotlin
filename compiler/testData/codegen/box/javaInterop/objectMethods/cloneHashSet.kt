@@ -7,6 +7,6 @@ fun box(): String {
     a.add("prosper")
     val b = a.clone()
     if (a != b) return "Fail equals"
-    if (a.identityEquals(b)) return "Fail identity"
+    if (a === b) return "Fail identity"
     return "OK"
 }

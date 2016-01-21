@@ -51,7 +51,6 @@ public class IntrinsicMethods {
 
     private static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     private static final Equals EQUALS = new Equals();
-    private static final IdentityEquals IDENTITY_EQUALS = new IdentityEquals();
     private static final IteratorNext ITERATOR_NEXT = new IteratorNext();
     private static final ArraySet ARRAY_SET = new ArraySet();
     private static final ArrayGet ARRAY_GET = new ArrayGet();
@@ -127,7 +126,6 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(FQ_NAMES.cloneable, "clone", 0, CLONE);
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "toString", 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "identityEquals", 1, IDENTITY_EQUALS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.string, "plus", 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());
 

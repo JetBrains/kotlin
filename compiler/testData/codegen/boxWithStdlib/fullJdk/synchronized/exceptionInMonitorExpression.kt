@@ -8,7 +8,7 @@ fun box(): String {
         }
     }
     catch (caught: Throwable) {
-        if (!(caught.identityEquals(e))) return "Fail: $caught"
+        if (caught !== e) return "Fail: $caught"
     }
 
     return "OK"

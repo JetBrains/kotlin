@@ -23,7 +23,6 @@ object OperatorNameConventions {
     @JvmField val SET_VALUE = Name.identifier("setValue")
 
     @JvmField val EQUALS = Name.identifier("equals")
-    @JvmField val IDENTITY_EQUALS = Name.identifier("identityEquals")
     @JvmField val COMPARE_TO = Name.identifier("compareTo")
     @JvmField val CONTAINS = Name.identifier("contains")
     @JvmField val INVOKE = Name.identifier("invoke")

@@ -4,5 +4,5 @@ fun box(): String {
 	val r = object : Runnable {
 		override fun run() {}
 	}
-	return if (foo(r).identityEquals(r)) "OK" else "Fail"
+	return if (foo(r) === r) "OK" else "Fail"
 }

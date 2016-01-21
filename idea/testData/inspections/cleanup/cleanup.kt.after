@@ -15,8 +15,6 @@ fun foo() {
     bar(bar(10 + 2) + 1)
 
     oldFun2()
-
-    1 === 2
 }
 
 fun unnecessarySafeCall(x: String) {

@@ -32,7 +32,6 @@ val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
         .addAll(ASSIGNMENT_OPERATIONS.keys)
         .addAll(COMPARISON_OPERATIONS)
         .addAll(EQUALS_OPERATIONS)
-        .addAll(IDENTITY_EQUALS_OPERATIONS)
         .addAll(IN_OPERATIONS)
         .add(KtTokens.LBRACKET)
         .add(KtTokens.BY_KEYWORD)
@@ -50,7 +49,6 @@ fun Name.getOperationSymbolsToSearch(): Set<KtToken> {
     when (this) {
         OperatorNameConventions.COMPARE_TO -> return COMPARISON_OPERATIONS_TO_SEARCH
         OperatorNameConventions.EQUALS -> return EQUALS_OPERATIONS
-        OperatorNameConventions.IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
         OperatorNameConventions.CONTAINS -> return IN_OPERATIONS_TO_SEARCH
         OperatorNameConventions.ITERATOR -> return IN_OPERATIONS_TO_SEARCH
         in INDEXING_OPERATION_NAMES -> return setOf(KtTokens.LBRACKET)

@@ -32,7 +32,7 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
         private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
         private val SUPPORTED_OPERATION_NAMES = SUPPORTED_OPERATIONS.mapNotNull { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet() +
-                                        setOf("xor", "or", "and", "equals", "identityEquals")
+                                        setOf("xor", "or", "and", "equals")
     }
 
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {

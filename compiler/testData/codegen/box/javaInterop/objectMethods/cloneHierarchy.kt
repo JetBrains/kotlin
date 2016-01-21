@@ -25,8 +25,8 @@ fun box(): String {
 
     if (c.s != d.s) return "Fail s: ${d.s}"
     if (c.l != d.l) return "Fail l: ${d.l}"
-    if (c.l.identityEquals(d.l)) return "Fail list identity"
-    if (c.identityEquals(d)) return "Fail identity"
+    if (c.l === d.l) return "Fail list identity"
+    if (c === d) return "Fail identity"
 
     return "OK"
 }

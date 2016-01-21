@@ -76,8 +76,8 @@ For `in` and `!in` the procedure is the same, but the order of arguments is reve
 
 | Expression | Translated to |
 |------------|---------------|
-| `a == b` | `a?.equals(b) ?: b.identityEquals(null)` |
-| `a != b` | `!(a?.equals(b) ?: b.identityEquals(null))` |
+| `a == b` | `a?.equals(b) ?: b === null` |
+| `a != b` | `!(a?.equals(b) ?: b === null)` |
 
 *Note*: `===` and `!==` (identity checks) are not overloadable, so no conventions exist for them
 

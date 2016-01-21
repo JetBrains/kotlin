@@ -1176,15 +1176,5 @@ public abstract class KotlinBuiltIns {
         return getNullableAnyType();
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // GET FUNCTION
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @NotNull
-    public FunctionDescriptor getIdentityEquals() {
-        return first(getBuiltInsPackageFragment().getMemberScope().getContributedFunctions(Name.identifier("identityEquals"),
-                                                                                           NoLookupLocation.FROM_BUILTINS));
-    }
 }
