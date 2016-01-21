@@ -7,11 +7,13 @@ End of files
 Cleaning output files:
 out/production/module/GetRandomEnumEntryKt.class
 out/production/module/META-INF/module.kotlin_module
+out/production/module/UseEnumImplicitlyKt.class
 out/production/module/UseKt.class
 End of files
 Compiling files:
 src/getRandomEnumEntry.kt
 src/use.kt
+src/useEnumImplicitly.kt
 End of files
 COMPILATION FAILED
 when expression must be exhaustive, add necessary 'C' branch or 'else' branch instead
@@ -24,4 +26,5 @@ Compiling files:
 src/Enum.kt
 src/getRandomEnumEntry.kt
 src/use.kt
+src/useEnumImplicitly.kt
 End of files

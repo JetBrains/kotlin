@@ -1,0 +1,1 @@
+fun getAorD() = if (Math.random() > 0.5) getA() else getD()
