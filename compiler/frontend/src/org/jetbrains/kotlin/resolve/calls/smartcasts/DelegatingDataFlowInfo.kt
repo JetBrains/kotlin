@@ -277,10 +277,6 @@ internal class DelegatingDataFlowInfo private constructor(
             newTypeInfo.putAll(key, myTypeInfo[key].intersect(otherTypeInfo[key]))
         }
 
-        if (nullabilityMapBuilder.isEmpty() && newTypeInfo.isEmpty) {
-            return DataFlowInfo.EMPTY
-        }
-
         return create(null, ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo)
     }
 
@@ -300,7 +296,7 @@ internal class DelegatingDataFlowInfo private constructor(
                            // NB: typeInfo must be mutable here!
                            typeInfo: SetMultimap<DataFlowValue, KotlinType>,
                            valueWithGivenTypeInfo: DataFlowValue? = null
-        ): DelegatingDataFlowInfo {
+        ): DataFlowInfo {
             for (value in typeInfo.keys()) {
                 var iterator = typeInfo[value].iterator()
                 while (iterator.hasNext()) {
@@ -310,6 +306,9 @@ internal class DelegatingDataFlowInfo private constructor(
                         iterator.remove()
                     }
                 }
+            }
+            if (nullabilityInfo.isEmpty() && typeInfo.isEmpty && valueWithGivenTypeInfo == null) {
+                return parent ?: DataFlowInfoFactory.EMPTY
             }
             return DelegatingDataFlowInfo(parent, nullabilityInfo, typeInfo, valueWithGivenTypeInfo)
         }
