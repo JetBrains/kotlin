@@ -18,10 +18,6 @@ package org.jetbrains.kotlin.utils.fileUtils
 
 import java.io.File
 
-// TODO: move to stdlib as:
-// public fun File?.readTextOrEmpty(encoding: String = Charset.defaultCharset().name()): String = this?.readText(encoding) ?: ""
-fun File?.readTextOrEmpty(): String = this?.readText() ?: ""
-
 fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
     if (name.endsWith(oldExt)) {
         val path = path

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import org.jetbrains.kotlin.utils.fileUtils.readTextOrEmpty
 import java.io.File
 import java.util.ArrayList
 
@@ -56,8 +55,8 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             }
 
             val code = getCode(output, sourceMapBuilder)
-            val prefix = outputPrefixFile?.readTextOrEmpty() ?: ""
-            val postfix = outputPostfixFile?.readTextOrEmpty() ?: ""
+            val prefix = outputPrefixFile?.readText() ?: ""
+            val postfix = outputPostfixFile?.readText() ?: ""
             val sourceFiles = files.map {
                 val virtualFile = it.originalFile.virtualFile
 
