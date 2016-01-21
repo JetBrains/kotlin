@@ -29,7 +29,7 @@ fun <T : CharSequence?> foo(x: T) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
         x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
+        x.bar1()
         x.bar2()
         <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
     }
