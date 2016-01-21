@@ -46,6 +46,11 @@ import java.util.List;
 
 public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProducer {
     @Override
+    public boolean shouldReplace(ConfigurationFromContext self, ConfigurationFromContext other) {
+        return other.isProducedBy(TestNGConfigurationProducer.class);
+    }
+
+    @Override
     protected boolean setupConfigurationFromContext(
             TestNGConfiguration configuration, ConfigurationContext context, Ref<PsiElement> sourceElement
     ) {
