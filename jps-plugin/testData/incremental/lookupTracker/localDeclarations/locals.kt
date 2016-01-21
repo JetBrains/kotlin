@@ -2,13 +2,13 @@ package local.declarations
 
 import bar.*
 
-/*p:local.declarations*/fun f(p: /*p:local.declarations*/Any) {
-    p.toString()
+/*p:local.declarations*/fun f(p: /*p:local.declarations*/Any) /*p:kotlin(Int)*/{
+    /*p:kotlin(Any) p:kotlin(String)*/p.toString()
 
-    val a = 1
-    val b = a
-    fun localFun() = b
-    fun /*p:local.declarations*/Int.localExtFun() = localFun()
+    val a = /*p:kotlin(Int)*/1
+    val b = /*p:kotlin(Int)*/a
+    fun localFun() = /*p:kotlin(Int)*/b
+    fun /*p:local.declarations*/Int.localExtFun() = /*p:kotlin(Int)*/localFun()
 
     abstract class LocalI {
         abstract var a: /*p:local.declarations*/Int
@@ -16,34 +16,34 @@ import bar.*
     }
 
     class LocalC : LocalI() {
-        override var a = 1
+        override var a = /*p:kotlin(Int)*/1
 
         override fun foo() {}
 
-        var b = "bbb"
+        var b = /*p:kotlin(String)*/"bbb"
 
-        fun bar() = b
+        fun bar() = /*p:kotlin(Int)*/b
     }
 
     val o = object {
-        val a = "aaa"
-        fun foo(): LocalI = null as LocalI
+        val a = /*p:kotlin(String)*/"aaa"
+        fun foo(): LocalI = /*p:kotlin(Nothing)*/null as LocalI
     }
 
-    localFun()
-    1./*c:kotlin.Int(getLocalExtFun) c:kotlin.Int(getLOCALExtFun)*/localExtFun()
+    /*p:kotlin(Int)*/localFun()
+    /*p:kotlin(Int)*/1./*c:kotlin.Int(getLocalExtFun) c:kotlin.Int(getLOCALExtFun)*/localExtFun()
 
     val c = LocalC()
-    c.a
-    c.b
+    /*p:kotlin(Int)*/c.a
+    /*p:kotlin(String)*/c.b
     c.foo()
-    c.bar()
+    /*p:kotlin(Int)*/c.bar()
 
     val i: LocalI = c
-    i.a
+    /*p:kotlin(Int)*/i.a
     i.foo()
 
-    o.a
+    /*p:kotlin(String)*/o.a
     val ii = o.foo()
-    ii.a
+    /*p:kotlin(Int)*/ii.a
 }
