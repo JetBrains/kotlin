@@ -1001,6 +1001,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinTopLevelPropertyUsages.0.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("kt7656.0.kt")
+            public void testKt7656() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPropertyUsages/kt7656.0.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/findUsages/kotlin/findSecondaryConstructorUsages")
