@@ -390,37 +390,38 @@ public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V>
 /**
  * Converts this [Map] to a [LinkedHashMap], maintaining the insertion order of elements added to that map afterwards.
  */
+@Deprecated("It may be to late to covert map to linked map, if you care about the order use the ordered map from the beginning.", ReplaceWith("LinkedHashMap(this)", "java.util.LinkedHashMap"))
 public fun <K, V> Map<K, V>.toLinkedMap(): MutableMap<K, V> = LinkedHashMap(this)
 
 /**
  * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair].
  */
 public operator fun <K, V> Map<K, V>.plus(pair: Pair<K, V>): Map<K, V>
-        = this.toLinkedMap().apply { put(pair.first, pair.second) }
+        = LinkedHashMap(this).apply { put(pair.first, pair.second) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given collection of key-value [pairs].
  */
 public operator fun <K, V> Map<K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>
-        = this.toLinkedMap().apply { putAll(pairs) }
+        = LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given array of key-value [pairs].
  */
 public operator fun <K, V> Map<K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>
-        = this.toLinkedMap().apply { putAll(pairs) }
+        = LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from a given sequence of key-value [pairs].
  */
 public operator fun <K, V> Map<K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>
-        = this.toLinkedMap().apply { putAll(pairs) }
+        = LinkedHashMap(this).apply { putAll(pairs) }
 
 /**
  * Creates a new read-only map by replacing or adding entries to this map from another [map].
  */
 public operator fun <K, V> Map<K, V>.plus(map: Map<K, V>): Map<K, V>
-        = this.toLinkedMap().apply { putAll(map) }
+        = LinkedHashMap(this).apply { putAll(map) }
 
 
 /**
