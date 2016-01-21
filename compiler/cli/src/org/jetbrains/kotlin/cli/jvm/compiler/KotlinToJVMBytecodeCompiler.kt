@@ -410,7 +410,7 @@ object KotlinToJVMBytecodeCompiler {
             return if (versionIndex >= 0) substring(0, versionIndex) else this
         }
 
-        val runtimes = jvmClasspathRoots.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
+        val runtimes = jvmClasspathRoots.map { it.canonicalFile }.filter { it.name == PathUtil.KOTLIN_JAVA_RUNTIME_JAR && it.exists() }
 
         val runtimeVersions = runtimes.map {
             JarUtil.getJarAttribute(it, Attributes.Name.IMPLEMENTATION_VERSION).orEmpty().removeIdeaVersionSuffix()

@@ -1,4 +1,4 @@
-error: conflicting versions of Kotlin runtime on classpath: compiler/testData/cli/jvm/kotlin-runtime-4584-stub/kotlin-runtime.jar, $PROJECT_DIR$/lib/kotlin-runtime.jar
+error: conflicting versions of Kotlin runtime on classpath: $TESTDATA_DIR$/kotlin-runtime-4584-stub/kotlin-runtime.jar, $PROJECT_DIR$/lib/kotlin-runtime.jar
 compiler/testData/cli/jvm/conflictingRuntimeVersions.kt:1:9: error: unresolved reference: unresolvedFunction
 val f = unresolvedFunction()
         ^
