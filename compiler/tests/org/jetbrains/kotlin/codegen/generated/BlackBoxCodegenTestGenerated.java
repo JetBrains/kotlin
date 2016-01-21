@@ -7357,6 +7357,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericIntersection.kt")
+        public void testGenericIntersection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/genericIntersection.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("genericSet.kt")
         public void testGenericSet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/genericSet.kt");

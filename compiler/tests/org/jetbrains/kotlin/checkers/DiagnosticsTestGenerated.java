@@ -15615,6 +15615,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericIntersection.kt")
+            public void testGenericIntersection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/genericIntersection.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericSet.kt")
             public void testGenericSet() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/genericSet.kt");
