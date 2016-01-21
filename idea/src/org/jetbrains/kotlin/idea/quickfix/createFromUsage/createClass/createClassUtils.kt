@@ -61,7 +61,7 @@ internal fun getTargetParentByQualifier(
             if (qualifierDescriptor.fqName != file.packageFqName) {
                 JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString())
             }
-            else file // KT-9972
+            else file as PsiElement // KT-9972
         else ->
             null
     }

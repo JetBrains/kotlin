@@ -35,9 +35,12 @@ class KotlinReferenceContributor() : PsiReferenceContributor() {
                 if (it.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
 
                 when (it.readWriteAccess(useResolveForReadWrite = false)) {
-                    ReferenceAccess.READ -> arrayOf(SyntheticPropertyAccessorReference.Getter(it))
-                    ReferenceAccess.WRITE -> arrayOf(SyntheticPropertyAccessorReference.Setter(it))
-                    ReferenceAccess.READ_WRITE -> arrayOf(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
+                    ReferenceAccess.READ ->
+                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Getter(it))
+                    ReferenceAccess.WRITE ->
+                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Setter(it))
+                    ReferenceAccess.READ_WRITE ->
+                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
                 }
             }
 

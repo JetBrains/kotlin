@@ -455,19 +455,20 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             "private "
                         else ""
 
-                val declaration : KtNamedDeclaration = when (callableInfo.kind) {
+                val declaration: KtNamedDeclaration = when (callableInfo.kind) {
                     CallableKind.FUNCTION, CallableKind.SECONDARY_CONSTRUCTOR -> {
                         val body = when {
                             containingElement is KtClass && containingElement.isInterface() && !config.isExtension -> ""
                             else -> "{}"
                         }
+                        @Suppress("USELESS_CAST") // KT-10755
                         if (callableInfo is FunctionInfo) {
                             val operatorModifier = if (callableInfo.isOperator) "operator " else ""
                             val infixModifier = if (callableInfo.isInfix) "infix " else ""
-                            psiFactory.createFunction("$modifiers$infixModifier${operatorModifier}fun<> $header $body")
+                            psiFactory.createFunction("$modifiers$infixModifier${operatorModifier}fun<> $header $body") as KtNamedDeclaration
                         }
                         else {
-                            psiFactory.createSecondaryConstructor("${modifiers}constructor$paramList $body")
+                            psiFactory.createSecondaryConstructor("${modifiers}constructor$paramList $body") as KtNamedDeclaration
                         }
                     }
                     CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR -> {

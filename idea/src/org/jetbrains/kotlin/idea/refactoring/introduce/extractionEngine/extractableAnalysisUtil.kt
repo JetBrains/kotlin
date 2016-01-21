@@ -351,7 +351,7 @@ private fun ExtractionData.analyzeControlFlow(
                              + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sorted()
                     return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
                 }
-                OutputValueBoxer::AsList
+                { outputValues -> OutputValueBoxer.AsList(outputValues) } // KT-8596
             }
 
             else -> controlFlow.boxerFactory
