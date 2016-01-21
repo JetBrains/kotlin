@@ -31,9 +31,9 @@ class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
             return false;
         }
 
-        val debugProcess = context.debugProcess
-        val positionManager = KotlinPositionManager(debugProcess!!)
-        val location = context.frameProxy!!.location()
+        val debugProcess = context.debugProcess ?: return false
+        val positionManager = KotlinPositionManager(debugProcess)
+        val location = context.frameProxy?.location() ?: return false
         return runReadAction {
             shouldFilter(positionManager, location)
         }
@@ -41,7 +41,7 @@ class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
 
 
     private fun shouldFilter(positionManager: KotlinPositionManager, location: Location): Boolean {
-        val defaultStrata = location.declaringType().defaultStratum()
+        val defaultStrata = location.declaringType()?.defaultStratum()
         if ("Kotlin" != defaultStrata) {
             return false;
         }
