@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
@@ -728,13 +729,41 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
 
         val callParams = if (needThis) parameters.drop(1) else parameters
-        val statement = if (expression.isConstructor) {
-            MethodCallExpression.build(null, convertMethodReferenceQualifier(qualifier), callParams.map { it.first }, emptyList(), false).assignNoPrototype()
+
+        val specialMethod = method?.let { SpecialMethod.match(it, callParams.size, converter.services) }
+        val statement: Statement = if (expression.isConstructor) {
+            MethodCallExpression.build(null, convertMethodReferenceQualifier(qualifier), callParams.map { it.first }, emptyList(), false)
+        }
+        else if (specialMethod != null) {
+            val factory = PsiElementFactory.SERVICE.getInstance(converter.project)
+            val fakeReceiver = receiver?.let {
+                val psiExpression = if (qualifier is PsiExpression) qualifier else factory.createExpressionFromText("fakeReceiver", null)
+                psiExpression.convertedExpression = it.first
+                psiExpression
+            }
+            val fakeParams = callParams.mapIndexed {
+                i, param ->
+                with(factory.createExpressionFromText("fake$i", null)) {
+                    this.convertedExpression = param.first
+                    this
+                }
+            }
+            val patchedConverter = codeConverter.withSpecialExpressionConverter(object : SpecialExpressionConverter {
+                override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
+                    val convertedExpression = expression.convertedExpression
+                    expression.convertedExpression = null
+                    return convertedExpression
+                }
+            })
+
+            specialMethod.convertCall(fakeReceiver, fakeParams.toTypedArray(), emptyList(), patchedConverter)!!
         }
         else {
             val referenceName = expression.referenceName!!
-            MethodCallExpression.build(receiver?.first, referenceName, callParams.map { it.first }, emptyList(), false).assignNoPrototype()
+            MethodCallExpression.build(receiver?.first, referenceName, callParams.map { it.first }, emptyList(), false)
         }
+
+        statement.assignNoPrototype()
 
         val lambdaParameterList = ParameterList(
                 if (parameters.size == 1 && !isKotlinFunctionType) {
@@ -765,6 +794,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             )
         }
     }
+
+    private var PsiExpression.convertedExpression: Expression? by UserDataProperty(Key.create("CONVERTED_EXPRESSION"))
 
     private fun isFunctionType(functionalType: PsiType?) = functionalType?.canonicalText?.startsWith("kotlin.jvm.functions.Function") ?: false
 
