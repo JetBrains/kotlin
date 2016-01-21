@@ -623,6 +623,14 @@
             <fileset dir="${output}/classes/daemon-client"/>
             <zipfileset src="${dependencies.dir}/native-platform-uberjar.jar" includes="**" />
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.daemon-client}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
         </jar>
     </target>
 
