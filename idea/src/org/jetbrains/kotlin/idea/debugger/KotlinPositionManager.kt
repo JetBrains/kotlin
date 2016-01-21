@@ -229,7 +229,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
             if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return result
 
-            val names = classNamesForPositionAndInlinedOnes(sourcePosition)
+            val names = classNamesForPosition(sourcePosition)
             for (name in names) {
                 result.addAll(myDebugProcess.virtualMachineProxy.classesByName(name))
             }
@@ -248,38 +248,26 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         throw NoDataException.INSTANCE
     }
 
-    private fun classNamesForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
-        val result = hashSetOf<String>()
-        val names = classNamesForPosition(sourcePosition)
-        result.addAll(names)
+    fun originalClassNameForPosition(sourcePosition: SourcePosition): String? {
+        return classNamesForPosition(sourcePosition).firstOrNull()
+    }
+
+    private fun classNamesForPosition(sourcePosition: SourcePosition): List<String> {
+        val element = runReadAction { sourcePosition.elementAt } ?: return emptyList()
+        val names = classNamesForPosition(element)
 
         val lambdas = findLambdas(sourcePosition)
-        result.addAll(lambdas)
-
-        return result.toReadOnlyList();
-    }
-
-    private fun findLambdas(sourcePosition: SourcePosition): Collection<String> {
-        return runReadAction {
-            val lambdas = getLambdasAtLineIfAny(sourcePosition)
-            val file = sourcePosition.file.containingFile as KtFile
-            val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
-            lambdas.flatMap {
-                val typeMapper = KotlinPositionManagerCache.getOrCreateTypeMapper(it)
-                getInternalClassNameForElement(it, typeMapper, file, isInLibrary)
-            }
+        if (lambdas.isEmpty()) {
+            return names
         }
+
+        return names + lambdas
     }
 
-    fun classNamesForPosition(sourcePosition: SourcePosition): Collection<String> {
-        val psiElement = runReadAction { sourcePosition.elementAt } ?: return emptyList()
-        return classNamesForPosition(psiElement)
-    }
-
-    private fun classNamesForPosition(element: PsiElement): Collection<String> {
+    private fun classNamesForPosition(element: PsiElement): List<String> {
         return runReadAction {
             if (DumbService.getInstance(element.project).isDumb) {
-                emptySet()
+                emptyList()
             }
             else {
                 KotlinPositionManagerCache.getOrComputeClassNames(element) {
@@ -290,6 +278,18 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
                     getInternalClassNameForElement(element, typeMapper, file, isInLibrary)
                 }
+            }
+        }
+    }
+
+    private fun findLambdas(sourcePosition: SourcePosition): Collection<String> {
+        return runReadAction {
+            val lambdas = getLambdasAtLineIfAny(sourcePosition)
+            val file = sourcePosition.file.containingFile as KtFile
+            val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+            lambdas.flatMap {
+                val typeMapper = KotlinPositionManagerCache.getOrCreateTypeMapper(it)
+                getInternalClassNameForElement(it, typeMapper, file, isInLibrary)
             }
         }
     }
@@ -322,27 +322,28 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        return classNamesForPositionAndInlinedOnes(position).mapNotNull {
+        return classNamesForPosition(position).mapNotNull {
             className -> myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
         }
     }
 
+    // The order is used in ExtraSteppingFilter: original className should be the first
     private fun getInternalClassNameForElement(
             notPositionedElement: PsiElement?,
             typeMapper: JetTypeMapper,
             file: KtFile,
             isInLibrary: Boolean
-    ): Collection<String> {
+    ): List<String> {
         val element = getElementToCalculateClassName(notPositionedElement)
 
         when (element) {
-            is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toSet()
+            is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toList()
             is KtFunction -> {
                 val descriptor = InlineUtil.getInlineArgumentDescriptor(element, typeMapper.bindingContext)
                 if (descriptor != null) {
                     val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                     if (descriptor.isCrossinline) {
-                        return findCrossInlineArguments(element, descriptor, typeMapper.bindingContext) + classNamesForParent
+                        return classNamesForParent + findCrossInlineArguments(element, descriptor, typeMapper.bindingContext)
                     }
                     return classNamesForParent
                 }
@@ -351,13 +352,13 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         val crossInlineParameterUsages = element?.containsCrossInlineParameterUsages(typeMapper.bindingContext)
         if (crossInlineParameterUsages != null && crossInlineParameterUsages.isNotEmpty()) {
-            return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext)
+            return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext).toList()
         }
 
         when {
             element is KtFunctionLiteral -> {
                 val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                return asmType.internalName.toSet()
+                return asmType.internalName.toList()
             }
             element is KtAnonymousInitializer -> {
                 val parent = getElementToCalculateClassName(element.parent)
@@ -371,7 +372,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 if (isInPropertyAccessor(notPositionedElement)) {
                     val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
                     if (classOrObject != null) {
-                        return getJvmInternalNameForImpl(typeMapper, classOrObject).toSet()
+                        return getJvmInternalNameForImpl(typeMapper, classOrObject).toList()
                     }
                 }
 
@@ -380,7 +381,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
 
-                return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toSet()
+                return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toList()
             }
             element is KtNamedFunction -> {
                 val parent = getElementToCalculateClassName(element.parent)
@@ -396,11 +397,11 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 }
 
                 val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
-                return inlinedCalls + parentInternalName.toSet()
+                return parentInternalName.toList() + inlinedCalls
             }
         }
 
-        return NoResolveFileClassesProvider.getFileClassInternalName(file).toSet()
+        return NoResolveFileClassesProvider.getFileClassInternalName(file).toList()
     }
 
     private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out KtElement>> =
@@ -537,5 +538,5 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
     private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
 
-    private fun String?.toSet() = if (this == null) emptySet() else setOf(this)
+    private fun String?.toList() = if (this == null) emptyList() else listOf(this)
 }

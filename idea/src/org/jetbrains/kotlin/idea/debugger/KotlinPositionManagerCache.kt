@@ -38,7 +38,7 @@ class KotlinPositionManagerCache(private val project: Project) {
 
     private val cachedClassNames = CachedValuesManager.getManager(project).createCachedValue(
             {
-                CachedValueProvider.Result<HashMap<PsiElement, Collection<String>>>(
+                CachedValueProvider.Result<HashMap<PsiElement, List<String>>>(
                         hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
@@ -49,7 +49,7 @@ class KotlinPositionManagerCache(private val project: Project) {
             }, false)
 
     companion object {
-        fun getOrComputeClassNames(psiElement: PsiElement, create: (PsiElement) -> Collection<String>): Collection<String> {
+        fun getOrComputeClassNames(psiElement: PsiElement, create: (PsiElement) -> List<String>): List<String> {
             val cache = getInstance(psiElement.project)
             synchronized(cache.cachedClassNames) {
                 val classNamesCache = cache.cachedClassNames.value
