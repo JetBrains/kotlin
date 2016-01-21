@@ -162,14 +162,18 @@ public abstract class KotlinBuiltIns {
         public final FqName iterable = collectionsFqName("Iterable");
         public final FqName collection = collectionsFqName("Collection");
         public final FqName list = collectionsFqName("List");
+        public final FqName listIterator = collectionsFqName("ListIterator");
         public final FqName set = collectionsFqName("Set");
         public final FqName map = collectionsFqName("Map");
+        public final FqName mapEntry = map.child(Name.identifier("Entry"));
         public final FqName mutableIterator = collectionsFqName("MutableIterator");
         public final FqName mutableIterable = collectionsFqName("MutableIterable");
         public final FqName mutableCollection = collectionsFqName("MutableCollection");
         public final FqName mutableList = collectionsFqName("MutableList");
+        public final FqName mutableListIterator = collectionsFqName("MutableListIterator");
         public final FqName mutableSet = collectionsFqName("MutableSet");
         public final FqName mutableMap = collectionsFqName("MutableMap");
+        public final FqName mutableMapEntry = mutableMap.child(Name.identifier("MutableEntry"));
 
         private final FqNameUnsafe _collection = collection.toUnsafe();
         private final FqNameUnsafe _list = list.toUnsafe();

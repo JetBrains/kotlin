@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -114,23 +116,35 @@ object TypeIntrinsics {
     private val IS_FUNCTON_OF_ARITY_DESCRIPTOR =
             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"), Type.INT_TYPE)
 
-    private val IS_MUTABLE_COLLECTION_METHOD_NAME = hashMapOf(
-            "kotlin.collections.MutableIterator" to "isMutableIterator",
-            "kotlin.collections.MutableIterable" to "isMutableIterable",
-            "kotlin.collections.MutableCollection" to "isMutableCollection",
-            "kotlin.collections.MutableList" to "isMutableList",
-            "kotlin.collections.MutableListIterator" to "isMutableListIterator",
-            "kotlin.collections.MutableSet" to "isMutableSet",
-            "kotlin.collections.MutableMap" to "isMutableMap",
-            "kotlin.collections.MutableMap.MutableEntry" to "isMutableMapEntry"
+
+    private val MUTABLE_COLLECTION_TYPE_FQ_NAMES = setOf(
+            FQ_NAMES.mutableIterator,
+            FQ_NAMES.mutableIterable,
+            FQ_NAMES.mutableCollection,
+            FQ_NAMES.mutableList,
+            FQ_NAMES.mutableListIterator,
+            FQ_NAMES.mutableMap,
+            FQ_NAMES.mutableSet,
+            FQ_NAMES.mutableMapEntry
     )
+
+    private fun getMutableCollectionMethodName(prefix: String, jetType: KotlinType): String? {
+        val fqName = getClassFqName(jetType)
+        if (fqName == null || fqName !in MUTABLE_COLLECTION_TYPE_FQ_NAMES) return null
+        val baseName = if (fqName == FQ_NAMES.mutableMapEntry) "MutableMapEntry" else fqName.shortName().asString()
+        return prefix + baseName
+    }
+
+    private fun getIsMutableCollectionMethodName(jetType: KotlinType): String? = getMutableCollectionMethodName("is", jetType)
+
+    private fun getAsMutableCollectionMethodName(jetType: KotlinType): String? = getMutableCollectionMethodName("as", jetType)
 
     private val IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR =
             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"))
 
-    private fun getClassFqName(jetType: KotlinType): String? {
+    private fun getClassFqName(jetType: KotlinType): FqName? {
         val classDescriptor = TypeUtils.getClassDescriptor(jetType) ?: return null
-        return DescriptorUtils.getFqName(classDescriptor).asString()
+        return DescriptorUtils.getFqName(classDescriptor).toSafe()
     }
 
     private val KOTLIN_FUNCTION_INTERFACE_REGEX = Regex("^kotlin\\.Function([0-9]+)$")
@@ -140,7 +154,7 @@ object TypeIntrinsics {
      */
     private fun getFunctionTypeArity(jetType: KotlinType): Int {
         val classFqName = getClassFqName(jetType) ?: return -1
-        val match = KOTLIN_FUNCTION_INTERFACE_REGEX.find(classFqName) ?: return -1
+        val match = KOTLIN_FUNCTION_INTERFACE_REGEX.find(classFqName.asString()) ?: return -1
         return Integer.valueOf(match.groups[1]!!.value)
     }
 
@@ -151,25 +165,6 @@ object TypeIntrinsics {
         invokestatic(INTRINSICS_CLASS, methodName, methodDescriptor, false)
     }
 
-    private fun getIsMutableCollectionMethodName(jetType: KotlinType): String? =
-            IS_MUTABLE_COLLECTION_METHOD_NAME[getClassFqName(jetType)]
-
-    private val CHECKCAST_METHOD_NAME = hashMapOf(
-            "kotlin.collections.MutableIterator" to "asMutableIterator",
-            "kotlin.collections.MutableIterable" to "asMutableIterable",
-            "kotlin.collections.MutableCollection" to "asMutableCollection",
-            "kotlin.collections.MutableList" to "asMutableList",
-            "kotlin.collections.MutableListIterator" to "asMutableListIterator",
-            "kotlin.collections.MutableSet" to "asMutableSet",
-            "kotlin.collections.MutableMap" to "asMutableMap",
-            "kotlin.collections.MutableMap.MutableEntry" to "asMutableMapEntry"
-    )
-
-    private fun getAsMutableCollectionMethodName(jetType: KotlinType): String? {
-        val classDescriptor = TypeUtils.getClassDescriptor(jetType) ?: return null
-        val classFqName = DescriptorUtils.getFqName(classDescriptor).asString()
-        return CHECKCAST_METHOD_NAME[classFqName]
-    }
 
     private val OBJECT_TYPE = Type.getObjectType("java/lang/Object")
 

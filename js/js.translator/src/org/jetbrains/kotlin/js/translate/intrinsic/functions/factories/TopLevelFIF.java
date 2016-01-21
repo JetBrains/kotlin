@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 import static org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
@@ -138,17 +139,17 @@ public final class TopLevelFIF extends CompositeFIF {
 
     private TopLevelFIF() {
         add(EQUALS_IN_ANY, KOTLIN_EQUALS);
-        add(pattern("kotlin", "toString").isExtensionOf("kotlin.Any"), TO_STRING);
-        add(pattern("kotlin", "equals").isExtensionOf("kotlin.Any"), KOTLIN_EQUALS);
+        add(pattern("kotlin", "toString").isExtensionOf(FQ_NAMES.any.asString()), TO_STRING);
+        add(pattern("kotlin", "equals").isExtensionOf(FQ_NAMES.any.asString()), KOTLIN_EQUALS);
         add(pattern("kotlin", "identityEquals").isExtensionOf("kotlin.Any"), IDENTITY_EQUALS);
         add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
-        add(pattern("kotlin", "iterator").isExtensionOf("kotlin.Iterator"), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("kotlin", "iterator").isExtensionOf(FQ_NAMES.iterator.asString()), RETURN_RECEIVER_INTRINSIC);
 
         add(pattern("kotlin.collections", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
-        add(pattern("kotlin.js", "set").isExtensionOf("kotlin.collections.MutableMap"), NATIVE_MAP_SET);
+        add(pattern("kotlin.js", "set").isExtensionOf(FQ_NAMES.mutableMap.asString()), NATIVE_MAP_SET);
 
         add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
