@@ -18,6 +18,14 @@ package kotlin.jvm.internal
 
 @Suppress("unused")
 object IntrinsicArrayConstructors {
+    private inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
+        val result = arrayOfNulls<T>(size)
+        for (i in 0..size - 1) {
+            result[i] = init(i)
+        }
+        return result as Array<T>
+    }
+
     private inline fun DoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
         val result = DoubleArray(size)
         for (i in 0..size - 1) {

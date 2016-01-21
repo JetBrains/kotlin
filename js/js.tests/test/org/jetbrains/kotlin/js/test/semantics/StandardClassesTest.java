@@ -28,24 +28,24 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testArrayAccess() throws Exception {
         fooBoxTest();
     }
-
 
     public void testArrayIsFilledWithNulls() throws Exception {
         fooBoxTest();
     }
 
-
     public void testArrayFunctionConstructor() throws Exception {
         fooBoxTest();
     }
 
-
     public void testArraySize() throws Exception {
         fooBoxTest();
+    }
+
+    public void testArrayConstructorsWithLambda() throws Exception {
+        checkFooBoxIsOk();
     }
 
     //TODO: this feature in not supported for some time
