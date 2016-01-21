@@ -14,4 +14,4 @@ interface A {
 
 // 1 foo\(
 // 1 getProp
-// 1 defaultFun\$
+// 3 defaultFun\$

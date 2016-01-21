@@ -57,10 +57,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
@@ -678,6 +675,15 @@ public class FunctionCodegen {
                 generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen);
                 endVisit(mv, "default method", getSourceFromDescriptor(functionDescriptor));
             }
+
+            generateOldDefaultForFun(defaultMethod,
+                                     JvmDeclarationOriginKt.Synthetic(function, functionDescriptor),
+                                     flags,
+                                     getThrownExceptions(functionDescriptor, typeMapper),
+                                     (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS ?
+                                      typeMapper.mapDefaultImpls((ClassDescriptor) functionDescriptor.getContainingDeclaration()) :
+                                      typeMapper.mapImplementationOwner(functionDescriptor)).getInternalName()
+            );
         }
     }
 
@@ -740,6 +746,38 @@ public class FunctionCodegen {
         generator.genCallWithoutAssertions(method, codegen);
 
         iv.areturn(signature.getReturnType());
+    }
+
+    private void generateOldDefaultForFun(
+            Method newDefaultMethod,
+            JvmDeclarationOrigin origin,
+            int flags,
+            String[] exceptions,
+            String owner
+    ) {
+        if ("<init>".equals(newDefaultMethod.getName())) {
+            return;
+        }
+        String oldSignature = newDefaultMethod.getDescriptor().replaceFirst("Ljava/lang/Object;\\)", ")");
+        MethodVisitor mv = v.newMethod(
+                origin,
+                flags,
+                newDefaultMethod.getName(),
+                oldSignature,
+                null,
+                exceptions
+        );
+        mv.visitCode();
+        int index = 0;
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        for (Type type: Type.getArgumentTypes(oldSignature)) {
+            iv.load(index, type);
+            index += type.getSize();
+        }
+        iv.aconst(null);
+        iv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, newDefaultMethod.getName(), newDefaultMethod.getDescriptor(), false);
+        iv.areturn(newDefaultMethod.getReturnType());
+        mv.visitEnd();
     }
 
     @NotNull
