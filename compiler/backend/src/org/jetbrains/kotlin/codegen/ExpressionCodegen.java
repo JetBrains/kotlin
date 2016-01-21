@@ -3439,6 +3439,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             public CallableDescriptor getResultingDescriptor() {
                 return descriptor;
             }
+
+            @NotNull
+            @Override
+            public Map<TypeParameterDescriptor, KotlinType> getTypeArguments() {
+                Map<TypeParameterDescriptor, KotlinType> originalArgs = super.getTypeArguments();
+                if (originalArgs.isEmpty()) return originalArgs;
+
+                assert originalArgs.size() == 1 : "Unknown constructor called: " + originalArgs.size() + " type arguments";
+
+                return Collections.singletonMap(
+                        CollectionsKt.single(descriptor.getTypeParameters()),
+                        CollectionsKt.single(originalArgs.values())
+                );
+            }
         };
 
         return invokeFunction(fakeResolvedCall, StackValue.singleton(intrinsicConstructors, typeMapper));

@@ -19,65 +19,51 @@ package kotlin
 import kotlin.internal.PureReifiable
 
 /**
- * Returns an array with the specified [size], where each element is calculated by calling the specified
- * [init] function. The `init` function returns an array element given its index.
- */
-public inline fun <reified @PureReifiable T> Array(size: Int, init: (Int) -> T): Array<T> {
-    val result = arrayOfNulls<T>(size)
-    for (i in 0..size - 1)
-        result[i] = init(i)
-    return result as Array<T>
-}
-
-/**
  * Returns an empty array of the specified type [T].
  */
 public inline fun <reified @PureReifiable T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
 
-
-// Array "constructor"
 /**
  * Returns an array containing the specified elements.
  */
-public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T) : Array<T> = elements as Array<T>
+public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
 
-// "constructors" for primitive types array
 /**
  * Returns an array containing the specified [Double] numbers.
  */
-public fun doubleArrayOf(vararg elements: Double) : DoubleArray    = elements
+public fun doubleArrayOf(vararg elements: Double): DoubleArray = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
  */
-public fun floatArrayOf(vararg elements: Float) : FloatArray       = elements
+public fun floatArrayOf(vararg elements: Float): FloatArray = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
  */
-public fun longArrayOf(vararg elements: Long) : LongArray          = elements
+public fun longArrayOf(vararg elements: Long): LongArray = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
  */
-public fun intArrayOf(vararg elements: Int) : IntArray             = elements
+public fun intArrayOf(vararg elements: Int): IntArray = elements
 
 /**
  * Returns an array containing the specified characters.
  */
-public fun charArrayOf(vararg elements: Char) : CharArray          = elements
+public fun charArrayOf(vararg elements: Char): CharArray = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
  */
-public fun shortArrayOf(vararg elements: Short) : ShortArray       = elements
+public fun shortArrayOf(vararg elements: Short): ShortArray = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  */
-public fun byteArrayOf(vararg elements: Byte) : ByteArray          = elements
+public fun byteArrayOf(vararg elements: Byte): ByteArray = elements
 
 /**
  * Returns an array containing the specified boolean values.
  */
-public fun booleanArrayOf(vararg elements: Boolean) : BooleanArray = elements
+public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = elements

@@ -1,14 +1,5 @@
 package-fragment kotlin
 
-public inline fun </*0*/ reified @kotlin.internal.PureReifiable() T> Array(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>
-public inline fun BooleanArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Boolean>): kotlin.BooleanArray
-public inline fun ByteArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Byte>): kotlin.ByteArray
-public inline fun CharArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Char>): kotlin.CharArray
-public inline fun DoubleArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Double>): kotlin.DoubleArray
-public inline fun FloatArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Float>): kotlin.FloatArray
-public inline fun IntArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.IntArray
-public inline fun LongArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Long>): kotlin.LongArray
-public inline fun ShortArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Short>): kotlin.ShortArray
 public inline fun </*0*/ reified @kotlin.internal.PureReifiable() T> arrayOf(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<T>
 public fun </*0*/ reified @kotlin.internal.PureReifiable() T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
 public fun booleanArrayOf(/*0*/ vararg elements: kotlin.Boolean /*kotlin.BooleanArray*/): kotlin.BooleanArray
@@ -31,7 +22,7 @@ public open class Any {
 }
 
 public final class Array</*0*/ T> : kotlin.Cloneable {
-    /*primary*/ private constructor Array</*0*/ T>()
+    /*primary*/ public constructor Array</*0*/ T>(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> T)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.Array<T>
@@ -51,6 +42,7 @@ public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
 
 public final class BooleanArray : kotlin.Cloneable {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
+    public constructor BooleanArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Boolean)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.BooleanArray
@@ -124,6 +116,7 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
 public final class ByteArray : kotlin.Cloneable {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
+    public constructor ByteArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Byte)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.ByteArray
@@ -168,6 +161,7 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
 public final class CharArray : kotlin.Cloneable {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
+    public constructor CharArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Char)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.CharArray
@@ -290,6 +284,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
 
 public final class DoubleArray : kotlin.Cloneable {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
+    public constructor DoubleArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Double)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.DoubleArray
@@ -383,6 +378,7 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
 
 public final class FloatArray : kotlin.Cloneable {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
+    public constructor FloatArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Float)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.FloatArray
@@ -466,6 +462,7 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
 
 public final class IntArray : kotlin.Cloneable {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
+    public constructor IntArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Int)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.IntArray
@@ -546,6 +543,7 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
 public final class LongArray : kotlin.Cloneable {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
+    public constructor LongArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Long)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.LongArray
@@ -642,6 +640,7 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
 public final class ShortArray : kotlin.Cloneable {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
+    public constructor ShortArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Short)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.ShortArray

@@ -21,14 +21,16 @@ import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
+import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
-import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.name.Name;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.decapitalize;
@@ -40,6 +42,7 @@ public final class ArrayFIF extends CompositeFIF {
     private static final NamePredicate CHAR_ARRAY;
     private static final NamePredicate BOOLEAN_ARRAY;
     private static final NamePredicate LONG_ARRAY;
+    private static final NamePredicate ARRAY;
     private static final NamePredicate ARRAYS;
     private static final DescriptorPredicate ARRAY_FACTORY_METHODS;
 
@@ -54,7 +57,7 @@ public final class ArrayFIF extends CompositeFIF {
             arrayFactoryMethodNames.add(Name.identifier(decapitalize(arrayTypeName.asString() + "Of")));
         }
 
-        Name arrayName = Name.identifier("Array");
+        Name arrayName = KotlinBuiltIns.FQ_NAMES.array.shortName();
         Name booleanArrayName = PrimitiveType.BOOLEAN.getArrayTypeName();
         Name charArrayName = PrimitiveType.CHAR.getArrayTypeName();
         Name longArrayName = PrimitiveType.LONG.getArrayTypeName();
@@ -63,6 +66,7 @@ public final class ArrayFIF extends CompositeFIF {
         CHAR_ARRAY = new NamePredicate(charArrayName);
         BOOLEAN_ARRAY = new NamePredicate(booleanArrayName);
         LONG_ARRAY = new NamePredicate(longArrayName);
+        ARRAY = new NamePredicate(arrayName);
 
         arrayTypeNames.add(charArrayName);
         arrayTypeNames.add(booleanArrayName);
@@ -123,10 +127,14 @@ public final class ArrayFIF extends CompositeFIF {
         add(pattern(ARRAYS, "set"), SET_INTRINSIC);
         add(pattern(ARRAYS, "<get-size>"), LENGTH_PROPERTY_INTRINSIC);
         add(pattern(ARRAYS, "iterator"), new KotlinFunctionIntrinsic("arrayIterator"));
-        add(pattern(NUMBER_ARRAY, "<init>"),new KotlinFunctionIntrinsic("numberArrayOfSize"));
-        add(pattern(CHAR_ARRAY, "<init>"), new KotlinFunctionIntrinsic("charArrayOfSize"));
-        add(pattern(BOOLEAN_ARRAY, "<init>"), new KotlinFunctionIntrinsic("booleanArrayOfSize"));
-        add(pattern(LONG_ARRAY, "<init>"), new KotlinFunctionIntrinsic("longArrayOfSize"));
+
+        add(pattern(NUMBER_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("numberArrayOfSize"));
+        add(pattern(CHAR_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("charArrayOfSize"));
+        add(pattern(BOOLEAN_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("booleanArrayOfSize"));
+        add(pattern(LONG_ARRAY, "<init>(Int)"), new KotlinFunctionIntrinsic("longArrayOfSize"));
+
+        add(pattern(ARRAYS, "<init>(Int,Function1)"), new KotlinFunctionIntrinsic("arrayFromFun"));
+
         add(ARRAY_FACTORY_METHODS, ARRAY_INTRINSIC);
     }
 }
