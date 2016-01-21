@@ -21,19 +21,17 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.utils.ifEmpty
 
 fun isProjectConfigured(project: Project): Boolean {
     val modules = getModulesWithKotlinFiles(project)
     return modules.all { isModuleConfigured(it) }
 }
-
-fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 
 fun isModuleConfigured(module: Module): Boolean {
     val configurators = getApplicableConfigurators(module)
@@ -94,8 +92,9 @@ fun getNonConfiguredModulesWithKotlinFiles(project: Project, configurator: Kotli
 
 fun getNonConfiguredModules(project: Project, excludeModules: Collection<Module> = emptyList()): Collection<Module> {
     val modulesWithKotlinFiles = getModulesWithKotlinFiles(project) - excludeModules
+    val ableToRunConfigurators = getAbleToRunConfigurators(project)
     return modulesWithKotlinFiles.filter { module ->
-        getAbleToRunConfigurators(project).any { !it.isConfigured(module) }
+        ableToRunConfigurators.any { !it.isConfigured(module) }
     }
 }
 

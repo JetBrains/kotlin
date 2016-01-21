@@ -23,7 +23,7 @@
       <implementation-class>org.jetbrains.kotlin.idea.compiler.KotlinCompilerManager</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.NonConfiguredKotlinProjectComponent</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent</implementation-class>
     </component>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
@@ -576,7 +576,7 @@
 
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
-    <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupSDKNotificationProvider"/>
+    <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupEnvironmentNotificationProvider"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener"/>
 

@@ -59,7 +59,7 @@ fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<
 fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<VirtualFile> {
     return getLibraryRootsWithAbiIncompatibleVersion(
             module, KotlinJavaScriptAbiVersionIndex,
-            { version ->  !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.minor) })       // TODO: support major.minor.patch version in JS metadata
+            { version -> !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.minor) })       // TODO: support major.minor.patch version in JS metadata
 }
 
 

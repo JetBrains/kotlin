@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanel
 import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
 
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
-class KotlinSetupSDKNotificationProvider(
+class KotlinSetupEnvironmentNotificationProvider(
         private val myProject: Project,
         notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
 

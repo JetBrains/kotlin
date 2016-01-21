@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.idea.util.projectStructure
 
-import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderEnumerator
-import java.io.File
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.vfs.VfsUtil
+import java.io.File
+
+fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 
 fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
 

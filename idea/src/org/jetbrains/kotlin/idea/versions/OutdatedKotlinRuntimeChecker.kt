@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.IOException
 import javax.swing.event.HyperlinkEvent
 
-private data class VersionedLibrary(val library: Library, val version: String?)
+data class VersionedLibrary(val library: Library, val version: String?, val usedInModules: Collection<Module>)
 
-fun checkOutdatedKotlinRuntime(project: Project): List<Module> {
+fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     val pluginVersion = KotlinPluginUtil.getPluginVersion()
     if ("@snapshot@" == pluginVersion) return emptyList() // plugin is run from sources, can't compare versions
 
@@ -46,13 +46,35 @@ fun checkOutdatedKotlinRuntime(project: Project): List<Module> {
         return emptyList()
     }
 
-    val versionedOutdatedLibraries = findOutdatedKotlinLibraries(project)
-    if (versionedOutdatedLibraries.isEmpty()) {
-        return emptyList()
+    val outdatedLibraries = arrayListOf<VersionedLibrary>()
+
+    for ((library, modules) in findAllUsedLibraries(project).entrySet()) {
+        val libraryVersionProperties =
+                LibraryPresentationProviderUtil.getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library) ?:
+                LibraryPresentationProviderUtil.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library) ?:
+                continue
+
+        val libraryVersion = libraryVersionProperties.versionString
+
+        val runtimeVersion = bundledRuntimeVersion()
+
+        val isOutdated = isRuntimeOutdated(libraryVersion, runtimeVersion)
+
+        if (isOutdated) {
+            outdatedLibraries.add(VersionedLibrary(library, libraryVersion, modules))
+        }
     }
 
-    val message: String = if (versionedOutdatedLibraries.size == 1) {
-        val versionedLibrary = versionedOutdatedLibraries.keys.first()
+    return outdatedLibraries
+}
+
+fun collectModulesWithOutdatedRuntime(libraries: List<VersionedLibrary>): List<Module> =
+    libraries.flatMap { it.usedInModules }
+
+fun notifyOutdatedKotlinRuntime(project: Project, outdatedLibraries: Collection<VersionedLibrary>) {
+    val pluginVersion = KotlinPluginUtil.getPluginVersion()
+    val message: String = if (outdatedLibraries.size == 1) {
+        val versionedLibrary = outdatedLibraries.first()
 
         val version = versionedLibrary.version
         val readableVersion = version ?: "unknown"
@@ -63,7 +85,7 @@ fun checkOutdatedKotlinRuntime(project: Project): List<Module> {
         "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>"
     }
     else {
-        val libraryNames = versionedOutdatedLibraries.keys.joinToString { it.library.name!! }
+        val libraryNames = outdatedLibraries.joinToString { it.library.name!! }
 
         "<p>Version of Kotlin runtime is outdated in several libraries ($libraryNames). Plugin version is $pluginVersion.</p>" +
         "<p>Runtime libraries should be updated to avoid compatibility problems.</p>" +
@@ -75,7 +97,7 @@ fun checkOutdatedKotlinRuntime(project: Project): List<Module> {
                                           NotificationType.WARNING, NotificationListener { notification, event ->
         if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
             if ("update" == event.description) {
-                val outdatedLibraries = findOutdatedKotlinLibraries(project).map { it.key.library }
+                val outdatedLibraries = findOutdatedKotlinLibraries(project).map { it.library }
                 updateLibraries(project, outdatedLibraries)
                 suggestDeleteKotlinJsIfNeeded(project, outdatedLibraries)
             }
@@ -88,11 +110,9 @@ fun checkOutdatedKotlinRuntime(project: Project): List<Module> {
             notification.expire()
         }
     }), project)
-
-    return versionedOutdatedLibraries.flatMap { it.value }
 }
 
-private fun deleteKotlinJs(project: Project) {
+fun deleteKotlinJs(project: Project) {
     ApplicationManager.getApplication().invokeLater {
         runWriteAction {
             val kotlinJsFile = project.baseDir.findFileByRelativePath("script/kotlin.js") ?: return@runWriteAction
@@ -151,29 +171,6 @@ private fun suggestDeleteKotlinJsIfNeeded(project: Project, outdatedLibraries: C
 
 private val SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version"
 private val OUTDATED_RUNTIME_GROUP_DISPLAY_ID = "Outdated Kotlin Runtime"
-
-private fun findOutdatedKotlinLibraries(project: Project): Map<VersionedLibrary, Collection<Module>> {
-    val outdatedLibraries = hashMapOf<VersionedLibrary, Collection<Module>>()
-
-    for ((library, modules) in findAllUsedLibraries(project).entrySet()) {
-        val libraryVersionProperties =
-                LibraryPresentationProviderUtil.getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library) ?:
-                LibraryPresentationProviderUtil.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library) ?:
-                continue
-
-        val libraryVersion = libraryVersionProperties.versionString
-
-        val runtimeVersion = bundledRuntimeVersion()
-
-        val isOutdated = isRuntimeOutdated(libraryVersion, runtimeVersion)
-
-        if (isOutdated) {
-            outdatedLibraries[VersionedLibrary(library, libraryVersion)] = modules
-        }
-    }
-
-    return outdatedLibraries
-}
 
 fun isRuntimeOutdated(libraryVersion: String?, runtimeVersion: String): Boolean {
     return libraryVersion == null || libraryVersion.startsWith("internal-") != runtimeVersion.startsWith("internal-") ||

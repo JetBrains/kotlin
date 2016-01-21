@@ -26,7 +26,7 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
-import org.jetbrains.kotlin.idea.configuration.ui.NonConfiguredKotlinProjectComponent;
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
@@ -41,7 +41,7 @@ public class ConfigureKotlinNotification extends Notification {
             @NotNull final Project project,
             @NotNull final List<Module> excludeModules
     ) {
-        super(NonConfiguredKotlinProjectComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, getNotificationString(project,excludeModules),
+        super(KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, getNotificationString(project, excludeModules),
               NotificationType.WARNING, new NotificationListener() {
             @Override
             public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
