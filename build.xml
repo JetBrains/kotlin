@@ -604,6 +604,51 @@
         </jar>
     </target>
 
+    <target name="kotlin-build">
+        <cleandir dir="${output}/classes/kotlin-build"/>
+
+        <javac2 destdir="${output}/classes/kotlin-build" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+                source="${java.target}" target="${java.target}">
+            <withKotlin modulename="kotlin-build"/>
+            <skip pattern="kotlin/jvm/internal/.*"/>
+            <src>
+                <pathelement path="build/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${bootstrap.reflect}"/>
+                <pathelement path="${idea.sdk}/lib/util.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+        </javac2>
+
+        <jar destfile="${kotlin-home}/lib/kotlin-build.jar">
+            <fileset dir="${output}/classes/kotlin-build"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
+
+        <jar jarfile="${output}/kotlin-build-sources.jar">
+            <fileset dir="build/src"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build.sources}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
+    </target>
+
     <target name="daemon-client">
         <cleandir dir="${output}/classes/daemon-client"/>
 
@@ -1011,7 +1056,7 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
