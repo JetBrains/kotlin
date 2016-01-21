@@ -1230,6 +1230,29 @@ public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R): R {
 }
 
 /**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each character with its index in the original char sequence.
+ */
+public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (Int, R, Char) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each character with its index in the original string.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public inline fun <R> String.foldIndexed(initial: R, operation: (Int, R, Char) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each character and current accumulator value.
  */
 public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, R) -> R): R {
@@ -1250,6 +1273,35 @@ public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each character with its index in the original char sequence and current accumulator value.
+ */
+public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (Int, Char, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each character with its index in the original string and current accumulator value.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public inline fun <R> String.foldRightIndexed(initial: R, operation: (Int, Char, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
     }
     return accumulator
 }
@@ -1502,6 +1554,37 @@ public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
 }
 
 /**
+ * Accumulates value starting with the first character and applying [operation] from left to right
+ * to current accumulator value and each character with its index in the original char sequence.
+ */
+public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first character and applying [operation] from left to right
+ * to current accumulator value and each character with its index in the original string.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public inline fun String.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
  */
 public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Char {
@@ -1524,6 +1607,37 @@ public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last character and applying [operation] from right to left
+ * to each character with its index in the original char sequence and current accumulator value.
+ */
+public inline fun CharSequence.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last character and applying [operation] from right to left
+ * to each character with its index in the original string and current accumulator value.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public inline fun String.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
     }
     return accumulator
 }

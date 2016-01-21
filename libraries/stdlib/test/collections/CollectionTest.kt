@@ -79,6 +79,63 @@ class CollectionTest {
         }
     }
 
+    @test fun foldIndexed() {
+        expect(42) {
+            val numbers = listOf(1, 2, 3, 4)
+            numbers.foldIndexed(0) { index, a, b -> index * (a + b) }
+        }
+
+        expect(0) {
+            val numbers = arrayListOf<Int>()
+            numbers.foldIndexed(0) { index, a, b -> index * (a + b) }
+        }
+
+        expect("11234") {
+            val numbers = listOf(1, 2, 3, 4)
+            numbers.map { it.toString() }.foldIndexed("") { index, a, b -> if (index == 0) a + b + b else a + b }
+        }
+    }
+
+    @test fun foldIndexedWithDifferentTypes() {
+        expect(10) {
+            val numbers = listOf("a", "ab", "abc")
+            numbers.foldIndexed(1) { index, a, b -> a + b.length + index }
+        }
+
+        expect("11223344") {
+            val numbers = listOf(1, 2, 3, 4)
+            numbers.foldIndexed("") { index, a, b -> a + b + (index + 1) }
+        }
+    }
+
+    @test fun foldIndexedWithNonCommutativeOperation() {
+        expect(4) {
+            val numbers = listOf(1, 2, 3)
+            numbers.foldIndexed(7) { index, a, b -> index + a - b }
+        }
+    }
+
+    @test fun foldRightIndexed() {
+        expect("12343210") {
+            val numbers = listOf(1, 2, 3, 4)
+            numbers.map { it.toString() }.foldRightIndexed("") { index, a, b -> a + b + index }
+        }
+    }
+
+    @test fun foldRightIndexedWithDifferentTypes() {
+        expect("12343210") {
+            val numbers = listOf(1, 2, 3, 4)
+            numbers.foldRightIndexed("") { index, a, b -> "" + a + b + index }
+        }
+    }
+
+    @test fun foldRightIndexedWithNonCommutativeOperation() {
+        expect(-4) {
+            val numbers = listOf(1, 2, 3)
+            numbers.foldRightIndexed(7) { index, a, b -> index + a - b }
+        }
+    }
+
     @test fun fold() {
         // lets calculate the sum of some numbers
         expect(10) {
@@ -158,6 +215,32 @@ class CollectionTest {
 
         assertEquals(listOf("foo", "bar", "xyz"), pair.first, "pair.first")
         assertEquals(listOf("something"), pair.second, "pair.second")
+    }
+
+    @test fun reduceIndexed() {
+        expect("123") {
+            val list = listOf("1", "2", "3", "4")
+            list.reduceIndexed { index, a, b -> if (index == 3) a else a + b }
+        }
+
+        //        TODO replace with more accurate version when KT-5987 will be fixed
+        //        failsWith(javaClass<UnsupportedOperationException>()) {
+        assertFails {
+            run { arrayListOf<Int>().reduceIndexed { index, a, b -> a + b } }
+        }
+    }
+
+    @test fun reduceRightIndexed() {
+        expect("234") {
+            val list = listOf("1", "2", "3", "4")
+            list.reduceRightIndexed { index, a, b -> if (index == 0) b else a + b }
+        }
+
+        //        TODO replace with more accurate version when KT-5987 will be fixed
+        //        failsWith(javaClass<UnsupportedOperationException>()) {
+        assertFails {
+            run { arrayListOf<Int>().reduceRightIndexed { index, a, b -> a + b } }
+        }
     }
 
     @test fun reduce() {

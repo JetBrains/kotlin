@@ -859,6 +859,24 @@ class StringTest {
         assertEquals(data.toString(), data.foldRight("", { s, c -> "" + s + c }))
     }
 
+    @test fun reduceIndexed() = withOneCharSequenceArg { arg1 ->
+        // get the 3rd character
+        assertEquals('c', arg1("bacfd").reduceIndexed { index, v, c -> if (index == 2) c else v })
+
+        assertTrue(assertFails {
+            arg1("").reduceIndexed { index, a, b -> '\n' }
+        } is UnsupportedOperationException)
+    }
+
+    @test fun reduceRightIndexed() = withOneCharSequenceArg { arg1 ->
+        // get the 3rd character
+        assertEquals('c', arg1("bacfd").reduceRightIndexed { index, c, v -> if (index == 2) c else v })
+
+        assertTrue(assertFails {
+            arg1("").reduceRightIndexed { index, a, b -> '\n' }
+        } is UnsupportedOperationException)
+    }
+
     @test fun reduce() = withOneCharSequenceArg { arg1 ->
         // get the smallest character(by char value)
         assertEquals('a', arg1("bacfd").reduce { v, c -> if (v > c) c else v })
