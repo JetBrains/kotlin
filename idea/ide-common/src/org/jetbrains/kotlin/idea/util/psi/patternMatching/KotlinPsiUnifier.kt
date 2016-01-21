@@ -355,19 +355,18 @@ class KotlinPsiUnifier(
             return (sortTypes(types1).zip(sortTypes(types2))).all { matchTypes(it.first, it.second) == MATCHED }
         }
 
-        private fun KtElement.shouldIgnoreResolvedCall(): Boolean {
-            return when {
-                this is KtConstantExpression -> true
-                this is KtOperationReferenceExpression -> getReferencedNameElementType() == KtTokens.EXCLEXCL
-                this is KtIfExpression -> true
-                this is KtUnaryExpression -> when (operationReference.getReferencedNameElementType()) {
-                    KtTokens.EXCLEXCL, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> true
-                    else -> false
-                }
-                this is KtBinaryExpression -> operationReference.getReferencedNameElementType() == KtTokens.ELVIS
-                this is KtThisExpression -> true
+        private fun KtElement.shouldIgnoreResolvedCall() = when (this) {
+            is KtConstantExpression -> true
+            is KtOperationReferenceExpression -> getReferencedNameElementType() == KtTokens.EXCLEXCL
+            is KtIfExpression -> true
+            is KtWhenExpression -> true
+            is KtUnaryExpression -> when (operationReference.getReferencedNameElementType()) {
+                KtTokens.EXCLEXCL, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> true
                 else -> false
             }
+            is KtBinaryExpression -> operationReference.getReferencedNameElementType() == KtTokens.ELVIS
+            is KtThisExpression -> true
+            else -> false
         }
 
         private fun KtBinaryExpression.matchComplexAssignmentWithSimple(simple: KtBinaryExpression): Status? {
