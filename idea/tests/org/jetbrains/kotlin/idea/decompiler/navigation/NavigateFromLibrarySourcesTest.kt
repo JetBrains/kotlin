@@ -24,7 +24,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -50,7 +50,7 @@ class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     fun testLightClassForLibrarySource() {
         val navigationElement = navigationElementForReferenceInLibrarySource("Foo")
         assertTrue(navigationElement is KtClassOrObject, "Foo should navigate to JetClassOrObject")
-        val lightClass = LightClassUtil.getPsiClass(navigationElement as KtClassOrObject)
+        val lightClass = (navigationElement as KtClassOrObject).toLightClass()
         assertTrue(lightClass is KtLightClassForDecompiledDeclaration,
                    "Light classes for decompiled declaration should be provided for library source")
         assertEquals("Foo", lightClass!!.name)

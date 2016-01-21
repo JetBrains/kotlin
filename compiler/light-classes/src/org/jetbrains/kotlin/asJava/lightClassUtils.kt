@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassUtil.getPsiClass(this)
+fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassGenerationSupport.getInstance(project).getLightClass(this)
 
 fun KtFile.findFacadeClass(): KtLightClass? {
     return LightClassGenerationSupport.getInstance(project)
@@ -38,7 +38,7 @@ fun KtFile.findFacadeClass(): KtLightClass? {
 
 fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
-            is KtClassOrObject -> LightClassUtil.getPsiClass(this).singletonOrEmptyList()
+            is KtClassOrObject -> toLightClass().singletonOrEmptyList()
             is KtNamedFunction,
             is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
@@ -59,7 +59,7 @@ fun PsiElement.toLightMethods(): List<PsiMethod> =
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
-            is KtClass -> LightClassUtil.getPsiClass(this)?.getConstructors()?.first().singletonOrEmptyList()
+            is KtClass -> toLightClass()?.getConstructors()?.first().singletonOrEmptyList()
             is PsiMethod -> this.singletonList()
             else -> listOf()
         }

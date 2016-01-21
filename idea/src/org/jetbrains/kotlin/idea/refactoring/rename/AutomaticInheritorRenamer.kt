@@ -24,13 +24,13 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.psi.KtClass
 
 class AutomaticInheritorRenamer(klass: KtClass, newName: String): AutomaticRenamer() {
     init {
-        val lightClass = LightClassUtil.getPsiClass(klass)
+        val lightClass = klass.toLightClass()
         if (lightClass != null) {
             for (inheritorLightClass in ClassInheritorsSearch.search(lightClass, true).findAll()) {
                 if ((inheritorLightClass.unwrapped as? PsiNamedElement)?.name != null) {

@@ -28,13 +28,16 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.ClassInheritorsSearch
-import com.intellij.util.NullableFunction
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import java.awt.event.MouseEvent
 import java.util.*
@@ -141,7 +144,7 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
         return
     }
 
-    val lightClass = LightClassUtil.getPsiClass(element) ?: return
+    val lightClass = element.toLightClass() ?: return
 
     if (ClassInheritorsSearch.search(lightClass, false).findFirst() == null) return
 

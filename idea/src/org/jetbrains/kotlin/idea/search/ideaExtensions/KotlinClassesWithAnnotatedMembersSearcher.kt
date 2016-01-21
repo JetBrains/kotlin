@@ -21,7 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassesWithAnnotatedMembersSearch
 import com.intellij.psi.search.searches.ScopedQueryExecutor
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -39,7 +39,7 @@ class KotlinClassesWithAnnotatedMembersSearcher : ScopedQueryExecutor<PsiClass, 
                                                                        { it.getNonStrictParentOfType<KtClassOrObject>() !in processed}) { declaration ->
             val ktClass = declaration.getNonStrictParentOfType<KtClassOrObject>()
             if (ktClass != null && processed.add(ktClass)) {
-                val lightClass = LightClassUtil.getPsiClass(ktClass)
+                val lightClass = ktClass.toLightClass()
                 if (lightClass != null) consumer.process(lightClass) else true
             }
             else

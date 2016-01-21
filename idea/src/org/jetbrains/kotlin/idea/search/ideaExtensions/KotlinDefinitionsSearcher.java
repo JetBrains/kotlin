@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.psi.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
+
 public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
     @Override
     public boolean execute(@NotNull DefinitionsScopedSearch.SearchParameters queryParameters, @NotNull Processor<PsiElement> consumer) {
@@ -82,11 +84,11 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         return element instanceof KtLightMethod && ((KtLightMethod) element).isDelegated();
     }
 
-    private static boolean processClassImplementations(final KtClass klass, Processor<PsiElement> consumer) {
+    private static boolean processClassImplementations(@NotNull final KtClass klass, Processor<PsiElement> consumer) {
         PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
             @Override
             public PsiClass compute() {
-                return LightClassUtil.INSTANCE.getPsiClass(klass);
+                return toLightClass(klass);
             }
         });
         if (psiClass != null) {

@@ -28,7 +28,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtClass
@@ -141,7 +141,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val owner = PsiTreeUtil.getParentOfType(function, KtFunction::class.java, KtClass::class.java)
 
         if (owner is KtClass) {
-            val delegate = LightClassUtil.getPsiClass(owner) ?: return null
+            val delegate = owner.toLightClass() ?: return null
             val method = delegate.methods.firstOrNull() { it.navigationElement == function } ?: return null
             val methodLocation = PsiLocation.fromPsiElement(method)
             if (JUnitUtil.isTestMethod(methodLocation, false)) {
@@ -157,14 +157,11 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         if (!jetClass.isJUnitTestClass()) {
             jetClass = getTestClassInFile(containingFile)
         }
-        if (jetClass != null) {
-            return LightClassUtil.getPsiClass(jetClass)
-        }
-        return null
+        return jetClass?.toLightClass()
     }
 
     private fun KtClass?.isJUnitTestClass() =
-            LightClassUtil.getPsiClass(this)?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
+            this?.toLightClass()?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
 
     private fun getTestClassInFile(jetFile: KtFile) =
             jetFile.declarations.filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }

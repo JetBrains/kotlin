@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -45,8 +46,8 @@ internal fun getPsiClass(element: PsiElement?): PsiClass? {
     return when {
         element == null -> null
         element is PsiClass -> element
-        element is KtClass -> LightClassUtil.getPsiClass(element)
-        element.parent is KtClass -> LightClassUtil.getPsiClass(element.parent as KtClass)
+        element is KtClass -> element.toLightClass()
+        element.parent is KtClass -> (element.parent as KtClass).toLightClass()
         else -> null
     }
 }

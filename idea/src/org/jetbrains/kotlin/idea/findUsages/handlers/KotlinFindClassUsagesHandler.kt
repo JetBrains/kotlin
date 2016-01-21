@@ -31,7 +31,6 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.FilteredQuery
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.KtLightMethod
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions
@@ -193,7 +192,7 @@ class KotlinFindClassUsagesHandler(
     override fun getStringsToSearch(element: PsiElement): Collection<String> {
         val psiClass = when (element) {
                            is PsiClass -> element
-                           is KtClassOrObject -> LightClassUtil.getPsiClass(getElement())
+                           is KtClassOrObject -> getElement().toLightClass()
                            else -> null
                        } ?: return Collections.emptyList()
 

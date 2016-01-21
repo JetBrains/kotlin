@@ -58,6 +58,7 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -548,8 +549,7 @@ fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boo
     }
     val javaClass = (targetClass?.add(javaClassToAdd) ?: javaClassToAdd) as PsiClass
 
-    val template = LightClassUtil.getPsiClass(klass)
-                   ?: throw AssertionError("Can't generate light class: ${klass.getElementTextWithContext()}")
+    val template = klass.toLightClass() ?: throw AssertionError("Can't generate light class: ${klass.getElementTextWithContext()}")
 
     copyModifierListItems(template.modifierList!!, javaClass.modifierList!!)
     if (template.isInterface) {

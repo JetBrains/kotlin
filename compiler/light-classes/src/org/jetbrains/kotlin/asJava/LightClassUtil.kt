@@ -48,12 +48,6 @@ object LightClassUtil {
         return null
     }/*package*/
 
-    fun getPsiClass(classOrObject: KtClassOrObject?): KtLightClass? {
-        return classOrObject?.let {
-            return LightClassGenerationSupport.getInstance(it.project).getLightClass(it)
-        }
-    }
-
     fun getLightClassAccessorMethod(accessor: KtPropertyAccessor): PsiMethod? =
             getLightClassAccessorMethods(accessor).firstOrNull()
 
@@ -94,7 +88,7 @@ object LightClassUtil {
             if (origin is KtObjectDeclaration && origin.isCompanion()) {
                 val containingClass = PsiTreeUtil.getParentOfType(origin, KtClass::class.java)
                 if (containingClass != null) {
-                    val containingLightClass = getPsiClass(containingClass)
+                    val containingLightClass = containingClass.toLightClass()
                     if (containingLightClass != null) {
                         psiClass = containingLightClass
                     }
@@ -156,7 +150,7 @@ object LightClassUtil {
         if (declaration is KtParameter) {
             val constructorClass = KtPsiUtil.getClassIfParameterIsProperty(declaration)
             if (constructorClass != null) {
-                return getPsiClass(constructorClass)
+                return constructorClass.toLightClass()
             }
         }
 
@@ -165,7 +159,7 @@ object LightClassUtil {
         }
 
         if (declaration is KtConstructor<*>) {
-            return getPsiClass(declaration.getContainingClassOrObject())
+            return declaration.getContainingClassOrObject().toLightClass()
         }
 
         if (!canGenerateLightClass(declaration)) {
@@ -184,7 +178,7 @@ object LightClassUtil {
         }
         else if (parent is KtClassBody) {
             assert(parent.parent is KtClassOrObject)
-            return getPsiClass(parent.parent as KtClassOrObject)
+            return (parent.parent as KtClassOrObject).toLightClass()
         }
 
         return null

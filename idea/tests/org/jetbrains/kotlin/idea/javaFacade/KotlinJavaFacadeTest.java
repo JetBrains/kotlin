@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 
+import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
+
 public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
@@ -212,7 +214,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
         assertInstanceOf(element, KtClass.class);
         KtClass aClass = (KtClass) element;
 
-        PsiClass createdByWrapDelegate = LightClassUtil.INSTANCE.getPsiClass(aClass);
+        PsiClass createdByWrapDelegate = toLightClass(aClass);
         assertNull(createdByWrapDelegate);
     }
 
@@ -296,7 +298,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
         assertNotNull("Caret should be placed to class definition", ktClass);
 
         // Should not fail!
-        KtLightClass lightClass = (KtLightClass) LightClassUtil.INSTANCE.getPsiClass(ktClass);
+        KtLightClass lightClass = toLightClass(ktClass);
 
         assertNotNull(String.format("Failed to wrap jetClass '%s' to class", ktClass.getText()), lightClass);
 

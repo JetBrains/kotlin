@@ -24,7 +24,7 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -114,7 +114,7 @@ class TypeInstantiationItems(
 
         val psiClass: PsiClass = when (declaration) {
             is PsiClass -> declaration
-            is KtClassOrObject -> LightClassUtil.getPsiClass(declaration) ?: return
+            is KtClassOrObject -> declaration.toLightClass() ?: return
             else -> return
         }
         add(InheritanceSearcher(psiClass, kotlinClassDescriptor, typeArgs, freeParameters, tail))

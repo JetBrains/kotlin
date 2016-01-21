@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import java.util.Map;
 
+import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
+
 public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     protected final String scopeType;
 
@@ -102,7 +104,7 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         }
 
         if (element instanceof KtClassOrObject) {
-            PsiClass psiClass = LightClassUtil.INSTANCE.getPsiClass((KtClassOrObject) element);
+            PsiClass psiClass = toLightClass((KtClassOrObject) element);
             if (psiClass == null) return null;
 
             PsiMethod[] constructors = psiClass.getConstructors();

@@ -38,7 +38,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.asJava.LightClassUtil;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.context.ContextKt;
@@ -72,6 +72,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
 import static org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*;
 
 public class SourceNavigationHelper {
@@ -375,7 +376,7 @@ public class SourceNavigationHelper {
                 );
             }
         }
-        return LightClassUtil.INSTANCE.getPsiClass(classOrObject);
+        return toLightClass(classOrObject);
     }
 
     @Nullable

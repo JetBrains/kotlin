@@ -116,12 +116,12 @@ open class KtLightClassForExplicitDeclaration(
             val grandparent = parent.parent
 
             if (parent is KtClassBody && grandparent is KtClassOrObject) {
-                return LightClassUtil.getPsiClass(grandparent)
+                return grandparent.toLightClass()
             }
         }
 
         if (declaration is KtClass) {
-            return LightClassUtil.getPsiClass(declaration)
+            return declaration.toLightClass()
         }
         return null
     }

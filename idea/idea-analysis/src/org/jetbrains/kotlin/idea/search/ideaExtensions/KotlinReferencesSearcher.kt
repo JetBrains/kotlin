@@ -174,7 +174,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
         fun processKtClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
             val className = element.name
             if (className != null) {
-                val lightClass = runReadAction { LightClassUtil.getPsiClass(element) }
+                val lightClass = runReadAction { element.toLightClass() }
                 if (lightClass != null) {
                     searchNamedElement(queryParameters, lightClass, className)
 
@@ -188,7 +188,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                         if (kotlinReferencesSearchOptions?.acceptCompanionObjectMembers == true) {
                             runReadAction {
                                 val originClass = element.getStrictParentOfType<KtClass>()
-                                val originLightClass = LightClassUtil.getPsiClass(originClass)
+                                val originLightClass = originClass?.toLightClass()
                                 if (originLightClass != null) {
                                     val lightDeclarations: List<KtLightElement<*, *>?> =
                                             originLightClass.methods.map { it as? KtLightMethod } +
@@ -214,7 +214,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                 .firstOrNull() as? KtObjectDeclaration ?: return null
             if (originObject.isCompanion()) {
                 val originClass = originObject.getStrictParentOfType<KtClass>()
-                val originLightClass = LightClassUtil.getPsiClass(originClass)
+                val originLightClass = originClass?.toLightClass()
                 val allMethods = originLightClass?.allMethods
                 return allMethods?.find { it is KtLightMethod && it.getOrigin() == function }
             }
@@ -266,7 +266,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                     runReadAction {
                         val componentFunctionDescriptor = element.dataClassComponentFunction()
                         if (componentFunctionDescriptor != null) {
-                            val containingClass = LightClassUtil.getPsiClass(element.getStrictParentOfType<KtClassOrObject>())
+                            val containingClass = element.getStrictParentOfType<KtClassOrObject>()?.toLightClass()
                             searchDataClassComponentUsages(queryParameters, containingClass, componentFunctionDescriptor)
                         }
                     }

@@ -29,6 +29,7 @@ import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -45,7 +46,7 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
         return processAnnotatedMembers(p.annotationClass, p.scope) { declaration ->
             when (declaration) {
                 is KtClass -> {
-                    val lightClass = LightClassUtil.getPsiClass(declaration)
+                    val lightClass = declaration.toLightClass()
                     consumer.process(lightClass)
                 }
                 is KtNamedFunction, is KtSecondaryConstructor -> {
