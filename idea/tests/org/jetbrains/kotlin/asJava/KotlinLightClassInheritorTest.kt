@@ -49,7 +49,7 @@ class KotlinLightClassInheritorTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun doTestInheritorByText(text: String, superQName: String, checkDeep: Boolean) {
         val file = myFixture.configureByText("A.kt", text) as KtFile
         val jetClass = file.declarations.filterIsInstance<KtClass>().single()
-        val psiClass = LightClassGenerationSupport.getInstance(project).getPsiClass(jetClass)!!
+        val psiClass = LightClassGenerationSupport.getInstance(project).getLightClass(jetClass)!!
         val baseClass = JavaPsiFacade.getInstance(project).findClass(superQName, GlobalSearchScope.allScope(project))!!
         Assert.assertTrue(psiClass.isInheritor(baseClass, checkDeep))
     }

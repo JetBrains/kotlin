@@ -25,10 +25,7 @@ import com.intellij.util.Function
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.LightClassConstructionContext
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -140,7 +137,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         })
     }
 
-    override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {
+    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
         return KtLightClassForExplicitDeclaration.create(classOrObject)
     }
 

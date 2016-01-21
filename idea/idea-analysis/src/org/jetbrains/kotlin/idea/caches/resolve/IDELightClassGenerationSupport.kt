@@ -138,7 +138,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return PackageIndexUtil.getSubPackageFqNames(fqn, sourceAndClassFiles(scope, project), project, MemberScope.ALL_NAME_FILTER)
     }
 
-    override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {
+    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
         val virtualFile = classOrObject.containingFile.virtualFile
         if (virtualFile != null) {
             when {
@@ -147,7 +147,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 ProjectRootsUtil.isLibraryClassFile(project, virtualFile) ->
                     return getLightClassForDecompiledClassOrObject(classOrObject)
                 ProjectRootsUtil.isLibrarySourceFile(project, virtualFile) ->
-                    return SourceNavigationHelper.getOriginalClass(classOrObject)
+                    return SourceNavigationHelper.getOriginalClass(classOrObject) as? KtLightClass
             }
         }
         if (classOrObject.getContainingKtFile().analysisContext != null) {
@@ -270,7 +270,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
     }
 
-    private fun getLightClassForDecompiledClassOrObject(decompiledClassOrObject: KtClassOrObject): PsiClass? {
+    private fun getLightClassForDecompiledClassOrObject(decompiledClassOrObject: KtClassOrObject): KtLightClassForDecompiledDeclaration? {
         if (decompiledClassOrObject is KtEnumEntry) {
             return null
         }
@@ -285,18 +285,19 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     private fun findCorrespondingLightClass(
             decompiledClassOrObject: KtClassOrObject,
-            rootLightClassForDecompiledFile: PsiClass): PsiClass {
+            rootLightClassForDecompiledFile: KtLightClassForDecompiledDeclaration
+    ): KtLightClassForDecompiledDeclaration {
         val relativeFqName = getClassRelativeName(decompiledClassOrObject)
         val iterator = relativeFqName.pathSegments().iterator()
         val base = iterator.next()
         assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.getContainingKtFile().virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
-        var current = rootLightClassForDecompiledFile
+        var current: KtLightClassForDecompiledDeclaration = rootLightClassForDecompiledFile
         while (iterator.hasNext()) {
             val name = iterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false).sure {
                 "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.getContainingKtFile().virtualFile.name
             }
-            current = innerClass
+            current = innerClass as KtLightClassForDecompiledDeclaration
         }
         return current
     }
@@ -361,7 +362,7 @@ class KtFileClassProviderImpl(val lightClassGenerationSupport: LightClassGenerat
         }
 
         val result = arrayListOf<PsiClass>()
-        file.declarations.filterIsInstance<KtClassOrObject>().map { lightClassGenerationSupport.getPsiClass(it) }.filterNotNullTo(result)
+        file.declarations.filterIsInstance<KtClassOrObject>().map { lightClassGenerationSupport.getLightClass(it) }.filterNotNullTo(result)
 
         val moduleInfo = file.getModuleInfo()
         val jvmClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)

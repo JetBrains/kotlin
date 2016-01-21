@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassUtil.getPsiClass(this) as KtLightClass?
+fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassUtil.getPsiClass(this)
 
 fun KtFile.findFacadeClass(): KtLightClass? {
     return LightClassGenerationSupport.getInstance(project)

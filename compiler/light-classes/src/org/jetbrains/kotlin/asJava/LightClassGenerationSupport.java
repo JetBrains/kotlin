@@ -68,7 +68,7 @@ public abstract class LightClassGenerationSupport {
     public abstract Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope);
 
     @Nullable
-    public abstract PsiClass getPsiClass(@NotNull KtClassOrObject classOrObject);
+    public abstract KtLightClass getLightClass(@NotNull KtClassOrObject classOrObject);
 
     @Nullable
     public abstract ClassDescriptor resolveClassToDescriptor(@NotNull KtClassOrObject classOrObject);

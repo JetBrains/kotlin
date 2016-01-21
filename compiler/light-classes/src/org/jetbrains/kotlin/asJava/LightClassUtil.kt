@@ -48,9 +48,10 @@ object LightClassUtil {
         return null
     }/*package*/
 
-    fun getPsiClass(classOrObject: KtClassOrObject?): PsiClass? {
-        if (classOrObject == null) return null
-        return LightClassGenerationSupport.getInstance(classOrObject.project).getPsiClass(classOrObject)
+    fun getPsiClass(classOrObject: KtClassOrObject?): KtLightClass? {
+        return classOrObject?.let {
+            return LightClassGenerationSupport.getInstance(it.project).getLightClass(it)
+        }
     }
 
     fun getLightClassAccessorMethod(accessor: KtPropertyAccessor): PsiMethod? =
