@@ -62,6 +62,7 @@ public class InlineCodegenUtil {
     public static final int API = Opcodes.ASM5;
 
     public static final String CAPTURED_FIELD_PREFIX = "$";
+    public static final String NON_CAPTURED_FIELD_PREFIX = "$$";
     public static final String THIS$0 = "this$0";
     public static final String THIS = "this";
     public static final String RECEIVER$0 = "receiver$0";
@@ -286,7 +287,8 @@ public class InlineCodegenUtil {
 
     public static boolean isCapturedFieldName(@NotNull String fieldName) {
         // TODO: improve this heuristic
-        return fieldName.startsWith(CAPTURED_FIELD_PREFIX) ||
+        return fieldName.startsWith(CAPTURED_FIELD_PREFIX) &&
+               !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX) ||
                THIS$0.equals(fieldName) ||
                RECEIVER$0.equals(fieldName);
     }
