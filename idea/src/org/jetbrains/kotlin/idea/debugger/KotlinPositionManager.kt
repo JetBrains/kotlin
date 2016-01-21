@@ -159,7 +159,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val literalsOrFunctions = getLambdasAtLineIfAny(file, lineNumber)
         if (literalsOrFunctions.isEmpty()) return null;
 
-        val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
         val elementAt = file.findElementAt(start) ?: return null
         val typeMapper = KotlinPositionManagerCache.getOrCreateTypeMapper(elementAt)
 
@@ -172,7 +171,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 continue
             }
 
-            val internalClassNames = getInternalClassNameForElement(literal.firstChild, typeMapper, file, isInLibrary)
+            val internalClassNames = classNamesForPosition(literal.firstChild)
             if (internalClassNames.any { it == currentLocationClassName }) {
                 return literal
             }
@@ -283,15 +282,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     private fun findLambdas(sourcePosition: SourcePosition): Collection<String> {
-        return runReadAction {
-            val lambdas = getLambdasAtLineIfAny(sourcePosition)
-            val file = sourcePosition.file.containingFile as KtFile
-            val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
-            lambdas.flatMap {
-                val typeMapper = KotlinPositionManagerCache.getOrCreateTypeMapper(it)
-                getInternalClassNameForElement(it, typeMapper, file, isInLibrary)
-            }
-        }
+        val lambdas = runReadAction { getLambdasAtLineIfAny(sourcePosition) }
+        return lambdas.flatMap { classNamesForPosition(it) }
     }
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
@@ -341,7 +333,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             is KtFunction -> {
                 val descriptor = InlineUtil.getInlineArgumentDescriptor(element, typeMapper.bindingContext)
                 if (descriptor != null) {
-                    val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                    val classNamesForParent = classNamesForPosition(element.parent)
                     if (descriptor.isCrossinline) {
                         return classNamesForParent + findCrossInlineArguments(element, descriptor, typeMapper.bindingContext)
                     }
@@ -364,9 +356,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 val parent = getElementToCalculateClassName(element.parent)
                 // Class-object initializer
                 if (parent is KtObjectDeclaration && parent.isCompanion()) {
-                    return getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary)
+                    return classNamesForPosition(parent.parent)
                 }
-                return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                return classNamesForPosition(element.parent)
             }
             element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
                 if (isInPropertyAccessor(notPositionedElement)) {
@@ -378,7 +370,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
                 val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
                 if (descriptor !is PropertyDescriptor) {
-                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                    return classNamesForPosition(element.parent)
                 }
 
                 return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toList()
