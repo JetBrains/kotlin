@@ -219,7 +219,8 @@ internal class DelegatingDataFlowInfo private constructor(
         if (getCollectedTypes(value).contains(type)) return this
         if (!value.type.isFlexible() && value.type.isSubtypeOf(type)) return this
         val newNullabilityInfo = if (type.isMarkedNullable) EMPTY_NULLABILITY_INFO else ImmutableMap.of(value, NOT_NULL)
-        val newTypeInfo = ImmutableSetMultimap.of(value, type)
+        val newTypeInfo = newTypeInfo()
+        newTypeInfo.put(value, type)
         return create(this, newNullabilityInfo, newTypeInfo)
     }
 
@@ -296,9 +297,20 @@ internal class DelegatingDataFlowInfo private constructor(
 
         private fun create(parent: DataFlowInfo?,
                            nullabilityInfo: ImmutableMap<DataFlowValue, Nullability>,
+                           // NB: typeInfo must be mutable here!
                            typeInfo: SetMultimap<DataFlowValue, KotlinType>,
                            valueWithGivenTypeInfo: DataFlowValue? = null
         ): DelegatingDataFlowInfo {
+            for (value in typeInfo.keys()) {
+                var iterator = typeInfo[value].iterator()
+                while (iterator.hasNext()) {
+                    val type = iterator.next()
+                    // Remove original type and for not flexible type also all its supertypes (see also KT-10666)
+                    if (if (value.type.isFlexible()) value.type == type else value.type.isSubtypeOf(type)) {
+                        iterator.remove()
+                    }
+                }
+            }
             return DelegatingDataFlowInfo(parent, nullabilityInfo, typeInfo, valueWithGivenTypeInfo)
         }
     }
