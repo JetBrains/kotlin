@@ -24,9 +24,6 @@
                 <includes>
                     <include>**/*.kotlin_*</include>
                 </includes>
-                <excludes>
-                    <exclude>kotlin/internal/**/*</exclude>
-                </excludes>
             </resource>
         </resources>
 

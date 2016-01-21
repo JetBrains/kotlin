@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -53,12 +54,18 @@ public class ReifiedTypeParameterSubstitutionChecker implements CallChecker {
                     context.trace.report(
                             Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION.on(getElementToReport(context, parameter.getIndex()), argument));
                 }
-                else if (TypeUtilsKt.unsafeAsReifiedArgument(argument)) {
+                else if (TypeUtilsKt.unsafeAsReifiedArgument(argument) && !hasPureReifiableAnnotation(parameter)) {
                     context.trace.report(
                             Errors.REIFIED_TYPE_UNSAFE_SUBSTITUTION.on(getElementToReport(context, parameter.getIndex()), argument));
                 }
             }
         }
+    }
+
+    private static final FqName PURE_REIFIABLE_ANNOTATION_FQ_NAME = new FqName("kotlin.internal.PureReifiable");
+
+    private static boolean hasPureReifiableAnnotation(@NotNull TypeParameterDescriptor parameter) {
+        return parameter.getAnnotations().hasAnnotation(PURE_REIFIABLE_ANNOTATION_FQ_NAME);
     }
 
     @NotNull

@@ -58,7 +58,8 @@ public abstract class KotlinBuiltIns {
             COLLECTIONS_PACKAGE_FQ_NAME,
             RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
-            ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME()
+            ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
+            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 
     protected final ModuleDescriptorImpl builtInsModule;

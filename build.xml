@@ -489,7 +489,6 @@
                 <fileset dir="${output}/classes/compiler"/>
                 <fileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
-                    <exclude name="kotlin/internal/**"/>
                 </fileset>
                 <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
@@ -954,7 +953,6 @@
                 <fileset dir="${output}/classes/stdlib"/>
                 <zipfileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
-                    <exclude name="kotlin/internal/**"/>
                     <!-- TODO: load metadata from @KotlinClass annotation in KotlinBuiltIns on JVM and restore this exclusion -->
                     <!-- exclude name="kotlin/reflect/**"/ -->
                 </zipfileset>
@@ -1106,7 +1104,6 @@
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${output}/builtins">
                 <include name="kotlin/**"/>
-                <exclude name="kotlin/internal/**"/>
             </fileset>
             <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
