@@ -1,0 +1,22 @@
+package
+
+public fun test(): kotlin.Unit
+public fun test2(): kotlin.Unit
+public operator fun </*0*/ K> Container<K>.iterator(): kotlin.collections.Iterator<K>
+
+public final class Container</*0*/ K> {
+    public constructor Container</*0*/ K>(/*0*/ k: K)
+    public final val k: K
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OtherContainer</*0*/ K> {
+    public constructor OtherContainer</*0*/ K>(/*0*/ k: K)
+    public final val k: K
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun iterator(): kotlin.collections.Iterator<K>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

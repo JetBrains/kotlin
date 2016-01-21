@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -333,7 +334,7 @@ public class DelegatedPropertyResolver {
                                                                        dataFlowInfo, traceToResolveDelegatedProperty);
         traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
             @Override
-            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
+            public boolean accept(@Nullable WritableSlice<?, ?> slice, @Nullable Diagnostic diagnostic, Object key) {
                 return slice != CONSTRAINT_SYSTEM_COMPLETER;
             }
         }, true);

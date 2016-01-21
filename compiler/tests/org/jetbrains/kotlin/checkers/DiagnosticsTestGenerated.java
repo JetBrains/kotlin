@@ -3330,6 +3330,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ForLoopWithExtensionIteratorOnNullable.kt")
+            public void testForLoopWithExtensionIteratorOnNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ForLoopWithExtensionIteratorOnNullable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forLoopWithNullableRange.kt")
             public void testForLoopWithNullableRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/forLoopWithNullableRange.kt");

@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
@@ -75,17 +78,28 @@ class FakeCallResolver(
             context: ExpressionTypingContext,
             valueArguments: List<KtExpression>,
             name: Name,
-            callElement: KtExpression?
+            callElement: KtExpression?,
+            iteratorCheck: Boolean = false
     ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
         val fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name)
         val fakeBindingTrace = context.replaceBindingTrace(fakeTrace)
 
-        return makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake ->
-            fakeTrace.commit({ slice, key ->
+        var hasUnreportedIteratorError = false
+        val result = makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake ->
+            fakeTrace.commit({ slice, diagnostic, key ->
                 // excluding all entries related to fake expression
-                key != fake
+                // convert all errors on this expression to ITERATOR_MISSING on callElement
+                val isFakeKey = key == fake
+                if (iteratorCheck && diagnostic?.severity == Severity.ERROR && isFakeKey) {
+                    hasUnreportedIteratorError = true
+                }
+                !isFakeKey
             }, true)
         }
+        if (hasUnreportedIteratorError && callElement != null) {
+            context.trace.report(Errors.ITERATOR_MISSING.on(callElement))
+        }
+        return result
     }
 
     @JvmOverloads fun makeAndResolveFakeCallInContext(
