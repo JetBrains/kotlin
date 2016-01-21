@@ -1,0 +1,36 @@
+Cleaning output files:
+out/production/module/B.class
+End of files
+Compiling files:
+src/B.kt
+End of files
+Cleaning output files:
+out/production/module/ConsumeBExtLambdaKt.class
+out/production/module/ConsumeBLambdaKt.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UseConsumeBExtLambdaKt$useConsumeBExtLambda$1.class
+out/production/module/UseConsumeBExtLambdaKt.class
+out/production/module/UseConsumeBLambdaKt$useConsumeBLambda$1.class
+out/production/module/UseConsumeBLambdaKt.class
+End of files
+Compiling files:
+src/consumeBExtLambda.kt
+src/consumeBLambda.kt
+src/useConsumeBExtLambda.kt
+src/useConsumeBLambda.kt
+End of files
+COMPILATION FAILED
+Type mismatch: inferred type is B but A was expected
+Type mismatch: inferred type is B but A was expected
+
+
+Cleaning output files:
+out/production/module/B.class
+End of files
+Compiling files:
+src/B.kt
+src/consumeBExtLambda.kt
+src/consumeBLambda.kt
+src/useConsumeBExtLambda.kt
+src/useConsumeBLambda.kt
+End of files
