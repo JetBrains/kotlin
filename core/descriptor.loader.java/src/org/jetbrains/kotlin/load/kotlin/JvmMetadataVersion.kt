@@ -23,11 +23,16 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
  * This version includes the version of the core protobuf messages (descriptors.proto) as well as JVM extensions (jvm_descriptors.proto).
  */
 class JvmMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    override fun isCompatible() = this.isCompatibleTo(INSTANCE)
+    // NOTE: 1.1 is incompatible with 1.0 and hence with any other version except 1.1.*
+    override fun isCompatible() =
+            skipCheck || (this.major == 1 && this.minor == 1)
 
     companion object {
+        // TODO: this is a temporary hack which can be removed once we migrate the IDEA code from 1.0 to 1.1
+        var skipCheck: Boolean = false
+
         @JvmField
-        val INSTANCE = JvmMetadataVersion(1, 0, 2)
+        val INSTANCE = JvmMetadataVersion(1, 1, 0)
 
         @JvmField
         val INVALID_VERSION = JvmMetadataVersion()
