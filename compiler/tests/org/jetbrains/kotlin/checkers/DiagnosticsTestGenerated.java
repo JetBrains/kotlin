@@ -18153,6 +18153,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyTypeParametersWithUpperBounds.kt")
+            public void testPropertyTypeParametersWithUpperBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/propertyTypeParametersWithUpperBounds.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("repeatedBound.kt")
             public void testRepeatedBound() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/repeatedBound.kt");

@@ -450,9 +450,26 @@ class DeclarationsChecker(
     }
 
     private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
-        for (typeParameter in descriptor.typeParameters) {
-            if (isTypeParameterUsedInReceiverType(typeParameter, descriptor)) continue
+        val allTypeParameters = descriptor.typeParameters.toSet()
+        val allAccessibleTypeParameters = HashSet<TypeParameterDescriptor>()
 
+        fun addAccessibleTypeParametersFromType(type: KotlinType?) {
+            TypeUtils.contains(type) {
+                val declarationDescriptor = it.constructor.declarationDescriptor
+                if (declarationDescriptor is TypeParameterDescriptor && declarationDescriptor in allTypeParameters) {
+                    if (allAccessibleTypeParameters.add(declarationDescriptor)) {
+                        declarationDescriptor.upperBounds.forEach {
+                            addAccessibleTypeParametersFromType(it)
+                        }
+                    }
+                }
+                false
+            }
+        }
+        addAccessibleTypeParametersFromType(descriptor.extensionReceiverParameter?.type)
+
+        val typeParametersInaccessibleFromReceiver = allTypeParameters - allAccessibleTypeParameters
+        for (typeParameter in typeParametersInaccessibleFromReceiver) {
             val typeParameterPsi = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameter)
             if (typeParameterPsi is KtTypeParameter) {
                 trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on(typeParameterPsi))
@@ -836,14 +853,6 @@ class DeclarationsChecker(
             val declaration = DescriptorToSourceUtils.descriptorToDeclaration(member) as? KtNamedDeclaration ?: return false
             val modifierList = declaration.modifierList ?: return true
             return !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-        }
-
-        private fun isTypeParameterUsedInReceiverType(
-                parameter: TypeParameterDescriptor,
-                descriptor: PropertyDescriptor): Boolean {
-            val receiverParameter = descriptor.extensionReceiverParameter ?: return false
-
-            return TypeUtils.contains(receiverParameter.type) { parameter == it.constructor.declarationDescriptor }
         }
 
         private fun hasDefaultConstructor(classDescriptor: ClassDescriptor) =

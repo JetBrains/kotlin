@@ -31,3 +31,14 @@ class C<T1, T2> {
     val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>E<!>> Map<T1, T2>.d: Int get() = 3
     val <E> Map<T1, E>.e: Int get() = 3
 }
+
+val <T : Enum<T>> T.z1: Int
+    get() = 4
+
+interface D<T : Enum<T>>
+
+val <X: D<*>> X.z2: Int
+    get() = 4
+
+val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>Y<!>> D<*>.z3: Int
+    get() = 4
