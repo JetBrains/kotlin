@@ -35,15 +35,3 @@ public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
  * specified value.
  */
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
-
-
-public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
-    val value = get(key)
-    return if (value == null && !containsKey(key)) {
-        val answer = defaultValue()
-        put(key, answer)
-        answer
-    } else {
-        value as V
-    }
-}

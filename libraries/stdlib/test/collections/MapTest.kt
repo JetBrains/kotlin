@@ -62,7 +62,7 @@ class MapTest {
         assertEquals(null, c)
 
         val d = empty.getOrPut("") { 1 }
-        assertEquals(null, d)  // soon will change to 1
+        assertEquals(1, d)
     }
 
     @test fun sizeAndEmpty() {

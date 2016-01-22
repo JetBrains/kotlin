@@ -19,15 +19,6 @@ public operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
 }
 
 /**
- * getOrPut is not supported on [ConcurrentMap] since it cannot be implemented correctly in terms of concurrency.
- * Use [concurrentGetOrPut] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.
- */
-@Deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.", level = DeprecationLevel.ERROR)
-@kotlin.internal.LowPriorityInOverloadResolution
-public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): Nothing =
-    throw UnsupportedOperationException("getOrPut is not supported on ConcurrentMap.")
-
-/**
  * Concurrent getOrPut, that is safe for concurrent maps.
  *
  * Returns the value for the given [key]. If the key is not found in the map, calls the [defaultValue] function,
@@ -36,14 +27,14 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -
  * This method guarantees not to put the value into the map if the key is already there,
  * but the [defaultValue] function may be invoked even if the key is already in the map.
  */
-public inline fun <K, V: Any> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     // Do not use computeIfAbsent on JVM8 as it would change locking behavior
     return this.get(key) ?:
             defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
 
 }
 
-@Deprecated("Use getOrPut instead", ReplaceWith("getOrPut(key, defaultValue)"))
+@Deprecated("Use getOrPut instead", ReplaceWith("getOrPut(key, defaultValue)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V: Any> ConcurrentMap<K, V>.concurrentGetOrPut(key: K, defaultValue: () -> V): V {
     // Do not use computeIfAbsent on JVM8 as it would change locking behavior
     return this.get(key) ?:
