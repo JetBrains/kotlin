@@ -3,12 +3,12 @@ package test
 public interface ErrorTypes {
 
     public interface Sub : test.ErrorTypes.Super {
-        public abstract override /*1*/ fun errorTypeInParameter(/*0*/ list: kotlin.(Mutable)List<kotlin.Array<(out) [ERROR : Unresolved java classifier: T]!>!>!): kotlin.Unit
+        public abstract override /*1*/ fun errorTypeInParameter(/*0*/ list: kotlin.collections.(Mutable)List<kotlin.Array<(out) [ERROR : Unresolved java classifier: T]!>!>!): kotlin.Unit
         public abstract override /*1*/ fun returnErrorType(): [ERROR : Unresolved java classifier: T]!
     }
 
     public interface Super {
-        public abstract fun errorTypeInParameter(/*0*/ list: kotlin.(Mutable)List<kotlin.Array<(out) [ERROR : Unresolved java classifier: T]!>!>!): kotlin.Unit
+        public abstract fun errorTypeInParameter(/*0*/ list: kotlin.collections.(Mutable)List<kotlin.Array<(out) [ERROR : Unresolved java classifier: T]!>!>!): kotlin.Unit
         public abstract fun returnErrorType(): [ERROR : Unresolved java classifier: T]!
     }
 }

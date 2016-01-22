@@ -43,8 +43,8 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
             val synthesizedSuperFun = createSynthesizedFunctionWithFirstParameterAsReceiver(invokeDeclaration)
             val fakeOverride = synthesizedSuperFun.copy(
                     invoke.getContainingDeclaration(),
-                    synthesizedSuperFun.getModality(),
-                    synthesizedSuperFun.getVisibility(),
+                    synthesizedSuperFun.modality,
+                    synthesizedSuperFun.visibility,
                     CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                     true
             )
@@ -52,7 +52,7 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
             fakeOverride
         }
 
-        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.getDispatchReceiverParameter()!!.getType())))
+        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.getDispatchReceiverParameter()!!.type)))
     }
 
     return result
@@ -60,27 +60,27 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
 
 private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: FunctionDescriptor): FunctionDescriptor {
     val result = SimpleFunctionDescriptorImpl.create(
-            descriptor.getContainingDeclaration(),
-            descriptor.getAnnotations(),
-            descriptor.getName(),
+            descriptor.containingDeclaration,
+            descriptor.annotations,
+            descriptor.name,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
-            descriptor.getSource()
+            descriptor.source
     )
 
-    val original = descriptor.getOriginal()
+    val original = descriptor.original
     result.initialize(
-            original.getValueParameters().first().getType(),
-            original.getDispatchReceiverParameter(),
-            original.getTypeParameters(),
-            original.getValueParameters().drop(1).map { p ->
+            original.valueParameters.first().type,
+            original.dispatchReceiverParameter,
+            original.typeParameters,
+            original.valueParameters.drop(1).map { p ->
                 ValueParameterDescriptorImpl(
-                        result, null, p.index - 1, p.getAnnotations(), Name.identifier("p${p.index + 1}"), p.getType(),
-                        p.declaresDefaultValue(), p.isCrossinline, p.isNoinline, p.varargElementType, p.getSource()
+                        result, null, p.index - 1, p.annotations, Name.identifier("p${p.index + 1}"), p.type,
+                        p.declaresDefaultValue(), p.isCrossinline, p.isNoinline, p.varargElementType, p.source
                 )
             },
-            original.getReturnType(),
-            original.getModality(),
-            original.getVisibility()
+            original.returnType,
+            original.modality,
+            original.visibility
     )
     result.isOperator = original.isOperator
     result.isInfix = original.isInfix
@@ -94,14 +94,14 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
 }
 
 fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
-    if (descriptor.getName() != OperatorNameConventions.INVOKE || descriptor !is FunctionDescriptor) return false
+    if (descriptor.name != OperatorNameConventions.INVOKE || descriptor !is FunctionDescriptor) return false
 
     var real: FunctionDescriptor = descriptor
-    while (!real.getKind().isReal()) {
+    while (!real.kind.isReal) {
         // You can't override two different synthesized invokes at the same time
-        real = real.getOverriddenDescriptors().singleOrNull() ?: return false
+        real = real.overriddenDescriptors.singleOrNull() ?: return false
     }
 
-    return real.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-           real.getContainingDeclaration() is FunctionClassDescriptor
+    return real.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+           real.containingDeclaration is FunctionClassDescriptor
 }

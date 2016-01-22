@@ -418,6 +418,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("delegationComplex.kt")
+        public void testDelegationComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/delegationComplex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegationComplexWithList.kt")
+        public void testDelegationComplexWithList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/delegationComplexWithList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegationProperty.kt")
         public void testDelegationProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/delegationProperty.kt");
@@ -2422,6 +2434,45 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReturnsNothing extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInReturnsNothing() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/returnsNothing"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ifElse.kt")
+            public void testIfElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/ifElse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineMethod.kt")
+            public void testInlineMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/inlineMethod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyGetter.kt")
+            public void testPropertyGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/propertyGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryCatch.kt")
+            public void testTryCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/tryCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("when.kt")
+            public void testWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/when.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -2736,6 +2787,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("contains.kt")
             public void testContains() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/function/contains.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("covariantOverride.kt")
+            public void testCovariantOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/function/covariantOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("covariantOverrideGeneric.kt")
+            public void testCovariantOverrideGeneric() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/function/covariantOverrideGeneric.kt");
                 doTest(fileName);
             }
 
@@ -6882,6 +6945,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateSetter.kt")
+            public void testPrivateSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/privateSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateSetterFromLambda.kt")
+            public void testPrivateSetterFromLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/privateSetterFromLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleVar.kt")
             public void testSimpleVar() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/simpleVar.kt");
@@ -8242,6 +8317,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("exhaustiveWhenInitialization.kt")
+        public void testExhaustiveWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exhaustiveWhenInitialization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exhaustiveWhenReturn.kt")
+        public void testExhaustiveWhenReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exhaustiveWhenReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/is.kt");
@@ -8317,6 +8404,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("range.kt")
         public void testRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/range.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedWhenInitialization.kt")
+        public void testSealedWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/sealedWhenInitialization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeDisjunction.kt")
+        public void testTypeDisjunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/typeDisjunction.kt");
             doTest(fileName);
         }
 

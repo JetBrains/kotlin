@@ -50,20 +50,21 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            @NotNull CallPosition callPosition
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker,
-              statementFilter, isAnnotationContext, collectAllCandidates);
+              statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {
             this.dataFlowInfoForArguments = dataFlowInfoForArguments;
         }
         else if (checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
-            this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
+            this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(dataFlowInfo, call);
         }
         else {
-            this.dataFlowInfoForArguments = new MutableDataFlowInfoForArguments.WithoutArgumentsCheck();
+            this.dataFlowInfoForArguments = new MutableDataFlowInfoForArguments.WithoutArgumentsCheck(dataFlowInfo);
         }
     }
 

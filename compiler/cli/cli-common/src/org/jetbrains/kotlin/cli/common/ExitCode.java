@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.cli.common;
 public enum ExitCode {
     OK(0),
     COMPILATION_ERROR(1),
-    INTERNAL_ERROR(2);
+    INTERNAL_ERROR(2),
+    SCRIPT_EXECUTION_ERROR(3);
 
     private final int code;
 

@@ -22,39 +22,39 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import java.util.LinkedHashMap
 
-public fun getTypeSubstitution(baseType: KotlinType, derivedType: KotlinType): LinkedHashMap<TypeConstructor, TypeProjection>? {
+fun getTypeSubstitution(baseType: KotlinType, derivedType: KotlinType): LinkedHashMap<TypeConstructor, TypeProjection>? {
     val substitutedType = TypeCheckingProcedure.findCorrespondingSupertype(derivedType, baseType) ?: return null
 
-    val substitution = LinkedHashMap<TypeConstructor, TypeProjection>(substitutedType.getArguments().size())
-    for ((param, arg) in baseType.getConstructor().getParameters().zip(substitutedType.getArguments())) {
-        substitution[param.getTypeConstructor()] = arg
+    val substitution = LinkedHashMap<TypeConstructor, TypeProjection>(substitutedType.arguments.size)
+    for ((param, arg) in baseType.constructor.parameters.zip(substitutedType.arguments)) {
+        substitution[param.typeConstructor] = arg
     }
 
     return substitution
 }
 
-public fun getCallableSubstitution(
+fun getCallableSubstitution(
         baseCallable: CallableDescriptor,
         derivedCallable: CallableDescriptor
 ): MutableMap<TypeConstructor, TypeProjection>? {
-    val baseClass = baseCallable.getContainingDeclaration() as? ClassDescriptor ?: return null
-    val derivedClass = derivedCallable.getContainingDeclaration() as? ClassDescriptor ?: return null
-    val substitution = getTypeSubstitution(baseClass.getDefaultType(), derivedClass.getDefaultType()) ?: return null
+    val baseClass = baseCallable.containingDeclaration as? ClassDescriptor ?: return null
+    val derivedClass = derivedCallable.containingDeclaration as? ClassDescriptor ?: return null
+    val substitution = getTypeSubstitution(baseClass.defaultType, derivedClass.defaultType) ?: return null
 
-    for ((baseParam, derivedParam) in baseCallable.getTypeParameters().zip(derivedCallable.getTypeParameters())) {
-        substitution[baseParam.getTypeConstructor()] = TypeProjectionImpl(derivedParam.getDefaultType())
+    for ((baseParam, derivedParam) in baseCallable.typeParameters.zip(derivedCallable.typeParameters)) {
+        substitution[baseParam.typeConstructor] = TypeProjectionImpl(derivedParam.defaultType)
     }
 
     return substitution
 }
 
-public fun getCallableSubstitutor(
+fun getCallableSubstitutor(
         baseCallable: CallableDescriptor,
         derivedCallable: CallableDescriptor
 ): TypeSubstitutor? {
     return getCallableSubstitution(baseCallable, derivedCallable)?.let { TypeSubstitutor.create(it) }
 }
 
-public fun getTypeSubstitutor(baseType: KotlinType, derivedType: KotlinType): TypeSubstitutor? {
+fun getTypeSubstitutor(baseType: KotlinType, derivedType: KotlinType): TypeSubstitutor? {
     return getTypeSubstitution(baseType, derivedType)?.let { TypeSubstitutor.create(it) }
 }

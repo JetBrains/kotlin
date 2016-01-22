@@ -19,8 +19,8 @@ object O {
 }
 
 fun check(callable: KCallable<*>, vararg args: Any?) {
-    val expected = callable.parameters.size()
-    val actual = args.size()
+    val expected = callable.parameters.size
+    val actual = args.size
 
     if (expected == actual) {
         throw AssertionError("Bad test case: expected and actual number of arguments should differ (was $expected vs $actual)")
@@ -32,10 +32,10 @@ fun check(callable: KCallable<*>, vararg args: Any?) {
         callable.call(*args)
         throw AssertionError("Fail: an IllegalArgumentException should have been thrown")
     } catch (e: IllegalArgumentException) {
-        if (e.getMessage() != expectedExceptionMessage) {
+        if (e.message != expectedExceptionMessage) {
             // This most probably means that we don't check number of passed arguments in reflection
             // and the default check from Java reflection yields an IllegalArgumentException, but with a not that helpful message
-            throw AssertionError("Fail: an exception with an unrecognized message was thrown: \"${e.getMessage()}\"" +
+            throw AssertionError("Fail: an exception with an unrecognized message was thrown: \"${e.message}\"" +
                                  "\nExpected message was: $expectedExceptionMessage")
         }
     }

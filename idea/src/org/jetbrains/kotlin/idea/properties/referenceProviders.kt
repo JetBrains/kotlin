@@ -53,7 +53,7 @@ private val PROPERTY_KEY = FqName(AnnotationUtil.PROPERTY_KEY)
 private val PROPERTY_KEY_RESOURCE_BUNDLE = Name.identifier(AnnotationUtil.PROPERTY_KEY_RESOURCE_BUNDLE_PARAMETER)
 
 private fun AnnotationDescriptor.getBundleName(): String? {
-    return allValueArguments.entrySet().singleOrNull { it.key.name == PROPERTY_KEY_RESOURCE_BUNDLE }?.value?.value as? String
+    return allValueArguments.entries.singleOrNull { it.key.name == PROPERTY_KEY_RESOURCE_BUNDLE }?.value?.value as? String
 }
 
 private fun DeclarationDescriptor.getBundleNameByAnnotation(): String? {
@@ -83,7 +83,7 @@ private fun KtExpression.getBundleNameByContext(): String? {
                 ?.getBundleName()
     }
 
-    return resolvedCall.valueArguments.entrySet()
+    return resolvedCall.valueArguments.entries
             .singleOrNull { it.value.arguments.any { it.getArgumentExpression() == expression } }
             ?.key
             ?.getBundleNameByAnnotation()
@@ -126,7 +126,7 @@ private fun KtStringTemplateExpression.isBundleName(): Boolean {
     return false
 }
 
-public object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
+object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
         if (!(element is KtStringTemplateExpression && element.isPlain())) return PsiReference.EMPTY_ARRAY
         val bundleName = element.getBundleNameByContext() ?: return PsiReference.EMPTY_ARRAY
@@ -134,7 +134,7 @@ public object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
     }
 }
 
-public object KotlinResourceBundleNameReferenceProvider : PsiReferenceProvider() {
+object KotlinResourceBundleNameReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
         if (!(element is KtStringTemplateExpression && element.isPlain() && element.isBundleName())) return PsiReference.EMPTY_ARRAY
         return arrayOf(ResourceBundleReference(element))

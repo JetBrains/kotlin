@@ -33,9 +33,9 @@ class OverloadReducer(
         dropOverloadsForDefaultValues(map)
     }
 
-    public fun shouldDropMethod(method: PsiMethod): Boolean = method in methodsToDrop
+    fun shouldDropMethod(method: PsiMethod): Boolean = method in methodsToDrop
 
-    public fun parameterDefault(method: PsiMethod, parameterIndex: Int): PsiExpression? {
+    fun parameterDefault(method: PsiMethod, parameterIndex: Int): PsiExpression? {
         val defaults = methodToLastParameterDefaults[method] ?: return null
         val index = method.parameterList.parametersCount - parameterIndex - 1
         return if (index < defaults.size) defaults[index] else null
@@ -173,7 +173,7 @@ class OverloadReducer(
     }
 }
 
-public fun Converter.convertParameterList(
+fun Converter.convertParameterList(
         method: PsiMethod,
         overloadReducer: OverloadReducer?,
         convertParameter: (parameter: PsiParameter, default: DeferredElement<Expression>?) -> FunctionParameter = { parameter, default -> convertParameter(parameter, defaultValue = default) },

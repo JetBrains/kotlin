@@ -21,29 +21,27 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.ContentRoot
 import java.io.File
 
-public data class JvmClasspathRoot(public override val file: File): JvmContentRoot
+data class JvmClasspathRoot(override val file: File): JvmContentRoot
 
-public data class JavaSourceRoot(public override val file: File, public val packagePrefix: String?): JvmContentRoot
+data class JavaSourceRoot(override val file: File, val packagePrefix: String?): JvmContentRoot
 
-public interface JvmContentRoot : ContentRoot {
-    public val file: File
+interface JvmContentRoot : ContentRoot {
+    val file: File
 }
 
-public fun CompilerConfiguration.addJvmClasspathRoot(file: File) {
+fun CompilerConfiguration.addJvmClasspathRoot(file: File) {
     add(CommonConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
 }
 
-public fun CompilerConfiguration.addJvmClasspathRoots(files: List<File>): Unit = files.forEach { addJvmClasspathRoot(it) }
+fun CompilerConfiguration.addJvmClasspathRoots(files: List<File>): Unit = files.forEach { addJvmClasspathRoot(it) }
 
-public val CompilerConfiguration.jvmClasspathRoots: List<File>
+val CompilerConfiguration.jvmClasspathRoots: List<File>
     get() {
         return get(CommonConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<JvmClasspathRoot>()?.map { it.file } ?: emptyList()
     }
 
-@JvmOverloads
-public fun CompilerConfiguration.addJavaSourceRoot(file: File, packagePrefix: String? = null) {
+@JvmOverloads fun CompilerConfiguration.addJavaSourceRoot(file: File, packagePrefix: String? = null) {
     add(CommonConfigurationKeys.CONTENT_ROOTS, JavaSourceRoot(file, packagePrefix))
 }
 
-@JvmOverloads
-public fun CompilerConfiguration.addJavaSourceRoots(files: List<File>, packagePrefix: String? = null): Unit = files.forEach { addJavaSourceRoot(it, packagePrefix) }
+@JvmOverloads fun CompilerConfiguration.addJavaSourceRoots(files: List<File>, packagePrefix: String? = null): Unit = files.forEach { addJavaSourceRoot(it, packagePrefix) }

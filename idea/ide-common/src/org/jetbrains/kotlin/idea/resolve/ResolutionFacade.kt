@@ -26,31 +26,31 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public interface ResolutionFacade {
-    public val project: Project
+interface ResolutionFacade {
+    val project: Project
 
-    public fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
+    fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
 
-    public fun analyzeFullyAndGetResult(elements: Collection<KtElement>): AnalysisResult
+    fun analyzeFullyAndGetResult(elements: Collection<KtElement>): AnalysisResult
 
-    public fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor
+    fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor
 
-    public val moduleDescriptor: ModuleDescriptor
+    val moduleDescriptor: ModuleDescriptor
 
     // get service for the module this resolution was created for
-    public fun <T : Any> getFrontendService(serviceClass: Class<T>): T
+    fun <T : Any> getFrontendService(serviceClass: Class<T>): T
 
-    public fun <T : Any> getIdeService(serviceClass: Class<T>): T
+    fun <T : Any> getIdeService(serviceClass: Class<T>): T
 
     // get service for the module defined by PsiElement/ModuleDescriptor passed as parameter
-    public fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T
+    fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T
 
-    public fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
+    fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
 
 }
 
-public inline fun <reified T : Any> ResolutionFacade.frontendService(): T
-        = this.getFrontendService(javaClass<T>())
+inline fun <reified T : Any> ResolutionFacade.frontendService(): T
+        = this.getFrontendService(T::class.java)
 
-public inline fun <reified T : Any> ResolutionFacade.ideService(): T
-        = this.getIdeService(javaClass<T>())
+inline fun <reified T : Any> ResolutionFacade.ideService(): T
+        = this.getIdeService(T::class.java)

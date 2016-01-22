@@ -104,18 +104,18 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             );
         }
         if (element instanceof KtNamedFunction || element instanceof KtSecondaryConstructor) {
-            Collection<PsiMethod> lightMethods = LightClassUtil.INSTANCE$.getLightClassMethods((KtFunction) element);
+            Collection<PsiMethod> lightMethods = LightClassUtil.INSTANCE.getLightClassMethods((KtFunction) element);
             processPsiMethodCallers(lightMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
         if (element instanceof KtProperty) {
             LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((KtProperty) element);
+                    LightClassUtil.INSTANCE.getLightClassPropertyMethods((KtProperty) element);
             processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
         if (element instanceof KtClassOrObject) {
             KtPrimaryConstructor constructor = ((KtClassOrObject) element).getPrimaryConstructor();
             if (constructor != null) {
-                PsiMethod lightMethod = LightClassUtil.INSTANCE$.getLightClassMethod(constructor);
+                PsiMethod lightMethod = LightClassUtil.INSTANCE.getLightClassMethod(constructor);
                 processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
             }
             else {

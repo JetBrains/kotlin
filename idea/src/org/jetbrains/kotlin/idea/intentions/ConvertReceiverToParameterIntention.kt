@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(javaClass(), "Convert receiver to parameter"), LowPriorityAction {
+class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(KtTypeReference::class.java, "Convert receiver to parameter"), LowPriorityAction {
     override fun isApplicableTo(element: KtTypeReference): Boolean {
-        return (element.getParent() as? KtNamedFunction)?.getReceiverTypeReference() == element
+        return (element.parent as? KtNamedFunction)?.receiverTypeReference == element
     }
 
     private fun configureChangeSignature(): KotlinChangeSignatureConfiguration {
@@ -43,10 +43,10 @@ public class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependen
 
     override fun startInWriteAction() = false
 
-    override fun applyTo(element: KtTypeReference, editor: Editor) {
-        val function = element.getParent() as? KtNamedFunction ?: return
+    override fun applyTo(element: KtTypeReference, editor: Editor?) {
+        val function = element.parent as? KtNamedFunction ?: return
         val context = function.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
-        runChangeSignature(element.project, descriptor, configureChangeSignature(), element, getText())
+        runChangeSignature(element.project, descriptor, configureChangeSignature(), element, text)
     }
 }

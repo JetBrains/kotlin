@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractExperimentalIncrementalJpsTest : AbstractIncrementalJpsTest() {

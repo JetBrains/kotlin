@@ -47,6 +47,14 @@ public fun <K, V> mapOf(): Map<K, V> = emptyMap()
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = Collections.singletonMap(pair.first, pair.second)
 
 /**
+ * Returns a new [MutableMap] with the specified contents, given as a list of pairs
+ * where the first component is the key and the second is the value.
+ * This map preserves insertion order so iterating through the map's entries will be in the same order.
+ */
+public fun <K, V> mutableMapOf(vararg pairs: Pair<K, V>): MutableMap<K, V>
+        = LinkedHashMap<K, V>(mapCapacity(pairs.size)).apply { putAll(pairs) }
+
+/**
  * Returns a new [HashMap] with the specified contents, given as a list of pairs
  * where the first component is the key and the second is the value.
  *
@@ -104,24 +112,11 @@ public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contain
 public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get(key: K): V? = (this as Map<K, V>).get(key)
 
 /**
- * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
- *
- * Allows to overcome type-safety restriction of `get` that requires to pass a key of type `K`.
- */
-@Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as Any?)"))
-public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = get(key)
-
-/**
  * Returns `true` if the map contains the specified [key].
  *
  * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `K`.
  */
 public fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(key: K): Boolean = (this as Map<K, *>).containsKey(key)
-
-@Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("containsKey(key as Any?)"))
-public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = containsKey(key)
 
 /**
  * Returns `true` if the map maps one or more keys to the specified [value].
@@ -129,10 +124,6 @@ public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = containsKey
  * Allows to overcome type-safety restriction of `containsValue` that requires to pass a value of type `V`.
  */
 public fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue(value: V): Boolean = this.containsValue(value)
-
-@Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and value have incompatible types. Upcast value to Any? if you're sure.", ReplaceWith("containsValue(value as Any?)"))
-public inline fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = containsValue(value)
 
 
 /**
@@ -179,6 +170,7 @@ public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
  *
  * @sample test.collections.MapTest.getOrElse
  */
+@Deprecated("This function will change its behavior soon not to distinguish missing keys and keys mapped to nulls. To stick with the new behavior you can use get(key) with ?: operator after instead.")
 public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
     val value = get(key)
     if (value == null && !containsKey(key)) {
@@ -194,14 +186,30 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
  *
  * @sample test.collections.MapTest.getOrPut
  */
-public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+@kotlin.jvm.JvmVersion
+public inline fun <K, V: Any> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     val value = get(key)
-    if (value == null && !containsKey(key)) {
+    return if (value == null) {
         val answer = defaultValue()
         put(key, answer)
-        return answer
+        answer
     } else {
-        return value as V
+        value
+    }
+}
+
+@kotlin.jvm.JvmName("getOrPutNullable")
+@kotlin.jvm.JvmVersion
+@Deprecated("This function will change its behavior soon not to distinguish missing keys and keys mapped to nulls.")
+@kotlin.internal.LowPriorityInOverloadResolution
+public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+    val value = get(key)
+    return if (value == null && !containsKey(key)) {
+        val answer = defaultValue()
+        put(key, answer)
+        answer
+    } else {
+        value as V
     }
 }
 
@@ -242,15 +250,6 @@ public inline fun <K, V, R, C : MutableMap<R, V>> Map<K, V>.mapKeysTo(destinatio
         destination.put(newKey, e.value)
     }
     return destination
-}
-
-/**
- * Puts all the given [pairs] into this [MutableMap] with the first component in the pair being the key and the second the value.
- */
-@kotlin.jvm.JvmName("putAllVararg")
-@Deprecated("Use an overload without vararg", ReplaceWith("putAll(pairs)"))
-public fun <K, V> MutableMap<K, V>.putAll(vararg pairs: Pair<K, V>): Unit {
-    putAll(pairs)
 }
 
 /**
@@ -462,30 +461,35 @@ public operator fun <K, V> MutableMap<K, V>.plusAssign(map: Map<K, V>) {
 /**
  * Creates a new read-only map by removing a [key] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(key: K): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(key) }
 
 /**
  * Creates a new read-only map by removing a collection of [keys] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(keys: Iterable<K>): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(keys) }
 
 /**
  * Creates a new read-only map by removing a array of [keys] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(keys: Array<K>): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(keys) }
 
 /**
  * Creates a new read-only map by removing a sequence of [keys] from this map.
  */
+@Deprecated("This operation will be removed soon.")
 public operator fun <K, V> Map<K, V>.minus(keys: Sequence<K>): Map<K, V>
         = this.toLinkedMap().apply { minusAssign(keys) }
 
 /**
  * Removes the given [key] from this mutable map.
  */
+@Deprecated("This operation will be removed soon, use remove(key) instead.", ReplaceWith("this.keys -= key"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(key: K) {
     remove(key)
 }
@@ -493,6 +497,7 @@ public operator fun <K, V> MutableMap<K, V>.minusAssign(key: K) {
 /**
  * Removes all the given [keys] from this mutable map.
  */
+@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Iterable<K>) {
     for (key in keys) remove(key)
 }
@@ -500,6 +505,7 @@ public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Iterable<K>) {
 /**
  * Removes all the given [keys] from this mutable map.
  */
+@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Array<K>) {
     for (key in keys) remove(key)
 }
@@ -507,6 +513,7 @@ public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Array<K>) {
 /**
  * Removes all the given [keys] from this mutable map.
  */
+@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"))
 public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Sequence<K>) {
     for (key in keys) remove(key)
 }

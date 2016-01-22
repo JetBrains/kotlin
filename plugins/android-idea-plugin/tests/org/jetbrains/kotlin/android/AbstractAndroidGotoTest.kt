@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
+abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 
     override fun getTestDataPath(): String {
         return KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/goto/" + getTestName(true) + "/"
     }
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val f = myFixture!!
         getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
         val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");

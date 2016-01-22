@@ -15,7 +15,7 @@
  */
 @file:kotlin.jvm.JvmName("ComparisonsKt")
 
-package kotlin
+package kotlin.comparisons
 
 import java.util.Comparator
 
@@ -181,15 +181,6 @@ inline public fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<i
     }
 }
 
-
-/**
- * Creates a comparator using the function to calculate a result of comparison.
- */
-inline public fun <T> comparator(crossinline comparison: (T, T) -> Int): Comparator<T> {
-    return object : Comparator<T> {
-        public override fun compare(a: T, b: T): Int = comparison(a, b)
-    }
-}
 
 /**
  * Creates a comparator using the primary comparator and function to calculate a result of comparison.

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import javax.swing.Icon
 
-public class KtLightClassForFacade private constructor(
+class KtLightClassForFacade private constructor(
         manager: PsiManager,
         private val facadeClassFqName: FqName,
         private val searchScope: GlobalSearchScope,
@@ -46,7 +46,7 @@ public class KtLightClassForFacade private constructor(
 
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 
-    public class FacadeStubCache(private val project: Project) {
+    class FacadeStubCache(private val project: Project) {
         private inner class FacadeCacheData {
             val cache = object : SLRUCache<StubCacheKey, CachedValue<KotlinFacadeLightClassData>>(20, 30) {
                 override fun createValue(key: StubCacheKey): CachedValue<KotlinFacadeLightClassData> {
@@ -60,20 +60,20 @@ public class KtLightClassForFacade private constructor(
                 { CachedValueProvider.Result.create(FacadeCacheData(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
                 /*trackValue = */ false)
 
-        public operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<KotlinFacadeLightClassData> {
+        operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<KotlinFacadeLightClassData> {
             synchronized (cachedValue) {
-                return cachedValue.getValue().cache.get(StubCacheKey(qualifiedName, searchScope))
+                return cachedValue.value.cache.get(StubCacheKey(qualifiedName, searchScope))
             }
         }
 
         companion object {
-            public fun getInstance(project: Project): FacadeStubCache {
-                return ServiceManager.getService<FacadeStubCache>(project, javaClass<FacadeStubCache>())
+            fun getInstance(project: Project): FacadeStubCache {
+                return ServiceManager.getService<FacadeStubCache>(project, FacadeStubCache::class.java)
             }
         }
     }
 
-    public val files: Collection<KtFile> = files.toSet() // needed for hashCode
+    val files: Collection<KtFile> = files.toSet() // needed for hashCode
 
     private val hashCode: Int =
             computeHashCode()
@@ -143,7 +143,7 @@ public class KtLightClassForFacade private constructor(
 
     override fun getQualifiedName() = facadeClassFqName.asString()
 
-    override fun isValid() = files.all { it.isValid() }
+    override fun isValid() = files.all { it.isValid }
 
     override fun copy() = KtLightClassForFacade(getManager(), facadeClassFqName, searchScope, lightClassDataCache, files, deprecated)
 
@@ -156,7 +156,7 @@ public class KtLightClassForFacade private constructor(
     override fun getNavigationElement() = files.iterator().next()
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is PsiClass && Comparing.equal(another.getQualifiedName(), getQualifiedName())
+        return another is PsiClass && Comparing.equal(another.qualifiedName, getQualifiedName())
     }
 
     override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
@@ -189,7 +189,7 @@ public class KtLightClassForFacade private constructor(
     override fun toString() = "${KtLightClassForFacade::class.java.simpleName}:$facadeClassFqName"
 
     companion object Factory {
-        public fun createForFacade(
+        fun createForFacade(
                 manager: PsiManager,
                 facadeClassFqName: FqName,
                 searchScope: GlobalSearchScope,

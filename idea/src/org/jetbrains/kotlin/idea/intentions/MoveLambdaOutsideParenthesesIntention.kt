@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.psi.unpackFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
+class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpression::class.java, "Move lambda argument out of parentheses") {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
-        if (element.getLambdaArguments().isNotEmpty()) return false
-        val argument = element.getValueArguments().lastOrNull() ?: return false
+        if (element.lambdaArguments.isNotEmpty()) return false
+        val argument = element.valueArguments.lastOrNull() ?: return false
         val expression = argument.getArgumentExpression() ?: return false
         val functionLiteral = expression.unpackFunctionLiteral() ?: return false
 
-        val callee = element.getCalleeExpression()
+        val callee = element.calleeExpression
         if (callee is KtNameReferenceExpression) {
             val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
             val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
@@ -45,23 +45,19 @@ public class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCa
             val candidates = targets.filterIsInstance<FunctionDescriptor>()
             // if there are functions among candidates but none of them have last function parameter then not show the intention
             if (candidates.isNotEmpty() && candidates.none {
-                val lastParameter = it.getValueParameters().lastOrNull()
-                lastParameter != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(lastParameter.getType())
+                val lastParameter = it.valueParameters.lastOrNull()
+                lastParameter != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(lastParameter.type)
             }) {
                 return false
             }
         }
 
         if (caretOffset < argument.asElement().startOffset) return false
-        val bodyRange = functionLiteral.getBodyExpression()?.getTextRange() ?: return true
+        val bodyRange = functionLiteral.bodyExpression?.textRange ?: return true
         return !bodyRange.containsInside(caretOffset)
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
-        element.moveFunctionLiteralOutsideParentheses()
-    }
-
-    fun applyTo(element: KtCallExpression) {
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
         element.moveFunctionLiteralOutsideParentheses()
     }
 }

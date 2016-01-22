@@ -41,20 +41,20 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
 
         super.handleInsert(context, item)
 
-        val file = context.getFile()
+        val file = context.file
         if (file is KtFile) {
             if (!context.isAfterDot()) {
-                val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
+                val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
                 psiDocumentManager.commitAllDocuments()
 
-                val startOffset = context.getStartOffset()
-                val document = context.getDocument()
+                val startOffset = context.startOffset
+                val document = context.document
 
                 val qualifiedName = qualifiedNameToInsert(item)
 
                 // first try to resolve short name for faster handling
                 val token = file.findElementAt(startOffset)
-                val nameRef = token!!.getParent() as? KtNameReferenceExpression
+                val nameRef = token!!.parent as? KtNameReferenceExpression
                 if (nameRef != null) {
                     val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]
@@ -72,33 +72,33 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                     "$;val v:"  // if we have no reference in the current context we have a more complicated prefix to get one
                 }
                 val tempSuffix = ".xxx" // we add "xxx" after dot because of KT-9606
-                document.replaceString(startOffset, context.getTailOffset(), tempPrefix + qualifiedName + tempSuffix)
+                document.replaceString(startOffset, context.tailOffset, tempPrefix + qualifiedName + tempSuffix)
 
                 psiDocumentManager.commitAllDocuments()
 
-                val classNameStart = startOffset + tempPrefix.length()
-                val classNameEnd = classNameStart + qualifiedName.length()
+                val classNameStart = startOffset + tempPrefix.length
+                val classNameEnd = classNameStart + qualifiedName.length
                 val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
-                val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length())
+                val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length)
 
                 ShortenReferences.DEFAULT.process(file, classNameStart, classNameEnd)
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
-                if (rangeMarker.isValid() && wholeRangeMarker.isValid()) {
-                    document.deleteString(wholeRangeMarker.getStartOffset(), rangeMarker.getStartOffset())
-                    document.deleteString(rangeMarker.getEndOffset(), wholeRangeMarker.getEndOffset())
+                if (rangeMarker.isValid && wholeRangeMarker.isValid) {
+                    document.deleteString(wholeRangeMarker.startOffset, rangeMarker.startOffset)
+                    document.deleteString(rangeMarker.endOffset, wholeRangeMarker.endOffset)
                 }
             }
         }
     }
 
     private fun qualifiedNameToInsert(item: LookupElement): String {
-        val lookupObject = item.getObject() as DeclarationLookupObject
+        val lookupObject = item.`object` as DeclarationLookupObject
         if (lookupObject.descriptor != null) {
             return IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassifierDescriptor)
         }
         else {
-            val qualifiedName = (lookupObject.psiElement as PsiClass).getQualifiedName()!!
+            val qualifiedName = (lookupObject.psiElement as PsiClass).qualifiedName!!
             return if (FqNameUnsafe.isValid(qualifiedName)) FqNameUnsafe(qualifiedName).render() else qualifiedName
         }
     }

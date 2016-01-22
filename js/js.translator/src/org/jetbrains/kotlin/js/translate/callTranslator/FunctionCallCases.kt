@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.ArrayList
 
-public fun CallArgumentTranslator.ArgumentsInfo.argsWithReceiver(receiver: JsExpression): List<JsExpression> {
-    val allArguments = ArrayList<JsExpression>(1 + reifiedArguments.size() + valueArguments.size())
+fun CallArgumentTranslator.ArgumentsInfo.argsWithReceiver(receiver: JsExpression): List<JsExpression> {
+    val allArguments = ArrayList<JsExpression>(1 + reifiedArguments.size + valueArguments.size)
     allArguments.addAll(reifiedArguments)
     allArguments.add(receiver)
     allArguments.addAll(valueArguments)
@@ -107,7 +107,7 @@ object DefaultFunctionCallCase : FunctionCallCase() {
         }
 
         val referenceToCall =
-                if (callableDescriptor.getVisibility() == Visibilities.LOCAL) {
+                if (callableDescriptor.visibility == Visibilities.LOCAL) {
                     Namer.getFunctionCallRef(functionRef)
                 }
                 else {
@@ -163,13 +163,13 @@ object NativeSetterCallCase : AnnotatedAsNativeXCallCase(PredefinedAnnotation.NA
 object InvokeIntrinsic : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         val callableDescriptor = callInfo.callableDescriptor
-        if (callableDescriptor.getName() != OperatorNameConventions.INVOKE)
+        if (callableDescriptor.name != OperatorNameConventions.INVOKE)
             return false
-        val parameterCount = callableDescriptor.getValueParameters().size()
-        val funDeclaration = callableDescriptor.getContainingDeclaration()
+        val parameterCount = callableDescriptor.valueParameters.size
+        val funDeclaration = callableDescriptor.containingDeclaration
 
-        val reflectionTypes = callInfo.context.getReflectionTypes()
-        return if (callableDescriptor.getExtensionReceiverParameter() == null)
+        val reflectionTypes = callInfo.context.reflectionTypes
+        return if (callableDescriptor.extensionReceiverParameter == null)
             funDeclaration == callableDescriptor.builtIns.getFunction(parameterCount) ||
             funDeclaration == reflectionTypes.getKFunction(parameterCount)
         else
@@ -209,7 +209,7 @@ object ConstructorCallCase : FunctionCallCase() {
         val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        if(constructorDescriptor.isPrimary() || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
+        if(constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
             return JsNew(functionRef, argumentsInfo.translateArguments)
         }
         else {
@@ -233,11 +233,11 @@ object SuperCallCase : FunctionCallCase() {
 
 object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean =
-            callInfo.resolvedCall.getCall().getCallType() != Call.CallType.DEFAULT && callInfo.callableDescriptor.isDynamic()
+            callInfo.resolvedCall.call.callType != Call.CallType.DEFAULT && callInfo.callableDescriptor.isDynamic()
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
         val arguments = argumentsInfo.translateArguments
-        val callType = resolvedCall.getCall().getCallType()
+        val callType = resolvedCall.call.callType
         return when (callType) {
             Call.CallType.INVOKE ->
                 JsInvocation(dispatchReceiver!!, arguments)
@@ -255,13 +255,13 @@ object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase() {
 object DynamicOperatorCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean =
             callInfo.callableDescriptor.isDynamic() &&
-            callInfo.resolvedCall.getCall().getCallElement().let {
+            callInfo.resolvedCall.call.callElement.let {
                 it is KtOperationExpression &&
                 PsiUtils.getOperationToken(it).let { (it == KtTokens.NOT_IN || OperatorTable.hasCorrespondingOperator(it)) }
             }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
-        val callElement = resolvedCall.getCall().getCallElement() as KtOperationExpression
+        val callElement = resolvedCall.call.callElement as KtOperationExpression
         val operationToken = PsiUtils.getOperationToken(callElement)
 
         val arguments = argumentsInfo.translateArguments

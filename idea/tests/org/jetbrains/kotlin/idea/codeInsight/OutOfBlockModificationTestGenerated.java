@@ -53,6 +53,12 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         doTest(fileName);
     }
 
+    @TestMetadata("FunInInitBlock.kt")
+    public void testFunInInitBlock() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunInInitBlock.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunNoBody.kt")
     public void testFunNoBody() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/FunNoBody.kt");
@@ -182,6 +188,12 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
     @TestMetadata("InPropertyWithInference.kt")
     public void testInPropertyWithInference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InPropertyWithInference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InitBlock.kt")
+    public void testInitBlock() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/outOfBlock/InitBlock.kt");
         doTest(fileName);
     }
 

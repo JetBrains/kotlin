@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-public class DeferredMethodVisitor(
+class DeferredMethodVisitor(
         val intermediate: MethodNode,
         val resultNode: () -> MethodVisitor
 ) : MethodVisitor(InlineCodegenUtil.API, intermediate) {

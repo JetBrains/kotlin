@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T> run(/*0*/ block: () -> T): T
+public fun test1(): kotlin.Unit

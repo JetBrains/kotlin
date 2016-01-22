@@ -16,7 +16,7 @@ operator fun <T, U, V> Function2<T, U, V>.rangeTo(p: Function2<T, U, V>): Closed
     return 1..2
 }
 
-operator fun <T, U, V, W> @Extension Function3<T, U, V, W>.rangeTo(ext: @Extension Function3<T, U, V, W>): ClosedRange<Int> {
+operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.rangeTo(ext: @ExtensionFunctionType Function3<T, U, V, W>): ClosedRange<Int> {
     return 1..2
 }
 

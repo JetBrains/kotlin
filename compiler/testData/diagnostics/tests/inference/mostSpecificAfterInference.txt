@@ -1,10 +1,10 @@
 package
 
 package i {
-    public fun test(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
-    public fun test1(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
+    public fun test(/*0*/ list: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    public fun test1(/*0*/ list: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     public fun </*0*/ T> java.lang.Iterable<T>.foo(): kotlin.Unit
-    public fun </*0*/ T> kotlin.Collection<T>.foo(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ R> java.lang.Iterable<T>.map1(/*0*/ f: (T) -> R): kotlin.List<R>
-    public fun </*0*/ T, /*1*/ R> kotlin.Collection<T>.map1(/*0*/ f: (T) -> R): kotlin.List<R>
+    public fun </*0*/ T> kotlin.collections.Collection<T>.foo(): kotlin.Unit
+    public fun </*0*/ T, /*1*/ R> java.lang.Iterable<T>.map1(/*0*/ f: (T) -> R): kotlin.collections.List<R>
+    public fun </*0*/ T, /*1*/ R> kotlin.collections.Collection<T>.map1(/*0*/ f: (T) -> R): kotlin.collections.List<R>
 }

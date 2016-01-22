@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinBasicStepMethodFilter(
+class KotlinBasicStepMethodFilter(
         val resolvedElement: KtElement,
         val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
@@ -35,7 +35,7 @@ public class KotlinBasicStepMethodFilter(
         myTargetMethodName = when (resolvedElement) {
             is KtAnonymousInitializer -> "<init>"
             is KtConstructor<*> -> "<init>"
-            is KtPropertyAccessor -> JvmAbi.getterName((resolvedElement.parent as KtProperty).name!!)
+            is KtPropertyAccessor -> JvmAbi.getterName((resolvedElement.property).name!!)
             else -> resolvedElement.name!!
         }
     }

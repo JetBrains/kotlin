@@ -29,11 +29,11 @@ fun checkConflictsAndReplaceUsageInfos(result: MutableList<UsageInfo>) {
     val usagesToRemove = ArrayList<UsageInfo>()
 
     for (usageInfo in result) {
-        val ref = usageInfo.getReference()
+        val ref = usageInfo.reference
         if (usageInfo !is MoveRenameUsageInfo || ref !is AbstractKtReference<*> || ref.canRename()) continue
 
-        val refElement = usageInfo.getElement()
-        val referencedElement = usageInfo.getReferencedElement()
+        val refElement = usageInfo.element
+        val referencedElement = usageInfo.referencedElement
         if (refElement != null && referencedElement != null) {
             usagesToAdd.add(UnresolvableConventionViolationUsageInfo(refElement, referencedElement))
             usagesToRemove.add(usageInfo)

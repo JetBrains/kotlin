@@ -21,20 +21,20 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinFindUsagesProvider : FindUsagesProvider {
-    public override fun canFindUsagesFor(psiElement: PsiElement): Boolean =
+class KotlinFindUsagesProvider : FindUsagesProvider {
+    override fun canFindUsagesFor(psiElement: PsiElement): Boolean =
             psiElement is KtNamedDeclaration
 
-    public override fun getWordsScanner() = null
+    override fun getWordsScanner() = null
 
-    public override fun getHelpId(psiElement: PsiElement): String? = null
+    override fun getHelpId(psiElement: PsiElement): String? = null
 
-    public override fun getType(element: PsiElement): String {
+    override fun getType(element: PsiElement): String {
         return when(element) {
             is KtNamedFunction -> "function"
             is KtClass -> "class"
             is KtParameter -> "parameter"
-            is KtProperty -> if (element.isLocal()) "variable" else "property"
+            is KtProperty -> if (element.isLocal) "variable" else "property"
             is KtDestructuringDeclarationEntry -> "variable"
             is KtTypeParameter -> "type parameter"
             is KtSecondaryConstructor -> "constructor"
@@ -43,10 +43,10 @@ public class KotlinFindUsagesProvider : FindUsagesProvider {
         }
     }
 
-    public override fun getDescriptiveName(element: PsiElement): String {
-        return if (element is PsiNamedElement) element.getName() ?: "<unnamed>" else ""
+    override fun getDescriptiveName(element: PsiElement): String {
+        return if (element is PsiNamedElement) element.name ?: "<unnamed>" else ""
     }
 
-    public override fun getNodeText(element: PsiElement, useFullName: Boolean): String =
+    override fun getNodeText(element: PsiElement, useFullName: Boolean): String =
             getDescriptiveName(element)
 }

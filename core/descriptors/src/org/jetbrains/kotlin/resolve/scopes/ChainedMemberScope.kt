@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
-public class ChainedMemberScope(
+class ChainedMemberScope(
         internal val debugName: String,
         private val scopes: List<MemberScope>
 ) : MemberScope {
@@ -44,7 +44,7 @@ public class ChainedMemberScope(
     override fun toString() = debugName
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), ": ", debugName, " {")
+        p.println(javaClass.simpleName, ": ", debugName, " {")
         p.pushIndent()
 
         for (scope in scopes) {

@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfiguration>(JetRunConfigurationType.getInstance()) {
+class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfiguration>(JetRunConfigurationType.getInstance()) {
 
     override fun setupConfigurationFromContext(configuration: JetRunConfiguration,
                                                context: ConfigurationContext,
                                                sourceElement: Ref<PsiElement>): Boolean {
-        val location = context.getLocation() ?: return false
-        val module = location.getModule() ?: return false
+        val location = context.location ?: return false
+        val module = location.module ?: return false
         val container = getEntryPointContainer(location)
         val startClassFQName = getStartClassFqName(container) ?: return false
 
@@ -50,13 +50,13 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
 
     private fun getEntryPointContainer(location: Location<*>?): KtDeclarationContainer? {
         if (location == null) return null
-        if (DumbService.getInstance(location.getProject()).isDumb()) return null
+        if (DumbService.getInstance(location.project).isDumb) return null
 
-        val module = location.getModule() ?: return null
+        val module = location.module ?: return null
 
         if (ProjectStructureUtil.isJsKotlinModule(module)) return null
 
-        val locationElement = location.getPsiElement()
+        val locationElement = location.psiElement
 
         return getEntryPointContainer(locationElement)
     }
@@ -65,20 +65,20 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
                                           configuration: JetRunConfiguration,
                                           fqName: FqName) {
         configuration.setModule(module)
-        configuration.setRunClass(fqName.asString())
+        configuration.runClass = fqName.asString()
         configuration.setGeneratedName()
     }
 
     override fun isConfigurationFromContext(configuration: JetRunConfiguration, context: ConfigurationContext): Boolean {
-        val startClassFQName = getStartClassFqName(getEntryPointContainer(context.getLocation())) ?: return false
+        val startClassFQName = getStartClassFqName(getEntryPointContainer(context.location)) ?: return false
 
-        return configuration.getRunClass() == startClassFQName.asString() &&
-            context.getModule() ==  configuration.getConfigurationModule().getModule()
+        return configuration.runClass == startClassFQName.asString() &&
+               context.module ==  configuration.configurationModule.module
     }
 
     companion object {
-        public fun getEntryPointContainer(locationElement: PsiElement): KtDeclarationContainer? {
-            val psiFile = locationElement.getContainingFile()
+        fun getEntryPointContainer(locationElement: PsiElement): KtDeclarationContainer? {
+            val psiFile = locationElement.containingFile
             if (!(psiFile is KtFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
 
             val resolutionFacade = psiFile.getResolutionFacade()
@@ -90,32 +90,32 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
                 if (entryPointContainer is KtClass) {
                     entryPointContainer = entryPointContainer.getCompanionObjects().singleOrNull()
                 }
-                if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.getDeclarations())) return entryPointContainer
+                if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.declarations)) return entryPointContainer
                 currentElement = (currentElement as PsiElement).declarationContainer(true)
             }
 
             return null
         }
 
-        public fun getStartClassFqName(container: KtDeclarationContainer?): FqName? = when(container) {
+        fun getStartClassFqName(container: KtDeclarationContainer?): FqName? = when(container) {
             null -> null
             is KtFile -> container.javaFileFacadeFqName
             is KtClassOrObject -> {
                 if (container is KtObjectDeclaration && container.isCompanion()) {
                     val containerClass = container.getParentOfType<KtClass>(true)
-                    containerClass?.getFqName()
+                    containerClass?.fqName
                 } else {
-                    container.getFqName()
+                    container.fqName
                 }
             }
-            else -> throw IllegalArgumentException("Invalid entry-point container: " + (container as PsiElement).getText())
+            else -> throw IllegalArgumentException("Invalid entry-point container: " + (container as PsiElement).text)
         }
 
         private fun PsiElement.declarationContainer(strict: Boolean): KtDeclarationContainer? {
             val element = if (strict)
-                PsiTreeUtil.getParentOfType(this, javaClass<KtClassOrObject>(), javaClass<KtFile>())
+                PsiTreeUtil.getParentOfType(this, KtClassOrObject::class.java, KtFile::class.java)
             else
-                PsiTreeUtil.getNonStrictParentOfType(this, javaClass<KtClassOrObject>(), javaClass<KtFile>())
+                PsiTreeUtil.getNonStrictParentOfType(this, KtClassOrObject::class.java, KtFile::class.java)
             return element as KtDeclarationContainer?
         }
 

@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.idea.configuration.KotlinModuleTypeManager;
 public class KotlinModuleTypeManagerImpl extends KotlinModuleTypeManager {
     @Override
     public boolean isAndroidGradleModule(@NotNull Module module) {
-        // We don't want to depend on the Android-Gradle plugin
-        // See com.android.tools.idea.gradle.util.Projects.isGradleProject()
+        return hasAndroidFacet(module) && isGradleModule(module);
+    }
+
+    private static boolean hasAndroidFacet(@NotNull Module module) {
         for (Facet facet : FacetManager.getInstance(module).getAllFacets()) {
-            if (facet.getName().equals("Android-Gradle")) {
+            if (facet.getName().equals("Android")) {
                 return true;
             }
         }

@@ -77,20 +77,20 @@ class SmartCompletion(
             expression
     }
 
-    public val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
+    val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
 
     private val callableTypeExpectedInfo = expectedInfos.filterCallableExpected()
 
-    public val smartCastCalculator: SmartCastCalculator by lazy(LazyThreadSafetyMode.NONE) {
+    val smartCastCalculator: SmartCastCalculator by lazy(LazyThreadSafetyMode.NONE) {
         SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression, callTypeAndReceiver.receiver as? KtExpression, resolutionFacade)
     }
 
-    public val descriptorFilter: ((DeclarationDescriptor, AbstractLookupElementFactory) -> Collection<LookupElement>)? =
+    val descriptorFilter: ((DeclarationDescriptor, AbstractLookupElementFactory) -> Collection<LookupElement>)? =
             { descriptor: DeclarationDescriptor, factory: AbstractLookupElementFactory ->
                 filterDescriptor(descriptor, factory).map { postProcess(it) }
             }.check { expectedInfos.isNotEmpty() }
 
-    public fun additionalItems(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
+    fun additionalItems(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val (items, inheritanceSearcher) = additionalItemsNoPostProcess(lookupElementFactory)
         val postProcessedItems = items.map { postProcess(it) }
         //TODO: could not use "let" because of KT-8754
@@ -105,14 +105,14 @@ class SmartCompletion(
         return postProcessedItems to postProcessedSearcher
     }
 
-    public val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>>(LazyThreadSafetyMode.NONE) {
-        val parent = expressionWithType.getParent()
+    val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>>(LazyThreadSafetyMode.NONE) {
+        val parent = expressionWithType.parent
         when (parent) {
             is KtBinaryExpression -> {
-                if (parent.getRight() == expressionWithType) {
-                    val operationToken = parent.getOperationToken()
+                if (parent.right == expressionWithType) {
+                    val operationToken = parent.operationToken
                     if (operationToken == KtTokens.EQ || operationToken in COMPARISON_TOKENS) {
-                        val left = parent.getLeft()
+                        val left = parent.left
                         if (left is KtReferenceExpression) {
                             return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
                         }
@@ -122,8 +122,8 @@ class SmartCompletion(
 
             is KtWhenConditionWithExpression -> {
                 val entry = parent.getParent() as KtWhenEntry
-                val whenExpression = entry.getParent() as KtWhenExpression
-                val subject = whenExpression.getSubjectExpression() ?: return@lazy emptySet()
+                val whenExpression = entry.parent as KtWhenExpression
+                val subject = whenExpression.subjectExpression ?: return@lazy emptySet()
 
                 val descriptorsToSkip = HashSet<DeclarationDescriptor>()
 
@@ -137,12 +137,12 @@ class SmartCompletion(
                 val subjectType = bindingContext.getType(subject) ?: return@lazy emptySet()
                 val classDescriptor = TypeUtils.getClassDescriptor(subjectType)
                 if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
-                    val conditions = whenExpression.getEntries()
-                            .flatMap { it.getConditions().toList() }
+                    val conditions = whenExpression.entries
+                            .flatMap { it.conditions.toList() }
                             .filterIsInstance<KtWhenConditionWithExpression>()
                     for (condition in conditions) {
-                        val selectorExpr = (condition.getExpression() as? KtDotQualifiedExpression)
-                                                   ?.getSelectorExpression() as? KtReferenceExpression ?: continue
+                        val selectorExpr = (condition.expression as? KtDotQualifiedExpression)
+                                                   ?.selectorExpression as? KtReferenceExpression ?: continue
                         val target = bindingContext[BindingContext.REFERENCE_TARGET, selectorExpr] as? ClassDescriptor ?: continue
                         if (DescriptorUtils.isEnumEntry(target)) {
                             descriptorsToSkip.add(target)
@@ -222,7 +222,7 @@ class SmartCompletion(
                         val entry = whenCondition.parent as KtWhenEntry
                         val whenExpression = entry.parent as KtWhenExpression
                         val entries = whenExpression.entries
-                        if (whenExpression.elseExpression == null && entry == entries.last() && entries.size() != 1) {
+                        if (whenExpression.elseExpression == null && entry == entries.last() && entries.size != 1) {
                             val lookupElement = LookupElementBuilder.create("else").bold().withTailText(" ->")
                             items.add(object: LookupElementDecorator<LookupElement>(lookupElement) {
                                 override fun handleInsert(context: InsertionContext) {
@@ -256,10 +256,10 @@ class SmartCompletion(
         return if (item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) == null) {
             object : LookupElementDecorator<LookupElement>(item) {
                 override fun handleInsert(context: InsertionContext) {
-                    if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
-                        val offset = context.getOffsetMap().getOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
+                    if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
+                        val offset = context.offsetMap.getOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
                         if (offset != -1) {
-                            context.getDocument().deleteString(context.getTailOffset(), offset)
+                            context.document.deleteString(context.tailOffset, offset)
                         }
                     }
 
@@ -274,7 +274,7 @@ class SmartCompletion(
 
     private fun MutableCollection<LookupElement>.addThisItems(place: KtExpression, expectedInfos: Collection<ExpectedInfo>, smartCastCalculator: SmartCastCalculator) {
         if (shouldCompleteThisItems(prefixMatcher)) {
-            val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix(), resolutionFacade)
+            val items = thisExpressionItems(bindingContext, place, prefixMatcher.prefix, resolutionFacade)
             for (item in items) {
                 val types = smartCastCalculator.types(item.receiverParameter).map { FuzzyType(it, emptyList()) }
                 val matcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
@@ -292,9 +292,9 @@ class SmartCompletion(
             val originalDeclaration = toFromOriginalFileMapper.toOriginalFile(declaration)
             if (originalDeclaration != null) {
                 val originalDescriptor = originalDeclaration.resolveToDescriptor() as? CallableDescriptor
-                val returnType = originalDescriptor?.getReturnType()
+                val returnType = originalDescriptor?.returnType
                 if (returnType != null && !returnType.isError) {
-                    return listOf(ExpectedInfo(returnType, declaration.getName(), null))
+                    return listOf(ExpectedInfo(returnType, declaration.name, null))
                 }
             }
         }
@@ -316,10 +316,10 @@ class SmartCompletion(
     }
 
     private fun implicitlyTypedDeclarationFromInitializer(expression: KtExpression): KtDeclaration? {
-        val parent = expression.getParent()
+        val parent = expression.parent
         when (parent) {
-            is KtVariableDeclaration -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
-            is KtNamedFunction -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
+            is KtVariableDeclaration -> if (expression == parent.initializer && parent.typeReference == null) return parent
+            is KtNamedFunction -> if (expression == parent.initializer && parent.typeReference == null) return parent
         }
         return null
     }
@@ -371,11 +371,11 @@ class SmartCompletion(
     }
 
     private fun buildForAsTypePosition(lookupElementFactory: BasicLookupElementFactory): Collection<LookupElement>? {
-        val binaryExpression = ((expression.getParent() as? KtUserType)
-                ?.getParent() as? KtTypeReference)
-                    ?.getParent() as? KtBinaryExpressionWithTypeRHS
+        val binaryExpression = ((expression.parent as? KtUserType)
+                ?.parent as? KtTypeReference)
+                    ?.parent as? KtBinaryExpressionWithTypeRHS
                         ?: return null
-        val elementType = binaryExpression.getOperationReference().getReferencedNameElementType()
+        val elementType = binaryExpression.operationReference.getReferencedNameElementType()
         if (elementType != KtTokens.AS_KEYWORD && elementType != KtTokens.AS_SAFE) return null
         val expectedInfos = calcExpectedInfos(binaryExpression)
 
@@ -391,7 +391,7 @@ class SmartCompletion(
     }
 
     companion object {
-        public val OLD_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("nonFunctionReplacementOffset")
-        public val MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("multipleArgumentsReplacementOffset")
+        val OLD_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("nonFunctionReplacementOffset")
+        val MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("multipleArgumentsReplacementOffset")
     }
 }

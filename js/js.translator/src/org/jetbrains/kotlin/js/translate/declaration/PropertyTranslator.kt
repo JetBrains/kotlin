@@ -43,18 +43,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
  * Translates single property /w accessors.
  */
 
-public fun translateAccessors(
+fun translateAccessors(
         descriptor: PropertyDescriptor,
         declaration: KtProperty?,
         result: MutableList<JsPropertyInitializer>,
         context: TranslationContext
 ) {
-    if (descriptor.getModality() == Modality.ABSTRACT || JsDescriptorUtils.isSimpleFinalProperty(descriptor)) return
+    if (descriptor.modality == Modality.ABSTRACT || JsDescriptorUtils.isSimpleFinalProperty(descriptor)) return
 
     PropertyTranslator(descriptor, declaration, context).translate(result)
 }
 
-public fun translateAccessors(
+fun translateAccessors(
         descriptor: PropertyDescriptor,
         result: MutableList<JsPropertyInitializer>,
         context: TranslationContext
@@ -62,7 +62,7 @@ public fun translateAccessors(
     translateAccessors(descriptor, null, result, context)
 }
 
-public fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
+fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
         descriptor: PropertyDescriptor,
         context: TranslationContext,
         generateGetter: () -> JsPropertyInitializer,
@@ -78,7 +78,7 @@ public fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
     }
 
     to.add(generateGetter())
-    if (descriptor.isVar()) {
+    if (descriptor.isVar) {
         to.add(generateSetter())
     }
 }
@@ -89,7 +89,7 @@ private class PropertyTranslator(
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
-    private val propertyName: String = descriptor.getName().asString()
+    private val propertyName: String = descriptor.name.asString()
 
     fun translate(result: MutableList<JsPropertyInitializer>) {
         result.addGetterAndSetter(descriptor, context(), { generateGetter() }, { generateSetter() })
@@ -101,20 +101,20 @@ private class PropertyTranslator(
     private fun generateSetter(): JsPropertyInitializer =
             if (hasCustomSetter()) translateCustomAccessor(getCustomSetterDeclaration()) else generateDefaultSetter()
 
-    private fun hasCustomGetter() = declaration?.getGetter() != null && getCustomGetterDeclaration().hasBody()
+    private fun hasCustomGetter() = declaration?.getter != null && getCustomGetterDeclaration().hasBody()
 
-    private fun hasCustomSetter() = declaration?.getSetter() != null && getCustomSetterDeclaration().hasBody()
+    private fun hasCustomSetter() = declaration?.setter != null && getCustomSetterDeclaration().hasBody()
 
     private fun getCustomGetterDeclaration(): KtPropertyAccessor =
-            declaration?.getGetter() ?:
-                    throw IllegalStateException("declaration and getter should not be null descriptor=${descriptor} declaration=${declaration}")
+            declaration?.getter ?:
+            throw IllegalStateException("declaration and getter should not be null descriptor=${descriptor} declaration=${declaration}")
 
     private fun getCustomSetterDeclaration(): KtPropertyAccessor =
-            declaration?.getSetter() ?:
-                    throw IllegalStateException("declaration and setter should not be null descriptor=${descriptor} declaration=${declaration}")
+            declaration?.setter ?:
+            throw IllegalStateException("declaration and setter should not be null descriptor=${descriptor} declaration=${declaration}")
 
     private fun generateDefaultGetter(): JsPropertyInitializer {
-        val getterDescriptor = descriptor.getGetter() ?: throw IllegalStateException("Getter descriptor should not be null")
+        val getterDescriptor = descriptor.getter ?: throw IllegalStateException("Getter descriptor should not be null")
         return generateDefaultAccessor(getterDescriptor, generateDefaultGetterFunction(getterDescriptor))
     }
 
@@ -126,7 +126,7 @@ private class PropertyTranslator(
         }
 
         assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
-        val scope = context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration())
+        val scope = context().getScopeForDescriptor(getterDescriptor.containingDeclaration)
         val result = backingFieldReference(context(), descriptor)
         val body = JsBlock(JsReturn(result))
 
@@ -137,7 +137,7 @@ private class PropertyTranslator(
         getterDescriptor: PropertyGetterDescriptor,
         delegatedCall: ResolvedCall<FunctionDescriptor>
     ): JsFunction {
-        val scope = context().getScopeForDescriptor(getterDescriptor.getContainingDeclaration())
+        val scope = context().getScopeForDescriptor(getterDescriptor.containingDeclaration)
         val function = JsFunction(scope, JsBlock(), accessorDescription(getterDescriptor))
 
         val delegateRef = getDelegateNameRef(propertyName)
@@ -146,8 +146,8 @@ private class PropertyTranslator(
         )
 
         if (getterDescriptor.isExtension) {
-            val receiver = function.addParameter(getReceiverParameterName()).getName()
-            val arguments = (delegatedJsCall as JsInvocation).getArguments()
+            val receiver = function.addParameter(getReceiverParameterName()).name
+            val arguments = (delegatedJsCall as JsInvocation).arguments
             arguments.set(0, receiver.makeRef())
         }
 
@@ -169,18 +169,18 @@ private class PropertyTranslator(
     }
 
     private fun generateDefaultSetter(): JsPropertyInitializer {
-        val setterDescriptor = descriptor.getSetter() ?: throw IllegalStateException("Setter descriptor should not be null")
+        val setterDescriptor = descriptor.setter ?: throw IllegalStateException("Setter descriptor should not be null")
         return generateDefaultAccessor(setterDescriptor, generateDefaultSetterFunction(setterDescriptor))
     }
 
     private fun generateDefaultSetterFunction(setterDescriptor: PropertySetterDescriptor): JsFunction {
-        val containingScope = context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration())
+        val containingScope = context().getScopeForDescriptor(setterDescriptor.containingDeclaration)
         val function = JsFunction(containingScope, JsBlock(), accessorDescription(setterDescriptor))
 
-        assert(setterDescriptor.getValueParameters().size() == 1) { "Setter must have 1 parameter" }
-        val correspondingPropertyName = setterDescriptor.getCorrespondingProperty().getName().asString()
-        val valueParameter = function.addParameter(correspondingPropertyName).getName()
-        val withAliased = context().innerContextWithAliased(setterDescriptor.getValueParameters().get(0), valueParameter.makeRef())
+        assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
+        val correspondingPropertyName = setterDescriptor.correspondingProperty.name.asString()
+        val valueParameter = function.addParameter(correspondingPropertyName).name
+        val withAliased = context().innerContextWithAliased(setterDescriptor.valueParameters.get(0), valueParameter.makeRef())
         val delegatedCall = context().bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor)
 
         if (delegatedCall != null) {
@@ -191,8 +191,8 @@ private class PropertyTranslator(
             function.addStatement(delegatedJsCall.makeStmt())
 
             if (setterDescriptor.isExtension) {
-                val receiver = function.addParameter(getReceiverParameterName(), 0).getName()
-                (delegatedJsCall as JsInvocation).getArguments().set(0, receiver.makeRef())
+                val receiver = function.addParameter(getReceiverParameterName(), 0).name
+                (delegatedJsCall as JsInvocation).arguments.set(0, receiver.makeRef())
             }
         }
         else {
@@ -221,7 +221,7 @@ private class PropertyTranslator(
                         throw IllegalArgumentException("Unknown accessor type ${accessorDescriptor.javaClass}")
                 }
 
-        val name = accessorDescriptor.getName().asString()
+        val name = accessorDescriptor.name.asString()
         return "$accessorType for $name"
     }
 }

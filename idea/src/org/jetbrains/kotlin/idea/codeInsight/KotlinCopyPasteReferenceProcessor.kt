@@ -64,8 +64,8 @@ import java.io.IOException
 import java.util.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
-public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
-    private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
+class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
+    private val LOG = Logger.getInstance(KotlinCopyPasteReferenceProcessor::class.java)
 
     private val IGNORE_REFERENCES_INSIDE: Array<Class<out KtElement>> = arrayOf(
             KtImportList::class.java,
@@ -95,7 +95,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             startOffsets: IntArray,
             endOffsets: IntArray
     ): List<KotlinReferenceTransferableData> {
-        if (file !is KtFile || DumbService.getInstance(file.getProject()).isDumb()) return listOf()
+        if (file !is KtFile || DumbService.getInstance(file.getProject()).isDumb) return listOf()
 
         val collectedData = try {
             collectReferenceData(file, startOffsets, endOffsets)
@@ -116,7 +116,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         return listOf(KotlinReferenceTransferableData(collectedData.toTypedArray()))
     }
 
-    public fun collectReferenceData(
+    fun collectReferenceData(
             file: KtFile,
             startOffsets: IntArray,
             endOffsets: IntArray
@@ -144,7 +144,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
             val descriptors = reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
             //check whether this reference is unambiguous
-            if (reference !is KtMultiReference<*> && descriptors.size() > 1) return@forEachDescendantOfType
+            if (reference !is KtMultiReference<*> && descriptors.size > 1) return@forEachDescendantOfType
 
             for (descriptor in descriptors) {
                 val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
@@ -174,9 +174,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             indented: Ref<Boolean>,
             values: List<KotlinReferenceTransferableData>
     ) {
-        if (DumbService.getInstance(project).isDumb()) return
+        if (DumbService.getInstance(project).isDumb) return
 
-        val document = editor.getDocument()
+        val document = editor.document
         val file = PsiDocumentManager.getInstance(project).getPsiFile(document)
         if (file !is KtFile) return
 
@@ -185,7 +185,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         processReferenceData(project, file, bounds.getStartOffset(), referenceData)
     }
 
-    public fun processReferenceData(project: Project, file: KtFile, blockStart: Int, referenceData: Array<KotlinReferenceData>) {
+    fun processReferenceData(project: Project, file: KtFile, blockStart: Int, referenceData: Array<KotlinReferenceData>) {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
         val referencesPossibleToRestore = findReferencesToRestore(file, blockStart, referenceData)
@@ -263,8 +263,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     }
 
     private fun restoreReferences(referencesToRestore: Collection<ReferenceToRestoreData>, file: KtFile) {
-        val importHelper = ImportInsertHelper.getInstance(file.getProject())
-        val smartPointerManager = SmartPointerManager.getInstance(file.getProject())
+        val importHelper = ImportInsertHelper.getInstance(file.project)
+        val smartPointerManager = SmartPointerManager.getInstance(file.project)
 
         data class BindingRequest(
                 val pointer: SmartPsiElementPointer<KtSimpleNameExpression>,
@@ -290,10 +290,10 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             importHelper.importDescriptor(file, descriptor)
         }
         for ((pointer, fqName) in bindingRequests) {
-            val reference = pointer.getElement()!!.mainReference
+            val reference = pointer.element!!.mainReference
             reference.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
         }
-        performDelayedShortening(file.getProject())
+        performDelayedShortening(file.project)
     }
 
     private fun KotlinReferenceData.Kind.isExtension()
@@ -302,7 +302,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun findImportableDescriptors(fqName: FqName, file: KtFile): Collection<DeclarationDescriptor> {
         return file.resolveImportReference(fqName).filterNot {
             /*TODO: temporary hack until we don't have ability to insert qualified reference into root package*/
-            DescriptorUtils.getParentOfType(it, javaClass<PackageFragmentDescriptor>())?.fqName?.isRoot() ?: false
+            DescriptorUtils.getParentOfType(it, PackageFragmentDescriptor::class.java)?.fqName?.isRoot ?: false
         }
     }
 
@@ -312,7 +312,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
         val fqNames = referencesToRestore.map { it.refData.fqName }.toSortedSet()
 
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
             declarationsToImportSuggested = fqNames
         }
 
@@ -324,22 +324,21 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val dialog = RestoreReferencesDialog(project, fqNames.toTypedArray())
         dialog.show()
 
-        val selectedFqNames = dialog.getSelectedElements()!!.toSet()
+        val selectedFqNames = dialog.selectedElements!!.toSet()
         return referencesToRestore.filter { selectedFqNames.contains(it.refData.fqName) }
     }
 
     private fun toTextRanges(startOffsets: IntArray, endOffsets: IntArray): List<TextRange> {
-        assert(startOffsets.size() == endOffsets.size())
+        assert(startOffsets.size == endOffsets.size)
         return startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }
     }
 
     private fun PsiElement.isInCopiedArea(fileCopiedFrom: KtFile, startOffsets: IntArray, endOffsets: IntArray): Boolean {
-        if (getContainingFile() != fileCopiedFrom) return false
+        if (containingFile != fileCopiedFrom) return false
         return toTextRanges(startOffsets, endOffsets).any { this.range in it }
     }
 
     companion object {
-        @TestOnly
-        public var declarationsToImportSuggested: Collection<String> = emptyList()
+        @TestOnly var declarationsToImportSuggested: Collection<String> = emptyList()
     }
 }

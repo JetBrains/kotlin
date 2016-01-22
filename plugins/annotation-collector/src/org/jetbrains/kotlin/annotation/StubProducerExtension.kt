@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExten
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.File
 
-public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandlerExtension {
+class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandlerExtension {
 
     override fun analysisCompleted(
             project: Project,
@@ -67,7 +67,7 @@ private class StubClassBuilderFactory : ClassBuilderFactory {
     override fun asText(builder: ClassBuilder) = throw UnsupportedOperationException("BINARIES generator asked for text")
 
     override fun asBytes(builder: ClassBuilder): ByteArray {
-        val visitor = builder.getVisitor() as ClassWriter
+        val visitor = builder.visitor as ClassWriter
         return visitor.toByteArray()
     }
 

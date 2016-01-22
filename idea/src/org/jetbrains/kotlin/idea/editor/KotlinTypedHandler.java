@@ -75,6 +75,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             case '<':
                 kotlinLTTyped = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
                                 LtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
+                autoPopupParameterInfo(project, editor);
                 return Result.CONTINUE;
 
             case '>':

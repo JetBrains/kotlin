@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.repl.messages
 
 import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter
 
-public interface DiagnosticMessageHolder : DiagnosticMessageReporter {
+interface DiagnosticMessageHolder : DiagnosticMessageReporter {
     val renderedDiagnostics: String
 }

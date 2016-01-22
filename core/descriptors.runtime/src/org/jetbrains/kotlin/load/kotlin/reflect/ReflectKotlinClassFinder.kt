@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.ClassId
 
-public class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinClassFinder {
+class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinClassFinder {
     private fun findKotlinClass(fqName: String): KotlinJvmBinaryClass? {
         return classLoader.tryLoadClass(fqName)?.let { ReflectKotlinClass.create(it) }
     }
@@ -31,11 +31,11 @@ public class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : Ko
 
     override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
         // TODO: go through javaClass's class loader
-        return findKotlinClass(javaClass.getFqName()?.asString() ?: return null)
+        return findKotlinClass(javaClass.fqName?.asString() ?: return null)
     }
 }
 
 private fun ClassId.toRuntimeFqName(): String {
-    val className = getRelativeClassName().asString().replace('.', '$')
-    return if (getPackageFqName().isRoot()) className else "${getPackageFqName()}.$className"
+    val className = relativeClassName.asString().replace('.', '$')
+    return if (packageFqName.isRoot) className else "${packageFqName}.$className"
 }

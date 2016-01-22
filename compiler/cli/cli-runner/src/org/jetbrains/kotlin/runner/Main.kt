@@ -20,7 +20,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
 
-public object Main {
+object Main {
     private val KOTLIN_HOME: File
 
     init {
@@ -41,7 +41,7 @@ public object Main {
         classpath.add(".")
 
         var i = 0
-        while (i < args.size()) {
+        while (i < args.size) {
             val arg = args[i]
             if (collectingArguments) {
                 arguments.add(arg)
@@ -50,7 +50,7 @@ public object Main {
             }
 
             fun next(): String {
-                if (++i == args.size()) {
+                if (++i == args.size) {
                     throw RunnerException("argument expected to $arg")
                 }
                 return args[i]
@@ -99,13 +99,12 @@ public object Main {
         runner.run(classpath, arguments)
     }
 
-    @JvmStatic
-    public fun main(args: Array<String>) {
+    @JvmStatic fun main(args: Array<String>) {
         try {
             run(args)
         }
         catch (e: RunnerException) {
-            System.err.println("error: " + e.getMessage())
+            System.err.println("error: " + e.message)
             System.exit(1)
         }
     }

@@ -5,6 +5,11 @@ class A {
     companion object C
 }
 
+enum class E {
+    ENTRY;
+    companion object {}
+}
+
 fun box(): String {
     val obj = A::class.companionObject
     assertNotNull(obj)
@@ -15,6 +20,8 @@ fun box(): String {
 
     assertNull(A.C::class.companionObject)
     assertNull(A.C::class.companionObjectInstance)
+
+    assertEquals(E.Companion, E::class.companionObjectInstance)
 
     return "OK"
 }

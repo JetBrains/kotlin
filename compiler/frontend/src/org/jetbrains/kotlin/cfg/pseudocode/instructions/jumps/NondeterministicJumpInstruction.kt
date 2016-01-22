@@ -29,24 +29,24 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
-public class NondeterministicJumpInstruction(
+class NondeterministicJumpInstruction(
         element: KtElement,
         targetLabels: List<Label>,
         lexicalScope: LexicalScope,
-        public val inputValue: PseudoValue?
+        val inputValue: PseudoValue?
 ) : KtElementInstructionImpl(element, lexicalScope), JumpInstruction {
     private var _next: Instruction? = null
     private val _resolvedTargets: MutableMap<Label, Instruction> = Maps.newLinkedHashMap()
 
-    public val targetLabels: List<Label> = Lists.newArrayList(targetLabels)
-    public val resolvedTargets: Map<Label, Instruction>
+    val targetLabels: List<Label> = Lists.newArrayList(targetLabels)
+    val resolvedTargets: Map<Label, Instruction>
             get() = _resolvedTargets
 
-    public fun setResolvedTarget(label: Label, resolvedTarget: Instruction) {
+    fun setResolvedTarget(label: Label, resolvedTarget: Instruction) {
         _resolvedTargets[label] = outgoingEdgeTo(resolvedTarget)!!
     }
 
-    public var next: Instruction
+    var next: Instruction
         get() = _next!!
         set(value: Instruction) {
             _next = outgoingEdgeTo(value)
@@ -54,7 +54,7 @@ public class NondeterministicJumpInstruction(
 
     override val nextInstructions: Collection<Instruction>
         get() {
-            val targetInstructions = Lists.newArrayList(resolvedTargets.values())
+            val targetInstructions = Lists.newArrayList(resolvedTargets.values)
             targetInstructions.add(next)
             return targetInstructions
         }
@@ -72,7 +72,7 @@ public class NondeterministicJumpInstruction(
 
     override fun toString(): String {
         val inVal = if (inputValue != null) "|$inputValue" else ""
-        val labels = targetLabels.map { it.getName() }.joinToString(", ")
+        val labels = targetLabels.map { it.name }.joinToString(", ")
         return "jmp?($labels$inVal)"
     }
 
@@ -80,7 +80,7 @@ public class NondeterministicJumpInstruction(
         return createCopy(targetLabels)
     }
 
-    public fun copy(newTargetLabels: MutableList<Label>): Instruction {
+    fun copy(newTargetLabels: MutableList<Label>): Instruction {
         return updateCopyInfo(createCopy(newTargetLabels))
     }
 

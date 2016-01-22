@@ -1,7 +1,7 @@
 package
 
 package c {
-    public fun </*0*/ T, /*1*/ R, /*2*/ C : kotlin.MutableCollection<in R>> kotlin.Array<out T>.mapTo(/*0*/ result: C, /*1*/ transform: (T) -> R): C
+    public fun </*0*/ T, /*1*/ R, /*2*/ C : kotlin.collections.MutableCollection<in R>> kotlin.Array<out T>.mapTo(/*0*/ result: C, /*1*/ transform: (T) -> R): C
     public fun kotlin.Array<kotlin.Int>.toArrayList(): java.util.ArrayList<kotlin.Int>
     public fun kotlin.Array<kotlin.Int>.toIntArray(): kotlin.IntArray
 }

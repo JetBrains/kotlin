@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
+class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with '!!' expression") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        val condition = element.getCondition() as? KtBinaryExpression ?: return null
-        val thenClause = element.getThen() ?: return null
-        val elseClause = element.getElse()
+        val condition = element.condition as? KtBinaryExpression ?: return null
+        val thenClause = element.then ?: return null
+        val elseClause = element.`else`
 
         val expression = condition.expressionComparedToNull() ?: return null
 
-        val token = condition.getOperationToken()
+        val token = condition.operationToken
 
         val throwExpression: KtThrowExpression
         val matchingClause: KtExpression?
@@ -62,12 +62,12 @@ public class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpre
         }
 
         setText(text)
-        val rParen = element.getRightParenthesis() ?: return null
+        val rParen = element.rightParenthesis ?: return null
         return TextRange(element.startOffset, rParen.endOffset)
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
-        val condition = element.getCondition() as KtBinaryExpression
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
+        val condition = element.condition as KtBinaryExpression
         val expression = condition.expressionComparedToNull()!!
         val result = element.replace(KtPsiFactory(element).createExpressionByPattern("$0!!", expression)) as KtPostfixExpression
 

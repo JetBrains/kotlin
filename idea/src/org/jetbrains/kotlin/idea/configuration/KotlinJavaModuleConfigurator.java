@@ -79,7 +79,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 
     @NotNull

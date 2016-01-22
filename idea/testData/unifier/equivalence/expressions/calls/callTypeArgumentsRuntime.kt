@@ -11,9 +11,9 @@ fun <T> bar(klass: Class<T>) {
 }
 
 fun main() {
-    foo(<selection>javaClass<A>()</selection>)
-    foo(javaClass<B>())
-    bar(javaClass<B>())
-    bar(javaClass<A>())
+    foo(<selection>A::class.java</selection>)
+    foo(B::class.java)
+    bar(B::class.java)
+    bar(A::class.java)
     javaClass()
 }

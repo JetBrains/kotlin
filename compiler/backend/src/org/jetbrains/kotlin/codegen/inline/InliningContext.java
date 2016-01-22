@@ -73,17 +73,18 @@ public class InliningContext {
         return subInline(nameGenerator.subGenerator("lambda"), map, true);
     }
 
-    public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
+    private InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
         return subInline(generator, additionalTypeMappings, isInliningLambda);
     }
 
     public InliningContext subInlineWithClassRegeneration(@NotNull NameGenerator generator,
             @NotNull Map<String, String> newTypeMappings,
-            @NotNull AnonymousObjectGeneration anonymousObjectGeneration
+            @NotNull AnonymousObjectGeneration anonymousObjectGeneration,
+            @NotNull InlineCallSiteInfo callSiteInfo
     ) {
         return new RegeneratedClassContext(this, expressionMap, state, generator,
-                                           new TypeRemapper(typeRemapper, newTypeMappings),
-                                           reifedTypeInliner, isInliningLambda, anonymousObjectGeneration);
+                                           TypeRemapper.createFrom(typeRemapper, newTypeMappings),
+                                           reifedTypeInliner, isInliningLambda, anonymousObjectGeneration, callSiteInfo);
     }
 
     public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings, boolean isInliningLambda) {
@@ -96,8 +97,15 @@ public class InliningContext {
             boolean isInliningLambda,
             boolean isRegeneration
     ) {
+        //isInliningLambda && !this.isInliningLambda for root inline lambda
         return new InliningContext(this, expressionMap, state, generator,
-                                   new TypeRemapper(typeRemapper, additionalTypeMappings), reifedTypeInliner, isInliningLambda, isRegeneration);
+                                   TypeRemapper.createFrom(
+                                           typeRemapper,
+                                           additionalTypeMappings,
+                                           //root inline lambda
+                                           isInliningLambda && !this.isInliningLambda
+                                   ),
+                                   reifedTypeInliner, isInliningLambda, isRegeneration);
     }
 
     public boolean isRoot() {
@@ -124,8 +132,8 @@ public class InliningContext {
         return isInliningLambda && !getParent().isInliningLambda;
     }
 
-    public String getClassNameToInline() {
+    public InlineCallSiteInfo getCallSiteInfo() {
         assert parent != null : "At least root context should return proper value";
-        return parent.getClassNameToInline();
+        return parent.getCallSiteInfo();
     }
 }

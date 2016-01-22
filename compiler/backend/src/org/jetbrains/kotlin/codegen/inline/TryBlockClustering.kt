@@ -26,7 +26,7 @@ enum class TryCatchPosition {
     INNER
 }
 
-public class SplitPair<T: Interval>(val patchedPart: T, val newPart: T)
+class SplitPair<T: Interval>(val patchedPart: T, val newPart: T)
 
 class SimpleInterval(override val startLabel: LabelNode, override val endLabel: LabelNode ) : Interval
 
@@ -35,7 +35,7 @@ interface Interval {
     val endLabel: LabelNode
 
     /*note that some intervals are mutable */
-    public fun isEmpty(): Boolean = startLabel == endLabel
+    fun isEmpty(): Boolean = startLabel == endLabel
 
 }
 
@@ -97,5 +97,5 @@ fun <T : IntervalWithHandler> doClustering(blocks: List<T>): List<TryBlockCluste
         cluster.blocks.add(block)
     }
 
-    return clusters.values().toList()
+    return clusters.values.toList()
 }

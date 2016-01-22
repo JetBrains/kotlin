@@ -44,31 +44,31 @@ import java.io.Writer
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
-public object AnnotationCollectorConfigurationKeys {
-    public val ANNOTATION_FILTER_LIST: CompilerConfigurationKey<List<String>> =
+object AnnotationCollectorConfigurationKeys {
+    val ANNOTATION_FILTER_LIST: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation filter regular expressions")
-    public val OUTPUT_FILENAME: CompilerConfigurationKey<String> =
+    val OUTPUT_FILENAME: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("annotation file name")
-    public val STUBS_PATH: CompilerConfigurationKey<String> =
+    val STUBS_PATH: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("stubs output directory")
-    public val INHERITED: CompilerConfigurationKey<String> =
+    val INHERITED: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("support inherited annotations")
 }
 
-public class AnnotationCollectorCommandLineProcessor : CommandLineProcessor {
+class AnnotationCollectorCommandLineProcessor : CommandLineProcessor {
     companion object {
-        public val ANNOTATION_COLLECTOR_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt"
+        val ANNOTATION_COLLECTOR_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt"
 
-        public val ANNOTATION_FILTER_LIST_OPTION: CliOption =
+        val ANNOTATION_FILTER_LIST_OPTION: CliOption =
                 CliOption("annotations", "<path>", "Annotation filter regular expressions, separated by commas", required = false)
 
-        public val OUTPUT_FILENAME_OPTION: CliOption =
+        val OUTPUT_FILENAME_OPTION: CliOption =
                 CliOption("output", "<path>", "File in which annotated declarations will be placed", required = false)
 
-        public val STUBS_PATH_OPTION: CliOption =
+        val STUBS_PATH_OPTION: CliOption =
                 CliOption("stubs", "<path>", "Output path for stubs", required = false)
 
-        public val INHERITED_ANNOTATIONS_OPTION: CliOption =
+        val INHERITED_ANNOTATIONS_OPTION: CliOption =
                 CliOption("inherited", "<true/false>",
                           "True if collecting Kotlin class names for inherited annotations is needed", required = false)
     }
@@ -92,8 +92,8 @@ public class AnnotationCollectorCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-public class AnnotationCollectorComponentRegistrar : ComponentRegistrar {
-    public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+class AnnotationCollectorComponentRegistrar : ComponentRegistrar {
+    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val supportInheritedAnnotations = "true" == (configuration.get(AnnotationCollectorConfigurationKeys.INHERITED) ?: "true")
 
         val annotationFilterList = configuration.get(AnnotationCollectorConfigurationKeys.ANNOTATION_FILTER_LIST)

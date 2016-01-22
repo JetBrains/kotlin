@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-public class ModuleDescriptorImpl @JvmOverloads constructor(
+class ModuleDescriptorImpl @JvmOverloads constructor(
         moduleName: Name,
         private val storageManager: StorageManager,
         private val moduleParameters: ModuleParameters,
@@ -36,7 +36,7 @@ public class ModuleDescriptorImpl @JvmOverloads constructor(
         private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor, ModuleParameters by moduleParameters {
     init {
-        if (!moduleName.isSpecial()) {
+        if (!moduleName.isSpecial) {
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
     }
@@ -68,26 +68,26 @@ public class ModuleDescriptorImpl @JvmOverloads constructor(
     private val isInitialized: Boolean
         get() = packageFragmentProviderForModuleContent != null
 
-    public fun setDependencies(dependencies: ModuleDependencies) {
+    fun setDependencies(dependencies: ModuleDependencies) {
         assert(this.dependencies == null) { "Dependencies of $id were already set" }
         this.dependencies = dependencies
     }
 
-    public fun setDependencies(vararg descriptors: ModuleDescriptorImpl) {
+    fun setDependencies(vararg descriptors: ModuleDescriptorImpl) {
         setDependencies(descriptors.toList())
     }
 
-    public fun setDependencies(descriptors: List<ModuleDescriptorImpl>) {
+    fun setDependencies(descriptors: List<ModuleDescriptorImpl>) {
         setDependencies(ModuleDependenciesImpl(descriptors))
     }
 
     private val id: String
-        get() = getName().toString()
+        get() = name.toString()
 
     /*
      * Call initialize() to set module contents. Uninitialized module cannot be queried for its contents.
      */
-    public fun initialize(providerForModuleContent: PackageFragmentProvider) {
+    fun initialize(providerForModuleContent: PackageFragmentProvider) {
         assert(!isInitialized) { "Attempt to initialize module $id twice" }
         this.packageFragmentProviderForModuleContent = providerForModuleContent
     }
@@ -99,7 +99,7 @@ public class ModuleDescriptorImpl @JvmOverloads constructor(
 
     override fun isFriend(other: ModuleDescriptor) = other == this || other in friendModules
 
-    public fun addFriend(friend: ModuleDescriptorImpl): Unit {
+    fun addFriend(friend: ModuleDescriptorImpl): Unit {
         assert(friend != this) { "Attempt to make module $id a friend to itself" }
         friendModules.add(friend)
     }
@@ -108,13 +108,13 @@ public class ModuleDescriptorImpl @JvmOverloads constructor(
     override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
 }
 
-public interface ModuleDependencies {
-    public val descriptors: List<ModuleDescriptorImpl>
+interface ModuleDependencies {
+    val descriptors: List<ModuleDescriptorImpl>
 }
 
-public class ModuleDependenciesImpl(override val descriptors: List<ModuleDescriptorImpl>) : ModuleDependencies
+class ModuleDependenciesImpl(override val descriptors: List<ModuleDescriptorImpl>) : ModuleDependencies
 
-public class LazyModuleDependencies(
+class LazyModuleDependencies(
         storageManager: StorageManager,
         computeDependencies: () -> List<ModuleDescriptorImpl>
 ) : ModuleDependencies {

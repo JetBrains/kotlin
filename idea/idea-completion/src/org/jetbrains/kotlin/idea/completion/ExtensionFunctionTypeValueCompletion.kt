@@ -68,6 +68,10 @@ class ExtensionFunctionTypeValueCompletion(
                                     val parameterTail = presentation.tailFragments.first()
                                     presentation.clearTail()
                                     presentation.appendTailText(parameterTail.text, false)
+
+                                    lookupElementFactory.basicFactory.appendContainerAndReceiverInformation(variable) {
+                                        presentation.appendTailText(it, true)
+                                    }
                                 }
 
                                 override fun handleInsert(context: InsertionContext?) {

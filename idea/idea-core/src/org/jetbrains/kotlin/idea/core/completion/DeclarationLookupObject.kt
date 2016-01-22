@@ -23,15 +23,15 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public interface DeclarationLookupObject : Iconable {
-    public val psiElement: PsiElement?
-    public val descriptor: DeclarationDescriptor?
-    public val name: Name?
-    public val importableFqName: FqName?
-    public val isDeprecated: Boolean
+interface DeclarationLookupObject : Iconable {
+    val psiElement: PsiElement?
+    val descriptor: DeclarationDescriptor?
+    val name: Name?
+    val importableFqName: FqName?
+    val isDeprecated: Boolean
 }
 
-public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
+data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
     override val psiElement: PsiElement? get() = null
 
     override val descriptor: DeclarationDescriptor? get() = null

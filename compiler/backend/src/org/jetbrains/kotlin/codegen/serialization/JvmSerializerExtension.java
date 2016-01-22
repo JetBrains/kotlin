@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.serialization;
 
-import com.google.protobuf.MessageLite;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeCapabilities;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
@@ -42,12 +42,14 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final StringTable stringTable;
     private final AnnotationSerializer annotationSerializer;
     private final boolean useTypeTable;
+    private final String moduleName;
 
-    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper, boolean useTypeTable) {
+    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull GenerationState state) {
         this.bindings = bindings;
-        this.stringTable = new JvmStringTable(typeMapper);
+        this.stringTable = new JvmStringTable(state.getTypeMapper());
         this.annotationSerializer = new AnnotationSerializer(stringTable);
-        this.useTypeTable = useTypeTable;
+        this.useTypeTable = state.getUseTypeTableInSerializer();
+        this.moduleName = state.getModuleName();
     }
 
     @NotNull
@@ -62,10 +64,16 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     @Override
-    public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
-        Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
-        if (index != null) {
-            proto.setExtension(JvmProtoBuf.index, index);
+    public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
+        if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
+            proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName));
+        }
+    }
+
+    @Override
+    public void serializePackage(@NotNull ProtoBuf.Package.Builder proto) {
+        if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
+            proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName));
         }
     }
 
@@ -99,8 +107,6 @@ public class JvmSerializerExtension extends SerializerExtension {
                 proto.setExtension(JvmProtoBuf.constructorSignature, signature);
             }
         }
-
-        saveImplClassName(descriptor, proto);
     }
 
     @Override
@@ -112,8 +118,6 @@ public class JvmSerializerExtension extends SerializerExtension {
                 proto.setExtension(JvmProtoBuf.methodSignature, signature);
             }
         }
-
-        saveImplClassName(descriptor, proto);
     }
 
     @Override
@@ -126,45 +130,18 @@ public class JvmSerializerExtension extends SerializerExtension {
         Method setterMethod = setter == null ? null : bindings.get(METHOD_FOR_FUNCTION, setter);
 
         Pair<Type, String> field = bindings.get(FIELD_FOR_PROPERTY, descriptor);
-        String fieldName;
-        String fieldDesc;
-        boolean isStaticInOuter;
-        if (field != null) {
-            fieldName = field.second;
-            fieldDesc = field.first.getDescriptor();
-            isStaticInOuter = bindings.get(STATIC_FIELD_IN_OUTER_CLASS, descriptor);
-        }
-        else {
-            fieldName = null;
-            fieldDesc = null;
-            isStaticInOuter = false;
-        }
-
         Method syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor);
 
         JvmProtoBuf.JvmPropertySignature signature = signatureSerializer.propertySignature(
-                descriptor, fieldName, fieldDesc, isStaticInOuter,
+                descriptor,
+                field != null ? field.second : null,
+                field != null ? field.first.getDescriptor() : null,
                 syntheticMethod != null ? signatureSerializer.methodSignature(null, syntheticMethod) : null,
                 getterMethod != null ? signatureSerializer.methodSignature(null, getterMethod) : null,
                 setterMethod != null ? signatureSerializer.methodSignature(null, setterMethod) : null
         );
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
-
-        saveImplClassName(descriptor, proto);
-    }
-
-    private void saveImplClassName(@NotNull CallableMemberDescriptor callable, @NotNull MessageLite.Builder proto) {
-        String name = bindings.get(IMPL_CLASS_NAME_FOR_CALLABLE, callable);
-        if (name == null) return;
-
-        int index = stringTable.getStringIndex(name);
-        if (proto instanceof ProtoBuf.Function.Builder) {
-            ((ProtoBuf.Function.Builder) proto).setExtension(JvmProtoBuf.methodImplClassName, index);
-        }
-        else if (proto instanceof ProtoBuf.Property.Builder) {
-            ((ProtoBuf.Property.Builder) proto).setExtension(JvmProtoBuf.propertyImplClassName, index);
-        }
     }
 
     private class SignatureSerializer {
@@ -240,7 +217,6 @@ public class JvmSerializerExtension extends SerializerExtension {
                 @NotNull PropertyDescriptor descriptor,
                 @Nullable String fieldName,
                 @Nullable String fieldDesc,
-                boolean isStaticInOuter,
                 @Nullable JvmProtoBuf.JvmMethodSignature syntheticMethod,
                 @Nullable JvmProtoBuf.JvmMethodSignature getter,
                 @Nullable JvmProtoBuf.JvmMethodSignature setter
@@ -249,7 +225,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
             if (fieldDesc != null) {
                 assert fieldName != null : "Field name shouldn't be null when there's a field type: " + fieldDesc;
-                signature.setField(fieldSignature(descriptor, fieldName, fieldDesc, isStaticInOuter));
+                signature.setField(fieldSignature(descriptor, fieldName, fieldDesc));
             }
 
             if (syntheticMethod != null) {
@@ -270,8 +246,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         public JvmProtoBuf.JvmFieldSignature fieldSignature(
                 @NotNull PropertyDescriptor descriptor,
                 @NotNull String name,
-                @NotNull String desc,
-                boolean isStaticInOuter
+                @NotNull String desc
         ) {
             JvmProtoBuf.JvmFieldSignature.Builder builder = JvmProtoBuf.JvmFieldSignature.newBuilder();
             if (!descriptor.getName().asString().equals(name)) {
@@ -279,9 +254,6 @@ public class JvmSerializerExtension extends SerializerExtension {
             }
             if (requiresSignature(descriptor, desc)) {
                 builder.setDesc(stringTable.getStringIndex(desc));
-            }
-            if (isStaticInOuter) {
-                builder.setIsStaticInOuter(true);
             }
             return builder.build();
         }

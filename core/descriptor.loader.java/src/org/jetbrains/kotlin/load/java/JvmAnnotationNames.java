@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -28,24 +27,26 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class JvmAnnotationNames {
+    public static final FqName METADATA = new FqName("kotlin.Metadata");
+
     public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
     public static final FqName KOTLIN_FILE_FACADE = new FqName("kotlin.jvm.internal.KotlinFileFacade");
     public static final FqName KOTLIN_MULTIFILE_CLASS = new FqName("kotlin.jvm.internal.KotlinMultifileClass");
     public static final FqName KOTLIN_MULTIFILE_CLASS_PART = new FqName("kotlin.jvm.internal.KotlinMultifileClassPart");
     public static final FqName KOTLIN_SYNTHETIC_CLASS = new FqName("kotlin.jvm.internal.KotlinSyntheticClass");
     public static final FqName KOTLIN_FUNCTION = new FqName("kotlin.jvm.internal.KotlinFunction");
-    public static final FqName KOTLIN_INTERFACE_DEFAULT_IMPLS = new FqName("kotlin.jvm.internal.KotlinInterfaceDefaultImpls");
-    public static final FqName KOTLIN_LOCAL_CLASS = new FqName("kotlin.jvm.internal.KotlinLocalClass");
-
-    public static final FqName KOTLIN_DELEGATED_METHOD = new FqName("kotlin.jvm.internal.KotlinDelegatedMethod");
-    public static final String IMPLEMENTATION_CLASS_NAME_FIELD_NAME = "implementationClassName";
 
     public static final String VERSION_FIELD_NAME = "version";
+    public static final String METADATA_VERSION_FIELD_NAME = "mv";
+    public static final String BYTECODE_VERSION_FIELD_NAME = "bv";
     public static final String FILE_PART_CLASS_NAMES_FIELD_NAME = "filePartClassNames";
     public static final String MULTIFILE_CLASS_NAME_FIELD_NAME = "multifileClassName";
+    public static final String KIND_FIELD_NAME = "k";
+    public static final String METADATA_DATA_FIELD_NAME = "d1";
+    public static final String METADATA_STRINGS_FIELD_NAME = "d2";
+    public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = "xs";
     public static final String DATA_FIELD_NAME = "data";
     public static final String STRINGS_FIELD_NAME = "strings";
-    public static final String MODULE_NAME_FIELD_NAME = "moduleName";
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
     public static final Name DEPRECATED_ANNOTATION_MESSAGE = Name.identifier("message");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
@@ -65,22 +66,11 @@ public final class JvmAnnotationNames {
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
     public static final FqName ENHANCED_MUTABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedMutability");
 
-    public static final String OLD_ABI_VERSION_FIELD_NAME = "abiVersion";
-
-    // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
-    // See also DescriptorRendererOptions#excludedTypeAnnotationClasses
-    public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = SetsKt.setOf(
-            JETBRAINS_READONLY_ANNOTATION,
-            JETBRAINS_MUTABLE_ANNOTATION,
-            JETBRAINS_NOT_NULL_ANNOTATION,
-            JETBRAINS_NULLABLE_ANNOTATION
-    );
-
     private static final Set<JvmClassName> SPECIAL_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> NULLABILITY_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> SPECIAL_META_ANNOTATIONS = new HashSet<JvmClassName>();
     static {
-        for (FqName fqName : Arrays.asList(KOTLIN_CLASS, KOTLIN_SYNTHETIC_CLASS, KOTLIN_INTERFACE_DEFAULT_IMPLS, KOTLIN_LOCAL_CLASS)) {
+        for (FqName fqName : Arrays.asList(METADATA, KOTLIN_CLASS, KOTLIN_SYNTHETIC_CLASS)) {
             SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
 

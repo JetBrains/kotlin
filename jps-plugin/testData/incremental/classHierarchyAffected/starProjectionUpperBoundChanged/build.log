@@ -1,0 +1,17 @@
+Cleaning output files:
+out/production/module/A.class
+End of files
+Compiling files:
+src/A.kt
+End of files
+Cleaning output files:
+out/production/module/AStarDeclaration.class
+out/production/module/CallGetAStar.class
+out/production/module/GetAStarKt.class
+out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+src/AStarDeclaration.kt
+src/CallGetAStar.kt
+src/getAStar.kt
+End of files

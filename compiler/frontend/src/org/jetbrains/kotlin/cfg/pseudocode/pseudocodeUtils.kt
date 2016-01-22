@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMapper
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
@@ -69,7 +70,7 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
     return null
 }
 
-public fun getExpectedTypePredicate(
+fun getExpectedTypePredicate(
         value: PseudoValue,
         bindingContext: BindingContext,
         builtIns: KotlinBuiltIns
@@ -112,7 +113,7 @@ public fun getExpectedTypePredicate(
                     resolutionCandidate,
                     DelegatingBindingTrace(bindingContext, "Compute type predicates for unresolved call arguments"),
                     TracingStrategy.EMPTY,
-                    DataFlowInfoForArgumentsImpl(call)
+                    DataFlowInfoForArgumentsImpl(DataFlowInfo.EMPTY, call)
             )
             val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(call,
                                                                                         TracingStrategy.EMPTY,
@@ -123,7 +124,7 @@ public fun getExpectedTypePredicate(
             val candidateArgumentMap = candidateCall.getValueArguments()
             val callArguments = call.getValueArguments()
             val i = inputValueIndex - argValueOffset
-            if (i < 0 || i >= callArguments.size()) continue
+            if (i < 0 || i >= callArguments.size) continue
 
             val mapping = candidateCall.getArgumentMapping(callArguments.get(i))
             if (mapping !is ArgumentMatch) continue
@@ -237,14 +238,14 @@ public fun getExpectedTypePredicate(
     return and(typePredicates.filterNotNull())
 }
 
-public fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: BindingContext): DeclarationDescriptor? {
+fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: BindingContext): DeclarationDescriptor? {
     return when (this) {
         is CallInstruction -> return resolvedCall.getResultingDescriptor()
         else -> PseudocodeUtil.extractVariableDescriptorIfAny(this, false, bindingContext)
     }
 }
 
-public val Instruction.sideEffectFree: Boolean
+val Instruction.sideEffectFree: Boolean
     get() = owner.isSideEffectFree(this)
 
 fun Instruction.calcSideEffectFree(): Boolean {
@@ -286,9 +287,9 @@ fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue
     return results
 }
 
-public fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
+fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
     val pseudocodeDeclaration =
-            PsiTreeUtil.getParentOfType(this, javaClass<KtDeclarationWithBody>(), javaClass<KtClassOrObject>(), javaClass<KtScript>())
+            PsiTreeUtil.getParentOfType(this, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtScript::class.java)
             ?: getNonStrictParentOfType<KtProperty>()
             ?: return null
 
@@ -301,7 +302,7 @@ public fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocod
            ?: throw AssertionError("Can't find nested pseudocode for element: ${pseudocodeDeclaration.getElementTextWithContext()}")
 }
 
-public fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
+fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
     if (getCorrespondingElement() == element) return this
 
     getLocalDeclarations().forEach { decl -> decl.body.getPseudocodeByElement(element)?.let { return it } }

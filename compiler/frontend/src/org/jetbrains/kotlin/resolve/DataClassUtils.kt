@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 
 private val COMPONENT_FUNCTION_NAME_PREFIX = "component"
 
-public fun isComponentLike(name: Name): Boolean {
+fun isComponentLike(name: Name): Boolean {
     if (!name.asString().startsWith(COMPONENT_FUNCTION_NAME_PREFIX)) return false
 
     try {
@@ -33,8 +33,8 @@ public fun isComponentLike(name: Name): Boolean {
     return true
 }
 
-public fun getComponentIndex(componentName: Name): Int =
-    componentName.asString().substring(COMPONENT_FUNCTION_NAME_PREFIX.length()).toInt()
+fun getComponentIndex(componentName: Name): Int =
+    componentName.asString().substring(COMPONENT_FUNCTION_NAME_PREFIX.length).toInt()
 
-public fun createComponentName(index: Int): Name =
+fun createComponentName(index: Int): Name =
     Name.identifier(COMPONENT_FUNCTION_NAME_PREFIX + index)

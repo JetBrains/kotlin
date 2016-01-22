@@ -35,7 +35,7 @@ public abstract class AbstractKotlinType implements KotlinType {
     @NotNull
     @Override
     public TypeCapabilities getCapabilities() {
-        return TypeCapabilities.NONE.INSTANCE$;
+        return TypeCapabilities.NONE.INSTANCE;
     }
 
     @Override
@@ -62,7 +62,7 @@ public abstract class AbstractKotlinType implements KotlinType {
 
         for (AnnotationWithTarget annotationWithTarget : getAnnotations().getAllAnnotations()) {
             sb.append("[");
-            sb.append(DescriptorRenderer.Companion.getDEBUG_TEXT().renderAnnotation(
+            sb.append(DescriptorRenderer.DEBUG_TEXT.renderAnnotation(
                     annotationWithTarget.getAnnotation(), annotationWithTarget.getTarget()));
             sb.append("] ");
         }

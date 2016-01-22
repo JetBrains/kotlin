@@ -40,7 +40,7 @@ fun test2() : Int {
         }
         return result
     } catch (e: RuntimeException) {
-        return e.getMessage()!!.toInt2()!!
+        return e.message!!.toInt2()!!
     }
 }
 

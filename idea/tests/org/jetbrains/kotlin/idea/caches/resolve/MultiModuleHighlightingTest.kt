@@ -78,7 +78,7 @@ class MultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
         var atLeastOneFile = false
         PluginJetFilesProvider.allFilesInProject(myProject!!).forEach { file ->
             atLeastOneFile = true
-            configureByExistingFile(file.getVirtualFile()!!)
+            configureByExistingFile(file.virtualFile!!)
             checkHighlighting(myEditor, true, false)
         }
         Assert.assertTrue(atLeastOneFile)
@@ -99,7 +99,7 @@ class MultiModuleHighlightingTest : DaemonAnalyzerTestCase() {
         val testRootDir = createTempDirectory()!!
         FileUtil.copyDir(testRootDirInTestData, testRootDir)
         val testRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(testRootDir)!!
-        object : WriteCommandAction.Simple<Unit>(getProject()) {
+        object : WriteCommandAction.Simple<Unit>(project) {
             override fun run() {
                 testRoot.refresh(false, true)
             }

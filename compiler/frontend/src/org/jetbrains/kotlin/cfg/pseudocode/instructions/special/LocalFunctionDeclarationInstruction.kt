@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
-public class LocalFunctionDeclarationInstruction(
+class LocalFunctionDeclarationInstruction(
         element: KtElement,
-        public val body: Pseudocode,
+        val body: Pseudocode,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {
-    public var sink: SubroutineSinkInstruction? = null
+    var sink: SubroutineSinkInstruction? = null
         set(value: SubroutineSinkInstruction?) {
             field = outgoingEdgeTo(value) as SubroutineSinkInstruction?
         }

@@ -16,27 +16,22 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.StringsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
-public final class JvmAbi {
-    /**
-     * This constant is used to identify binary format (class file) versions
-     * If you change class file metadata format and/or naming conventions, please change this version.
-     * - Major version should be increased only when the new binary format is neither forward- nor backward compatible.
-     *   This shouldn't really ever happen at all.
-     * - Minor version should be increased when the new format is backward compatible,
-     *   i.e. the new compiler can process old class files, but the old compiler will not be able to process new class files.
-     * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
-     *   make a change to the metadata format or the bytecode which is both forward- and backward compatible.
-     */
-    public static final BinaryVersion VERSION = BinaryVersion.create(1, 0, 1);
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 
+public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;
 
@@ -51,7 +46,6 @@ public final class JvmAbi {
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
 
     public static final String INSTANCE_FIELD = "INSTANCE";
-    public static final String DEPRECATED_INSTANCE_FIELD = "INSTANCE$";
 
     public static final String DEFAULT_MODULE_NAME = "main";
     public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
@@ -97,6 +91,17 @@ public final class JvmAbi {
     @NotNull
     public static String sanitizeAsJavaIdentifier(@NotNull String str) {
         return StringsKt.replace(str, StringsKt.toRegex("[^\\p{L}\\p{Digit}]"), "_");
+    }
+
+    public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+               isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+    }
+
+    public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
+        return isCompanionObject(companionObject) &&
+               isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
+               !JavaToKotlinClassMap.INSTANCE.isMappedCompanion((ClassDescriptor) companionObject);
     }
 }
 

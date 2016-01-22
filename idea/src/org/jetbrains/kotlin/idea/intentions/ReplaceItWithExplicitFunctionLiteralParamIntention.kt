@@ -21,31 +21,34 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ReplaceItWithExplicitFunctionLiteralParamIntention() : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression> (
-        javaClass(), "Replace 'it' with explicit parameter"
+class ReplaceItWithExplicitFunctionLiteralParamIntention() : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression> (
+        KtNameReferenceExpression::class.java, "Replace 'it' with explicit parameter"
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtNameReferenceExpression)
             = isAutoCreatedItUsage(element)
 
-    override fun applyTo(element: KtNameReferenceExpression, editor: Editor) {
+    override fun applyTo(element: KtNameReferenceExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val target = element.mainReference.resolveToDescriptors(element.analyze()).single()
 
-        val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as KtFunctionLiteral
+        val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.containingDeclaration!!) as KtFunctionLiteral
 
         val newExpr = KtPsiFactory(element).createExpression("{ it -> }") as KtLambdaExpression
         functionLiteral.addRangeAfter(
-                newExpr.getFunctionLiteral().getValueParameterList(),
-                newExpr.getFunctionLiteral().getArrow()!!,
-                functionLiteral.getLBrace())
-        PsiDocumentManager.getInstance(element.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+                newExpr.functionLiteral.valueParameterList,
+                newExpr.functionLiteral.arrow!!,
+                functionLiteral.lBrace)
+        PsiDocumentManager.getInstance(element.project).doPostponedOperationsAndUnblockDocument(editor.document)
 
-        val paramToRename = functionLiteral.getValueParameters().single()
-        editor.getCaretModel().moveToOffset(element.getTextOffset())
+        val paramToRename = functionLiteral.valueParameters.single()
+        editor.caretModel.moveToOffset(element.textOffset)
         VariableInplaceRenameHandler().doRename(paramToRename, editor, null)
     }
 }

@@ -353,6 +353,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("NotInNotIs2.kt")
+    public void testNotInNotIs2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/NotInNotIs2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PrefixMatcher.kt")
     public void testPrefixMatcher() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/PrefixMatcher.kt");

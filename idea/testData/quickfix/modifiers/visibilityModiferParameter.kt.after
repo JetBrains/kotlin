@@ -1,4 +1,4 @@
-// "Change visibility modifier" "true"
+// "Use inherited visibility" "true"
 interface ParseResult<out T> {
     public val success : Boolean
     public val value : T

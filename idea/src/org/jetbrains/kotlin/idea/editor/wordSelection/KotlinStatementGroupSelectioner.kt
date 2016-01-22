@@ -31,34 +31,34 @@ import org.jetbrains.kotlin.psi.*
 /**
  * Originally from IDEA platform: StatementGroupSelectioner
  */
-public class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
+class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement): Boolean {
         if (e !is KtExpression && e !is KtWhenEntry && e !is PsiComment) return false
-        val parent = e.getParent()
+        val parent = e.parent
         return parent is KtBlockExpression || parent is KtWhenExpression || parent is KtFunctionLiteral
     }
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        val parent = e.getParent()
+        val parent = e.parent
 
         val startElement = e.siblings(forward = false, withItself = false)
                 .firstOrNull { // find preceding '{' or blank line
-                    it is LeafPsiElement && it.getElementType() == KtTokens.LBRACE ||
-                        it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
+                    it is LeafPsiElement && it.elementType == KtTokens.LBRACE ||
+                    it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
                 }
                 ?.siblings(forward = true, withItself = false)
                 ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element after it
-                ?.firstOrNull() ?: parent.getFirstChild()!!
+                ?.firstOrNull() ?: parent.firstChild!!
 
         val endElement = e.siblings(forward = true, withItself = false)
                 .firstOrNull { // find next '}' or blank line
-                    it is LeafPsiElement && it.getElementType() == KtTokens.RBRACE ||
-                        it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
+                    it is LeafPsiElement && it.elementType == KtTokens.RBRACE ||
+                    it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
                 }
                 ?.siblings(forward = false, withItself = false)
                 ?.dropWhile { it is PsiWhiteSpace } // and take first non-whitespace element before it
-                ?.firstOrNull() ?: parent.getLastChild()!!
+                ?.firstOrNull() ?: parent.lastChild!!
 
-        return ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(startElement.getTextRange()!!.getStartOffset(), endElement.getTextRange()!!.getEndOffset()))
+        return ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(startElement.textRange!!.startOffset, endElement.textRange!!.endOffset))
     }
 }

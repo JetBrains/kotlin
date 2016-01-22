@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeCapability
 
-public interface CustomFlexibleRendering : TypeCapability {
-    public fun renderInflexible(type: KotlinType, renderer: DescriptorRenderer): String?
-    public fun renderBounds(flexibility: Flexibility, renderer: DescriptorRenderer): Pair<String, String>?
+interface CustomFlexibleRendering : TypeCapability {
+    fun renderInflexible(type: KotlinType, renderer: DescriptorRenderer): String?
+    fun renderBounds(flexibility: Flexibility, renderer: DescriptorRenderer): Pair<String, String>?
 }

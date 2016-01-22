@@ -18,19 +18,20 @@ package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.jps.incremental.storage.ProtoMapValue
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassPartKind
+import com.intellij.util.SmartList
+import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.incremental.difference
+import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
-
-    public fun doTest(testDataPath: String) {
+abstract class AbstractProtoComparisonTest : UsefulTestCase() {
+    fun doTest(testDataPath: String) {
         val testDir = KotlinTestUtils.tmpDir("testDirectory")
 
         val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old")
@@ -65,7 +66,7 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
     }
 
     private fun compileFileAndGetClasses(testPath: String, testDir: File, prefix: String): List<File> {
-        val files = File(testPath).listFiles { it.name.startsWith(prefix) }!!
+        val files = File(testPath).listFiles { it -> it.name.startsWith(prefix) }!!
         val sourcesDirectory = testDir.createSubDirectory("sources")
         val classesDirectory = testDir.createSubDirectory("$prefix.src")
 
@@ -74,54 +75,50 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         }
         MockLibraryUtil.compileKotlin(sourcesDirectory.path, classesDirectory)
 
-        return File(classesDirectory, "test").listFiles() { it.name.endsWith(".class") }?.sortedBy { it.name }!!
+        return File(classesDirectory, "test").listFiles() { it -> it.name.endsWith(".class") }?.sortedBy { it.name }!!
     }
 
     private fun Printer.printDifference(oldClassFile: File, newClassFile: File) {
-        val oldLocalFileKotlinClass = LocalFileKotlinClass.create(oldClassFile)!!
-        val newLocalFileKotlinClass = LocalFileKotlinClass.create(newClassFile)!!
-
-        val oldClassHeader = oldLocalFileKotlinClass.classHeader
-        val newClassHeader = newLocalFileKotlinClass.classHeader
-
-        if (oldClassHeader.annotationData == null || newClassHeader.annotationData == null) {
-            println("skip ${oldLocalFileKotlinClass.classId}")
-            return
-        }
-
-        val oldProtoBytes = BitEncoding.decodeBytes(oldClassHeader.annotationData!!)
-        val newProtoBytes = BitEncoding.decodeBytes(newClassHeader.annotationData!!)
-
-        val oldProto = ProtoMapValue(
-                oldClassHeader.isCompatibleFileFacadeKind() || oldClassHeader.isCompatibleMultifileClassPartKind(),
-                oldProtoBytes, oldClassHeader.strings!!
-        )
-        val newProto = ProtoMapValue(
-                newClassHeader.isCompatibleFileFacadeKind() || newClassHeader.isCompatibleMultifileClassPartKind(),
-                newProtoBytes, newClassHeader.strings!!
-        )
-
-        val diff = when {
-            newClassHeader.isCompatibleClassKind() ||
-            newClassHeader.isCompatibleFileFacadeKind() ||
-            newClassHeader.isCompatibleMultifileClassPartKind() ->
-                difference(oldProto, newProto)
-            else ->  {
-                println("ignore ${oldLocalFileKotlinClass.classId}")
-                return
+        fun KotlinJvmBinaryClass.readProto(): ProtoMapValue? {
+            assert(classHeader.metadataVersion.isCompatible()) { "Incompatible class ($classHeader): $location" }
+            return when (classHeader.kind) {
+                KotlinClassHeader.Kind.CLASS, KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                    ProtoMapValue(
+                            classHeader.kind != KotlinClassHeader.Kind.CLASS,
+                            BitEncoding.decodeBytes(classHeader.data!!),
+                            classHeader.strings!!
+                    )
+                }
+                else -> {
+                    println("skip $classId")
+                    return null
+                }
             }
         }
 
-        val changes = when (diff) {
-            is DifferenceKind.NONE ->
-                "NONE"
-            is DifferenceKind.CLASS_SIGNATURE ->
-                "CLASS_SIGNATURE"
-            is DifferenceKind.MEMBERS ->
-                "MEMBERS\n    ${diff.names.sorted()}"
+        val oldClass = LocalFileKotlinClass.create(oldClassFile)!!
+        val newClass = LocalFileKotlinClass.create(newClassFile)!!
+
+        val diff = difference(
+                oldClass.readProto() ?: return,
+                newClass.readProto() ?: return
+        )
+
+        val changes = SmartList<String>()
+
+        if (diff.isClassAffected) {
+            changes.add("CLASS_SIGNATURE")
         }
 
-        println("changes in ${oldLocalFileKotlinClass.classId}: $changes")
+        if (diff.changedMembersNames.isNotEmpty()) {
+            changes.add("MEMBERS\n    ${diff.changedMembersNames.sorted()}")
+        }
+
+        if (changes.isEmpty()) {
+            changes.add("NONE")
+        }
+
+        println("changes in ${oldClass.classId}: ${changes.joinToString()}")
     }
 
     private fun File.createSubDirectory(relativePath: String): File {

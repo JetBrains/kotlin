@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvider {
+class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvider {
     @NotNull
     @Override
     public FrameworkTypeEx getFrameworkType() {
@@ -42,7 +42,7 @@ public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvid
     @Override
     public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull final FrameworkSupportModel model) {
         return new FrameworkSupportInModuleConfigurable() {
-            JavaRuntimeLibraryDescription description = null;
+            private JavaRuntimeLibraryDescription description = null;
 
             @Nullable
             @Override

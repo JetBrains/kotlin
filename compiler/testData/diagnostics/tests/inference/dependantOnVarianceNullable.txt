@@ -2,5 +2,5 @@ package
 
 package b {
     public fun </*0*/ T> comparator(/*0*/ fn: (T, T) -> kotlin.Int): java.util.Comparator<T>
-    public fun foo(/*0*/ list: kotlin.List<kotlin.String>): kotlin.String
+    public fun foo(/*0*/ list: kotlin.collections.List<kotlin.String>): kotlin.String
 }

@@ -16,19 +16,51 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.CustomSuppressableInspectionTool
-import com.intellij.psi.PsiElement
-import com.intellij.codeInsight.daemon.HighlightDisplayKey
+import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.codeInspection.SuppressManager
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.highlighter.createSuppressWarningActions
 
-public abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressableInspectionTool {
-    public override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
-        return SuppressManager.getInstance()!!.createSuppressActions(HighlightDisplayKey.find(getShortName())!!)
+abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressableInspectionTool {
+    override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
+        if (element == null) return emptyArray()
+
+        return createSuppressWarningActions(element, toSeverity(defaultLevel), suppressionKey).toTypedArray()
     }
 
-    public override fun isSuppressedFor(element: PsiElement): Boolean {
-        return SuppressManager.getInstance()!!.isSuppressedFor(element, getID())
+    override fun isSuppressedFor(element: PsiElement): Boolean {
+        if (SuppressManager.getInstance()!!.isSuppressedFor(element, id)) {
+            return true
+        }
+
+        val project = element.project
+        if (KotlinCacheService.getInstance(project).getSuppressionCache().isSuppressed(element, suppressionKey, toSeverity(defaultLevel))) {
+            return true
+        }
+
+        return false
+    }
+
+    protected open val suppressionKey: String get() = this.shortName.removePrefix("Kotlin")
+}
+
+private fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  {
+    return when (highlightDisplayLevel) {
+        HighlightDisplayLevel.DO_NOT_SHOW -> Severity.INFO
+
+        HighlightDisplayLevel.WARNING,
+        HighlightDisplayLevel.WEAK_WARNING -> Severity.WARNING
+
+        HighlightDisplayLevel.ERROR,
+        HighlightDisplayLevel.GENERIC_SERVER_ERROR_OR_WARNING,
+        HighlightDisplayLevel.NON_SWITCHABLE_ERROR -> Severity.ERROR
+
+        else -> Severity.ERROR
     }
 }
+

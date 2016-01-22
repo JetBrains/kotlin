@@ -16,35 +16,33 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.load.java.AbiVersionUtil
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 
-public class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>) {
+class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>) {
 
     fun findPackageParts(packageFqName: String): PackageParts? {
         return packageFqName2Parts[packageFqName]
     }
 
     companion object {
-        public val MAPPING_FILE_EXT: String = "kotlin_module"
+        @JvmField
+        val MAPPING_FILE_EXT: String = "kotlin_module"
 
-        public val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
+        @JvmField
+        val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
 
         fun create(proto: ByteArray? = null): ModuleMapping {
             if (proto == null) {
                 return EMPTY
             }
 
-            val inputStream = DataInputStream(ByteArrayInputStream(proto))
-            val size = inputStream.readInt()
+            val stream = DataInputStream(ByteArrayInputStream(proto))
+            val version = JvmMetadataVersion(*IntArray(stream.readInt()) { stream.readInt() })
 
-            val version = BinaryVersion.create((0..size - 1).map { inputStream.readInt() }.toIntArray())
-
-            if (AbiVersionUtil.isAbiVersionCompatible(version)) {
-                val parseFrom = JvmPackageTable.PackageTable.parseFrom(inputStream)
+            if (version.isCompatible()) {
+                val parseFrom = JvmPackageTable.PackageTable.parseFrom(stream)
                 if (parseFrom != null) {
                     val packageFqNameParts = hashMapOf<String, PackageParts>()
                     parseFrom.packagePartsList.forEach {
@@ -66,7 +64,7 @@ public class ModuleMapping private constructor(val packageFqName2Parts: Map<Stri
     }
 }
 
-public class PackageParts(val packageFqName: String) {
+class PackageParts(val packageFqName: String) {
 
     val parts = linkedSetOf<String>()
 
@@ -77,8 +75,7 @@ public class PackageParts(val packageFqName: String) {
             packageFqName.hashCode() * 31 + parts.hashCode()
 
     companion object {
-        @JvmStatic
-        public fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
+        @JvmStatic fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
             if (this.parts.isNotEmpty()) {
                 val packageParts = JvmPackageTable.PackageParts.newBuilder()
                 packageParts.setPackageFqName(this.packageFqName)

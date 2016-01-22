@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -37,42 +35,51 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import javax.inject.Inject
 
-public class CodeFragmentAnalyzer(
+class CodeFragmentAnalyzer(
         private val resolveSession: ResolveSession,
         private val qualifierResolver: QualifiedExpressionResolver,
-        private val expressionTypingServices: ExpressionTypingServices
+        private val expressionTypingServices: ExpressionTypingServices,
+        private val typeResolver: TypeResolver
 ) {
 
     // component dependency cycle
-    public var resolveElementCache: ResolveElementCache? = null
+    var resolveElementCache: ResolveElementCache? = null
         @Inject set
 
-    public fun analyzeCodeFragment(codeFragment: KtCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
-        val codeFragmentExpression = codeFragment.getContentElement()
-        if (codeFragmentExpression !is KtExpression) return
+    fun analyzeCodeFragment(codeFragment: KtCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
+        val codeFragmentElement = codeFragment.getContentElement()
 
         val (scopeForContextElement, dataFlowInfo) = getScopeAndDataFlowForAnalyzeFragment(codeFragment) {
             resolveElementCache!!.resolveToElement(it, bodyResolveMode)
         } ?: return
 
-        PreliminaryDeclarationVisitor.createForExpression(codeFragmentExpression, trace)
-        expressionTypingServices.getTypeInfo(
-                scopeForContextElement,
-                codeFragmentExpression,
-                TypeUtils.NO_EXPECTED_TYPE,
-                dataFlowInfo,
-                trace,
-                false
-        )
+        when (codeFragmentElement) {
+            is KtExpression -> {
+                PreliminaryDeclarationVisitor.createForExpression(codeFragmentElement, trace)
+                expressionTypingServices.getTypeInfo(
+                        scopeForContextElement,
+                        codeFragmentElement,
+                        TypeUtils.NO_EXPECTED_TYPE,
+                        dataFlowInfo,
+                        trace,
+                        false
+                )
+            }
+
+            is KtTypeReference -> {
+                val context = TypeResolutionContext(scopeForContextElement, trace, true, true).noBareTypes()
+                typeResolver.resolvePossiblyBareType(context, codeFragmentElement)
+            }
+        }
     }
 
     //TODO: this code should be moved into debugger which should set correct context for its code fragment
     private fun KtExpression.correctContextForExpression(): KtExpression {
         return when (this) {
-                   is KtProperty -> this.getDelegateExpressionOrInitializer()
-                   is KtFunctionLiteral -> this.getBodyExpression()?.getStatements()?.lastOrNull()
-                   is KtDeclarationWithBody -> this.getBodyExpression()
-                   is KtBlockExpression -> this.getStatements().lastOrNull()
+                   is KtProperty -> this.delegateExpressionOrInitializer
+                   is KtFunctionLiteral -> this.bodyExpression?.statements?.lastOrNull()
+                   is KtDeclarationWithBody -> this.bodyExpression
+                   is KtBlockExpression -> this.statements.lastOrNull()
                    else -> {
                        val previousSibling = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtExpression>()
                        if (previousSibling != null) return previousSibling
@@ -89,7 +96,7 @@ public class CodeFragmentAnalyzer(
             codeFragment: KtCodeFragment,
             resolveToElement: (KtElement) -> BindingContext
     ): Pair<LexicalScope, DataFlowInfo>? {
-        val context = codeFragment.getContext()
+        val context = codeFragment.context
         if (context !is KtExpression) return null
 
         val scopeForContextElement: LexicalScope?
@@ -99,7 +106,7 @@ public class CodeFragmentAnalyzer(
             is KtPrimaryConstructor -> {
                 val descriptor = resolveSession.getClassDescriptor(context.getContainingClassOrObject(), NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
-                scopeForContextElement = descriptor.getScopeForInitializerResolution()
+                scopeForContextElement = descriptor.scopeForInitializerResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             is KtSecondaryConstructor -> {
@@ -113,7 +120,7 @@ public class CodeFragmentAnalyzer(
             is KtClassOrObject -> {
                 val descriptor = resolveSession.getClassDescriptor(context, NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
-                scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
+                scopeForContextElement = descriptor.scopeForMemberDeclarationResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             is KtExpression -> {
@@ -125,7 +132,7 @@ public class CodeFragmentAnalyzer(
                 dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
             }
             is KtFile -> {
-                scopeForContextElement = resolveSession.getFileScopeProvider().getFileResolutionScope(context)
+                scopeForContextElement = resolveSession.fileScopeProvider.getFileResolutionScope(context)
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             else -> return null
@@ -139,7 +146,8 @@ public class CodeFragmentAnalyzer(
         }
 
         val importScopes = importList.imports.mapNotNull {
-            qualifierResolver.processImportReference(it, resolveSession.moduleDescriptor, resolveSession.trace, null)
+            qualifierResolver.processImportReference(it, resolveSession.moduleDescriptor, resolveSession.trace,
+                                                     aliasImportNames = emptyList(), packageFragmentForVisibilityCheck = null)
         }
 
         return scopeForContextElement.addImportingScopes(importScopes) to dataFlowInfo

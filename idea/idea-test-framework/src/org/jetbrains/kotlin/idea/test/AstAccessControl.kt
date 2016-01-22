@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import kotlin.test.fail
 
-public object AstAccessControl {
-    public val ALLOW_AST_ACCESS_DIRECTIVE: String = "ALLOW_AST_ACCESS"
+object AstAccessControl {
+    val ALLOW_AST_ACCESS_DIRECTIVE: String = "ALLOW_AST_ACCESS"
 
     // Please provide at least one test that fails ast switch check (shouldFail should be true for at least one test)
     // This kind of inconvenience is justified by the fact that the check can be invalidated by slight misconfiguration of the test
@@ -56,7 +56,7 @@ public object AstAccessControl {
         val manager = (PsiManager.getInstance(project) as PsiManagerImpl)
         val filter = VirtualFileFilter {
             file ->
-            if (file!!.getFileType() != KotlinFileType.INSTANCE || file in allowedFiles) {
+            if (file!!.fileType != KotlinFileType.INSTANCE || file in allowedFiles) {
                 false
             }
             else {

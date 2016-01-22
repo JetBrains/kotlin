@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import java.util.*
 
-public fun LexicalScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
+fun LexicalScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
         = getImplicitReceiversWithInstanceToExpression().keys
 
-public interface ReceiverExpressionFactory {
-    public fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean = true): KtExpression
+interface ReceiverExpressionFactory {
+    fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean = true): KtExpression
 }
 
-public fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
+fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
     // we use a set to workaround a bug with receiver for companion object present twice in the result of getImplicitReceiversHierarchy()
     val receivers = LinkedHashSet(getImplicitReceiversHierarchy())
 
@@ -46,19 +46,19 @@ public fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<Rece
     var current: DeclarationDescriptor? = ownerDescriptor
     while (current != null) {
         if (current is PropertyAccessorDescriptor) {
-            current =  current.getCorrespondingProperty()
+            current =  current.correspondingProperty
         }
         outerDeclarationsWithInstance.add(current)
 
         val classDescriptor = current as? ClassDescriptor
-        if (classDescriptor != null && !classDescriptor.isInner() && !DescriptorUtils.isLocal(classDescriptor)) break
+        if (classDescriptor != null && !classDescriptor.isInner && !DescriptorUtils.isLocal(classDescriptor)) break
 
-        current = current.getContainingDeclaration()
+        current = current.containingDeclaration
     }
 
     val result = LinkedHashMap<ReceiverParameterDescriptor, ReceiverExpressionFactory?>()
     for ((index, receiver) in receivers.withIndex()) {
-        val owner = receiver.getContainingDeclaration()
+        val owner = receiver.containingDeclaration
         val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
             val thisWithLabel = thisQualifierName(receiver)?.let { "this@${it.render()}" }
             if (index == 0)
@@ -66,7 +66,7 @@ public fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<Rece
             else
                 thisWithLabel to false
         }
-        else if (owner is ClassDescriptor && owner.getKind().isSingleton()) {
+        else if (owner is ClassDescriptor && owner.kind.isSingleton) {
             IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(owner) to false
         }
         else {
@@ -86,9 +86,9 @@ public fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<Rece
 }
 
 private fun thisQualifierName(receiver: ReceiverParameterDescriptor): Name? {
-    val descriptor = receiver.getContainingDeclaration()
-    val name = descriptor.getName()
-    if (!name.isSpecial()) return name
+    val descriptor = receiver.containingDeclaration
+    val name = descriptor.name
+    if (!name.isSpecial) return name
 
     val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtFunctionLiteral
     return functionLiteral?.findLabelAndCall()?.first

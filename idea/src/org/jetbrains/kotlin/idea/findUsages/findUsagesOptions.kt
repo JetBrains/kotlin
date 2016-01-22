@@ -22,25 +22,25 @@ import com.intellij.find.findUsages.JavaMethodFindUsagesOptions
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
 import com.intellij.openapi.project.Project
 
-public class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsagesOptions(project) {
-    public var searchConstructorUsages: Boolean = true
+class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsagesOptions(project) {
+    var searchConstructorUsages: Boolean = true
 
-    public override fun equals(o: Any?): Boolean {
+    override fun equals(o: Any?): Boolean {
         return super.equals(o) && o is KotlinClassFindUsagesOptions && o.searchConstructorUsages == searchConstructorUsages
     }
 
-    public override fun hashCode(): Int {
+    override fun hashCode(): Int {
         return 31 * super.hashCode() + if (searchConstructorUsages) 1 else 0
     }
 }
 
-public interface KotlinCallableFindUsagesOptions {
-    public var searchOverrides: Boolean
+interface KotlinCallableFindUsagesOptions {
+    var searchOverrides: Boolean
 
     fun toJavaOptions(project: Project): FindUsagesOptions?
 }
 
-public class KotlinFunctionFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaMethodFindUsagesOptions(project) {
+class KotlinFunctionFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaMethodFindUsagesOptions(project) {
     override var searchOverrides: Boolean
         get() = isOverridingMethods
         set(value: Boolean) {
@@ -64,7 +64,7 @@ public class KotlinFunctionFindUsagesOptions(project: Project): KotlinCallableFi
     }
 }
 
-public class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
+class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
     override var searchOverrides: Boolean = false
 
     override fun toJavaOptions(project: Project): JavaVariableFindUsagesOptions {

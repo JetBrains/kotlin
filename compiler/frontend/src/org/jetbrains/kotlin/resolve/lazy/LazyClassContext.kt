@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
 
-public interface LazyClassContext {
+interface LazyClassContext {
     val declarationScopeProvider: DeclarationScopeProvider
 
     val storageManager: StorageManager

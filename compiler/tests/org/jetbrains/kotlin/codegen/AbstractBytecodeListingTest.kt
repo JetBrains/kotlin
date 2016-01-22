@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 
-public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
+abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
-    public fun doTest(filename: String) {
+    fun doTest(filename: String) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         loadFileByFullPath(filename)
         val ktFile = File(filename)
@@ -70,7 +70,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             if ((access and Opcodes.ACC_STATIC) != 0) addModifier("static", list)
         }
 
-        public val text: String
+        val text: String
             get() = StringBuilder().apply {
                 append(classAnnotations.joinToString("\n", postfix = "\n"))
                 arrayListOf<String>().apply { handleModifiers(classAccess, this) }.forEach { append(it) }
@@ -138,7 +138,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
         override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
             val name = Type.getType(desc).className
-            classAnnotations.add("@$name ")
+            classAnnotations.add("@$name")
             return super.visitAnnotation(desc, visible)
         }
 

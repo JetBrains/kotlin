@@ -26,22 +26,22 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
-public class ConditionalJumpInstruction(
+class ConditionalJumpInstruction(
         element: KtElement,
-        public val onTrue: Boolean,
+        val onTrue: Boolean,
         lexicalScope: LexicalScope,
         targetLabel: Label,
-        public val conditionValue: PseudoValue?) : AbstractJumpInstruction(element, targetLabel, lexicalScope) {
+        val conditionValue: PseudoValue?) : AbstractJumpInstruction(element, targetLabel, lexicalScope) {
     private var _nextOnTrue: Instruction? = null
     private var _nextOnFalse: Instruction? = null
 
-    public var nextOnTrue: Instruction
+    var nextOnTrue: Instruction
         get() = _nextOnTrue!!
         set(value: Instruction) {
             _nextOnTrue = outgoingEdgeTo(value)
         }
 
-    public var nextOnFalse: Instruction
+    var nextOnFalse: Instruction
         get() = _nextOnFalse!!
         set(value: Instruction) {
             _nextOnFalse = outgoingEdgeTo(value)
@@ -64,7 +64,7 @@ public class ConditionalJumpInstruction(
     override fun toString(): String {
         val instr = if (onTrue) "jt" else "jf"
         val inValue = conditionValue?.let { "|" + it } ?: ""
-        return "$instr(${targetLabel.getName()}$inValue)"
+        return "$instr(${targetLabel.name}$inValue)"
     }
 
     override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction =

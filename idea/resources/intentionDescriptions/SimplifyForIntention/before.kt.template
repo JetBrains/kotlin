@@ -1,0 +1,5 @@
+val map = hashMapOf(1 to 2)
+for (<spot>entry</spot> in map.entries) {
+    val key = entry.key
+    val value = entry.value
+}

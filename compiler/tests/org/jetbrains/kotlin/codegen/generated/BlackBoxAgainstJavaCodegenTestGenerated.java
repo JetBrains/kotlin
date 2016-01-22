@@ -904,6 +904,18 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             doTestAgainstJava(fileName);
         }
 
+        @TestMetadata("setterNonVoid1.kt")
+        public void testSetterNonVoid1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/setterNonVoid1.kt");
+            doTestAgainstJava(fileName);
+        }
+
+        @TestMetadata("setterNonVoid2.kt")
+        public void testSetterNonVoid2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/setterNonVoid2.kt");
+            doTestAgainstJava(fileName);
+        }
+
         @TestMetadata("_protected.kt")
         public void test_protected() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/_protected.kt");

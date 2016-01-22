@@ -34,19 +34,19 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
  */
 object PackageDirectiveCompletion {
     val DUMMY_IDENTIFIER = "___package___"
-    val ACTIVATION_PATTERN = PlatformPatterns.psiElement().inside(javaClass<KtPackageDirective>())
+    val ACTIVATION_PATTERN = PlatformPatterns.psiElement().inside(KtPackageDirective::class.java)
 
     fun perform(parameters: CompletionParameters, result: CompletionResultSet): Boolean {
-        val position = parameters.getPosition()
+        val position = parameters.position
         if (!ACTIVATION_PATTERN.accepts(position)) return false
 
-        val file = position.getContainingFile() as KtFile
+        val file = position.containingFile as KtFile
 
-        val expression = file.findElementAt(parameters.getOffset())?.getParent() as? KtSimpleNameExpression ?: return false
+        val expression = file.findElementAt(parameters.offset)?.parent as? KtSimpleNameExpression ?: return false
 
         try {
-            val prefixLength = parameters.getOffset() - expression.getTextOffset()
-            val prefix = expression.getText()!!
+            val prefixLength = parameters.offset - expression.textOffset
+            val prefix = expression.text!!
             val prefixMatcher = PlainPrefixMatcher(prefix.substring(0, prefixLength))
             val result = result.withPrefixMatcher(prefixMatcher)
 
@@ -58,7 +58,7 @@ object PackageDirectiveCompletion {
             val lookupElementFactory = BasicLookupElementFactory(resolutionFacade.project, InsertHandlerProvider(callType = CallType.PACKAGE_DIRECTIVE, expectedInfosCalculator = { emptyList() }))
             for (variant in variants) {
                 val lookupElement = lookupElementFactory.createLookupElement(variant)
-                if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {
+                if (!lookupElement.lookupString.contains(DUMMY_IDENTIFIER)) {
                     result.addElement(lookupElement)
                 }
             }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 
-public class LexicalScope(val parentScope: LexicalScope?, val element: KtElement) {
+class LexicalScope(val parentScope: LexicalScope?, val element: KtElement) {
     //todo remove after KT-4126
     private val d = (parentScope?.depth ?: 0) + 1
     val depth: Int get() = d

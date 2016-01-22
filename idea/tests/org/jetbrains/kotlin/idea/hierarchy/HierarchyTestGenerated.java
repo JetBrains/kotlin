@@ -157,6 +157,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doTypeClassHierarchyTest(fileName);
         }
 
+        @TestMetadata("JavaStyleClassLiteralInvalidCode")
+        public void testJavaStyleClassLiteralInvalidCode() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JavaStyleClassLiteralInvalidCode/");
+            doTypeClassHierarchyTest(fileName);
+        }
+
         @TestMetadata("JetInt")
         public void testJetInt() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JetInt/");

@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
-public abstract class ReflectJavaElement : JavaElement
+abstract class ReflectJavaElement : JavaElement

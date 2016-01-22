@@ -56,7 +56,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
     init {
         // locking before entering thread in order to avoid racing with isChanged
         fileIdsLock.acquire()
-        thread(daemon = true, start = true) {
+        thread(isDaemon = true, start = true) {
             try {
                 fileIds = classpath
                         .map { File(it) }

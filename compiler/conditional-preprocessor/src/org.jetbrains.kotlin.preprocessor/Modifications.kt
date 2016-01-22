@@ -25,7 +25,7 @@ data class Modification(val range: TextRange, val apply: (String) -> String)
 class CollectModificationsVisitor(evaluators: List<Evaluator>) : KtTreeVisitorVoid() {
 
     val elementModifications: Map<Evaluator, MutableList<Modification>> =
-            evaluators.toMap(selector = { it }, transform = { arrayListOf<Modification>() })
+            evaluators.toMapBy(selector = { it }, transform = { arrayListOf<Modification>() })
 
     override fun visitDeclaration(declaration: KtDeclaration) {
         super.visitDeclaration(declaration)
@@ -40,10 +40,10 @@ class CollectModificationsVisitor(evaluators: List<Evaluator>) : KtTreeVisitorVo
 
             if (!conditionalResult)
                 modifications.add(Modification(declaration.textRange) { rangeText ->
-                    StringBuilder {
+                    buildString {
                         append("/* Not available on $evaluator */")
                         repeat(StringUtil.getLineBreakCount(rangeText)) { append("\n") }
-                    }.toString()
+                    }
                 })
             else {
                 val targetName = annotations.filterIsInstance<Conditional.TargetName>().singleOrNull()
@@ -60,13 +60,13 @@ class CollectModificationsVisitor(evaluators: List<Evaluator>) : KtTreeVisitorVo
 }
 
 fun List<Modification>.applyTo(sourceText: String): String {
-    return StringBuilder {
+    return buildString {
         var prevIndex = 0
         for ((range, transform) in this@applyTo) {
             append(sourceText, prevIndex, range.startOffset)
             append(transform(range.substring(sourceText)))
             prevIndex = range.endOffset
         }
-        append(sourceText, prevIndex, sourceText.length())
-    }.toString()
+        append(sourceText, prevIndex, sourceText.length)
+    }
 }

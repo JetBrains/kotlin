@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.types.KotlinType
 
-public class SmartCastResult(public val resultType: KotlinType, public val isCorrect: Boolean)
+class SmartCastResult(val resultType: KotlinType, val isCorrect: Boolean)

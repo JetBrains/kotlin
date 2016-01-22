@@ -24,19 +24,19 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
-public abstract class AbstractJumpInstruction(
+abstract class AbstractJumpInstruction(
         element: KtElement,
-        public val targetLabel: Label,
+        val targetLabel: Label,
         lexicalScope: LexicalScope
 ) : KtElementInstructionImpl(element, lexicalScope), JumpInstruction {
-    public var resolvedTarget: Instruction? = null
+    var resolvedTarget: Instruction? = null
         set(value: Instruction?) {
             field = outgoingEdgeTo(value)
         }
 
     protected abstract fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction
 
-    public fun copy(newLabel: Label): Instruction {
+    fun copy(newLabel: Label): Instruction {
         return updateCopyInfo(createCopy(newLabel, lexicalScope))
     }
 

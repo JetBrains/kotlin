@@ -32,7 +32,7 @@ object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
         }
 
         // 2. bind plain comments
-        var result = tokens.size()
+        var result = tokens.size
         tokens@ for (idx in tokens.indices.reversed()) {
             val tokenType = tokens[idx]
             when (tokenType) {
@@ -61,7 +61,7 @@ object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
             if (tokens[idx] == KtTokens.DOC_COMMENT) return idx
         }
 
-        return tokens.size()
+        return tokens.size
     }
 }
 

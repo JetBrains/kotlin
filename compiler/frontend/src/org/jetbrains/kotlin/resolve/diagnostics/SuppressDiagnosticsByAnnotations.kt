@@ -28,23 +28,23 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 
-public val FUNCTION_NO_BODY_ERRORS: List<DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor>> =
+val FUNCTION_NO_BODY_ERRORS: List<DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor>> =
         listOf(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, Errors.NON_MEMBER_FUNCTION_NO_BODY)
 
-public val PROPERTY_NOT_INITIALIZED_ERRORS: List<DiagnosticFactory0<KtProperty>> =
+val PROPERTY_NOT_INITIALIZED_ERRORS: List<DiagnosticFactory0<KtProperty>> =
         listOf(Errors.MUST_BE_INITIALIZED, Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT)
 
-public abstract class SuppressDiagnosticsByAnnotations(
+abstract class SuppressDiagnosticsByAnnotations(
         diagnosticsToSuppress: List<DiagnosticFactory<out Diagnostic>>,
         vararg annotationsFqName: FqName
-) : DiagnosticsWithSuppression.SuppressStringProvider {
+) : SuppressStringProvider {
 
     private val annotationsFqName = annotationsFqName
-    private val stringsToSuppress = diagnosticsToSuppress.map { it.getName().toLowerCase() }
+    private val stringsToSuppress = diagnosticsToSuppress.map { it.name.toLowerCase() }
     private val expectedFqNames = annotationsFqName.map { it.toString() }
 
     override fun get(annotationDescriptor: AnnotationDescriptor): List<String> {
-        val descriptor = DescriptorUtils.getClassDescriptorForType(annotationDescriptor.getType())
+        val descriptor = DescriptorUtils.getClassDescriptorForType(annotationDescriptor.type)
         val actualFqName = DescriptorUtils.getFqName(descriptor).asString()
 
         if (expectedFqNames.any { it == actualFqName }) return stringsToSuppress

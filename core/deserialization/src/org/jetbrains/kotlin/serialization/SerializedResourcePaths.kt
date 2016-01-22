@@ -20,12 +20,12 @@ import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-abstract class SerializedResourcePaths {
-    abstract val extensionRegistry: ExtensionRegistryLite
+interface SerializedResourcePaths {
+    val extensionRegistry: ExtensionRegistryLite
 
-    abstract fun getClassMetadataPath(classId: ClassId): String
+    fun getClassMetadataPath(classId: ClassId): String
 
-    abstract fun getPackageFilePath(fqName: FqName): String
+    fun getPackageFilePath(fqName: FqName): String
 
-    abstract fun getStringTableFilePath(fqName: FqName): String
+    fun getStringTableFilePath(fqName: FqName): String
 }

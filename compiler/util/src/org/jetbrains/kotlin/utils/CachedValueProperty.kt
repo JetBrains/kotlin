@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.utils
 
 import kotlin.reflect.KProperty
 
-public class CachedValueProperty<TValue : Any, TTimestamp : Any>(
+class CachedValueProperty<TValue : Any, TTimestamp : Any>(
         private val calculator: () -> TValue,
         private val timestampCalculator: () -> TTimestamp
 ) {

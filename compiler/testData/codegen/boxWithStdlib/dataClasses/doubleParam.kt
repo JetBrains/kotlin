@@ -26,5 +26,5 @@ fun box(): String {
     if (A(-2.72) !in s) return "Fail: -2.72 not found"
     if (A(NAN) !in s) return "Fail: NaN not found"
 
-    return if (s.size() == 5) "OK" else "Fail $s"
+    return if (s.size == 5) "OK" else "Fail $s"
 }

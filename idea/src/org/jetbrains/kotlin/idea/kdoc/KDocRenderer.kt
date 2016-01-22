@@ -64,7 +64,7 @@ object KDocRenderer {
             else {
                 to.append(tag.getContent())
             }
-            if (index < seeTags.size() - 1) {
+            if (index < seeTags.size - 1) {
                 to.append(", ")
             }
         }
@@ -120,7 +120,7 @@ object KDocRenderer {
         }
     }
 
-    public fun MarkdownNode.toHtml(): String {
+    fun MarkdownNode.toHtml(): String {
         val sb = StringBuilder()
         visit { node, processChildren ->
             fun wrapChildren(tag: String, newline: Boolean = false) {
@@ -211,8 +211,8 @@ object KDocRenderer {
     }
 
     fun StringBuilder.trimEnd() {
-        while (length() > 0 && this[length() - 1] == ' ') {
-            deleteCharAt(length() - 1)
+        while (length > 0 && this[length - 1] == ' ') {
+            deleteCharAt(length - 1)
         }
     }
 

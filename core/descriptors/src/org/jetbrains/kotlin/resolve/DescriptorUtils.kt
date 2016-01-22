@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
-import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_ENTRY
-import org.jetbrains.kotlin.descriptors.ClassKind.OBJECT
+import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -33,98 +31,99 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getCompanionObjectDescriptor() ?: this
+fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
 
-public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor {
+fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor {
     return when {
-        this is ConstructorDescriptor -> getContainingDeclaration()
-        this is PropertyAccessorDescriptor -> getCorrespondingProperty()
+        this is ConstructorDescriptor -> containingDeclaration
+        this is PropertyAccessorDescriptor -> correspondingProperty
         else -> this
     }
 }
 
-public val DeclarationDescriptor.fqNameUnsafe: FqNameUnsafe
+val DeclarationDescriptor.fqNameUnsafe: FqNameUnsafe
     get() = DescriptorUtils.getFqName(this)
 
-public val DeclarationDescriptor.fqNameSafe: FqName
+val DeclarationDescriptor.fqNameSafe: FqName
     get() = DescriptorUtils.getFqNameSafe(this)
 
-public val DeclarationDescriptor.isExtension: Boolean
-    get() = this is CallableDescriptor && getExtensionReceiverParameter() != null
+val DeclarationDescriptor.isExtension: Boolean
+    get() = this is CallableDescriptor && extensionReceiverParameter != null
 
-public val DeclarationDescriptor.module: ModuleDescriptor
+val DeclarationDescriptor.module: ModuleDescriptor
     get() = DescriptorUtils.getContainingModule(this)
 
-public fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName, location: LookupLocation): ClassDescriptor? {
-    assert(!topLevelClassFqName.isRoot())
+fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName, location: LookupLocation): ClassDescriptor? {
+    assert(!topLevelClassFqName.isRoot)
     return getPackage(topLevelClassFqName.parent()).memberScope.getContributedClassifier(topLevelClassFqName.shortName(), location) as? ClassDescriptor
 }
 
-public val ClassDescriptor.classId: ClassId
+val ClassDescriptor.classId: ClassId
     get() {
-        val owner = getContainingDeclaration()
+        val owner = containingDeclaration
         if (owner is PackageFragmentDescriptor) {
-            return ClassId(owner.fqName, getName())
+            return ClassId(owner.fqName, name)
         }
         else if (owner is ClassDescriptor) {
-            return owner.classId.createNestedClassId(getName())
+            return owner.classId.createNestedClassId(name)
         }
         throw IllegalStateException("Illegal container: $owner")
     }
 
-public val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectDescriptor != null
+val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectDescriptor != null
 
-public val ClassDescriptor.hasClassValueDescriptor: Boolean get() = classValueDescriptor != null
+val ClassDescriptor.hasClassValueDescriptor: Boolean get() = classValueDescriptor != null
 
-public val ClassDescriptor.classValueDescriptor: ClassDescriptor?
+val ClassDescriptor.classValueDescriptor: ClassDescriptor?
     get() = if (kind.isSingleton) this else companionObjectDescriptor
 
-public val ClassDescriptor.classValueTypeDescriptor: ClassDescriptor?
+val ClassDescriptor.classValueTypeDescriptor: ClassDescriptor?
     get() = when (kind) {
         OBJECT -> this
         ENUM_ENTRY -> {
             // enum entry has the type of enum class
             val container = this.containingDeclaration
-            assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)
+            assert(container is ClassDescriptor && container.kind == ENUM_CLASS)
             container as ClassDescriptor
         }
         else -> companionObjectDescriptor
     }
 
 /** If a literal of this class can be used as a value, returns the type of this value */
-public val ClassDescriptor.classValueType: KotlinType?
-    get() = classValueTypeDescriptor?.getDefaultType()
+val ClassDescriptor.classValueType: KotlinType?
+    get() = classValueTypeDescriptor?.defaultType
 
-public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
+val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
     get() {
         var parent: DeclarationDescriptorWithVisibility? = this
 
         while (parent != null) {
-            if (!parent.getVisibility().isPublicAPI) return false
+            if (!parent.visibility.isPublicAPI) return false
 
-            parent = DescriptorUtils.getParentOfType(parent, javaClass<DeclarationDescriptorWithVisibility>())
+            parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility::class.java)
         }
 
         return true
     }
 
-public fun ClassDescriptor.getSuperClassNotAny(): ClassDescriptor? {
-    for (supertype in getDefaultType().getConstructor().getSupertypes()) {
-        val superClassifier = supertype.getConstructor().getDeclarationDescriptor()
-        if (!KotlinBuiltIns.isAnyOrNullableAny(supertype) &&
-            (DescriptorUtils.isClass(superClassifier) || DescriptorUtils.isEnumClass(superClassifier))) {
-            return superClassifier as ClassDescriptor
+fun ClassDescriptor.getSuperClassNotAny(): ClassDescriptor? {
+    for (supertype in defaultType.constructor.supertypes) {
+        if (!KotlinBuiltIns.isAnyOrNullableAny(supertype)) {
+            val superClassifier = supertype.constructor.declarationDescriptor
+            if (DescriptorUtils.isClassOrEnumClass(superClassifier)) {
+                return superClassifier as ClassDescriptor
+            }
         }
     }
     return null
 }
 
-public fun ClassDescriptor.getSuperClassOrAny(): ClassDescriptor = getSuperClassNotAny() ?: builtIns.getAny()
+fun ClassDescriptor.getSuperClassOrAny(): ClassDescriptor = getSuperClassNotAny() ?: builtIns.any
 
-public val ClassDescriptor.secondaryConstructors: List<ConstructorDescriptor>
-    get() = getConstructors().filterNot { it.isPrimary() }
+val ClassDescriptor.secondaryConstructors: List<ConstructorDescriptor>
+    get() = constructors.filterNot { it.isPrimary }
 
-public val DeclarationDescriptor.builtIns: KotlinBuiltIns
+val DeclarationDescriptor.builtIns: KotlinBuiltIns
     get() = module.builtIns
 
 /**
@@ -145,17 +144,17 @@ public val DeclarationDescriptor.builtIns: KotlinBuiltIns
  * for constructor of Outer.Inner -> returns Outer (dispatch receiver parameter is Outer, but it's containing declaration is Inner)
  *
  */
-public fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): DeclarationDescriptor? {
-    if (this is CallableMemberDescriptor && getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): DeclarationDescriptor? {
+    if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
         return getContainingDeclaration()
     }
-    return getDispatchReceiverParameter()?.getContainingDeclaration()
+    return dispatchReceiverParameter?.containingDeclaration
 }
 
 /**
  * @return `true` iff the parameter has a default value, i.e. declares it or inherits by overriding a parameter which has a default value.
  */
-public fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
+fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     val handler = object : DFS.AbstractNodeHandler<ValueParameterDescriptor, Boolean>() {
         var result = false
 
@@ -178,24 +177,24 @@ public fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return handler.result()
 }
 
-public fun Annotated.isRepeatableAnnotation(): Boolean =
+fun Annotated.isRepeatableAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.repeatable) != null
 
-public fun Annotated.isDocumentedAnnotation(): Boolean =
+fun Annotated.isDocumentedAnnotation(): Boolean =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) != null
 
-public fun Annotated.getAnnotationRetention(): KotlinRetention? {
+fun Annotated.getAnnotationRetention(): KotlinRetention? {
     val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention) ?: return null
-    val retentionArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
+    val retentionArgumentValue = annotationEntryDescriptor.allValueArguments.entries.firstOrNull {
         it.key.name.asString() == "value"
-    }?.getValue() as? EnumValue ?: return null
+    }?.value as? EnumValue ?: return null
     return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
 }
 
-public val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor>
+val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor>
     get() = sequence(this, { it.containingDeclaration })
 
-public val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
+val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
     get() = parentsWithSelf.drop(1)
 
 val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
@@ -203,7 +202,7 @@ val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
 
 fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
 
-public fun CallableMemberDescriptor.firstOverridden(
+fun CallableMemberDescriptor.firstOverridden(
         predicate: (CallableMemberDescriptor) -> Boolean
 ): CallableMemberDescriptor? {
     var result: CallableMemberDescriptor? = null

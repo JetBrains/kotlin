@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     val p: Inv<PrintStream> = inv(printStream())
     val p1: Inv<PrintStream?> = inv(printStream())
 
-    list().size()
+    list().size
     val l: Inv<List<String>> = inv(list())
     val l1: Inv<MutableList<String>?> = inv(list())
 

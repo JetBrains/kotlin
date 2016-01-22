@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
-public abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase() {
+abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase() {
     protected fun doTest(path: String) {
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
         val mainFilePath = config.getString("mainFile")
         val intentionAction = Class.forName(config.getString("intentionClass")).newInstance() as IntentionAction
-        val isApplicableExpected = config["isApplicable"]?.getAsBoolean() ?: true
+        val isApplicableExpected = config["isApplicable"]?.asBoolean ?: true
 
-        val withRuntime = config["withRuntime"]?.getAsBoolean() ?: false
+        val withRuntime = config["withRuntime"]?.asBoolean ?: false
         if (withRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
@@ -52,30 +52,30 @@ public abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase()
                    val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
                    val conflictFile = rootDir.findFileByRelativePath("$mainFilePath.conflicts")
                    val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
-                   val editor = EditorFactory.getInstance()!!.createEditor(document, getProject()!!)!!
-                   editor.getCaretModel().moveToOffset(extractCaretOffset(document))
-                   val mainPsiFile = PsiManager.getInstance(getProject()!!).findFile(mainFile)!!
+                   val editor = EditorFactory.getInstance()!!.createEditor(document, project!!)!!
+                   editor.caretModel.moveToOffset(extractCaretOffset(document))
+                   val mainPsiFile = PsiManager.getInstance(project!!).findFile(mainFile)!!
 
                    try {
                        Assert.assertTrue("isAvailable() for ${intentionAction.javaClass} should return $isApplicableExpected",
-                                         isApplicableExpected == intentionAction.isAvailable(getProject(), editor, mainPsiFile))
+                                         isApplicableExpected == intentionAction.isAvailable(project, editor, mainPsiFile))
                        config.getNullableString("intentionText")?.let {
-                           TestCase.assertEquals("Intention text mismatch", it, intentionAction.getText())
+                           TestCase.assertEquals("Intention text mismatch", it, intentionAction.text)
                        }
 
                        if (isApplicableExpected) {
-                           getProject().executeWriteCommand(intentionAction.getText()) {
-                               intentionAction.invoke(getProject(), editor, mainPsiFile)
+                           project.executeWriteCommand(intentionAction.text) {
+                               intentionAction.invoke(project, editor, mainPsiFile)
                            }
                        }
 
                        assert(conflictFile == null) { "Conflict file $conflictFile should not exist" }
                    }
                    catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
-                       KotlinTestUtils.assertEqualsToFile(File(conflictFile!!.path), e.getMessage()!!)
+                       KotlinTestUtils.assertEqualsToFile(File(conflictFile!!.path), e.message!!)
                    }
                    finally {
-                       PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
+                       PsiDocumentManager.getInstance(project!!).commitAllDocuments()
                        FileDocumentManager.getInstance().saveAllDocuments()
 
                        EditorFactory.getInstance()!!.releaseEditor(editor)
@@ -93,11 +93,11 @@ public abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase()
         return testName.substring(0, testName.lastIndexOf('_')).replace('_', '/')
     }
 
-    protected override fun getTestRoot() : String {
+    override fun getTestRoot() : String {
         return "/multiFileIntentions/"
     }
 
-    protected override fun getTestDataPath() : String {
+    override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase()
     }
 }

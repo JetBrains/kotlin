@@ -2,14 +2,14 @@ package test
 
 public open class J : test.K {
     public constructor J()
-    public open override /*1*/ fun foo(/*0*/ l: kotlin.MutableList<kotlin.String>): kotlin.String
+    public open override /*1*/ fun foo(/*0*/ l: kotlin.collections.MutableList<kotlin.String>): kotlin.String
 }
 
 public interface K {
-    public abstract fun foo(/*0*/ l: kotlin.MutableList<kotlin.String>): kotlin.String
+    public abstract fun foo(/*0*/ l: kotlin.collections.MutableList<kotlin.String>): kotlin.String
 }
 
 public final class K1 : test.J {
     public constructor K1()
-    public open override /*1*/ fun foo(/*0*/ l: kotlin.MutableList<kotlin.String>): kotlin.String
+    public open override /*1*/ fun foo(/*0*/ l: kotlin.collections.MutableList<kotlin.String>): kotlin.String
 }

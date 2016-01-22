@@ -23,24 +23,24 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.psiUtil.*
 
 object KtQualifiedExpressionImpl {
-    public fun KtQualifiedExpression.getOperationTokenNode(): ASTNode {
-        val operationNode = this.getNode()!!.findChildByType(KtTokens.OPERATIONS)
+    fun KtQualifiedExpression.getOperationTokenNode(): ASTNode {
+        val operationNode = this.node!!.findChildByType(KtTokens.OPERATIONS)
         return operationNode!!
     }
 
-    public fun KtQualifiedExpression.getOperationSign(): KtToken {
-        return this.getOperationTokenNode().getElementType() as KtToken
+    fun KtQualifiedExpression.getOperationSign(): KtToken {
+        return this.operationTokenNode.elementType as KtToken
     }
 
     private fun KtQualifiedExpression.getExpression(afterOperation: Boolean): KtExpression? {
-        return getOperationTokenNode().getPsi()?.siblings(afterOperation, false)?.firstOrNull { it is KtExpression } as? KtExpression
+        return operationTokenNode.psi?.siblings(afterOperation, false)?.firstOrNull { it is KtExpression } as? KtExpression
     }
 
-    public fun KtQualifiedExpression.getReceiverExpression(): KtExpression {
+    fun KtQualifiedExpression.getReceiverExpression(): KtExpression {
         return getExpression(false) ?: throw AssertionError("No receiver found: ${getElementTextWithContext()}")
     }
 
-    public fun KtQualifiedExpression.getSelectorExpression(): KtExpression? {
+    fun KtQualifiedExpression.getSelectorExpression(): KtExpression? {
         return getExpression(true)
     }
 }

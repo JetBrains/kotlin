@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ResolveElementCacheTest : KotlinLightCodeInsightFixtureTestCase() {
+class ResolveElementCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     private val FILE_TEXT =
@@ -66,10 +68,10 @@ class C(param1: String = "", param2: Int = 0) {
         val members = klass.declarations
         val function = members.first() as KtNamedFunction
         val statements = (function.bodyExpression as KtBlockExpression).statements
-        return Data(file, klass, members, statements, KtPsiFactory(getProject()))
+        return Data(file, klass, members, statements, KtPsiFactory(project))
     }
 
-    public fun testFullResolveCaching() {
+    fun testFullResolveCaching() {
         doTest { this.testResolveCaching() }
     }
 
@@ -109,9 +111,9 @@ class C(param1: String = "", param2: Int = 0) {
         assert(bFunBodyContextAfterChange2 !== bFunBodyContextAfterChange1)
     }
 
-    public fun testNonPhysicalFileFullResolveCaching() {
+    fun testNonPhysicalFileFullResolveCaching() {
         doTest {
-            val nonPhysicalFile = KtPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
+            val nonPhysicalFile = KtPsiFactory(project).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
             val nonPhysicalData = extractData(nonPhysicalFile)
             nonPhysicalData.testResolveCaching()
 
@@ -137,7 +139,7 @@ class C(param1: String = "", param2: Int = 0) {
         }
     }
 
-    public fun testResolveSurvivesTypingInCodeBlock() {
+    fun testResolveSurvivesTypingInCodeBlock() {
         doTest {
             val statement = statements[0]
             val bindingContext1 = statement.analyze(BodyResolveMode.FULL)
@@ -145,7 +147,7 @@ class C(param1: String = "", param2: Int = 0) {
             val classConstructorParamTypeRef = klass.getPrimaryConstructor()!!.valueParameters.first().typeReference!!
             val bindingContext2 = classConstructorParamTypeRef.analyze(BodyResolveMode.FULL)
 
-            val documentManager = PsiDocumentManager.getInstance(getProject())
+            val documentManager = PsiDocumentManager.getInstance(project)
             val document = documentManager.getDocument(file)!!
             documentManager.doPostponedOperationsAndUnblockDocument(document)
 
@@ -173,7 +175,7 @@ class C(param1: String = "", param2: Int = 0) {
         }
     }
 
-    public fun testPartialResolveUsesFullResolveCached() {
+    fun testPartialResolveUsesFullResolveCached() {
         doTest {
             val statement1 = statements[0]
             val statement2 = statements[1]
@@ -187,7 +189,7 @@ class C(param1: String = "", param2: Int = 0) {
         }
     }
 
-    public fun testPartialResolveCaching() {
+    fun testPartialResolveCaching() {
         doTest { this.testPartialResolveCaching() }
     }
 
@@ -208,35 +210,35 @@ class C(param1: String = "", param2: Int = 0) {
         val bindingContext5 = statement1.analyze(BodyResolveMode.PARTIAL)
         assert(bindingContext5 !== bindingContext1)
 
-        statement1.getParent().addAfter(factory.createExpression("x()"), statement1)
+        statement1.parent.addAfter(factory.createExpression("x()"), statement1)
 
         val bindingContext6 = statement1.analyze(BodyResolveMode.PARTIAL)
         assert(bindingContext6 !== bindingContext5)
     }
 
-    public fun testNonPhysicalFilePartialResolveCaching() {
+    fun testNonPhysicalFilePartialResolveCaching() {
         doTest {
-            val nonPhysicalFile = KtPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
+            val nonPhysicalFile = KtPsiFactory(project).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
             val nonPhysicalData = extractData(nonPhysicalFile)
             nonPhysicalData.testPartialResolveCaching()
         }
     }
 
-    public fun testPartialResolveCachedForWholeStatement() {
+    fun testPartialResolveCachedForWholeStatement() {
         doTest {
             val statement = statements[0] as KtCallExpression
-            val argument1 = statement.getValueArguments()[0]
-            val argument2 = statement.getValueArguments()[1]
+            val argument1 = statement.valueArguments[0]
+            val argument2 = statement.valueArguments[1]
             val bindingContext1 = argument1.analyze(BodyResolveMode.PARTIAL)
             val bindingContext2 = argument2.analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext1 === bindingContext2)
         }
     }
 
-    public fun testPartialResolveCachedForAllStatementsResolved() {
+    fun testPartialResolveCachedForAllStatementsResolved() {
         doTest {
             val bindingContext1 = statements[2].analyze(BodyResolveMode.PARTIAL) // resolve 'd(x)'
-            val bindingContext2 = (statements[1] as KtVariableDeclaration).getInitializer()!!.analyze(BodyResolveMode.PARTIAL) // resolve initializer in 'val x = c()' - it required for resolved 'd(x)' and should be already resolved
+            val bindingContext2 = (statements[1] as KtVariableDeclaration).initializer!!.analyze(BodyResolveMode.PARTIAL) // resolve initializer in 'val x = c()' - it required for resolved 'd(x)' and should be already resolved
             assert(bindingContext1 === bindingContext2)
 
             val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
@@ -244,9 +246,9 @@ class C(param1: String = "", param2: Int = 0) {
         }
     }
 
-    public fun testPartialResolveCachedForDefaultParameterValue() {
+    fun testPartialResolveCachedForDefaultParameterValue() {
         doTest {
-            val defaultValue = (members[0] as KtNamedFunction).getValueParameters()[0].getDefaultValue()
+            val defaultValue = (members[0] as KtNamedFunction).valueParameters[0].defaultValue
             val bindingContext1 = defaultValue!!.analyze(BodyResolveMode.PARTIAL)
             val bindingContext2 = defaultValue.analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext1 === bindingContext2)
@@ -256,26 +258,63 @@ class C(param1: String = "", param2: Int = 0) {
         }
     }
 
-    public fun testFullResolvedCachedWhenPartialForConstructorInvoked() {
+    fun testFullResolvedCachedWhenPartialForConstructorInvoked() {
         doTest {
-            val defaultValue1 = klass.getPrimaryConstructorParameters()[0].getDefaultValue()!!
-            val defaultValue2 = klass.getPrimaryConstructorParameters()[1].getDefaultValue()!!
+            val defaultValue1 = klass.getPrimaryConstructorParameters()[0].defaultValue!!
+            val defaultValue2 = klass.getPrimaryConstructorParameters()[1].defaultValue!!
             val bindingContext1 = defaultValue1.analyze(BodyResolveMode.PARTIAL)
             val bindingContext2 = defaultValue2.analyze(BodyResolveMode.FULL)
             assert(bindingContext1 === bindingContext2)
         }
     }
 
-    public fun testAnnotationEntry() {
+    fun testAnnotationEntry() {
         val file = myFixture.configureByText("Test.kt", """
         annotation class A
         @A class B {}
         """) as KtFile
 
-        val klass = file.getDeclarations()[1] as KtClass
-        val annotationEntry = klass.getAnnotationEntries().single()
+        val klass = file.declarations[1] as KtClass
+        val annotationEntry = klass.annotationEntries.single()
 
         val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
         assert(context[BindingContext.ANNOTATION, annotationEntry] != null)
+    }
+
+    fun testFileAnnotationList() {
+        val file = myFixture.configureByText("Test.kt", """
+        @file:Suppress("Some")
+        @file:JvmName("Hi")
+        """) as KtFile
+
+        val fileAnnotationList = file.fileAnnotationList!!
+        val context = fileAnnotationList.analyze(BodyResolveMode.PARTIAL)
+        assert(context[BindingContext.ANNOTATION, fileAnnotationList.annotationEntries[0]] != null)
+        assert(context[BindingContext.ANNOTATION, fileAnnotationList.annotationEntries[1]] != null)
+    }
+
+    fun testIncompleteFileAnnotationList() {
+        val file = myFixture.configureByText("Test.kt", """
+        @file
+        import some.hello
+        """) as KtFile
+
+        val fileAnnotationList = file.fileAnnotationList!!
+        fileAnnotationList.analyze(BodyResolveMode.PARTIAL)
+    }
+
+    fun testNamedParametersInFunctionType() {
+        val file = myFixture.configureByText("Test.kt", """
+        fun <K, V> intercept(block: (key: K, next: (K) -> V, K) -> V) {}
+        """) as KtFile
+
+        val function = file.declarations[0] as KtNamedFunction
+        val functionType = function.valueParameters.first().typeReference!!.typeElement as KtFunctionType
+        val descriptorsForParameters = functionType.parameters.map { it.resolveToDescriptor() }
+
+        assert(
+                listOf("key", "next", SpecialNames.NO_NAME_PROVIDED.asString()) ==
+                        descriptorsForParameters.map { it.name.asString() }
+        )
     }
 }

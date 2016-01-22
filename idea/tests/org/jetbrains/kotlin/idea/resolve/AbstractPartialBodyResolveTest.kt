@@ -45,11 +45,11 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
-public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    public fun doTest(testPath: String) {
+    fun doTest(testPath: String) {
         val dumpNormal = dump(testPath, BodyResolveMode.PARTIAL)
 
         val testPathNoExt = FileUtil.getNameWithoutExtension(testPath)
@@ -68,15 +68,15 @@ public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFix
     private fun dump(testPath: String, resolveMode: BodyResolveMode): String {
         myFixture.configureByText(KotlinFileType.INSTANCE, File(testPath).readText())
 
-        val file = myFixture.getFile() as KtFile
-        val editor = myFixture.getEditor()
-        val selectionModel = editor.getSelectionModel()
+        val file = myFixture.file as KtFile
+        val editor = myFixture.editor
+        val selectionModel = editor.selectionModel
         val expression = if (selectionModel.hasSelection()) {
-            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), javaClass<KtExpression>())
+            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.selectionStart, selectionModel.selectionEnd, KtExpression::class.java)
                 ?: error("No JetExpression at selection range")
         }
         else {
-            val offset = editor.getCaretModel().getOffset()
+            val offset = editor.caretModel.offset
             val element = file.findElementAt(offset)!!
             element.getNonStrictParentOfType<KtSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
         }
@@ -105,18 +105,18 @@ public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFix
 
         val skippedStatements = set
                 .filter { !it.parents.any { it in set } } // do not include skipped statements which are inside other skipped statement
-                .sortedBy { it.getTextOffset() }
+                .sortedBy { it.textOffset }
 
-        myFixture.getProject().executeWriteCommand("") {
+        myFixture.project.executeWriteCommand("") {
             for (statement in skippedStatements) {
-                statement.replace(KtPsiFactory(getProject()).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
+                statement.replace(KtPsiFactory(project).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
             }
         }
 
-        val fileText = file.getText()
+        val fileText = file.text
         if (selectionModel.hasSelection()) {
-            val start = selectionModel.getSelectionStart()
-            val end = selectionModel.getSelectionEnd()
+            val start = selectionModel.selectionStart
+            val end = selectionModel.selectionEnd
             builder.append(fileText.substring(0, start))
             builder.append("<selection>")
             builder.append(fileText.substring(start, end))
@@ -124,7 +124,7 @@ public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFix
             builder.append(fileText.substring(end))
         }
         else {
-            val newCaretOffset = editor.getCaretModel().getOffset()
+            val newCaretOffset = editor.caretModel.offset
             builder.append(fileText.substring(0, newCaretOffset))
             builder.append("<caret>")
             builder.append(fileText.substring(newCaretOffset))
@@ -148,11 +148,11 @@ public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFix
         val processedStatements = bindingContext.getSliceContents(BindingContext.PROCESSED)
                 .filter { it.value }
                 .map { it.key }
-                .filter { it.getParent() is KtBlockExpression }
+                .filter { it.parent is KtBlockExpression }
 
         val receiver = (expression as? KtSimpleNameExpression)?.getReceiverExpression()
         val expressionWithType = if (receiver != null) {
-            expression.getParent() as? KtExpression ?: expression
+            expression.parent as? KtExpression ?: expression
         }
         else {
             expression
@@ -167,7 +167,7 @@ public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFix
 
         val s = DescriptorRenderer.COMPACT.render(this)
 
-        val renderType = this is VariableDescriptor && type != this.getReturnType()
+        val renderType = this is VariableDescriptor && type != this.returnType
         if (!renderType) return s
         return "$s smart-cast to ${type.presentation()}"
     }
@@ -176,7 +176,7 @@ public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFix
             = if (this != null) DescriptorRenderer.COMPACT.renderType(this) else "unknown type"
 
     private fun KtExpression.compactPresentation(): String {
-        val text = getText()
+        val text = text
         val builder = StringBuilder()
         var dropSpace = false
         for (c in text) {

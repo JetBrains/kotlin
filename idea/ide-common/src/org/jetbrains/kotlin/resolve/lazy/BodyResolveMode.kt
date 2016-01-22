@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-public enum class BodyResolveMode {
+enum class BodyResolveMode {
     FULL,
     PARTIAL,
     PARTIAL_FOR_COMPLETION

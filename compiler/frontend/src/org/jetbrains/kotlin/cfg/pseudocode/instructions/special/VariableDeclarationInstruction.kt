@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
-public class VariableDeclarationInstruction(
+class VariableDeclarationInstruction(
         element: KtDeclaration,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {
@@ -33,7 +33,7 @@ public class VariableDeclarationInstruction(
         assert(element is KtVariableDeclaration || element is KtParameter) { "Invalid element: ${render(element)}}" }
     }
 
-    public val variableDeclarationElement: KtDeclaration
+    val variableDeclarationElement: KtDeclaration
         get() = element as KtDeclaration
 
     override fun accept(visitor: InstructionVisitor) {

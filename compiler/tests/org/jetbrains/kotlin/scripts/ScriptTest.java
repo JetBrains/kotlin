@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -87,7 +86,7 @@ public class ScriptTest {
                     KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
             try {
-                return KotlinToJVMBytecodeCompiler.compileScript(configuration, paths, environment);
+                return KotlinToJVMBytecodeCompiler.INSTANCE.compileScript(configuration, paths, environment);
             }
             catch (CompilationException e) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),

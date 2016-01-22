@@ -38,7 +38,7 @@ private fun validateDeserializedScope(scopeOwner: DeclarationDescriptor, scope: 
     val isPackageViewScope = scopeOwner is PackageViewDescriptor
     if (scope is DeserializedMemberScope || isPackageViewScope) {
         val relevantDescriptors = scope.getContributedDescriptors().filter { member ->
-            member is CallableMemberDescriptor && member.getKind().isReal() || (!isPackageViewScope && member is ClassDescriptor)
+            member is CallableMemberDescriptor && member.kind.isReal || (!isPackageViewScope && member is ClassDescriptor)
         }
         checkSorted(relevantDescriptors, scopeOwner)
     }

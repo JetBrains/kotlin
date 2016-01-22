@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import java.util.*
 
-public class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
-    public data class Options(
+class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
+    data class Options(
             val removeThisLabels: Boolean = false,
             val removeThis: Boolean = false
     ) {
@@ -55,6 +55,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
     }
 
     companion object {
+        @JvmField
         val DEFAULT = ShortenReferences()
 
         private fun DeclarationDescriptor.asString()
@@ -64,41 +65,40 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
         private fun mayImport(descriptor: DeclarationDescriptor, file: KtFile): Boolean {
             return descriptor.canBeReferencedViaImport()
-                   && ImportInsertHelper.getInstance(file.getProject()).mayImportOnShortenReferences(descriptor)
+                   && ImportInsertHelper.getInstance(file.project).mayImportOnShortenReferences(descriptor)
         }
     }
 
-    @JvmOverloads
-    public fun process(element: KtElement, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): KtElement {
+    @JvmOverloads fun process(element: KtElement, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): KtElement {
         return process(listOf(element), elementFilter).single()
     }
 
-    public fun process(file: KtFile, startOffset: Int, endOffset: Int) {
-        val documentManager = PsiDocumentManager.getInstance(file.getProject())
+    fun process(file: KtFile, startOffset: Int, endOffset: Int) {
+        val documentManager = PsiDocumentManager.getInstance(file.project)
         val document = file.viewProvider.document!!
         if (!documentManager.isCommitted(document)) {
             throw IllegalStateException("Document should be committed to shorten references in range")
         }
 
         val rangeMarker = document.createRangeMarker(startOffset, endOffset)
-        rangeMarker.setGreedyToLeft(true)
-        rangeMarker.setGreedyToRight(true)
+        rangeMarker.isGreedyToLeft = true
+        rangeMarker.isGreedyToRight = true
         try {
             process(listOf(file), { element ->
-                if (rangeMarker.isValid()) {
-                    val range = TextRange(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
+                if (rangeMarker.isValid) {
+                    val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
 
-                    val elementRange = element.getTextRange()!!
+                    val elementRange = element.textRange!!
                     when {
                         range.contains(elementRange) -> FilterResult.PROCESS
 
                         range.intersects(elementRange) -> {
                             // for qualified call expression allow to shorten only the part without parenthesis
                             val calleeExpression = ((element as? KtDotQualifiedExpression)
-                                    ?.getSelectorExpression() as? KtCallExpression)
-                                    ?.getCalleeExpression()
+                                    ?.selectorExpression as? KtCallExpression)
+                                    ?.calleeExpression
                             if (calleeExpression != null) {
-                                val rangeWithoutParenthesis = TextRange(elementRange.getStartOffset(), calleeExpression.getTextRange()!!.getEndOffset())
+                                val rangeWithoutParenthesis = TextRange(elementRange.startOffset, calleeExpression.textRange!!.endOffset)
                                 if (range.contains(rangeWithoutParenthesis)) FilterResult.PROCESS else FilterResult.GO_INSIDE
                             }
                             else {
@@ -119,14 +119,13 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         }
     }
 
-    public enum class FilterResult {
+    enum class FilterResult {
         SKIP,
         GO_INSIDE,
         PROCESS
     }
 
-    @JvmOverloads
-    public fun process(elements: Iterable<KtElement>, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): Collection<KtElement> {
+    @JvmOverloads fun process(elements: Iterable<KtElement>, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): Collection<KtElement> {
         return elements.groupBy { element -> element.getContainingKtFile() }
                 .flatMap { shortenReferencesInFile(it.key, it.value, elementFilter) }
     }
@@ -139,7 +138,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         //TODO: that's not correct since we have options!
         val elementsToUse = dropNestedElements(elements)
 
-        val helper = ImportInsertHelper.getInstance(file.getProject())
+        val helper = ImportInsertHelper.getInstance(file.project)
 
         val failedToImportDescriptors = LinkedHashSet<DeclarationDescriptor>()
 
@@ -175,7 +174,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
     private fun dropNestedElements(elements: List<KtElement>): LinkedHashSet<KtElement> {
         val elementSet = elements.toSet()
-        val newElements = LinkedHashSet<KtElement>(elementSet.size())
+        val newElements = LinkedHashSet<KtElement>(elementSet.size)
         for (element in elementSet) {
             if (!element.parents.any { it in elementSet }) {
                 newElements.add(element)
@@ -233,9 +232,9 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             }
         }
 
-        public fun shortenElements(elementSetToUpdate: MutableSet<KtElement>) {
+        fun shortenElements(elementSetToUpdate: MutableSet<KtElement>) {
             for (element in elementsToShorten) {
-                if (!element.isValid()) continue
+                if (!element.isValid) continue
                 val newElement = shortenElement(element)
                 if (element in elementSetToUpdate && newElement != element) {
                     elementSetToUpdate.remove(element)
@@ -244,7 +243,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             }
         }
 
-        public fun getDescriptorsToImport(): Set<DeclarationDescriptor> = descriptorsToImport
+        fun getDescriptorsToImport(): Set<DeclarationDescriptor> = descriptorsToImport
     }
 
     private class ShortenTypesVisitor(
@@ -256,19 +255,19 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val filterResult = elementFilter(userType)
             if (filterResult == FilterResult.SKIP) return
 
-            userType.getTypeArgumentList()?.accept(this)
+            userType.typeArgumentList?.accept(this)
 
             if (filterResult == FilterResult.PROCESS) {
                 processType(userType)
             }
             else {
-                userType.getQualifier()?.accept(this)
+                userType.qualifier?.accept(this)
             }
         }
 
         private fun processType(type: KtUserType) {
-            if (type.getQualifier() == null) return
-            val referenceExpression = type.getReferenceExpression() ?: return
+            if (type.qualifier == null) return
+            val referenceExpression = type.referenceExpression ?: return
 
             val bindingContext = analyze(referenceExpression)
             val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return
@@ -284,7 +283,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             processQualifiedElement(type, target, canShortenNow)
         }
 
-        override fun qualifier(element: KtUserType) = element.getQualifier()!!
+        override fun qualifier(element: KtUserType) = element.qualifier!!
 
         override fun shortenElement(element: KtUserType): KtElement {
             element.deleteQualifier()
@@ -301,18 +300,18 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val filterResult = elementFilter(expression)
             if (filterResult == FilterResult.SKIP) return
 
-            expression.getSelectorExpression()?.acceptChildren(this)
+            expression.selectorExpression?.acceptChildren(this)
 
             if (filterResult == FilterResult.PROCESS) {
                 if (process(expression)) return
             }
 
-            expression.getReceiverExpression().accept(this)
+            expression.receiverExpression.accept(this)
         }
 
         abstract fun process(qualifiedExpression: KtDotQualifiedExpression): Boolean
 
-        override fun qualifier(element: KtDotQualifiedExpression) = element.getReceiverExpression()
+        override fun qualifier(element: KtDotQualifiedExpression) = element.receiverExpression
     }
 
     private class ShortenQualifiedExpressionsVisitor(
@@ -324,7 +323,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         override fun process(qualifiedExpression: KtDotQualifiedExpression): Boolean {
             val bindingContext = analyze(qualifiedExpression)
 
-            val receiver = qualifiedExpression.getReceiverExpression()
+            val receiver = qualifiedExpression.receiverExpression
             when (receiver) {
                 is KtThisExpression -> {
                     if (!options.removeThis) return false
@@ -336,9 +335,9 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
             if (PsiTreeUtil.getParentOfType(
                     qualifiedExpression,
-                    javaClass<KtImportDirective>(), javaClass<KtPackageDirective>()) != null) return true
+                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return true
 
-            val selector = qualifiedExpression.getSelectorExpression() ?: return false
+            val selector = qualifiedExpression.selectorExpression ?: return false
             val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return false
             val targets = callee.targets(bindingContext)
             if (targets.isEmpty()) return false
@@ -353,14 +352,14 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
                 if (!targetsMatch) return false
                 val originalCall = selector.getResolvedCall(bindingContext) ?: return false
                 val newCall = selectorCopy.getResolvedCall(newContext) ?: return false
-                val receiverKind = originalCall.getExplicitReceiverKind()
+                val receiverKind = originalCall.explicitReceiverKind
                 val newReceiver = when (receiverKind) {
-                                      ExplicitReceiverKind.BOTH_RECEIVERS, ExplicitReceiverKind.EXTENSION_RECEIVER -> newCall.getExtensionReceiver()
-                                      ExplicitReceiverKind.DISPATCH_RECEIVER -> newCall.getDispatchReceiver()
+                                      ExplicitReceiverKind.BOTH_RECEIVERS, ExplicitReceiverKind.EXTENSION_RECEIVER -> newCall.extensionReceiver
+                                      ExplicitReceiverKind.DISPATCH_RECEIVER -> newCall.dispatchReceiver
                                       else -> return false
                                   } as? ImplicitReceiver ?: return false
 
-                val thisTarget = receiver.getInstanceReference().targets(bindingContext).singleOrNull()
+                val thisTarget = receiver.instanceReference.targets(bindingContext).singleOrNull()
                 if (newReceiver.declarationDescriptor.asString() != thisTarget?.asString()) return false
             }
 
@@ -384,7 +383,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         }
 
         override fun shortenElement(element: KtDotQualifiedExpression): KtElement {
-            return element.replace(element.getSelectorExpression()!!) as KtElement
+            return element.replace(element.selectorExpression!!) as KtElement
         }
     }
 
@@ -400,10 +399,10 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
             val bindingContext = analyze(thisExpression)
 
-            val targetBefore = thisExpression.getInstanceReference().targets(bindingContext).singleOrNull() ?: return
+            val targetBefore = thisExpression.instanceReference.targets(bindingContext).singleOrNull() ?: return
             val scope = thisExpression.getResolutionScope(bindingContext, resolutionFacade)
             val newContext = simpleThis.analyzeInContext(scope, thisExpression)
-            val targetAfter = simpleThis.getInstanceReference().targets(newContext).singleOrNull()
+            val targetAfter = simpleThis.instanceReference.targets(newContext).singleOrNull()
             if (targetBefore == targetAfter) {
                 addElementToShorten(thisExpression)
             }
@@ -436,21 +435,21 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         override fun process(qualifiedExpression: KtDotQualifiedExpression): Boolean {
             val bindingContext = analyze(qualifiedExpression)
 
-            val receiver = qualifiedExpression.getReceiverExpression()
+            val receiver = qualifiedExpression.receiverExpression
 
             if (PsiTreeUtil.getParentOfType(
                     qualifiedExpression,
-                    javaClass<KtImportDirective>(), javaClass<KtPackageDirective>()) != null) return false
+                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return false
 
             val receiverTarget = receiver.singleTarget(bindingContext) ?: return false
             if (receiverTarget !is ClassDescriptor) return false
 
-            val selectorExpression = qualifiedExpression.getSelectorExpression() ?: return false
+            val selectorExpression = qualifiedExpression.selectorExpression ?: return false
             val selectorTarget = selectorExpression.singleTarget(bindingContext) ?: return false
 
-            if (receiverTarget.getCompanionObjectDescriptor() != selectorTarget) return false
+            if (receiverTarget.companionObjectDescriptor != selectorTarget) return false
 
-            val selectorsSelector = (qualifiedExpression.getParent() as? KtDotQualifiedExpression)?.getSelectorExpression()
+            val selectorsSelector = (qualifiedExpression.parent as? KtDotQualifiedExpression)?.selectorExpression
             if (selectorsSelector == null) {
                 addElementToShorten(qualifiedExpression)
                 return true

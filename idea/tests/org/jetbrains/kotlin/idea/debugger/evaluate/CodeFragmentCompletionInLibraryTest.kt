@@ -35,33 +35,33 @@ import java.io.File
 
 private val LIBRARY_SRC_PATH = KotlinTestUtils.getHomeDirectory() + "/idea/idea-completion/testData/codeFragmentInLibrarySource/customLibrary/"
 
-public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
+class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
 
     override fun getProjectDescriptor() = object: JdkAndMockLibraryProjectDescriptor(LIBRARY_SRC_PATH, false) {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             super.configureModule(module, model)
 
-            val library = model.getModuleLibraryTable().getLibraryByName(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
-            val modifiableModel = library.getModifiableModel()
+            val library = model.moduleLibraryTable.getLibraryByName(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
+            val modifiableModel = library.modifiableModel
 
             modifiableModel.addRoot(findLibrarySourceDir(), OrderRootType.SOURCES)
             modifiableModel.commit()
         }
     }
 
-    public fun testCompletionInCustomLibrary() {
+    fun testCompletionInCustomLibrary() {
         testCompletionInLibraryCodeFragment("<caret>", "EXIST: parameter")
     }
 
-    public fun testSecondCompletionInCustomLibrary() {
-        testCompletionInLibraryCodeFragment("Sh<caret>", "EXIST: ShortRange", "EXIST: Short", "INVOCATION_COUNT: 2")
+    fun testSecondCompletionInCustomLibrary() {
+        testCompletionInLibraryCodeFragment("Ch<caret>", "EXIST: CharRange", "EXIST: Char", "INVOCATION_COUNT: 2")
     }
 
-    public fun testExtensionCompletionInCustomLibrary() {
+    fun testExtensionCompletionInCustomLibrary() {
         testCompletionInLibraryCodeFragment("3.extOn<caret>", "EXIST: extOnInt")
     }
 
-    public fun testJavaTypesCompletion() {
+    fun testJavaTypesCompletion() {
         testCompletionInLibraryCodeFragment("Hash<caret>", "EXIST: HashMap", "EXIST: HashSet")
     }
 
@@ -73,14 +73,14 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
 
     private fun setupFixtureByCodeFragment(fragmentText: String) {
         val sourceFile = findLibrarySourceDir().findChild("customLibrary.kt")!!
-        val jetFile = PsiManager.getInstance(getProject()).findFile(sourceFile) as KtFile
-        val fooFunctionFromLibrary = jetFile.getDeclarations().first() as KtFunction
+        val jetFile = PsiManager.getInstance(project).findFile(sourceFile) as KtFile
+        val fooFunctionFromLibrary = jetFile.declarations.first() as KtFunction
         val codeFragment = KtPsiFactory(fooFunctionFromLibrary).createExpressionCodeFragment(
                 fragmentText,
-                KotlinCodeFragmentFactory.getContextElement(fooFunctionFromLibrary.getBodyExpression())
+                KotlinCodeFragmentFactory.getContextElement(fooFunctionFromLibrary.bodyExpression)
         )
         codeFragment.forceResolveScope(GlobalSearchScope.allScope(project))
-        myFixture.configureFromExistingVirtualFile(codeFragment.getVirtualFile())
+        myFixture.configureFromExistingVirtualFile(codeFragment.virtualFile)
     }
 
     private fun findLibrarySourceDir(): VirtualFile {

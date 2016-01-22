@@ -96,7 +96,7 @@ fun box(): String {
     val mentry = MME()
 
     hashMap[""] = ""
-    val hashMapEntry = hashMap.entrySet().first()
+    val hashMapEntry = hashMap.entries.first()
 
     assert(entry !is MutableMap.MutableEntry<*, *>) { "ME should satisfy '!is MutableMap.MutableEntry'"}
     assert(mentry is MutableMap.MutableEntry<*, *>) { "MME should satisfy 'is MutableMap.MutableEntry'"}

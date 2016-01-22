@@ -1,7 +1,7 @@
 package
 
 package d {
-    public fun test(/*0*/ numbers: kotlin.Iterable<kotlin.Int>): kotlin.Unit
-    public fun </*0*/ T> kotlin.Iterable<T>.fold(/*0*/ initial: T, /*1*/ operation: (T, T) -> T): T
-    public fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
+    public fun test(/*0*/ numbers: kotlin.collections.Iterable<kotlin.Int>): kotlin.Unit
+    public fun </*0*/ T> kotlin.collections.Iterable<T>.fold(/*0*/ initial: T, /*1*/ operation: (T, T) -> T): T
+    public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
 }

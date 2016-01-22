@@ -20,5 +20,5 @@ fun box(): String {
 
 
     val m: ArrayList<Int> = list.findAll<Int>({ name: Int -> name < 4 })
-    return if (m.size() == 2) "OK" else "fail"
+    return if (m.size == 2) "OK" else "fail"
 }

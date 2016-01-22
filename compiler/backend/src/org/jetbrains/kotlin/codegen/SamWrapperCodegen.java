@@ -86,7 +86,7 @@ public class SamWrapperCodegen {
         ClassBuilder cv = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(erasedInterfaceFunction), asmType, file);
         cv.defineClass(file,
                        V1_6,
-                       ACC_FINAL,
+                       ACC_FINAL | ACC_SUPER,
                        asmType.getInternalName(),
                        null,
                        OBJECT_TYPE.getInternalName(),
@@ -95,6 +95,8 @@ public class SamWrapperCodegen {
         cv.visitSource(file.getName(), null);
 
         writeKotlinSyntheticClassAnnotation(cv, state);
+
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv);
 
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);

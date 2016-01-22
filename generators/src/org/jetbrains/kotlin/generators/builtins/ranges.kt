@@ -22,74 +22,47 @@ import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
 class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getPackage() = "kotlin.ranges"
     override fun generateBody() {
         for (kind in ProgressionKind.values()) {
             val t = kind.capitalized
             val range = "${t}Range"
 
-            val incrementType = progressionIncrementType(kind)
-
-            val increment = when (kind) {
-                FLOAT -> "1.0f"
-                DOUBLE -> "1.0"
-                else -> "1"
-            }
+            val increment = "1"
 
             val emptyBounds = when (kind) {
                 CHAR -> "1.toChar(), 0.toChar()"
-                FLOAT -> "1.0f, 0.0f"
-                DOUBLE -> "1.0, 0.0"
                 else -> "1, 0"
             }
 
-            fun compare(v: String) = areEqualNumbers(kind, v)
+            fun compare(v: String) = areEqualNumbers(v)
 
             val hashCode = when (kind) {
-                BYTE, CHAR, SHORT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * start.toInt() + endInclusive.toInt())"
+                CHAR -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * first.toInt() + last.toInt())"
                 INT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * start + endInclusive)"
+                "        if (isEmpty()) -1 else (31 * first + last)"
                 LONG -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * ${hashLong("start")} + ${hashLong("endInclusive")}).toInt()"
-                FLOAT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * ${floatToIntBits("start")} + ${floatToIntBits("endInclusive")})"
-                DOUBLE -> "{\n" +
-                "        if (isEmpty()) return -1\n" +
-                "        var temp = ${doubleToLongBits("start")}\n" +
-                "        val result = ${hashLong("temp")}\n" +
-                "        temp = ${doubleToLongBits("endInclusive")}\n" +
-                "        return (31 * result + ${hashLong("temp")}).toInt()\n" +
-                "    }"
+                "        if (isEmpty()) -1 else (31 * ${hashLong("first")} + ${hashLong("last")}).toInt()"
             }
 
-            val toString = "\"\$start..\$endInclusive\""
-
-            if (kind == FLOAT || kind == DOUBLE) {
-                continue
-            }
-            if (kind == SHORT || kind == BYTE) {
-                out.println("""@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)""")
-            }
+            val toString = "\"\$first..\$last\""
 
             out.println(
 """/**
  * A range of values of type `$t`.
  */
 public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t> {
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    override val end: $t get() = endInclusive
-""" + (if (kind != FLOAT && kind != DOUBLE) """
     override val start: $t get() = first
     override val endInclusive: $t get() = last
-""" else "") +
-"""
-    override fun contains(value: $t): Boolean = start <= value && value <= endInclusive
 
-    override fun isEmpty(): Boolean = start > endInclusive
+    override fun contains(value: $t): Boolean = first <= value && value <= last
+
+    override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
         other is $range && (isEmpty() && other.isEmpty() ||
-        ${compare("start")} && ${compare("endInclusive")})
+        ${compare("first")} && ${compare("last")})
 
     override fun hashCode(): Int $hashCode
 

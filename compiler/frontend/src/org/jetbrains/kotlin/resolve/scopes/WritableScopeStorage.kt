@@ -32,7 +32,7 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
     private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
 
     protected fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
-        val name = descriptor.getName()
+        val name = descriptor.name
 
         val originalDescriptor = variableOrClassDescriptorByName(name)
         if (originalDescriptor != null) {
@@ -55,12 +55,12 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
         if (functionsByName == null) {
             functionsByName = HashMap(1)
         }
-        val name = functionDescriptor.getName()
+        val name = functionDescriptor.name
         //TODO: could not use += because of KT-8050
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
     }
 
-    protected fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): DeclarationDescriptor? {
+    protected fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size): DeclarationDescriptor? {
         if (descriptorLimit == 0) return null
 
         var list = variablesAndClassifiersByName?.get(name)
@@ -74,7 +74,7 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
         return null
     }
 
-    protected fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): List<FunctionDescriptor>? {
+    protected fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size): List<FunctionDescriptor>? {
         if (descriptorLimit == 0) return null
 
         var list = functionsByName?.get(name)
@@ -89,7 +89,7 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
 
     private fun addDescriptor(descriptor: DeclarationDescriptor): Int {
         addedDescriptors.add(descriptor)
-        return addedDescriptors.size() - 1
+        return addedDescriptors.size - 1
     }
 
     private class IntList(val last: Int, val prev: IntList?)
@@ -108,13 +108,13 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
         return result
     }
 
-    protected fun getClassifier(name: Name, descriptorLimit: Int = addedDescriptors.size())
+    protected fun getClassifier(name: Name, descriptorLimit: Int = addedDescriptors.size)
             = variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
 
-    protected fun getVariables(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<VariableDescriptor>
+    protected fun getVariables(name: Name, descriptorLimit: Int = addedDescriptors.size): Collection<VariableDescriptor>
             = listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)
 
-    protected fun getFunctions(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<FunctionDescriptor>
+    protected fun getFunctions(name: Name, descriptorLimit: Int = addedDescriptors.size): Collection<FunctionDescriptor>
             = functionsByName(name, descriptorLimit) ?: emptyList()
 
 }

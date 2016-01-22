@@ -34,29 +34,24 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
-public class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
+class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
 
-public class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
+class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with elvis operator"){
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val data = calcData(element) ?: return null
 
         val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
         if (!type.isNothing()) return null
 
-        val rParen = element.getRightParenthesis() ?: return null
+        val rParen = element.rightParenthesis ?: return null
         return TextRange(element.startOffset, rParen.endOffset)
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
-        val newElvis = applyTo(element)
-        editor.getCaretModel().moveToOffset(newElvis.getRight()!!.getTextOffset())
-    }
-
-    public fun applyTo(element: KtIfExpression): KtBinaryExpression {
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val (initializer, declaration, ifNullExpr) = calcData(element)!!
         val factory = KtPsiFactory(element)
 
-        val explicitTypeToAdd = if (declaration.isVar() && declaration.getTypeReference() == null)
+        val explicitTypeToAdd = if (declaration.isVar && declaration.typeReference == null)
             initializer.analyze().getType(initializer)
         else
             null
@@ -73,11 +68,11 @@ public class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression
         val newElvis = initializer.replaced(elvis)
         element.delete()
 
-        if (explicitTypeToAdd != null && !explicitTypeToAdd.isError()) {
+        if (explicitTypeToAdd != null && !explicitTypeToAdd.isError) {
             declaration.setType(explicitTypeToAdd)
         }
 
-        return newElvis
+        editor?.caretModel?.moveToOffset(newElvis.right!!.textOffset)
     }
 
     private data class Data(
@@ -87,22 +82,22 @@ public class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression
     )
 
     private fun calcData(ifExpression: KtIfExpression): Data? {
-        if (ifExpression.getElse() != null) return null
+        if (ifExpression.`else` != null) return null
 
-        val binaryExpression = ifExpression.getCondition() as? KtBinaryExpression ?: return null
-        if (binaryExpression.getOperationToken() != KtTokens.EQEQ) return null
+        val binaryExpression = ifExpression.condition as? KtBinaryExpression ?: return null
+        if (binaryExpression.operationToken != KtTokens.EQEQ) return null
         val value = binaryExpression.expressionComparedToNull() as? KtNameReferenceExpression ?: return null
 
-        if (ifExpression.getParent() !is KtBlockExpression) return null
+        if (ifExpression.parent !is KtBlockExpression) return null
         val prevStatement = ifExpression.siblings(forward = false, withItself = false)
                                     .firstIsInstanceOrNull<KtExpression>() ?: return null
         if (prevStatement !is KtVariableDeclaration) return null
-        if (prevStatement.getNameAsName() != value.getReferencedNameAsName()) return null
-        val initializer = prevStatement.getInitializer() ?: return null
-        val then = ifExpression.getThen() ?: return null
+        if (prevStatement.nameAsName != value.getReferencedNameAsName()) return null
+        val initializer = prevStatement.initializer ?: return null
+        val then = ifExpression.then ?: return null
 
         if (then is KtBlockExpression) {
-            val statement = then.getStatements().singleOrNull() ?: return null
+            val statement = then.statements.singleOrNull() ?: return null
             return Data(initializer, prevStatement, statement)
         }
         else {

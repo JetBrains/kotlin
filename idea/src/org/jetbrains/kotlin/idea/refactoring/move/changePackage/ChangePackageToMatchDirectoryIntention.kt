@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
-import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
-public class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
+class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
         KtPackageDirective::class.java, "", "Change file's package to match directory"
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {
@@ -43,7 +43,7 @@ public class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndepen
         return true
     }
 
-    override fun applyTo(element: KtPackageDirective, editor: Editor) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         val file = element.getContainingKtFile()
         val newFqName = file.getFqNameByDirectory()
         if (!newFqName.toUnsafe().hasIdentifiersOnly()) return

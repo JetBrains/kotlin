@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.psi
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiReference
 
-public interface KtElement : NavigatablePsiElement {
-    public fun getContainingKtFile(): KtFile
+interface KtElement : NavigatablePsiElement {
+    fun getContainingKtFile(): KtFile
 
-    public fun <D> acceptChildren(visitor: KtVisitor<Void, D>, data: D)
+    fun <D> acceptChildren(visitor: KtVisitor<Void, D>, data: D)
 
-    public fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R
+    fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R
 
     @Deprecated("Don't use getReference() on JetElement for the choice is unpredictable")
     override fun getReference(): PsiReference?
 }
 
-public fun KtElement.getModificationStamp(): Long {
+fun KtElement.getModificationStamp(): Long {
     return when (this) {
         is KtFile -> this.modificationStamp
         is KtDeclarationStub<*> -> this.modificationStamp

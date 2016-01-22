@@ -28,31 +28,30 @@ import org.jetbrains.kotlin.resolve.ImportPath
 /**
  * Returns FqName for given declaration (either Java or Kotlin)
  */
-public fun PsiElement.getKotlinFqName(): FqName? {
+fun PsiElement.getKotlinFqName(): FqName? {
     val element = namedUnwrappedElement
     return when (element) {
-        is PsiPackage -> FqName(element.getQualifiedName())
-        is PsiClass -> element.getQualifiedName()?.let { FqName(it) }
-        // as is necessary because of unresolved ambiguity: KT-3996
-        is PsiMember -> (element as PsiMember).getName()?.let { name ->
-            val prefix = element.getContainingClass()?.getQualifiedName()
+        is PsiPackage -> FqName(element.qualifiedName)
+        is PsiClass -> element.qualifiedName?.let { FqName(it) }
+        is PsiMember -> element.getName()?.let { name ->
+            val prefix = element.containingClass?.qualifiedName
             FqName(if (prefix != null) "$prefix.$name" else name)
         }
-        is KtNamedDeclaration -> element.getFqName()
+        is KtNamedDeclaration -> element.fqName
         else -> null
     }
 }
 
-public fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
+fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
     return when {
         skipAliasedImports && importPath.hasAlias() -> false
-        importPath.isAllUnder() && !isRoot() -> importPath.fqnPart() == this.parent()
+        importPath.isAllUnder && !isRoot -> importPath.fqnPart() == this.parent()
         else -> importPath.fqnPart() == this
     }
 }
 
-public fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
-    return if (isAllUnder() || hasAlias()) this == alreadyImported else fqnPart().isImported(alreadyImported)
+fun ImportPath.isImported(alreadyImported: ImportPath): Boolean {
+    return if (isAllUnder || hasAlias()) this == alreadyImported else fqnPart().isImported(alreadyImported)
 }
 
-public fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }
+fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = imports.any { isImported(it) }

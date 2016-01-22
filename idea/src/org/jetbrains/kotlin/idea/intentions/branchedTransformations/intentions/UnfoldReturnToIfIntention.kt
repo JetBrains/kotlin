@@ -29,17 +29,17 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToIfIntention : SelfTargetingRangeIntention<KtReturnExpression>(javaClass(), "Replace return with 'if' expression"), LowPriorityAction {
+class UnfoldReturnToIfIntention : SelfTargetingRangeIntention<KtReturnExpression>(KtReturnExpression::class.java, "Replace return with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtReturnExpression): TextRange? {
-        val ifExpression = element.getReturnedExpression() as? KtIfExpression ?: return null
-        return TextRange(element.startOffset, ifExpression.getIfKeyword().endOffset)
+        val ifExpression = element.returnedExpression as? KtIfExpression ?: return null
+        return TextRange(element.startOffset, ifExpression.ifKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtReturnExpression, editor: Editor) {
-        val ifExpression = element.getReturnedExpression() as KtIfExpression
+    override fun applyTo(element: KtReturnExpression, editor: Editor?) {
+        val ifExpression = element.returnedExpression as KtIfExpression
         val newIfExpression = ifExpression.copied()
-        val thenExpr = newIfExpression.getThen()!!.lastBlockStatementOrThis()
-        val elseExpr = newIfExpression.getElse()!!.lastBlockStatementOrThis()
+        val thenExpr = newIfExpression.then!!.lastBlockStatementOrThis()
+        val elseExpr = newIfExpression.`else`!!.lastBlockStatementOrThis()
 
         val psiFactory = KtPsiFactory(element)
         thenExpr.replace(psiFactory.createExpressionByPattern("return $0", thenExpr))

@@ -65,10 +65,6 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(multiDeclarationEntry, data);
     }
 
-    public R visitTypedef(@NotNull KtTypedef typedef, D data) {
-        return visitNamedDeclaration(typedef, data);
-    }
-
     public R visitKtFile(@NotNull KtFile file, D data) {
         visitFile(file);
         return null;

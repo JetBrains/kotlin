@@ -34,22 +34,22 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageI
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import java.util.*
 
-public class KotlinChangeSignatureProcessor(project: Project,
+class KotlinChangeSignatureProcessor(project: Project,
                                             changeInfo: KotlinChangeInfo,
                                             private val commandName: String) : ChangeSignatureProcessorBase(project, changeInfo) {
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {
-        val subject = if (getChangeInfo().kind.isConstructor) "constructor" else "function"
-        return KotlinUsagesViewDescriptor(myChangeInfo.getMethod(), RefactoringBundle.message("0.to.change.signature", subject))
+        val subject = if (changeInfo.kind.isConstructor) "constructor" else "function"
+        return KotlinUsagesViewDescriptor(myChangeInfo.method, RefactoringBundle.message("0.to.change.signature", subject))
     }
 
     override fun getChangeInfo() = super.getChangeInfo() as KotlinChangeInfo
 
     override fun findUsages(): Array<UsageInfo> {
         val allUsages = ArrayList<UsageInfo>()
-        getChangeInfo().getOrCreateJavaChangeInfos()?.let { javaChangeInfos ->
+        changeInfo.getOrCreateJavaChangeInfos()?.let { javaChangeInfos ->
             val javaProcessor = JavaChangeSignatureUsageProcessor()
             javaChangeInfos.mapTo(allUsages) {
-                KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), getChangeInfo().getMethod())
+                KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), changeInfo.method)
             }
         }
         super.findUsages().filterTo(allUsages) { it is KotlinUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
@@ -58,7 +58,7 @@ public class KotlinChangeSignatureProcessor(project: Project,
     }
 
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
-        val usageProcessors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions()
+        val usageProcessors = ChangeSignatureUsageProcessor.EP_NAME.extensions
 
         if (!usageProcessors.all { it.setupDefaultValues(myChangeInfo, refUsages, myProject) }) return false
 
@@ -72,25 +72,25 @@ public class KotlinChangeSignatureProcessor(project: Project,
 
         RenameUtil.addConflictDescriptions(usages, conflictDescriptions)
         RenameUtil.removeConflictUsages(usagesSet)
-        if (!conflictDescriptions.isEmpty()) {
-            if (ApplicationManager.getApplication().isUnitTestMode()) {
+        if (!conflictDescriptions.isEmpty) {
+            if (ApplicationManager.getApplication().isUnitTestMode) {
                 throw BaseRefactoringProcessor.ConflictsInTestsException(conflictDescriptions.values())
             }
 
             val dialog = prepareConflictsDialog(conflictDescriptions, usages)
             dialog.show()
-            if (!dialog.isOK()) {
-                if (dialog.isShowConflicts()) prepareSuccessful()
+            if (!dialog.isOK) {
+                if (dialog.isShowConflicts) prepareSuccessful()
                 return false
             }
         }
 
         val usageArray = usagesSet.toTypedArray()
         Arrays.sort(usageArray) { u1, u2 ->
-            val element1 = u1.getElement()
-            val element2 = u2.getElement()
-            val rank1 = if (element1 != null) element1.getTextOffset() else -1
-            val rank2 = if (element2 != null) element2.getTextOffset() else -1
+            val element1 = u1.element
+            val element2 = u2.element
+            val rank1 = if (element1 != null) element1.textOffset else -1
+            val rank2 = if (element2 != null) element2.textOffset else -1
             rank2 - rank1 // Reverse order
         }
         refUsages.set(usageArray)
@@ -100,7 +100,7 @@ public class KotlinChangeSignatureProcessor(project: Project,
         return true
     }
 
-    override fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean = isPreviewUsages()
+    override fun isPreviewUsages(usages: Array<out UsageInfo>): Boolean = isPreviewUsages
 
     override fun getCommandName() = commandName
 }

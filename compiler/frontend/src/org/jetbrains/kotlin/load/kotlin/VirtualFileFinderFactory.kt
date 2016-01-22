@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.load.kotlin
 
 import com.intellij.psi.search.GlobalSearchScope
 
-public interface VirtualFileFinderFactory {
-    public fun create(scope: GlobalSearchScope): VirtualFileFinder
+interface VirtualFileFinderFactory {
+    fun create(scope: GlobalSearchScope): VirtualFileFinder
 }

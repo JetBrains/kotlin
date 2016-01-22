@@ -43,7 +43,7 @@ class KotlinDecompiledFileViewProvider(
         return factory(this)
     }
 
-    override fun createCopy(copy: VirtualFile) = KotlinDecompiledFileViewProvider(getManager(), copy, false, factory)
+    override fun createCopy(copy: VirtualFile) = KotlinDecompiledFileViewProvider(manager, copy, false, factory)
 
     override fun getContents() = content.get()
 }

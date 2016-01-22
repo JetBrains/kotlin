@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.load.kotlin.header;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.load.java.AbiVersionUtil;
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +35,8 @@ import static org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.*;
 import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
+    private static final boolean IGNORE_OLD_METADATA = "true".equals(System.getProperty("kotlin.ignore.old.metadata"));
+
     private static final Map<ClassId, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<ClassId, KotlinClassHeader.Kind>();
 
     static {
@@ -45,15 +47,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         HEADER_KINDS.put(ClassId.topLevel(KOTLIN_SYNTHETIC_CLASS), SYNTHETIC_CLASS);
     }
 
-    private BinaryVersion version = AbiVersionUtil.INVALID_VERSION;
+    private JvmMetadataVersion metadataVersion = null;
+    private JvmBytecodeBinaryVersion bytecodeVersion = null;
     private String multifileClassName = null;
-    private String[] filePartClassNames = null;
-    private String[] annotationData = null;
+    private String[] data = null;
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
-    private String syntheticClassKind = null;
-    private boolean isInterfaceDefaultImpls = false;
-    private boolean isLocalClass = false;
 
     @Nullable
     public KotlinClassHeader createHeader() {
@@ -61,18 +60,22 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
-        if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            annotationData = null;
+        if (metadataVersion == null || !metadataVersion.isCompatible()) {
+            data = null;
         }
-        else if (shouldHaveData() && annotationData == null) {
+        else if (shouldHaveData() && data == null) {
             // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
             // We tell the outside world that there's really no annotation at all
             return null;
         }
 
         return new KotlinClassHeader(
-                headerKind, version, annotationData, strings, syntheticClassKind, filePartClassNames, multifileClassName,
-                isInterfaceDefaultImpls, isLocalClass
+                headerKind,
+                metadataVersion != null ? metadataVersion : JvmMetadataVersion.INVALID_VERSION,
+                bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
+                data,
+                strings,
+                multifileClassName
         );
     }
 
@@ -86,14 +89,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source) {
         FqName fqName = classId.asSingleFqName();
-        if (KOTLIN_INTERFACE_DEFAULT_IMPLS.equals(fqName)) {
-            isInterfaceDefaultImpls = true;
-            return null;
+        if (fqName.equals(METADATA)) {
+            return new KotlinMetadataArgumentVisitor();
         }
-        else if (KOTLIN_LOCAL_CLASS.equals(fqName)) {
-            isLocalClass = true;
-            return null;
-        }
+
+        if (IGNORE_OLD_METADATA) return null;
 
         if (headerKind != null) {
             // Ignore all Kotlin annotations except the first found
@@ -103,18 +103,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         KotlinClassHeader.Kind newKind = HEADER_KINDS.get(classId);
         if (newKind != null) {
             headerKind = newKind;
-
-            switch (newKind) {
-                case CLASS:
-                case FILE_FACADE:
-                case MULTIFILE_CLASS:
-                case MULTIFILE_CLASS_PART:
-                    return new HeaderAnnotationArgumentVisitor();
-                case SYNTHETIC_CLASS:
-                    return new SyntheticClassHeaderReader();
-                default:
-                    return null;
-            }
+            return new HeaderAnnotationArgumentVisitor();
         }
 
         return null;
@@ -124,21 +113,30 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     public void visitEnd() {
     }
 
-    private class HeaderAnnotationArgumentVisitor implements AnnotationArgumentVisitor {
+    private class KotlinMetadataArgumentVisitor implements AnnotationArgumentVisitor {
         @Override
         public void visit(@Nullable Name name, @Nullable Object value) {
             if (name == null) return;
 
             String string = name.asString();
-            if (VERSION_FIELD_NAME.equals(string)) {
-                version = value instanceof int[] ? BinaryVersion.create((int[]) value) : AbiVersionUtil.INVALID_VERSION;
+            if (KIND_FIELD_NAME.equals(string)) {
+                if (value instanceof Integer) {
+                    headerKind = KotlinClassHeader.Kind.getById((Integer) value);
+                }
             }
-            else if (MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
-                multifileClassName = value instanceof String ? (String) value : null;
+            else if (METADATA_VERSION_FIELD_NAME.equals(string)) {
+                if (value instanceof int[]) {
+                    metadataVersion = new JvmMetadataVersion((int[]) value);
+                }
             }
-            else if (OLD_ABI_VERSION_FIELD_NAME.equals(string)) {
-                if (version == AbiVersionUtil.INVALID_VERSION && value instanceof Integer && (Integer) value > 0) {
-                    version = BinaryVersion.create(0, (Integer) value, 0);
+            else if (BYTECODE_VERSION_FIELD_NAME.equals(string)) {
+                if (value instanceof int[]) {
+                    bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
+                }
+            }
+            else if (METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
+                if (value instanceof String) {
+                    multifileClassName = (String) value;
                 }
             }
         }
@@ -147,14 +145,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
             String string = name.asString();
-            if (DATA_FIELD_NAME.equals(string)) {
+            if (METADATA_DATA_FIELD_NAME.equals(string)) {
                 return dataArrayVisitor();
             }
-            else if (STRINGS_FIELD_NAME.equals(string)) {
+            else if (METADATA_STRINGS_FIELD_NAME.equals(string)) {
                 return stringsArrayVisitor();
-            }
-            else if (FILE_PART_CLASS_NAMES_FIELD_NAME.equals(string)) {
-                return filePartClassNamesVisitor();
             }
             else {
                 return null;
@@ -162,13 +157,74 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @NotNull
-        private AnnotationArrayArgumentVisitor filePartClassNamesVisitor() {
+        private AnnotationArrayArgumentVisitor dataArrayVisitor() {
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
-                protected void visitEnd(@NotNull String[] data) {
-                    filePartClassNames = data;
+                protected void visitEnd(@NotNull String[] result) {
+                    data = result;
                 }
             };
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor stringsArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(@NotNull String[] result) {
+                    strings = result;
+                }
+            };
+        }
+
+        @Override
+        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        }
+
+        @Nullable
+        @Override
+        public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
+            return null;
+        }
+
+        @Override
+        public void visitEnd() {
+        }
+    }
+
+    private class HeaderAnnotationArgumentVisitor implements AnnotationArgumentVisitor {
+        @Override
+        public void visit(@Nullable Name name, @Nullable Object value) {
+            if (name == null) return;
+
+            String string = name.asString();
+            if (VERSION_FIELD_NAME.equals(string)) {
+                if (value instanceof int[]) {
+                    metadataVersion = new JvmMetadataVersion((int[]) value);
+
+                    // If there's no bytecode binary version in the class file, we assume it to be equal to the metadata version
+                    if (bytecodeVersion == null) {
+                        bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
+                    }
+                }
+            }
+            else if (MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
+                multifileClassName = value instanceof String ? (String) value : null;
+            }
+        }
+
+        @Override
+        @Nullable
+        public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
+            String string = name.asString();
+            if (DATA_FIELD_NAME.equals(string) || FILE_PART_CLASS_NAMES_FIELD_NAME.equals(string)) {
+                return dataArrayVisitor();
+            }
+            else if (STRINGS_FIELD_NAME.equals(string)) {
+                return stringsArrayVisitor();
+            }
+            else {
+                return null;
+            }
         }
 
         @NotNull
@@ -176,7 +232,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
                 protected void visitEnd(@NotNull String[] data) {
-                    annotationData = data;
+                    ReadKotlinClassHeaderAnnotationVisitor.this.data = data;
                 }
             };
         }
@@ -204,44 +260,32 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Override
         public void visitEnd() {
         }
-
-        private abstract class CollectStringArrayAnnotationVisitor implements AnnotationArrayArgumentVisitor {
-            private final List<String> strings;
-
-            public CollectStringArrayAnnotationVisitor() {
-                this.strings = new ArrayList<String>();
-            }
-
-            @Override
-            public void visit(@Nullable Object value) {
-                if (value instanceof String) {
-                    strings.add((String) value);
-                }
-            }
-
-            @Override
-            public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            }
-
-            @Override
-            public void visitEnd() {
-                //noinspection SSBasedInspection
-                visitEnd(strings.toArray(new String[strings.size()]));
-            }
-
-            protected abstract void visitEnd(@NotNull String[] data);
-        }
     }
 
-    private class SyntheticClassHeaderReader extends HeaderAnnotationArgumentVisitor {
+    private abstract static class CollectStringArrayAnnotationVisitor implements AnnotationArrayArgumentVisitor {
+        private final List<String> strings;
+
+        public CollectStringArrayAnnotationVisitor() {
+            this.strings = new ArrayList<String>();
+        }
+
         @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            if ("Kind".equals(enumClassId.getShortClassName().asString()) &&
-                enumClassId.isNestedClass() &&
-                enumClassId.getOuterClassId().equals(ClassId.topLevel(KOTLIN_SYNTHETIC_CLASS)) &&
-                "kind".equals(name.asString())) {
-                syntheticClassKind = enumEntryName.asString();
+        public void visit(@Nullable Object value) {
+            if (value instanceof String) {
+                strings.add((String) value);
             }
         }
+
+        @Override
+        public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        }
+
+        @Override
+        public void visitEnd() {
+            //noinspection SSBasedInspection
+            visitEnd(strings.toArray(new String[strings.size()]));
+        }
+
+        protected abstract void visitEnd(@NotNull String[] data);
     }
 }

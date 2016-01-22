@@ -41,16 +41,16 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         val lambda = invokingContext.getFunctionObject(descriptor)
         val functionContext = invokingContext.newFunctionBodyWithUsageTracker(lambda, descriptor)
 
-        FunctionTranslator.addParameters(lambda.getParameters(), descriptor, functionContext)
+        FunctionTranslator.addParameters(lambda.parameters, descriptor, functionContext)
         val functionBody = translateFunctionBody(descriptor, declaration, functionContext)
-        lambda.getBody().getStatements().addAll(functionBody.getStatements())
+        lambda.body.statements.addAll(functionBody.statements)
 
         val tracker = functionContext.usageTracker()!!
 
         val isRecursive = tracker.isCaptured(descriptor)
 
         if (isRecursive) {
-            lambda.setName(tracker.getNameForCapturedDescriptor(descriptor))
+            lambda.name = tracker.getNameForCapturedDescriptor(descriptor)
         }
 
         if (tracker.hasCapturedExceptContaining()) {
@@ -78,8 +78,8 @@ fun JsFunction.withCapturedParameters(context: TranslationContext, invokingConte
     val ref = invokingContext.define(descriptor, this)
     val invocation = JsInvocation(ref)
 
-    val invocationArguments = invocation.getArguments()
-    val functionParameters = this.getParameters()
+    val invocationArguments = invocation.arguments
+    val functionParameters = this.parameters
 
     val tracker = context.usageTracker()!!
 
@@ -149,13 +149,13 @@ private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName:
  * `lambda` should capture x in this case
  */
 private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName: JsName, localFunAlias: JsInvocation): CapturedArgsParams {
-    val capturedArgs = localFunAlias.getArguments()
+    val capturedArgs = localFunAlias.arguments
 
-    val scope = capturingFunction.getInnerFunction()?.getScope()!!
+    val scope = capturingFunction.getInnerFunction()?.scope!!
     val freshNames = getFreshNamesInScope(scope, capturedArgs)
 
     val aliasCallArguments = freshNames.map { it.makeRef() }
-    val alias = JsInvocation(localFunAlias.getQualifier(), aliasCallArguments)
+    val alias = JsInvocation(localFunAlias.qualifier, aliasCallArguments)
     declareAliasInsideFunction(capturingFunction, capturedName, alias)
 
     val capturedParameters = freshNames.map {JsParameter(it)}
@@ -175,7 +175,7 @@ private fun getFreshNamesInScope(scope: JsScope, suggested: List<JsExpression>):
             throw AssertionError("Expected suggestion to be JsNameRef")
         }
 
-        val ident = suggestion.getIdent()
+        val ident = suggestion.ident
         val name = scope.declareFreshName(ident)
         freshNames.add(name)
     }
@@ -185,11 +185,11 @@ private fun getFreshNamesInScope(scope: JsScope, suggested: List<JsExpression>):
 
 private fun JsFunction.addDeclaration(name: JsName, value: JsExpression?) {
     val declaration = JsAstUtils.newVar(name, value)
-    this.getBody().getStatements().add(0, declaration)
+    this.body.statements.add(0, declaration)
 }
 
 private fun HasName.getStaticRef(): JsNode? {
-    return this.getName()?.staticRef
+    return this.name?.staticRef
 }
 
 private fun isLocalInlineDeclaration(descriptor: CallableDescriptor): Boolean {

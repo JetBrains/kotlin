@@ -10,5 +10,5 @@ package test
 
 public final class TypeAnnotationWithArguments {
     /*primary*/ public constructor TypeAnnotationWithArguments()
-    public final fun foo(/*0*/ param: @test.Ann(x = "param", y = 3.14.toDouble()) kotlin.IntRange): @test.Ann(x = "fun", y = 2.72.toDouble()) kotlin.Unit
+    public final fun foo(/*0*/ param: @test.Ann(x = "param", y = 3.14.toDouble()) kotlin.ranges.IntRange): @test.Ann(x = "fun", y = 2.72.toDouble()) kotlin.Unit
 }

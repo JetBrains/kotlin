@@ -4,7 +4,7 @@ import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
 fun box(): String {
-    val j = javaClass<J>()
+    val j = J::class.java
     assertEquals(j, j.kotlin.java)
 
     return "OK"

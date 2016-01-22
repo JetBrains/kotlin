@@ -3,7 +3,7 @@ package foo
 fun box(): String {
     val kotlin: String = "kotlin"
 
-    if (kotlin.subSequence(0, kotlin.length()) != kotlin) return "Fail 0"
+    if (kotlin.subSequence(0, kotlin.length) != kotlin) return "Fail 0"
 
     val kot: CharSequence = kotlin.subSequence(0, 3)
     if (kot.toString() != "kot") return "Fail 1: $kot"

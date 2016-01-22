@@ -18,27 +18,26 @@ package org.jetbrains.kotlin.container
 
 import kotlin.reflect.KProperty
 
-public fun createContainer(id: String, init: StorageComponentContainer.() -> Unit): StorageComponentContainer {
+fun createContainer(id: String, init: StorageComponentContainer.() -> Unit): StorageComponentContainer {
     val c = StorageComponentContainer(id)
     c.init()
     c.compose()
     return c
 }
 
-public inline fun <reified T : Any> StorageComponentContainer.useImpl() {
+inline fun <reified T : Any> StorageComponentContainer.useImpl() {
     registerSingleton(T::class.java)
 }
 
-public inline fun <reified T : Any> ComponentProvider.get(): T {
+inline fun <reified T : Any> ComponentProvider.get(): T {
     return getService(T::class.java)
 }
 
-@Suppress("UNCHECKED_CAST")
-public fun <T : Any> ComponentProvider.getService(request: Class<T>): T {
+@Suppress("UNCHECKED_CAST") fun <T : Any> ComponentProvider.getService(request: Class<T>): T {
     return resolve(request)!!.getValue() as T
 }
 
-public fun StorageComponentContainer.useInstance(instance: Any) {
+fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 

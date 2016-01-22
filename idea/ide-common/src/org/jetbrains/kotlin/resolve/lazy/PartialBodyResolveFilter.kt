@@ -54,8 +54,8 @@ class PartialBodyResolveFilter(
         assert(!KtPsiUtil.isLocal(declaration)) { "Should never be invoked on local declaration otherwise we may miss some local declarations with type Nothing" }
 
         declaration.forEachDescendantOfType<KtCallableDeclaration> { declaration ->
-            if (declaration.getTypeReference().containsProbablyNothing()) {
-                val name = declaration.getName()
+            if (declaration.typeReference.containsProbablyNothing()) {
+                val name = declaration.name
                 if (name != null) {
                     if (declaration is KtNamedFunction) {
                         nothingFunctionNames.add(name)
@@ -91,8 +91,8 @@ class PartialBodyResolveFilter(
                 }
             }
             else if (statement is KtDestructuringDeclaration) {
-                if (statement.getEntries().any {
-                    val name = it.getName()
+                if (statement.entries.any {
+                    val name = it.name
                     name != null && nameFilter(name)
                 }) {
                     statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
@@ -113,7 +113,7 @@ class PartialBodyResolveFilter(
                 val smartCastPlaces = potentialSmartCastPlaces(statement, { it.affectsNames(nameFilter) })
                 if (!smartCastPlaces.isEmpty()) {
                     //TODO: do we really need correct resolve for ALL smart cast places?
-                    smartCastPlaces.values()
+                    smartCastPlaces.values
                             .flatMap { it }
                             .forEach { statementMarks.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
                     updateNameFilter()
@@ -149,7 +149,7 @@ class PartialBodyResolveFilter(
 
         fun addPlaces(name: SmartCastName, places: Collection<KtExpression>) {
             if (places.isNotEmpty()) {
-                map.getOrPut(name, { ArrayList(places.size()) }).addAll(places)
+                map.getOrPut(name, { ArrayList(places.size) }).addAll(places)
             }
         }
 
@@ -164,25 +164,25 @@ class PartialBodyResolveFilter(
             override fun visitPostfixExpression(expression: KtPostfixExpression) {
                 expression.acceptChildren(this)
 
-                if (expression.getOperationToken() == KtTokens.EXCLEXCL) {
-                    addIfCanBeSmartCast(expression.getBaseExpression() ?: return)
+                if (expression.operationToken == KtTokens.EXCLEXCL) {
+                    addIfCanBeSmartCast(expression.baseExpression ?: return)
                 }
             }
 
             override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS) {
                 expression.acceptChildren(this)
 
-                if (expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_KEYWORD) {
-                    addIfCanBeSmartCast(expression.getLeft())
+                if (expression.operationReference.getReferencedNameElementType() == KtTokens.AS_KEYWORD) {
+                    addIfCanBeSmartCast(expression.left)
                 }
             }
 
             override fun visitBinaryExpression(expression: KtBinaryExpression) {
                 expression.acceptChildren(this)
 
-                if (expression.getOperationToken() == KtTokens.ELVIS) {
-                    val left = expression.getLeft()
-                    val right = expression.getRight()
+                if (expression.operationToken == KtTokens.ELVIS) {
+                    val left = expression.left
+                    val right = expression.right
                     if (left != null && right != null) {
                         val smartCastName = left.smartCastExpressionName()
                         if (smartCastName != null && filter(smartCastName)) {
@@ -194,9 +194,9 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitIfExpression(expression: KtIfExpression) {
-                val condition = expression.getCondition()
-                val thenBranch = expression.getThen()
-                val elseBranch = expression.getElse()
+                val condition = expression.condition
+                val thenBranch = expression.then
+                val elseBranch = expression.`else`
 
                 val (thenSmartCastNames, elseSmartCastNames) = possiblySmartCastInCondition(condition)
 
@@ -239,11 +239,11 @@ class PartialBodyResolveFilter(
 
             override fun visitForExpression(expression: KtForExpression) {
                 // analyze only the loop-range expression, do not enter the loop body
-                expression.getLoopRange()?.accept(this)
+                expression.loopRange?.accept(this)
             }
 
             override fun visitWhileExpression(expression: KtWhileExpression) {
-                val condition = expression.getCondition()
+                val condition = expression.condition
                 // we need to enter the body only for "while(true)"
                 if (condition.isTrueConstant()) {
                     expression.acceptChildren(this)
@@ -268,9 +268,9 @@ class PartialBodyResolveFilter(
         val emptyResult = Pair(setOf<SmartCastName>(), setOf<SmartCastName>())
         when (condition) {
             is KtBinaryExpression -> {
-                val operation = condition.getOperationToken()
-                val left = condition.getLeft() ?: return emptyResult
-                val right = condition.getRight() ?: return emptyResult
+                val operation = condition.operationToken
+                val left = condition.left ?: return emptyResult
+                val right = condition.right ?: return emptyResult
 
                 fun smartCastInEq(): Pair<Set<SmartCastName>, Set<SmartCastName>> {
                     if (left.isNullLiteral()) {
@@ -307,19 +307,19 @@ class PartialBodyResolveFilter(
             }
 
             is KtIsExpression -> {
-                val cast = condition.getLeftHandSide().smartCastExpressionName().singletonOrEmptySet()
-                return if (condition.isNegated()) Pair(setOf(), cast) else Pair(cast, setOf())
+                val cast = condition.leftHandSide.smartCastExpressionName().singletonOrEmptySet()
+                return if (condition.isNegated) Pair(setOf(), cast) else Pair(cast, setOf())
             }
 
             is KtPrefixExpression -> {
-                if (condition.getOperationToken() == KtTokens.EXCL) {
-                    val operand = condition.getBaseExpression() ?: return emptyResult
+                if (condition.operationToken == KtTokens.EXCL) {
+                    val operand = condition.baseExpression ?: return emptyResult
                     return possiblySmartCastInCondition(operand).swap()
                 }
             }
 
             is KtParenthesizedExpression -> {
-                val operand = condition.getExpression() ?: return emptyResult
+                val operand = condition.expression ?: return emptyResult
                 return possiblySmartCastInCondition(operand)
             }
         }
@@ -345,10 +345,10 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitIfExpression(expression: KtIfExpression) {
-                expression.getCondition()?.accept(this)
+                expression.condition?.accept(this)
 
-                val thenBranch = expression.getThen()
-                val elseBranch = expression.getElse()
+                val thenBranch = expression.then
+                val elseBranch = expression.`else`
                 if (thenBranch != null && elseBranch != null) { // if we have only one branch it makes no sense to search exits in it
                     val thenExits = collectAlwaysExitPoints(thenBranch)
                     if (thenExits.isNotEmpty()) {
@@ -362,15 +362,15 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitForExpression(loop: KtForExpression) {
-                loop.getLoopRange()?.accept(this)
+                loop.loopRange?.accept(this)
                 // do not make sense to search exits inside for as not necessary enter it at all
             }
 
             override fun visitWhileExpression(loop: KtWhileExpression) {
-                val condition = loop.getCondition() ?: return
+                val condition = loop.condition ?: return
                 if (condition.isTrueConstant()) {
                     insideLoopLevel++
-                    loop.getBody()?.accept(this)
+                    loop.body?.accept(this)
                     insideLoopLevel--
                 }
                 else {
@@ -380,9 +380,9 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitDoWhileExpression(loop: KtDoWhileExpression) {
-                loop.getCondition()?.accept(this)
+                loop.condition?.accept(this)
                 insideLoopLevel++
-                loop.getBody()?.accept(this)
+                loop.body?.accept(this)
                 insideLoopLevel--
             }
 
@@ -399,7 +399,7 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitCallExpression(expression: KtCallExpression) {
-                val name = (expression.getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedName()
+                val name = (expression.calleeExpression as? KtSimpleNameExpression)?.getReferencedName()
                 if (name != null && name in nothingFunctionNames) {
                     result.add(expression)
                 }
@@ -414,9 +414,9 @@ class PartialBodyResolveFilter(
             }
 
             override fun visitBinaryExpression(expression: KtBinaryExpression) {
-                if (expression.getOperationToken() == KtTokens.ELVIS) {
+                if (expression.operationToken == KtTokens.ELVIS) {
                     // do not search exits after "?:"
-                    expression.getLeft()?.accept(this)
+                    expression.left?.accept(this)
                 }
                 else {
                     super.visitBinaryExpression(expression)
@@ -462,9 +462,9 @@ class PartialBodyResolveFilter(
             is KtSimpleNameExpression -> SmartCastName(null, this.getReferencedName())
 
             is KtQualifiedExpression -> {
-                val selector = getSelectorExpression() as? KtSimpleNameExpression ?: return null
+                val selector = selectorExpression as? KtSimpleNameExpression ?: return null
                 val selectorName = selector.getReferencedName()
-                val receiver = getReceiverExpression()
+                val receiver = receiverExpression
                 if (receiver is KtThisExpression) {
                     return SmartCastName(null, selectorName)
                 }
@@ -518,7 +518,7 @@ class PartialBodyResolveFilter(
     }
 
     companion object {
-        public fun findStatementToResolve(element: KtElement, declaration: KtDeclaration): KtExpression? {
+        fun findStatementToResolve(element: KtElement, declaration: KtDeclaration): KtExpression? {
             return element.parentsWithSelf.takeWhile { it != declaration }.firstOrNull { it.isStatement() } as KtExpression?
         }
 
@@ -526,16 +526,16 @@ class PartialBodyResolveFilter(
             forEachDescendantOfType(canGoInside = { it !is KtBlockExpression }, action = action)
         }
 
-        private fun KtExpression?.isNullLiteral() = this?.getNode()?.getElementType() == KtNodeTypes.NULL
+        private fun KtExpression?.isNullLiteral() = this?.node?.elementType == KtNodeTypes.NULL
 
         private fun KtExpression?.isTrueConstant()
-                = this != null && getNode()?.getElementType() == KtNodeTypes.BOOLEAN_CONSTANT && getText() == "true"
+                = this != null && node?.elementType == KtNodeTypes.BOOLEAN_CONSTANT && text == "true"
 
         private fun <T : Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) setOf(this) else setOf()
 
         //TODO: review logic
         private fun isValueNeeded(expression: KtExpression): Boolean {
-            val parent = expression.getParent()
+            val parent = expression.parent
             return when (parent) {
                 is KtBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
 
@@ -545,7 +545,7 @@ class PartialBodyResolveFilter(
                 }
 
                 is KtDeclarationWithBody -> {
-                    if (expression == parent.getBodyExpression())
+                    if (expression == parent.bodyExpression)
                         !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
                     else
                         true
@@ -558,7 +558,7 @@ class PartialBodyResolveFilter(
         }
 
         private fun KtBlockExpression.lastStatement(): KtExpression?
-                = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<KtExpression>()
+                = lastChild?.siblings(forward = false)?.firstIsInstanceOrNull<KtExpression>()
 
         private fun PsiElement.isStatement() = this is KtExpression && getParent() is KtBlockExpression
 
@@ -576,7 +576,7 @@ class PartialBodyResolveFilter(
                 if (e.isStatement()) {
                     markStatement(e as KtExpression, level)
                 }
-                e = e.getParent()!!
+                e = e.parent!!
             }
         }
 
@@ -585,7 +585,7 @@ class PartialBodyResolveFilter(
             if (currentLevel < level) {
                 statementMarks[statement] = level
 
-                val block = statement.getParent() as KtBlockExpression
+                val block = statement.parent as KtBlockExpression
                 val currentBlockLevel = blockLevels[block] ?: MarkLevel.NONE
                 if (currentBlockLevel < level) {
                     blockLevels[block] = level
@@ -597,12 +597,12 @@ class PartialBodyResolveFilter(
                 = statementMarks[statement] ?: MarkLevel.NONE
 
         fun allMarkedStatements(): Collection<KtExpression>
-                = statementMarks.keySet()
+                = statementMarks.keys
 
         fun lastMarkedStatement(block: KtBlockExpression, minLevel: MarkLevel): KtExpression? {
             val level = blockLevels[block] ?: MarkLevel.NONE
             if (level < minLevel) return null // optimization
-            return block.getLastChild().siblings(forward = false)
+            return block.lastChild.siblings(forward = false)
                     .filterIsInstance<KtExpression>()
                     .first { statementMark(it) >= minLevel }
         }

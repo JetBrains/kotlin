@@ -19,6 +19,6 @@ package org.jetbrains.kotlin.types.error
 import org.jetbrains.kotlin.name.FqName
 
 // marker for DescriptorRenderer to treat specially in decompiler mode
-public interface MissingDependencyErrorClass {
-    public val fullFqName: FqName
+interface MissingDependencyErrorClass {
+    val fullFqName: FqName
 }

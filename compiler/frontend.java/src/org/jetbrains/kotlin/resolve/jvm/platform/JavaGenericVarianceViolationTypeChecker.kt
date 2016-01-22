@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
-public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
+object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // Prohibits covariant type argument conversions `List<String> -> (MutableList<Any>..List<Any>)` when expected type's lower bound is invariant.
     // It's needed to prevent accident unsafe covariant conversions of mutable collections.
     //
@@ -59,14 +59,14 @@ public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
 
         val correspondingSubType = TypeCheckingProcedure.findCorrespondingSupertype(expressionTypeWithSmartCast, lowerBound) ?: return
 
-        assert(lowerBound.arguments.size() == upperBound.arguments.size()) {
+        assert(lowerBound.arguments.size == upperBound.arguments.size) {
             "Different arguments count in flexible bounds: " +
-            "($lowerBound(${lowerBound.arguments.size()})..$upperBound(${upperBound.arguments.size()})"
+            "($lowerBound(${lowerBound.arguments.size})..$upperBound(${upperBound.arguments.size})"
         }
 
-        assert(lowerBound.arguments.size() == correspondingSubType.arguments.size()) {
+        assert(lowerBound.arguments.size == correspondingSubType.arguments.size) {
             "Different arguments count in corresponding subtype and supertype: " +
-            "($lowerBound(${lowerBound.arguments.size()})..$correspondingSubType(${correspondingSubType.arguments.size()})"
+            "($lowerBound(${lowerBound.arguments.size})..$correspondingSubType(${correspondingSubType.arguments.size})"
         }
 
 

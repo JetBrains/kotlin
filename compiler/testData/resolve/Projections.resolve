@@ -18,13 +18,13 @@ class Inv<T>() {
 fun testInOut() {
   In<String>().`In.f:T->Unit`f("1");
   (return as In<in String>).`In.f:T->Unit`f("1");
-  (return as In<out String>).`In.f:Int->Int`f("1")
-  (return as In<*>).`In.f:Int->Int`f("1");
+  (return as In<out String>).`!null`f("1")
+  (return as In<*>).`!null`f("1");
 
   In<String>().`In.f:Int->Int`f(1);
   (return as In<in String>).`In.f:Int->Int`f(1);
   (return as In<out String>).`In.f:Int->Int`f(1)
-  (return as In<out String>).`!`f1(1)
+  (return as In<out String>).`In.f1`f1(1)
   (return as In<*>).`In.f:Int->Int`f(1);
 
   Out<Int>().`Out.f(a)`f(1)
@@ -39,13 +39,13 @@ fun testInOut() {
 
   Inv<Int>().`Inv.f`f(1)
   (return as Inv<in Int>).`Inv.f`f(1)
-  (return as Inv<out Int>).`!`f(1)
-  (return as Inv<*>).`!`f(1)
+  (return as Inv<out Int>).`Inv.f`f(1)
+  (return as Inv<*>).`Inv.f`f(1)
 
   Inv<Int>().`Inv.inf`inf(1)
   (return as Inv<in Int>).`Inv.inf`inf(1)
-  (return as Inv<out Int>).`!`inf(1)
-  (return as Inv<*>).`!`inf(1)
+  (return as Inv<out Int>).`Inv.inf`inf(1)
+  (return as Inv<*>).`Inv.inf`inf(1)
 
   Inv<Int>().`Inv.outf`outf()
   ((return as Inv<in Int>).`Inv.outf`outf())`:kotlin::Any`

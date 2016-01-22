@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.incremental.components
 
 import java.io.Serializable
 
-public interface LookupTracker {
+interface LookupTracker {
     // used in tests for more accurate checks
     val requiresPosition: Boolean
 
@@ -41,7 +41,7 @@ public interface LookupTracker {
     }
 }
 
-public enum class ScopeKind {
+enum class ScopeKind {
     PACKAGE,
     CLASSIFIER
 }

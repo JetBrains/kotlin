@@ -26,7 +26,7 @@ abstract class MissingConditionFixer<T: PsiElement>() : SmartEnterProcessorWithF
         val workElement = getElement(element)
         if (workElement == null) return
 
-        val doc = editor.getDocument()
+        val doc = editor.document
         val lParen = getLeftParenthesis(workElement)
         val rParen = getRightParenthesis(workElement)
         val condition = getCondition(workElement)
@@ -42,7 +42,7 @@ abstract class MissingConditionFixer<T: PsiElement>() : SmartEnterProcessorWithF
                 stopOffset = Math.min(stopOffset, workElement.range.end)
 
                 doc.replaceString(workElement.range.start, stopOffset, "$keyword ()")
-                processor.registerUnresolvedError(workElement.range.start + "$keyword (".length())
+                processor.registerUnresolvedError(workElement.range.start + "$keyword (".length)
             }
             else {
                 processor.registerUnresolvedError(lParen.range.end)

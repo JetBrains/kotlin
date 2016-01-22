@@ -10,5 +10,5 @@ fun withSideEffect(v: Int): Int {
 
 fun box(): Boolean {
     val al = ArrayList<Int>(withSideEffect(2))
-    return al.size() == 0 && baz == 2
+    return al.size == 0 && baz == 2
 }

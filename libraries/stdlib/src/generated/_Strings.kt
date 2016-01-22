@@ -8,6 +8,7 @@ package kotlin.text
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.comparisons.*
 import java.util.*
 
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
@@ -20,25 +21,9 @@ public fun CharSequence.elementAt(index: Int): Char {
 }
 
 /**
- * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.elementAt(index: Int): Char {
-    return get(index)
-}
-
-/**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
  */
 public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
-}
-
-/**
- * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -50,25 +35,9 @@ public fun CharSequence.elementAtOrNull(index: Int): Char? {
 }
 
 /**
- * Returns a character at the given [index] or `null` if the [index] is out of bounds of this string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.elementAtOrNull(index: Int): Char? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
-}
-
-/**
  * Returns the first character matching the given [predicate], or `null` if no such character was found.
  */
 public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
-    return firstOrNull(predicate)
-}
-
-/**
- * Returns the first character matching the given [predicate], or `null` if no such character was found.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.find(predicate: (Char) -> Boolean): Char? {
     return firstOrNull(predicate)
 }
 
@@ -80,29 +49,10 @@ public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
- * Returns the last character matching the given [predicate], or `null` if no such character was found.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.findLast(predicate: (Char) -> Boolean): Char? {
-    return lastOrNull(predicate)
-}
-
-/**
  * Returns first character.
  * @throws [NoSuchElementException] if the char sequence is empty.
  */
 public fun CharSequence.first(): Char {
-    if (isEmpty())
-        throw NoSuchElementException("Collection is empty.")
-    return this[0]
-}
-
-/**
- * Returns first character.
- * @throws [NoSuchElementException] if the string is empty.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.first(): Char {
     if (isEmpty())
         throw NoSuchElementException("Collection is empty.")
     return this[0]
@@ -118,27 +68,9 @@ public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char {
 }
 
 /**
- * Returns the first character matching the given [predicate].
- * @throws [NoSuchElementException] if no such character is found.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.first(predicate: (Char) -> Boolean): Char {
-    for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found.")
-}
-
-/**
  * Returns the first character, or `null` if the char sequence is empty.
  */
 public fun CharSequence.firstOrNull(): Char? {
-    return if (isEmpty()) null else this[0]
-}
-
-/**
- * Returns the first character, or `null` if the string is empty.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.firstOrNull(): Char? {
     return if (isEmpty()) null else this[0]
 }
 
@@ -151,26 +83,9 @@ public inline fun CharSequence.firstOrNull(predicate: (Char) -> Boolean): Char? 
 }
 
 /**
- * Returns the first character matching the given [predicate], or `null` if character was not found.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.firstOrNull(predicate: (Char) -> Boolean): Char? {
-    for (element in this) if (predicate(element)) return element
-    return null
-}
-
-/**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
  */
 public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
-}
-
-/**
- * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
@@ -182,30 +97,9 @@ public fun CharSequence.getOrNull(index: Int): Char? {
 }
 
 /**
- * Returns a character at the given [index] or `null` if the [index] is out of bounds of this string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.getOrNull(index: Int): Char? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
-}
-
-/**
  * Returns index of the first character matching the given [predicate], or -1 if the char sequence does not contain such character.
  */
 public inline fun CharSequence.indexOfFirst(predicate: (Char) -> Boolean): Int {
-    for (index in indices) {
-        if (predicate(this[index])) {
-            return index
-        }
-    }
-    return -1
-}
-
-/**
- * Returns index of the first character matching the given [predicate], or -1 if the string does not contain such character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.indexOfFirst(predicate: (Char) -> Boolean): Int {
     for (index in indices) {
         if (predicate(this[index])) {
             return index
@@ -227,34 +121,10 @@ public inline fun CharSequence.indexOfLast(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last character matching the given [predicate], or -1 if the string does not contain such character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.indexOfLast(predicate: (Char) -> Boolean): Int {
-    for (index in indices.reversed()) {
-        if (predicate(this[index])) {
-            return index
-        }
-    }
-    return -1
-}
-
-/**
  * Returns the last character.
  * @throws [NoSuchElementException] if the char sequence is empty.
  */
 public fun CharSequence.last(): Char {
-    if (isEmpty())
-        throw NoSuchElementException("Collection is empty.")
-    return this[lastIndex]
-}
-
-/**
- * Returns the last character.
- * @throws [NoSuchElementException] if the string is empty.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.last(): Char {
     if (isEmpty())
         throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
@@ -273,30 +143,9 @@ public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
 }
 
 /**
- * Returns the last character matching the given [predicate].
- * @throws [NoSuchElementException] if no such character is found.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.last(predicate: (Char) -> Boolean): Char {
-    for (index in this.indices.reversed()) {
-        val element = this[index]
-        if (predicate(element)) return element
-    }
-    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
-}
-
-/**
  * Returns the last character, or `null` if the char sequence is empty.
  */
 public fun CharSequence.lastOrNull(): Char? {
-    return if (isEmpty()) null else this[length - 1]
-}
-
-/**
- * Returns the last character, or `null` if the string is empty.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.lastOrNull(): Char? {
     return if (isEmpty()) null else this[length - 1]
 }
 
@@ -312,33 +161,9 @@ public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
- * Returns the last character matching the given [predicate], or `null` if no such character was found.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.lastOrNull(predicate: (Char) -> Boolean): Char? {
-    for (index in this.indices.reversed()) {
-        val element = this[index]
-        if (predicate(element)) return element
-    }
-    return null
-}
-
-/**
  * Returns the single character, or throws an exception if the char sequence is empty or has more than one character.
  */
 public fun CharSequence.single(): Char {
-    return when (length) {
-        0 -> throw NoSuchElementException("Collection is empty.")
-        1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element.")
-    }
-}
-
-/**
- * Returns the single character, or throws an exception if the string is empty or has more than one character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.single(): Char {
     return when (length) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
@@ -364,24 +189,6 @@ public inline fun CharSequence.single(predicate: (Char) -> Boolean): Char {
 }
 
 /**
- * Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.single(predicate: (Char) -> Boolean): Char {
-    var single: Char? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
-            single = element
-            found = true
-        }
-    }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
-    return single as Char
-}
-
-/**
  * Returns single character, or `null` if the char sequence is empty or has more than one character.
  */
 public fun CharSequence.singleOrNull(): Char? {
@@ -389,35 +196,9 @@ public fun CharSequence.singleOrNull(): Char? {
 }
 
 /**
- * Returns single character, or `null` if the string is empty or has more than one character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.singleOrNull(): Char? {
-    return if (length == 1) this[0] else null
-}
-
-/**
  * Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found.
  */
 public inline fun CharSequence.singleOrNull(predicate: (Char) -> Boolean): Char? {
-    var single: Char? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            if (found) return null
-            single = element
-            found = true
-        }
-    }
-    if (!found) return null
-    return single
-}
-
-/**
- * Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.singleOrNull(predicate: (Char) -> Boolean): Char? {
     var single: Char? = null
     var found = false
     for (element in this) {
@@ -564,30 +345,9 @@ public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, pred
 }
 
 /**
- * Appends all elements not matching the given [predicate] to the given [destination].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <C : Appendable> String.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
-    for (element in this) if (!predicate(element)) destination.append(element)
-    return destination
-}
-
-/**
  * Appends all characters matching the given [predicate] to the given [destination].
  */
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {
-    for (index in 0..length - 1) {
-        val element = get(index)
-        if (predicate(element)) destination.append(element)
-    }
-    return destination
-}
-
-/**
- * Appends all characters matching the given [predicate] to the given [destination].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (index in 0..length - 1) {
         val element = get(index)
         if (predicate(element)) destination.append(element)
@@ -739,28 +499,9 @@ public fun CharSequence.toArrayList(): ArrayList<Char> {
 }
 
 /**
- * Returns an [ArrayList] of all characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.toArrayList(): ArrayList<Char> {
-    return toCollection(ArrayList<Char>(length))
-}
-
-/**
  * Appends all characters to the given [destination] collection.
  */
 public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C {
-    for (item in this) {
-        destination.add(item)
-    }
-    return destination
-}
-
-/**
- * Appends all characters to the given [destination] collection.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <C : MutableCollection<in Char>> String.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
     }
@@ -775,44 +516,10 @@ public fun CharSequence.toHashSet(): HashSet<Char> {
 }
 
 /**
- * Returns a [HashSet] of all characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>(mapCapacity(length)))
-}
-
-/**
- * Returns a [LinkedList] containing all elements.
- */
-@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
-public fun String.toLinkedList(): LinkedList<Char> {
-    return toCollection(LinkedList())
-}
-
-/**
  * Returns a [List] containing all characters.
  */
 public fun CharSequence.toList(): List<Char> {
     return this.toArrayList()
-}
-
-/**
- * Returns a [List] containing all characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.toList(): List<Char> {
-    return this.toArrayList()
-}
-
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
-public inline fun <K> CharSequence.toMap(selector: (Char) -> K): Map<K, Char> {
-    return toMapBy(selector)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
-    return toMapBy(selector)
 }
 
 /**
@@ -821,15 +528,6 @@ public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
  */
 @Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
-}
-
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given string.
- * If any two characters would have the same key returned by [selector] the last one gets added to the map.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     return toMapBy(selector, transform)
 }
 
@@ -862,21 +560,6 @@ public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> 
 }
 
 /**
- * Returns a [Map] containing the characters from the given string indexed by the key
- * returned from [selector] function applied to each character.
- * If any two characters would have the same key returned by [selector] the last one gets added to the map.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K> String.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
-}
-
-/**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -897,14 +580,6 @@ public fun CharSequence.toSet(): Set<Char> {
 }
 
 /**
- * Returns a [Set] of all characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.toSet(): Set<Char> {
-    return toCollection(LinkedHashSet<Char>(mapCapacity(length)))
-}
-
-/**
  * Returns a [SortedSet] of all characters.
  */
 public fun CharSequence.toSortedSet(): SortedSet<Char> {
@@ -912,25 +587,9 @@ public fun CharSequence.toSortedSet(): SortedSet<Char> {
 }
 
 /**
- * Returns a [SortedSet] of all characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.toSortedSet(): SortedSet<Char> {
-    return toCollection(TreeSet<Char>())
-}
-
-/**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each character of original char sequence.
  */
 public inline fun <R> CharSequence.flatMap(transform: (Char) -> Iterable<R>): List<R> {
-    return flatMapTo(ArrayList<R>(), transform)
-}
-
-/**
- * Returns a single list of all elements yielded from results of [transform] function being invoked on each character of original string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R> String.flatMap(transform: (Char) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
 }
 
@@ -946,18 +605,6 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
 }
 
 /**
- * Appends all elements yielded from results of [transform] function being invoked on each character of original string, to the given [destination].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R, C : MutableCollection<in R>> String.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
-    for (element in this) {
-        val list = transform(element)
-        destination.addAll(list)
-    }
-    return destination
-}
-
-/**
  * Returns a map of the characters in original char sequence grouped by the key returned by the given [selector] function.
  */
 public inline fun <K> CharSequence.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
@@ -965,30 +612,9 @@ public inline fun <K> CharSequence.groupBy(selector: (Char) -> K): Map<K, List<C
 }
 
 /**
- * Returns a map of the characters in original string grouped by the key returned by the given [selector] function.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K> String.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
-}
-
-/**
  * Appends characters from original char sequence grouped by the key returned by the given [selector] function to the given [map].
  */
 public inline fun <K> CharSequence.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
-    for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Char>() }
-        list.add(element)
-    }
-    return map
-}
-
-/**
- * Appends characters from original string grouped by the key returned by the given [selector] function to the given [map].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K> String.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
     for (element in this) {
         val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Char>() }
@@ -1007,27 +633,9 @@ public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
 
 /**
  * Returns a list containing the results of applying the given [transform] function
- * to each character in the original string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R> String.map(transform: (Char) -> R): List<R> {
-    return mapTo(ArrayList<R>(length), transform)
-}
-
-/**
- * Returns a list containing the results of applying the given [transform] function
  * to each character and its index in the original char sequence.
  */
 public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(length), transform)
-}
-
-/**
- * Returns a list containing the results of applying the given [transform] function
- * to each character and its index in the original string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R> String.mapIndexed(transform: (Int, Char) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(length), transform)
 }
 
@@ -1053,18 +661,6 @@ public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexed
  * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
-    var index = 0
-    for (item in this)
-        destination.add(transform(index++, item))
-    return destination
-}
-
-/**
- * Applies the given [transform] function to each character and its index in the original string
- * and appends the results to the given [destination].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R, C : MutableCollection<in R>> String.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
     var index = 0
     for (item in this)
         destination.add(transform(index++, item))
@@ -1099,17 +695,6 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapTo(destinatio
 }
 
 /**
- * Applies the given [transform] function to each character of the original string
- * and appends the results to the given [destination].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, transform: (Char) -> R): C {
-    for (item in this)
-        destination.add(transform(item))
-    return destination
-}
-
-/**
  * Returns a lazy [Iterable] of [IndexedValue] for each character of the original char sequence.
  */
 public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
@@ -1117,26 +702,9 @@ public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
 }
 
 /**
- * Returns a lazy [Iterable] of [IndexedValue] for each character of the original string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.withIndex(): Iterable<IndexedValue<Char>> {
-    return IndexingIterable { iterator() }
-}
-
-/**
  * Returns `true` if all characters match the given [predicate].
  */
 public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
-    for (element in this) if (!predicate(element)) return false
-    return true
-}
-
-/**
- * Returns `true` if all characters match the given [predicate].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
 }
@@ -1150,15 +718,6 @@ public fun CharSequence.any(): Boolean {
 }
 
 /**
- * Returns `true` if string has at least one character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.any(): Boolean {
-    for (element in this) return true
-    return false
-}
-
-/**
  * Returns `true` if at least one character matches the given [predicate].
  */
 public inline fun CharSequence.any(predicate: (Char) -> Boolean): Boolean {
@@ -1167,26 +726,9 @@ public inline fun CharSequence.any(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns `true` if at least one character matches the given [predicate].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
-    for (element in this) if (predicate(element)) return true
-    return false
-}
-
-/**
  * Returns the length of this char sequence.
  */
 public fun CharSequence.count(): Int {
-    return length
-}
-
-/**
- * Returns the number of characters in this string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.count(): Int {
     return length
 }
 
@@ -1200,29 +742,9 @@ public inline fun CharSequence.count(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Returns the number of characters matching the given [predicate].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.count(predicate: (Char) -> Boolean): Int {
-    var count = 0
-    for (element in this) if (predicate(element)) count++
-    return count
-}
-
-/**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each character.
  */
 public inline fun <R> CharSequence.fold(initial: R, operation: (R, Char) -> R): R {
-    var accumulator = initial
-    for (element in this) accumulator = operation(accumulator, element)
-    return accumulator
-}
-
-/**
- * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
@@ -1241,19 +763,6 @@ public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, R) ->
 }
 
 /**
- * Accumulates value starting with [initial] value and applying [operation] from right to left to each character and current accumulator value.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R {
-    var index = lastIndex
-    var accumulator = initial
-    while (index >= 0) {
-        accumulator = operation(get(index--), accumulator)
-    }
-    return accumulator
-}
-
-/**
  * Performs the given [action] on each character.
  */
 public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
@@ -1261,26 +770,9 @@ public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
 }
 
 /**
- * Performs the given [action] on each character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.forEach(action: (Char) -> Unit): Unit {
-    for (element in this) action(element)
-}
-
-/**
  * Performs the given [action] on each character, providing sequential index with the character.
  */
 public inline fun CharSequence.forEachIndexed(action: (Int, Char) -> Unit): Unit {
-    var index = 0
-    for (item in this) action(index++, item)
-}
-
-/**
- * Performs the given [action] on each character, providing sequential index with the character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.forEachIndexed(action: (Int, Char) -> Unit): Unit {
     var index = 0
     for (item in this) action(index++, item)
 }
@@ -1299,42 +791,9 @@ public fun CharSequence.max(): Char? {
 }
 
 /**
- * Returns the largest character or `null` if there are no characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.max(): Char? {
-    if (isEmpty()) return null
-    var max = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (max < e) max = e
-    }
-    return max
-}
-
-/**
  * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
  */
 public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
-    if (isEmpty()) return null
-    var maxElem = this[0]
-    var maxValue = selector(maxElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        val v = selector(e)
-        if (maxValue < v) {
-            maxElem = e
-            maxValue = v
-        }
-    }
-    return maxElem
-}
-
-/**
- * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R : Comparable<R>> String.maxBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var maxElem = this[0]
     var maxValue = selector(maxElem)
@@ -1376,42 +835,9 @@ public fun CharSequence.min(): Char? {
 }
 
 /**
- * Returns the smallest character or `null` if there are no characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.min(): Char? {
-    if (isEmpty()) return null
-    var min = this[0]
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        if (min > e) min = e
-    }
-    return min
-}
-
-/**
  * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
  */
 public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
-    if (isEmpty()) return null
-    var minElem = this[0]
-    var minValue = selector(minElem)
-    for (i in 1..lastIndex) {
-        val e = this[i]
-        val v = selector(e)
-        if (minValue > v) {
-            minElem = e
-            minValue = v
-        }
-    }
-    return minElem
-}
-
-/**
- * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R : Comparable<R>> String.minBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var minElem = this[0]
     var minValue = selector(minElem)
@@ -1448,15 +874,6 @@ public fun CharSequence.none(): Boolean {
 }
 
 /**
- * Returns `true` if the string has no characters.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.none(): Boolean {
-    for (element in this) return false
-    return true
-}
-
-/**
  * Returns `true` if no characters match the given [predicate].
  */
 public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
@@ -1465,32 +882,9 @@ public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns `true` if no characters match the given [predicate].
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.none(predicate: (Char) -> Boolean): Boolean {
-    for (element in this) if (predicate(element)) return false
-    return true
-}
-
-/**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
  */
 public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
-    }
-    return accumulator
-}
-
-/**
- * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
@@ -1514,20 +908,6 @@ public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Cha
 }
 
 /**
- * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
-    var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = get(index--)
-    while (index >= 0) {
-        accumulator = operation(get(index--), accumulator)
-    }
-    return accumulator
-}
-
-/**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
 public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
@@ -1539,33 +919,9 @@ public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [selector] function applied to each character in the string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.sumBy(selector: (Char) -> Int): Int {
-    var sum: Int = 0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-/**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
 public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
-    var sum: Double = 0.0
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all values produced by [selector] function applied to each character in the string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.sumByDouble(selector: (Char) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
         sum += selector(element)
@@ -1629,29 +985,6 @@ public inline fun <V> CharSequence.zip(other: CharSequence, transform: (Char, Ch
 }
 
 /**
- * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <V> String.zip(other: CharSequence, transform: (Char, Char) -> V): List<V> {
-    val length = Math.min(this.length, other.length)
-    val list = ArrayList<V>(length)
-    for (i in 0..length-1) {
-        list.add(transform(this[i], other[i]))
-    }
-    return list
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public infix fun CharSequence.zip(other: String): List<Pair<Char, Char>> {
-    return zip(other) { c1, c2 -> c1 to c2 }
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public infix fun String.zip(other: String): List<Pair<Char, Char>> {
-    return zip(other) { c1, c2 -> c1 to c2 }
-}
-
-/**
  * Creates an [Iterable] instance that wraps the original char sequence returning its characters when being iterated.
  */
 public fun CharSequence.asIterable(): Iterable<Char> {
@@ -1665,19 +998,6 @@ public fun CharSequence.asIterable(): Iterable<Char> {
  * Creates a [Sequence] instance that wraps the original char sequence returning its characters when being iterated.
  */
 public fun CharSequence.asSequence(): Sequence<Char> {
-    if (this is String && isEmpty()) return emptySequence()
-    return object : Sequence<Char> {
-        override fun iterator(): Iterator<Char> {
-            return this@asSequence.iterator()
-        }
-    }
-}
-
-/**
- * Creates a [Sequence] instance that wraps the original string returning its characters when being iterated.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
     return object : Sequence<Char> {
         override fun iterator(): Iterator<Char> {

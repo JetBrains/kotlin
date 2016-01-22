@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.utils
 
-public class KotlinFrontEndException(message: String, cause: Throwable) : RuntimeException(message, cause)
+class KotlinFrontEndException(message: String, cause: Throwable) : RuntimeException(message, cause)

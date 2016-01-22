@@ -23,7 +23,7 @@ val prop5 = "${1.toFloat()}"
 val prop6 = "${1.0}"
 
 // val prop7: null
-val prop7 = "${javaClass<Int>()}"
+val prop7 = "${Int::class.java}"
 
 // val prop8: \"a1.0\"
 val prop8 = "a${1.toDouble()}"

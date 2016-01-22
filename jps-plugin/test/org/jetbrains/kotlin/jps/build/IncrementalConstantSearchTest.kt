@@ -21,7 +21,7 @@ import com.intellij.util.concurrency.FixedFuture
 import java.io.File
 import java.util.concurrent.Future
 
-public class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
+class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
     fun testJavaConstantChangedUsedInKotlin() {
         doTest("jps-plugin/testData/incremental/custom/javaConstantChangedUsedInKotlin/")
     }
@@ -34,8 +34,16 @@ public class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
         doTest("jps-plugin/testData/incremental/custom/kotlinConstantChangedUsedInJava/")
     }
 
+    fun testKotlinJvmFieldChangedUsedInJava() {
+        doTest("jps-plugin/testData/incremental/custom/kotlinJvmFieldChangedUsedInJava/")
+    }
+
     fun testKotlinConstantUnchangedUsedInJava() {
         doTest("jps-plugin/testData/incremental/custom/kotlinConstantUnchangedUsedInJava/")
+    }
+
+    fun testKotlinJvmFieldUnchangedUsedInJava() {
+        doTest("jps-plugin/testData/incremental/custom/kotlinJvmFieldUnchangedUsedInJava/")
     }
 
     override val mockConstantSearch: Callbacks.ConstantAffectionResolver?

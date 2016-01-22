@@ -36,18 +36,18 @@ fun updateHighlightingResult(file: KtFile, hasErrors: Boolean) {
     if (hasErrors != file.getUserData(HAS_ERRORS_IN_HIGHLIHTING_KEY)) {
         file.putUserData(HAS_ERRORS_IN_HIGHLIHTING_KEY, hasErrors)
 
-        val vFile = file.getVirtualFile()
+        val vFile = file.virtualFile
         if (vFile != null) {
-            EditorNotifications.getInstance(file.getProject())?.updateNotifications(vFile)
+            EditorNotifications.getInstance(file.project)?.updateNotifications(vFile)
         }
     }
 }
 
-public class ErrorDuringFileAnalyzeNotificationProvider(val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
+class ErrorDuringFileAnalyzeNotificationProvider(val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
     private class HighlightingErrorNotificationPanel : EditorNotificationPanel() {
         init {
             setText("Kotlin internal error occurred in this file. Highlighting may be inadequate.")
-            myLabel.setIcon(AllIcons.General.Error)
+            myLabel.icon = AllIcons.General.Error
             createActionLabel("Open Event Log", ActivateToolWindowAction.getActionIdForToolWindow(EventLog.LOG_TOOL_WINDOW_ID))
         }
     }
@@ -55,7 +55,7 @@ public class ErrorDuringFileAnalyzeNotificationProvider(val project: Project) : 
     override fun getKey() = ERROR_HIGHLIGHT_PANEL_KEY
 
     override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
-        if (file.getFileType() != KotlinFileType.INSTANCE) {
+        if (file.fileType != KotlinFileType.INSTANCE) {
             return null
         }
 

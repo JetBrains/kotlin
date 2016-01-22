@@ -25,7 +25,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
 
-public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pair<String, ByteArray>>) {
+fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pair<String, ByteArray>>) {
     val process = evaluationContext.debugProcess
 
     val classLoader: ClassLoaderReference

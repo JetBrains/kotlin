@@ -19,16 +19,11 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
 import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -175,7 +170,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         if (isMember) {
             parameterTypes.add(jClass)
         }
-        addParametersAndMasks(parameterTypes, desc)
+        addParametersAndMasks(parameterTypes, desc, false)
 
         return jClass.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, declared)
     }
@@ -186,18 +181,18 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     fun findDefaultConstructor(desc: String, declared: Boolean): Constructor<*>? {
         val parameterTypes = arrayListOf<Class<*>>()
-        addParametersAndMasks(parameterTypes, desc)
-        parameterTypes.add(DEFAULT_CONSTRUCTOR_MARKER)
+        addParametersAndMasks(parameterTypes, desc, true)
 
         return jClass.tryGetConstructor(parameterTypes, declared)
     }
 
-    private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String) {
+    private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String, isConstructor: Boolean) {
         val valueParameters = loadParameterTypes(desc)
         result.addAll(valueParameters)
         repeat((valueParameters.size + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
+        result.add(if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else Any::class.java)
     }
 
     private fun loadParameterTypes(desc: String): List<Class<*>> {
@@ -242,16 +237,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     // TODO: check resulting field's type
-    fun findFieldBySignature(
-            proto: ProtoBuf.Property,
-            nameResolver: NameResolver,
-            name: String
-    ): Field? {
-        val owner = implClassForCallable(nameResolver, proto) ?:
-                if (proto.hasExtension(JvmProtoBuf.propertySignature) &&
-                        proto.getExtension(JvmProtoBuf.propertySignature).let { it.hasField() && it.field.isStaticInOuter }) {
-                    jClass.enclosingClass ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
-                } else jClass
+    fun findFieldBySignature(name: String, isCompanionOfClass: Boolean): Field? {
+        val owner = if (isCompanionOfClass) jClass.enclosingClass else jClass
 
         return try {
             owner.getDeclaredField(name)
@@ -259,17 +246,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         catch (e: NoSuchFieldException) {
             null
         }
-    }
-
-    // Returns the JVM class which contains this callable. This class may be different from the one represented by descriptors
-    // in case of top level functions (their bodies are in package parts), methods with implementations in interfaces, etc.
-    private fun implClassForCallable(nameResolver: NameResolver, proto: ProtoBuf.Property): Class<*>? {
-        if (!proto.hasExtension(JvmProtoBuf.propertyImplClassName)) return null
-
-        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.propertyImplClassName))
-        // TODO: store fq name of impl class name in jvm_descriptors.proto
-        val classId = ClassId(jClass.classId.packageFqName, implClassName)
-        return jClass.safeClassLoader.loadClass(classId.asSingleFqName().asString())
     }
 
     companion object {

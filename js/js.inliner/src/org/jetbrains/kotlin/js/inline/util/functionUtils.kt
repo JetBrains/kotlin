@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline.util
 import com.google.dart.compiler.backend.js.ast.JsFunction
 import com.google.dart.compiler.backend.js.ast.JsReturn
 
-public fun isFunctionCreator(outer: JsFunction): Boolean =
+fun isFunctionCreator(outer: JsFunction): Boolean =
         outer.getInnerFunction() != null
 
 /**
@@ -33,12 +33,12 @@ public fun isFunctionCreator(outer: JsFunction): Boolean =
  * Inner functions can only be generated when lambda
  * with closure is created
  */
-public fun JsFunction.getInnerFunction(): JsFunction? {
-    val statements = getBody().getStatements()
-    if (statements.size() != 1) return null
+fun JsFunction.getInnerFunction(): JsFunction? {
+    val statements = body.statements
+    if (statements.size != 1) return null
 
     val statement = statements.get(0)
-    val returnExpr = (statement as? JsReturn)?.getExpression()
+    val returnExpr = (statement as? JsReturn)?.expression
 
     return returnExpr as? JsFunction
 }

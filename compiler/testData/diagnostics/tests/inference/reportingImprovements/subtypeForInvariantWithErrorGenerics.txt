@@ -1,8 +1,8 @@
 package
 
 package a {
-    public fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
-    public fun </*0*/ R> bar(/*0*/ r: kotlin.MutableList<R>, /*1*/ f: () -> R): kotlin.Boolean
-    public fun </*0*/ R> foo(/*0*/ f: () -> R, /*1*/ r: kotlin.MutableList<R>): kotlin.Boolean
+    public fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.collections.MutableList<T>
+    public fun </*0*/ R> bar(/*0*/ r: kotlin.collections.MutableList<R>, /*1*/ f: () -> R): kotlin.Boolean
+    public fun </*0*/ R> foo(/*0*/ f: () -> R, /*1*/ r: kotlin.collections.MutableList<R>): kotlin.Boolean
     public fun test(): kotlin.Unit
 }

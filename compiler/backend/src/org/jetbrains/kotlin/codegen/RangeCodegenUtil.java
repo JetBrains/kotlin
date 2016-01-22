@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor;
 
 public class RangeCodegenUtil {
@@ -53,8 +53,8 @@ public class RangeCodegenUtil {
         ImmutableMap.Builder<FqName, PrimitiveType> rangeBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<FqName, PrimitiveType> progressionBuilder = ImmutableMap.builder();
         for (PrimitiveType primitiveType : supportedRangeTypes()) {
-            FqName rangeClassFqName = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Range"));
-            FqName progressionClassFqName = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Progression"));
+            FqName rangeClassFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Range"));
+            FqName progressionClassFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Progression"));
             rangeBuilder.put(rangeClassFqName, primitiveType);
             progressionBuilder.put(progressionClassFqName, primitiveType);
         }

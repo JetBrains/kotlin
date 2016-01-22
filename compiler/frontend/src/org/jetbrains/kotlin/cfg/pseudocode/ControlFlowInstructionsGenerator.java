@@ -519,7 +519,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
                 @Nullable ResolvedCall<?> resolvedCall,
                 @NotNull Map<PseudoValue, ReceiverValue> receiverValues
         ) {
-            AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE$;
+            AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE;
             ReadValueInstruction instruction = new ReadValueInstruction(
                     expression, getCurrentScope(), accessTarget, receiverValues, valueFactory
             );

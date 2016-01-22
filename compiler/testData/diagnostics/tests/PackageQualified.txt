@@ -3,15 +3,15 @@ package
 package foobar {
     public val x1: [ERROR : <ERROR PROPERTY TYPE>]
     public val x2: java.util.List<kotlin.Int>? = null
-    public val y1: kotlin.List<kotlin.Int>? = null
+    public val y1: kotlin.collections.List<kotlin.Int>? = null
     public fun </*0*/ O> done(/*0*/ result: O): foobar.Iteratee<kotlin.Any?, O>
 
-    public abstract class Collection</*0*/ E> : kotlin.Iterable<E> {
+    public abstract class Collection</*0*/ E> : kotlin.collections.Iterable<E> {
         public constructor Collection</*0*/ E>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public final fun </*0*/ O> iterate(/*0*/ iteratee: foobar.Iteratee<E, O>): O
-        public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<E>
+        public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<E>
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
@@ -61,7 +61,7 @@ package foobar {
         public val a: java.util.List<kotlin.Int>? = null
         public val a2: [ERROR : util.List<Int>]<kotlin.Int>?
         public val a3: [ERROR : ArrayList<Int>]<kotlin.Int>?
-        public val b: kotlin.List<kotlin.Int>? = null
+        public val b: kotlin.collections.List<kotlin.Int>? = null
         public val b1: [ERROR : util.List<Int>]<kotlin.Int>?
     }
 }

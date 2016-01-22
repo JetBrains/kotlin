@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-public interface IdentifierChecker {
+interface IdentifierChecker {
     fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink)
     fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink)
 

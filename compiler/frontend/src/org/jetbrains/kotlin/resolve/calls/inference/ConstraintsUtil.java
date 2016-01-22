@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.inference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

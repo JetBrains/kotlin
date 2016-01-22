@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.util.Printer
 
-public class CallableMethod(
+class CallableMethod(
         override val owner: Type,
         private val defaultImplOwner: Type?,
         private val defaultMethodDesc: String,
@@ -37,48 +37,47 @@ public class CallableMethod(
         override val extensionReceiverType: Type?,
         override val generateCalleeType: Type?
 ) : Callable {
-    public fun getValueParameters(): List<JvmMethodParameterSignature> =
-            signature.getValueParameters()
+    fun getValueParameters(): List<JvmMethodParameterSignature> =
+            signature.valueParameters
 
     override val valueParameterTypes: List<Type>
-        get() = signature.getValueParameters().filter { it.getKind() == JvmMethodParameterKind.VALUE }.map { it.getAsmType() }
+        get() = signature.valueParameters.filter { it.kind == JvmMethodParameterKind.VALUE }.map { it.asmType }
 
-    public fun getAsmMethod(): Method =
-            signature.getAsmMethod()
+    fun getAsmMethod(): Method =
+            signature.asmMethod
 
     override val parameterTypes: Array<Type>
-        get() = getAsmMethod().getArgumentTypes()
+        get() = getAsmMethod().argumentTypes
 
 
-    public override fun genInvokeInstruction(v: InstructionAdapter) {
-        v.visitMethodInsn(invokeOpcode, owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor())
+    override fun genInvokeInstruction(v: InstructionAdapter) {
+        v.visitMethodInsn(invokeOpcode, owner.internalName, getAsmMethod().name, getAsmMethod().descriptor)
     }
 
-    public fun genInvokeDefaultInstruction(v: InstructionAdapter) {
+    fun genInvokeDefaultInstruction(v: InstructionAdapter) {
         if (defaultImplOwner == null) {
             throw IllegalStateException()
         }
 
         val method = getAsmMethod()
 
-        if ("<init>".equals(method.getName())) {
-            v.aconst(null)
-            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", defaultMethodDesc, false)
+        if ("<init>".equals(method.name)) {
+            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.internalName, "<init>", defaultMethodDesc, false)
         }
         else {
-            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
-                              method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, false)
+            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.internalName,
+                              method.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, false)
 
             StackValue.coerce(Type.getReturnType(defaultMethodDesc), Type.getReturnType(signature.asmMethod.descriptor), v)
         }
     }
 
     override val returnType: Type
-        get() = signature.getReturnType()
+        get() = signature.returnType
 
     override fun isStaticCall(): Boolean =
             invokeOpcode == INVOKESTATIC
 
     override fun toString(): String =
-            "${Printer.OPCODES[invokeOpcode]} ${owner.getInternalName()}.$signature"
+            "${Printer.OPCODES[invokeOpcode]} ${owner.internalName}.$signature"
 }

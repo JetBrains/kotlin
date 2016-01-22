@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public interface PackageFragmentProvider {
-    public fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
+interface PackageFragmentProvider {
+    fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
 
-    public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
+    fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
 
-    public object Empty : PackageFragmentProvider {
+    object Empty : PackageFragmentProvider {
         override fun getPackageFragments(fqName: FqName) = emptyList<PackageFragmentDescriptor>()
 
         override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = emptySet<FqName>()

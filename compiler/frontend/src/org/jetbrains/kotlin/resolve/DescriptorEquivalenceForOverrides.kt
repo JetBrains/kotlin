@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 
 object DescriptorEquivalenceForOverrides {
 
-    public fun areEquivalent(a: DeclarationDescriptor?, b: DeclarationDescriptor?): Boolean {
+    fun areEquivalent(a: DeclarationDescriptor?, b: DeclarationDescriptor?): Boolean {
         return when {
             a is ClassDescriptor &&
             b is ClassDescriptor -> areClassesEquivalent(a, b)
@@ -45,7 +45,7 @@ object DescriptorEquivalenceForOverrides {
 
     private fun areClassesEquivalent(a: ClassDescriptor, b: ClassDescriptor): Boolean {
         // type constructors are compared by fqName
-        return a.getTypeConstructor() == b.getTypeConstructor()
+        return a.typeConstructor == b.typeConstructor
     }
 
     private fun areTypeParametersEquivalent(
@@ -54,17 +54,17 @@ object DescriptorEquivalenceForOverrides {
             equivalentCallables: (DeclarationDescriptor?, DeclarationDescriptor?) -> Boolean = {x, y -> false}
     ): Boolean {
         if (a == b) return true
-        if (a.getContainingDeclaration() == b.getContainingDeclaration()) return false
+        if (a.containingDeclaration == b.containingDeclaration) return false
 
         if (!ownersEquivalent(a, b, equivalentCallables)) return false
 
-        return a.getIndex() == b.getIndex() // We ignore type parameter names
+        return a.index == b.index // We ignore type parameter names
     }
 
     private fun areCallableMemberDescriptorsEquivalent(a: CallableMemberDescriptor, b: CallableMemberDescriptor): Boolean {
         if (a == b) return true
-        if (a.getName() != b.getName()) return false
-        if (a.getContainingDeclaration() == b.getContainingDeclaration()) return false
+        if (a.name != b.name) return false
+        if (a.containingDeclaration == b.containingDeclaration) return false
 
         // Distinct locals are not equivalent
         if (DescriptorUtils.isLocal(a) || DescriptorUtils.isLocal(b)) return false
@@ -75,16 +75,16 @@ object DescriptorEquivalenceForOverrides {
             c1, c2 ->
             if (c1 == c2) return@eq true
 
-            val d1 = c1.getDeclarationDescriptor()
-            val d2 = c2.getDeclarationDescriptor()
+            val d1 = c1.declarationDescriptor
+            val d2 = c2.declarationDescriptor
 
             if (d1 !is TypeParameterDescriptor || d2 !is TypeParameterDescriptor) return@eq false
 
             areTypeParametersEquivalent(d1, d2, {x, y -> x == a && y == b})
         }
 
-        return overridingUtil.isOverridableByIncludingReturnType(a, b).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
-                && overridingUtil.isOverridableByIncludingReturnType(b, a).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
+        return overridingUtil.isOverridableByIncludingReturnType(a, b).result == OverrideCompatibilityInfo.Result.OVERRIDABLE
+                && overridingUtil.isOverridableByIncludingReturnType(b, a).result == OverrideCompatibilityInfo.Result.OVERRIDABLE
 
     }
 
@@ -93,8 +93,8 @@ object DescriptorEquivalenceForOverrides {
             b: DeclarationDescriptor,
             equivalentCallables: (DeclarationDescriptor?, DeclarationDescriptor?) -> Boolean
     ): Boolean {
-        val aOwner = a.getContainingDeclaration()
-        val bOwner = b.getContainingDeclaration()
+        val aOwner = a.containingDeclaration
+        val bOwner = b.containingDeclaration
 
         // This check is needed when we call areTypeParametersEquivalent() from areCallableMemberDescriptorsEquivalent:
         // if the type parameter owners are, e.g.,  functions, we'll go into infinite recursion here

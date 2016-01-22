@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 
-public class KtClassLiteralExpression(node: ASTNode) : KtDoubleColonExpression(node) {
+class KtClassLiteralExpression(node: ASTNode) : KtDoubleColonExpression(node) {
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitClassLiteralExpression(this, data)
     }

@@ -75,13 +75,13 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 if (keyArgumentIndex < 0) return
 
                 val callable = resolvedCall.resultingDescriptor
-                if (callable.valueParameters.size() != keyArgumentIndex + 2) return
+                if (callable.valueParameters.size != keyArgumentIndex + 2) return
 
                 val messageArgument = resolvedArguments[keyArgumentIndex + 1] as? VarargValueArgument ?: return
                 if (messageArgument.arguments.singleOrNull()?.getSpreadElement() != null) return
 
                 val expectedArgumentCount = JavaI18nUtil.getPropertyValuePlaceholdersCount(property.value ?: "")
-                val actualArgumentCount = messageArgument.arguments.size()
+                val actualArgumentCount = messageArgument.arguments.size
                 if (actualArgumentCount < expectedArgumentCount) {
                     val description = CodeInsightBundle.message(
                             "property.has.more.parameters.than.passed",

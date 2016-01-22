@@ -17,26 +17,17 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 
-public class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
+class BuiltInsSerializerExtension(
+        private val packageFragments: Collection<PackageFragmentDescriptor>
+) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 
-    override fun serializePackage(packageFragments: Collection<PackageFragmentDescriptor>, proto: ProtoBuf.Package.Builder) {
+    override fun serializePackage(proto: ProtoBuf.Package.Builder) {
         if (packageFragments.isEmpty()) return
-
-        val classes = packageFragments.flatMap {
-            it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
-        }
-
-        for (descriptor in DescriptorSerializer.sort(classes)) {
-            proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.name))
-        }
 
         proto.setExtension(BuiltInsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(packageFragments.first().fqName))
     }

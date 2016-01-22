@@ -28,6 +28,9 @@ public class NumberFormatException(message: String? = null) : RuntimeException(m
 public class NullPointerException(message: String? = null) : RuntimeException(message) {}
 
 @library
+public class AssertionError(message: String? = null) : Error(message) {}
+
+@library
 public interface Runnable {
     public open fun run() : Unit;
 }

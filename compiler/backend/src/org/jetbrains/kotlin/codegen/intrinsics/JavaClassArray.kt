@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class JavaClassArray : IntrinsicMethod() {
+class JavaClassArray : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             createIntrinsicCallable(method) {
                 //do nothing all generated as vararg

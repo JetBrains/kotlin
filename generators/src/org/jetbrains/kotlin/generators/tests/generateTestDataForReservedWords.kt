@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.generators.tests.reservedWords
+package org.jetbrains.kotlin.generators.tests
 
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import java.io.File
 
-val MODIFIER_KEYWORDS = KtTokens.MODIFIER_KEYWORDS_ARRAY.map { it.getValue() }.toSet()
+val MODIFIER_KEYWORDS = KtTokens.MODIFIER_KEYWORDS_ARRAY.map { it.value }.toSet()
 
 val commonCases: CaseBuilder.(String, String) -> Unit = { testByName, testByRef ->
     case("val", "val $KEYWORD_MARKER: Int", " = 0", testByName)
@@ -158,7 +158,7 @@ fun box(): String {
         ) {
             case("val", "val $KEYWORD_MARKER", "", testNotRenamedByName)
             case("var", "var $KEYWORD_MARKER", "", testNotRenamedByName)
-            case("param", "$KEYWORD_MARKER",  "", testRenamedByName, ignore = true)
+            case("param", "$KEYWORD_MARKER", "", testRenamedByName, ignore = true)
         }
 // -------------------------
 
@@ -333,7 +333,6 @@ class TestDataBuilder() {
             shouldBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_BE_ESCAPED.joinToString("\n")}")
             shouldNotBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_NOT_BE_ESCAPED.joinToString("\n")}")
             casesFile.writeText("$PREAMBLE_MESSAGE\n${cases.joinToString("\n")}")
-
         }
     }
 }
@@ -389,7 +388,7 @@ class CyclicSequence<T>(val c: List<T>) : Sequence<T> {
 
     val iterator = object : Iterator<T> {
         override fun next(): T {
-            i = if (i >= c.size()) 0 else i
+            i = if (i >= c.size) 0 else i
             return c[i++]
         }
         override fun hasNext(): Boolean = true

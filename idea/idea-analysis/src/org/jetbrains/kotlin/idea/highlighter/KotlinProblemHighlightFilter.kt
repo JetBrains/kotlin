@@ -24,7 +24,7 @@ import com.intellij.ide.projectView.impl.ProjectRootsUtil
 class KotlinProblemHighlightFilter : ProblemHighlightFilter() {
 
     override fun shouldHighlight(psiFile: PsiFile): Boolean {
-        return psiFile.getFileType() != KotlinFileType.INSTANCE || !ProjectRootsUtil.isOutsideSourceRoot(psiFile)
+        return psiFile.fileType != KotlinFileType.INSTANCE || !ProjectRootsUtil.isOutsideSourceRoot(psiFile)
     }
 
 }

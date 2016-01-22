@@ -30,24 +30,24 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpression>(javaClass(), "Replace 'assert' with 'if' statement"), LowPriorityAction {
+class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpression::class.java, "Replace 'assert' with 'if' statement"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
-        val callee = element.getCalleeExpression() ?: return false
-        if (!callee.getTextRange().containsOffset(caretOffset)) return false
+        val callee = element.calleeExpression ?: return false
+        if (!callee.textRange.containsOffset(caretOffset)) return false
 
-        val argumentSize = element.getValueArguments().size()
+        val argumentSize = element.valueArguments.size
         if (argumentSize !in 1..2) return false
-        val functionLiterals = element.getLambdaArguments()
-        if (functionLiterals.size() > 1) return false
-        if (functionLiterals.size() == 1 && argumentSize == 1) return false // "assert {...}" is incorrect
+        val functionLiterals = element.lambdaArguments
+        if (functionLiterals.size > 1) return false
+        if (functionLiterals.size == 1 && argumentSize == 1) return false // "assert {...}" is incorrect
 
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
-        return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).asString() == "kotlin.assert"
+        return DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).asString() == "kotlin.assert"
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
-        val args = element.getValueArguments()
-        val conditionText = args[0]?.getArgumentExpression()?.getText() ?: return
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
+        val args = element.valueArguments
+        val conditionText = args[0]?.getArgumentExpression()?.text ?: return
         val functionLiteralArgument = element.lambdaArguments.singleOrNull()
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
         val psiFactory = KtPsiFactory(element)
@@ -66,31 +66,31 @@ public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCall
         val ifExpression = replaceWithIfThenThrowExpression(element)
 
         // shorten java.lang.AssertionError
-        ShortenReferences.DEFAULT.process(ifExpression.getThen()!!)
+        ShortenReferences.DEFAULT.process(ifExpression.then!!)
 
-        val ifCondition = ifExpression.getCondition() as KtPrefixExpression
-        ifCondition.getBaseExpression()!!.replace(psiFactory.createExpression(conditionText))
+        val ifCondition = ifExpression.condition as KtPrefixExpression
+        ifCondition.baseExpression!!.replace(psiFactory.createExpression(conditionText))
 
-        val thrownExpression = ((ifExpression.getThen() as KtBlockExpression).getStatements().single() as KtThrowExpression).getThrownExpression()
+        val thrownExpression = ((ifExpression.then as KtBlockExpression).statements.single() as KtThrowExpression).thrownExpression
         val assertionErrorCall = if (thrownExpression is KtCallExpression)
             thrownExpression
         else
-            (thrownExpression as KtDotQualifiedExpression).getSelectorExpression() as KtCallExpression
+            (thrownExpression as KtDotQualifiedExpression).selectorExpression as KtCallExpression
 
         val message = psiFactory.createExpression(
                 if (messageIsFunction && messageExpr is KtCallableReferenceExpression) {
-                    messageExpr.getCallableReference().getText() + "()"
+                    messageExpr.callableReference.text + "()"
                 }
                 else if (messageIsFunction) {
-                    messageExpr.getText() + "()"
+                    messageExpr.text + "()"
                 }
                 else {
-                    messageExpr.getText()
+                    messageExpr.text
                 }
         )
-        assertionErrorCall.getValueArguments().single().getArgumentExpression()!!.replace(message)
+        assertionErrorCall.valueArguments.single().getArgumentExpression()!!.replace(message)
 
-        simplifyConditionIfPossible(ifExpression)
+        simplifyConditionIfPossible(ifExpression, editor)
     }
 
     private fun extractMessageSingleExpression(functionLiteral: KtLambdaExpression, bindingContext: BindingContext): KtExpression? {
@@ -101,21 +101,21 @@ public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCall
 
     private fun messageIsFunction(callExpr: KtCallExpression, bindingContext: BindingContext): Boolean {
         val resolvedCall = callExpr.getResolvedCall(bindingContext) ?: return false
-        val valParameters = resolvedCall.getResultingDescriptor().getValueParameters()
-        return valParameters.size() > 1 && !KotlinBuiltIns.isAny(valParameters[1].type)
+        val valParameters = resolvedCall.resultingDescriptor.valueParameters
+        return valParameters.size > 1 && !KotlinBuiltIns.isAny(valParameters[1].type)
     }
 
-    private fun simplifyConditionIfPossible(ifExpression: KtIfExpression) {
-        val condition = ifExpression.getCondition() as KtPrefixExpression
+    private fun simplifyConditionIfPossible(ifExpression: KtIfExpression, editor: Editor?) {
+        val condition = ifExpression.condition as KtPrefixExpression
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
         if (simplifier.isApplicableTo(condition)) {
-            simplifier.applyTo(condition)
+            simplifier.applyTo(condition, editor)
         }
     }
 
     private fun replaceWithIfThenThrowExpression(original: KtCallExpression): KtIfExpression {
         val replacement = KtPsiFactory(original).createExpression("if (!true) { throw java.lang.AssertionError(\"\") }") as KtIfExpression
-        val parent = original.getParent()
+        val parent = original.parent
         return if (parent is KtDotQualifiedExpression)
             parent.replaced(replacement)
         else

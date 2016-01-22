@@ -21,7 +21,7 @@ import jline.console.history.FileHistory
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import java.io.File
 
-public class ConsoleReplCommandReader : ReplCommandReader {
+class ConsoleReplCommandReader : ReplCommandReader {
     private val consoleReader = ConsoleReader("kotlin", System.`in`, System.`out`, null).apply {
         isHistoryEnabled = true
         expandEvents = false

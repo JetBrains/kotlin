@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -31,7 +32,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
-public class MultifileClassPartCodegen(
+class MultifileClassPartCodegen(
         v: ClassBuilder,
         file: KtFile,
         private val filePartType: Type,
@@ -46,7 +47,7 @@ public class MultifileClassPartCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(element, Opcodes.V1_6,
-                      Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC,
+                      Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_SUPER,
                       filePartType.internalName,
                       null,
                       "java/lang/Object",
@@ -83,15 +84,17 @@ public class MultifileClassPartCodegen(
             }
         }
 
-        val bindings = v.serializationBindings
-
-        val serializer = DescriptorSerializer.createTopLevel(
-                JvmSerializerExtension(bindings, state.typeMapper, state.useTypeTableInSerializer)
-        )
+        val serializer = DescriptorSerializer.createTopLevel(JvmSerializerExtension(v.serializationBindings, state))
         val packageProto = serializer.packagePartProto(members).build()
 
+        writeKotlinMetadata(v, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART) { av ->
+            AsmUtil.writeAnnotationData(av, serializer, packageProto, false)
+            av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassType.internalName)
+        }
+
         val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
-        AsmUtil.writeAnnotationData(av, serializer, packageProto)
+        JvmCodegenUtil.writeAbiVersion(av)
+        AsmUtil.writeAnnotationData(av, serializer, packageProto, true)
         av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassType.internalName)
         av.visitEnd()
     }

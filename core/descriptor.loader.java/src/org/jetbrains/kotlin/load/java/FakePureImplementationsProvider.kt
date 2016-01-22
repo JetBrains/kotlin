@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public object FakePureImplementationsProvider {
-    public fun getPurelyImplementedInterface(classFqName: FqName): FqName? = when(classFqName) {
+object FakePureImplementationsProvider {
+    fun getPurelyImplementedInterface(classFqName: FqName): FqName? = when(classFqName) {
         in MUTABLE_LISTS_IMPLEMENTATIONS -> MUTABLE_LIST_FQ_NAME
         in MUTABLE_MAPS_IMPLEMENTATIONS -> MUTABLE_MAP_FQ_NAME
         in MUTABLE_SETS_IMPLEMENTATIONS -> MUTABLE_SET_FQ_NAME

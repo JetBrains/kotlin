@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldAssignmentToWhenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace assignment with 'when' expression" ), LowPriorityAction {
+class UnfoldAssignmentToWhenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace assignment with 'when' expression" ), LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
-        if (element.getOperationToken() !in KtTokens.ALL_ASSIGNMENTS) return null
-        if (element.getLeft() == null) return null
-        val right = element.getRight() as? KtWhenExpression ?: return null
+        if (element.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
+        if (element.left == null) return null
+        val right = element.right as? KtWhenExpression ?: return null
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(right)) return null
-        if (right.getEntries().any { it.getExpression() == null }) return null
-        return TextRange(element.startOffset, right.getWhenKeyword().endOffset)
+        if (right.entries.any { it.expression == null }) return null
+        return TextRange(element.startOffset, right.whenKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         BranchedUnfoldingUtils.unfoldAssignmentToWhen(element, editor)
     }
 }

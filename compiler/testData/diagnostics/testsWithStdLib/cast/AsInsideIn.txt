@@ -1,9 +1,9 @@
 package
 
-public fun foo1(/*0*/ list: kotlin.List<A>, /*1*/ arg: B?): kotlin.Boolean
-public fun foo2(/*0*/ list: kotlin.List<A>, /*1*/ arg: B?): kotlin.Boolean
-public fun foo3(/*0*/ list: kotlin.List<A>, /*1*/ arg: B?): kotlin.Boolean
-public fun foo4(/*0*/ list: kotlin.List<A>, /*1*/ arg: B): kotlin.Boolean
+public fun foo1(/*0*/ list: kotlin.collections.List<A>, /*1*/ arg: B?): kotlin.Boolean
+public fun foo2(/*0*/ list: kotlin.collections.List<A>, /*1*/ arg: B?): kotlin.Boolean
+public fun foo3(/*0*/ list: kotlin.collections.List<A>, /*1*/ arg: B?): kotlin.Boolean
+public fun foo4(/*0*/ list: kotlin.collections.List<A>, /*1*/ arg: B): kotlin.Boolean
 
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

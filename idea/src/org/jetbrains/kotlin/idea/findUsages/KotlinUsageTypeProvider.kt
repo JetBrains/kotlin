@@ -23,12 +23,12 @@ import com.intellij.usages.impl.rules.UsageTypeProviderEx
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
 
-public object KotlinUsageTypeProvider : UsageTypeProviderEx {
-    public override fun getUsageType(element: PsiElement?): UsageType? {
+object KotlinUsageTypeProvider : UsageTypeProviderEx {
+    override fun getUsageType(element: PsiElement?): UsageType? {
         return getUsageType(element, UsageTarget.EMPTY_ARRAY)
     }
 
-    public override fun getUsageType(element: PsiElement?, targets: Array<out UsageTarget>): UsageType? {
+    override fun getUsageType(element: PsiElement?, targets: Array<out UsageTarget>): UsageType? {
         val usageType = UsageTypeUtils.getUsageType(element)
         if (usageType == null) return null
         return convertEnumToUsageType(usageType)
@@ -41,7 +41,6 @@ public object KotlinUsageTypeProvider : UsageTypeProviderEx {
             NON_LOCAL_PROPERTY_TYPE -> KotlinUsageTypes.NON_LOCAL_PROPERTY_TYPE
             FUNCTION_RETURN_TYPE -> KotlinUsageTypes.FUNCTION_RETURN_TYPE
             SUPER_TYPE -> KotlinUsageTypes.SUPER_TYPE
-            TYPE_DEFINITION -> KotlinUsageTypes.TYPE_DEFINITION
             IS -> KotlinUsageTypes.IS
             CLASS_OBJECT_ACCESS -> KotlinUsageTypes.CLASS_OBJECT_ACCESS
             COMPANION_OBJECT_ACCESS -> KotlinUsageTypes.COMPANION_OBJECT_ACCESS
@@ -85,7 +84,6 @@ object KotlinUsageTypes {
     val NON_LOCAL_PROPERTY_TYPE = UsageType(KotlinBundle.message("usageType.nonLocal.property.type"))
     val FUNCTION_RETURN_TYPE = UsageType(KotlinBundle.message("usageType.function.return.type"))
     val SUPER_TYPE = UsageType(KotlinBundle.message("usageType.superType"))
-    val TYPE_DEFINITION = UsageType(KotlinBundle.message("usageType.type.definition"))
     val IS = UsageType(KotlinBundle.message("usageType.is"))
     val CLASS_OBJECT_ACCESS = UsageType(KotlinBundle.message("usageType.class.object"))
     val COMPANION_OBJECT_ACCESS = UsageType(KotlinBundle.message("usageType.companion.object"))

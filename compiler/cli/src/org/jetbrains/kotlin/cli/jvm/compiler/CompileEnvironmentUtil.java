@@ -30,6 +30,7 @@ import com.intellij.psi.PsiManager;
 import kotlin.Unit;
 import kotlin.io.FilesKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
@@ -162,7 +163,7 @@ public class CompileEnvironmentUtil {
                 continue;
             }
 
-            FilesKt.recurse(new File(sourceRootPath), new Function1<File, Unit>() {
+            SequencesKt.forEach(FilesKt.walkTopDown(new File(sourceRootPath)), new Function1<File, Unit>() {
                 @Override
                 public Unit invoke(File file) {
                     if (file.isFile()) {
@@ -175,7 +176,7 @@ public class CompileEnvironmentUtil {
                             }
                         }
                     }
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             });
         }

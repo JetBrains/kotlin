@@ -28,8 +28,7 @@ import kotlin.properties.Delegates
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@FixMethodOrder(MethodSorters.JVM)
-public class KotlinReplTest : PlatformTestCase() {
+@FixMethodOrder(MethodSorters.JVM) class KotlinReplTest : PlatformTestCase() {
     private var consoleRunner: KotlinConsoleRunner by Delegates.notNull()
     private var commandsSent = 0
 

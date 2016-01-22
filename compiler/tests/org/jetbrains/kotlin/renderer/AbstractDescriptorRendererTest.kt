@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.ArrayList
 
-public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
+abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
     protected open fun getDescriptor(declaration: KtDeclaration, container: ComponentProvider): DeclarationDescriptor {
         return container.get<ResolveSession>().resolveToDescriptor(declaration)
     }
@@ -50,11 +50,11 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
     protected open val targetEnvironment: TargetEnvironment
         get() = CompilerEnvironment
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
-        val psiFile = KtPsiFactory(getProject()).createFile(fileText)
+        val psiFile = KtPsiFactory(project).createFile(fileText)
 
-        val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject(), environment.getModuleName())
+        val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, environment.getModuleName())
 
 
         val container = createContainerForLazyResolve(
@@ -67,14 +67,14 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
 
         val resolveSession = container.get<ResolveSession>()
 
-        context.initializeModuleContents(resolveSession.getPackageFragmentProvider())
+        context.initializeModuleContents(resolveSession.packageFragmentProvider)
 
         val descriptors = ArrayList<DeclarationDescriptor>()
 
         psiFile.accept(object : KtVisitorVoid() {
             override fun visitKtFile(file: KtFile) {
-                val fqName = file.getPackageFqName()
-                if (!fqName.isRoot()) {
+                val fqName = file.packageFqName
+                if (!fqName.isRoot) {
                     val packageDescriptor = context.module.getPackage(fqName)
                     descriptors.add(packageDescriptor)
                 }
@@ -82,7 +82,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             }
 
             override fun visitParameter(parameter: KtParameter) {
-                val declaringElement = parameter.getParent().getParent()
+                val declaringElement = parameter.parent.parent
                 when (declaringElement) {
                     is KtFunctionType -> return
                     is KtNamedFunction ->
@@ -90,20 +90,20 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                     is KtPrimaryConstructor -> {
                         val ktClassOrObject: KtClassOrObject = declaringElement.getContainingClassOrObject()
                         val classDescriptor = getDescriptor(ktClassOrObject, container) as ClassDescriptor
-                        addCorrespondingParameterDescriptor(classDescriptor.getUnsubstitutedPrimaryConstructor()!!, parameter)
+                        addCorrespondingParameterDescriptor(classDescriptor.unsubstitutedPrimaryConstructor!!, parameter)
                     }
                     else -> super.visitParameter(parameter)
                 }
             }
 
             override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
-                val parent = accessor.getParent() as KtProperty
-                val propertyDescriptor = getDescriptor(parent, container) as PropertyDescriptor
-                if (accessor.isGetter()) {
-                    descriptors.add(propertyDescriptor.getGetter()!!)
+                val property = accessor.property
+                val propertyDescriptor = getDescriptor(property, container) as PropertyDescriptor
+                if (accessor.isGetter) {
+                    descriptors.add(propertyDescriptor.getter!!)
                 }
                 else {
-                    descriptors.add(propertyDescriptor.getSetter()!!)
+                    descriptors.add(propertyDescriptor.setter!!)
                 }
                 accessor.acceptChildren(this)
             }
@@ -118,8 +118,8 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 if (descriptor is ClassDescriptor) {
                     // if class has primary constructor then we visit it later, otherwise add it artificially
                     if (element !is KtClassOrObject || !element.hasExplicitPrimaryConstructor()) {
-                        if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                            descriptors.add(descriptor.getUnsubstitutedPrimaryConstructor()!!)
+                        if (descriptor.unsubstitutedPrimaryConstructor != null) {
+                            descriptors.add(descriptor.unsubstitutedPrimaryConstructor!!)
                         }
                     }
                 }
@@ -131,8 +131,8 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             }
 
             private fun addCorrespondingParameterDescriptor(functionDescriptor: FunctionDescriptor, parameter: KtParameter) {
-                for (valueParameterDescriptor in functionDescriptor.getValueParameters()) {
-                    if (valueParameterDescriptor.getName() == parameter.getNameAsName()) {
+                for (valueParameterDescriptor in functionDescriptor.valueParameters) {
+                    if (valueParameterDescriptor.name == parameter.nameAsName) {
                         descriptors.add(valueParameterDescriptor)
                     }
                 }
@@ -146,7 +146,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
         }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
-        val document = DocumentImpl(psiFile.getText())
+        val document = DocumentImpl(psiFile.text)
         UsefulTestCase.assertSameLines(KotlinTestUtils.getLastCommentedLines(document), renderedDescriptors.toString())
     }
 

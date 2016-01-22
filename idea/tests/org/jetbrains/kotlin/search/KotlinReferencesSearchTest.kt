@@ -28,24 +28,24 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.junit.Assert
 import java.io.File
 
-public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
+class KotlinReferencesSearchTest(): AbstractSearcherTest() {
     override fun getTestDataPath(): String {
-        return File(PluginTestCaseBase.getTestDataPathBase(), "/search/references").getPath() + File.separator
+        return File(PluginTestCaseBase.getTestDataPathBase(), "/search/references").path + File.separator
     }
 
-    public fun testPlus() {
+    fun testPlus() {
         val refs = doTest<KtFunction>()
-        Assert.assertEquals(3, refs.size())
-        Assert.assertEquals("+", refs[0].getCanonicalText())
-        Assert.assertEquals("plus", refs[1].getCanonicalText())
-        Assert.assertEquals("plus", refs[2].getCanonicalText())
+        Assert.assertEquals(3, refs.size)
+        Assert.assertEquals("+", refs[0].canonicalText)
+        Assert.assertEquals("plus", refs[1].canonicalText)
+        Assert.assertEquals("plus", refs[2].canonicalText)
     }
 
-    public fun testParam() {
+    fun testParam() {
         val refs = doTest<KtParameter>()
-        Assert.assertEquals(3, refs.size())
-        Assert.assertEquals("n", refs[0].getCanonicalText())
-        Assert.assertEquals("component1", refs[1].getCanonicalText())
+        Assert.assertEquals(3, refs.size)
+        Assert.assertEquals("n", refs[0].canonicalText)
+        Assert.assertEquals("component1", refs[1].canonicalText)
         Assert.assertTrue(refs[2] is KtDestructuringDeclarationReference)
     }
 
@@ -53,8 +53,8 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
     private val myFixtureProxy: JavaCodeInsightTestFixture get() = myFixture
 
     private inline fun <reified T: PsiElement> doTest(): List<PsiReference> {
-        myFixtureProxy.configureByFile(getFileName())
-        val func = myFixtureProxy.getElementAtCaret().getParentOfType<T>(false)!!
-        return ReferencesSearch.search(func).findAll().sortedBy { it.getElement().getTextRange().getStartOffset() }
+        myFixtureProxy.configureByFile(fileName)
+        val func = myFixtureProxy.elementAtCaret.getParentOfType<T>(false)!!
+        return ReferencesSearch.search(func).findAll().sortedBy { it.element.textRange.startOffset }
     }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization;
 
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -113,20 +114,27 @@ public class StringTableImpl implements StringTable {
         return result;
     }
 
+    @NotNull
+    public Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> buildProto() {
+        ProtoBuf.StringTable.Builder strings = ProtoBuf.StringTable.newBuilder();
+        for (String simpleName : this.strings.getAllInternedObjects()) {
+            strings.addString(simpleName);
+        }
+
+        ProtoBuf.QualifiedNameTable.Builder qualifiedNames = ProtoBuf.QualifiedNameTable.newBuilder();
+        for (FqNameProto fqName : this.qualifiedNames.getAllInternedObjects()) {
+            qualifiedNames.addQualifiedName(fqName.fqName);
+        }
+
+        return new Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable>(strings.build(), qualifiedNames.build());
+    }
+
     @Override
     public void serializeTo(@NotNull OutputStream output) {
         try {
-            ProtoBuf.StringTable.Builder stringTable = ProtoBuf.StringTable.newBuilder();
-            for (String simpleName : strings.getAllInternedObjects()) {
-                stringTable.addString(simpleName);
-            }
-            stringTable.build().writeDelimitedTo(output);
-
-            ProtoBuf.QualifiedNameTable.Builder qualifiedNameTable = ProtoBuf.QualifiedNameTable.newBuilder();
-            for (FqNameProto fqName : qualifiedNames.getAllInternedObjects()) {
-                qualifiedNameTable.addQualifiedName(fqName.fqName);
-            }
-            qualifiedNameTable.build().writeDelimitedTo(output);
+            Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> protos = buildProto();
+            protos.getFirst().writeDelimitedTo(output);
+            protos.getSecond().writeDelimitedTo(output);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);

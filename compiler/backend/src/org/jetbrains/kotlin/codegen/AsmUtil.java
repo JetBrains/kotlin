@@ -61,11 +61,11 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -268,7 +268,7 @@ public class AsmUtil {
     }
 
     public static int getVisibilityAccessFlagForAnonymous(@NotNull ClassDescriptor descriptor) {
-        return InlineUtil.isInline(descriptor.getContainingDeclaration()) ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
+        return InlineUtil.isInlineOrContainingInline(descriptor.getContainingDeclaration()) ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
     }
 
     public static int calculateInnerClassAccessFlags(@NotNull ClassDescriptor innerClass) {
@@ -299,9 +299,6 @@ public class AsmUtil {
 
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
-            if (((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().isConst()) {
-                return ACC_DEPRECATED;
-            }
             return KotlinBuiltIns.isDeprecated(descriptor)
                    ? ACC_DEPRECATED
                    : getDeprecatedAccessFlag(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
@@ -325,6 +322,8 @@ public class AsmUtil {
     private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
+
+        if (AnnotationUtilKt.isInlineOnly(memberDescriptor)) return ACC_PRIVATE;
 
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
@@ -542,7 +541,7 @@ public class AsmUtil {
                 if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
                     genInvertBoolean(v);
                 }
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -681,28 +680,17 @@ public class AsmUtil {
     }
 
     public static boolean isInstancePropertyWithStaticBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
-        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            return false;
-        }
-
-        DeclarationDescriptor container = propertyDescriptor.getContainingDeclaration();
-        return isNonCompanionObject(container) ||
-               isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ||
-               (isCompanionObject(container) && isInterface(container.getContainingDeclaration()));
-    }
-
-    public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+               isObject(propertyDescriptor.getContainingDeclaration());
     }
 
-    public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
+    public static int getVisibilityForBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
         if (isDelegate || isExtensionProperty) {
             return ACC_PRIVATE;
         }
         else {
-            return areBothAccessorDefault(propertyDescriptor)
+            return propertyDescriptor.isLateInit() || isConstOrHasJvmFieldAnnotation(propertyDescriptor)
                    ? getVisibilityAccessFlag(descriptorForVisibility(propertyDescriptor))
                    : ACC_PRIVATE;
         }
@@ -718,27 +706,10 @@ public class AsmUtil {
     }
 
     public static boolean isPropertyWithBackingFieldCopyInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
         DeclarationDescriptor propertyContainer = propertyDescriptor.getContainingDeclaration();
-        return !propertyDescriptor.isVar()
-               && !isExtensionProperty
+        return propertyDescriptor.isConst()
                && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
-               && areBothAccessorDefault(propertyDescriptor)
-               && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
-    }
-
-    public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
-        DeclarationDescriptor containingClass = companionObject.getContainingDeclaration();
-        return isCompanionObject(companionObject) && (isClass(containingClass) || isEnumClass(containingClass));
-    }
-
-    private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {
-        return isAccessorWithEmptyBody(propertyDescriptor.getGetter())
-               && (!propertyDescriptor.isVar() || isAccessorWithEmptyBody(propertyDescriptor.getSetter()));
-    }
-
-    private static boolean isAccessorWithEmptyBody(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
-        return accessorDescriptor == null || !accessorDescriptor.hasBody();
+               && getVisibilityForBackingField(propertyDescriptor, false) == ACC_PUBLIC;
     }
 
     public static Type comparisonOperandType(Type left, Type right) {
@@ -814,24 +785,25 @@ public class AsmUtil {
     public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull GenerationState state) {
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS), true);
         JvmCodegenUtil.writeAbiVersion(av);
-        JvmCodegenUtil.writeModuleName(av, state);
         av.visitEnd();
     }
 
     public static void writeAnnotationData(
             @NotNull AnnotationVisitor av,
             @NotNull DescriptorSerializer serializer,
-            @NotNull MessageLite message
+            @NotNull MessageLite message,
+            boolean old
     ) {
         byte[] bytes = serializer.serialize(message);
 
-        JvmCodegenUtil.writeAbiVersion(av);
-        AnnotationVisitor data = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
+        AnnotationVisitor data = av.visitArray(old ? JvmAnnotationNames.DATA_FIELD_NAME : JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(bytes)) {
             data.visit(null, string);
         }
         data.visitEnd();
-        AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.STRINGS_FIELD_NAME);
+        AnnotationVisitor strings = av.visitArray(
+                old ? JvmAnnotationNames.STRINGS_FIELD_NAME : JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME
+        );
         for (String string : ((JvmStringTable) serializer.getStringTable()).getStrings()) {
             strings.visit(null, string);
         }
@@ -841,13 +813,6 @@ public class AsmUtil {
     @NotNull
     public static String asmDescByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return asmTypeByFqNameWithoutInnerClasses(fqName).getDescriptor();
-    }
-
-    @NotNull
-    public static String shortNameByAsmType(@NotNull Type type) {
-        String internalName = type.getInternalName();
-        int lastSlash = internalName.lastIndexOf('/');
-        return lastSlash < 0 ? internalName : internalName.substring(lastSlash + 1);
     }
 
     @NotNull

@@ -3,5 +3,5 @@
 import kotlin.text.Regex
 
 fun foo(regex: Regex) {
-    regex.<caret>hasMatch("")
+    regex.<caret>containsMatchIn("")
 }

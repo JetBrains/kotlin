@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
     val name = name
-    return if (name != null) Identifier(name, false).assignPrototype(nameIdentifier!!) else Identifier.Empty
+    return if (name != null) Identifier(name, false).assignPrototype(nameIdentifier) else Identifier.Empty
 }
 
 class Identifier(

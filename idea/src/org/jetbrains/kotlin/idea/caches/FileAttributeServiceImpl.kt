@@ -20,37 +20,64 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.FileAttribute
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.DataInputOutputUtil
+import java.io.DataInput
+import java.io.DataOutput
 
-public class FileAttributeServiceImpl : FileAttributeService {
+class FileAttributeServiceImpl : FileAttributeService {
     val attributes: MutableMap<String, FileAttribute> = ContainerUtil.newConcurrentMap()
 
     override fun register(id: String, version: Int) {
         attributes[id] = FileAttribute(id, version, true)
     }
 
-    override fun <T: Enum<T>> writeAttribute(id: String, file: VirtualFile, value: T): CachedAttributeData<T> {
+    override fun <T: Enum<T>> writeEnumAttribute(id: String, file: VirtualFile, value: T): CachedAttributeData<T> {
+        return write(file, id, value) { output, v ->
+            DataInputOutputUtil.writeINT(output, v.ordinal)
+        }
+    }
+
+    override fun <T: Enum<T>> readEnumAttribute(id: String, file: VirtualFile, klass: Class<T>): CachedAttributeData<T>? {
+        return read(file, id) { input ->
+            deserializeEnumValue(DataInputOutputUtil.readINT(input), klass)
+        }
+    }
+
+
+    override fun writeBooleanAttribute(id: String, file: VirtualFile, value: Boolean): CachedAttributeData<Boolean> {
+        return write(file, id, value) { output, v ->
+            DataInputOutputUtil.writeINT(output, if (v) 1 else 0)
+        }
+    }
+
+    override fun readBooleanAttribute(id: String, file: VirtualFile): CachedAttributeData<Boolean>? {
+        return read(file, id) { input ->
+            DataInputOutputUtil.readINT(input) > 0
+        }
+    }
+
+    private inline fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T> {
         val attribute = attributes[id] ?: throw IllegalArgumentException("Attribute with $id wasn't registered")
 
         val data = CachedAttributeData(value, timeStamp = file.timeStamp)
 
         attribute.writeAttribute(file).use {
             DataInputOutputUtil.writeTIME(it, data.timeStamp)
-            DataInputOutputUtil.writeINT(it, data.value?.ordinal() ?: -1)
+            writeValueFun(it, value)
         }
 
         return data
     }
 
-    override fun <T: Enum<T>> readAttribute(id: String, file: VirtualFile, klass: Class<T>): CachedAttributeData<T>? {
+    private inline fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>? {
         val attribute = attributes[id] ?: throw IllegalArgumentException("Attribute with $id wasn't registered")
 
         val stream = attribute.readAttribute(file) ?: return null
         return stream.use {
             val timeStamp = DataInputOutputUtil.readTIME(it)
-            val intValue = DataInputOutputUtil.readINT(it)
+            val value = readValueFun(it)
 
             if (file.timeStamp == timeStamp) {
-                CachedAttributeData(deserializeEnumValue(intValue, klass), timeStamp)
+                CachedAttributeData(value, timeStamp)
             }
             else {
                 null
@@ -60,7 +87,10 @@ public class FileAttributeServiceImpl : FileAttributeService {
 
     private fun <T: Enum<T>> deserializeEnumValue(i: Int, klass: Class<T>): T {
         val method = klass.getMethod("values")
+
+        @Suppress("UNCHECKED_CAST")
         val values = method.invoke(null) as Array<T>
+
         return values[i]
     }
 }

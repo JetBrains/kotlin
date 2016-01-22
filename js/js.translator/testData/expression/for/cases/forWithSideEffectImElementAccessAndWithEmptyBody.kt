@@ -19,7 +19,7 @@ class C {
         var data = arrayOf(T(3), T(1), T(2))
         override fun hasNext(): Boolean {
             log += "C.hasNext();"
-            return i < data.size()
+            return i < data.size
         }
 
         override fun next(): T {

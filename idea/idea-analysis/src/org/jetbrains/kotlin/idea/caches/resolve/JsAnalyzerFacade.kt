@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
-public object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
+object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
 
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
@@ -55,7 +55,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         )
 
         val container = createContainerForLazyResolve(moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform, targetEnvironment)
-        var packageFragmentProvider = container.get<ResolveSession>().getPackageFragmentProvider()
+        var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
         if (moduleInfo is LibraryInfo && KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(moduleInfo.library)) {
             val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)

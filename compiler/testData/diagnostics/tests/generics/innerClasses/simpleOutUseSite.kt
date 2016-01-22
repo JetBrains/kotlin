@@ -28,10 +28,9 @@ fun main() {
     checkSubtype<Outer<out CharSequence>.Inner>(outer.bar())
     checkSubtype<Outer<out CharSequence>.Inner>(outer.Inner())
 
-    // Should not actually work as in Java (captured constructor type mismatch)
-    outer.set(outer.bar())
-    outer.set(outer.Inner())
+    outer.<!MEMBER_PROJECTED_OUT!>set<!>(outer.bar())
+    outer.<!MEMBER_PROJECTED_OUT!>set<!>(outer.Inner())
 
     val x: Outer<String>.Inner = factoryString()
-    outer.set(x)
+    outer.<!MEMBER_PROJECTED_OUT!>set<!>(x)
 }

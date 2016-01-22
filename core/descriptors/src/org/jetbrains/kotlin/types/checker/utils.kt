@@ -16,28 +16,29 @@
 
 package org.jetbrains.kotlin.types.checker
 
+import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
 
 private class SubtypePathNode(val type: KotlinType, val previous: SubtypePathNode?)
 
-public fun findCorrespondingSupertype(
+fun findCorrespondingSupertype(
         subtype: KotlinType, supertype: KotlinType,
         typeCheckingProcedureCallbacks: TypeCheckingProcedureCallbacks
 ): KotlinType? {
     val queue = ArrayDeque<SubtypePathNode>()
     queue.add(SubtypePathNode(subtype, null))
 
-    val supertypeConstructor = supertype.getConstructor()
+    val supertypeConstructor = supertype.constructor
 
     while (!queue.isEmpty()) {
         val lastPathNode = queue.poll()
         val currentSubtype = lastPathNode.type
-        val constructor = currentSubtype.getConstructor()
+        val constructor = currentSubtype.constructor
 
         if (typeCheckingProcedureCallbacks.assertEqualTypeConstructors(constructor, supertypeConstructor)) {
             var substituted = currentSubtype
@@ -46,8 +47,20 @@ public fun findCorrespondingSupertype(
             var currentPathNode = lastPathNode.previous
 
             while (currentPathNode != null) {
-                substituted = TypeSubstitutor.create(currentPathNode.type).safeSubstitute(substituted, Variance.INVARIANT)
-                isAnyMarkedNullable = isAnyMarkedNullable || currentPathNode.type.isMarkedNullable
+                val currentType = currentPathNode.type
+                if (currentType.arguments.any { it.projectionKind != Variance.INVARIANT }) {
+                    substituted = TypeConstructorSubstitution.create(currentType)
+                                        .wrapWithCapturingSubstitution().buildSubstitutor()
+                                        .safeSubstitute(substituted, Variance.INVARIANT)
+                                        .approximate()
+                }
+                else {
+                    substituted = TypeConstructorSubstitution.create(currentType)
+                                        .buildSubstitutor()
+                                        .safeSubstitute(substituted, Variance.INVARIANT)
+                }
+
+                isAnyMarkedNullable = isAnyMarkedNullable || currentType.isMarkedNullable
 
                 currentPathNode = currentPathNode.previous
             }
@@ -55,10 +68,12 @@ public fun findCorrespondingSupertype(
             return TypeUtils.makeNullableAsSpecified(substituted, isAnyMarkedNullable)
         }
 
-        for (immediateSupertype in constructor.getSupertypes()) {
+        for (immediateSupertype in constructor.supertypes) {
             queue.add(SubtypePathNode(immediateSupertype, lastPathNode))
         }
     }
 
     return null
 }
+
+private fun KotlinType.approximate() = approximateCapturedTypes(this).upper

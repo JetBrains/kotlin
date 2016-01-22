@@ -18,24 +18,28 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 fun generateIsCheck(
         v: InstructionAdapter,
-        isNullable: Boolean,
-        generateInstanceOfInstruction: (InstructionAdapter) -> Unit
+        kotlinType: KotlinType,
+        asmType: Type
 ) {
-    if (isNullable) {
+    if (TypeUtils.isNullableType(kotlinType)) {
         val nope = Label()
         val end = Label()
 
@@ -44,7 +48,8 @@ fun generateIsCheck(
 
             ifnull(nope)
 
-            generateInstanceOfInstruction(this)
+            TypeIntrinsics.instanceOf(this, kotlinType, asmType)
+
             goTo(end)
 
             mark(nope)
@@ -55,11 +60,37 @@ fun generateIsCheck(
         }
     }
     else {
-        generateInstanceOfInstruction(v)
+        TypeIntrinsics.instanceOf(v, kotlinType, asmType)
     }
 }
 
-fun generateNullCheckForNonSafeAs(
+fun generateAsCast(
+        v: InstructionAdapter,
+        kotlinType: KotlinType,
+        asmType: Type,
+        isSafe: Boolean
+) {
+    if (!isSafe) {
+        if (!TypeUtils.isNullableType(kotlinType)) {
+            generateNullCheckForNonSafeAs(v, kotlinType)
+        }
+    }
+    else {
+        with(v) {
+            dup()
+            TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+            val ok = Label()
+            ifne(ok)
+            pop()
+            aconst(null)
+            mark(ok)
+        }
+    }
+
+    TypeIntrinsics.checkcast(v, kotlinType, asmType, isSafe)
+}
+
+private fun generateNullCheckForNonSafeAs(
         v: InstructionAdapter,
         type: KotlinType
 ) {
@@ -72,7 +103,7 @@ fun generateNullCheckForNonSafeAs(
     }
 }
 
-public fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
+fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
         = valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
 
 fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObjectDeclaration, outerContext: FieldOwnerContext<*>, state: GenerationState) {
@@ -82,7 +113,7 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObject
         return
     }
 
-    if (!AsmUtil.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+    if (!JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
         return
     }
     val properties = companion.declarations.filterIsInstance<KtProperty>()

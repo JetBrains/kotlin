@@ -1,8 +1,8 @@
 package
 
 package d {
-    public fun foo(/*0*/ result: kotlin.MutableList<in kotlin.String>, /*1*/ collection: kotlin.MutableCollection<kotlin.String>, /*2*/ prefix: kotlin.String): kotlin.Unit
-    public fun test(/*0*/ result: kotlin.MutableList<in kotlin.Any>, /*1*/ collection: kotlin.MutableCollection<kotlin.String>, /*2*/ prefix: kotlin.String): kotlin.Unit
-    public fun </*0*/ T> kotlin.MutableCollection<out T>.filterToMy(/*0*/ result: kotlin.MutableList<in T>, /*1*/ filter: (T) -> kotlin.Boolean): kotlin.MutableCollection<out T>
+    public fun foo(/*0*/ result: kotlin.collections.MutableList<in kotlin.String>, /*1*/ collection: kotlin.collections.MutableCollection<kotlin.String>, /*2*/ prefix: kotlin.String): kotlin.Unit
+    public fun test(/*0*/ result: kotlin.collections.MutableList<in kotlin.Any>, /*1*/ collection: kotlin.collections.MutableCollection<kotlin.String>, /*2*/ prefix: kotlin.String): kotlin.Unit
+    public fun </*0*/ T> kotlin.collections.MutableCollection<out T>.filterToMy(/*0*/ result: kotlin.collections.MutableList<in T>, /*1*/ filter: (T) -> kotlin.Boolean): kotlin.collections.MutableCollection<out T>
     public fun kotlin.String.startsWith(/*0*/ prefix: kotlin.String): kotlin.Boolean
 }

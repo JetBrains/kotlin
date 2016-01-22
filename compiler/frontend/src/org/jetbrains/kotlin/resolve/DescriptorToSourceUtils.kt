@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 
-public object DescriptorToSourceUtils {
+object DescriptorToSourceUtils {
     private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
         if (descriptor is CallableMemberDescriptor) {
-            val kind = descriptor.getKind()
+            val kind = descriptor.kind
             if (kind != DECLARATION && kind != SYNTHESIZED) {
-                for (overridden in descriptor.getOverriddenDescriptors()) {
-                    collectEffectiveReferencedDescriptors(result, overridden.getOriginal())
+                for (overridden in descriptor.overriddenDescriptors) {
+                    collectEffectiveReferencedDescriptors(result, overridden.original)
                 }
                 return
             }
@@ -43,20 +43,17 @@ public object DescriptorToSourceUtils {
         result.add(descriptor)
     }
 
-    @JvmStatic
-    public fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
+    @JvmStatic fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
-        collectEffectiveReferencedDescriptors(result, descriptor.getOriginal())
+        collectEffectiveReferencedDescriptors(result, descriptor.original)
         return result
     }
 
-    @JvmStatic
-    public fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
-        return (descriptor as? DeclarationDescriptorWithSource)?.getSource()?.getPsi()
+    @JvmStatic fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
+        return (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
     }
 
-    @JvmStatic
-    public fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): KtAnnotationEntry? {
+    @JvmStatic fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): KtAnnotationEntry? {
         return descriptor.source.getPsi() as? KtAnnotationEntry
     }
 
@@ -64,30 +61,28 @@ public object DescriptorToSourceUtils {
     // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
     // with multiple declarations), returns null. It can't find declarations in builtins or decompiled code.
     // In IDE, use DescriptorToSourceUtilsIde instead.
-    @JvmStatic
-    public fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
+    @JvmStatic fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
         val effectiveReferencedDescriptors = getEffectiveReferencedDescriptors(descriptor)
-        return if (effectiveReferencedDescriptors.size() == 1) getSourceFromDescriptor(effectiveReferencedDescriptors.firstOrNull()!!) else null
+        return if (effectiveReferencedDescriptors.size == 1) getSourceFromDescriptor(effectiveReferencedDescriptors.firstOrNull()!!) else null
     }
 
-    @JvmStatic
-    public fun getContainingFile(declarationDescriptor: DeclarationDescriptor): KtFile? {
+    @JvmStatic fun getContainingFile(declarationDescriptor: DeclarationDescriptor): KtFile? {
         // declarationDescriptor may describe a synthesized element which doesn't have PSI
         // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
         val descriptor = findTopLevelParent(declarationDescriptor) ?: return null
 
         val declaration = descriptorToDeclaration(descriptor) ?: return null
 
-        return declaration.getContainingFile() as? KtFile
+        return declaration.containingFile as? KtFile
     }
 
     private fun findTopLevelParent(declarationDescriptor: DeclarationDescriptor): DeclarationDescriptor? {
         var descriptor: DeclarationDescriptor? = declarationDescriptor
         if (declarationDescriptor is PropertyAccessorDescriptor) {
-            descriptor = (descriptor as PropertyAccessorDescriptor).getCorrespondingProperty()
+            descriptor = (descriptor as PropertyAccessorDescriptor).correspondingProperty
         }
         while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
-            descriptor = descriptor.getContainingDeclaration()
+            descriptor = descriptor.containingDeclaration
         }
         return descriptor
     }

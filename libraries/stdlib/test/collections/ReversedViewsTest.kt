@@ -65,17 +65,17 @@ class ReversedViewsTest {
     }
 
     @test fun testMutableSimple() {
-        assertEquals(listOf(3, 2, 1), arrayListOf(1, 2, 3).asReversed())
-        assertEquals(listOf(3, 2, 1), arrayListOf(1, 2, 3).asReversed().toList())
+        assertEquals(listOf(3, 2, 1), mutableListOf(1, 2, 3).asReversed())
+        assertEquals(listOf(3, 2, 1), mutableListOf(1, 2, 3).asReversed().toList())
     }
 
     @test fun testMutableDoubleReverse() {
-        assertEquals(listOf(1, 2, 3), arrayListOf(1, 2, 3).asReversed().asReversed())
-        assertEquals(listOf(2, 3), arrayListOf(1, 2, 3, 4).asReversed().subList(1, 3).asReversed())
+        assertEquals(listOf(1, 2, 3), mutableListOf(1, 2, 3).asReversed().asReversed())
+        assertEquals(listOf(2, 3), mutableListOf(1, 2, 3, 4).asReversed().subList(1, 3).asReversed())
     }
 
     @test fun testMutableEmpty() {
-        assertEquals(emptyList<Int>(), arrayListOf<Int>().asReversed())
+        assertEquals(emptyList<Int>(), mutableListOf<Int>().asReversed())
     }
 
     @test fun testMutableReversedSubList() {
@@ -84,7 +84,7 @@ class ReversedViewsTest {
     }
 
     @test fun testMutableAdd() {
-        val original = arrayListOf(1, 2, 3)
+        val original = mutableListOf(1, 2, 3)
         val reversed = original.asReversed()
 
         reversed.add(0) // add zero at end of reversed
@@ -97,7 +97,7 @@ class ReversedViewsTest {
     }
 
     @test fun testMutableSet() {
-        val original = arrayListOf(1, 2, 3)
+        val original = mutableListOf(1, 2, 3)
         val reversed = original.asReversed()
 
         reversed.set(0, 300)
@@ -109,7 +109,7 @@ class ReversedViewsTest {
     }
 
     @test fun testMutableRemove() {
-        val original = arrayListOf("a", "b", "c")
+        val original = mutableListOf("a", "b", "c")
         val reversed = original.asReversed()
 
         reversed.removeAt(0) // remove c
@@ -124,7 +124,7 @@ class ReversedViewsTest {
     }
 
     @test fun testMutableRemoveByObj() {
-        val original = arrayListOf("a", "b", "c")
+        val original = mutableListOf("a", "b", "c")
         val reversed = original.asReversed()
 
         reversed.remove("c")
@@ -133,7 +133,7 @@ class ReversedViewsTest {
     }
 
     @test fun testMutableClear() {
-        val original = arrayListOf(1, 2, 3)
+        val original = mutableListOf(1, 2, 3)
         val reversed = original.asReversed()
 
         reversed.clear()
@@ -144,16 +144,16 @@ class ReversedViewsTest {
 
     @test fun testContains() {
         assertTrue { 1 in listOf(1, 2, 3).asReversed() }
-        assertTrue { 1 in arrayListOf(1, 2, 3).asReversed() }
+        assertTrue { 1 in mutableListOf(1, 2, 3).asReversed() }
     }
 
     @test fun testIndexOf() {
         assertEquals(2, listOf(1, 2, 3).asReversed().indexOf(1))
-        assertEquals(2, arrayListOf(1, 2, 3).asReversed().indexOf(1))
+        assertEquals(2, mutableListOf(1, 2, 3).asReversed().indexOf(1))
     }
 
     @test fun testBidirectionalModifications() {
-        val original = arrayListOf(1, 2, 3, 4)
+        val original = mutableListOf(1, 2, 3, 4)
         val reversed = original.asReversed()
 
         original.removeAt(3)
@@ -178,7 +178,7 @@ class ReversedViewsTest {
 
     @test fun testSetIOOB() {
         val success = try {
-            arrayListOf(1, 2, 3).asReversed().set(3, 0)
+            mutableListOf(1, 2, 3).asReversed().set(3, 0)
             true
         } catch(expected: IndexOutOfBoundsException) {
             false
@@ -189,7 +189,7 @@ class ReversedViewsTest {
 
     @test fun testAddIOOB() {
         val success = try {
-            arrayListOf(1, 2, 3).asReversed().add(4, 0)
+            mutableListOf(1, 2, 3).asReversed().add(4, 0)
             true
         } catch(expected: IndexOutOfBoundsException) {
             false
@@ -200,7 +200,7 @@ class ReversedViewsTest {
 
     @test fun testRemoveIOOB() {
         val success = try {
-            arrayListOf(1, 2, 3).asReversed().removeAt(3)
+            mutableListOf(1, 2, 3).asReversed().removeAt(3)
             true
         } catch(expected: IndexOutOfBoundsException) {
             false

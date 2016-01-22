@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.renderer.CustomFlexibleRendering
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.*
 
-public object RawTypeTag : TypeCapability
+object RawTypeTag : TypeCapability
 
-public object RawTypeCapabilities : TypeCapabilities {
+object RawTypeCapabilities : TypeCapabilities {
     private object RawSubstitutionCapability : CustomSubstitutionCapability {
-        override val substitution = RawSubstitution
+        override val substitution: TypeSubstitution?
+            get() = RawSubstitution
+        override val substitutionToComposeWith: TypeSubstitution?
+            get() = RawSubstitution
     }
 
     private object RawFlexibleRendering : CustomFlexibleRendering {
@@ -42,11 +45,11 @@ public object RawTypeCapabilities : TypeCapabilities {
         override fun renderInflexible(type: KotlinType, renderer: DescriptorRenderer): String? {
             if (type.arguments.isNotEmpty()) return null
 
-            return StringBuilder {
+            return buildString {
                 append(renderer.renderTypeConstructor(type.constructor))
                 append("(raw)")
                 if (type.isMarkedNullable) append('?')
-            }.toString()
+            }
         }
 
         override fun renderBounds(flexibility: Flexibility, renderer: DescriptorRenderer): Pair<String, String>? {
@@ -72,9 +75,9 @@ public object RawTypeCapabilities : TypeCapabilities {
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
         return when(capabilityClass) {
-            javaClass<CustomSubstitutionCapability>() -> RawSubstitutionCapability as T
-            javaClass<CustomFlexibleRendering>() -> RawFlexibleRendering as T
-            javaClass<RawTypeTag>() -> RawTypeTag as T
+            CustomSubstitutionCapability::class.java -> RawSubstitutionCapability as T
+            CustomFlexibleRendering::class.java -> RawFlexibleRendering as T
+            RawTypeTag::class.java -> RawTypeTag as T
             else -> null
         }
     }
@@ -86,7 +89,7 @@ internal object RawSubstitution : TypeSubstitution() {
     private val lowerTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
     private val upperTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
 
-    public fun eraseType(type: KotlinType): KotlinType {
+    fun eraseType(type: KotlinType): KotlinType {
         val declaration = type.constructor.declarationDescriptor
         return when (declaration) {
             is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound())

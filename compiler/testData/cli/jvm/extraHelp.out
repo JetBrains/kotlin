@@ -5,6 +5,7 @@ where advanced options include:
   -Xno-optimize              Disable optimizations
   -Xreport-perf              Report detailed performance statistics
   -Xmultifile-facades-open   Compile multifile facade classes as open
+  -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)
   -Xplugin <path>            Load plugins from the given classpath

@@ -1344,6 +1344,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("DifferentParametersCount.java")
+            public void testDifferentParametersCount() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/DifferentParametersCount.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("FilenameFilter.java")
             public void testFilenameFilter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/FilenameFilter.java");
@@ -2254,6 +2260,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             public static class WithUseSiteTarget extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInWithUseSiteTarget() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("DelegateTarget.kt")
+                public void testDelegateTarget() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/DelegateTarget.kt");
+                    doTestCompiledKotlin(fileName);
                 }
 
                 @TestMetadata("FieldTarget.kt")

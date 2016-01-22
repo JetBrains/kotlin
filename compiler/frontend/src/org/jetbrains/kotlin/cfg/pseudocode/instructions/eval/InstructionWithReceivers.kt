@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-public interface InstructionWithReceivers: Instruction {
-    public val receiverValues: Map<PseudoValue, ReceiverValue>
+interface InstructionWithReceivers: Instruction {
+    val receiverValues: Map<PseudoValue, ReceiverValue>
 }

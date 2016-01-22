@@ -21,26 +21,26 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
 
-public class ReflectJavaAnnotation(private val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
+class ReflectJavaAnnotation(private val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
     override fun findArgument(name: Name): JavaAnnotationArgument? {
-        return getArgumentValue(annotation.annotationType().getDeclaredMethod(name.asString()))
+        return getArgumentValue(annotation.annotationClass.java.getDeclaredMethod(name.asString()))
     }
 
     override fun getArguments(): Collection<JavaAnnotationArgument> {
-        return annotation.annotationType().getDeclaredMethods().map { getArgumentValue(it) }
+        return annotation.annotationClass.java.declaredMethods.map { getArgumentValue(it) }
     }
 
     private fun getArgumentValue(argument: Method): ReflectJavaAnnotationArgument {
-        return argument.invoke(annotation).let { ReflectJavaAnnotationArgument.create(it, Name.identifier(argument.getName())) }
+        return argument.invoke(annotation).let { ReflectJavaAnnotationArgument.create(it, Name.identifier(argument.name)) }
     }
 
-    override fun resolve() = ReflectJavaClass(annotation.annotationType())
+    override fun resolve() = ReflectJavaClass(annotation.annotationClass.java)
 
-    override fun getClassId() = annotation.annotationType().classId
+    override fun getClassId() = annotation.annotationClass.java.classId
 
     override fun equals(other: Any?) = other is ReflectJavaAnnotation && annotation == other.annotation
 
     override fun hashCode() = annotation.hashCode()
 
-    override fun toString() = javaClass.getName() + ": " + annotation
+    override fun toString() = javaClass.name + ": " + annotation
 }

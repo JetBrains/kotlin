@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
+import com.intellij.codeInsight.intention.HighPriorityAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.ide.util.DirectoryChooserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -27,16 +29,16 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.core.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.Collections
-import java.util.HashMap
+import java.util.*
 
 enum class ClassKind(val keyword: String, val description: String) {
     PLAIN_CLASS("class", "class"),
@@ -48,7 +50,10 @@ enum class ClassKind(val keyword: String, val description: String) {
     DEFAULT("", "") // Used as a placeholder and must be replaced with one of the kinds above
 }
 
-public data class ClassInfo(
+val ClassKind.actionPriority: IntentionActionPriority
+    get() = if (this == ANNOTATION_CLASS) IntentionActionPriority.LOW else IntentionActionPriority.NORMAL
+
+data class ClassInfo(
         val kind: ClassKind = ClassKind.DEFAULT,
         val name: String,
         val targetParent: PsiElement,
@@ -59,10 +64,7 @@ public data class ClassInfo(
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 )
 
-public class CreateClassFromUsageFix<E : KtElement>(
-        element: E,
-        val classInfo: ClassInfo
-): CreateFromUsageFixBase<E>(element) {
+open class CreateClassFromUsageFix<E : KtElement> protected constructor (element: E, val classInfo: ClassInfo): CreateFromUsageFixBase<E>(element) {
     override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
@@ -87,7 +89,7 @@ public class CreateClassFromUsageFix<E : KtElement>(
                     directories.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
                     ?: directories.firstOrNull()
 
-            val targetDirectory = if (directories.size() > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
+            val targetDirectory = if (directories.size > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
                 DirectoryChooserUtil.chooseDirectory(directories.toTypedArray(), preferredDirectory, project, HashMap())
             }
             else {
@@ -123,6 +125,26 @@ public class CreateClassFromUsageFix<E : KtElement>(
             ).createBuilder()
             builder.placement = CallablePlacement.NoReceiver(targetParent)
             project.executeCommand(text) { builder.build() }
+        }
+    }
+
+    private class LowPriorityCreateClassFromUsageFix<E : KtElement>(
+            element: E,
+            classInfo: ClassInfo
+    ) : CreateClassFromUsageFix<E>(element, classInfo), LowPriorityAction
+
+    private class HighPriorityCreateClassFromUsageFix<E : KtElement>(
+            element: E,
+            classInfo: ClassInfo
+    ) : CreateClassFromUsageFix<E>(element, classInfo), HighPriorityAction
+
+    companion object {
+        fun <E : KtElement> create(element: E, classInfo: ClassInfo): CreateClassFromUsageFix<E> {
+            return when (classInfo.kind.actionPriority) {
+                IntentionActionPriority.NORMAL -> CreateClassFromUsageFix(element, classInfo)
+                IntentionActionPriority.LOW -> LowPriorityCreateClassFromUsageFix(element, classInfo)
+                IntentionActionPriority.HIGH -> HighPriorityCreateClassFromUsageFix(element, classInfo)
+            }
         }
     }
 }

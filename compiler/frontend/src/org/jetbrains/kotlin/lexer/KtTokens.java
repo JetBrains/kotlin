@@ -142,6 +142,7 @@ public interface KtTokens {
     KtKeywordToken RECEIVER_KEYWORD     = KtKeywordToken.softKeyword("receiver");
     KtKeywordToken PARAM_KEYWORD     = KtKeywordToken.softKeyword("param");
     KtKeywordToken SETPARAM_KEYWORD  = KtKeywordToken.softKeyword("setparam");
+    KtKeywordToken DELEGATE_KEYWORD  = KtKeywordToken.softKeyword("delegate");
     KtKeywordToken IMPORT_KEYWORD    = KtKeywordToken.softKeyword("import");
     KtKeywordToken WHERE_KEYWORD     = KtKeywordToken.softKeyword("where");
     KtKeywordToken BY_KEYWORD        = KtKeywordToken.softKeyword("by");
@@ -203,6 +204,7 @@ public interface KtTokens {
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
                                              DYNAMIC_KEYWORD, COMPANION_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD, SEALED_KEYWORD,
                                              FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD,
+                                             DELEGATE_KEYWORD,
                                              LATEINIT_KEYWORD,
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD
@@ -235,16 +237,20 @@ public interface KtTokens {
      * @see KtPsiUtil#isInComment(com.intellij.psi.PsiElement)
      */
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT, SHEBANG_COMMENT);
-    TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.orSet(COMMENTS, TokenSet.create(WHITE_SPACE));
+    TokenSet WHITE_SPACE_OR_COMMENT_BIT_SET = TokenSet.orSet(COMMENTS, WHITESPACES);
 
     TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART);
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, EXCLEXCL, MUL, PLUS,
                                           MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
                                           SAFE_ACCESS, ELVIS,
-            //            MAP, FILTER,
                                           RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
                                           NOT_IN, NOT_IS,
                                           IDENTIFIER);
+
+    TokenSet BINARY_OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, MUL, PLUS,
+                                                 MINUS, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
+                                                 ELVIS, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
+                                                 NOT_IN, NOT_IS);
 
     TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
     TokenSet ALL_ASSIGNMENTS = TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);

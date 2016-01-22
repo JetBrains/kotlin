@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 
-public class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC, buffer), KDoc {
+class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC, buffer), KDoc {
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
-    override fun toString(): String = getNode().getElementType().toString()
+    override fun toString(): String = node.elementType.toString()
 
     override fun getTokenType(): IElementType = KtTokens.DOC_COMMENT
 
@@ -45,10 +45,10 @@ public class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocToken
         getChildrenOfType<KDocSection>().firstOrNull { it.getName() == name }
 
     override fun findSectionByTag(tag: KDocKnownTag): KDocSection? =
-        findSectionByName(tag.name().toLowerCase())
+        findSectionByName(tag.name.toLowerCase())
 
     override fun findSectionByTag(tag: KDocKnownTag, subjectName: String): KDocSection? =
         getChildrenOfType<KDocSection>().firstOrNull {
-            it.getName() == tag.name().toLowerCase() && it.getSubjectName() == subjectName
+            it.getName() == tag.name.toLowerCase() && it.getSubjectName() == subjectName
         }
 }

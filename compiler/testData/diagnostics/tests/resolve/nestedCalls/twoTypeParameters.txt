@@ -1,6 +1,6 @@
 package
 
-public fun </*0*/ D, /*1*/ E : D> kotlin.List<ResolutionTask<D, E>>.bar(/*0*/ t: ResolutionTask<D, E>): ResolutionTask<D, E>
+public fun </*0*/ D, /*1*/ E : D> kotlin.collections.List<ResolutionTask<D, E>>.bar(/*0*/ t: ResolutionTask<D, E>): ResolutionTask<D, E>
 
 public final class ResolutionCandidate</*0*/ A> {
     public constructor ResolutionCandidate</*0*/ A>()
@@ -21,6 +21,6 @@ public final class ResolutionTaskHolder</*0*/ F, /*1*/ G : F> {
     public constructor ResolutionTaskHolder</*0*/ F, /*1*/ G : F>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun test(/*0*/ candidate: ResolutionCandidate<F>, /*1*/ tasks: kotlin.MutableList<ResolutionTask<F, G>>): kotlin.Unit
+    public final fun test(/*0*/ candidate: ResolutionCandidate<F>, /*1*/ tasks: kotlin.collections.MutableList<ResolutionTask<F, G>>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

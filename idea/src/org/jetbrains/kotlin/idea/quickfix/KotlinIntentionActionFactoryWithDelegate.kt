@@ -25,29 +25,24 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D : Any>(
         private val actionPriority: IntentionActionPriority = IntentionActionPriority.NORMAL
 ) : KotlinIntentionActionFactoryWithDelegate<E, D>() {
 
-    protected abstract fun createFix(data: D): IntentionAction?
+    protected abstract fun createFix(originalElement: E, data: D): IntentionAction?
 
-    protected override final fun createFixes(
+    override final fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> D?
     ): List<QuickFixWithDelegateFactory> {
-        fun createAction(): IntentionAction? {
-            val data = quickFixDataFactory() ?: return null
-            return createFix(data)
-        }
-
-        val delegateFactory = when (actionPriority) {
-            IntentionActionPriority.NORMAL -> QuickFixWithDelegateFactory(::createAction)
-            IntentionActionPriority.HIGH -> HighPriorityQuickFixWithDelegateFactory(::createAction)
-            IntentionActionPriority.LOW -> LowPriorityQuickFixWithDelegateFactory(::createAction)
-        }
-        return listOf(delegateFactory)
+        return QuickFixWithDelegateFactory(actionPriority) factory@ {
+            val originalElement = originalElementPointer.element ?: return@factory null
+            val data = quickFixDataFactory() ?: return@factory null
+            createFix(originalElement, data)
+        }.singletonList()
     }
 }
 

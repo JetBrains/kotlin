@@ -70,7 +70,7 @@ class KotlinCompilerAdapter : Javac13() {
         // Javac13#execute passes everything in compileList to javac, which doesn't recognize .kt files
         val compileListForJavac = filterOutKotlinSources(compileList)
 
-        val hasKotlinFilesInSources = compileListForJavac.size() < compileList.size()
+        val hasKotlinFilesInSources = compileListForJavac.size < compileList.size
 
         if (hasKotlinFilesInSources) {
             kotlinc.execute()

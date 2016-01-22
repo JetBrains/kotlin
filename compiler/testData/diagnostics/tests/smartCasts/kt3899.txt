@@ -1,7 +1,7 @@
 package
 
-public fun F(): kotlin.MutableMap<kotlin.String, kotlin.String>
-public fun hashMapOf(/*0*/ pair: StringPair): kotlin.MutableMap<kotlin.String, kotlin.String>
+public fun F(): kotlin.collections.MutableMap<kotlin.String, kotlin.String>
+public fun hashMapOf(/*0*/ pair: StringPair): kotlin.collections.MutableMap<kotlin.String, kotlin.String>
 public infix fun kotlin.String.to(/*0*/ second: kotlin.String): StringPair
 
 public final data class StringPair {

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 
-public abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
+abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
     init {
         myDoCompare = false
     }
@@ -43,18 +43,18 @@ public abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase(
         val config = JsonParser().parse(FileUtil.loadFile(configFile, true)) as JsonObject
         val inspection = LocalInspectionToolWrapper(Class.forName(config.getString("inspectionClass")).newInstance() as LocalInspectionTool)
 
-        val withRuntime = config["withRuntime"]?.getAsBoolean() ?: false
+        val withRuntime = config["withRuntime"]?.asBoolean ?: false
         if (withRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
 
-        val withFullJdk = config["withFullJdk"]?.getAsBoolean() ?: false
+        val withFullJdk = config["withFullJdk"]?.asBoolean ?: false
 
         doTest({ rootDir, rootAfter ->
                    try {
                        if (withRuntime) {
                            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
-                                   getModule(),
+                                   module,
                                    if (withFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
                            )
                        }
@@ -70,11 +70,11 @@ public abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase(
                        )
 
                        InspectionTestUtil.runTool(inspection, scope, globalContext)
-                       InspectionTestUtil.compareToolResults(globalContext, inspection, false, configFile.getParent())
+                       InspectionTestUtil.compareToolResults(globalContext, inspection, false, configFile.parent)
                    }
                    finally {
                        if (withRuntime) {
-                           ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(getModule(), IdeaTestUtil.getMockJdk17())
+                           ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, IdeaTestUtil.getMockJdk17())
                        }
                    }
                },
@@ -86,11 +86,11 @@ public abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase(
         return testName.substring(0, testName.lastIndexOf('_')).replace('_', '/')
     }
 
-    protected override fun getTestRoot() : String {
+    override fun getTestRoot() : String {
         return "/multiFileInspections/"
     }
 
-    protected override fun getTestDataPath() : String {
+    override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase()
     }
 }

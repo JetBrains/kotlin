@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
-public class LazyScriptClassMemberScope(
+class LazyScriptClassMemberScope(
         private val resolveSession: ResolveSession,
         declarationProvider: ClassMemberDeclarationProvider,
         private val scriptDescriptor: LazyScriptDescriptor,
@@ -78,7 +78,7 @@ public class LazyScriptClassMemberScope(
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
         val primaryConstructor = getPrimaryConstructor()!!
         for (valueParameterDescriptor in primaryConstructor.valueParameters) {
-            if (name == valueParameterDescriptor.getName()) {
+            if (name == valueParameterDescriptor.name) {
                 result.add(createPropertyFromScriptParameter(scriptDescriptor, valueParameterDescriptor))
             }
         }
@@ -94,16 +94,16 @@ public class LazyScriptClassMemberScope(
                 Modality.FINAL,
                 Visibilities.PUBLIC,
                 false,
-                parameter.getName(),
+                parameter.name,
                 CallableMemberDescriptor.Kind.DECLARATION,
                 SourceElement.NO_SOURCE,
                 /* lateInit = */ false,
                 /* isConst = */ false
         )
         propertyDescriptor.setType(
-                parameter.getType(),
+                parameter.type,
                 listOf(),
-                scriptDescriptor.getThisAsReceiverParameter(),
+                scriptDescriptor.thisAsReceiverParameter,
                 null as ReceiverParameterDescriptor?
         )
         propertyDescriptor.initialize(null, null)

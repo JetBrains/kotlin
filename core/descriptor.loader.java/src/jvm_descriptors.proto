@@ -76,10 +76,6 @@ message JvmFieldSignature {
 
   // JVM descriptor of the field type, e.g. 'Ljava/lang/String;'
   optional int32 desc = 2 [(string_id_in_table) = true];
-
-  // True iff this field is a backing field for a companion object and is really present as a static
-  // field in the outer class, not as an instance field here
-  optional bool is_static_in_outer = 3 [default = false];
 }
 
 message JvmPropertySignature {
@@ -98,20 +94,10 @@ extend Constructor {
 
 extend Function {
   optional JvmMethodSignature method_signature = 100;
-
-  // Package-less name of the class with the callable's body and annotations, if it differs from the class it's serialized into.
-  // E.g. for a class "A/B/C$D" this would be "C$D".
-  // This is needed to find the class to load annotations from in the following cases:
-  // 1) annotations on top-level members are written to compiled package part classes
-  // 2) annotations on properties in traits are written to TImpl classes
-  optional int32 method_impl_class_name = 101 [(string_id_in_table) = true];
 }
 
 extend Property {
   optional JvmPropertySignature property_signature = 100;
-
-  // see Function#method_impl_class_name
-  optional int32 property_impl_class_name = 101 [(string_id_in_table) = true];
 }
 
 extend Type {
@@ -123,11 +109,11 @@ extend TypeParameter {
   repeated Annotation type_parameter_annotation = 100;
 }
 
-extend ValueParameter {
-  // Index of the corresponding parameter of this method in JVM (counting receiver parameters, enum constructor synthetic parameters, etc.)
-  optional int32 index = 100;
+extend Class {
+  // If absent, assumed to be JvmAbi.DEFAULT_MODULE_NAME
+  optional int32 class_module_name = 101 [(string_id_in_table) = true];
 }
 
-extend Class {
-  repeated Annotation class_annotation = 100;
+extend Package {
+  optional int32 package_module_name = 101 [(string_id_in_table) = true];
 }

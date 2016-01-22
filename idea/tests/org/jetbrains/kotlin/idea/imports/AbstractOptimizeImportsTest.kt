@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.psi.*
 
-public abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
+abstract class AbstractOptimizeImportsTest() : AbstractImportsTest() {
     override fun doTest(file: KtFile) {
         KotlinImportOptimizer().processFile(file).run()
     }

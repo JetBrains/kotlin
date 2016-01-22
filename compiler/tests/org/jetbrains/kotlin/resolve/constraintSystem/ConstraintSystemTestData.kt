@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeImpl
 import java.util.regex.Pattern
 
-public class ConstraintSystemTestData(
+class ConstraintSystemTestData(
         context: BindingContext,
         private val project: Project,
         private val typeResolver: TypeResolver
@@ -44,19 +44,19 @@ public class ConstraintSystemTestData(
 
     init {
         val functions = context.getSliceContents(BindingContext.FUNCTION)
-        functionFoo = findFunctionByName(functions.values(), "foo")
+        functionFoo = findFunctionByName(functions.values, "foo")
         val function = DescriptorToSourceUtils.descriptorToDeclaration(functionFoo) as KtFunction
-        val fooBody = function.getBodyExpression()
+        val fooBody = function.bodyExpression
         scopeToResolveTypeParameters = context.get(BindingContext.LEXICAL_SCOPE, fooBody)!!
     }
 
     private fun findFunctionByName(functions: Collection<FunctionDescriptor>, name: String): FunctionDescriptor {
-        return functions.firstOrNull { it.getName().asString() == name } ?:
+        return functions.firstOrNull { it.name.asString() == name } ?:
                throw AssertionError("Function ${name} is not declared")
     }
 
     fun getParameterDescriptor(name: String): TypeParameterDescriptor {
-        return functionFoo.getTypeParameters().firstOrNull { it.getName().asString() == name } ?:
+        return functionFoo.typeParameters.firstOrNull { it.name.asString() == name } ?:
                throw AssertionError("Unsupported type parameter name: $name. You may add it to constraintSystem/declarations.kt")
     }
 

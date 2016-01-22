@@ -25,11 +25,11 @@ import java.io.Closeable
  *     throw ExceptionUtils.rethrow(e);
  * In this case compiler knows that code after this rethrowing won't be executed.
  */
-public fun rethrow(e: Throwable): RuntimeException {
+fun rethrow(e: Throwable): RuntimeException {
     throw e
 }
 
-public fun closeQuietly(closeable: Closeable?) {
+fun closeQuietly(closeable: Closeable?) {
     if (closeable != null) {
         try {
             closeable.close()

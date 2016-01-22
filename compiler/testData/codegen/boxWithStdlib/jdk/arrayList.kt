@@ -8,6 +8,6 @@ fun box(): String {
     val j: Int = a.get(1)
     if (i != 74) return "fail 1"
     if (j != 75) return "fail 2"
-    if (a.size() != 2) return "epic fail"
+    if (a.size != 2) return "epic fail"
     return "OK"
 }

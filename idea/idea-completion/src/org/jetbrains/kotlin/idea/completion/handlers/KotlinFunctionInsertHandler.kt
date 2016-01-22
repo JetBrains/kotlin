@@ -25,6 +25,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
@@ -73,11 +74,11 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
             val startOffset = context.startOffset
             val element = context.file.findElementAt(startOffset) ?: return
 
-            addArguments(context, element)
+            addArguments(context, element, item)
         }
 
-        private fun addArguments(context : InsertionContext, offsetElement : PsiElement) {
-            val completionChar = context.getCompletionChar()
+        private fun addArguments(context: InsertionContext, offsetElement: PsiElement, item: LookupElement) {
+            val completionChar = context.completionChar
             if (completionChar == '(') { //TODO: more correct behavior related to braces type
                 context.setAddCompletionChar(false)
             }
@@ -97,12 +98,12 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
             if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
                 val offset1 = chars.skipSpaces(offset)
-                if (offset1 < chars.length()) {
+                if (offset1 < chars.length) {
                     if (chars[offset1] == '<') {
                         PsiDocumentManager.getInstance(project).commitDocument(document)
-                        val token = context.getFile().findElementAt(offset1)!!
-                        if (token.getNode().getElementType() == KtTokens.LT) {
-                            val parent = token.getParent()
+                        val token = context.file.findElementAt(offset1)!!
+                        if (token.node.elementType == KtTokens.LT) {
+                            val parent = token.parent
                             if (parent is KtTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
                                 offset = parent.endOffset
                                 insertTypeArguments = false
@@ -119,6 +120,12 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
             if (insertTypeArguments) {
                 document.insertString(offset, "<>")
                 editor.caretModel.moveToOffset(offset + 1)
+                offset += 2
+            }
+
+            // insert additional brackets for reserved syntax: "async {}"
+            if (insertLambda && (item.`object` as? DeclarationLookupObject)?.name?.identifier == "async") {
+                document.insertString(offset, "()")
                 offset += 2
             }
 
@@ -160,7 +167,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
             document.insertString(openingBracketOffset + 1, argumentText)
             if (closeBracketOffset != null) {
-                closeBracketOffset += argumentText.length()
+                closeBracketOffset += argumentText.length
             }
 
             if (!insertTypeArguments) {
@@ -183,11 +190,11 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
         }
 
         private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
-                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(javaClass<KotlinCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings::class.java)!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 
     object Infix : KotlinFunctionInsertHandler() {
-        public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
             super.handleInsert(context, item)
 
             if (context.completionChar == ' ') {
@@ -202,7 +209,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
     object OnlyName : KotlinFunctionInsertHandler()
 
-    public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
         val psiDocumentManager = PsiDocumentManager.getInstance(context.project)

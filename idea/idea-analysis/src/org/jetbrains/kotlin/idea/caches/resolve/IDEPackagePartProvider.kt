@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.PackageParts
 
-public class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider {
+class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider {
 
     override fun findPackageParts(packageFqName: String): List<String> {
         val values: MutableList<PackageParts> = FileBasedIndex.getInstance().getValues(KotlinModuleMappingIndex.KEY, packageFqName, scope)

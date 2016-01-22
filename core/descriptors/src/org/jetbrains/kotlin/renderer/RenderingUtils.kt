@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
-public fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String {
-    val nameString = descriptor.getName().render()
+fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String {
+    val nameString = descriptor.name.render()
     if (descriptor is TypeParameterDescriptor) {
         return nameString
     }
-    val qualifier = qualifierName(descriptor.getContainingDeclaration())
+    val qualifier = qualifierName(descriptor.containingDeclaration)
     return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
 }
 
@@ -37,26 +37,26 @@ private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (de
 }
 
 
-public fun Name.render(): String {
+fun Name.render(): String {
     return if (this.shouldBeEscaped()) '`' + asString() + '`' else asString()
 }
 
 private fun Name.shouldBeEscaped(): Boolean {
-    if (isSpecial()) return false
+    if (isSpecial) return false
 
     val string = asString()
     return string in KeywordStringsGenerated.KEYWORDS || string.any { !Character.isLetterOrDigit(it) && it != '_' }
 }
 
-public fun FqNameUnsafe.render(): String {
+fun FqNameUnsafe.render(): String {
     return renderFqName(pathSegments())
 }
 
-public fun FqName.render(): String {
+fun FqName.render(): String {
     return renderFqName(pathSegments())
 }
 
-public fun renderFqName(pathSegments: List<Name>): String {
+fun renderFqName(pathSegments: List<Name>): String {
     return buildString {
         for (element in pathSegments) {
             if (length > 0) {

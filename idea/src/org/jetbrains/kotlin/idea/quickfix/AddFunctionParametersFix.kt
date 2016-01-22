@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -37,7 +36,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
-public class AddFunctionParametersFix(
+class AddFunctionParametersFix(
         private val callElement: KtCallElement,
         functionDescriptor: FunctionDescriptor,
         private val hasTypeMismatches: Boolean) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
@@ -87,19 +86,19 @@ public class AddFunctionParametersFix(
                     val validator = CollectingNameValidator()
 
                     for (i in arguments.indices) {
-                        val argument = arguments.get(i)
+                        val argument = arguments[i]
                         val expression = argument.getArgumentExpression()
 
                         if (i < parameters.size) {
-                            validator.addName(parameters.get(i).name.asString())
+                            validator.addName(parameters[i].name.asString())
                             val argumentType = expression?.let {
                                 val bindingContext = it.analyze()
                                 bindingContext[BindingContext.SMARTCAST, it] ?: bindingContext.getType(it)
                             }
-                            val parameterType = parameters.get(i).type
+                            val parameterType = parameters[i].type
 
                             if (argumentType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
-                                it.parameters.get(i).currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(argumentType)
+                                it.parameters[i].currentTypeInfo = KotlinTypeInfo(false, argumentType)
                                 typesToShorten.add(argumentType)
                             }
                         }
@@ -109,7 +108,7 @@ public class AddFunctionParametersFix(
                                     argument,
                                     validator
                             )
-                            parameterInfo.originalType?.let { typesToShorten.add(it) }
+                            parameterInfo.originalTypeInfo.type?.let { typesToShorten.add(it) }
 
                             if (expression != null) {
                                 parameterInfo.defaultValueForCall = expression
@@ -136,8 +135,8 @@ public class AddFunctionParametersFix(
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
         val type = expression?.let { it.analyze().getType(it) } ?: functionDescriptor.builtIns.nullableAnyType
-        return KotlinParameterInfo(functionDescriptor, -1, name, type, null, null, KotlinValVar.None, null)
-                .apply { currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type) }
+        return KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, null))
+                .apply { currentTypeInfo = KotlinTypeInfo(false, type) }
     }
 
     private fun hasOtherUsages(function: PsiElement): Boolean {

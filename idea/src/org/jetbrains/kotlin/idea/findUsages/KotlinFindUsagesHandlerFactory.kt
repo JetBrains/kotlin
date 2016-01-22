@@ -39,15 +39,15 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 
-public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
+class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
     val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
 
-    public val findFunctionOptions: KotlinFunctionFindUsagesOptions = KotlinFunctionFindUsagesOptions(project)
+    val findFunctionOptions: KotlinFunctionFindUsagesOptions = KotlinFunctionFindUsagesOptions(project)
     val findPropertyOptions = KotlinPropertyFindUsagesOptions(project)
     val findClassOptions = KotlinClassFindUsagesOptions(project)
     val defaultOptions = FindUsagesOptions(project)
 
-    public override fun canFindUsages(element: PsiElement): Boolean =
+    override fun canFindUsages(element: PsiElement): Boolean =
             element is KtClassOrObject ||
             element is KtNamedFunction ||
             element is KtProperty ||
@@ -55,11 +55,11 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             element is KtTypeParameter ||
             element is KtConstructor<*>
 
-    public fun createFindUsagesHandlerNoQuestions(element: PsiElement): FindUsagesHandler {
+    fun createFindUsagesHandlerNoQuestions(element: PsiElement): FindUsagesHandler {
         return createFindUsagesHandler(element, forHighlightUsages = false, canAsk = false)
     }
 
-    public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
+    override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
         return createFindUsagesHandler(element, forHighlightUsages, canAsk = !forHighlightUsages)
     }
 
@@ -120,7 +120,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
     }
 
     private fun handlerForMultiple(originalDeclaration: KtNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
-        return when (declarations.size()) {
+        return when (declarations.size) {
             0 -> FindUsagesHandler.NULL_HANDLER
 
             1 -> {

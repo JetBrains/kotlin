@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.messages
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-public class ReplSystemInWrapper(
+class ReplSystemInWrapper(
         private val stdin: InputStream,
         private val replWriter: ReplWriter
 ) : InputStream() {
@@ -31,7 +31,7 @@ public class ReplSystemInWrapper(
     private var inputByteArray = byteArrayOf()
 
     private val isAtBufferEnd: Boolean
-        get() = curBytePos == inputByteArray.size()
+        get() = curBytePos == inputByteArray.size
 
     @Volatile var isReplScriptExecuting = false
 

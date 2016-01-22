@@ -20,13 +20,13 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeType
 
-public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
+abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 
     protected fun findExpressionUnder(type: KtNodeType): KtExpression? {
         val containerNode = findChildByType<KtContainerNode>(type) ?: return null
-        return containerNode.findChildByClass<KtExpression>(javaClass())
+        return containerNode.findChildByClass<KtExpression>(KtExpression::class.java)
     }
 
     override fun replace(newElement: PsiElement): PsiElement {
@@ -35,7 +35,7 @@ public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtE
 
     companion object {
         fun replaceExpression(expression: KtExpression, newElement: PsiElement, rawReplaceHandler: (PsiElement) -> PsiElement): PsiElement {
-            val parent = expression.getParent()
+            val parent = expression.parent
 
             if (newElement is KtExpression) {
                 when (parent) {
@@ -47,7 +47,7 @@ public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtE
                     is KtSimpleNameStringTemplateEntry -> {
                         if (newElement !is KtSimpleNameExpression) {
                             val newEntry = parent.replace(KtPsiFactory(expression).createBlockStringTemplateEntry(newElement)) as KtBlockStringTemplateEntry
-                            return newEntry.getExpression()!!
+                            return newEntry.expression!!
                         }
                     }
                 }

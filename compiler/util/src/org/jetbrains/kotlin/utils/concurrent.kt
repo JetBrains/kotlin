@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.utils.concurrent.block
 
-public class LockedClearableLazyValue<T: Any>(val lock: Any, val init: () -> T) {
+class LockedClearableLazyValue<T: Any>(val lock: Any, val init: () -> T) {
     @Volatile private var value: T? = null
 
-    public fun get(): T {
+    fun get(): T {
         val _v1 = value
         if (_v1 != null) {
             return _v1

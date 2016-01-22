@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 // This node represents "fake" reference expression for ENUM_ENTRY(arguments) constructor syntax
 // It uses the superclass enum node to provide access to the real constructor name
-public class KtEnumEntrySuperclassReferenceExpression :
+class KtEnumEntrySuperclassReferenceExpression :
         KtExpressionImplStub<KotlinEnumEntrySuperclassReferenceExpressionStub>, KtSimpleNameExpression {
 
-    public constructor(node: ASTNode) : super(node)
+    constructor(node: ASTNode) : super(node)
 
-    public constructor(stub: KotlinEnumEntrySuperclassReferenceExpressionStub) :
+    constructor(stub: KotlinEnumEntrySuperclassReferenceExpressionStub) :
             super(stub, KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
 
     // It is the owner enum class (not an enum entry but the whole enum)

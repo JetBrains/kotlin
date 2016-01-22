@@ -31,30 +31,30 @@ import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-public class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
-    public fun testNoErrors() {
+class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
+    fun testNoErrors() {
         val root = myFixture.copyDirectoryToProject("../libraries/stdlib/src", "")
 
-        val psiManager = getPsiManager() // workaround for KT-3974 IllegalAccessError when accessing protected method inherited by outer class
+        val psiManager = psiManager // workaround for KT-3974 IllegalAccessError when accessing protected method inherited by outer class
 
         var totalErrors = 0
         var hasAtLeastOneFile = false
 
         VfsUtil.processFileRecursivelyWithoutIgnored(root) { file ->
-            if (!file!!.isDirectory()) {
+            if (!file!!.isDirectory) {
                 val psiFile = psiManager.findFile(file)
                 if (psiFile is KtFile) {
                     hasAtLeastOneFile = true
                     val bindingContext = psiFile.analyzeFully()
-                    val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }
+                    val errors = bindingContext.diagnostics.all().filter { it.severity == Severity.ERROR }
 
                     if (errors.isNotEmpty()) {
-                        System.err.println("${psiFile.getName()}: ${errors.size()} errors")
+                        System.err.println("${psiFile.getName()}: ${errors.size} errors")
                         AnalyzerWithCompilerReport.reportDiagnostics(
-                                bindingContext.getDiagnostics(), PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR
+                                bindingContext.diagnostics, PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR
                         )
 
-                        totalErrors += errors.size()
+                        totalErrors += errors.size
                     }
                 }
             }

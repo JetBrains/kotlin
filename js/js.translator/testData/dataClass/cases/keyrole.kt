@@ -11,13 +11,13 @@ fun box(): String {
     setD.add(Holder(Dat("a", "b")))
     setD.add(Holder(Dat("a", "b")))
     setD.add(Holder(Dat("a", "b")))
-    assertEquals(1, setD.size())
+    assertEquals(1, setD.size)
 
     val setO = java.util.HashSet<Holder<Obj>>()
     setO.add(Holder(Obj("a", "b")))
     setO.add(Holder(Obj("a", "b")))
     setO.add(Holder(Obj("a", "b")))
-    assertEquals(3, setO.size())
+    assertEquals(3, setO.size)
 
     return "OK"
 }

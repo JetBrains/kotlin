@@ -38,8 +38,23 @@ internal annotation class Exact
 internal annotation class LowPriorityInOverloadResolution
 
 /**
+ * Specifies that the corresponding member has the highest priority in overload resolution. Effectively this means that
+ * an extension annotated with this annotation will win in overload resolution over a member with the same signature.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class HidesMembers
+
+/**
  * The value of this type parameter should be mentioned in input types (argument types, receiver type or expected type).
  */
 @Target(AnnotationTarget.TYPE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class OnlyInputTypes
+
+/**
+ * Specifies that this function should not be called directly without inlining
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class InlineOnly

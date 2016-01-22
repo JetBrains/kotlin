@@ -1,7 +1,7 @@
 class Outer(val foo: StringBuilder) {
     class Inner() {
         fun len(): Int {
-            return foo.length()
+            return foo.length
         }
     }
 

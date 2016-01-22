@@ -23,29 +23,29 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.combineWhenConditions
 import org.jetbrains.kotlin.psi.*
 
-public class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' with 'if'"), LowPriorityAction {
+class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Replace 'when' with 'if'"), LowPriorityAction {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
-        val entries = element.getEntries()
+        val entries = element.entries
         if (entries.isEmpty()) return null
         val lastEntry = entries.last()
-        if (entries.any { it != lastEntry && it.isElse() }) return null
-        return element.getWhenKeyword().getTextRange()
+        if (entries.any { it != lastEntry && it.isElse }) return null
+        return element.whenKeyword.textRange
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         val factory = KtPsiFactory(element)
         val ifExpression = factory.buildExpression {
-            val entries = element.getEntries()
+            val entries = element.entries
             for ((i, entry) in entries.withIndex()) {
                 if (i > 0) {
                     appendFixedText("else ")
                 }
-                val branch = entry.getExpression()
-                if (entry.isElse()) {
+                val branch = entry.expression
+                if (entry.isElse) {
                     appendExpression(branch)
                 }
                 else {
-                    val condition = factory.combineWhenConditions(entry.getConditions(), element.getSubjectExpression())
+                    val condition = factory.combineWhenConditions(entry.conditions, element.subjectExpression)
                     appendFixedText("if (")
                     appendExpression(condition)
                     appendFixedText(")")

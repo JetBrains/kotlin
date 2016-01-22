@@ -29,28 +29,28 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceCallWithUnaryOperatorIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace call with unary operator"), HighPriorityAction {
+class ReplaceCallWithUnaryOperatorIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace call with unary operator"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
 
         val call = element.callExpression ?: return null
-        if (call.getTypeArgumentList() != null) return null
-        if (!call.getValueArguments().isEmpty()) return null
+        if (call.typeArgumentList != null) return null
+        if (!call.valueArguments.isEmpty()) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
 
-        setText("Replace with '$operation' operator")
-        return call.getCalleeExpression()!!.getTextRange()
+        text = "Replace with '$operation' operator"
+        return call.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val operation = operation(element.calleeName)!!
-        val receiver = element.getReceiverExpression()
+        val receiver = element.receiverExpression
         element.replace(KtPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))
     }
 
     private fun operation(functionName: String?) : String? {
         if (functionName == null) return null
-        return OperatorConventions.UNARY_OPERATION_NAMES.inverse()[Name.identifier(functionName)]?.getValue()
+        return OperatorConventions.UNARY_OPERATION_NAMES.inverse()[Name.identifier(functionName)]?.value
     }
 }

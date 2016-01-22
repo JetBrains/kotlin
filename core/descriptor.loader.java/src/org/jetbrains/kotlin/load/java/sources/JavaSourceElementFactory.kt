@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.load.java.sources
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.descriptors.SourceElement
 
-public interface JavaSourceElementFactory {
-    public fun source(javaElement: JavaElement): JavaSourceElement
+interface JavaSourceElementFactory {
+    fun source(javaElement: JavaElement): JavaSourceElement
 }
 
-public interface JavaSourceElement: SourceElement {
-    public val javaElement: JavaElement
+interface JavaSourceElement: SourceElement {
+    val javaElement: JavaElement
 }

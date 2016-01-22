@@ -1,0 +1,19 @@
+package
+
+public fun test1(/*0*/ x: Closeable): kotlin.Int
+public fun test2(/*0*/ x: Closeable): kotlin.Int
+public fun test3(/*0*/ x: Closeable): kotlin.Int
+public fun </*0*/ T1 : AutoCloseable, /*1*/ R1> T1.myUse(/*0*/ f: (T1) -> R1): R1
+public fun </*0*/ T2 : Closeable, /*1*/ R2> T2.myUse(/*0*/ f: (T2) -> R2): R2
+
+public interface AutoCloseable {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Closeable : AutoCloseable {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

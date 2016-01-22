@@ -23,14 +23,14 @@ import com.intellij.refactoring.MultiFileTestCase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
+abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     protected fun extractCaretOffset(doc: Document): Int {
         val offset = runWriteAction {
             val text = StringBuilder(doc.getText())
             val offset = text.indexOf("<caret>")
 
             if (offset >= 0) {
-                text.delete(offset, offset + "<caret>".length())
+                text.delete(offset, offset + "<caret>".length)
                 doc.setText(text.toString())
             }
 

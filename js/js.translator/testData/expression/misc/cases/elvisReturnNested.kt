@@ -7,8 +7,8 @@
 package foo
 
 fun firstNotNullLen(s1 : String?, s2 : String?, s3 : String?) : Int {
-    val len = (s1?.length() ?: s2?.length()) ?:
-                (s2?.length() ?: s3?.length()) ?:
+    val len = (s1?.length ?: s2?.length) ?:
+                (s2?.length ?: s3?.length) ?:
                     return 0
     return len
 }

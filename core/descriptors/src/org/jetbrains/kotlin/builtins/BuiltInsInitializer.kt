@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.utils.sure
 
-public class BuiltInsInitializer<T : KotlinBuiltIns>(
+class BuiltInsInitializer<T : KotlinBuiltIns>(
         private val constructor: () -> T
 ) {
     @Volatile private var instance: T? = null

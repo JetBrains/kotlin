@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.Name.guess
 
-public class ReflectJavaValueParameter(
+class ReflectJavaValueParameter(
         private val returnType: ReflectJavaType,
         private val annotations: Array<Annotation>,
         private val name: String?,
@@ -37,5 +37,5 @@ public class ReflectJavaValueParameter(
     override fun getType() = returnType
     override fun isVararg() = isVararg
 
-    override fun toString() = javaClass.getName() + ": " + (if (isVararg) "vararg " else "") + getName() + ": " + returnType
+    override fun toString() = javaClass.name + ": " + (if (isVararg) "vararg " else "") + getName() + ": " + returnType
 }

@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
-public class RenameDynamicMemberHandler: VariableInplaceRenameHandler() {
+class RenameDynamicMemberHandler: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
         val callee = PsiTreeUtil.findElementOfClassAtOffset(
-                file, editor.getCaretModel().getOffset(), javaClass<KtSimpleNameExpression>(), false
+                file, editor.caretModel.offset, KtSimpleNameExpression::class.java, false
         ) ?: return false
         val calleeDescriptor = callee.analyze()[BindingContext.REFERENCE_TARGET, callee] ?: return false
         return calleeDescriptor.isDynamic()

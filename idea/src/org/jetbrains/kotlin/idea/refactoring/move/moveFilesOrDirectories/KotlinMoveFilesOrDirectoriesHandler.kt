@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
-public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
+class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
         return elements.map {
             when {
                 it is PsiFile || it is PsiDirectory -> it
-                it is PsiClass && it.getContainingClass() == null -> it.getContainingFile()
-                it is KtClassOrObject && it.getParent() is KtFile -> it.getParent()
+                it is PsiClass && it.containingClass == null -> it.containingFile
+                it is KtClassOrObject && it.parent is KtFile -> it.parent
                 else -> return null
             }
         }.toTypedArray()

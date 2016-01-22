@@ -23,22 +23,22 @@ import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import java.awt.Font
 
-public object ReplColors {
-    public val HISTORY_GUTTER_COLOR: JBColor = JBColor(Gray.xF2, Gray.x41)
-    public val EDITOR_GUTTER_COLOR: JBColor = JBColor(Gray.xCF, Gray.x31)
-    public val PLACEHOLDER_COLOR: JBColor = JBColor.LIGHT_GRAY
+object ReplColors {
+    val HISTORY_GUTTER_COLOR: JBColor = JBColor(Gray.xF2, Gray.x41)
+    val EDITOR_GUTTER_COLOR: JBColor = JBColor(Gray.xCF, Gray.x31)
+    val PLACEHOLDER_COLOR: JBColor = JBColor.LIGHT_GRAY
 
-    public val WARNING_INFO_CONTENT_TYPE: ConsoleViewContentType =
+    val WARNING_INFO_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_WARNING_INFO",
                     TextAttributes().apply { fontType = Font.ITALIC; foregroundColor = JBColor.RED }
             )
-    public val INITIAL_PROMPT_CONTENT_TYPE: ConsoleViewContentType =
+    val INITIAL_PROMPT_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_INITIAL_PROMPT",
                     TextAttributes().apply { fontType = Font.BOLD }
             )
-    public val USER_OUTPUT_CONTENT_TYPE: ConsoleViewContentType =
+    val USER_OUTPUT_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_USER_OUTPUT",
                     TextAttributes().apply { fontType = Font.ITALIC; foregroundColor = Colors.DARK_GREEN }

@@ -22,8 +22,8 @@ import com.intellij.psi.ElementManipulators
 import org.junit.Assert.*
 import com.intellij.openapi.util.TextRange
 
-public class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTestCase() {
-    public fun testSingleQuoted() {
+class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTestCase() {
+    fun testSingleQuoted() {
         doTestContentChange("\"a\"", "b", "\"b\"")
         doTestContentChange("\"\"", "b", "\"b\"")
         doTestContentChange("\"a\"", "\t", "\"\\t\"")
@@ -31,7 +31,7 @@ public class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFix
         doTestContentChange("\"a\"", "\\t", "\"\\\\t\"")
     }
 
-    public fun testUnclosedQuoted() {
+    fun testUnclosedQuoted() {
         doTestContentChange("\"a", "b", "\"b")
         doTestContentChange("\"", "b", "\"b")
         doTestContentChange("\"a", "\t", "\"\\t")
@@ -39,7 +39,7 @@ public class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFix
         doTestContentChange("\"a", "\\t", "\"\\\\t")
     }
 
-    public fun testTripleQuoted() {
+    fun testTripleQuoted() {
         doTestContentChange("\"\"\"a\"\"\"", "b", "\"\"\"b\"\"\"")
         doTestContentChange("\"\"\"\"\"\"", "b", "\"\"\"b\"\"\"")
         doTestContentChange("\"\"\"a\"\"\"", "\t", "\"\"\"\t\"\"\"")
@@ -47,7 +47,7 @@ public class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFix
         doTestContentChange("\"\"\"a\"\"\"", "\\t", "\"\"\"\\t\"\"\"")
     }
 
-    public fun testUnclosedTripleQuoted() {
+    fun testUnclosedTripleQuoted() {
         doTestContentChange("\"\"\"a", "b", "\"\"\"b")
         doTestContentChange("\"\"\"", "b", "\"\"\"b")
         doTestContentChange("\"\"\"a", "\t", "\"\"\"\t")
@@ -55,16 +55,16 @@ public class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFix
         doTestContentChange("\"\"\"a", "\\t", "\"\"\"\\t")
     }
 
-    public fun testReplaceRange() {
+    fun testReplaceRange() {
         doTestContentChange("\"abc\"", "x", range = TextRange(2,3), expected = "\"axc\"")
         doTestContentChange("\"\"\"abc\"\"\"", "x", range = TextRange(4,5), expected = "\"\"\"axc\"\"\"")
     }
 
     private fun doTestContentChange(original: String, newContent: String, expected: String, range: TextRange? = null) {
-        val expression = KtPsiFactory(getProject()).createExpression(original) as KtStringTemplateExpression
+        val expression = KtPsiFactory(project).createExpression(original) as KtStringTemplateExpression
         val manipulator = ElementManipulators.getNotNullManipulator(expression)
         val newExpression = if (range == null) manipulator.handleContentChange(expression, newContent) else manipulator.handleContentChange(expression, range, newContent)
-        assertEquals(expected, newExpression.getText())
+        assertEquals(expected, newExpression.text)
     }
 
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE

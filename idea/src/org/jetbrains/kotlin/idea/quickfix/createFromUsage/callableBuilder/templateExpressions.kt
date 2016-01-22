@@ -48,7 +48,7 @@ internal class ParameterNameExpression(
 
     override fun calculateResult(context: ExpressionContext?): Result? {
         val lookupItems = calculateLookupItems(context)!!
-        return TextResult(if (lookupItems.isEmpty()) "" else lookupItems.first().getLookupString())
+        return TextResult(if (lookupItems.isEmpty()) "" else lookupItems.first().lookupString)
     }
 
     override fun calculateQuickResult(context: ExpressionContext?) = calculateResult(context)
@@ -58,25 +58,25 @@ internal class ParameterNameExpression(
         val names = LinkedHashSet(this.names.toList())
 
         // find the parameter list
-        val project = context.getProject()!!
-        val offset = context.getStartOffset()
+        val project = context.project!!
+        val offset = context.startOffset
         PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val editor = context.getEditor()!!
-        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as KtFile
+        val editor = context.editor!!
+        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) as KtFile
         val elementAt = file.findElementAt(offset)
-        val declaration = PsiTreeUtil.getParentOfType(elementAt, javaClass<KtFunction>(), javaClass<KtClass>()) ?: return arrayOf()
+        val declaration = PsiTreeUtil.getParentOfType(elementAt, KtFunction::class.java, KtClass::class.java) ?: return arrayOf()
         val parameterList = when (declaration) {
-            is KtFunction -> declaration.getValueParameterList()!!
+            is KtFunction -> declaration.valueParameterList!!
             is KtClass -> declaration.getPrimaryConstructorParameterList()!!
-            else -> throw AssertionError("Unexpected declaration: ${declaration.getText()}")
+            else -> throw AssertionError("Unexpected declaration: ${declaration.text}")
         }
 
         // add names based on selected type
         val parameter = elementAt?.getStrictParentOfType<KtParameter>()
         if (parameter != null) {
-            val parameterTypeRef = parameter.getTypeReference()
+            val parameterTypeRef = parameter.typeReference
             if (parameterTypeRef != null) {
-                val suggestedNamesBasedOnType = parameterTypeToNamesMap[parameterTypeRef.getText()]
+                val suggestedNamesBasedOnType = parameterTypeToNamesMap[parameterTypeRef.text]
                 if (suggestedNamesBasedOnType != null) {
                     names.addAll(suggestedNamesBasedOnType)
                 }
@@ -84,8 +84,8 @@ internal class ParameterNameExpression(
         }
 
         // remember other parameter names for later use
-        val parameterNames = parameterList.getParameters().mapNotNullTo(HashSet<String>()) { jetParameter ->
-            if (jetParameter == parameter) null else jetParameter.getName()
+        val parameterNames = parameterList.parameters.mapNotNullTo(HashSet<String>()) { jetParameter ->
+            if (jetParameter == parameter) null else jetParameter.name
         }
 
         // add fallback parameter name
@@ -102,7 +102,7 @@ internal class ParameterNameExpression(
 /**
  * An <code>Expression</code> for type references and delegation specifiers.
  */
-internal abstract class TypeExpression(public val typeCandidates: List<TypeCandidate>) : Expression() {
+internal abstract class TypeExpression(val typeCandidates: List<TypeCandidate>) : Expression() {
     class ForTypeReference(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
                 typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.toTypedArray()
@@ -111,8 +111,8 @@ internal abstract class TypeExpression(public val typeCandidates: List<TypeCandi
     class ForDelegationSpecifier(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
                 typeCandidates.map {
-                    val descriptor = it.theType.getConstructor().getDeclarationDescriptor() as ClassDescriptor
-                    val text = it.renderedType!! + if (descriptor.getKind() == ClassKind.INTERFACE) "" else "()"
+                    val descriptor = it.theType.constructor.declarationDescriptor as ClassDescriptor
+                    val text = it.renderedType!! + if (descriptor.kind == ClassKind.INTERFACE) "" else "()"
                     LookupElementBuilder.create(it, text)
                 }.toTypedArray()
     }
@@ -121,7 +121,7 @@ internal abstract class TypeExpression(public val typeCandidates: List<TypeCandi
 
     override fun calculateResult(context: ExpressionContext?): Result {
         val lookupItems = calculateLookupItems(context)
-        return TextResult(if (lookupItems.size() == 0) "" else lookupItems[0].getLookupString())
+        return TextResult(if (lookupItems.size == 0) "" else lookupItems[0].lookupString)
     }
 
     override fun calculateQuickResult(context: ExpressionContext?) = calculateResult(context)
@@ -137,26 +137,26 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
                                           insertLeadingSpace: Boolean) : Expression() {
     private val prefix = if (insertLeadingSpace) " <" else "<"
 
-    public var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
+    var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
         private set
 
     override fun calculateResult(context: ExpressionContext?): Result {
         context!!
-        val project = context.getProject()!!
-        val offset = context.getStartOffset()
+        val project = context.project!!
+        val offset = context.startOffset
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val editor = context.getEditor()!!
-        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as KtFile
+        val editor = context.editor!!
+        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) as KtFile
         val elementAt = file.findElementAt(offset)
         val declaration = elementAt?.getStrictParentOfType<KtNamedDeclaration>() ?: return TextResult("")
 
         val renderedTypeParameters = LinkedHashSet<RenderedTypeParameter>()
         renderedTypeParameters.addAll(mandatoryTypeParameters)
         for (parameter in declaration.getValueParameters()) {
-            val parameterTypeRef = parameter.getTypeReference()
+            val parameterTypeRef = parameter.typeReference
             if (parameterTypeRef != null) {
-                val typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap[parameterTypeRef.getText()]
+                val typeParameterNamesFromParameter = parameterTypeToTypeParameterNamesMap[parameterTypeRef.text]
                 if (typeParameterNamesFromParameter != null) {
                     renderedTypeParameters.addAll(typeParameterNamesFromParameter)
                 }
@@ -164,14 +164,14 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
         }
         val returnTypeRef = declaration.getReturnTypeReference()
         if (returnTypeRef != null) {
-            val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.getText()]
+            val typeParameterNamesFromReturnType = parameterTypeToTypeParameterNamesMap[returnTypeRef.text]
             if (typeParameterNamesFromReturnType != null) {
                 renderedTypeParameters.addAll(typeParameterNamesFromReturnType)
             }
         }
 
 
-        val sortedRenderedTypeParameters = renderedTypeParameters.sortedBy { if (it.fake) it.typeParameter.getIndex() else -1 }
+        val sortedRenderedTypeParameters = renderedTypeParameters.sortedBy { if (it.fake) it.typeParameter.index else -1 }
         currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
 
         return TextResult(
@@ -183,14 +183,4 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
 
     // do not offer the user any choices
     override fun calculateLookupItems(context: ExpressionContext?) = arrayOf<LookupElement>()
-}
-
-internal object ValVarExpression: Expression() {
-    private val cachedLookupElements = listOf("val", "var").map { LookupElementBuilder.create(it) }.toTypedArray<LookupElement>()
-
-    override fun calculateResult(context: ExpressionContext?): Result? = TextResult("val")
-
-    override fun calculateQuickResult(context: ExpressionContext?): Result? = calculateResult(context)
-
-    override fun calculateLookupItems(context: ExpressionContext?): Array<LookupElement>? = cachedLookupElements
 }

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class KDocTypedHandler(): TypedHandlerDelegate() {
+class KDocTypedHandler(): TypedHandlerDelegate() {
     override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result {
         if (overwriteClosingBracket(c, editor, file)) {
             EditorModificationUtil.moveCaretRelatively(editor, 1)
@@ -47,14 +47,14 @@ public class KDocTypedHandler(): TypedHandlerDelegate() {
         if (file !is KtFile) return false
         if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return false
 
-        val offset = editor.getCaretModel().getOffset()
-        val document = editor.getDocument()
-        val chars = document.getCharsSequence()
-        if (offset < document.getTextLength() && chars[offset] == c) {
+        val offset = editor.caretModel.offset
+        val document = editor.document
+        val chars = document.charsSequence
+        if (offset < document.textLength && chars[offset] == c) {
             PsiDocumentManager.getInstance(file.getProject()).commitDocument(document)
 
             val element = file.findElementAt(offset) ?: return false
-            val elementType = element.getNode().getElementType()
+            val elementType = element.node.elementType
             return when (c) {
                 ']' -> {
                     // if the bracket is not part of a link, it will be part of KDOC_TEXT, not a separate RBRACKET element
@@ -75,13 +75,13 @@ public class KDocTypedHandler(): TypedHandlerDelegate() {
         if (file !is KtFile) return false
         if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return false
 
-        val offset = editor.getCaretModel().getOffset()
+        val offset = editor.caretModel.offset
         if (offset == 0) return false
 
-        val document = editor.getDocument()
+        val document = editor.document
         PsiDocumentManager.getInstance(project).commitDocument(document)
         val element = file.findElementAt(offset - 1) ?: return false
-        if (element.getNode().getElementType() != KDocTokens.TEXT) return false
+        if (element.node.elementType != KDocTokens.TEXT) return false
 
         when (c) {
             '[' -> {
@@ -90,7 +90,7 @@ public class KDocTypedHandler(): TypedHandlerDelegate() {
             }
 
             '(' -> {
-                if (offset > 1 && document.getCharsSequence()[offset - 2] == ']') {
+                if (offset > 1 && document.charsSequence[offset - 2] == ']') {
                     document.insertString(offset, ")")
                     return true
                 }

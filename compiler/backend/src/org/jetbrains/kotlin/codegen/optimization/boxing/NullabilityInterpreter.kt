@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-public class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) {
+class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) {
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue) = makeNotNullIfNeeded(insn, super.unaryOperation(insn, value))
 
     override fun newOperation(insn: AbstractInsnNode) = makeNotNullIfNeeded(insn, super.newOperation(insn))
@@ -35,7 +35,7 @@ public class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) 
 }
 
 private fun makeNotNullIfNeeded(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
-    when (insn.getOpcode()) {
+    when (insn.opcode) {
         Opcodes.ANEWARRAY, Opcodes.NEWARRAY, Opcodes.LDC, Opcodes.NEW -> NotNullBasicValue(value)
         else -> value
     }

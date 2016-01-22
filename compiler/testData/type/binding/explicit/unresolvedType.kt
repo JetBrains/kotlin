@@ -2,7 +2,7 @@ val foo: List<adad<List<dd>>> = null!!
 /*
 psi: List<adad<List<dd>>>
 type: List<[ERROR : adad<List<dd>>]<List<[ERROR : dd]>>>
-    typeParameter: <out E> defined in kotlin.List
+    typeParameter: <out E> defined in kotlin.collections.List
     typeProjection: [ERROR : adad<List<dd>>]<List<[ERROR : dd]>>
     psi: adad<List<dd>>
     type: [ERROR : adad<List<dd>>]<List<[ERROR : dd]>>
@@ -10,7 +10,7 @@ type: List<[ERROR : adad<List<dd>>]<List<[ERROR : dd]>>>
         typeProjection: List<[ERROR : dd]>
         psi: List<dd>
         type: List<[ERROR : dd]>
-            typeParameter: <out E> defined in kotlin.List
+            typeParameter: <out E> defined in kotlin.collections.List
             typeProjection: [ERROR : dd]
             psi: dd
             type: [ERROR : dd]

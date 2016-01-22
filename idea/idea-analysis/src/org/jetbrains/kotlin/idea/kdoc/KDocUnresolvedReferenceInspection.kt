@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 
-public class KDocUnresolvedReferenceInspection(): AbstractKotlinInspection() {
+class KDocUnresolvedReferenceInspection(): AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         KDocUnresolvedReferenceVisitor(holder)
 

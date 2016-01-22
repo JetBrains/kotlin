@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-public class SubpackagesIndexService(private val project: Project) {
+class SubpackagesIndexService(private val project: Project) {
 
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
             {
@@ -38,7 +38,7 @@ public class SubpackagesIndexService(private val project: Project) {
             false
     )
 
-    public inner class SubpackagesIndex(allPackageFqNames: Collection<String>) {
+    inner class SubpackagesIndex(allPackageFqNames: Collection<String>) {
         // a map from any existing package (in kotlin) to a set of subpackages (not necessarily direct) containing files
         private val allPackageFqNames = hashSetOf<FqName>()
         private val fqNameByPrefix = MultiMap.createSet<FqName, FqName>()
@@ -49,7 +49,7 @@ public class SubpackagesIndexService(private val project: Project) {
                 this.allPackageFqNames.add(fqName)
 
                 var prefix = fqName
-                while (!prefix.isRoot()) {
+                while (!prefix.isRoot) {
                     prefix = prefix.parent()
                     fqNameByPrefix.putValue(prefix, fqName)
                 }
@@ -67,7 +67,7 @@ public class SubpackagesIndexService(private val project: Project) {
         fun getSubpackages(fqName: FqName, scope: GlobalSearchScope, nameFilter: (Name) -> Boolean): Collection<FqName> {
             val possibleFilesFqNames = fqNameByPrefix[fqName]
             val existingSubPackagesShortNames = HashSet<Name>()
-            val len = fqName.pathSegments().size()
+            val len = fqName.pathSegments().size
             for (filesFqName in possibleFilesFqNames) {
                 val candidateSubPackageShortName = filesFqName.pathSegments()[len]
                 if (candidateSubPackageShortName in existingSubPackagesShortNames || !nameFilter(candidateSubPackageShortName)) continue
@@ -83,8 +83,8 @@ public class SubpackagesIndexService(private val project: Project) {
     }
 
     companion object {
-        public fun getInstance(project: Project): SubpackagesIndex {
-            return ServiceManager.getService(project, javaClass<SubpackagesIndexService>())!!.cachedValue.getValue()!!
+        fun getInstance(project: Project): SubpackagesIndex {
+            return ServiceManager.getService(project, SubpackagesIndexService::class.java)!!.cachedValue.value!!
         }
     }
 }

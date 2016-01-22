@@ -30,15 +30,15 @@ import org.jetbrains.kotlin.js.inline.util.collectFunctionReferencesInside
  * At now, it only removes unused local functions and function literals,
  * because named functions can be referenced from another module.
  */
-public fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunction>) {
+fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunction>) {
     val removable = with(UnusedLocalFunctionsCollector(functions)) {
         process()
         accept(root)
         removableFunctions
     }
 
-    NodeRemover(javaClass<JsPropertyInitializer>()) {
-        val function = it.getValueExpr() as? JsFunction
+    NodeRemover(JsPropertyInitializer::class.java) {
+        val function = it.valueExpr as? JsFunction
         function != null && function in removable
     }.accept(root)
 }
@@ -48,10 +48,10 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
     private val functions = functions
     private val processed = IdentitySet<JsFunction>()
 
-    public val removableFunctions: List<JsFunction>
+    val removableFunctions: List<JsFunction>
         get() = tracker.removable
 
-    public fun process() {
+    fun process() {
         functions.filter { it.value.isLocal }
                  .forEach { tracker.addCandidateForRemoval(it.key, it.value) }
 
@@ -67,7 +67,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
     }
 
     override fun visit(x: JsPropertyInitializer, ctx: JsContext<*>): Boolean {
-        val value = x.getValueExpr()
+        val value = x.valueExpr
 
         return when (value) {
             is JsFunction -> !wasProcessed(value)
@@ -84,7 +84,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
     }
 
     override fun endVisit(x: JsNameRef, ctx: JsContext<*>) {
-        val name = x.getName()
+        val name = x.name
         if (isFunctionReference(x) && name != null) {
             tracker.markReachable(name)
         }
@@ -103,7 +103,7 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
     }
 
     private fun isFunctionReference(nameRef: HasName?): Boolean {
-        return nameRef?.getName()?.staticRef is JsFunction
+        return nameRef?.name?.staticRef is JsFunction
     }
 
     private fun wasProcessed(function: JsFunction?): Boolean = function != null && function in processed

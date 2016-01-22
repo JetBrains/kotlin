@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -35,18 +36,18 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 
-public class TracingStrategyForImplicitConstructorDelegationCall(
+class TracingStrategyForImplicitConstructorDelegationCall(
         val delegationCall: KtConstructorDelegationCall, call: Call
-) : AbstractTracingStrategy(delegationCall.getCalleeExpression()!!, call) {
+) : AbstractTracingStrategy(delegationCall.calleeExpression!!, call) {
 
-    val calleeExpression = delegationCall.getCalleeExpression()
+    val calleeExpression = delegationCall.calleeExpression
 
     override fun bindCall(trace: BindingTrace, call: Call) {
-        trace.record(CALL, call.getCalleeExpression(), call)
+        trace.record(CALL, call.calleeExpression, call)
     }
 
     override fun <D : CallableDescriptor> bindReference(trace: BindingTrace, resolvedCall: ResolvedCall<D>) {
-        val descriptor = resolvedCall.getCandidateDescriptor()
+        val descriptor = resolvedCall.candidateDescriptor
         val storedReference = trace.get(REFERENCE_TARGET, calleeExpression)
         if (storedReference == null || !ErrorUtils.isError(descriptor)) {
             trace.record(REFERENCE_TARGET, calleeExpression, descriptor)
@@ -82,8 +83,8 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
     }
 
     private fun reportError(trace: BindingTrace) {
-        if (!trace.getBindingContext().getDiagnostics().forElement(delegationCall).
-            any { it.getFactory() == Errors.EXPLICIT_DELEGATION_CALL_REQUIRED }
+        if (!trace.bindingContext.diagnostics.forElement(delegationCall).
+            any { it.factory == Errors.EXPLICIT_DELEGATION_CALL_REQUIRED }
         ) {
             trace.report(Errors.EXPLICIT_DELEGATION_CALL_REQUIRED.on(delegationCall))
         }
@@ -117,7 +118,7 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("missingReceiver")
     }
 
-    override fun wrongReceiverType(trace: BindingTrace, receiverParameter: ReceiverParameterDescriptor, receiverArgument: ReceiverValue) {
+    override fun wrongReceiverType(trace: BindingTrace, receiverParameter: ReceiverParameterDescriptor, receiverArgument: ReceiverValue, c: ResolutionContext<*>) {
         unexpectedError("wrongReceiverType")
     }
 
@@ -129,7 +130,7 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("wrongNumberOfTypeArguments")
     }
 
-    override fun typeInferenceFailed(trace: BindingTrace, data: InferenceErrorData) {
+    override fun typeInferenceFailed(context: ResolutionContext<*>, data: InferenceErrorData) {
         unexpectedError("typeInferenceFailed")
     }
 

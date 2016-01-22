@@ -43,8 +43,7 @@ class BridgeForBuiltinSpecial<Signature>(
 )
 
 object BuiltinSpecialBridgesUtil {
-    @JvmStatic
-    public fun <Signature> generateBridgesForBuiltinSpecial(
+    @JvmStatic fun <Signature> generateBridgesForBuiltinSpecial(
             function: FunctionDescriptor,
             signatureByDescriptor: (FunctionDescriptor) -> Signature
     ): Set<BridgeForBuiltinSpecial<Signature>> {
@@ -93,8 +92,7 @@ object BuiltinSpecialBridgesUtil {
         return bridges
     }
 
-    @JvmStatic
-    public fun <Signature> FunctionDescriptor.shouldHaveTypeSafeBarrier(
+    @JvmStatic fun <Signature> FunctionDescriptor.shouldHaveTypeSafeBarrier(
             signatureByDescriptor: (FunctionDescriptor) -> Signature
     ): Boolean {
         if (BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(this) == null) return false
@@ -143,7 +141,7 @@ private fun <Signature> needGenerateSpecialBridge(
                                         && signatureByDescriptor(it) == overriddenBuiltinSignature }
 }
 
-public fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
+fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
         element: KtElement,
         bindingContext: BindingContext
 ): Boolean {

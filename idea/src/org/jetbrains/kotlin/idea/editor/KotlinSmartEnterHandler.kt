@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
+class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
     init {
         addFixers(
                 KotlinIfConditionFixer(),
@@ -60,7 +60,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         while (atCaret != null) {
             when {
                 atCaret.isKotlinStatement() == true -> return atCaret
-                atCaret.getParent() is KtFunctionLiteral -> return atCaret
+                atCaret.parent is KtFunctionLiteral -> return atCaret
                 atCaret is KtDeclaration -> {
                     val declaration = atCaret
                     when {
@@ -71,15 +71,15 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 }
             }
 
-            atCaret = atCaret.getParent()
+            atCaret = atCaret.parent
         }
 
         return null
     }
 
     override fun moveCaretInsideBracesIfAny(editor: Editor, file: PsiFile) {
-        var caretOffset = editor.getCaretModel().getOffset()
-        val chars = editor.getDocument().getCharsSequence()
+        var caretOffset = editor.caretModel.offset
+        val chars = editor.document.charsSequence
 
         if (CharArrayUtil.regionMatches(chars, caretOffset, "{}")) {
             caretOffset += 2
@@ -92,10 +92,10 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
         caretOffset = CharArrayUtil.shiftBackward(chars, caretOffset - 1, " \t") + 1
 
-        if (CharArrayUtil.regionMatches(chars, caretOffset - "{}".length(), "{}") ||
-                CharArrayUtil.regionMatches(chars, caretOffset - "{\n}".length(), "{\n}")) {
+        if (CharArrayUtil.regionMatches(chars, caretOffset - "{}".length, "{}") ||
+            CharArrayUtil.regionMatches(chars, caretOffset - "{\n}".length, "{\n}")) {
             commit(editor)
-            val settings = CodeStyleSettingsManager.getSettings(file.getProject())
+            val settings = CodeStyleSettingsManager.getSettings(file.project)
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = false
             val elt = file.findElementAt(caretOffset - 1)!!.getStrictParentOfType<KtBlockExpression>()
@@ -103,48 +103,48 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 reformat(elt)
             }
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = old
-            editor.getCaretModel().moveToOffset(caretOffset - 1)
+            editor.caretModel.moveToOffset(caretOffset - 1)
         }
     }
 
-    public fun registerUnresolvedError(offset: Int) {
+    fun registerUnresolvedError(offset: Int) {
         if (myFirstErrorOffset > offset) {
             myFirstErrorOffset = offset
         }
     }
 
     private fun PsiElement.isKotlinStatement() = when {
-        getParent() is KtBlockExpression && getNode()?.getElementType() !in BRACES -> true
-        getParent()?.getNode()?.getElementType() in BRANCH_CONTAINERS && this !is KtBlockExpression -> true
+        parent is KtBlockExpression && node?.elementType !in BRACES -> true
+        parent?.node?.elementType in BRANCH_CONTAINERS && this !is KtBlockExpression -> true
         else -> false
     }
 
     class KotlinPlainEnterProcessor : SmartEnterProcessorWithFixers.FixEnterProcessor() {
         private fun getControlStatementBlock(caret: Int, element: PsiElement): KtExpression? {
             when (element) {
-                is KtDeclarationWithBody -> return element.getBodyExpression()
+                is KtDeclarationWithBody -> return element.bodyExpression
                 is KtIfExpression -> {
-                    if (element.getThen().isWithCaret(caret)) return element.getThen()
-                    if (element.getElse().isWithCaret(caret)) return element.getElse()
+                    if (element.then.isWithCaret(caret)) return element.then
+                    if (element.`else`.isWithCaret(caret)) return element.`else`
                 }
-                is KtLoopExpression -> return element.getBody()
+                is KtLoopExpression -> return element.body
             }
 
             return null
         }
 
         override fun doEnter(atCaret: PsiElement, file: PsiFile?, editor: Editor, modified: Boolean): Boolean {
-            val block = getControlStatementBlock(editor.getCaretModel().getOffset(), atCaret) as? KtBlockExpression
+            val block = getControlStatementBlock(editor.caretModel.offset, atCaret) as? KtBlockExpression
             if (block != null) {
-                val firstElement = block.getFirstChild()?.getNextSibling()
+                val firstElement = block.firstChild?.nextSibling
 
                 val offset = if (firstElement != null) {
-                    firstElement.getTextRange()!!.getStartOffset() - 1
+                    firstElement.textRange!!.startOffset - 1
                 } else {
-                    block.getTextRange()!!.getEndOffset()
+                    block.textRange!!.endOffset
                 }
 
-                editor.getCaretModel().moveToOffset(offset)
+                editor.caretModel.moveToOffset(offset)
             }
 
             plainEnter(editor)
@@ -155,4 +155,4 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
 private val BRANCH_CONTAINERS = TokenSet.create(KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.BODY)
 private val BRACES = TokenSet.create(KtTokens.RBRACE, KtTokens.LBRACE)
-private fun KtParameter.isInLambdaExpression() = this.getParent()?.getParent() is KtFunctionLiteral
+private fun KtParameter.isInLambdaExpression() = this.parent?.parent is KtFunctionLiteral

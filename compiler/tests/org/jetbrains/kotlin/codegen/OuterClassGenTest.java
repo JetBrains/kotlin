@@ -96,21 +96,21 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testLocalObjectInlined() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", null, null);
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "callToInline", "()V");
         doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineObject");
     }
 
     public void testLocalObjectInInlineLambda() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", null, null);
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
         doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineObject");
     }
 
     public void testLocalObjectInLambdaInlinedIntoObject() throws Exception {
-        OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", null, null);
+        OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
 
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineObject");
 
-        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", null, null);
+        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "run", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$lambda\\$lambda\\$1",
                      objectInLambda, "inlineObject");
     }
@@ -121,21 +121,21 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     public void testLambdaInlined() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", null, null);
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "callToInline", "()V");
         doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
     }
 
     public void testLambdaInInlineLambda() throws Exception {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", null, null);
+        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
         doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineLambda");
     }
 
     public void testLambdaInLambdaInlinedIntoObject() throws Exception {
-        OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", null, null);
+        OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
 
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineLambda");
 
-        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", null, null);
+        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "invoke", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$lambda\\$lambda\\$1",
                      objectInLambda, "inlineLambda");
     }

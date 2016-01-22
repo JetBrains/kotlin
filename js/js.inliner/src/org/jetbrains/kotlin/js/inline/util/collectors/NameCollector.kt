@@ -26,7 +26,7 @@ import com.google.dart.compiler.backend.js.ast.JsVars
 import java.util.HashMap
 
 class NameCollector(private val scope: JsScope) : RecursiveJsVisitor() {
-    public val names: MutableMap<String, JsName> = HashMap()
+    val names: MutableMap<String, JsName> = HashMap()
 
     override fun visit(x: JsVars.JsVar) {
         super.visit(x)
@@ -36,8 +36,8 @@ class NameCollector(private val scope: JsScope) : RecursiveJsVisitor() {
     override fun visitFunction(x: JsFunction) { }
 
     private fun addNameIfNeeded(hasName: HasName?) {
-        val name = hasName?.getName()
-        val ident = name?.getIdent()
+        val name = hasName?.name
+        val ident = name?.ident
 
         if (name == null || ident == null) return
 

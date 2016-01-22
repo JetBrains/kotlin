@@ -17,16 +17,11 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
 
-class ConvertPropertyInitializerToGetterIntention : SelfTargetingIntention<KtProperty>(javaClass(), "Convert property initializer to getter") {
+class ConvertPropertyInitializerToGetterIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Convert property initializer to getter") {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         return element.initializer != null
                && element.initializer?.textRange?.containsOffset(caretOffset) == true
@@ -35,8 +30,8 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingIntention<KtPro
                && !element.isLocal
     }
 
-    override fun applyTo(property: KtProperty, editor: Editor) {
-        convertPropertyInitializerToGetter(property, editor)
+    override fun applyTo(element: KtProperty, editor: Editor?) {
+        convertPropertyInitializerToGetter(element, editor)
     }
 
     companion object {

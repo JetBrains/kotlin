@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.console.actions.logError
 
 private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
-public class CommandExecutor(private val runner: KotlinConsoleRunner) {
+class CommandExecutor(private val runner: KotlinConsoleRunner) {
     private val commandHistory = runner.commandHistory
     private val historyUpdater = HistoryUpdater(runner)
 

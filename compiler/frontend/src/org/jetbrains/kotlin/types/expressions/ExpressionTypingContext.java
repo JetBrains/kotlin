@@ -20,10 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCacheImpl;
+import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -37,7 +34,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KotlinType expectedType
     ) {
-        return newContext(trace, scope, dataFlowInfo, expectedType, CallChecker.DoNothing.INSTANCE$);
+        return newContext(trace, scope, dataFlowInfo, expectedType, CallChecker.DoNothing.INSTANCE);
     }
 
     @NotNull
@@ -61,8 +58,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.contextDependency, context.resolutionResultsCache,
                 context.callChecker,
                 context.statementFilter,
-                context.isAnnotationContext, context.collectAllCandidates
-        );
+                context.isAnnotationContext, context.collectAllCandidates,
+                context.callPosition);
     }
 
     @NotNull
@@ -79,7 +76,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return new ExpressionTypingContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker,
-                statementFilter, isAnnotationContext, false);
+                statementFilter, isAnnotationContext, false, CallPosition.Unknown.INSTANCE);
     }
 
     private ExpressionTypingContext(
@@ -92,11 +89,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            @NotNull CallPosition callPosition
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
               callChecker,
-              statementFilter, isAnnotationContext, collectAllCandidates);
+              statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
     }
 
     @Override
@@ -108,11 +106,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            @NotNull CallPosition callPosition
     ) {
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache,
                                            callChecker,
-                                           statementFilter, isAnnotationContext, collectAllCandidates);
+                                           statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
     }
 }

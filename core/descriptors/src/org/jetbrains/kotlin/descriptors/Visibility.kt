@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-public abstract class Visibility protected constructor(
-        public val name: String,
-        public val isPublicAPI: Boolean
+abstract class Visibility protected constructor(
+        val name: String,
+        val isPublicAPI: Boolean
 ) {
-    public abstract fun isVisible(receiver: ReceiverValue?, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor): Boolean
+    abstract fun isVisible(receiver: ReceiverValue?, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor): Boolean
 
     /**
      * True, if it makes sense to check this visibility in imports and not import inaccessible declarations with such visibility.
@@ -34,7 +34,7 @@ public abstract class Visibility protected constructor(
      * it returns true for PRIVATE, because there's no point in importing privates: they are inaccessible unless their short name is
      * already available without an import
      */
-    public abstract fun mustCheckInImports(): Boolean
+    abstract fun mustCheckInImports(): Boolean
 
     /**
      * @return null if the answer is unknown
@@ -43,13 +43,13 @@ public abstract class Visibility protected constructor(
         return Visibilities.compareLocal(this, visibility)
     }
 
-    public open val displayName: String
+    open val displayName: String
         get() = name
 
     override final fun toString() = displayName
 
-    public open fun normalize(): Visibility = this
+    open fun normalize(): Visibility = this
 
     // Should be overloaded in Java visibilities
-    public open fun effectiveVisibility(descriptor: ClassDescriptor?) = effectiveVisibility(normalize(), descriptor)
+    open fun effectiveVisibility(descriptor: ClassDescriptor?) = effectiveVisibility(normalize(), descriptor)
 }

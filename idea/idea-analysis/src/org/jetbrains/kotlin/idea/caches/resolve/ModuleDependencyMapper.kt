@@ -46,7 +46,7 @@ fun createModuleResolverProvider(
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
 
     val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
-    val syntheticFilesModules = syntheticFilesByModule.keySet()
+    val syntheticFilesModules = syntheticFilesByModule.keys
     allModuleInfos.addAll(syntheticFilesModules)
 
     val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
@@ -58,7 +58,7 @@ fun createModuleResolverProvider(
 
         val jvmPlatformParameters = JvmPlatformParameters {
             javaClass: JavaClass ->
-            val psiClass = (javaClass as JavaClassImpl).getPsi()
+            val psiClass = (javaClass as JavaClassImpl).psi
             psiClass.getNullableModuleInfo()
         }
 
@@ -79,21 +79,21 @@ fun createModuleResolverProvider(
 }
 
 private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
-    val ideaModules = ModuleManager.getInstance(project).getModules().toList()
+    val ideaModules = ModuleManager.getInstance(project).modules.toList()
     val modulesSourcesInfos = ideaModules.flatMap { listOf(it.productionSourceInfo(), it.testSourceInfo()) }
 
     //TODO: (module refactoring) include libraries that are not among dependencies of any module
     val ideaLibraries = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).getOrderEntries().filterIsInstance<LibraryOrderEntry>().map {
-            it.getLibrary()
+        ModuleRootManager.getInstance(it).orderEntries.filterIsInstance<LibraryOrderEntry>().map {
+            it.library
         }
     }.filterNotNull().toSet()
 
     val librariesInfos = ideaLibraries.map { LibraryInfo(project, it) }
 
     val ideaSdks = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).getOrderEntries().filterIsInstance<JdkOrderEntry>().map {
-            it.getJdk()
+        ModuleRootManager.getInstance(it).orderEntries.filterIsInstance<JdkOrderEntry>().map {
+            it.jdk
         }
     }.filterNotNull().toSet()
 

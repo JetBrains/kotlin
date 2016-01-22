@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.debugger.breakpoints
 import com.intellij.util.xmlb.annotations.Attribute
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties
 
-public class KotlinPropertyBreakpointProperties(
+class KotlinPropertyBreakpointProperties(
         @Attribute var myFieldName: String = "",
         @Attribute var myClassName: String = ""
 ): JavaBreakpointProperties<KotlinPropertyBreakpointProperties>() {
-    public var WATCH_MODIFICATION: Boolean = true
-    public var WATCH_ACCESS: Boolean = false
-    public var WATCH_INITIALIZATION: Boolean = false
+    var WATCH_MODIFICATION: Boolean = true
+    var WATCH_ACCESS: Boolean = false
+    var WATCH_INITIALIZATION: Boolean = false
 
     override fun getState() = this
 

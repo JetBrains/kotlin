@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Mutable;

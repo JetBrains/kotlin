@@ -31,14 +31,14 @@ import java.util.*
 
 // TODO: optimize by reordering records to minimize storage of 'range' fields
 class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
-    public val strings = ArrayList<String>()
+    val strings = ArrayList<String>()
     private val records = ArrayList<Record.Builder>()
     private val map = HashMap<String, Int>()
     private val localNames = HashSet<Int>()
 
     override fun getStringIndex(string: String): Int =
             map.getOrPut(string) {
-                strings.size().apply {
+                strings.size.apply {
                     strings.add(string)
 
                     val lastRecord = records.lastOrNull()
@@ -78,7 +78,7 @@ class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
             }
         }
 
-        val index = strings.size()
+        val index = strings.size
         if (classId.isLocal) {
             localNames.add(index)
         }

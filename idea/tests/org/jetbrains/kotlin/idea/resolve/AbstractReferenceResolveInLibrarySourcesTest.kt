@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.Assert
 import junit.framework.AssertionFailedError
 
-public abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         private val REF_CARET_MARKER = "<ref-caret>"
     }
@@ -34,25 +34,25 @@ public abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLight
 
         fixture.configureByFile(path)
 
-        val expectedResolveData = AbstractReferenceResolveTest.readResolveData(fixture.getFile()!!.getText(), 0)
+        val expectedResolveData = AbstractReferenceResolveTest.readResolveData(fixture.file!!.text, 0)
 
-        val gotoData = NavigationTestUtils.invokeGotoImplementations(fixture.getEditor(), fixture.getFile())!!
-        Assert.assertEquals("Single target expected for origianl file", 1, gotoData.targets.size())
+        val gotoData = NavigationTestUtils.invokeGotoImplementations(fixture.editor, fixture.file)!!
+        Assert.assertEquals("Single target expected for origianl file", 1, gotoData.targets.size)
 
-        val testedPsiElement = gotoData.targets[0].getNavigationElement()
-        val testedElementFile = testedPsiElement.getContainingFile()!!
+        val testedPsiElement = gotoData.targets[0].navigationElement
+        val testedElementFile = testedPsiElement.containingFile!!
 
-        val lineContext = InTextDirectivesUtils.findStringWithPrefixes(fixture.getFile()!!.getText(), "CONTEXT:")
+        val lineContext = InTextDirectivesUtils.findStringWithPrefixes(fixture.file!!.text, "CONTEXT:")
         if (lineContext == null) {
-            throw AssertionFailedError("'CONTEXT: ' directive is expected to set up position in library file: ${testedElementFile.getName()}")
+            throw AssertionFailedError("'CONTEXT: ' directive is expected to set up position in library file: ${testedElementFile.name}")
         }
 
         val inContextOffset = lineContext.indexOf(REF_CARET_MARKER)
         if (inContextOffset == -1) throw IllegalStateException("No '$REF_CARET_MARKER' marker found in 'CONTEXT: $lineContext'")
 
         val contextStr = lineContext.replace(REF_CARET_MARKER, "")
-        val offsetInFile = testedElementFile.getText()!!.indexOf(contextStr)
-        if (offsetInFile == -1) throw IllegalStateException("Context '$contextStr' wasn't found in file ${testedElementFile.getName()}")
+        val offsetInFile = testedElementFile.text!!.indexOf(contextStr)
+        if (offsetInFile == -1) throw IllegalStateException("Context '$contextStr' wasn't found in file ${testedElementFile.name}")
 
         val offset = offsetInFile + inContextOffset
 
@@ -61,6 +61,6 @@ public abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLight
         AbstractReferenceResolveTest.checkReferenceResolve(expectedResolveData, offset, reference)
     }
 
-    override fun getTestDataPath() : String = File(PluginTestCaseBase.getTestDataPathBase(), "/resolve/referenceInLib").getPath() + File.separator
+    override fun getTestDataPath() : String = File(PluginTestCaseBase.getTestDataPathBase(), "/resolve/referenceInLib").path + File.separator
     override fun fileName(): String = getTestName(true) + ".kt"
 }

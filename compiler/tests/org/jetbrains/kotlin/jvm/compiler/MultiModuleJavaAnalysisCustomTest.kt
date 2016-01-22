@@ -45,7 +45,7 @@ import org.junit.Assert
 import java.io.File
 import java.util.HashMap
 
-public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
+class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
     private class TestModule(val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
                              val _dependencies: TestModule.() -> List<TestModule>) :
@@ -55,7 +55,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     fun testJavaEntitiesBelongToCorrectModule() {
-        val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it.isDirectory() }!!
+        val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it -> it.isDirectory }!!
         val environment = createEnvironment(moduleDirs)
         val modules = setupModules(environment, moduleDirs)
         val resolverForProject = JvmAnalyzerFacade.setupResolverForProject(
@@ -64,7 +64,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
                 { m -> ModuleContent(m.kotlinFiles, m.javaFilesScope) },
                 JvmPlatformParameters {
                     javaClass ->
-                    val moduleName = javaClass.getName().asString().toLowerCase().first().toString()
+                    val moduleName = javaClass.name.asString().toLowerCase().first().toString()
                     modules.first { it._name == moduleName }
                 },
                 CompilerEnvironment,
@@ -77,20 +77,20 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     private fun createEnvironment(moduleDirs: Array<File>): KotlinCoreEnvironment {
         val configuration = CompilerConfiguration()
         configuration.addJavaSourceRoots(moduleDirs.toList())
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(testRootDisposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     private fun setupModules(environment: KotlinCoreEnvironment, moduleDirs: Array<File>): List<TestModule> {
         val project = environment.project
         val modules = HashMap<String, TestModule>()
         for (dir in moduleDirs) {
-            val name = dir.getName()
-            val kotlinFiles = KotlinTestUtils.loadToJetFiles(environment, dir.listFiles { it.extension == "kt" }?.toList().orEmpty())
+            val name = dir.name
+            val kotlinFiles = KotlinTestUtils.loadToJetFiles(environment, dir.listFiles { it -> it.extension == "kt" }?.toList().orEmpty())
             val javaFilesScope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
                 override fun contains(file: VirtualFile): Boolean {
                     if (file !in myBaseScope!!) return false
-                    if (file.isDirectory()) return true
-                    return file.getParent()!!.getParent()!!.getName() == name
+                    if (file.isDirectory) return true
+                    return file.parent!!.parent!!.name == name
                 }
             }
             modules[name] = TestModule(name, kotlinFiles, javaFilesScope) {
@@ -102,7 +102,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
                 }
             }
         }
-        return modules.values().toList()
+        return modules.values.toList()
     }
 
     private fun performChecks(resolverForProject: ResolverForProject<TestModule>, modules: List<TestModule>) {
@@ -123,7 +123,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     private fun checkClass(classDescriptor: ClassDescriptor) {
-        classDescriptor.getDefaultType().getMemberScope().getContributedDescriptors().filterIsInstance<CallableDescriptor>().forEach {
+        classDescriptor.defaultType.memberScope.getContributedDescriptors().filterIsInstance<CallableDescriptor>().forEach {
             checkCallable(it)
         }
 
@@ -131,28 +131,28 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     private fun checkCallable(callable: CallableDescriptor) {
-        val name = callable.getName().asString()
+        val name = callable.name.asString()
         if (name in setOf("equals", "hashCode", "toString")) return
 
-        val returnType = callable.getReturnType()!!
+        val returnType = callable.returnType!!
         if (!KotlinBuiltIns.isUnit(returnType)) {
-            checkDescriptor(returnType.getConstructor().getDeclarationDescriptor()!!, callable)
+            checkDescriptor(returnType.constructor.declarationDescriptor!!, callable)
         }
 
-        callable.getValueParameters().map {
-            it.getType().getConstructor().getDeclarationDescriptor()!!
+        callable.valueParameters.map {
+            it.type.constructor.declarationDescriptor!!
         }.forEach { checkDescriptor(it, callable) }
 
-        callable.getAnnotations().map {
-            it.getType().getConstructor().getDeclarationDescriptor()!!
+        callable.annotations.map {
+            it.type.constructor.declarationDescriptor!!
         }.forEach { checkDescriptor(it, callable) }
     }
 
     private fun checkSupertypes(classDescriptor: ClassDescriptor) {
-        classDescriptor.getDefaultType().getConstructor().getSupertypes().filter {
+        classDescriptor.defaultType.constructor.supertypes.filter {
             !KotlinBuiltIns.isAnyOrNullableAny(it)
         }.map {
-            it.getConstructor().getDeclarationDescriptor()!!
+            it.constructor.declarationDescriptor!!
         }.forEach {
             checkDescriptor(it, classDescriptor)
         }
@@ -161,9 +161,9 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     private fun checkDescriptor(referencedDescriptor: ClassifierDescriptor, context: DeclarationDescriptor) {
         assert(!ErrorUtils.isError(referencedDescriptor)) { "Error descriptor: $referencedDescriptor" }
 
-        val descriptorName = referencedDescriptor.getName().asString()
+        val descriptorName = referencedDescriptor.name.asString()
         val expectedModuleName = "<${descriptorName.toLowerCase().first().toString()}>"
-        val moduleName = referencedDescriptor.module.getName().asString()
+        val moduleName = referencedDescriptor.module.name.asString()
         Assert.assertEquals(
                 "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
                 expectedModuleName, moduleName

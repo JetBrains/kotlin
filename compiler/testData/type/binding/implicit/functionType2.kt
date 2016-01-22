@@ -22,7 +22,7 @@ type: (Pair<Int, Float>) -> List<Int>
     typeProjection: List<Int>
     psi: val foo = getT<(Pair<Int, Float>) -> List<Int>>()
     type: List<Int>
-        typeParameter: <out E> defined in kotlin.List
+        typeParameter: <out E> defined in kotlin.collections.List
         typeProjection: Int
         psi: val foo = getT<(Pair<Int, Float>) -> List<Int>>()
         type: Int

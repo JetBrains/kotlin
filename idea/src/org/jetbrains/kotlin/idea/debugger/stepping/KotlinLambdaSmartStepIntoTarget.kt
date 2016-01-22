@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class KotlinLambdaSmartStepTarget(
+class KotlinLambdaSmartStepTarget(
         label: String,
         highlightElement: KtFunction,
         lines: Range<Int>,

@@ -35,23 +35,23 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
+class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
     override fun getFamilyName() = "Replace explicit lambda parameter with 'it'"
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
-        val functionLiteral = targetFunctionLiteral(element, editor.getCaretModel().getOffset()) ?: return false
+        val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset) ?: return false
 
-        val parameter = functionLiteral.getValueParameters().singleOrNull() ?: return false
-        if (parameter.getTypeReference() != null) return false
+        val parameter = functionLiteral.valueParameters.singleOrNull() ?: return false
+        if (parameter.typeReference != null) return false
 
-        setText("Replace explicit parameter '${parameter.getName()}' with 'it'")
+        text = "Replace explicit parameter '${parameter.name}' with 'it'"
         return true
     }
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        val caretOffset = editor.getCaretModel().getOffset()
-        val functionLiteral = targetFunctionLiteral(element, editor.getCaretModel().getOffset())!!
-        val cursorInParameterList = functionLiteral.getValueParameterList()!!.getTextRange().containsOffset(caretOffset)
+        val caretOffset = editor.caretModel.offset
+        val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset)!!
+        val cursorInParameterList = functionLiteral.valueParameterList!!.textRange.containsOffset(caretOffset)
         ParamRenamingProcessor(editor, functionLiteral, cursorInParameterList).run()
     }
 
@@ -60,12 +60,12 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
         if (expression != null) {
             val target = expression.mainReference.resolveToDescriptors(expression.analyze(BodyResolveMode.PARTIAL))
                                  .singleOrNull() as? ParameterDescriptor ?: return null
-            val functionDescriptor = target.getContainingDeclaration() as? AnonymousFunctionDescriptor ?: return null
+            val functionDescriptor = target.containingDeclaration as? AnonymousFunctionDescriptor ?: return null
             return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? KtFunctionLiteral
         }
 
         val functionLiteral = element.getParentOfType<KtFunctionLiteral>(true) ?: return null
-        val arrow = functionLiteral.getArrow() ?: return null
+        val arrow = functionLiteral.arrow ?: return null
         if (caretOffset > arrow.endOffset) return null
         return functionLiteral
     }
@@ -74,24 +74,24 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
             val editor: Editor,
             val functionLiteral: KtFunctionLiteral,
             val cursorWasInParameterList: Boolean
-    ) : RenameProcessor(editor.getProject(),
-                        functionLiteral.getValueParameters().single(),
+    ) : RenameProcessor(editor.project,
+                        functionLiteral.valueParameters.single(),
                         "it",
                         false,
                         false
     ) {
-        public override fun performRefactoring(usages: Array<out UsageInfo>) {
+        override fun performRefactoring(usages: Array<out UsageInfo>) {
             super.performRefactoring(usages)
 
-            functionLiteral.deleteChildRange(functionLiteral.getValueParameterList(), functionLiteral.getArrow()!!)
+            functionLiteral.deleteChildRange(functionLiteral.valueParameterList, functionLiteral.arrow!!)
 
             if (cursorWasInParameterList) {
-                editor.getCaretModel().moveToOffset(functionLiteral.getBodyExpression()!!.getTextOffset())
+                editor.caretModel.moveToOffset(functionLiteral.bodyExpression!!.textOffset)
             }
 
-            val project = functionLiteral.getProject()
-            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
-            CodeStyleManager.getInstance(project).adjustLineIndent(functionLiteral.getContainingFile(), functionLiteral.getTextRange())
+            val project = functionLiteral.project
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+            CodeStyleManager.getInstance(project).adjustLineIndent(functionLiteral.containingFile, functionLiteral.textRange)
 
         }
     }

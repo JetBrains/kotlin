@@ -1,10 +1,10 @@
 // Smart casts on complex expressions
 fun baz(s: String?): Int {
     if (s == null) return 0
-    return <!DEBUG_INFO_SMARTCAST!>when(<!DEBUG_INFO_SMARTCAST!>s<!>) {
-        "abc" -> s
+    return when(<!DEBUG_INFO_SMARTCAST!>s<!>) {
+        "abc" -> <!DEBUG_INFO_SMARTCAST!>s<!>
         else -> "xyz"
-    }<!>.length
+    }.length
 }
 
 var ss: String? = null

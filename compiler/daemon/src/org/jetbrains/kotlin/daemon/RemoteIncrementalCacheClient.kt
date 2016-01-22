@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.daemon
 
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
+import org.jetbrains.kotlin.modules.TargetId
 
 class RemoteIncrementalCacheClient(val facade: CompilerCallbackServicesFacade, val target: TargetId, val profiler: Profiler = DummyProfiler()): IncrementalCache {
 
@@ -31,7 +31,7 @@ class RemoteIncrementalCacheClient(val facade: CompilerCallbackServicesFacade, v
 
     override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? = profiler.withMeasure(this) { facade.incrementalCache_getMultifileFacadeParts(target, facadeInternalName) }
 
-    override fun getPackagePartData(fqName: String): JvmPackagePartProto? = profiler.withMeasure(this) { facade.incrementalCache_getPackagePartData(target, fqName) }
+    override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? = profiler.withMeasure(this) { facade.incrementalCache_getPackagePartData(target, partInternalName) }
 
     override fun getMultifileFacade(partInternalName: String): String? = profiler.withMeasure(this) { facade.incrementalCache_getMultifileFacade(target, partInternalName) }
 

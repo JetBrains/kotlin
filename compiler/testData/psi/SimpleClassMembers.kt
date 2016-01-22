@@ -12,9 +12,6 @@ class foo {
         val x
 
         var f
-
-        typealias foo = bar
-
     }
 
     class Bar {
@@ -45,9 +42,6 @@ class foo {
         val x
 
         var f
-
-        typealias foo = bar
-
     }
 
     fun foo()
@@ -55,8 +49,6 @@ class foo {
     val x
 
     var f
-
-    typealias foo = bar
 
     companion object {
 

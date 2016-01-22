@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.daemon.client
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCancelledException
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -51,7 +53,7 @@ class CompilerCallbackServicesFacadeServer(
 
     override fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String? = incrementalCompilationComponents!!.getIncrementalCache(target).getMultifileFacade(partInternalName)
 
-    override fun incrementalCache_getPackagePartData(target: TargetId, fqName: String): JvmPackagePartProto? = incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(fqName)
+    override fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto? = incrementalCompilationComponents!!.getIncrementalCache(target).getPackagePartData(partInternalName)
 
     override fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray? = incrementalCompilationComponents!!.getIncrementalCache(target).getModuleMappingData()
 
@@ -80,6 +82,13 @@ class CompilerCallbackServicesFacadeServer(
     override fun lookupTracker_isDoNothing(): Boolean = lookupTracker_isDoNothing
 
     override fun compilationCanceledStatus_checkCanceled() {
-        compilationCancelledStatus!!.checkCanceled()
+        try {
+            compilationCancelledStatus!!.checkCanceled()
+        }
+        catch (e: ProcessCanceledException) {
+            // avoid passing exceptions that may have different serialVersionUID on across rmi border
+            // TODO: doublecheck whether we need to distinguish different cancellation exceptions
+            throw RmiFriendlyCompilationCancelledException()
+        }
     }
 }

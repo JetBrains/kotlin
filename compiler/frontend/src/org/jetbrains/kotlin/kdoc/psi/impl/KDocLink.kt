@@ -24,21 +24,21 @@ import org.jetbrains.kotlin.psi.KtElementImpl
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class KDocLink(node: ASTNode) : KtElementImpl(node) {
-    public fun getLinkText(): String = getLinkTextRange().substring(getText())
+class KDocLink(node: ASTNode) : KtElementImpl(node) {
+    fun getLinkText(): String = getLinkTextRange().substring(text)
 
-    public fun getLinkTextRange(): TextRange {
-        val text = getText()
+    fun getLinkTextRange(): TextRange {
+        val text = text
         if (text.startsWith('[') && text.endsWith(']')) {
-            return TextRange(1, text.length() - 1)
+            return TextRange(1, text.length - 1)
         }
-        return TextRange(0, text.length())
+        return TextRange(0, text.length)
     }
 
     /**
      * If this link is the subject of a tag, returns the tag. Otherwise, returns null.
      */
-    public fun getTagIfSubject(): KDocTag? {
+    fun getTagIfSubject(): KDocTag? {
         val tag = getStrictParentOfType<KDocTag>()
         return if (tag != null && tag.getSubjectLink() == this) tag else null
     }

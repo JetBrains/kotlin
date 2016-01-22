@@ -32,39 +32,39 @@ import org.jetbrains.kotlin.idea.refactoring.pushDown.KotlinPushDownHandler
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.canDeleteElement
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
+class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun isSafeDeleteAvailable(element: PsiElement) = element.canDeleteElement()
 
     override fun getIntroduceVariableHandler() = KotlinIntroduceVariableHandler
 
     override fun getIntroduceParameterHandler() = KotlinIntroduceParameterHandler()
 
-    public fun getIntroduceLambdaParameterHandler(): RefactoringActionHandler = KotlinIntroduceLambdaParameterHandler()
+    fun getIntroduceLambdaParameterHandler(): RefactoringActionHandler = KotlinIntroduceLambdaParameterHandler()
 
-    public fun getIntroducePropertyHandler(): RefactoringActionHandler = KotlinIntroducePropertyHandler()
+    fun getIntroducePropertyHandler(): RefactoringActionHandler = KotlinIntroducePropertyHandler()
 
-    public fun getExtractFunctionHandler(): RefactoringActionHandler =
+    fun getExtractFunctionHandler(): RefactoringActionHandler =
             ExtractKotlinFunctionHandler()
 
-    public fun getExtractFunctionToScopeHandler(): RefactoringActionHandler =
+    fun getExtractFunctionToScopeHandler(): RefactoringActionHandler =
             ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandler.InteractiveExtractionHelper)
 
     override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
         when (element) {
             is KtProperty -> {
-                if (element.isLocal()) return true
+                if (element.isLocal) return true
             }
             is KtDestructuringDeclarationEntry -> return true
             is KtFunction -> {
-                if (element.isLocal() && element.nameIdentifier != null) return true
+                if (element.isLocal && element.nameIdentifier != null) return true
             }
             is KtParameter -> {
-                val parent = element.getParent()
+                val parent = element.parent
                 if (parent is KtForExpression) {
                     return true
                 }
                 if (parent is KtParameterList) {
-                    val grandparent = parent.getParent()
+                    val grandparent = parent.parent
                     return grandparent is KtCatchClause || grandparent is KtFunctionLiteral
                 }
             }

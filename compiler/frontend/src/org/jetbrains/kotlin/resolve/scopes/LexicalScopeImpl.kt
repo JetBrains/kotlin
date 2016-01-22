@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.utils.Printer
 
-public class LexicalScopeImpl @JvmOverloads constructor(
+class LexicalScopeImpl @JvmOverloads constructor(
         parent: HierarchicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
@@ -59,13 +59,13 @@ public class LexicalScopeImpl @JvmOverloads constructor(
 
     inner class InitializeHandler() {
 
-        public fun addVariableDescriptor(variableDescriptor: VariableDescriptor): Unit
+        fun addVariableDescriptor(variableDescriptor: VariableDescriptor): Unit
                 = this@LexicalScopeImpl.addVariableOrClassDescriptor(variableDescriptor)
 
-        public fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor): Unit
+        fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor): Unit
                 = this@LexicalScopeImpl.addFunctionDescriptorInternal(functionDescriptor)
 
-        public fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor): Unit
+        fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor): Unit
                 = this@LexicalScopeImpl.addVariableOrClassDescriptor(classifierDescriptor)
 
     }

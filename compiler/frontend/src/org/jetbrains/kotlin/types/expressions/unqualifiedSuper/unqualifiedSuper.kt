@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 
-public fun resolveUnqualifiedSuperFromExpressionContext(
+fun resolveUnqualifiedSuperFromExpressionContext(
         superExpression: KtSuperExpression,
         supertypes: Collection<KotlinType>,
         anyType: KotlinType
@@ -72,11 +72,11 @@ public fun resolveUnqualifiedSuperFromExpressionContext(
 private val ARITY_OF_METHODS_OF_ANY = hashMapOf("hashCode" to 0, "equals" to 1, "toString" to 0)
 
 private fun isCallingMethodOfAny(callExpression: KtCallExpression, calleeName: Name): Boolean =
-        ARITY_OF_METHODS_OF_ANY.getOrElse(calleeName.asString(), { -1 }) == callExpression.valueArguments.size()
+        ARITY_OF_METHODS_OF_ANY.getOrElse(calleeName.asString(), { -1 }) == callExpression.valueArguments.size
 
-public fun isPossiblyAmbiguousUnqualifiedSuper(superExpression: KtSuperExpression, supertypes: Collection<KotlinType>): Boolean =
-        supertypes.size() > 1 ||
-        (supertypes.size() == 1 && supertypes.single().isInterface() && isCallingMethodOfAnyWithSuper(superExpression))
+fun isPossiblyAmbiguousUnqualifiedSuper(superExpression: KtSuperExpression, supertypes: Collection<KotlinType>): Boolean =
+        supertypes.size > 1 ||
+        (supertypes.size == 1 && supertypes.single().isInterface() && isCallingMethodOfAnyWithSuper(superExpression))
 
 private fun isCallingMethodOfAnyWithSuper(superExpression: KtSuperExpression): Boolean {
     val parent = superExpression.parent

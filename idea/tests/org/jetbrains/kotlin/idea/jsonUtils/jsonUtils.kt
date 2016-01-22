@@ -23,5 +23,5 @@ fun JsonObject.getString(name: String): String {
 }
 
 fun JsonObject.getNullableString(name: String): String? {
-    return this[name]?.getAsString()
+    return this[name]?.asString
 }

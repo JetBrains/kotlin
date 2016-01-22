@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -59,7 +59,7 @@ fun selectElementsWithTargetSibling(
 
         val outermostParent = parent.getOutermostParentContainedIn(targetContainer)
         if (outermostParent == null) {
-            showErrorHintByKey(file.getProject(), editor, "cannot.refactor.no.container", operationName)
+            showErrorHintByKey(file.project, editor, "cannot.refactor.no.container", operationName)
             return
         }
 
@@ -77,7 +77,7 @@ fun selectElementsWithTargetParent(
         continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
     fun showErrorHintByKey(key: String) {
-        showErrorHintByKey(file.getProject(), editor, key, operationName)
+        showErrorHintByKey(file.project, editor, key, operationName)
     }
 
     fun selectTargetContainer(elements: List<PsiElement>) {
@@ -102,8 +102,8 @@ fun selectElementsWithTargetParent(
     }
 
     fun selectMultipleExpressions() {
-        val startOffset = editor.getSelectionModel().getSelectionStart()
-        val endOffset = editor.getSelectionModel().getSelectionEnd()
+        val startOffset = editor.selectionModel.selectionStart
+        val endOffset = editor.selectionModel.selectionEnd
 
         val elements = CodeInsightUtils.findStatements(file, startOffset, endOffset)
         if (elements.isEmpty()) {
@@ -120,20 +120,20 @@ fun selectElementsWithTargetParent(
                 selectTargetContainer(listOf(expr))
             }
             else {
-                if (!editor.getSelectionModel().hasSelection()) {
+                if (!editor.selectionModel.hasSelection()) {
                     val elementAtCaret = file.findElementAt(editor.caretModel.offset)
                     elementAtCaret?.getParentOfTypeAndBranch<KtProperty> { nameIdentifier }?.let {
                         return@selectExpression selectTargetContainer(listOf(it))
                     }
 
-                    editor.getSelectionModel().selectLineAtCaret()
+                    editor.selectionModel.selectLineAtCaret()
                 }
                 selectMultipleExpressions()
             }
         }
     }
 
-    editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE)
+    editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
     selectSingleExpression()
 }
 

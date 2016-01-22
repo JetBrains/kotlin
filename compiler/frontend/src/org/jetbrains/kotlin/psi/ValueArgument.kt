@@ -19,30 +19,29 @@ package org.jetbrains.kotlin.psi
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.name.Name
 
-public interface ValueArgument {
-    @IfNotParsed
-    public fun getArgumentExpression(): KtExpression?
+interface ValueArgument {
+    @IfNotParsed fun getArgumentExpression(): KtExpression?
 
-    public fun getArgumentName(): ValueArgumentName?
+    fun getArgumentName(): ValueArgumentName?
 
-    public fun isNamed(): Boolean
+    fun isNamed(): Boolean
 
-    public fun asElement(): KtElement
+    fun asElement(): KtElement
 
     /* The '*' in something like foo(*arr) i.e. pass an array as a number of vararg arguments */
-    public fun getSpreadElement(): LeafPsiElement?
+    fun getSpreadElement(): LeafPsiElement?
 
     /* The argument is placed externally to call element, e.g. in 'when' condition with subject: 'when (a) { in c -> }' */
-    public fun isExternal(): Boolean
+    fun isExternal(): Boolean
 }
 
-public interface LambdaArgument : ValueArgument {
-    public fun getLambdaExpression(): KtLambdaExpression
+interface LambdaArgument : ValueArgument {
+    fun getLambdaExpression(): KtLambdaExpression
 
     override fun getArgumentExpression(): KtExpression
 }
 
-public interface ValueArgumentName {
-    public val asName: Name
-    public val referenceExpression: KtSimpleNameExpression?
+interface ValueArgumentName {
+    val asName: Name
+    val referenceExpression: KtSimpleNameExpression?
 }

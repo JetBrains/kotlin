@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : KotlinQuickFixAction<KtNamedFunction>(element), CleanupFix {
+class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : KotlinQuickFixAction<KtNamedFunction>(element), CleanupFix {
     override fun getText(): String = "Remove identifier from anonymous function"
-    override fun getFamilyName(): String = getText()
+    override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) = removeNameFromFunction(element)
 
@@ -38,7 +38,7 @@ public class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : Kot
 
         private fun removeNameFromFunction(function: KtNamedFunction) {
             var wereAutoLabelUsages = false
-            val name = function.getNameAsName() ?: return
+            val name = function.nameAsName ?: return
 
             function.forEachDescendantOfType<KtReturnExpression> {
                 if (!wereAutoLabelUsages && it.getLabelNameAsName() == name) {
@@ -46,7 +46,7 @@ public class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : Kot
                 }
             }
 
-            function.getNameIdentifier()?.delete()
+            function.nameIdentifier?.delete()
 
             if (wereAutoLabelUsages) {
                 val psiFactory = KtPsiFactory(function)

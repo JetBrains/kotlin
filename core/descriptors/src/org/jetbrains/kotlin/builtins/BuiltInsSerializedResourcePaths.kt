@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
-public object BuiltInsSerializedResourcePaths : SerializedResourcePaths() {
-    public override val extensionRegistry: ExtensionRegistryLite
+object BuiltInsSerializedResourcePaths : SerializedResourcePaths {
+    override val extensionRegistry: ExtensionRegistryLite
 
     init {
         extensionRegistry = ExtensionRegistryLite.newInstance()
@@ -33,22 +33,26 @@ public object BuiltInsSerializedResourcePaths : SerializedResourcePaths() {
     val CLASS_METADATA_FILE_EXTENSION = "kotlin_class"
     val PACKAGE_FILE_EXTENSION = "kotlin_package"
     val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
+    val BUILTINS_FILE_EXTENSION = "kotlin_builtins"
 
-    public override fun getClassMetadataPath(classId: ClassId): String {
-        return packageFqNameToPath(classId.getPackageFqName()) + "/" + classId.getRelativeClassName().asString() +
+    override fun getClassMetadataPath(classId: ClassId): String {
+        return packageFqNameToPath(classId.packageFqName) + "/" + classId.relativeClassName.asString() +
                "." + CLASS_METADATA_FILE_EXTENSION
     }
 
-    public override fun getPackageFilePath(fqName: FqName): String =
+    override fun getPackageFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + PACKAGE_FILE_EXTENSION
 
-    public override fun getStringTableFilePath(fqName: FqName): String =
+    override fun getStringTableFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + STRING_TABLE_FILE_EXTENSION
+
+    fun getBuiltInsFilePath(fqName: FqName): String =
+            packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + BUILTINS_FILE_EXTENSION
 
 
     private fun packageFqNameToPath(fqName: FqName): String =
             fqName.asString().replace('.', '/')
 
     private fun shortName(fqName: FqName): String =
-            if (fqName.isRoot()) "default-package" else fqName.shortName().asString()
+            if (fqName.isRoot) "default-package" else fqName.shortName().asString()
 }

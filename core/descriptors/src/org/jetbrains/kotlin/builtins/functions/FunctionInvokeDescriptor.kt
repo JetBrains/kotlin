@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-public class FunctionInvokeDescriptor private constructor(
+class FunctionInvokeDescriptor private constructor(
         private val container: DeclarationDescriptor,
         private val original: FunctionInvokeDescriptor?,
         private val callableKind: CallableMemberDescriptor.Kind
@@ -63,12 +63,12 @@ public class FunctionInvokeDescriptor private constructor(
             val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION)
             result.initialize(
                     null,
-                    functionClass.getThisAsReceiverParameter(),
+                    functionClass.thisAsReceiverParameter,
                     listOf(),
-                    typeParameters.takeWhile { it.getVariance() == Variance.IN_VARIANCE }
+                    typeParameters.takeWhile { it.variance == Variance.IN_VARIANCE }
                             .withIndex()
                             .map { createValueParameter(result, it.index, it.value) },
-                    typeParameters.last().getDefaultType(),
+                    typeParameters.last().defaultType,
                     Modality.ABSTRACT,
                     Visibilities.PUBLIC
             )
@@ -81,7 +81,7 @@ public class FunctionInvokeDescriptor private constructor(
                 index: Int,
                 typeParameter: TypeParameterDescriptor
         ): ValueParameterDescriptor {
-            val typeParameterName = typeParameter.getName().asString()
+            val typeParameterName = typeParameter.name.asString()
             val name = when (typeParameterName) {
                 "T" -> "instance"
                 "E" -> "receiver"
@@ -95,7 +95,7 @@ public class FunctionInvokeDescriptor private constructor(
                     containingDeclaration, null, index,
                     Annotations.EMPTY,
                     Name.identifier(name),
-                    typeParameter.getDefaultType(),
+                    typeParameter.defaultType,
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,

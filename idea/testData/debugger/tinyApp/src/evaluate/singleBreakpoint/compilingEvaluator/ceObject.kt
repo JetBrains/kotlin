@@ -2,7 +2,7 @@ package ceObject
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 interface T {

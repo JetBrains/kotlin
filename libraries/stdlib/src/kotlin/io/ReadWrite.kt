@@ -9,20 +9,31 @@ import java.util.NoSuchElementException
 
 
 /** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
-public fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
+public fun Reader.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader
         = if (this is BufferedReader) this else BufferedReader(this, bufferSize)
 
 /** Returns a buffered reader wrapping this Writer, or this Writer itself if it is already buffered. */
-public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
+public fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter
         = if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
 /**
- * Iterates through each line of this reader, calls [block] for each line read
+ * Iterates through each line of this reader, calls [action] for each line read
  * and closes the [Reader] when it's completed.
  *
- * @param block function to process file lines.
+ * @param action function to process file lines.
  */
-public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { it.forEach(block) }
+public fun Reader.forEachLine(action: (String) -> Unit): Unit = useLines { it.forEach(action) }
+
+/**
+ * Reads this reader content as a list of lines.
+ *
+ * Do not use this function for huge files.
+ */
+public fun Reader.readLines(): List<String> {
+    val result = arrayListOf<String>()
+    forEachLine { result.add(it) }
+    return result
+}
 
 /**
  * Calls the [block] callback giving it a sequence of all the lines in this file and closes the reader once
@@ -96,7 +107,7 @@ public fun Reader.readText(): String {
  * @param bufferSize size of character buffer to use in process.
  * @return number of bytes copies.
  */
-public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long {
+public fun Reader.copyTo(out: Writer, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     var charsCopied: Long = 0
     val buffer = CharArray(bufferSize)
     var chars = read(buffer)
@@ -116,7 +127,8 @@ public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long
  * @param charset a character set to use.
  * @return a string with this URL entire content.
  */
-public fun URL.readText(charset: String): String = readBytes().toString(charset)
+@Deprecated("Use URL.readText(Charset) instead.", ReplaceWith("this.readText(charset(charset))"), level = DeprecationLevel.ERROR)
+public fun URL.readText(charset: String): String = readBytes().toString(charset(charset))
 
 /**
  * Reads the entire content of this URL as a String using UTF-8 or the specified [charset].

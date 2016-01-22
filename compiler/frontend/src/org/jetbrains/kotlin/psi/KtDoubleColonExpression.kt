@@ -21,14 +21,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
-    public val typeReference: KtTypeReference?
+abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
+    val typeReference: KtTypeReference?
         get() = findChildByType(KtNodeTypes.TYPE_REFERENCE)
 
-    public val doubleColonTokenReference: PsiElement
+    val doubleColonTokenReference: PsiElement
         get() = findChildByType(KtTokens.COLONCOLON)!!
 
-    public fun setTypeReference(typeReference: KtTypeReference) {
+    fun setTypeReference(typeReference: KtTypeReference) {
         val oldTypeReference = this.typeReference
         if (oldTypeReference != null) {
             oldTypeReference.replace(typeReference)

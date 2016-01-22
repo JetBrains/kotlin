@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtFunction
 import java.util.*
 
-public fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariable>): Boolean {
+fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariable>): Boolean {
     return visibleVariables.any { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 
-public fun numberOfInlinedFunctions(visibleVariables: List<LocalVariable>): Int {
+fun numberOfInlinedFunctions(visibleVariables: List<LocalVariable>): Int {
     return visibleVariables.count { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 

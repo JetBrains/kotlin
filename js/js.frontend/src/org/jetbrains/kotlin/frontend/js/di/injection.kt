@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
-public fun createTopDownAnalyzerForJs(
+fun createTopDownAnalyzerForJs(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory

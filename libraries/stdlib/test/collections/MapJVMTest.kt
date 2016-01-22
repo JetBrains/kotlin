@@ -1,10 +1,12 @@
 package test.collections
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.expect
 import org.junit.Test as test
+import kotlin.comparisons.*
 
 class MapJVMTest {
     @test fun createSortedMap() {
@@ -42,7 +44,7 @@ class MapJVMTest {
     }
 
     @test fun iterateAndRemove() {
-        val map = (1..5).toMap({ it }, { 'a' + it }).toLinkedMap()
+        val map = (1..5).toMapBy({ it }, { 'a' + it }).toLinkedMap()
         val iterator = map.iterator()
         while (iterator.hasNext()) {
             if (iterator.next().key % 2 == 0)
@@ -51,14 +53,13 @@ class MapJVMTest {
         assertEquals(listOf(1, 3, 5), map.keys.toList())
         assertEquals(listOf('b', 'd', 'f'), map.values.toList())
     }
-
+    
     @test fun getOrPutFailsOnConcurrentMap() {
         val map = ConcurrentHashMap<String, Int>()
 
-        // now this is an error
-        // map.getOrPut("x") { 1 }
+        // not an error anymore
         expect(1) {
-            map.concurrentGetOrPut("x") { 1 }
+            map.getOrPut("x") { 1 }
         }
         expect(1) {
             (map as MutableMap<String, Int>).getOrPut("x") { 1 }

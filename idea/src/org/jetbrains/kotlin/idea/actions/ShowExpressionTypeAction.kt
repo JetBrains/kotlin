@@ -37,27 +37,26 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
-@Deprecated("Remove once we no longer support IDEA 14.1")
-public class ShowExpressionTypeAction : AnAction() {
+@Deprecated("Remove once we no longer support IDEA 14.1") class ShowExpressionTypeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val editor = e.getData(CommonDataKeys.EDITOR) ?: return
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
 
-        val type = if (editor.getSelectionModel().hasSelection()) {
-            val startOffset = editor.getSelectionModel().getSelectionStart()
-            val endOffset = editor.getSelectionModel().getSelectionEnd()
-            val expression = CodeInsightUtilCore.findElementInRange<KtExpression>(psiFile, startOffset, endOffset, javaClass<KtExpression>(), KotlinLanguage.INSTANCE) ?: return
+        val type = if (editor.selectionModel.hasSelection()) {
+            val startOffset = editor.selectionModel.selectionStart
+            val endOffset = editor.selectionModel.selectionEnd
+            val expression = CodeInsightUtilCore.findElementInRange<KtExpression>(psiFile, startOffset, endOffset, KtExpression::class.java, KotlinLanguage.INSTANCE) ?: return
             typeByExpression(expression)
         }
         else {
-            val offset = editor.getCaretModel().getOffset()
+            val offset = editor.caretModel.offset
             val token = psiFile.findElementAt(offset) ?: return
             val pair = token.parents
                                .filterIsInstance<KtExpression>()
                                .map { it to typeByExpression(it) }
                                .firstOrNull { it.second != null } ?: return
             val (expression, type) = pair
-            editor.getSelectionModel().setSelection(expression.startOffset, expression.endOffset)
+            editor.selectionModel.setSelection(expression.startOffset, expression.endOffset)
             type
         }
 
@@ -76,7 +75,7 @@ public class ShowExpressionTypeAction : AnAction() {
 
         val editor = e.getData<Editor>(CommonDataKeys.EDITOR)
         val psiFile = e.getData<PsiFile>(CommonDataKeys.PSI_FILE)
-        e.getPresentation().setEnabled(editor != null && psiFile is KtFile)
+        e.presentation.isEnabled = editor != null && psiFile is KtFile
     }
 
     companion object {
@@ -88,7 +87,7 @@ public class ShowExpressionTypeAction : AnAction() {
             if (expression is KtCallableDeclaration) {
                 val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, expression] as? CallableDescriptor
                 if (descriptor != null) {
-                    return descriptor.getReturnType()
+                    return descriptor.returnType
                 }
             }
 

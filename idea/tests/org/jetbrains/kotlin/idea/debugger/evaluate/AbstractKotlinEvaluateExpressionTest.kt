@@ -61,7 +61,7 @@ import java.io.File
 import java.util.*
 import javax.swing.tree.TreeNode
 
-public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
+abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(KotlinEvaluateExpressionCache::class.java)!!
 
     private var appender: AppenderSkeleton? = null
@@ -72,16 +72,16 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     override fun setUp() {
         super.setUp()
 
-        val classRenderer = NodeRendererSettings.getInstance()!!.getClassRenderer()!!
+        val classRenderer = NodeRendererSettings.getInstance()!!.classRenderer!!
         oldShowFqTypeNames = classRenderer.SHOW_FQ_TYPE_NAMES
         classRenderer.SHOW_FQ_TYPE_NAMES = true
 
-        oldLogLevel = logger.getLevel()
-        logger.setLevel(Level.DEBUG)
+        oldLogLevel = logger.level
+        logger.level = Level.DEBUG
 
         appender = object : AppenderSkeleton() {
             override fun append(event: LoggingEvent?) {
-                println(event?.getRenderedMessage(), ProcessOutputTypes.SYSTEM)
+                println(event?.renderedMessage, ProcessOutputTypes.SYSTEM)
             }
             override fun close() {}
             override fun requiresLayout() = false
@@ -91,13 +91,13 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     override fun tearDown() {
-        logger.setLevel(oldLogLevel)
+        logger.level = oldLogLevel
         logger.removeAppender(appender)
 
         appender = null
         oldLogLevel = null
 
-        NodeRendererSettings.getInstance()!!.getClassRenderer()!!.SHOW_FQ_TYPE_NAMES = oldShowFqTypeNames
+        NodeRendererSettings.getInstance()!!.classRenderer!!.SHOW_FQ_TYPE_NAMES = oldShowFqTypeNames
 
         super.tearDown()
     }
@@ -223,7 +223,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     fun getExtraVars(): Set<TextWithImports> {
-        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext.getSourcePosition(), evaluationContext, hashSetOf())
+        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext.sourcePosition, evaluationContext, hashSetOf())
     }
 
     private inner class Printer() {
@@ -313,16 +313,16 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     private fun findFilesWithBlocks(mainFile: File): List<File> {
-        val mainFileName = mainFile.getName()
-        return mainFile.getParentFile()?.listFiles()?.filter { it.name.startsWith(mainFileName) && it.name != mainFileName } ?: Collections.emptyList()
+        val mainFileName = mainFile.name
+        return mainFile.parentFile?.listFiles()?.filter { it.name.startsWith(mainFileName) && it.name != mainFileName } ?: Collections.emptyList()
     }
 
     private fun createContextElement(context: SuspendContextImpl): PsiElement {
         val contextElement = ContextUtil.getContextElement(debuggerContext)!!
-        Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
+        Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.text}",
                           KotlinCodeFragmentFactory().isContextAccepted(contextElement))
 
-        val labelsAsText = InTextDirectivesUtils.findLinesWithPrefixesRemoved(contextElement.getContainingFile().getText(), "// DEBUG_LABEL: ")
+        val labelsAsText = InTextDirectivesUtils.findLinesWithPrefixesRemoved(contextElement.containingFile.text, "// DEBUG_LABEL: ")
         if (labelsAsText.isEmpty()) return contextElement
 
         val markupMap = hashMapOf<com.sun.jdi.Value, ValueMarkup>()
@@ -331,16 +331,16 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             assert(labelParts.size == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
             val localVariableName = labelParts[0].trim()
             val labelName = labelParts[1].trim()
-            val localVariable = context.getFrameProxy()!!.visibleVariableByName(localVariableName)
+            val localVariable = context.frameProxy!!.visibleVariableByName(localVariableName)
             assert(localVariable != null) { "Couldn't find localVariable for label: name = $localVariableName" }
-            val localVariableValue = context.getFrameProxy()!!.getValue(localVariable)
+            val localVariableValue = context.frameProxy!!.getValue(localVariable)
             assert(localVariableValue != null) { "Local variable $localVariableName should be an ObjectReference" }
             localVariableValue!!
             markupMap.put(localVariableValue, ValueMarkup(labelName, null, labelName))
         }
 
         val (text, labels) = KotlinCodeFragmentFactory.createCodeFragmentForLabeledObjects(contextElement.project, markupMap)
-        return KotlinCodeFragmentFactory().createWrappingContext(text, labels, KotlinCodeFragmentFactory.getContextElement(contextElement), getProject())!!
+        return KotlinCodeFragmentFactory().createWrappingContext(text, labels, KotlinCodeFragmentFactory.getContextElement(contextElement), project)!!
     }
 
     private fun SuspendContextImpl.evaluate(text: String, codeFragmentKind: CodeFragmentKind, expectedResult: String) {
@@ -348,7 +348,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = createContextElement(this)
 
-            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, evaluationContext.frameProxy)
+            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, this@AbstractKotlinEvaluateExpressionTest.evaluationContext.frameProxy)
 
             try {
 
@@ -360,7 +360,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
                 if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
 
-                val value = evaluator.evaluate(evaluationContext)
+                val value = evaluator.evaluate(this@AbstractKotlinEvaluateExpressionTest.evaluationContext)
                 val actualResult = value.asValue().asString()
 
                 Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)

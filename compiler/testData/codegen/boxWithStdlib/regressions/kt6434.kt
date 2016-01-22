@@ -7,7 +7,7 @@ class C(val nums: Map<E, Int>) {
     val normalizedNums = loadNormalizedNums()
 
     private fun loadNormalizedNums(): Map<E, Float> {
-        val vals = nums.values()
+        val vals = nums.values
         val min = vals.min()!!
         val max = vals.max()!!
         val rangeDiff = (max - min).toFloat()
@@ -23,6 +23,6 @@ class C(val nums: Map<E, Int>) {
 }
 
 fun box(): String {
-    val res = C(hashMapOf(E.VALUE to 11, E.VALUE2 to 12)).normalizedNums.values().sorted().joinToString()
+    val res = C(hashMapOf(E.VALUE to 11, E.VALUE2 to 12)).normalizedNums.values.sorted().joinToString()
     return  if ("0.0, 1.0" == res) "OK" else "fail $res"
 }

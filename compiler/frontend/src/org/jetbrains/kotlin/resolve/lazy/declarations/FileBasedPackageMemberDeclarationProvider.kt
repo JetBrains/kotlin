@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 
-public class FileBasedPackageMemberDeclarationProvider(
+class FileBasedPackageMemberDeclarationProvider(
         storageManager: StorageManager,
         private val fqName: FqName,
         private val factory: FileBasedDeclarationProviderFactory,
@@ -34,8 +34,8 @@ public class FileBasedPackageMemberDeclarationProvider(
 
     override fun doCreateIndex(index: AbstractPsiBasedDeclarationProvider.Index) {
         for (file in packageFiles) {
-            for (declaration in file.getDeclarations()) {
-                assert(fqName == file.getPackageFqName()) { "Files declaration utils contains file with invalid package" }
+            for (declaration in file.declarations) {
+                assert(fqName == file.packageFqName) { "Files declaration utils contains file with invalid package" }
                 index.putToIndex(declaration)
             }
         }

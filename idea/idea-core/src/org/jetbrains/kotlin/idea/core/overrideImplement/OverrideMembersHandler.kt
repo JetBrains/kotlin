@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
-public class OverrideMembersHandler : OverrideImplementMembersHandler() {
+class OverrideMembersHandler(private val preferConstructorParameters: Boolean = false) : OverrideImplementMembersHandler() {
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         val result = ArrayList<OverrideMemberChooserObject>()
         for (member in descriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
@@ -46,7 +46,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                     }
                 }
 
-                val realSupers = byOriginalRealSupers.values().map { it.realSuper }
+                val realSupers = byOriginalRealSupers.values.map { it.realSuper }
                 val nonAbstractRealSupers = realSupers.filter { it.modality != Modality.ABSTRACT }
                 val realSupersToUse = if (nonAbstractRealSupers.isNotEmpty()) {
                     nonAbstractRealSupers
@@ -59,7 +59,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                     val immediateSupers = byOriginalRealSupers[realSuper.original]!!.immediateSupers
                     assert(immediateSupers.isNotEmpty())
 
-                    val immediateSuperToUse = if (immediateSupers.size() == 1) {
+                    val immediateSuperToUse = if (immediateSupers.size == 1) {
                         immediateSupers.single()
                     }
                     else {
@@ -68,12 +68,12 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
 
                     val bodyType = if (immediateSuperToUse.modality == Modality.ABSTRACT)
                         OverrideMemberChooserObject.BodyType.EMPTY
-                    else if (realSupersToUse.size() == 1)
+                    else if (realSupersToUse.size == 1)
                         OverrideMemberChooserObject.BodyType.SUPER
                     else
                         OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER
 
-                    result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse, bodyType))
+                    result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse, bodyType, preferConstructorParameters))
                 }
             }
         }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.classFile
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassResolver
@@ -36,14 +37,14 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-public fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
-    val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val packageFqName = kotlinClass!!.classId.packageFqName
+fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
+    val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+    assert(kotlinClassHeaderInfo != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
+    val packageFqName = kotlinClassHeaderInfo!!.classId.packageFqName
     return DeserializerForClassfileDecompiler(classFile.parent!!, packageFqName)
 }
 
-public class DeserializerForClassfileDecompiler(
+class DeserializerForClassfileDecompiler(
         packageDirectory: VirtualFile,
         directoryPackageFqName: FqName
 ) : DeserializerForDecompilerBase(packageDirectory, directoryPackageFqName) {
@@ -71,15 +72,16 @@ public class DeserializerForClassfileDecompiler(
         }
         val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName))
         val header = binaryClassForPackageClass?.classHeader
-        val annotationData = header?.annotationData
+        val annotationData = header?.data
         val strings = header?.strings
         if (annotationData == null || strings == null) {
-            LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.getClassId()}")
+            LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.classId}")
             return emptyList()
         }
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
+                createDummyPackageFragment(packageFqName), packageProto, nameResolver,
+                JvmPackagePartSource(binaryClassForPackageClass!!.classId), deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()
     }
@@ -96,13 +98,13 @@ class DirectoryBasedClassFinder(
     override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.classId)
 
     override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
-        if (classId.getPackageFqName() != directoryPackageFqName) {
+        if (classId.packageFqName != directoryPackageFqName) {
             return null
         }
-        val targetName = classId.getRelativeClassName().pathSegments().joinToString("$", postfix = ".class")
+        val targetName = classId.relativeClassName.pathSegments().joinToString("$", postfix = ".class")
         val virtualFile = packageDirectory.findChild(targetName)
         if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
-            return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
+            return IDEKotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
         }
         return null
     }
@@ -115,7 +117,7 @@ class DirectoryBasedDataFinder(
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val binaryClass = classFinder.findKotlinClass(classId) ?: return null
         val classHeader = binaryClass.classHeader
-        val data = classHeader.annotationData
+        val data = classHeader.data
         if (data == null) {
             log.error("Annotation data missing for ${binaryClass.classId}")
             return null
@@ -133,6 +135,6 @@ class DirectoryBasedDataFinder(
 
 private val JavaClass.classId: ClassId
     get() {
-        val outer = getOuterClass()
-        return if (outer == null) ClassId.topLevel(getFqName()!!) else outer.classId.createNestedClassId(getName())
+        val outer = outerClass
+        return if (outer == null) ClassId.topLevel(fqName!!) else outer.classId.createNestedClassId(name)
     }

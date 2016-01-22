@@ -23,12 +23,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-public data class ApproximationBounds<T>(
-        public val lower: T,
-        public val upper: T
+data class ApproximationBounds<T>(
+        val lower: T,
+        val upper: T
 )
 
 private class TypeArgument(
@@ -42,10 +43,10 @@ private class TypeArgument(
 
 private fun TypeArgument.toTypeProjection(): TypeProjection {
     assert(isConsistent) { "Only consistent enhanced type propection can be converted to type projection" }
-    fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.getVariance()) Variance.INVARIANT else variance
+    fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.variance) Variance.INVARIANT else variance
     return when {
         inProjection == outProjection -> TypeProjectionImpl(inProjection)
-        KotlinBuiltIns.isNothing(inProjection) && typeParameter.getVariance() != Variance.IN_VARIANCE ->
+        KotlinBuiltIns.isNothing(inProjection) && typeParameter.variance != Variance.IN_VARIANCE ->
             TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
         KotlinBuiltIns.isNullableAny(outProjection) -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.IN_VARIANCE), inProjection)
         else -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
@@ -53,30 +54,37 @@ private fun TypeArgument.toTypeProjection(): TypeProjection {
 }
 
 private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor) =
-        when (TypeSubstitutor.combine(typeParameter.getVariance(), getProjectionKind())) {
-            Variance.INVARIANT -> TypeArgument(typeParameter, getType(), getType())
-            Variance.IN_VARIANCE -> TypeArgument(typeParameter, getType(), typeParameter.builtIns.nullableAnyType)
+        when (TypeSubstitutor.combine(typeParameter.variance, this)) {
+            Variance.INVARIANT -> TypeArgument(typeParameter, type, type)
+            Variance.IN_VARIANCE -> TypeArgument(typeParameter, type, typeParameter.builtIns.nullableAnyType)
             Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.nothingType, type)
         }
 
-public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?): TypeProjection? {
+fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?, approximateContravariant: Boolean): TypeProjection? {
     if (typeProjection == null) return null
-    if (typeProjection.isStarProjection()) return typeProjection
+    if (typeProjection.isStarProjection) return typeProjection
 
-    val type = typeProjection.getType()
+    val type = typeProjection.type
     if (!TypeUtils.containsSpecialType(type, { it.isCaptured() })) {
         return typeProjection
     }
-    val howThisTypeIsUsed = typeProjection.getProjectionKind()
+    val howThisTypeIsUsed = typeProjection.projectionKind
     if (howThisTypeIsUsed == Variance.OUT_VARIANCE) {
         // only 'return' type containing captured types should be over-approximated
         val approximation = approximateCapturedTypes(type)
         return TypeProjectionImpl(howThisTypeIsUsed, approximation.upper)
     }
-    return substituteCapturedTypes(typeProjection)
+
+    if (approximateContravariant) {
+        // TODO: assert that howThisTypeIsUsed is always IN
+        val approximation = approximateCapturedTypes(type).lower
+        return TypeProjectionImpl(howThisTypeIsUsed, approximation)
+    }
+
+    return substituteCapturedTypesWithProjections(typeProjection)
 }
 
-private fun substituteCapturedTypes(typeProjection: TypeProjection): TypeProjection? {
+private fun substituteCapturedTypesWithProjections(typeProjection: TypeProjection): TypeProjection? {
     val typeSubstitutor = TypeSubstitutor.create(object : TypeConstructorSubstitution() {
         override fun get(key: TypeConstructor): TypeProjection? {
             return (key as? CapturedTypeConstructor)?.typeProjection
@@ -85,29 +93,49 @@ private fun substituteCapturedTypes(typeProjection: TypeProjection): TypeProject
     return typeSubstitutor.substituteWithoutApproximation(typeProjection)
 }
 
-public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> {
-    val typeConstructor = type.getConstructor()
+fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> {
+    if (type.isFlexible()) {
+        val boundsForFlexibleLower = approximateCapturedTypes(type.lowerIfFlexible())
+        val boundsForFlexibleUpper = approximateCapturedTypes(type.upperIfFlexible())
+
+        val extraCapabilities = type.flexibility().extraCapabilities
+        return ApproximationBounds(
+                DelegatingFlexibleType.create(
+                        boundsForFlexibleLower.lower.lowerIfFlexible(), boundsForFlexibleUpper.lower.upperIfFlexible(), extraCapabilities),
+                DelegatingFlexibleType.create(
+                        boundsForFlexibleLower.upper.lowerIfFlexible(), boundsForFlexibleUpper.upper.upperIfFlexible(), extraCapabilities))
+    }
+
+    val typeConstructor = type.constructor
     if (type.isCaptured()) {
         val typeProjection = (typeConstructor as CapturedTypeConstructor).typeProjection
-        // todo: preserve flexibility as well
-        fun KotlinType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable())
-        val bound = typeProjection.getType().makeNullableIfNeeded()
+        fun KotlinType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable)
+        val bound = typeProjection.type.makeNullableIfNeeded()
 
-        return when (typeProjection.getProjectionKind()) {
+        return when (typeProjection.projectionKind) {
             Variance.IN_VARIANCE -> ApproximationBounds(bound, type.builtIns.nullableAnyType)
             Variance.OUT_VARIANCE -> ApproximationBounds(type.builtIns.nothingType.makeNullableIfNeeded(), bound)
             else -> throw AssertionError("Only nontrivial projections should have been captured, not: $typeProjection")
         }
     }
-    if (type.getArguments().isEmpty()) {
+    if (type.arguments.isEmpty() || type.arguments.size != typeConstructor.parameters.size) {
         return ApproximationBounds(type, type)
     }
     val lowerBoundArguments = ArrayList<TypeArgument>()
     val upperBoundArguments = ArrayList<TypeArgument>()
-    for ((typeProjection, typeParameter) in type.getArguments().zip(typeConstructor.getParameters())) {
-        val (lower, upper) = approximateProjection(typeProjection.toTypeArgument(typeParameter))
-        lowerBoundArguments.add(lower)
-        upperBoundArguments.add(upper)
+    for ((typeProjection, typeParameter) in type.arguments.zip(typeConstructor.parameters)) {
+        val typeArgument = typeProjection.toTypeArgument(typeParameter)
+
+        // Protection from infinite recursion caused by star projection
+        if (typeProjection.isStarProjection) {
+            lowerBoundArguments.add(typeArgument)
+            upperBoundArguments.add(typeArgument)
+        }
+        else {
+            val (lower, upper) = approximateProjection(typeArgument)
+            lowerBoundArguments.add(lower)
+            upperBoundArguments.add(upper)
+        }
     }
     val lowerBoundIsTrivial = lowerBoundArguments.any { !it.isConsistent }
     return ApproximationBounds(
@@ -116,10 +144,8 @@ public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<Kotli
 }
 
 private fun KotlinType.replaceTypeArguments(newTypeArguments: List<TypeArgument>): KotlinType {
-    assert(getArguments().size() == newTypeArguments.size()) { "Incorrect type arguments $newTypeArguments" }
-    return KotlinTypeImpl.create(
-            getAnnotations(), getConstructor(), isMarkedNullable(), newTypeArguments.map { it.toTypeProjection() }, getMemberScope()
-    )
+    assert(arguments.size == newTypeArguments.size) { "Incorrect type arguments $newTypeArguments" }
+    return replace(newTypeArguments.map { it.toTypeProjection() })
 }
 
 private fun approximateProjection(typeArgument: TypeArgument): ApproximationBounds<TypeArgument> {

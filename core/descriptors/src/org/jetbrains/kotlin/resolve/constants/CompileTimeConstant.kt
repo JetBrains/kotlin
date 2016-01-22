@@ -20,45 +20,45 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 
-public interface CompileTimeConstant<out T> {
-    public val isError: Boolean
+interface CompileTimeConstant<out T> {
+    val isError: Boolean
         get() = false
 
-    public val parameters: CompileTimeConstant.Parameters
+    val parameters: CompileTimeConstant.Parameters
 
-    public fun toConstantValue(expectedType: KotlinType): ConstantValue<T>
+    fun toConstantValue(expectedType: KotlinType): ConstantValue<T>
 
-    public fun getValue(expectedType: KotlinType): T = toConstantValue(expectedType).value
+    fun getValue(expectedType: KotlinType): T = toConstantValue(expectedType).value
 
-    public val canBeUsedInAnnotations: Boolean get() = parameters.canBeUsedInAnnotation
+    val canBeUsedInAnnotations: Boolean get() = parameters.canBeUsedInAnnotation
 
-    public val usesVariableAsConstant: Boolean get() = parameters.usesVariableAsConstant
+    val usesVariableAsConstant: Boolean get() = parameters.usesVariableAsConstant
 
-    public val usesNonConstValAsConstant: Boolean get() = parameters.usesNonConstValAsConstant
+    val usesNonConstValAsConstant: Boolean get() = parameters.usesNonConstValAsConstant
 
-    public val isPure: Boolean get() = parameters.isPure
+    val isPure: Boolean get() = parameters.isPure
 
-    public class Parameters(
-            public val canBeUsedInAnnotation: Boolean,
-            public val isPure: Boolean,
-            public val usesVariableAsConstant: Boolean,
-            public val usesNonConstValAsConstant: Boolean
+    class Parameters(
+            val canBeUsedInAnnotation: Boolean,
+            val isPure: Boolean,
+            val usesVariableAsConstant: Boolean,
+            val usesNonConstValAsConstant: Boolean
     )
 }
 
-public class TypedCompileTimeConstant<out T>(
-        public val constantValue: ConstantValue<T>,
+class TypedCompileTimeConstant<out T>(
+        val constantValue: ConstantValue<T>,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<T> {
     override val isError: Boolean
         get() = constantValue is ErrorValue
 
-    public val type: KotlinType = constantValue.type
+    val type: KotlinType = constantValue.type
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<T> = constantValue
 }
 
-public class IntegerValueTypeConstant(
+class IntegerValueTypeConstant(
         private val value: Number,
         private val builtIns: KotlinBuiltIns,
         override val parameters: CompileTimeConstant.Parameters
@@ -89,7 +89,7 @@ public class IntegerValueTypeConstant(
             ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
     )
 
-    public fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
+    fun getType(expectedType: KotlinType): KotlinType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
 
     override fun toString() = typeConstructor.toString()
 }

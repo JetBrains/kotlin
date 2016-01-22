@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
+class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
         private val bindingContext: BindingContext,
         private val delegateDiagnostics: Diagnostics = Diagnostics.EMPTY
 ) : Diagnostics {
@@ -37,9 +37,9 @@ public class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
         CachedValueProvider.Result(DiagnosticsWithSuppression(bindingContext, allDiagnostics), modificationTracker)
     })
 
-    private fun readonlyView() = cache.getValue()!!
+    private fun readonlyView() = cache.value!!
 
-    public override val modificationTracker = CompositeModificationTracker(delegateDiagnostics.modificationTracker)
+    override val modificationTracker = CompositeModificationTracker(delegateDiagnostics.modificationTracker)
 
     override fun all(): Collection<Diagnostic> = readonlyView().all()
     override fun forElement(psiElement: PsiElement) = readonlyView().forElement(psiElement)
@@ -58,6 +58,5 @@ public class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
         modificationTracker.incModificationCount()
     }
 
-    @TestOnly
-    public fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
+    @TestOnly fun getReadonlyView(): DiagnosticsWithSuppression = readonlyView()
 }

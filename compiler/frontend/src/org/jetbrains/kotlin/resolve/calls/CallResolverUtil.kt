@@ -35,25 +35,25 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public enum class ResolveArgumentsMode {
+enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
     SHAPE_FUNCTION_ARGUMENTS
 }
 
 
-public fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
+fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return getParameterArgumentsOfCallableType(type).any {
-        TypeUtils.containsSpecialType(it.getType(), DONT_CARE) || ErrorUtils.containsUninferredParameter(it.getType())
+        TypeUtils.containsSpecialType(it.type, DONT_CARE) || ErrorUtils.containsUninferredParameter(it.type)
     }
 }
 
-public fun hasUnknownReturnType(type: KotlinType): Boolean {
+fun hasUnknownReturnType(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
-public fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinType {
+fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinType {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     val newArguments = Lists.newArrayList<TypeProjection>()
     newArguments.addAll(getParameterArgumentsOfCallableType(type))
@@ -61,16 +61,16 @@ public fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): Ko
     return replaceTypeArguments(type, newArguments)
 }
 
-public fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
+fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
 
 private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
-        KotlinTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
+        KotlinTypeImpl.create(type.annotations, type.constructor, type.isMarkedNullable, newArguments, type.memberScope)
 
 private fun getParameterArgumentsOfCallableType(type: KotlinType) =
-        type.getArguments().dropLast(1)
+        type.arguments.dropLast(1)
 
 fun getReturnTypeForCallable(type: KotlinType) =
-        type.getArguments().last().getType()
+        type.arguments.last().type
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
     val returnType = returnType ?: return false
@@ -78,7 +78,7 @@ private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constrai
     return nestedTypeVariables.any { constraintSystem.getTypeBounds(it).value == null }
 }
 
-public fun CallableDescriptor.hasInferredReturnType(constraintSystem: ConstraintSystem): Boolean {
+fun CallableDescriptor.hasInferredReturnType(constraintSystem: ConstraintSystem): Boolean {
     if (hasReturnTypeDependentOnUninferredParams(constraintSystem)) return false
 
     // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
@@ -86,27 +86,27 @@ public fun CallableDescriptor.hasInferredReturnType(constraintSystem: Constraint
     return true
 }
 
-public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KotlinType {
-    var receiverType = receiverParameterDescriptor.getType()
+fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KotlinType {
+    var receiverType = receiverParameterDescriptor.type
     for (typeParameter in descriptor.typeParameters) {
         if (typeParameter.typeConstructor == receiverType.constructor) {
             receiverType = TypeIntersector.getUpperBoundsAsType(typeParameter)
         }
     }
     val fakeTypeArguments = ContainerUtil.newSmartList<TypeProjection>()
-    for (typeProjection in receiverType.getArguments()) {
-        fakeTypeArguments.add(TypeProjectionImpl(typeProjection.getProjectionKind(), DONT_CARE))
+    for (typeProjection in receiverType.arguments) {
+        fakeTypeArguments.add(TypeProjectionImpl(typeProjection.projectionKind, DONT_CARE))
     }
-    return KotlinTypeImpl.create(receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(), fakeTypeArguments,
-                       ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
+    return KotlinTypeImpl.create(receiverType.annotations, receiverType.constructor, receiverType.isMarkedNullable, fakeTypeArguments,
+                                 ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
 }
 
-public fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
-    if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
+    if (descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
         return true
     }
-    if (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-        return descriptor.getOverriddenDescriptors().all {
+    if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        return descriptor.overriddenDescriptors.all {
             isOrOverridesSynthesized(it)
         }
     }
@@ -131,35 +131,35 @@ fun getUnaryPlusOrMinusOperatorFunctionName(call: Call): Name? {
     return if (name == OperatorNameConventions.UNARY_PLUS || name == OperatorNameConventions.UNARY_MINUS) name else null
 }
 
-public fun isInvokeCallOnVariable(call: Call): Boolean {
-    if (call.getCallType() !== Call.CallType.INVOKE) return false
-    val dispatchReceiver = call.getDispatchReceiver()
+fun isInvokeCallOnVariable(call: Call): Boolean {
+    if (call.callType !== Call.CallType.INVOKE) return false
+    val dispatchReceiver = call.dispatchReceiver
     //calleeExpressionAsDispatchReceiver for invoke is always ExpressionReceiver, see CallForImplicitInvoke
     val expression = (dispatchReceiver as ExpressionReceiver).expression
     return expression is KtSimpleNameExpression
 }
 
-public fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
-    if (call.getCallType() !== Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false
-    return call.getExplicitReceiver() != null && call.getDispatchReceiver() != null
+fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
+    if (call.callType !== Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false
+    return call.explicitReceiver != null && call.dispatchReceiver != null
 }
 
-public fun getSuperCallExpression(call: Call): KtSuperExpression? {
-    return (call.getExplicitReceiver() as? ExpressionReceiver)?.expression as? KtSuperExpression
+fun getSuperCallExpression(call: Call): KtSuperExpression? {
+    return (call.explicitReceiver as? ExpressionReceiver)?.expression as? KtSuperExpression
 }
 
-public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {
+fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {
     if (argument.getSpreadElement() != null) {
         if (parameterDescriptor.varargElementType == null) {
             // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
             return DONT_CARE
         }
-        return parameterDescriptor.getType()
+        return parameterDescriptor.type
     }
     val varargElementType = parameterDescriptor.varargElementType
     if (varargElementType != null) {
         return varargElementType
     }
 
-    return parameterDescriptor.getType()
+    return parameterDescriptor.type
 }

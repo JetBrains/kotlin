@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import java.io.ByteArrayInputStream
 
-public class KotlinBuiltInStubBuilder : ClsStubBuilder() {
+class KotlinBuiltInStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
@@ -81,7 +81,7 @@ public class KotlinBuiltInStubBuilder : ClsStubBuilder() {
     private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName, nameResolver: NameResolver): ClsStubBuilderComponents {
         val finder = DirectoryBasedClassDataFinder(file.parent!!, packageFqName, nameResolver, BuiltInsSerializedResourcePaths)
         val annotationLoader = AnnotationLoaderForStubBuilderImpl(BuiltInSerializerProtocol)
-        return ClsStubBuilderComponents(finder, annotationLoader)
+        return ClsStubBuilderComponents(finder, annotationLoader, file)
     }
 
     companion object {

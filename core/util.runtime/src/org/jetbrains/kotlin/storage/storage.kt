@@ -18,24 +18,24 @@ package org.jetbrains.kotlin.storage
 
 import kotlin.reflect.KProperty
 
-public interface MemoizedFunctionToNotNull<P, R : Any> : Function1<P, R> {
-    public fun isComputed(key: P): Boolean
+interface MemoizedFunctionToNotNull<P, R : Any> : Function1<P, R> {
+    fun isComputed(key: P): Boolean
 }
 
-public interface MemoizedFunctionToNullable<P, R : Any> : Function1<P, R?> {
-    public fun isComputed(key: P): Boolean
+interface MemoizedFunctionToNullable<P, R : Any> : Function1<P, R?> {
+    fun isComputed(key: P): Boolean
 }
 
-public interface NotNullLazyValue<T : Any> : Function0<T> {
-    public fun isComputed(): Boolean
-    public fun isComputing(): Boolean
+interface NotNullLazyValue<T : Any> : Function0<T> {
+    fun isComputed(): Boolean
+    fun isComputing(): Boolean
 }
 
-public interface NullableLazyValue<T : Any> : Function0<T?> {
-    public fun isComputed(): Boolean
-    public fun isComputing(): Boolean
+interface NullableLazyValue<T : Any> : Function0<T?> {
+    fun isComputed(): Boolean
+    fun isComputing(): Boolean
 }
 
-public operator fun <T : Any> NotNullLazyValue<T>.getValue(_this: Any?, p: KProperty<*>): T = invoke()
+operator fun <T : Any> NotNullLazyValue<T>.getValue(_this: Any?, p: KProperty<*>): T = invoke()
 
-public operator fun <T : Any> NullableLazyValue<T>.getValue(_this: Any?, p: KProperty<*>): T? = invoke()
+operator fun <T : Any> NullableLazyValue<T>.getValue(_this: Any?, p: KProperty<*>): T? = invoke()

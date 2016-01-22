@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import kotlin.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -62,8 +64,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -74,6 +76,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
@@ -246,24 +249,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        if (!isTopLevelOrInnerClass(descriptor)) {
-            AnnotationVisitor av = v.getVisitor().visitAnnotation(
-                    asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_LOCAL_CLASS), true
-            );
-            av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray());
-            av.visitEnd();
-        }
+        final DescriptorSerializer serializer =
+                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
 
-        DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(
-                        v.getSerializationBindings(), typeMapper, state.getUseTypeTableInSerializer()
-                ));
+        final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
-        ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, new Function1<AnnotationVisitor, Unit>() {
+            @Override
+            public Unit invoke(AnnotationVisitor av) {
+                writeAnnotationData(av, serializer, classProto, false);
+                return Unit.INSTANCE;
+            }
+        });
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        writeAnnotationData(av, serializer, classProto);
-        writeModuleName(av, state);
+        writeAbiVersion(av);
+        writeAnnotationData(av, serializer, classProto, true);
         av.visitEnd();
     }
 
@@ -279,25 +280,25 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private static final Map<String, String> KOTLIN_MARKER_INTERFACES = new HashMap<String, String>();
+    private static final Map<FqName, String> KOTLIN_MARKER_INTERFACES = new HashMap<FqName, String>();
     static {
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterator", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterable", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Collection", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.List", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.ListIterator", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Set", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Map", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Map.Entry", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.iterator, "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.iterable, "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.collection, "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.list, "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.listIterator, "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.set, "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.map, "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mapEntry, "kotlin/jvm/internal/markers/KMappedMarker");
 
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterator", "kotlin/jvm/internal/markers/KMutableIterator");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterable", "kotlin/jvm/internal/markers/KMutableIterable");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableCollection", "kotlin/jvm/internal/markers/KMutableCollection");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableList", "kotlin/jvm/internal/markers/KMutableList");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableListIterator", "kotlin/jvm/internal/markers/KMutableListIterator");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableSet", "kotlin/jvm/internal/markers/KMutableSet");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap", "kotlin/jvm/internal/markers/KMutableMap");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap.MutableEntry", "kotlin/jvm/internal/markers/KMutableMap$Entry");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableIterator, "kotlin/jvm/internal/markers/KMutableIterator");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableIterable, "kotlin/jvm/internal/markers/KMutableIterable");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableCollection, "kotlin/jvm/internal/markers/KMutableCollection");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableList, "kotlin/jvm/internal/markers/KMutableList");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableListIterator, "kotlin/jvm/internal/markers/KMutableListIterator");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableSet, "kotlin/jvm/internal/markers/KMutableSet");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableMap, "kotlin/jvm/internal/markers/KMutableMap");
+        KOTLIN_MARKER_INTERFACES.put(FQ_NAMES.mutableMapEntry, "kotlin/jvm/internal/markers/KMutableMap$Entry");
     }
 
     @NotNull
@@ -327,7 +328,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 String jvmInterfaceInternalName = jvmInterfaceType.getInternalName();
                 superInterfaces.add(jvmInterfaceInternalName);
 
-                String kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).asString();
+                FqName kotlinInterfaceName = DescriptorUtils.getFqName(supertype.getConstructor().getDeclarationDescriptor()).toSafe();
                 String kotlinMarkerInterfaceInternalName = KOTLIN_MARKER_INTERFACES.get(kotlinInterfaceName);
                 if (kotlinMarkerInterfaceInternalName != null) {
                     kotlinMarkerInterfaces.add(kotlinMarkerInterfaceInternalName);
@@ -840,22 +841,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumEntry(descriptor)) return;
+        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) return;
 
-        boolean isCompanionObject = isCompanionObject(descriptor);
-        if (isNonCompanionObject(descriptor) || isCompanionObject) {
+        if (isNonCompanionObject(descriptor)) {
             StackValue.Field field = StackValue.singletonViaInstance(descriptor, typeMapper);
             v.newField(JvmDeclarationOriginKt.OtherOrigin(myClass),
-                       ACC_PUBLIC | ACC_STATIC | ACC_FINAL | (isCompanionObject ? ACC_DEPRECATED : 0),
+                       ACC_PUBLIC | ACC_STATIC | ACC_FINAL,
                        field.name, field.type.getDescriptor(), null, null);
 
-            if (isNonCompanionObject(descriptor)) {
-                StackValue.Field oldField = StackValue.oldSingleton(descriptor, typeMapper);
-                v.newField(JvmDeclarationOriginKt.OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED, oldField.name, oldField.type.getDescriptor(), null, null);
-            }
-
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-            // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
+            // Invoke the object constructor but ignore the result because INSTANCE will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
             markLineNumberForElement(element, v);
             v.anew(classAsmType);
@@ -874,12 +869,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
         v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
-
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-
-        if (!isCompanionObjectWithBackingFieldsInOuter(companionObjectDescriptor)) {
-            generateCompanionObjectInitializer(companionObjectDescriptor);
-        }
     }
 
     private void generateCompanionObjectBackingFieldCopies() {
@@ -889,7 +878,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyDescriptor property = info.descriptor;
 
             Type type = typeMapper.mapType(property);
-            int modifiers = ACC_STATIC | ACC_FINAL | ACC_PUBLIC | (property.isConst() ? 0 : ACC_DEPRECATED);
+            int modifiers = ACC_STATIC | ACC_FINAL | ACC_PUBLIC;
             FieldVisitor fv = v.newField(JvmDeclarationOriginKt.Synthetic(DescriptorToSourceUtils.descriptorToDeclaration(property), property),
                                          modifiers, context.getFieldName(property, false),
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType(), property),
@@ -931,13 +920,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        //TODO: uncomment when DEPRECATED INSTANCE is removed
-        //FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
-        //        CollectionsKt.single(companionObject.getConstructors()), /* superCallExpression = */ null
-        //);
-        //generateMethodCallTo(constructor, null, codegen.v);
-        //StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
-        StackValue.singleton(companionObject, typeMapper).store(StackValue.singletonViaInstance(companionObject, typeMapper), codegen.v, true);
+
+        FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
+                CollectionsKt.single(companionObject.getConstructors()), /* superCallExpression = */ null
+        );
+        generateMethodCallTo(constructor, null, codegen.v);
+        StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
+        StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1007,11 +996,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor,
                                            getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
-        if (isObject(descriptor)) {
+        if (isNonCompanionObject(descriptor)) {
             StackValue.singletonViaInstance(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
-            if (isNonCompanionObject(descriptor)) {
-                StackValue.oldSingleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
-            }
         }
 
         for (KtSuperTypeListEntry specifier : myClass.getSuperTypeListEntries()) {
@@ -1035,9 +1021,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
-            final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
+        if (isCompanionObject(descriptor)) {
+            ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
             parentCodegen.generateCompanionObjectInitializer(descriptor);
+        }
+
+        if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+            final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {

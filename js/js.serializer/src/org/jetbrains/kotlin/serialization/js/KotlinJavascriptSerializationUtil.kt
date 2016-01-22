@@ -35,8 +35,8 @@ import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
-public object KotlinJavascriptSerializationUtil {
-    public val CLASS_METADATA_FILE_EXTENSION: String = "kjsm"
+object KotlinJavascriptSerializationUtil {
+    val CLASS_METADATA_FILE_EXTENSION: String = "kjsm"
 
     private val PACKAGE_DEFAULT_BYTES = run {
         val stream = ByteArrayOutputStream()
@@ -57,8 +57,7 @@ public object KotlinJavascriptSerializationUtil {
         stream.toByteArray()
     }
 
-    @JvmStatic
-    public fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray, storageManager: StorageManager): PackageFragmentProvider? {
+    @JvmStatic fun createPackageFragmentProvider(moduleDescriptor: ModuleDescriptor, metadata: ByteArray, storageManager: StorageManager): PackageFragmentProvider? {
         val contentMap = metadata.toContentMap()
 
         val packageFqNames = getPackages(contentMap).map { FqName(it) }.toSet()
@@ -82,10 +81,10 @@ public object KotlinJavascriptSerializationUtil {
         }
     }
 
-    public fun contentMapToByteArray(contentMap: Map<String, ByteArray>): ByteArray {
+    fun contentMapToByteArray(contentMap: Map<String, ByteArray>): ByteArray {
         val contentBuilder = JsProtoBuf.Library.newBuilder()
         contentMap.forEach {
-            val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.getKey()).setContent(ByteString.copyFrom(it.getValue())).build()
+            val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.key).setContent(ByteString.copyFrom(it.value)).build()
             contentBuilder.addEntry(entry)
         }
 
@@ -97,7 +96,7 @@ public object KotlinJavascriptSerializationUtil {
         return byteStream.toByteArray()
     }
 
-    public fun metadataAsString(moduleName: String, moduleDescriptor: ModuleDescriptor): String =
+    fun metadataAsString(moduleName: String, moduleDescriptor: ModuleDescriptor): String =
         KotlinJavascriptMetadataUtils.formatMetadataAsString(moduleName, moduleDescriptor.toBinaryMetadata())
 
     fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArray) -> Unit) {
@@ -152,7 +151,7 @@ public object KotlinJavascriptSerializationUtil {
         val builder = JsProtoBuf.Classes.newBuilder()
 
         for (descriptor in DescriptorSerializer.sort(classes)) {
-            builder.addClassName(stringTable.getSimpleNameIndex(descriptor.getName()))
+            builder.addClassName(stringTable.getSimpleNameIndex(descriptor.name))
         }
 
         val classesProto = builder.build()
@@ -168,7 +167,7 @@ public object KotlinJavascriptSerializationUtil {
         return KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId)
     }
 
-    public fun toContentMap(module: ModuleDescriptor): Map<String, ByteArray> {
+    fun toContentMap(module: ModuleDescriptor): Map<String, ByteArray> {
         val contentMap = hashMapOf<String, ByteArray>()
 
         getPackagesFqNames(module).forEach {
@@ -201,7 +200,7 @@ public object KotlinJavascriptSerializationUtil {
     }
 
     private fun getPackages(contentMap: Map<String, ByteArray>): Set<String> {
-        val keys = contentMap.keySet().map { (if (it.startsWith('/')) it else "/" + it).substringBeforeLast('/') }.toSet()
+        val keys = contentMap.keys.map { (if (it.startsWith('/')) it else "/" + it).substringBeforeLast('/') }.toSet()
 
         val result = hashSetOf<String>()
 
@@ -221,8 +220,8 @@ public object KotlinJavascriptSerializationUtil {
             KotlinJavascriptSerializationUtil.contentMapToByteArray(toContentMap(this))
 }
 
-public fun KotlinJavascriptMetadata.forEachFile(operation: (filePath: String, fileContent: ByteArray) -> Unit): Unit =
-        this.body.toContentMap().forEach { operation(it.getKey(), it.getValue()) }
+fun KotlinJavascriptMetadata.forEachFile(operation: (filePath: String, fileContent: ByteArray) -> Unit): Unit =
+        this.body.toContentMap().forEach { operation(it.key, it.value) }
 
 private fun ByteArray.toContentMap(): Map<String, ByteArray> {
     val gzipInputStream = GZIPInputStream(ByteArrayInputStream(this))
@@ -230,7 +229,7 @@ private fun ByteArray.toContentMap(): Map<String, ByteArray> {
     gzipInputStream.close()
 
     val contentMap: MutableMap<String, ByteArray> = hashMapOf()
-    content.getEntryList().forEach { entry -> contentMap[entry.getPath()] = entry.getContent().toByteArray() }
+    content.entryList.forEach { entry -> contentMap[entry.path] = entry.content.toByteArray() }
 
     return contentMap
 }

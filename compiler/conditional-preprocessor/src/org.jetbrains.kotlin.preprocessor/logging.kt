@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.preprocessor
 
-public interface Logger {
+interface Logger {
     fun debug(msg: CharSequence)
     fun info(msg: CharSequence)
     fun warn(msg: CharSequence)
     fun error(msg: CharSequence)
 }
 
-public object SystemOutLogger : Logger {
+object SystemOutLogger : Logger {
     private fun out(level: String, msg: CharSequence) = println("[$level] $msg")
 
-    public var isDebugEnabled: Boolean = true
+    var isDebugEnabled: Boolean = true
     override fun debug(msg: CharSequence) {
         if (isDebugEnabled) out("DEBUG", msg)
     }
@@ -35,10 +35,10 @@ public object SystemOutLogger : Logger {
     override fun error(msg: CharSequence) = out("ERROR", msg)
 }
 
-public fun Logger.withPrefix(prefix: String): Logger = PrefixedLogger(prefix, this)
+fun Logger.withPrefix(prefix: String): Logger = PrefixedLogger(prefix, this)
 
-public class PrefixedLogger(val prefix: String, val logger: Logger) : Logger {
-    private fun prefix(msg: CharSequence): CharSequence = StringBuilder {
+class PrefixedLogger(val prefix: String, val logger: Logger) : Logger {
+    private fun prefix(msg: CharSequence): CharSequence = StringBuilder().apply {
         append(prefix)
         append(": ")
         append(msg)

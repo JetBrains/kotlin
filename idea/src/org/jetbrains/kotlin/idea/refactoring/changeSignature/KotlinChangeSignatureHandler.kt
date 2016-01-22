@@ -45,27 +45,27 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
+class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
     override fun findTargetMember(file: PsiFile, editor: Editor) =
-            file.findElementAt(editor.getCaretModel().getOffset())?.let { findTargetMember(it) }
+            file.findElementAt(editor.caretModel.offset)?.let { findTargetMember(it) }
 
     override fun findTargetMember(element: PsiElement) =
             findTargetForRefactoring(element)
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext) {
-        editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE)
+        editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
 
         val element = findTargetMember(file, editor) ?: CommonDataKeys.PSI_ELEMENT.getData(dataContext) ?: return
-        val elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset()) ?: return
-        if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
+        val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return
+        if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.text}")
 
         invokeChangeSignature(element, elementAtCaret, project, editor)
     }
 
     override fun invoke(project: Project, elements: Array<PsiElement>, dataContext: DataContext?) {
         val element = elements.singleOrNull()?.unwrapped ?: return
-        if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
+        if (element !is KtElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.text}")
 
         val editor = dataContext?.let { CommonDataKeys.EDITOR.getData(it) }
         invokeChangeSignature(element, element, project, editor)
@@ -75,37 +75,37 @@ public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             KotlinRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name")
 
     companion object {
-        public fun findTargetForRefactoring(element: PsiElement): PsiElement? {
-            val elementParent = element.getParent()
+        fun findTargetForRefactoring(element: PsiElement): PsiElement? {
+            val elementParent = element.parent
 
             if ((elementParent is KtNamedFunction || elementParent is KtClass || elementParent is KtProperty)
-                && (elementParent as KtNamedDeclaration).getNameIdentifier() === element) return elementParent
+                && (elementParent as KtNamedDeclaration).nameIdentifier === element) return elementParent
 
             if (elementParent is KtParameter) {
-                val primaryConstructor = PsiTreeUtil.getParentOfType(elementParent, javaClass<KtPrimaryConstructor>())
+                val primaryConstructor = PsiTreeUtil.getParentOfType(elementParent, KtPrimaryConstructor::class.java)
                 if (elementParent.hasValOrVar()
-                    && (elementParent.getNameIdentifier() === element || elementParent.getValOrVarKeyword() === element)
+                    && (elementParent.nameIdentifier === element || elementParent.valOrVarKeyword === element)
                     && primaryConstructor != null
-                    && primaryConstructor.getValueParameterList() === elementParent.getParent()) return elementParent
+                    && primaryConstructor.valueParameterList === elementParent.parent) return elementParent
             }
 
             if (elementParent is KtSecondaryConstructor && elementParent.getConstructorKeyword() === element) return elementParent
 
             element.getStrictParentOfType<KtParameterList>()?.let { parameterList ->
-                return PsiTreeUtil.getParentOfType(parameterList, javaClass<KtFunction>(), javaClass<KtProperty>(), javaClass<KtClass>())
+                return PsiTreeUtil.getParentOfType(parameterList, KtFunction::class.java, KtProperty::class.java, KtClass::class.java)
             }
 
             element.getStrictParentOfType<KtTypeParameterList>()?.let { typeParameterList ->
-                return PsiTreeUtil.getParentOfType(typeParameterList, javaClass<KtFunction>(), javaClass<KtProperty>(), javaClass<KtClass>())
+                return PsiTreeUtil.getParentOfType(typeParameterList, KtFunction::class.java, KtProperty::class.java, KtClass::class.java)
             }
 
             val call: KtCallElement? = PsiTreeUtil.getParentOfType(element,
-                                                                   javaClass<KtCallExpression>(),
-                                                                   javaClass<KtSuperTypeCallEntry>(),
-                                                                   javaClass<KtConstructorDelegationCall>())
+                                                                   KtCallExpression::class.java,
+                                                                   KtSuperTypeCallEntry::class.java,
+                                                                   KtConstructorDelegationCall::class.java)
             val calleeExpr = call?.let {
-                val callee = it.getCalleeExpression()
-                (callee as? KtConstructorCalleeExpression)?.getConstructorReferenceExpression() ?: callee
+                val callee = it.calleeExpression
+                (callee as? KtConstructorCalleeExpression)?.constructorReferenceExpression ?: callee
             } ?: element.getStrictParentOfType<KtSimpleNameExpression>()
 
             if (calleeExpr is KtSimpleNameExpression || calleeExpr is KtConstructorDelegationReferenceExpression) {
@@ -120,7 +120,7 @@ public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             return null
         }
 
-        public fun invokeChangeSignature(element: KtElement, context: PsiElement, project: Project, editor: Editor?) {
+        fun invokeChangeSignature(element: KtElement, context: PsiElement, project: Project, editor: Editor?) {
             val bindingContext = element.analyze(BodyResolveMode.FULL)
 
             val callableDescriptor = findDescriptor(element, project, editor, bindingContext) ?: return
@@ -157,24 +157,24 @@ public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                 is KtReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, element]
                 else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
             }
-            return if (descriptor is ClassDescriptor) descriptor.getUnsubstitutedPrimaryConstructor() else descriptor
+            return if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else descriptor
         }
 
-        public fun findDescriptor(element: PsiElement, project: Project, editor: Editor?, bindingContext: BindingContext): CallableDescriptor? {
+        fun findDescriptor(element: PsiElement, project: Project, editor: Editor?, bindingContext: BindingContext): CallableDescriptor? {
             if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null
 
             var descriptor = getDescriptor(bindingContext, element)
 
             return when (descriptor) {
                 is FunctionDescriptor -> {
-                    if (descriptor.getValueParameters().any { it.varargElementType != null }) {
+                    if (descriptor.valueParameters.any { it.varargElementType != null }) {
                         val message = KotlinRefactoringBundle.message("error.cant.refactor.vararg.functions")
                         CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                         return null
                     }
 
-                    if (descriptor.getKind() === SYNTHESIZED) {
-                        val message = KotlinRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.getName())
+                    if (descriptor.kind === SYNTHESIZED) {
+                        val message = KotlinRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.name)
                         CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                         return null
                     }

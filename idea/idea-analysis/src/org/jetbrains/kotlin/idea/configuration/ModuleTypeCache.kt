@@ -33,7 +33,7 @@ import com.intellij.openapi.util.SimpleModificationTracker
 class ModuleTypeCacheManager private constructor(project: Project) {
     companion object {
         @JvmStatic
-        fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<ModuleTypeCacheManager>())
+        fun getInstance(project: Project) = ServiceManager.getService(project, ModuleTypeCacheManager::class.java)
     }
 
     private val vfsModificationTracker = VfsModificationTracker(project)
@@ -53,7 +53,7 @@ class ModuleTypeCacheManager private constructor(project: Project) {
 
     private class VfsModificationTracker(project: Project): SimpleModificationTracker() {
         init {
-            val connection = project.getMessageBus().connect();
+            val connection = project.messageBus.connect();
             connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(
                     object : VirtualFileAdapter() {
                         override fun propertyChanged(event: VirtualFilePropertyEvent) {
@@ -95,11 +95,11 @@ private fun computeType(module: Module) =
 private val DEFAULT_SCRIPT_NAME = "build.gradle"
 
 private fun isGradleModule(module: Module): Boolean {
-    val moduleFile = module.getModuleFile()
+    val moduleFile = module.moduleFile
     if (moduleFile == null){
         return false
     }
 
-    val buildFile = moduleFile.getParent()?.findChild(DEFAULT_SCRIPT_NAME)
+    val buildFile = moduleFile.parent?.findChild(DEFAULT_SCRIPT_NAME)
     return buildFile != null && buildFile.exists()
 }

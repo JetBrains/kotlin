@@ -46,8 +46,8 @@ public final class Namer {
     public static final JsNameRef KOTLIN_OBJECT_REF = new JsNameRef(KOTLIN_NAME);
     public static final JsNameRef KOTLIN_LONG_NAME_REF = new JsNameRef("Long", KOTLIN_OBJECT_REF);
 
-    public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE$.getBuiltIns().getAny(), "equals");
-    public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE$.getBuiltIns().getComparable(), "compareTo");
+    public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getAny(), "equals");
+    public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getComparable(), "compareTo");
     public static final String NUMBER_RANGE = "NumberRange";
     public static final String CHAR_RANGE = "CharRange";
     public static final String LONG_FROM_NUMBER = "fromNumber";

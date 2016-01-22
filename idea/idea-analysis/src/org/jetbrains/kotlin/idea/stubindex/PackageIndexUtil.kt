@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
-public object PackageIndexUtil {
-    @JvmStatic
-    public fun getSubPackageFqNames(
+object PackageIndexUtil {
+    @JvmStatic fun getSubPackageFqNames(
             packageFqName: FqName,
             scope: GlobalSearchScope,
             project: Project,
@@ -34,8 +33,7 @@ public object PackageIndexUtil {
         return SubpackagesIndexService.getInstance(project).getSubpackages(packageFqName, scope, nameFilter)
     }
 
-    @JvmStatic
-    public fun findFilesWithExactPackage(
+    @JvmStatic fun findFilesWithExactPackage(
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
@@ -43,8 +41,7 @@ public object PackageIndexUtil {
         return KotlinExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope)
     }
 
-    @JvmStatic
-    public fun packageExists(
+    @JvmStatic fun packageExists(
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
@@ -58,15 +55,14 @@ public object PackageIndexUtil {
                subpackagesIndex.hasSubpackages(packageFqName, searchScope)
     }
 
-    @JvmStatic
-    public fun containsFilesWithExactPackage(
+    @JvmStatic fun containsFilesWithExactPackage(
             packageFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
     ): Boolean {
         var result = false
         StubIndex.getInstance().processElements<String, KtFile>(
-                KotlinExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<KtFile>()
+                KotlinExactPackagesIndex.getInstance().key, packageFqName.asString(), project, searchScope, KtFile::class.java
         ) {
             result = true
             false

@@ -1,4 +1,4 @@
 val empty = IntRange.<caret>EMPTY
-// BINARY: kotlin/IntRange.class
+// BINARY: ranges/IntRange.class
 // SRC: kotlin/Ranges.kt
-// TARGET: (in kotlin.IntRange.Companion).EMPTY
+// TARGET: (in kotlin.ranges.IntRange.Companion).EMPTY

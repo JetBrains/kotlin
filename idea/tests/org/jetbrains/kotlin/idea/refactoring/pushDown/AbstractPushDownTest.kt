@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.refactoring.pushDown
 import org.jetbrains.kotlin.idea.refactoring.AbstractMemberPullPushTest
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 
-public abstract class AbstractPushDownTest : AbstractMemberPullPushTest() {
+abstract class AbstractPushDownTest : AbstractMemberPullPushTest() {
     protected fun doTest(path: String) {
         doTest(path) { file ->
             val helper = object: KotlinPushDownHandler.TestHelper {
                 override fun adjustMembers(members: List<KotlinMemberInfo>) = chooseMembers(members)
             }
-            KotlinPushDownHandler().invoke(getProject(), getEditor(), file) {
+            KotlinPushDownHandler().invoke(project, editor, file) {
                 if (it == KotlinPushDownHandler.PUSH_DOWN_TEST_HELPER_KEY) helper else null
             }
         }

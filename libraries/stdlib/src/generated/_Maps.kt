@@ -8,6 +8,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.comparisons.*
 import java.util.*
 
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
@@ -130,6 +131,7 @@ public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean
 /**
  * Performs the given [action] on each entry.
  */
+@kotlin.internal.HidesMembers
 public inline fun <K, V> Map<K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit {
     for (element in this) action(element)
 }

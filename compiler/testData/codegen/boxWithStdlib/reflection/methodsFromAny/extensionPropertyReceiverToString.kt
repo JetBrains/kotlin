@@ -79,8 +79,8 @@ fun box(): String {
     check("kotlin.Array<kotlin.Array<kotlin.String>>", Array<Array<String>>::a3)
     check("kotlin.Array<kotlin.BooleanArray>", Array<BooleanArray>::a4)
 
-    check("kotlin.Map<kotlin.String, java.lang.Runnable>", Map<String, Runnable>::m)
-    check("kotlin.List<kotlin.MutableSet<kotlin.Array<kotlin.CharSequence>>>", List<MutableSet<Array<CharSequence>>>::l)
+    check("kotlin.collections.Map<kotlin.String, java.lang.Runnable>", Map<String, Runnable>::m)
+    check("kotlin.collections.List<kotlin.collections.MutableSet<kotlin.Array<kotlin.CharSequence>>>", List<MutableSet<Array<CharSequence>>>::l)
 
     return "OK"
 }

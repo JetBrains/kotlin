@@ -26,24 +26,24 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
  * can have sections for the class itself, its primary constructor and each of the
  * properties defined in the primary constructor.
  */
-public class KDocSection(node: ASTNode) : KDocTag(node) {
+class KDocSection(node: ASTNode) : KDocTag(node) {
     /**
      * Returns the name of the section (the name of the doc tag introducing the section,
      * or null for the default section).
      */
     override fun getName(): String? =
-            (getFirstChild() as? KDocTag)?.getName()
+            (firstChild as? KDocTag)?.name
 
     override fun getSubjectName(): String? =
-            (getFirstChild() as? KDocTag)?.getSubjectName()
+            (firstChild as? KDocTag)?.getSubjectName()
 
     override fun getContent(): String =
-            (getFirstChild() as? KDocTag)?.getContent() ?: super.getContent()
+            (firstChild as? KDocTag)?.getContent() ?: super.getContent()
 
-    public fun findTagsByName(name: String): List<KDocTag> {
+    fun findTagsByName(name: String): List<KDocTag> {
         return getChildrenOfType<KDocTag>().filter { it.getName() == name }
     }
 
-    public fun findTagByName(name: String): KDocTag?
+    fun findTagByName(name: String): KDocTag?
         = findTagsByName(name).firstOrNull()
 }

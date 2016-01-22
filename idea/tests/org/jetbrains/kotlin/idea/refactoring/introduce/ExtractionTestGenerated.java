@@ -343,6 +343,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("qualifier.kt")
+        public void testQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/qualifier.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ReplaceOccurence.kt")
         public void testReplaceOccurence() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ReplaceOccurence.kt");
@@ -370,6 +376,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("SuperReference.kt")
         public void testSuperReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/SuperReference.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("thisAsCallee.kt")
+        public void testThisAsCallee() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/thisAsCallee.kt");
             doIntroduceVariableTest(fileName);
         }
 
@@ -455,6 +467,51 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         public void testWhileCondition() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhileCondition.kt");
             doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/refactoring/introduceVariable/explicateTypeArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExplicateTypeArguments extends AbstractExtractionTest {
+            public void testAllFilesPresentInExplicateTypeArguments() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceVariable/explicateTypeArguments"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            }
+
+            @TestMetadata("DeeperNestedCall.kt")
+            public void testDeeperNestedCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/explicateTypeArguments/DeeperNestedCall.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("NestedCall.kt")
+            public void testNestedCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/explicateTypeArguments/NestedCall.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("Parenthesized.kt")
+            public void testParenthesized() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/explicateTypeArguments/Parenthesized.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("Qualified.kt")
+            public void testQualified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/explicateTypeArguments/Qualified.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/explicateTypeArguments/Simple.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("UnmatchedOccurrences.kt")
+            public void testUnmatchedOccurrences() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/explicateTypeArguments/UnmatchedOccurrences.kt");
+                doIntroduceVariableTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/refactoring/introduceVariable/extractToScope")

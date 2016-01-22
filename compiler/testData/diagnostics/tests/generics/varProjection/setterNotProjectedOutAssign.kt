@@ -4,6 +4,6 @@ interface Tr<T> {
 }
 
 fun test(t: Tr<*>) {
-    t.v = t
+    <!SETTER_PROJECTED_OUT!>t.v<!> = t
     t.v checkType { _<Tr<*>>() }
 }

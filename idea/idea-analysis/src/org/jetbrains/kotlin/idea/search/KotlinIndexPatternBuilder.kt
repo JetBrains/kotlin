@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 
-public class KotlinIndexPatternBuilder: IndexPatternBuilder {
+class KotlinIndexPatternBuilder: IndexPatternBuilder {
     private val TODO_COMMENT_TOKENS = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
 
     override fun getCommentTokenSet(file: PsiFile): TokenSet? {
@@ -40,7 +40,7 @@ public class KotlinIndexPatternBuilder: IndexPatternBuilder {
     override fun getCommentStartDelta(tokenType: IElementType?): Int = 0
 
     override fun getCommentEndDelta(tokenType: IElementType?): Int = when(tokenType) {
-        KtTokens.BLOCK_COMMENT -> "*/".length()
+        KtTokens.BLOCK_COMMENT -> "*/".length
         else -> 0
     }
 }

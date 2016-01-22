@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
+class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
 
-public class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtPrefixExpression>(javaClass(), "Simplify negated binary expression") {
+class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtPrefixExpression>(KtPrefixExpression::class.java, "Simplify negated binary expression") {
 
     private fun IElementType.negate(): KtSingleValueToken? = when (this) {
         KtTokens.IN_KEYWORD -> KtTokens.NOT_IN
@@ -48,38 +48,34 @@ public class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntent
     }
 
     override fun applicabilityRange(element: KtPrefixExpression): TextRange? {
-        return if (isApplicableTo(element)) element.getOperationReference().getTextRange() else null
+        return if (isApplicableTo(element)) element.operationReference.textRange else null
     }
 
-    public fun isApplicableTo(element: KtPrefixExpression): Boolean {
-        if (element.getOperationToken() != KtTokens.EXCL) return false
+    fun isApplicableTo(element: KtPrefixExpression): Boolean {
+        if (element.operationToken != KtTokens.EXCL) return false
 
-        val expression = KtPsiUtil.deparenthesize(element.getBaseExpression()) as? KtOperationExpression ?: return false
+        val expression = KtPsiUtil.deparenthesize(element.baseExpression) as? KtOperationExpression ?: return false
         when (expression) {
-            is KtIsExpression -> { if (expression.getTypeReference() == null) return false }
-            is KtBinaryExpression -> { if (expression.getLeft() == null || expression.getRight() == null) return false }
+            is KtIsExpression -> { if (expression.typeReference == null) return false }
+            is KtBinaryExpression -> { if (expression.left == null || expression.right == null) return false }
             else -> return false
         }
 
-        val operation = expression.getOperationReference().getReferencedNameElementType() as? KtSingleValueToken ?: return false
+        val operation = expression.operationReference.getReferencedNameElementType() as? KtSingleValueToken ?: return false
         val negatedOperation = operation.negate() ?: return false
 
-        setText("Simplify negated '${operation.getValue()}' expression to '${negatedOperation.getValue()}'")
+        text = "Simplify negated '${operation.value}' expression to '${negatedOperation.value}'"
         return true
     }
 
-    override fun applyTo(element: KtPrefixExpression, editor: Editor) {
-        applyTo(element)
-    }
-
-    public fun applyTo(element: KtPrefixExpression) {
-        val expression = KtPsiUtil.deparenthesize(element.getBaseExpression())!!
-        val operation = (expression as KtOperationExpression).getOperationReference().getReferencedNameElementType().negate()!!.getValue()
+    override fun applyTo(element: KtPrefixExpression, editor: Editor?) {
+        val expression = KtPsiUtil.deparenthesize(element.baseExpression)!!
+        val operation = (expression as KtOperationExpression).operationReference.getReferencedNameElementType().negate()!!.value
 
         val psiFactory = KtPsiFactory(expression)
         val newExpression = when (expression) {
-            is KtIsExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeftHandSide(), operation, expression.getTypeReference()!!)
-            is KtBinaryExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeft()!!, operation, expression.getRight()!!)
+            is KtIsExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.leftHandSide, operation, expression.typeReference!!)
+            is KtBinaryExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.left!!, operation, expression.right!!)
             else -> throw IllegalArgumentException()
         }
         element.replace(newExpression)

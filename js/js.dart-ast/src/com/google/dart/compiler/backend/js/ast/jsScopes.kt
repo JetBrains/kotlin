@@ -18,15 +18,15 @@ package com.google.dart.compiler.backend.js.ast
 
 import java.util.Stack
 
-public fun JsObjectScope(parent: JsScope, description: String): JsObjectScope = JsObjectScope(parent, description, null)
+fun JsObjectScope(parent: JsScope, description: String): JsObjectScope = JsObjectScope(parent, description, null)
 
-public class JsObjectScope(parent: JsScope, description: String, scopeId: String?) : JsScope(parent, description, scopeId)
+class JsObjectScope(parent: JsScope, description: String, scopeId: String?) : JsScope(parent, description, scopeId)
 
-public object JsDynamicScope : JsScope(null, "Scope for dynamic declarations", null) {
+object JsDynamicScope : JsScope(null, "Scope for dynamic declarations", null) {
     override fun doCreateName(name: String) = JsName(this, name)
 }
 
-public open class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description, null) {
+open class JsFunctionScope(parent: JsScope, description: String) : JsScope(parent, description, null) {
 
     private val labelScopes = Stack<LabelScope>()
     private val topLabelScope: LabelScope?
@@ -36,20 +36,20 @@ public open class JsFunctionScope(parent: JsScope, description: String) : JsScop
 
     override fun hasOwnName(name: String): Boolean = RESERVED_WORDS.contains(name) || super.hasOwnName(name)
 
-    public open fun declareNameUnsafe(identifier: String): JsName = super.declareName(identifier)
+    open fun declareNameUnsafe(identifier: String): JsName = super.declareName(identifier)
 
-    public open fun enterLabel(label: String): JsName {
+    open fun enterLabel(label: String): JsName {
         val scope = LabelScope(topLabelScope, label)
         labelScopes.push(scope)
         return scope.labelName
     }
 
-    public open fun exitLabel() {
+    open fun exitLabel() {
         assert(labelScopes.isNotEmpty()) { "No scope to exit from" }
         labelScopes.pop()
     }
 
-    public open fun findLabel(label: String): JsName? =
+    open fun findLabel(label: String): JsName? =
             topLabelScope?.findName(label)
 
     private inner class LabelScope(parent: LabelScope?, val ident: String) : JsScope(parent, "Label scope for $ident", null) {
@@ -76,12 +76,12 @@ public open class JsFunctionScope(parent: JsScope, description: String) : JsScop
         override fun hasOwnName(name: String): Boolean =
                 name in RESERVED_WORDS
                 || name == ident
-                || name == labelName?.getIdent()
-                || getParent()?.hasOwnName(name) ?: false
+                || name == labelName?.ident
+                || parent?.hasOwnName(name) ?: false
     }
 
     companion object {
-        public val RESERVED_WORDS: Set<String> = setOf(
+        val RESERVED_WORDS: Set<String> = setOf(
                 // keywords
                 "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
                 "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with",
@@ -107,7 +107,7 @@ public open class JsFunctionScope(parent: JsScope, description: String) : JsScop
     }
 }
 
-public class DelegatingJsFunctionScopeWithTemporaryParent(
+class DelegatingJsFunctionScopeWithTemporaryParent(
         private val delegatingScope: JsFunctionScope,
         parent: JsScope
 ) : JsFunctionScope(parent, "<delegating scope to delegatingScope>") {

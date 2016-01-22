@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTool {
+class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTool {
     // required to simplify the inspection registration in tests
     override fun getDisplayName(): String = "Usage of redundant or deprecated syntax or deprecated symbols"
 
@@ -54,7 +54,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             throw ProcessCanceledException(analysisResult.error)
         }
 
-        val diagnostics = analysisResult.bindingContext.getDiagnostics()
+        val diagnostics = analysisResult.bindingContext.diagnostics
 
         val problemDescriptors = arrayListOf<ProblemDescriptor>()
 
@@ -79,7 +79,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         return problemDescriptors.toTypedArray()
     }
 
-    private fun Diagnostic.isCleanup() = getFactory() in cleanupDiagnosticsFactories || isObsoleteLabel()
+    private fun Diagnostic.isCleanup() = factory in cleanupDiagnosticsFactories || isObsoleteLabel()
 
     private val cleanupDiagnosticsFactories = setOf(
             Errors.MISSING_CONSTRUCTOR_KEYWORD,
@@ -98,11 +98,12 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
             Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
             Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
-            Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
+            Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT,
+            Errors.UNSUPPORTED
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {
-        val annotationEntry = getPsiElement().getNonStrictParentOfType<KtAnnotationEntry>() ?: return false
+        val annotationEntry = psiElement.getNonStrictParentOfType<KtAnnotationEntry>() ?: return false
         return ReplaceObsoleteLabelSyntaxFix.looksLikeObsoleteLabel(annotationEntry)
     }
 

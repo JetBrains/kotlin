@@ -33,11 +33,11 @@ internal class ComponentRegistry {
 
     private var registrationMap = MultiMap.createLinkedSet<Type, ComponentDescriptor>()
 
-    public fun addAll(descriptors: Collection<ComponentDescriptor>) {
+    fun addAll(descriptors: Collection<ComponentDescriptor>) {
         registrationMap.putAllValues(buildRegistrationMap(descriptors))
     }
 
-    public fun tryGetEntry(request: Type): Collection<ComponentDescriptor> {
+    fun tryGetEntry(request: Type): Collection<ComponentDescriptor> {
         return registrationMap.get(request)
     }
 }

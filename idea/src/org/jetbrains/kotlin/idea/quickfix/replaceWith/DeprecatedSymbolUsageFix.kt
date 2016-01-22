@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
-public class DeprecatedSymbolUsageFix(
+class DeprecatedSymbolUsageFix(
         element: KtSimpleNameExpression/*TODO?*/,
         replaceWith: ReplaceWith
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith), CleanupFix, HighPriorityAction {
@@ -50,7 +50,7 @@ public class DeprecatedSymbolUsageFix(
             return DeprecatedSymbolUsageFix(nameExpression, replacement)
         }
 
-        public fun isImportToBeRemoved(import: KtImportDirective): Boolean {
+        fun isImportToBeRemoved(import: KtImportDirective): Boolean {
             return !import.isAllUnder
                    && import.targetDescriptors().all { DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null }
         }

@@ -22,30 +22,30 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-public class FoldWhenToReturnIntention : SelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' expression with return") {
+class FoldWhenToReturnIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Replace 'when' expression with return") {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
 
-        val entries = element.getEntries()
+        val entries = element.entries
 
         if (entries.isEmpty()) return null
 
         for (entry in entries) {
-            if (BranchedFoldingUtils.getFoldableBranchedReturn(entry.getExpression()) == null) return null
+            if (BranchedFoldingUtils.getFoldableBranchedReturn(entry.expression) == null) return null
         }
 
-        return element.getWhenKeyword().getTextRange()
+        return element.whenKeyword.textRange
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
-        assert(!element.getEntries().isEmpty())
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
+        assert(!element.entries.isEmpty())
 
         val newReturnExpression = KtPsiFactory(element).createExpressionByPattern("return $0", element) as KtReturnExpression
-        val newWhenExpression = newReturnExpression.getReturnedExpression() as KtWhenExpression
+        val newWhenExpression = newReturnExpression.returnedExpression as KtWhenExpression
 
-        for (entry in newWhenExpression.getEntries()) {
-            val currReturn = BranchedFoldingUtils.getFoldableBranchedReturn(entry.getExpression()!!)!!
-            val currExpr = currReturn.getReturnedExpression()!!
+        for (entry in newWhenExpression.entries) {
+            val currReturn = BranchedFoldingUtils.getFoldableBranchedReturn(entry.expression!!)!!
+            val currExpr = currReturn.returnedExpression!!
             currReturn.replace(currExpr)
         }
 

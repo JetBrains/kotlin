@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
-public abstract class InstructionWithNext(
+abstract class InstructionWithNext(
         element: KtElement,
         lexicalScope: LexicalScope
 ) : KtElementInstructionImpl(element, lexicalScope) {
-    public var next: Instruction? = null
+    var next: Instruction? = null
         set(value: Instruction?) {
             field = outgoingEdgeTo(value)
         }

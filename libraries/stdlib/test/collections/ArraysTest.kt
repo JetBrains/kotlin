@@ -5,6 +5,7 @@ import test.compare.STRING_CASE_INSENSITIVE_ORDER
 import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
+import kotlin.comparisons.*
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
 fun assertArrayNotSameButEquals(expected: IntArray, actual: IntArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
@@ -46,6 +47,14 @@ class ArraysTest {
         assertEquals(expected, arr[1])
     }
 
+    @test fun byteArrayInit() {
+        val arr = ByteArray(2) { it.toByte() }
+
+        assertEquals(2, arr.size)
+        assertEquals(0.toByte(), arr[0])
+        assertEquals(1.toByte(), arr[1])
+    }
+
     @test fun shortArray() {
         val arr = ShortArray(2)
 
@@ -55,6 +64,14 @@ class ArraysTest {
         assertEquals(expected, arr[1])
     }
 
+    @test fun shortArrayInit() {
+        val arr = ShortArray(2) { it.toShort() }
+
+        assertEquals(2, arr.size)
+        assertEquals(0.toShort(), arr[0])
+        assertEquals(1.toShort(), arr[1])
+    }
+    
     @test fun intArray() {
         val arr = IntArray(2)
 
@@ -62,7 +79,15 @@ class ArraysTest {
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
+    
+    @test fun intArrayInit() {
+        val arr = IntArray(2) { it.toInt() }
 
+        assertEquals(2, arr.size)
+        assertEquals(0.toInt(), arr[0])
+        assertEquals(1.toInt(), arr[1])
+    }
+    
     @test fun longArray() {
         val arr = LongArray(2)
 
@@ -70,6 +95,14 @@ class ArraysTest {
         assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
+    }
+
+    @test fun longArrayInit() {
+        val arr = LongArray(2) { it.toLong() }
+
+        assertEquals(2, arr.size)
+        assertEquals(0.toLong(), arr[0])
+        assertEquals(1.toLong(), arr[1])
     }
 
     @test fun floatArray() {
@@ -80,6 +113,14 @@ class ArraysTest {
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
+    
+    @test fun floatArrayInit() {
+        val arr = FloatArray(2) { it.toFloat() }
+
+        assertEquals(2, arr.size)
+        assertEquals(0.toFloat(), arr[0])
+        assertEquals(1.toFloat(), arr[1])
+    }
 
     @test fun doubleArray() {
         val arr = DoubleArray(2)
@@ -87,6 +128,14 @@ class ArraysTest {
         assertEquals(arr.size, 2)
         assertEquals(0.0, arr[0])
         assertEquals(0.0, arr[1])
+    }
+
+    @test fun doubleArrayInit() {
+        val arr = DoubleArray(2) { it.toDouble() }
+
+        assertEquals(2, arr.size)
+        assertEquals(0.toDouble(), arr[0])
+        assertEquals(1.toDouble(), arr[1])
     }
 
     @test fun charArray() {
@@ -98,10 +147,26 @@ class ArraysTest {
         assertEquals(expected, arr[1])
     }
 
+    @test fun charArrayInit() {
+        val arr = CharArray(2) { 'a' + it }
+
+        assertEquals(2, arr.size)
+        assertEquals('a', arr[0])
+        assertEquals('b', arr[1])
+    }
+
     @test fun booleanArray() {
         val arr = BooleanArray(2)
         assertEquals(arr.size, 2)
         assertEquals(false, arr[0])
+        assertEquals(false, arr[1])
+    }
+
+    @test fun booleanArrayInit() {
+        val arr = BooleanArray(2) { it % 2 == 0 }
+
+        assertEquals(2, arr.size)
+        assertEquals(true, arr[0])
         assertEquals(false, arr[1])
     }
 
@@ -431,7 +496,9 @@ class ArraysTest {
         val coll: Collection<Int> = listOf(3, 1, 2)
 
         assertArrayNotSameButEquals(arrayOf("B"), arrayOf("A", "B", "C").sliceArray(1..1))
+        assertArrayNotSameButEquals(arrayOf("B"), (arrayOf("A", "B", "C") as Array<out String>).sliceArray(1..1))
         assertArrayNotSameButEquals(arrayOf('E', 'B', 'C'), arrayOf('A', 'B', 'C', 'E').sliceArray(coll))
+
 
         assertArrayNotSameButEquals(arrayOf<Int>(), arrayOf<Int>().sliceArray(5..4))
         assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).sliceArray(5..1))
@@ -591,6 +658,7 @@ class ArraysTest {
         doTest(build = { map {'a' + it}.toCharArray() },        reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it % 2 == 0}.toBooleanArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { reverse() }, snapshot = { toList() })
     }
 
 
@@ -616,6 +684,7 @@ class ArraysTest {
         assertArrayNotSameButEquals(charArrayOf('3', '2', '1'), charArrayOf('1', '2', '3').reversedArray())
         assertArrayNotSameButEquals(booleanArrayOf(false, false, true), booleanArrayOf(true, false, false).reversedArray())
         assertArrayNotSameButEquals(arrayOf("3", "2", "1"), arrayOf("1", "2", "3").reversedArray())
+        assertArrayNotSameButEquals(arrayOf("3", "2", "1"), (arrayOf("1", "2", "3") as Array<out String>).reversedArray())
     }
 
     @test fun drop() {
@@ -904,9 +973,14 @@ class ArraysTest {
         assertTrue(arrayOf<Long>().sorted().none())
         assertEquals(listOf(1), arrayOf(1).sorted())
 
-        fun arrayData<A, T: Comparable<T>>(vararg values: T, toArray: Array<out T>.() -> A) = ArraySortedChecker<A, T>(values.toArray(), naturalOrder())
+        fun <A, T: Comparable<T>> arrayData(vararg values: T, toArray: Array<out T>.() -> A) = ArraySortedChecker<A, T>(values.toArray(), naturalOrder())
 
         with (arrayData("ac", "aD", "aba") { toList().toTypedArray() }) {
+            checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<Array<String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
+        }
+
+        with (arrayData("ac", "aD", "aba") { toList().toTypedArray() as Array<out String> }) {
             checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
             checkSorted<Array<out String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
         }

@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationsManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 
 object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<ConfigureKotlinNotification> {
-    fun notify(project: Project) {
-        notify(project, ConfigureKotlinNotification(project, ConfigureKotlinNotification.getNotificationString(project)))
+    fun notify(project: Project, excludeModules: List<Module> = emptyList()) {
+        notify(project, ConfigureKotlinNotification(project, excludeModules))
     }
 }
 

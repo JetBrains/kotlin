@@ -1,12 +1,12 @@
 package
 
 package n {
-    public fun </*0*/ T : kotlin.Any> kotlin.Iterable<T>.find(/*0*/ predicate: (T) -> kotlin.Boolean): T?
+    public fun </*0*/ T : kotlin.Any> kotlin.collections.Iterable<T>.find(/*0*/ predicate: (T) -> kotlin.Boolean): T?
 
     public abstract class Buggy {
         public constructor Buggy()
         public final val anotherThree: kotlin.Int
-        public abstract val coll: kotlin.Collection<kotlin.Int>
+        public abstract val coll: kotlin.collections.Collection<kotlin.Int>
         public final val extendedGetter: kotlin.Int
         public final val yetAnotherThree: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

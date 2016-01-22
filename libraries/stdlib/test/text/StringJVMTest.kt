@@ -74,10 +74,8 @@ class StringJVMTest {
     }
 
     @test fun toByteArrayEncodings() {
-        val s = "hello"
-        val defaultCharset = java.nio.charset.Charset.defaultCharset()!!
-        assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset)))
-        assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset.name())))
+        val s = "hello®"
+        assertEquals(String(s.toByteArray()), String(s.toByteArray(Charsets.UTF_8)))
     }
 
     @test fun toCharArray() {

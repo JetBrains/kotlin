@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-public class AccessorForConstructorDescriptor(
+class AccessorForConstructorDescriptor(
         private val calleeDescriptor: ConstructorDescriptor,
         containingDeclaration: DeclarationDescriptor,
         private val superCallTarget: ClassDescriptor?

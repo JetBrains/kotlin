@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -609,6 +610,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             boolean withinInline,
             boolean isSuperCall
     ) {
+        if (AnnotationUtilKt.isInlineOnly(unwrappedDescriptor)) return false;
+
         return isSuperCall && withinInline ||
                (accessFlag & ACC_PRIVATE) != 0 ||
                ((accessFlag & ACC_PROTECTED) != 0 &&

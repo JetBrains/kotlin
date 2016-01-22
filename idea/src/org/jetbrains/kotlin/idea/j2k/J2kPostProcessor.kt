@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.*
 
-public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
+class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     override fun insertImport(file: KtFile, fqName: FqName) {
         val descriptors = file.resolveImportReference(fqName)
         descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.project).importDescriptor(file, it) }

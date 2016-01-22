@@ -28,28 +28,28 @@ import org.jetbrains.kotlin.psi.*
 
 object CastReceiverInsertHandler {
     fun postHandleInsert(context: InsertionContext, item: LookupElement) {
-        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.getFile(), context.getStartOffset(), javaClass<KtSimpleNameExpression>(), false)
-        val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, javaClass<KtQualifiedExpression>(), true)
+        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.file, context.startOffset, KtSimpleNameExpression::class.java, false)
+        val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, KtQualifiedExpression::class.java, true)
         if (qualifiedExpression != null) {
-            val receiver = qualifiedExpression.getReceiverExpression()
+            val receiver = qualifiedExpression.receiverExpression
 
-            val descriptor = (item.getObject() as? DeclarationLookupObject)?.descriptor as CallableDescriptor
-            val project = context.getProject()
+            val descriptor = (item.`object` as? DeclarationLookupObject)?.descriptor as CallableDescriptor
+            val project = context.project
 
-            val thisObj = if (descriptor.getExtensionReceiverParameter() != null) descriptor.getExtensionReceiverParameter() else descriptor.getDispatchReceiverParameter()
-            val fqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(thisObj!!.getType().getConstructor().getDeclarationDescriptor()!!)
+            val thisObj = if (descriptor.extensionReceiverParameter != null) descriptor.extensionReceiverParameter else descriptor.dispatchReceiverParameter
+            val fqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(thisObj!!.type.constructor.declarationDescriptor!!)
 
             val parentCast = KtPsiFactory(project).createExpression("(expr as $fqName)") as KtParenthesizedExpression
-            val cast = parentCast.getExpression() as KtBinaryExpressionWithTypeRHS
-            cast.getLeft().replace(receiver)
+            val cast = parentCast.expression as KtBinaryExpressionWithTypeRHS
+            cast.left.replace(receiver)
 
             val psiDocumentManager = PsiDocumentManager.getInstance(project)
             psiDocumentManager.commitAllDocuments()
-            psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
+            psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
 
             val expr = receiver.replace(parentCast) as KtParenthesizedExpression
 
-            ShortenReferences.DEFAULT.process((expr.getExpression() as KtBinaryExpressionWithTypeRHS).getRight()!!)
+            ShortenReferences.DEFAULT.process((expr.expression as KtBinaryExpressionWithTypeRHS).right!!)
         }
     }
 }

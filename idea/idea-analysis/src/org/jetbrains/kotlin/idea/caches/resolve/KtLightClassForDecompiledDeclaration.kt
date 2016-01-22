@@ -25,20 +25,20 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 class KtLightClassForDecompiledDeclaration(
         private val clsClass: ClsClassImpl,
         private val origin: KtClassOrObject?
-) : KtWrappingLightClass(clsClass.getManager()) {
-    private val fqName = origin?.getFqName() ?: FqName(clsClass.getQualifiedName())
+) : KtWrappingLightClass(clsClass.manager) {
+    private val fqName = origin?.fqName ?: FqName(clsClass.qualifiedName)
 
     override fun copy() = this
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        val nestedClasses = origin?.getDeclarations()?.filterIsInstance<KtClassOrObject>() ?: emptyList()
-        return clsClass.getOwnInnerClasses().map { innerClsClass ->
+        val nestedClasses = origin?.declarations?.filterIsInstance<KtClassOrObject>() ?: emptyList()
+        return clsClass.ownInnerClasses.map { innerClsClass ->
             KtLightClassForDecompiledDeclaration(innerClsClass as ClsClassImpl,
-                                                 nestedClasses.firstOrNull { innerClsClass.getName() == it.getName() })
+                                                 nestedClasses.firstOrNull { innerClsClass.name == it.name })
         }
     }
 
-    override fun getNavigationElement() = origin?.getNavigationElement() ?: super.getNavigationElement()
+    override fun getNavigationElement() = origin?.navigationElement ?: super.getNavigationElement()
 
     override fun getDelegate() = clsClass
 

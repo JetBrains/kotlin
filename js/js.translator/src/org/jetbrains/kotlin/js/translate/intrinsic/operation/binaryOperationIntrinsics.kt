@@ -26,20 +26,20 @@ import gnu.trove.THashMap
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.common.collect.ImmutableSet
 
-public interface BinaryOperationIntrinsic {
+interface BinaryOperationIntrinsic {
 
     fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
 
     fun exists(): Boolean
 }
 
-public class BinaryOperationIntrinsics {
+class BinaryOperationIntrinsics {
 
     private val intrinsicCache = THashMap<Pair<KtToken, FunctionDescriptor>, BinaryOperationIntrinsic>()
 
     private val factories = listOf(LongCompareToBOIF, EqualsBOIF, CompareToBOIF)
 
-    public fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
+    fun getIntrinsic(expression: KtBinaryExpression, context: TranslationContext): BinaryOperationIntrinsic {
         val token = getOperationToken(expression)
         val descriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression)
         if (descriptor == null || descriptor !is FunctionDescriptor) {
@@ -73,16 +73,16 @@ public class BinaryOperationIntrinsics {
 
 interface BinaryOperationIntrinsicFactory {
 
-    public fun getSupportTokens(): ImmutableSet<out KtToken>
+    fun getSupportTokens(): ImmutableSet<out KtToken>
 
-    public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic?
+    fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic?
 }
 
 abstract class AbstractBinaryOperationIntrinsic : BinaryOperationIntrinsic {
 
-    public override abstract fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
+    override abstract fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
 
-    public override fun exists(): Boolean = true
+    override fun exists(): Boolean = true
 }
 
 object NO_INTRINSIC : AbstractBinaryOperationIntrinsic() {

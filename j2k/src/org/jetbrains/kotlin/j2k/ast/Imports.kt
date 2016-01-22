@@ -31,7 +31,7 @@ class Import(val name: String) : Element() {
     }
 }
 
-class ImportList(public var imports: List<Import>) : Element() {
+class ImportList(var imports: List<Import>) : Element() {
     override val isEmpty: Boolean
         get() = imports.isEmpty()
 
@@ -40,10 +40,10 @@ class ImportList(public var imports: List<Import>) : Element() {
     }
 }
 
-public fun Converter.convertImportList(importList: PsiImportList): ImportList =
+fun Converter.convertImportList(importList: PsiImportList): ImportList =
         ImportList(importList.allImportStatements.mapNotNull { convertImport(it, true) }).assignPrototype(importList)
 
-public fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boolean): Import? {
+fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boolean): Import? {
     fun doConvert(): Import? {
         val reference = anImport.importReference ?: return null
         val qualifiedName = quoteKeywords(reference.qualifiedName!!)

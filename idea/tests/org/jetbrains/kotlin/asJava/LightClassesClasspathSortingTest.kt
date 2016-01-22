@@ -40,17 +40,17 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
 
         // Configure library first to make classes be indexed before correspondent classes from sources
         val dirName = getTestName(true)
-        getModule().configureAs(getProjectDescriptor(dirName))
+        module.configureAs(getProjectDescriptor(dirName))
 
-        val testDirRoot = File(getTestDataPath())
-        val filePaths = File(testDirRoot, dirName).listFiles().map { it.relativeTo(testDirRoot) }.toArrayList().toTypedArray()
+        val testDirRoot = File(testDataPath)
+        val filePaths = File(testDirRoot, dirName).listFiles().map { it.toRelativeString(testDirRoot) }.toTypedArray()
         configureByFiles(null, *filePaths)
 
         checkLightClassBeforeDecompiled(fqName)
     }
 
     private fun checkLightClassBeforeDecompiled(fqName: String) {
-        val psiClass = JavaPsiFacade.getInstance(getProject()).findClass(fqName, ResolveScopeManager.getElementResolveScope(getFile()))
+        val psiClass = JavaPsiFacade.getInstance(project).findClass(fqName, ResolveScopeManager.getElementResolveScope(file))
 
         assertNotNull(psiClass, "Can't find class for $fqName")
         psiClass!!

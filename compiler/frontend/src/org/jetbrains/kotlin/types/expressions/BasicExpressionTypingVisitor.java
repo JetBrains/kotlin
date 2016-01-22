@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -196,7 +198,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         );
 
         if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
-            CompileTimeConstantChecker constantChecker = new CompileTimeConstantChecker(context.trace, components.builtIns, false);
+            CompileTimeConstantChecker constantChecker = new CompileTimeConstantChecker(context, components.builtIns, false);
             ConstantValue constantValue =
                     compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
             boolean hasError = constantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
@@ -564,7 +566,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 ResolvedCallImpl.create(resolutionCandidate,
                                         TemporaryBindingTrace.create(trace, "Fake trace for fake 'this' or 'super' resolved call"),
                                         TracingStrategy.EMPTY,
-                                        new DataFlowInfoForArgumentsImpl(call));
+                                        new DataFlowInfoForArgumentsImpl(context.dataFlowInfo, call));
         resolvedCall.markCallAsCompleted();
 
         trace.record(RESOLVED_CALL, call, resolvedCall);
@@ -979,7 +981,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KtSimpleNameExpression labelExpression = expression.getTargetLabel();
         if (labelExpression != null) {
             PsiElement labelIdentifier = labelExpression.getIdentifier();
-            UnderscoreChecker.INSTANCE$.checkIdentifier(labelIdentifier, context.trace);
+            UnderscoreChecker.INSTANCE.checkIdentifier(labelIdentifier, context.trace);
         }
         KtExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) return TypeInfoFactoryKt.noTypeInfo(context);
@@ -1107,7 +1109,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = visitEquality(expression, context, operationSign, left, right);
         }
         else if (OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(operationType)) {
-            context.trace.record(REFERENCE_TARGET, operationSign, components.builtIns.getIdentityEquals());
             ensureNonemptyIntersectionOfOperandTypes(expression, context);
             // TODO : Check comparison pointlessness
             result = TypeInfoFactoryKt.createTypeInfo(components.builtIns.getBooleanType(), context);
@@ -1448,6 +1449,32 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return components.dataFlowAnalyzer.checkType(resolveArrayAccessGetMethod(expression, context), expression, context);
     }
 
+    @Override
+    public KotlinTypeInfo visitClass(@NotNull KtClass klass, ExpressionTypingContext context) {
+        // analyze class in illegal position and write descriptor to trace but do not write to any scope
+        components.localClassifierAnalyzer.processClassOrObject(
+                null, context.replaceContextDependency(INDEPENDENT),
+                context.scope.getOwnerDescriptor(),
+                klass
+        );
+        return declarationInIllegalContext(klass, context);
+    }
+
+    @NotNull
+    private static KotlinTypeInfo declarationInIllegalContext(
+            @NotNull KtDeclaration declaration,
+            @NotNull ExpressionTypingContext context
+    ) {
+        context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(declaration));
+        return TypeInfoFactoryKt.noTypeInfo(context);
+    }
+
+    @Override
+    public KotlinTypeInfo visitProperty(@NotNull KtProperty property, ExpressionTypingContext context) {
+        components.localVariableResolver.process(property, context, context.scope, facade);
+        return declarationInIllegalContext(property, context);
+    }
+
     @NotNull
     public KotlinTypeInfo getTypeInfoForBinaryCall(
             @NotNull Name name,
@@ -1486,8 +1513,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public KotlinTypeInfo visitDeclaration(@NotNull KtDeclaration dcl, ExpressionTypingContext context) {
-        context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(dcl));
-        return TypeInfoFactoryKt.noTypeInfo(context);
+        return declarationInIllegalContext(dcl, context);
     }
 
     @Override

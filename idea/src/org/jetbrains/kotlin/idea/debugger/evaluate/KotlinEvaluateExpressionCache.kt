@@ -52,11 +52,11 @@ class KotlinEvaluateExpressionCache(val project: Project) {
                 evaluationContext: EvaluationContextImpl,
                 create: (KtCodeFragment, SourcePosition) -> CompiledDataDescriptor
         ): CompiledDataDescriptor {
-            val evaluateExpressionCache = getInstance(codeFragment.getProject())
+            val evaluateExpressionCache = getInstance(codeFragment.project)
 
             return synchronized<CompiledDataDescriptor>(evaluateExpressionCache.cachedCompiledData) {
-                val cache = evaluateExpressionCache.cachedCompiledData.getValue()!!
-                val text = "${codeFragment.importsToString()}\n${codeFragment.getText()}"
+                val cache = evaluateExpressionCache.cachedCompiledData.value!!
+                val text = "${codeFragment.importsToString()}\n${codeFragment.text}"
 
                 val answer = cache[text].firstOrNull {
                     it.sourcePosition == sourcePosition || evaluateExpressionCache.canBeEvaluatedInThisContext(it, evaluationContext)
@@ -64,7 +64,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
                 if (answer != null) return@synchronized answer
 
                 val newCompiledData = create(codeFragment, sourcePosition)
-                LOG.debug("Compile bytecode for ${codeFragment.getText()}")
+                LOG.debug("Compile bytecode for ${codeFragment.text}")
 
                 cache.putValue(text, newCompiledData)
                 return@synchronized newCompiledData
@@ -80,7 +80,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
             if (value == null) return@all false
 
             val thisDescriptor = value.asmType.getClassDescriptor(project)
-            val superClassDescriptor = jetType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
+            val superClassDescriptor = jetType.constructor.declarationDescriptor as? ClassDescriptor
             return@all thisDescriptor != null && superClassDescriptor != null && runReadAction { DescriptorUtils.isSubclass(thisDescriptor, superClassDescriptor) }
         }
     }

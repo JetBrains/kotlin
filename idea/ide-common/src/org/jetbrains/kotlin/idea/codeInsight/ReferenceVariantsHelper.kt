@@ -31,14 +31,11 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
-import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionFunctions
-import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
 class ReferenceVariantsHelper(
@@ -95,7 +92,11 @@ class ReferenceVariantsHelper(
         for (variant in variants) {
             if (variant is SyntheticJavaPropertyDescriptor) {
                 accessorMethodsToRemove.add(variant.getMethod.original)
-                accessorMethodsToRemove.addIfNotNull(variant.setMethod?.original)
+
+                val setter = variant.setMethod
+                if (setter != null && setter.returnType?.isUnit() == true) { // we do not filter out non-Unit setters
+                    accessorMethodsToRemove.add(setter.original)
+                }
             }
         }
 
@@ -341,14 +342,15 @@ class ReferenceVariantsHelper(
             process(descriptor as CallableDescriptor)
         }
 
+        val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            for (extension in scope.collectSyntheticExtensionProperties(receiverTypes)) {
+            for (extension in syntheticScopes.collectSyntheticExtensionProperties(receiverTypes)) {
                 process(extension)
             }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            for (extension in scope.collectSyntheticExtensionFunctions(receiverTypes)) {
+            for (extension in syntheticScopes.collectSyntheticExtensionFunctions(receiverTypes)) {
                 process(extension)
             }
         }

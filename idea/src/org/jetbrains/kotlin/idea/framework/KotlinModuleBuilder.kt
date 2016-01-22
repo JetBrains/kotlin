@@ -24,7 +24,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
-public class KotlinModuleBuilder(
+class KotlinModuleBuilder(
         val targetPlatform: TargetPlatform, val builderName: String, val builderDescription: String) : JavaModuleBuilder() {
     override fun getBuilderId() = "kotlin.module.builder"
     override fun getName() = builderName

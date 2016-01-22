@@ -47,7 +47,7 @@ public class FrameMap {
         myVarSizes.remove(descriptor);
         int oldIndex = myVarIndex.remove(descriptor);
         if (oldIndex != myMaxIndex) {
-            throw new IllegalStateException("descriptor can be left only if it is last");
+            throw new IllegalStateException("Descriptor can be left only if it is last: " + descriptor);
         }
         return oldIndex;
     }

@@ -39,10 +39,10 @@ class PrimaryConstructor(
 
     override fun generateCode(builder: CodeBuilder) { throw IncorrectOperationException() }
 
-    public fun initializer(): Initializer
+    fun initializer(): Initializer
             = Initializer(body!!, Modifiers.Empty).assignPrototypesFrom(this, CommentsAndSpacesInheritance(commentsBefore = false))
 
-    public fun createSignature(converter: Converter): PrimaryConstructorSignature {
+    fun createSignature(converter: Converter): PrimaryConstructorSignature {
         val signature = PrimaryConstructorSignature(annotations, modifiers, parameterList)
 
         // assign prototypes later because we don't know yet whether the body is empty or not
@@ -56,7 +56,7 @@ class PrimaryConstructor(
 }
 
 class PrimaryConstructorSignature(val annotations: Annotations, private val modifiers: Modifiers, val parameterList: ParameterList) : Element() {
-    public val accessModifier: Modifier? = run {
+    val accessModifier: Modifier? = run {
         val modifier = modifiers.accessModifier()
         if (modifier != Modifier.PUBLIC) modifier else null
     }

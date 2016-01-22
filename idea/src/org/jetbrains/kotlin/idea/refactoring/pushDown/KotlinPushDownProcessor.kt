@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.refactoring.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.pullUp.*
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.ArrayList
 
-public class KotlinPushDownContext(
+class KotlinPushDownContext(
         val sourceClass: KtClass,
         val membersToMove: List<KotlinMemberInfo>
 ) {
@@ -64,7 +64,7 @@ public class KotlinPushDownContext(
             .keysToMap { sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!! }
 }
 
-public class KotlinPushDownProcessor(
+class KotlinPushDownProcessor(
         project: Project,
         sourceClass: KtClass,
         membersToMove: List<KotlinMemberInfo>
@@ -148,7 +148,7 @@ public class KotlinPushDownProcessor(
                             addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
                         }
                     } ?: addMemberToTarget(member, targetClass).apply {
-                        if (context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
+                        if (this@KotlinPushDownProcessor.context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
                             if (targetClassDescriptor.kind != ClassKind.INTERFACE && memberDescriptor.modality == Modality.ABSTRACT) {
                                 addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
                             }

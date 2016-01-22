@@ -23,44 +23,44 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFold
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class FoldWhenToAssignmentIntention : SelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' expression with assignment") {
+class FoldWhenToAssignmentIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Replace 'when' expression with assignment") {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
 
-        val entries = element.getEntries()
+        val entries = element.entries
 
         if (entries.isEmpty()) return null
 
         val assignments = ArrayList<KtBinaryExpression>()
         for (entry in entries) {
-            val assignment = BranchedFoldingUtils.getFoldableBranchedAssignment(entry.getExpression()) ?: return null
+            val assignment = BranchedFoldingUtils.getFoldableBranchedAssignment(entry.expression) ?: return null
             assignments.add(assignment)
         }
 
         assert(!assignments.isEmpty())
 
-        val firstAssignment = assignments.get(0)
+        val firstAssignment = assignments.first()
         for (assignment in assignments) {
             if (!BranchedFoldingUtils.checkAssignmentsMatch(assignment, firstAssignment)) return null
         }
 
-        return element.getWhenKeyword().getTextRange()
+        return element.whenKeyword.textRange
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
-        assert(!element.getEntries().isEmpty())
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
+        assert(!element.entries.isEmpty())
 
-        val firstAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getEntries().get(0).getExpression()!!)!!
+        val firstAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.entries.first().expression!!)!!
 
-        val op = firstAssignment.getOperationReference().getText()
-        val lhs = firstAssignment.getLeft() as KtNameReferenceExpression
+        val op = firstAssignment.operationReference.text
+        val lhs = firstAssignment.left as KtNameReferenceExpression
 
         val assignment = KtPsiFactory(element).createExpressionByPattern("$0 $1 $2", lhs, op, element)
-        val newWhenExpression = (assignment as KtBinaryExpression).getRight() as KtWhenExpression
+        val newWhenExpression = (assignment as KtBinaryExpression).right as KtWhenExpression
 
-        for (entry in newWhenExpression.getEntries()) {
-            val currAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(entry.getExpression()!!)!!
-            val currRhs = currAssignment.getRight()!!
+        for (entry in newWhenExpression.entries) {
+            val currAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(entry.expression!!)!!
+            val currRhs = currAssignment.right!!
             currAssignment.replace(currRhs)
         }
 

@@ -28,7 +28,7 @@ val CLASS = Type.getType(Class::class.java)
 val OBJECT = Type.getType(Any::class.java)
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
-public class JDIEval(
+class JDIEval(
         private val vm: VirtualMachine,
         private val defaultClassLoader: ClassLoaderReference?,
         private val thread: ThreadReference,
@@ -251,7 +251,7 @@ public class JDIEval(
         mayThrow { obj.setValue(field, jdiValue) }
     }
 
-    public fun unboxType(boxedValue: Value, type: Type): Value {
+    fun unboxType(boxedValue: Value, type: Type): Value {
         val method = when (type) {
             Type.INT_TYPE -> MethodDescription("java/lang/Integer", "intValue", "()I", false)
             Type.BOOLEAN_TYPE -> MethodDescription("java/lang/Boolean", "booleanValue", "()Z", false)
@@ -266,7 +266,7 @@ public class JDIEval(
         return invokeMethod(boxedValue, method, listOf(), true)
     }
 
-    public fun boxType(value: Value): Value {
+    fun boxType(value: Value): Value {
         val method = when (value.asmType) {
             Type.INT_TYPE -> MethodDescription("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false)
             Type.BYTE_TYPE -> MethodDescription("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;", false)

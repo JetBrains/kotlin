@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public fun generateDelegateCall(
+fun generateDelegateCall(
         fromDescriptor: FunctionDescriptor,
         toDescriptor: FunctionDescriptor,
         thisObject: JsExpression,
@@ -44,14 +44,14 @@ public fun generateDelegateCall(
         args.add(JsNameRef(extensionFunctionReceiverName))
     }
 
-    for (param in fromDescriptor.getValueParameters()) {
-        val paramName = param.getName().asString()
+    for (param in fromDescriptor.valueParameters) {
+        val paramName = param.name.asString()
         val jsParamName = functionScope.declareName(paramName)
         parameters.add(JsParameter(jsParamName))
         args.add(JsNameRef(jsParamName))
     }
 
     val functionObject = simpleReturnFunction(context.getScopeForDescriptor(fromDescriptor), JsInvocation(overriddenMemberFunctionRef, args))
-    functionObject.getParameters().addAll(parameters)
+    functionObject.parameters.addAll(parameters)
     return JsPropertyInitializer(delegateMemberFunctionName.makeRef(), functionObject)
 }

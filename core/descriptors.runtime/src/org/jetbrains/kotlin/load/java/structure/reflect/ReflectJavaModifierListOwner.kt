@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import java.lang.reflect.Modifier
 
-public interface ReflectJavaModifierListOwner : JavaModifierListOwner {
+interface ReflectJavaModifierListOwner : JavaModifierListOwner {
     /* protected // KT-3029 */ val modifiers: Int
 
     override fun isAbstract() = Modifier.isAbstract(modifiers)

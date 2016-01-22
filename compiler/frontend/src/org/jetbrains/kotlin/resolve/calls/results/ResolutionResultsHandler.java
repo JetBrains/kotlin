@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 
 import java.util.Collection;
@@ -193,19 +194,23 @@ public class ResolutionResultsHandler {
             return OverloadResolutionResultsImpl.success(candidates.iterator().next());
         }
 
+        if (candidates.iterator().next() instanceof VariableAsFunctionResolvedCall) {
+            candidates = overloadingConflictResolver.findMaximallySpecificVariableAsFunctionCalls(candidates);
+        }
+
         Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
         if (noOverrides.size() == 1) {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
 
-        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, false, checkArgumentsMode);
+        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, checkArgumentsMode, false);
         if (maximallySpecific != null) {
             return OverloadResolutionResultsImpl.success(maximallySpecific);
         }
 
         if (discriminateGenerics) {
             MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(
-                    noOverrides, true, checkArgumentsMode);
+                    noOverrides, checkArgumentsMode, true);
             if (maximallySpecificGenericsDiscriminated != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
             }

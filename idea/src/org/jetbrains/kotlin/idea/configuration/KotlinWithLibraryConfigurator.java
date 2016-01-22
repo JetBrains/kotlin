@@ -42,9 +42,10 @@ import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
+import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt.showInfoNotification;
 
 public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConfigurator {
     public static final String DEFAULT_LIBRARY_DIR = "lib";
@@ -75,23 +76,25 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     }
 
     @Override
-    public void configure(@NotNull Project project) {
+    public void configure(@NotNull Project project, Collection<Module> excludeModules) {
         String defaultPathToJar = getDefaultPathToJarFile(project);
         boolean showPathToJarPanel = needToChooseJarPath(project);
 
         List<Module> nonConfiguredModules =
                 !ApplicationManager.getApplication().isUnitTestMode() ?
-                ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this) :
+                ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, this) :
                 Arrays.asList(ModuleManager.getInstance(project).getModules());
+        nonConfiguredModules.removeAll(excludeModules);
 
         List<Module> modulesToConfigure = nonConfiguredModules;
         String copyLibraryIntoPath = null;
 
         if (nonConfiguredModules.size() > 1 || showPathToJarPanel) {
             CreateLibraryDialogWithModules dialog = new CreateLibraryDialogWithModules(
-                    project, nonConfiguredModules, defaultPathToJar, showPathToJarPanel,
+                    project, this, defaultPathToJar, showPathToJarPanel,
                     getDialogTitle(),
-                    getLibraryCaption());
+                    getLibraryCaption(),
+                    excludeModules);
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {
                 dialog.show();

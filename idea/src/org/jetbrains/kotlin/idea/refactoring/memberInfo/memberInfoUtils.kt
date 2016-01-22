@@ -17,17 +17,13 @@
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? = null): ClassDescriptor? {
@@ -38,16 +34,8 @@ fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? 
     }
 }
 
-fun PsiNamedElement.isAbstractMember(): Boolean {
-    return when(this) {
-        is KtNamedDeclaration -> hasModifier(KtTokens.ABSTRACT_KEYWORD)
-        is PsiMember -> hasModifierProperty(PsiModifier.ABSTRACT)
-        else -> false
-    }
-}
-
 // Applies to JetClassOrObject and PsiClass
-public fun PsiNamedElement.qualifiedClassNameForRendering(): String {
+fun PsiNamedElement.qualifiedClassNameForRendering(): String {
     val fqName = when (this) {
         is KtClassOrObject -> fqName?.asString()
         is PsiClass -> qualifiedName

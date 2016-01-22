@@ -27,16 +27,16 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doTest(testPath: String) {
         val settingManager = CodeStyleSettingsManager.getInstance()
-        val tempSettings = settingManager.getCurrentSettings().clone()
-        settingManager.setTemporarySettings(tempSettings)
+        val tempSettings = settingManager.currentSettings.clone()
+        settingManager.temporarySettings = tempSettings
 
-        val codeStyleSettings = KotlinCodeStyleSettings.getInstance(getProject())
+        val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
 
         try {
             val fixture = myFixture
@@ -51,9 +51,9 @@ public abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCas
 
             fixture.configureByFile(testPath)
 
-            val file = fixture.getFile() as KtFile
+            val file = fixture.file as KtFile
 
-            val fileText = file.getText()
+            val fileText = file.text
 
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS:") ?: nameCountToUseStarImportForMembersDefault
@@ -66,11 +66,11 @@ public abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCas
                 codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(PackageEntry(false, it.trim(), true))
             }
 
-            getProject().executeWriteCommand("") {
+            project.executeWriteCommand("") {
                 doTest(file)
             }
 
-            KotlinTestUtils.assertEqualsToFile(File(testPath + ".after"), myFixture.getFile().getText())
+            KotlinTestUtils.assertEqualsToFile(File(testPath + ".after"), myFixture.file.text)
         }
         finally {
             settingManager.dropTemporarySettings()

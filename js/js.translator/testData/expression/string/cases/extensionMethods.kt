@@ -22,7 +22,7 @@ fun assertEquals(expected: Any, actual: Any, s: CharSequence, whatTested: String
 
 fun testString(s: String, expectedSize: Int, indexOfB: Int) {
     assertEquals(expectedSize, s.size, s, "size")
-    assertEquals(expectedSize, s.length(), s, "length()")
+    assertEquals(expectedSize, s.length, s, "length")
     assertEquals(expectedSize == 0, s.isEmpty(), s, "isEmpty()")
     assertEquals(expectedSize != 0, s.startsWith(startsWithParam), s, "startsWith(\"$startsWithParam\")")
     assertEquals(expectedSize != 0, s.endsWith(endsWithParam), s, "endsWith(\"$endsWithParam\")")
@@ -35,7 +35,7 @@ fun testString(s: String, expectedSize: Int, indexOfB: Int) {
 
 fun testCharSequence(s: CharSequence, expectedSize: Int) {
     assertEquals(expectedSize, s.size, s, "size")
-    assertEquals(expectedSize, s.length(), s, "length()")
+    assertEquals(expectedSize, s.length, s, "length")
     assertEquals(expectedSize == 0, s.isEmpty(), s, "isEmpty()")
 }
 

@@ -36,7 +36,7 @@ import com.sun.jdi.Type as jdi_Type
 import com.sun.jdi.Value as jdi_Value
 import com.sun.jdi.VoidValue as jdi_VoidValue
 
-public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {
+fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {
     val isStatic = (methodNode.access and ACC_STATIC) != 0
 
     val params = Type.getArgumentTypes(methodNode.desc)
@@ -64,14 +64,14 @@ public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Fra
 
 class JDIFailureException(message: String?, cause: Throwable? = null): RuntimeException(message, cause)
 
-public fun jdi_ObjectReference?.asValue(): ObjectValue {
+fun jdi_ObjectReference?.asValue(): ObjectValue {
     return when (this) {
         null -> NULL_VALUE
         else -> ObjectValue(this, type().asType())
     }
 }
 
-public fun jdi_Value?.asValue(): Value {
+fun jdi_Value?.asValue(): Value {
     return when (this) {
         null -> NULL_VALUE
         is jdi_VoidValue -> VOID_VALUE
@@ -96,7 +96,7 @@ val Value.jdiObj: jdi_ObjectReference?
 val Value.jdiClass: ClassObjectReference?
     get() = this.jdiObj as ClassObjectReference?
 
-public fun Value.asJdiValue(vm: VirtualMachine, expectedType: Type): jdi_Value? {
+fun Value.asJdiValue(vm: VirtualMachine, expectedType: Type): jdi_Value? {
     return when (this) {
         NULL_VALUE -> null
         VOID_VALUE -> vm.mirrorOfVoid()

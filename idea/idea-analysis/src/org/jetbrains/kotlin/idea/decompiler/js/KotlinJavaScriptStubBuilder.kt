@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
 import java.io.ByteArrayInputStream
 
-public class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
+class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
@@ -82,6 +82,6 @@ public class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
                 file.parent!!, packageFqName, nameResolver, KotlinJavascriptSerializedResourcePaths
         )
         val annotationLoader = AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol)
-        return ClsStubBuilderComponents(classDataFinder, annotationLoader)
+        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
 }

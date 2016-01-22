@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.js.translate.utils.jsAstUtils
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 
-public fun JsFunction.addStatement(stmt: JsStatement) {
-    getBody().getStatements().add(stmt)
+fun JsFunction.addStatement(stmt: JsStatement) {
+    body.statements.add(stmt)
 }
 
-public fun JsFunction.addParameter(identifier: String, index: Int? = null): JsParameter {
-    val name = getScope().declareFreshName(identifier)
+fun JsFunction.addParameter(identifier: String, index: Int? = null): JsParameter {
+    val name = scope.declareFreshName(identifier)
     val parameter = JsParameter(name)
 
     if (index == null) {
-        getParameters().add(parameter)
+        parameters.add(parameter)
     } else {
-        getParameters().add(index, parameter)
+        parameters.add(index, parameter)
     }
 
     return parameter
@@ -39,9 +39,9 @@ public fun JsFunction.addParameter(identifier: String, index: Int? = null): JsPa
 /**
  * Tests, if any node containing in receiver's AST matches, [predicate].
  */
-public fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
+fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
     val visitor = object : RecursiveJsVisitor() {
-        public var matched: Boolean = false
+        var matched: Boolean = false
 
         override fun visitElement(node: JsNode) {
             matched = matched || predicate(node)
@@ -62,7 +62,7 @@ fun JsExpression.toInvocationWith(thisExpr: JsExpression): JsExpression {
 
     when (this) {
         is JsNew -> {
-            qualifier = Namer.getFunctionCallRef(getConstructorExpression())
+            qualifier = Namer.getFunctionCallRef(constructorExpression)
             arguments = getArguments()
             // `new A(a, b, c)` -> `A.call($this, a, b, c)`
             return JsInvocation(qualifier, listOf(thisExpr) + arguments)
@@ -77,26 +77,26 @@ fun JsExpression.toInvocationWith(thisExpr: JsExpression): JsExpression {
     }
 }
 
-public var JsWhile.test: JsExpression
-    get() = getCondition()
-    set(value) = setCondition(value)
+var JsWhile.test: JsExpression
+    get() = condition
+    set(value) { condition = value }
 
-public var JsArrayAccess.index: JsExpression
-    get() = getIndexExpression()
-    set(value) = setIndexExpression(value)
+var JsArrayAccess.index: JsExpression
+    get() = indexExpression
+    set(value) { indexExpression = value }
 
-public var JsArrayAccess.array: JsExpression
-    get() = getArrayExpression()
-    set(value) = setArrayExpression(value)
+var JsArrayAccess.array: JsExpression
+    get() = arrayExpression
+    set(value) { arrayExpression = value }
 
-public var JsConditional.test: JsExpression
-    get() = getTestExpression()
-    set(value) = setTestExpression(value)
+var JsConditional.test: JsExpression
+    get() = testExpression
+    set(value) { testExpression = value }
 
-public var JsConditional.then: JsExpression
-    get() = getThenExpression()
-    set(value) = setThenExpression(value)
+var JsConditional.then: JsExpression
+    get() = thenExpression
+    set(value) { thenExpression = value }
 
-public var JsConditional.otherwise: JsExpression
-    get() = getElseExpression()
-    set(value) = setElseExpression(value)
+var JsConditional.otherwise: JsExpression
+    get() = elseExpression
+    set(value) { elseExpression = value }

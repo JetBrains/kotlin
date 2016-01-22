@@ -140,7 +140,7 @@ class SmartCompletionSession(
                     }
                 }
 
-                if (position.getContainingFile() is KtCodeFragment) {
+                if (position.containingFile is KtCodeFragment) {
                     val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants(lookupElementFactory)
                     if (variantsAndFactory != null) {
                         val variants = variantsAndFactory.first
@@ -176,7 +176,7 @@ class SmartCompletionSession(
         if (nameExpression != null) {
             val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression) as? CallTypeAndReceiver.INFIX ?: return
             val call = callTypeAndReceiver.receiver.getCall(bindingContext)
-            if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
+            if (call != null && call.functionLiteralArguments.isEmpty()) {
                 val dummyArgument = object : LambdaArgument {
                     override fun getLambdaExpression() = throw UnsupportedOperationException()
                     override fun getArgumentExpression() = throw UnsupportedOperationException()
@@ -186,7 +186,7 @@ class SmartCompletionSession(
                     override fun getSpreadElement(): LeafPsiElement? = null
                     override fun isExternal() = false
                 }
-                val dummyArguments = call.getValueArguments() + listOf(dummyArgument)
+                val dummyArguments = call.valueArguments + listOf(dummyArgument)
                 val dummyCall = object : DelegatingCall(call) {
                     override fun getValueArguments() = dummyArguments
                     override fun getFunctionLiteralArguments() = listOf(dummyArgument)

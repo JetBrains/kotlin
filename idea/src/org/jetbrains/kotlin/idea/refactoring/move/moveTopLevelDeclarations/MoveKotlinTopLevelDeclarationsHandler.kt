@@ -31,13 +31,12 @@ import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
+class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     private fun getSourceDirectories(elements: Array<out PsiElement>) = elements.mapTo(LinkedHashSet()) { it.containingFile?.parent }
 
     private fun doMoveWithCheck(

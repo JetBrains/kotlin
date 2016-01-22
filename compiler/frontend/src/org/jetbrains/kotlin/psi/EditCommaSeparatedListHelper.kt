@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 object EditCommaSeparatedListHelper {
-    public fun <TItem: KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem): TItem {
+    fun <TItem: KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem): TItem {
         return addItemBefore(list, allItems, item, null)
     }
 
-    public fun <TItem: KtElement> addItemAfter(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?): TItem {
-        assert(anchor == null || anchor.getParent() == list)
+    fun <TItem: KtElement> addItemAfter(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?): TItem {
+        assert(anchor == null || anchor.parent == list)
         if (allItems.isEmpty()) {
-            if (list.getFirstChild().getNode().getElementType() == KtTokens.LPAR) {
-                return list.addAfter(item, list.getFirstChild()) as TItem
+            if (list.firstChild.node.elementType == KtTokens.LPAR) {
+                return list.addAfter(item, list.firstChild) as TItem
             }
             else {
                 return list.add(item) as TItem
@@ -49,7 +49,7 @@ object EditCommaSeparatedListHelper {
         }
     }
 
-    public fun <TItem: KtElement> addItemBefore(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?): TItem {
+    fun <TItem: KtElement> addItemBefore(list: KtElement, allItems: List<TItem>, item: TItem, anchor: TItem?): TItem {
         val anchorAfter: TItem?
         if (allItems.isEmpty()) {
             assert(anchor == null)
@@ -62,13 +62,13 @@ object EditCommaSeparatedListHelper {
                 anchorAfter = if (index > 0) allItems.get(index - 1) else null
             }
             else {
-                anchorAfter = allItems.get(allItems.size() - 1)
+                anchorAfter = allItems.get(allItems.size - 1)
             }
         }
         return addItemAfter(list, allItems, item, anchorAfter)
     }
 
-    public fun <TItem: KtElement> removeItem(item: TItem) {
+    fun <TItem: KtElement> removeItem(item: TItem) {
         var comma = item.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
         if (comma?.getNode()?.getElementType() != KtTokens.COMMA) {
             comma = item.siblings(forward = false, withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }

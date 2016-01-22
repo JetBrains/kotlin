@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 object NamedArgumentCompletion {
-    public fun isOnlyNamedArgumentExpected(nameExpression: KtSimpleNameExpression): Boolean {
+    fun isOnlyNamedArgumentExpected(nameExpression: KtSimpleNameExpression): Boolean {
         val thisArgument = nameExpression.parent as? KtValueArgument ?: return false
         if (thisArgument.isNamed()) return false
 
@@ -46,7 +46,7 @@ object NamedArgumentCompletion {
                 .any { it.isNamed() }
     }
 
-    public fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
+    fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
         val nameToParameterType = HashMap<Name, MutableSet<KotlinType>>()
         for (expectedInfo in expectedInfos) {
             val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue
@@ -70,10 +70,10 @@ object NamedArgumentCompletion {
 
     private class NamedArgumentInsertHandler(private val parameterName: Name) : InsertHandler<LookupElement> {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
-            val editor = context.getEditor()
+            val editor = context.editor
             val text = parameterName.render()
-            editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
-            editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length())
+            editor.document.replaceString(context.startOffset, context.tailOffset, text)
+            editor.caretModel.moveToOffset(context.startOffset + text.length)
 
             WithTailInsertHandler.EQ.postHandleInsert(context, item)
         }

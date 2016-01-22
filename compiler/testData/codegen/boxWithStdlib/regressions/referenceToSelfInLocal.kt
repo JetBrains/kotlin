@@ -5,7 +5,7 @@ fun box(): String {
 
     class MyClass() {
         init {
-            accessedFromConstructor = javaClass<MyClass>()
+            accessedFromConstructor = MyClass::class.java
         }
     }
 

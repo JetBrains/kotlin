@@ -39,17 +39,19 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression"), LowPriorityAction {
+class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpression>(KtPostfixExpression::class.java, "Replace '!!' expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtPostfixExpression): TextRange? {
-        return if (element.getOperationToken() == KtTokens.EXCLEXCL && element.getBaseExpression() != null)
-            element.getOperationReference().getTextRange()
+        return if (element.operationToken == KtTokens.EXCLEXCL && element.baseExpression != null)
+            element.operationReference.textRange
         else
             null
     }
 
-    override fun applyTo(element: KtPostfixExpression, editor: Editor) {
-        val base = KtPsiUtil.safeDeparenthesize(element.getBaseExpression()!!)
-        val expressionText = formatForUseInExceptionArgument(base.getText()!!)
+    override fun applyTo(element: KtPostfixExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
+
+        val base = KtPsiUtil.safeDeparenthesize(element.baseExpression!!)
+        val expressionText = formatForUseInExceptionArgument(base.text!!)
 
         val defaultException = KtPsiFactory(element).createExpression("throw NullPointerException()")
 
@@ -62,25 +64,25 @@ public class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfix
             element.convertToIfNotNullExpression(base, base, defaultException)
 
         val thrownExpression =
-                ((if (isStatement) ifStatement.getThen() else ifStatement.getElse()) as KtThrowExpression).getThrownExpression()!!
+                ((if (isStatement) ifStatement.then else ifStatement.`else`) as KtThrowExpression).thrownExpression!!
 
         val message = escapeJava("Expression '$expressionText' must not be null")
         val nullPtrExceptionText = "NullPointerException(\"$message\")"
         val kotlinNullPtrExceptionText = "KotlinNullPointerException()"
 
         val exceptionLookupExpression = ChooseStringExpression(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText))
-        val project = element.getProject()
+        val project = element.project
         val builder = TemplateBuilderImpl(thrownExpression)
         builder.replaceElement(thrownExpression, exceptionLookupExpression);
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
-        editor.getCaretModel().moveToOffset(thrownExpression.getNode()!!.getStartOffset());
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document);
+        editor.caretModel.moveToOffset(thrownExpression.node!!.startOffset);
 
         TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), object: TemplateEditingAdapter() {
             override fun templateFinished(template: Template?, brokenOff: Boolean) {
                 if (!isStable && !isStatement) {
-                    ifStatement.introduceValueForCondition(ifStatement.getThen()!!, editor)
+                    ifStatement.introduceValueForCondition(ifStatement.then!!, editor)
                 }
             }
         })
@@ -88,7 +90,7 @@ public class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfix
 
     private fun formatForUseInExceptionArgument(expressionText: String): String {
         val lines = expressionText.split('\n')
-        return if (lines.size() > 1)
+        return if (lines.size > 1)
             lines.first().trim() + " ..."
         else
             expressionText.trim()

@@ -26,16 +26,16 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class ReplaceInvokeIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call"), HighPriorityAction {
+class ReplaceInvokeIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace 'invoke' with direct call"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.INVOKE.asString()) return null
-        return element.callExpression!!.getCalleeExpression()!!.getTextRange()
+        return element.callExpression!!.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
-        val receiver = element.getReceiverExpression()
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
+        val receiver = element.receiverExpression
         val callExpression = element.callExpression!!.copy() as KtCallExpression
-        callExpression.getCalleeExpression()!!.replace(receiver)
+        callExpression.calleeExpression!!.replace(receiver)
         element.replace(callExpression)
     }
 }

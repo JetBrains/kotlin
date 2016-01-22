@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.asJava.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.junit.Assert
 
-public abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected abstract fun getPackages(): List<FqName>
 
@@ -48,7 +48,7 @@ public abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTes
 
     protected abstract fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean
 
-    public fun testConsistency() {
+    fun testConsistency() {
         getPackages().forEach { doTestPackage(it) }
         getFacades().forEach { doTestFacade(it) }
     }

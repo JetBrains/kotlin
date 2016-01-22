@@ -22,6 +22,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 
+import java.util.Collection;
+
 public interface KotlinProjectConfigurator {
     ExtensionPointName<KotlinProjectConfigurator> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.projectConfigurator");
 
@@ -29,7 +31,7 @@ public interface KotlinProjectConfigurator {
 
     boolean isApplicable(@NotNull Module module);
 
-    void configure(@NotNull Project project);
+    void configure(@NotNull Project project, Collection<Module> excludeModules);
 
     @NotNull String getPresentableText();
 

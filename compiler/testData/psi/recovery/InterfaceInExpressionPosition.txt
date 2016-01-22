@@ -1,0 +1,40 @@
+JetFile: InterfaceInExpressionPosition.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('p')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(LT)('<')
+      PsiWhiteSpace(' ')
+      CLASS
+        PsiElement(interface)('interface')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('I')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          FUN
+            PsiElement(fun)('fun')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('f')
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n')
+          PsiElement(RBRACE)('}')

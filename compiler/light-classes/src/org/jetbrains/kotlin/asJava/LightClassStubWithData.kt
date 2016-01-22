@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 
 interface LightClassData
 
-interface WithFileStubAndExtraDiagnostics {
+interface WithFileStubAndExtraDiagnostics: LightClassData {
     val javaFileStub: PsiJavaFileStub
     val extraDiagnostics: Diagnostics
 }
@@ -31,6 +31,19 @@ interface WithFileStubAndExtraDiagnostics {
 interface LightClassDataForKotlinClass: LightClassData {
     val classOrObject: KtClassOrObject
     val jvmQualifiedName: FqName
+}
+
+object InvalidLightClassData: WithFileStubAndExtraDiagnostics, LightClassDataForKotlinClass {
+    override val javaFileStub: PsiJavaFileStub
+        get() = shouldNotBeCalled()
+    override val extraDiagnostics: Diagnostics
+        get() = shouldNotBeCalled()
+    override val classOrObject: KtClassOrObject
+        get() = shouldNotBeCalled()
+    override val jvmQualifiedName: FqName
+        get() = shouldNotBeCalled()
+
+    private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
 }
 
 data class KotlinFacadeLightClassData(

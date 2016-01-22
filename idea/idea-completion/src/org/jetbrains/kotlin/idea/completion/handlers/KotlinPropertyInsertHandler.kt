@@ -22,22 +22,22 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 
 object KotlinPropertyInsertHandler : KotlinCallableInsertHandler() {
-    public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
-        if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
+        if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
             deleteEmptyParenthesis(context)
         }
     }
 
     private fun deleteEmptyParenthesis(context: InsertionContext) {
-        val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
+        val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
         psiDocumentManager.commitAllDocuments()
-        psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
+        psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
 
-        val offset = context.getTailOffset()
-        val document = context.getDocument()
-        val chars = document.getCharsSequence()
+        val offset = context.tailOffset
+        val document = context.document
+        val chars = document.charsSequence
 
         val lParenOffset = chars.indexOfSkippingSpace('(', offset) ?: return
         val rParenOffset = chars.indexOfSkippingSpace(')', lParenOffset + 1) ?: return

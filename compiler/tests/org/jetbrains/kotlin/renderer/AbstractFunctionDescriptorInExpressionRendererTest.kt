@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
-abstract public class AbstractFunctionDescriptorInExpressionRendererTest : KotlinTestWithEnvironment() {
-    public fun doTest(path: String) {
+abstract class AbstractFunctionDescriptorInExpressionRendererTest : KotlinTestWithEnvironment() {
+    fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
-        val file = KtPsiFactory(getProject()).createFile(fileText)
+        val file = KtPsiFactory(project).createFile(fileText)
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(file).bindingContext
 
         val descriptors = arrayListOf<DeclarationDescriptor>()
@@ -49,7 +49,7 @@ abstract public class AbstractFunctionDescriptorInExpressionRendererTest : Kotli
             }
             override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
                 lambdaExpression.acceptChildren(this)
-                descriptors.add(bindingContext.get(BindingContext.FUNCTION, lambdaExpression.getFunctionLiteral())!!)
+                descriptors.add(bindingContext.get(BindingContext.FUNCTION, lambdaExpression.functionLiteral)!!)
             }
         })
 
@@ -60,7 +60,7 @@ abstract public class AbstractFunctionDescriptorInExpressionRendererTest : Kotli
         }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
-        val document = DocumentImpl(file.getText())
+        val document = DocumentImpl(file.text)
         UsefulTestCase.assertSameLines(KotlinTestUtils.getLastCommentedLines(document), renderedDescriptors.toString())
     }
 

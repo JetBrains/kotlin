@@ -32,52 +32,49 @@ import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
+class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
     override fun createUsageInfoForParameter(
             reference: PsiReference, usages: MutableList<UsageInfo>, parameter: PsiParameter, method: PsiMethod
     ) {
         if (reference !is KtReference) return
 
-        val element = reference.getElement()
+        val element = reference.element
 
-        val callExpression = element.getNonStrictParentOfType<KtCallExpression>()
-        if (callExpression == null) return
+        val callExpression = element.getNonStrictParentOfType<KtCallExpression>() ?: return
 
-        val calleeExpression = callExpression.getCalleeExpression()
+        val calleeExpression = callExpression.calleeExpression
         if (!(calleeExpression is KtReferenceExpression && calleeExpression.isAncestor(element))) return
 
         val bindingContext = element.analyze()
 
-        val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, calleeExpression)
-        if (descriptor == null) return
+        val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, calleeExpression) ?: return
 
         val originalDeclaration = method.unwrapped
         if (originalDeclaration !is PsiMethod && originalDeclaration !is KtDeclaration) return
 
         if (originalDeclaration != DescriptorToSourceUtils.descriptorToDeclaration(descriptor)) return
 
-        val args = callExpression.getValueArguments()
+        val args = callExpression.valueArguments
 
-        val namedArguments = args.filter { arg -> arg is KtValueArgument && arg.getArgumentName()?.getText() == parameter.getName() }
+        val namedArguments = args.filter { arg -> arg is KtValueArgument && arg.getArgumentName()?.text == parameter.name }
         if (!namedArguments.isEmpty()) {
             usages.add(SafeDeleteValueArgumentListUsageInfo(namedArguments.first(), parameter))
             return
         }
 
-        val originalParameter = parameter.unwrapped
-        if (originalParameter == null) return
+        val originalParameter = parameter.unwrapped ?: return
 
         val parameterIndex = originalParameter.parameterIndex()
         if (parameterIndex < 0) return
 
-        val argCount = args.size()
+        val argCount = args.size
         if (parameterIndex < argCount) {
-            usages.add(SafeDeleteValueArgumentListUsageInfo((args.get(parameterIndex) as KtValueArgument), parameter))
+            usages.add(SafeDeleteValueArgumentListUsageInfo((args[parameterIndex] as KtValueArgument), parameter))
         } else {
-            val lambdaArgs = callExpression.getLambdaArguments()
+            val lambdaArgs = callExpression.lambdaArguments
             val lambdaIndex = parameterIndex - argCount
-            if (lambdaIndex < lambdaArgs.size()) {
-                usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(lambdaArgs.get(lambdaIndex), parameter, true))
+            if (lambdaIndex < lambdaArgs.size) {
+                usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(lambdaArgs[lambdaIndex], parameter, true))
             }
         }
     }

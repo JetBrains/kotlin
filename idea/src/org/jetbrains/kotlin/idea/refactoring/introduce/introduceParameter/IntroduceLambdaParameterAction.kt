@@ -21,7 +21,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
 
-public class IntroduceLambdaParameterAction : AbstractIntroduceAction() {
+class IntroduceLambdaParameterAction : AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
             (provider as? KotlinRefactoringSupportProvider)?.getIntroduceLambdaParameterHandler()
 }

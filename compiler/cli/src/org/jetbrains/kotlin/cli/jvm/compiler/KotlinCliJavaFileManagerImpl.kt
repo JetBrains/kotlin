@@ -33,19 +33,19 @@ import org.jetbrains.kotlin.util.PerformanceCounter
 import java.util.ArrayList
 import kotlin.properties.Delegates
 
-public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
+class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
 : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
 
     private val perfCounter = PerformanceCounter.create("Find Java class")
     private var index: JvmDependenciesIndex by Delegates.notNull()
 
-    public fun initIndex(packagesCache: JvmDependenciesIndex) {
+    fun initIndex(packagesCache: JvmDependenciesIndex) {
         this.index = packagesCache
     }
 
-    public override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
+    override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
         return perfCounter.time {
-            val classNameWithInnerClasses = classId.getRelativeClassName().asString()
+            val classNameWithInnerClasses = classId.relativeClassName.asString()
             index.findClass(classId) { dir, type ->
                 findClassGivenPackage(searchScope, dir, classNameWithInnerClasses, type)
             }
@@ -65,8 +65,8 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
             val classIdAsTopLevelClass = qName.toSafeTopLevelClassId() ?: return@time super.findClasses(qName, scope)
 
             val result = ArrayList<PsiClass>()
-            val classNameWithInnerClasses = classIdAsTopLevelClass.getRelativeClassName().asString()
-            index.traverseDirectoriesInPackage(classIdAsTopLevelClass.getPackageFqName()) { dir, rootType ->
+            val classNameWithInnerClasses = classIdAsTopLevelClass.relativeClassName.asString()
+            index.traverseDirectoriesInPackage(classIdAsTopLevelClass.packageFqName) { dir, rootType ->
                 val psiClass = findClassGivenPackage(scope, dir, classNameWithInnerClasses, rootType)
                 if (psiClass != null) {
                     result.add(psiClass)
@@ -108,8 +108,8 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
             JavaRoot.RootType.SOURCE -> packageDir.findChild("$topLevelClassName.java")
         } ?: return null
 
-        if (!vFile.isValid()) {
-            LOG.error("Invalid child of valid parent: ${vFile.getPath()}; ${packageDir.isValid()} path=${packageDir.getPath()}")
+        if (!vFile.isValid) {
+            LOG.error("Invalid child of valid parent: ${vFile.path}; ${packageDir.isValid} path=${packageDir.path}")
             return null
         }
         if (vFile !in scope) {
@@ -124,7 +124,7 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
         private val LOG = Logger.getInstance(KotlinCliJavaFileManagerImpl::class.java)
 
         private fun findClassInPsiFile(classNameWithInnerClassesDotSeparated: String, file: PsiClassOwner): PsiClass? {
-            for (topLevelClass in file.getClasses()) {
+            for (topLevelClass in file.classes) {
                 val candidate = findClassByTopLevelClass(classNameWithInnerClassesDotSeparated, topLevelClass)
                 if (candidate != null) {
                     return candidate
@@ -135,11 +135,11 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
 
         private fun findClassByTopLevelClass(className: String, topLevelClass: PsiClass): PsiClass? {
             if (className.indexOf('.') < 0) {
-                return if (className == topLevelClass.getName()) topLevelClass else null
+                return if (className == topLevelClass.name) topLevelClass else null
             }
 
             val segments = StringUtil.split(className, ".").iterator()
-            if (!segments.hasNext() || segments.next() != topLevelClass.getName()) {
+            if (!segments.hasNext() || segments.next() != topLevelClass.name) {
                 return null
             }
             var curClass = topLevelClass

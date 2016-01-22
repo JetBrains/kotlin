@@ -21,29 +21,29 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.sure
 
-public abstract class VirtualFileKotlinClassFinder : JvmVirtualFileFinder {
+abstract class VirtualFileKotlinClassFinder : JvmVirtualFileFinder {
     override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
         val file = findVirtualFileWithHeader(classId) ?: return null
         return KotlinBinaryClassCache.getKotlinBinaryClass(file)
     }
 
     override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
-        var file = (javaClass as JavaClassImpl).getPsi().getContainingFile()!!.getVirtualFile() ?: return null
+        var file = (javaClass as JavaClassImpl).psi.containingFile!!.virtualFile ?: return null
         if (javaClass.getOuterClass() != null) {
             // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
             // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
-            file = file.getParent()!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
+            file = file.parent!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
         }
 
         return KotlinBinaryClassCache.getKotlinBinaryClass(file)
     }
 
     private fun classFileName(jClass: JavaClass): String {
-        val outerClass = jClass.getOuterClass()
+        val outerClass = jClass.outerClass
         if (outerClass == null) {
-            return jClass.getName().asString()
+            return jClass.name.asString()
         }
 
-        return classFileName(outerClass) + "$" + jClass.getName().asString()
+        return classFileName(outerClass) + "$" + jClass.name.asString()
     }
 }

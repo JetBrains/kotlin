@@ -36,13 +36,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import static kotlin.CollectionsKt.single;
+import static kotlin.collections.CollectionsKt.single;
 
 public class TestGenerator {
 
-    public static enum TargetBackend {
+    public enum TargetBackend {
         ANY,
-        JVM,
+        @SuppressWarnings("unused") JVM,
         JS
     }
 

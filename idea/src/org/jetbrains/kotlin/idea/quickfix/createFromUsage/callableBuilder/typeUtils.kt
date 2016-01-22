@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
 internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
-    return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
+    return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || arguments.any { inner in it.type }
 }
 
 private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
@@ -122,7 +122,7 @@ fun KtExpression.guessTypes(
     if (coerceUnusedToUnit
         && this !is KtDeclaration
         && isUsedAsStatement(context)
-        && getNonStrictParentOfType<KtAnnotationEntry>() == null) return arrayOf(module.builtIns.getUnitType())
+        && getNonStrictParentOfType<KtAnnotationEntry>() == null) return arrayOf(module.builtIns.unitType)
 
     // if we know the actual type of the expression
     val theType1 = context.getType(this)
@@ -136,21 +136,21 @@ fun KtExpression.guessTypes(
     val theType2 = context[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
     if (theType2 != null) return arrayOf(theType2)
 
-    val parent = getParent()
+    val parent = parent
     return when {
         this is KtTypeConstraint -> {
             // expression itself is a type assertion
             val constraint = this
-            arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
+            arrayOf(context[BindingContext.TYPE, constraint.boundTypeReference]!!)
         }
         parent is KtTypeConstraint -> {
             // expression is on the left side of a type assertion
             val constraint = parent
-            arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
+            arrayOf(context[BindingContext.TYPE, constraint.boundTypeReference]!!)
         }
         this is KtDestructuringDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
-            val typeRef = getTypeReference()
+            val typeRef = typeReference
             if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
@@ -162,7 +162,7 @@ fun KtExpression.guessTypes(
         }
         this is KtParameter -> {
             // expression is a parameter (e.g. declared in a for-loop)
-            val typeRef = getTypeReference()
+            val typeRef = typeReference
             if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
@@ -172,10 +172,10 @@ fun KtExpression.guessTypes(
                 guessType(context)
             }
         }
-        parent is KtProperty && parent.isLocal() -> {
+        parent is KtProperty && parent.isLocal -> {
             // the expression is the RHS of a variable assignment with a specified type
             val variable = parent
-            val typeRef = variable.getTypeReference()
+            val typeRef = variable.typeReference
             if (typeRef != null) {
                 // and has a specified type
                 arrayOf(context[BindingContext.TYPE, typeRef]!!)
@@ -186,17 +186,17 @@ fun KtExpression.guessTypes(
             }
         }
         parent is KtPropertyDelegate -> {
-            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as KtProperty] as VariableDescriptor
-            val delegateClassName = if (variableDescriptor.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
+            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.parent as KtProperty] as VariableDescriptor
+            val delegateClassName = if (variableDescriptor.isVar) "ReadWriteProperty" else "ReadOnlyProperty"
             val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"), NoLookupLocation.FROM_IDE)
-                                ?: return arrayOf(module.builtIns.getAnyType())
-            val receiverType = (variableDescriptor.getExtensionReceiverParameter() ?: variableDescriptor.getDispatchReceiverParameter())?.getType()
-                               ?: module.builtIns.getNullableNothingType()
-            val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(variableDescriptor.getType()))
+                                ?: return arrayOf(module.builtIns.anyType)
+            val receiverType = (variableDescriptor.extensionReceiverParameter ?: variableDescriptor.dispatchReceiverParameter)?.type
+                               ?: module.builtIns.nullableNothingType
+            val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(variableDescriptor.type))
             arrayOf(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
-        parent is KtStringTemplateEntryWithExpression && parent.getExpression() == this -> {
-            arrayOf(module.builtIns.getStringType())
+        parent is KtStringTemplateEntryWithExpression && parent.expression == this -> {
+            arrayOf(module.builtIns.stringType)
         }
         else -> {
             pseudocode?.getElementValue(this)?.let {
@@ -207,7 +207,7 @@ fun KtExpression.guessTypes(
 }
 
 private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinType> {
-    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.mapNotNullTo(HashSet<KotlinType>()) { ref ->
+    val expectedTypes = SearchUtils.findAllReferences(this, useScope)!!.mapNotNullTo(HashSet<KotlinType>()) { ref ->
         if (ref is KtSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
         }
@@ -232,10 +232,10 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinT
 /**
  * Encapsulates a single type substitution of a <code>KotlinType</code> by another <code>KotlinType</code>.
  */
-internal class KotlinTypeSubstitution(public val forType: KotlinType, public val byType: KotlinType)
+internal class KotlinTypeSubstitution(val forType: KotlinType, val byType: KotlinType)
 
 internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, variance: Variance): KotlinType {
-    val nullable = isMarkedNullable()
+    val nullable = isMarkedNullable
     val currentType = makeNotNullable()
 
     if (when (variance) {
@@ -246,18 +246,18 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
         return TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
     }
     else {
-        val newArguments = getArguments().zip(getConstructor().getParameters()).map { pair ->
+        val newArguments = arguments.zip(constructor.parameters).map { pair ->
             val (projection, typeParameter) = pair
-            TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
+            TypeProjectionImpl(Variance.INVARIANT, projection.type.substitute(substitution, typeParameter.variance))
         }
-        return KotlinTypeImpl.create(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
+        return KotlinTypeImpl.create(annotations, constructor, isMarkedNullable, newArguments, memberScope)
     }
 }
 
-fun KtExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this
+fun KtExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.right ?: this
 
 fun KtCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
-    return getTypeArguments().mapNotNull { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }
+    return typeArguments.mapNotNull { it.typeReference?.let { TypeInfo(it, Variance.INVARIANT) } }
 }
 
 fun KtCallExpression.getParameterInfos(): List<ParameterInfo> {

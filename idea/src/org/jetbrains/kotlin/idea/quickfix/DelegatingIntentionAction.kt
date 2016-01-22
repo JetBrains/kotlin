@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 
-public open class DelegatingIntentionAction(val delegate: IntentionAction): IntentionAction by delegate
+open class DelegatingIntentionAction(val delegate: IntentionAction): IntentionAction by delegate

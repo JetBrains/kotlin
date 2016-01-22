@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
-public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
+class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
-    public fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
+    fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace)
         checkEntries(annotated.annotationEntries, actualTargets, trace)
         if (annotated is KtCallableDeclaration) {
@@ -66,7 +66,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         }
     }
 
-    public fun checkExpression(expression: KtExpression, trace: BindingTrace) {
+    fun checkExpression(expression: KtExpression, trace: BindingTrace) {
         checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace), trace)
         if (expression is KtLambdaExpression) {
             for (parameter in expression.valueParameters) {
@@ -147,23 +147,22 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
-        @JvmStatic
-        public fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
+        @JvmStatic fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
             val classDescriptor = descriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return emptySet()
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
-        public fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
+        fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
             val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.target)
                                         ?: return null
             val valueArguments = targetEntryDescriptor.allValueArguments
-            val valueArgument = valueArguments.entrySet().firstOrNull()?.getValue() as? ArrayValue ?: return null
+            val valueArgument = valueArguments.entries.firstOrNull()?.value as? ArrayValue ?: return null
             return valueArgument.value.filterIsInstance<EnumValue>().mapNotNull {
                 KotlinTarget.valueOrNull(it.value.name.asString())
             }.toSet()
         }
 
-        public fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
+        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
                 List<KotlinTarget> {
             return getActualTargetList(annotated, descriptor, trace).defaultTargets
         }
@@ -180,9 +179,9 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                     if (annotated.isLocal)
                         TargetLists.T_LOCAL_VARIABLE
                     else if (annotated.parent is KtClassOrObject || annotated.parent is KtClassBody)
-                        TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(trace))
+                        TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
                     else
-                        TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(trace))
+                        TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(trace), annotated.hasDelegate())
                 }
                 is KtParameter -> {
                     if (annotated.hasValOrVar())
@@ -220,31 +219,41 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val T_CLASSIFIER = targetList(CLASS)
 
             val T_LOCAL_VARIABLE = targetList(LOCAL_VARIABLE) {
-                onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
+                onlyWithUseSiteTarget(PROPERTY_SETTER, VALUE_PARAMETER)
             }
 
             val T_DESTRUCTURING_DECLARATION = targetList(DESTRUCTURING_DECLARATION)
 
-            fun T_MEMBER_PROPERTY(backingField: Boolean) =
-                    targetList(if (backingField) MEMBER_PROPERTY_WITH_FIELD else MEMBER_PROPERTY_WITHOUT_FIELD,
-                               MEMBER_PROPERTY, PROPERTY) {
+            fun TargetListBuilder.propertyTargets(backingField: Boolean, delegate: Boolean) {
                 if (backingField) extraTargets(FIELD)
-                onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
+                if (delegate) {
+                    onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER, FIELD)
+                }
+                else {
+                    onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
+                }
             }
 
-            fun T_TOP_LEVEL_PROPERTY(backingField: Boolean) =
-                    targetList(if (backingField) TOP_LEVEL_PROPERTY_WITH_FIELD else TOP_LEVEL_PROPERTY_WITHOUT_FIELD,
+            fun T_MEMBER_PROPERTY(backingField: Boolean, delegate: Boolean) =
+                    targetList(if (backingField) MEMBER_PROPERTY_WITH_BACKING_FIELD
+                               else if (delegate) MEMBER_PROPERTY_WITH_DELEGATE
+                               else MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE,
+                               MEMBER_PROPERTY, PROPERTY) {
+                        propertyTargets(backingField, delegate)
+                    }
+
+            fun T_TOP_LEVEL_PROPERTY(backingField: Boolean, delegate: Boolean) =
+                    targetList(if (backingField) TOP_LEVEL_PROPERTY_WITH_BACKING_FIELD
+                               else if (delegate) TOP_LEVEL_PROPERTY_WITH_DELEGATE
+                               else TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE,
                                TOP_LEVEL_PROPERTY, PROPERTY) {
-                if (backingField) extraTargets(FIELD)
-                onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
-            }
+                        propertyTargets(backingField, delegate)
+                    }
 
             val T_PROPERTY_GETTER = targetList(PROPERTY_GETTER)
             val T_PROPERTY_SETTER = targetList(PROPERTY_SETTER)
 
-            val T_VALUE_PARAMETER_WITHOUT_VAL = targetList(VALUE_PARAMETER) {
-                onlyWithUseSiteTarget(PROPERTY, FIELD)
-            }
+            val T_VALUE_PARAMETER_WITHOUT_VAL = targetList(VALUE_PARAMETER)
 
             val T_VALUE_PARAMETER_WITH_VAL = targetList(VALUE_PARAMETER, PROPERTY, MEMBER_PROPERTY) {
                 extraTargets(FIELD)
@@ -318,6 +327,6 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 }
 
-public interface AdditionalAnnotationChecker {
-    public fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
+interface AdditionalAnnotationChecker {
+    fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
 }

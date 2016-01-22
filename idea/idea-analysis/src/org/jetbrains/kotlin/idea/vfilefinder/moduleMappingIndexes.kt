@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.load.kotlin.PackageParts
 import java.io.DataInput
 import java.io.DataOutput
 
-public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>() {
+object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>() {
 
-    private val classOfIndex = javaClass<KotlinModuleMappingIndex>().getCanonicalName()
+    private val classOfIndex = KotlinModuleMappingIndex::class.java.canonicalName
 
-    public val KEY: ID<String, PackageParts> = ID.create(classOfIndex)
+    val KEY: ID<String, PackageParts> = ID.create(classOfIndex)
 
     private val KEY_DESCRIPTOR = object : KeyDescriptor<String> {
         override fun save(output: DataOutput, value: String) = output.writeUTF(value)
@@ -55,7 +55,7 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
 
         override fun save(out: DataOutput, value: PackageParts?) {
             out.writeUTF(value!!.packageFqName)
-            out.writeInt(value.parts.size())
+            out.writeInt(value.parts.size)
             value.parts.forEach { out.writeUTF(it) }
         }
     }
@@ -79,7 +79,7 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
     override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
         return object : DataIndexer<String, PackageParts, FileContent> {
             override fun map(inputData: FileContent): Map<String, PackageParts> {
-                val content = inputData.getContent()
+                val content = inputData.content
                 try {
                     val moduleMapping = ModuleMapping.create(content)
                     return moduleMapping.packageFqName2Parts

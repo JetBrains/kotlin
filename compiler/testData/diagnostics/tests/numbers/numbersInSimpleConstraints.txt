@@ -6,7 +6,7 @@ package a {
     public fun </*0*/ T> id(/*0*/ t: T): T
     public fun </*0*/ T> lowerBound(/*0*/ t: T, /*1*/ l: a.Cov<T>): T
     public fun other(/*0*/ s: kotlin.String): kotlin.Unit
-    public fun </*0*/ T> otherGeneric(/*0*/ l: kotlin.List<T>): kotlin.Unit
+    public fun </*0*/ T> otherGeneric(/*0*/ l: kotlin.collections.List<T>): kotlin.Unit
     public fun test(): kotlin.Unit
     public fun testExactBound(/*0*/ invS: a.Inv<kotlin.String>, /*1*/ invI: a.Inv<kotlin.Int>, /*2*/ invB: a.Inv<kotlin.Byte>): kotlin.Unit
     public fun testLowerBound(/*0*/ cov: a.Cov<kotlin.String>, /*1*/ covN: a.Cov<kotlin.Number>): kotlin.Unit

@@ -20,22 +20,22 @@ import java.io.Serializable
 
 data class JvmPackagePartProto(val data: ByteArray, val strings: Array<String>) : Serializable
 
-public interface IncrementalCache {
-    public fun getObsoletePackageParts(): Collection<String>
+interface IncrementalCache {
+    fun getObsoletePackageParts(): Collection<String>
 
-    public fun getObsoleteMultifileClasses(): Collection<String>
+    fun getObsoleteMultifileClasses(): Collection<String>
 
-    public fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>?
+    fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>?
 
-    public fun getMultifileFacade(partInternalName: String): String?
+    fun getMultifileFacade(partInternalName: String): String?
 
-    public fun getPackagePartData(fqName: String): JvmPackagePartProto?
+    fun getPackagePartData(partInternalName: String): JvmPackagePartProto?
 
-    public fun getModuleMappingData(): ByteArray?
+    fun getModuleMappingData(): ByteArray?
 
-    public fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
+    fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
 
-    public fun getClassFilePath(internalClassName: String): String
+    fun getClassFilePath(internalClassName: String): String
 
-    public fun close()
+    fun close()
 }

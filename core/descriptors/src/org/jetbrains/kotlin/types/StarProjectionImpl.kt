@@ -34,18 +34,18 @@ class StarProjectionImpl(
     override fun getType() = _type
 }
 
-public fun TypeParameterDescriptor.starProjectionType(): KotlinType {
-    val classDescriptor = this.getContainingDeclaration() as ClassDescriptor
-    val typeParameters = classDescriptor.getTypeConstructor().getParameters().map { it.getTypeConstructor() }
+fun TypeParameterDescriptor.starProjectionType(): KotlinType {
+    val classDescriptor = this.containingDeclaration as ClassDescriptor
+    val typeParameters = classDescriptor.typeConstructor.parameters.map { it.typeConstructor }
     return TypeSubstitutor.create(
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) =
                         if (key in typeParameters)
-                            TypeUtils.makeStarProjection(key.getDeclarationDescriptor() as TypeParameterDescriptor)
+                            TypeUtils.makeStarProjection(key.declarationDescriptor as TypeParameterDescriptor)
                         else null
 
             }
-    ).substitute(this.getUpperBounds().first(), Variance.OUT_VARIANCE)!!
+    ).substitute(this.upperBounds.first(), Variance.OUT_VARIANCE)!!
 }
 
 class TypeBasedStarProjectionImpl(

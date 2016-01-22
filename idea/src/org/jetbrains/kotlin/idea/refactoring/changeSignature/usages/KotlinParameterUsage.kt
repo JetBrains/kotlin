@@ -17,20 +17,19 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
 
 // Explicit reference to function parameter or outer this
-public abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : KotlinUsageInfo<T>(element) {
+abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : KotlinUsageInfo<T>(element) {
     abstract fun getReplacementText(changeInfo: KotlinChangeInfo): String
 
     protected open fun processReplacedElement(element: KtElement) {
@@ -38,35 +37,35 @@ public abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : 
     }
 
     override fun processUsage(changeInfo: KotlinChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
-        val newElement = KtPsiFactory(element.getProject()).createExpression(getReplacementText(changeInfo))
-        val elementToReplace = (element.getParent() as? KtThisExpression) ?: element
+        val newElement = KtPsiFactory(element.project).createExpression(getReplacementText(changeInfo))
+        val elementToReplace = (element.parent as? KtThisExpression) ?: element
         processReplacedElement(elementToReplace.replace(newElement) as KtElement)
         return false
     }
 }
 
-public class KotlinParameterUsage(
+class KotlinParameterUsage(
         element: KtElement,
         private val parameterInfo: KotlinParameterInfo,
         val containingCallable: KotlinCallableDefinitionUsage<*>
 ) : KotlinExplicitReferenceUsage<KtElement>(element) {
     override fun processReplacedElement(element: KtElement) {
-        val qualifiedExpression = element.getParent() as? KtQualifiedExpression
-        val elementToShorten = if (qualifiedExpression?.getReceiverExpression() == element) qualifiedExpression!! else element
+        val qualifiedExpression = element.parent as? KtQualifiedExpression
+        val elementToShorten = if (qualifiedExpression?.receiverExpression == element) qualifiedExpression!! else element
         elementToShorten.addToShorteningWaitSet(Options(removeThis = true, removeThisLabels = true))
     }
 
     override fun getReplacementText(changeInfo: KotlinChangeInfo): String {
         if (changeInfo.receiverParameterInfo != parameterInfo) return parameterInfo.getInheritedName(containingCallable)
 
-        val newName = changeInfo.getNewName()
+        val newName = changeInfo.newName
         if (KotlinNameSuggester.isIdentifier(newName)) return "this@$newName"
 
         return "this"
     }
 }
 
-public class KotlinNonQualifiedOuterThisUsage(
+class KotlinNonQualifiedOuterThisUsage(
         element: KtThisExpression,
         val targetDescriptor: DeclarationDescriptor
 ) : KotlinExplicitReferenceUsage<KtThisExpression>(element) {
@@ -74,5 +73,5 @@ public class KotlinNonQualifiedOuterThisUsage(
         element.addToShorteningWaitSet(Options(removeThisLabels = true))
     }
 
-    override fun getReplacementText(changeInfo: KotlinChangeInfo): String = "this@${targetDescriptor.getName().asString()}"
+    override fun getReplacementText(changeInfo: KotlinChangeInfo): String = "this@${targetDescriptor.name.asString()}"
 }

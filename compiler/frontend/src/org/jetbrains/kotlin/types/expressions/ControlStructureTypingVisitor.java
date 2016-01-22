@@ -91,6 +91,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public KotlinTypeInfo visitIfExpression(KtIfExpression ifExpression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+        components.dataFlowAnalyzer.recordExpectedType(contextWithExpectedType.trace, ifExpression, contextWithExpectedType.expectedType);
+
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
         KtExpression condition = ifExpression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(context.scope, condition, context);
@@ -112,12 +114,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                        ? result.replaceJumpOutPossible(true).replaceJumpFlowInfo(conditionDataFlowInfo)
                        : result;
             }
-            return TypeInfoFactoryKt.createTypeInfo(components.dataFlowAnalyzer.checkImplicitCast(
-                                                                 components.builtIns.getUnitType(), ifExpression,
-                                                                 contextWithExpectedType, isStatement
-                                                         ),
-                                                    thenInfo.or(elseInfo)
-            );
+            return TypeInfoFactoryKt.createTypeInfo(components.builtIns.getUnitType(), thenInfo.or(elseInfo));
         }
         if (thenBranch == null) {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
@@ -128,7 +125,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         KtBlockExpression elseBlock = psiFactory.wrapInABlockWrapper(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
-                    createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
+                    createDataFlowInfoForArgumentsForIfCall(callForIf, conditionDataFlowInfo, thenInfo, elseInfo);
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 callForIf, ResolveConstruct.IF, Lists.newArrayList("thenBranch", "elseBranch"),
                 Lists.newArrayList(false, false),
@@ -173,9 +170,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // If break or continue was possible, take condition check info as the jump info
-        return TypeInfoFactoryKt
-                .createTypeInfo(components.dataFlowAnalyzer.checkImplicitCast(resultType, ifExpression, contextWithExpectedType, isStatement),
-                                resultDataFlowInfo, loopBreakContinuePossible, conditionDataFlowInfo);
+        return TypeInfoFactoryKt.createTypeInfo(resultType, resultDataFlowInfo, loopBreakContinuePossible, conditionDataFlowInfo);
     }
 
     @NotNull
@@ -199,15 +194,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         } else {
             dataFlowInfo = typeInfo.getDataFlowInfo().or(otherInfo);
         }
-        return components.dataFlowAnalyzer.checkImplicitCast(
-                components.dataFlowAnalyzer.checkType(
-                        typeInfo.replaceType(components.builtIns.getUnitType()),
-                        ifExpression,
-                        context
-                ),
+        return components.dataFlowAnalyzer.checkType(
+                typeInfo.replaceType(components.builtIns.getUnitType()),
                 ifExpression,
-                context,
-                isStatement
+                context
         ).replaceDataFlowInfo(dataFlowInfo);
     }
 
@@ -481,7 +471,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 components.identifierChecker.checkDeclaration(catchParameter, context.trace);
                 ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
                 modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
-                ModifierCheckerCore.INSTANCE$.check(catchParameter, context.trace, null);
+                ModifierCheckerCore.INSTANCE.check(catchParameter, context.trace, null);
 
                 VariableDescriptor variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);

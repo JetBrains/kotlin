@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.js.inline.util.collectReferencesInside
  *
  * Declaration can become unused, if inlining happened.
  */
-public fun removeUnusedLocalFunctionDeclarations(root: JsNode) {
+fun removeUnusedLocalFunctionDeclarations(root: JsNode) {
     val removable =
             with(UnusedInstanceCollector()) {
                 accept(root)
                 removableDeclarations
             }
 
-    NodeRemover(javaClass<JsStatement>()) {
+    NodeRemover(JsStatement::class.java) {
         it in removable
     }.accept(root)
 }
@@ -42,15 +42,15 @@ public fun removeUnusedLocalFunctionDeclarations(root: JsNode) {
 private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     private val tracker = ReferenceTracker<JsName, JsStatement>()
 
-    public val removableDeclarations: List<JsStatement>
+    val removableDeclarations: List<JsStatement>
         get() = tracker.removable
 
     override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {
         if (!isLocalFunctionDeclaration(x)) return super.visit(x, ctx)
 
-        val name = x.getName()!!
-        val statementContext = getLastStatementLevelContext()
-        val currentStatement = statementContext.getCurrentNode()
+        val name = x.name!!
+        val statementContext = lastStatementLevelContext
+        val currentStatement = statementContext.currentNode
         tracker.addCandidateForRemoval(name, currentStatement!!)
 
         val references = collectReferencesInside(x)
@@ -61,7 +61,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     }
 
     override fun visit(x: JsNameRef, ctx: JsContext<*>): Boolean {
-        val name = x.getName()
+        val name = x.name
 
         if (name != null) {
             tracker.markReachable(name)
@@ -71,8 +71,8 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
     }
 
     private fun isLocalFunctionDeclaration(jsVar: JsVars.JsVar): Boolean {
-        val name = jsVar.getName()
-        val expr = jsVar.getInitExpression()
+        val name = jsVar.name
+        val expr = jsVar.initExpression
         val staticRef = name?.staticRef
 
         return staticRef != null && staticRef == expr

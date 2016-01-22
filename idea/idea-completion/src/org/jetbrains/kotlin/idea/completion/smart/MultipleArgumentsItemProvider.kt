@@ -48,7 +48,7 @@ class MultipleArgumentsItemProvider(
         private val resolutionFacade: ResolutionFacade
 ) {
 
-    public fun addToCollection(collection: MutableCollection<LookupElement>,
+    fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
                                context: KtExpression) {
         val resolutionScope = context.getResolutionScope(bindingContext, resolutionFacade)
@@ -58,7 +58,7 @@ class MultipleArgumentsItemProvider(
             val additionalData = expectedInfo.additionalData
             if (additionalData is ArgumentPositionData.Positional && additionalData.argumentIndex == 0) {
                 val parameters = additionalData.function.valueParameters
-                if (parameters.size() > 1) {
+                if (parameters.size > 1) {
                     val tail = when (additionalData.callType) {
                         Call.CallType.ARRAY_GET_METHOD, Call.CallType.ARRAY_SET_METHOD -> Tail.RBRACKET
                         else -> Tail.RPARENTH
@@ -69,7 +69,7 @@ class MultipleArgumentsItemProvider(
 
                         if (i > 0 && parameters.asSequence().drop(i + 1).all { it.hasDefaultValue() }) { // this is the last parameter or all others have default values
                             val lookupElement = createParametersLookupElement(variables, tail)
-                            if (added.add(lookupElement.getLookupString())) { // check that we don't already have item with the same text
+                            if (added.add(lookupElement.lookupString)) { // check that we don't already have item with the same text
                                 collection.add(lookupElement)
                             }
                         }
@@ -83,16 +83,16 @@ class MultipleArgumentsItemProvider(
         val compoundIcon = LayeredIcon(2)
         val firstIcon = KotlinDescriptorIconProvider.getIcon(variables.first(), null, 0)
         val lastIcon = KotlinDescriptorIconProvider.getIcon(variables.last(), null, 0)
-        compoundIcon.setIcon(lastIcon, 0, 2 * firstIcon.getIconWidth() / 5, 0)
+        compoundIcon.setIcon(lastIcon, 0, 2 * firstIcon.iconWidth / 5, 0)
         compoundIcon.setIcon(firstIcon, 1, 0, 0)
 
         return LookupElementBuilder
-                .create(variables.map { it.getName().render() }.joinToString(", ")) //TODO: use code formatting settings
+                .create(variables.map { it.name.render() }.joinToString(", ")) //TODO: use code formatting settings
                 .withInsertHandler { context, lookupElement ->
-                    if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
-                        val offset = context.getOffsetMap().getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
+                    if (context.completionChar == Lookup.REPLACE_SELECT_CHAR) {
+                        val offset = context.offsetMap.getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)
                         if (offset != -1) {
-                            context.getDocument().deleteString(context.getTailOffset(), offset)
+                            context.document.deleteString(context.tailOffset, offset)
                         }
                     }
 
@@ -103,11 +103,11 @@ class MultipleArgumentsItemProvider(
     }
 
     private fun variableInScope(parameter: ValueParameterDescriptor, scope: LexicalScope): VariableDescriptor? {
-        val name = parameter.getName()
+        val name = parameter.name
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.findVariable(name, NoLookupLocation.FROM_IDE) { !it.isExtension }
                 ?: scope.getVariableFromImplicitReceivers(name) ?: return null
-        return if (smartCastCalculator.types(variable).any { KotlinTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
+        return if (smartCastCalculator.types(variable).any { KotlinTypeChecker.DEFAULT.isSubtypeOf(it, parameter.type) })
             variable
         else
             null

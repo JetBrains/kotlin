@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.Icon
 
-public class KotlinMemberSelectionTable(
+class KotlinMemberSelectionTable(
         memberInfos: List<KotlinMemberInfo>,
         memberInfoModel: MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>?,
         abstractColumnHeader: String?
@@ -46,7 +46,7 @@ public class KotlinMemberSelectionTable(
     }
 
     override fun isAbstractColumnEditable(rowIndex: Int): Boolean {
-        val memberInfo = myMemberInfos.get(rowIndex)
+        val memberInfo = myMemberInfos[rowIndex]
 
         if (memberInfo.isStatic()) return false
 

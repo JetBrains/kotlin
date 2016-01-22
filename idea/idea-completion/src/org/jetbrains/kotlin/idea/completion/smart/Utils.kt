@@ -44,14 +44,14 @@ import java.util.*
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val offset = context.getEditor().getCaretModel().getOffset()
-        val startOffset = offset - item.getLookupString().length()
-        context.getDocument().deleteString(startOffset, offset) // delete inserted lookup string
-        context.getDocument().insertString(startOffset, textBeforeCaret + textAfterCaret)
-        context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length())
+        val offset = context.editor.caretModel.offset
+        val startOffset = offset - item.lookupString.length
+        context.document.deleteString(startOffset, offset) // delete inserted lookup string
+        context.document.insertString(startOffset, textBeforeCaret + textAfterCaret)
+        context.editor.caretModel.moveToOffset(startOffset + textBeforeCaret.length)
 
         if (shortenRefs) {
-            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length() + textAfterCaret.length())
+            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length + textAfterCaret.length)
         }
     }
 }
@@ -66,31 +66,31 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
 
         Tail.COMMA -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.COMMA.handleInsert(context, getDelegate())
+                WithTailInsertHandler.COMMA.handleInsert(context, delegate)
             }
         }
 
         Tail.RPARENTH -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.RPARENTH.handleInsert(context, getDelegate())
+                WithTailInsertHandler.RPARENTH.handleInsert(context, delegate)
             }
         }
 
         Tail.RBRACKET -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.RBRACKET.handleInsert(context, getDelegate())
+                WithTailInsertHandler.RBRACKET.handleInsert(context, delegate)
             }
         }
 
         Tail.ELSE -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.ELSE.handleInsert(context, getDelegate())
+                WithTailInsertHandler.ELSE.handleInsert(context, delegate)
             }
         }
 
         Tail.RBRACE -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.RBRACE.handleInsert(context, getDelegate())
+                WithTailInsertHandler.RBRACE.handleInsert(context, delegate)
             }
         }
     }
@@ -102,11 +102,11 @@ fun LookupElement.withOptions(options: ItemOptions): LookupElement {
         lookupElement = object : LookupElementDecorator<LookupElement>(this) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
-                presentation.setItemText("*" + presentation.getItemText())
+                presentation.itemText = "*" + presentation.itemText
             }
 
             override fun handleInsert(context: InsertionContext) {
-                WithExpressionPrefixInsertHandler("*").handleInsert(context, getDelegate())
+                WithExpressionPrefixInsertHandler("*").handleInsert(context, delegate)
             }
         }
     }
@@ -118,7 +118,7 @@ fun LookupElement.addTailAndNameSimilarity(
         nameSimilarityExpectedInfos: Collection<ExpectedInfo> = matchedExpectedInfos
 ): LookupElement {
     val lookupElement = addTail(mergeTails(matchedExpectedInfos.map { it.tail }))
-    val similarity = calcNameSimilarity(lookupElement.getLookupString(), nameSimilarityExpectedInfos)
+    val similarity = calcNameSimilarity(lookupElement.lookupString, nameSimilarityExpectedInfos)
     if (similarity != 0) {
         lookupElement.putUserData(NAME_SIMILARITY_KEY, similarity)
     }
@@ -166,9 +166,11 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         lookupElementFactory: (TDescriptor) -> Collection<LookupElement>
 ) {
     class ItemData(val descriptor: TDescriptor, val itemOptions: ItemOptions) {
+        @Suppress("UNCHECKED_CAST")
         override fun equals(other: Any?)
-                = other is ItemData && descriptorsEqualWithSubstitution(this.descriptor, other.descriptor) && itemOptions == other.itemOptions
-        override fun hashCode() = if (this.descriptor != null) this.descriptor.getOriginal().hashCode() else 0
+                = descriptorsEqualWithSubstitution(this.descriptor, (other as? ItemData)?.descriptor) && itemOptions ==
+                (other as? ItemData)?.itemOptions
+        override fun hashCode() = if (this.descriptor != null) this.descriptor.original.hashCode() else 0
     }
 
     fun ItemData.createLookupElements() = lookupElementFactory(this.descriptor).map { it.withOptions(this.itemOptions) }
@@ -223,10 +225,10 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
         object: LookupElementDecorator<LookupElement>(it) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
-                presentation.setItemText("!! " + presentation.getItemText())
+                presentation.itemText = "!! " + presentation.itemText
             }
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler("!!", spaceBefore = false, spaceAfter = false).handleInsert(context, getDelegate())
+                WithTailInsertHandler("!!", spaceBefore = false, spaceAfter = false).handleInsert(context, delegate)
             }
         }.postProcess()
     }
@@ -235,10 +237,10 @@ private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factor
         object: LookupElementDecorator<LookupElement>(it) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
-                presentation.setItemText("?: " + presentation.getItemText())
+                presentation.itemText = "?: " + presentation.itemText
             }
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler("?:", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate()) //TODO: code style
+                WithTailInsertHandler("?:", spaceBefore = true, spaceAfter = true).handleInsert(context, delegate) //TODO: code style
             }
         }.postProcess()
     }

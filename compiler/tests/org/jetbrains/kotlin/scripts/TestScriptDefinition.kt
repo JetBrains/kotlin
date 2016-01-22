@@ -29,6 +29,6 @@ class TestScriptDefinition(
         val parameters: List<ScriptParameter>
 ) : KotlinScriptDefinition {
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor) = parameters
-    override fun isScript(file: PsiFile): Boolean = file.getName().endsWith(extension)
+    override fun isScript(file: PsiFile): Boolean = file.name.endsWith(extension)
     override fun getScriptName(script: KtScript): Name = ScriptNameUtil.fileNameWithExtensionStripped(script, extension)
 }

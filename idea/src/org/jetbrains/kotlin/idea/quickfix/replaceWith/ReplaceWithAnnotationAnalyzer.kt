@@ -56,17 +56,17 @@ import java.util.*
 data class ReplaceWith(val pattern: String, val imports: List<String>)
 
 object ReplaceWithAnnotationAnalyzer {
-    public val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
-    public val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
+    val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
+    val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
 
-    public data class ReplacementExpression(
+    data class ReplacementExpression(
             val expression: KtExpression,
             val fqNamesToImport: Collection<FqName>
     ) {
         fun copy() = ReplacementExpression(expression.copied(), fqNamesToImport)
     }
 
-    public fun analyzeCallableReplacement(
+    fun analyzeCallableReplacement(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
             resolutionFacade: ResolutionFacade
@@ -94,9 +94,8 @@ object ReplaceWithAnnotationAnalyzer {
         val module = symbolDescriptor.module
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
         val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module)
-        val additionalScopes = resolutionFacade.getFrontendService(FileScopeProvider.AdditionalScopes::class.java)
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
-                                       listOf(explicitImportsScope) + defaultImportsScopes + additionalScopes.scopes) ?: return null
+                                       listOf(explicitImportsScope) + defaultImportsScopes) ?: return null
 
         var bindingContext = analyzeInContext(expression, module, scope, resolutionFacade)
 
@@ -163,7 +162,7 @@ object ReplaceWithAnnotationAnalyzer {
         return ReplacementExpression(expression, importFqNames)
     }
 
-    public fun analyzeClassReplacement(
+    fun analyzeClassReplacement(
             annotation: ReplaceWith,
             symbolDescriptor: ClassDescriptor,
             resolutionFacade: ResolutionFacade

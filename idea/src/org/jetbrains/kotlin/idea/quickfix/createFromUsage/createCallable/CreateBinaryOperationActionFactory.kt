@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
-public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<KtBinaryExpression>() {
+object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<KtBinaryExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtBinaryExpression? {
         return diagnostic.psiElement.parent as? KtBinaryExpression
     }

@@ -29,14 +29,13 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 
-public object PackagePartClassUtils {
-    @JvmStatic
-    public fun getPathHashCode(file: VirtualFile): Int =
+object PackagePartClassUtils {
+    @JvmStatic fun getPathHashCode(file: VirtualFile): Int =
             file.path.toLowerCase().hashCode()
 
     private val PART_CLASS_NAME_SUFFIX = "Kt"
 
-    public @JvmStatic fun getPartClassName(str: String): String =
+    @JvmStatic fun getPartClassName(str: String): String =
             if (str.isEmpty())
                 "_$PART_CLASS_NAME_SUFFIX"
             else
@@ -51,45 +50,37 @@ public object PackagePartClassUtils {
                 "_$str"
 
     @TestOnly
-    @JvmStatic
-    public fun getDefaultFileClassFqName(packageFqName: FqName, file: VirtualFile): FqName =
+    @JvmStatic fun getDefaultFileClassFqName(packageFqName: FqName, file: VirtualFile): FqName =
             getPackagePartFqName(packageFqName, file.name)
 
     @TestOnly
-    @JvmStatic
-    public fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
+    @JvmStatic fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
             getPackagePartFqName(facadeClassFqName.parent(), file.name)
 
-    @JvmStatic
-    public fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
+    @JvmStatic fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
         val partClassName = getFilePartShortName(fileName)
         return packageFqName.child(Name.identifier(partClassName))
     }
 
     @Deprecated("Migrate to JvmFileClassesProvider")
-    @JvmStatic
-    public fun getPackagePartInternalName(file: KtFile): String =
+    @JvmStatic fun getPackagePartInternalName(file: KtFile): String =
             JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName
 
     @Deprecated("Migrate to JvmFileClassesProvider")
-    @JvmStatic
-    public fun getPackagePartFqName(file: KtFile): FqName =
+    @JvmStatic fun getPackagePartFqName(file: KtFile): FqName =
             getPackagePartFqName(file.packageFqName, file.name)
 
-    @JvmStatic
-    public fun getFilesWithCallables(files: Collection<KtFile>): List<KtFile> =
+    @JvmStatic fun getFilesWithCallables(files: Collection<KtFile>): List<KtFile> =
             files.filter { fileHasTopLevelCallables(it) }
 
-    @JvmStatic
-    public fun fileHasTopLevelCallables(file: KtFile): Boolean =
+    @JvmStatic fun fileHasTopLevelCallables(file: KtFile): Boolean =
             file.declarations.any {
                 it is KtProperty ||
                 it is KtNamedFunction ||
                 it is KtScript
             }
 
-    @JvmStatic
-    public fun getFilePartShortName(fileName: String): String =
+    @JvmStatic fun getFilePartShortName(fileName: String): String =
             getPartClassName(FileUtil.getNameWithoutExtension(fileName))
 
 }

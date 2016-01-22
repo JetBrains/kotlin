@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
-public fun resolveQualifierAsReceiverInExpression(
+fun resolveQualifierAsReceiverInExpression(
         qualifier: Qualifier,
         selector: DeclarationDescriptor?,
         context: ExpressionTypingContext,
@@ -43,7 +43,7 @@ public fun resolveQualifierAsReceiverInExpression(
     return referenceTarget
 }
 
-public fun resolveQualifierAsStandaloneExpression(
+fun resolveQualifierAsStandaloneExpression(
         qualifier: Qualifier,
         context: ExpressionTypingContext,
         symbolUsageValidator: SymbolUsageValidator

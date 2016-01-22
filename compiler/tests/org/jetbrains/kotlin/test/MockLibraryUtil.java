@@ -53,13 +53,14 @@ public class MockLibraryUtil {
             @NotNull String jarName,
             boolean addSources,
             boolean isJsLibrary,
+            boolean allowKotlinPackage,
             @NotNull String... extraClasspath
     ) {
         if (isJsLibrary) {
             return compileJsLibraryToJar(sourcesPath, jarName, addSources);
         }
         else {
-            return compileLibraryToJar(sourcesPath, jarName, addSources, extraClasspath);
+            return compileLibraryToJar(sourcesPath, jarName, addSources, allowKotlinPackage, extraClasspath);
         }
     }
 
@@ -68,6 +69,7 @@ public class MockLibraryUtil {
             @NotNull String sourcesPath,
             @NotNull String jarName,
             boolean addSources,
+            boolean allowKotlinPackage,
             @NotNull String... extraClasspath
     ) {
         try {
@@ -78,7 +80,7 @@ public class MockLibraryUtil {
             File srcFile = new File(sourcesPath);
             List<File> kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile);
             if (srcFile.isFile() || !kotlinFiles.isEmpty()) {
-                compileKotlin(sourcesPath, classesDir, extraClasspath);
+                compileKotlin(sourcesPath, classesDir, allowKotlinPackage, extraClasspath);
             }
 
             List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile);
@@ -170,6 +172,15 @@ public class MockLibraryUtil {
     }
 
     public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
+        compileKotlin(sourcesPath, outDir, false, extraClasspath);
+    }
+
+    public static void compileKotlin(
+            @NotNull String sourcesPath,
+            @NotNull File outDir,
+            boolean allowKotlinPackage,
+            @NotNull String... extraClasspath
+    ) {
         List<String> classpath = new ArrayList<String>();
         if (new File(sourcesPath).isDirectory()) {
             classpath.add(sourcesPath);
@@ -182,6 +193,9 @@ public class MockLibraryUtil {
         args.add(outDir.getAbsolutePath());
         args.add("-classpath");
         args.add(StringUtil.join(classpath, File.pathSeparator));
+        if (allowKotlinPackage) {
+            args.add("-Xallow-kotlin-package");
+        }
 
         runJvmCompiler(args);
     }

@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.load.java.structure
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public interface JavaPackage : JavaElement {
-    public fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass>
+interface JavaPackage : JavaElement {
+    fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass>
 
-    public fun getSubPackages(): Collection<JavaPackage>
+    fun getSubPackages(): Collection<JavaPackage>
 
-    public fun getFqName(): FqName
+    fun getFqName(): FqName
 }

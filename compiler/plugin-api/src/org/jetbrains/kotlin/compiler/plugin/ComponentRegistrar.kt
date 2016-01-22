@@ -20,10 +20,10 @@ import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
-public interface ComponentRegistrar {
+interface ComponentRegistrar {
     companion object {
-        public val PLUGIN_COMPONENT_REGISTRARS: CompilerConfigurationKey<MutableList<ComponentRegistrar>> = CompilerConfigurationKey.create("plugin component registrars")
+        val PLUGIN_COMPONENT_REGISTRARS: CompilerConfigurationKey<MutableList<ComponentRegistrar>> = CompilerConfigurationKey.create("plugin component registrars")
     }
 
-    public fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration)
+    fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration)
 }

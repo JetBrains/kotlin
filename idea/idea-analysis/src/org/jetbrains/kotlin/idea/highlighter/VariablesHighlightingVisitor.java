@@ -110,6 +110,15 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
                   .setTextAttributes(KotlinHighlightingColors.SMART_CAST_VALUE);
         }
 
+        if (expression instanceof KtWhenExpression) {
+            KtWhenExpression whenExpression = (KtWhenExpression) expression;
+            boolean implicitExhaustiveWhen = bindingContext.get(IMPLICIT_EXHAUSTIVE_WHEN, whenExpression) == Boolean.TRUE;
+            if (implicitExhaustiveWhen) {
+                holder.createInfoAnnotation(whenExpression.getWhenKeyword(), "When is implicitly exhaustive")
+                      .setTextAttributes(KotlinHighlightingColors.IMPLICIT_EXHAUSTIVE_WHEN);
+            }
+        }
+
         super.visitExpression(expression);
     }
 

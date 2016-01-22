@@ -32,21 +32,21 @@ import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-public abstract class AbstractPsiUnifierTest : KotlinLightCodeInsightFixtureTestCase() {
-    public fun doTest(filePath: String) {
+abstract class AbstractPsiUnifierTest : KotlinLightCodeInsightFixtureTestCase() {
+    fun doTest(filePath: String) {
         fun findPattern(file: KtFile): KtElement {
-            val selectionModel = myFixture.getEditor().getSelectionModel()
-            val start = selectionModel.getSelectionStart()
-            val end = selectionModel.getSelectionEnd()
+            val selectionModel = myFixture.editor.selectionModel
+            val start = selectionModel.selectionStart
+            val end = selectionModel.selectionEnd
             val selectionRange = TextRange(start, end)
             return file.findElementAt(start)?.parentsWithSelf?.last {
                 (it is KtExpression || it is KtTypeReference || it is KtWhenCondition)
-                        && selectionRange.contains(it.getTextRange() ?: TextRange.EMPTY_RANGE)
+                        && selectionRange.contains(it.textRange ?: TextRange.EMPTY_RANGE)
             } as KtElement
         }
 
         myFixture.configureByFile(filePath)
-        val file = myFixture.getFile() as KtFile
+        val file = myFixture.file as KtFile
 
         DirectiveBasedActionUtils.checkForUnexpectedErrors(file)
 

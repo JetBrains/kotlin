@@ -28,32 +28,32 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator"), HighPriorityAction {
+class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace 'contains' call with 'in' operator"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.CONTAINS.asString()) return null
 
         val resolvedCall = element.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
-        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
+        val argument = resolvedCall.call.valueArguments.singleOrNull() ?: return null
         if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.index != 0) return null
 
-        val target = resolvedCall.getResultingDescriptor()
-        val returnType = target.getReturnType() ?: return null
+        val target = resolvedCall.resultingDescriptor
+        val returnType = target.returnType ?: return null
         if (!target.builtIns.isBooleanOrSubtype(returnType)) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
 
-        return element.callExpression!!.getCalleeExpression()!!.getTextRange()
+        return element.callExpression!!.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
-        val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
-        val receiver = element.getReceiverExpression()
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
+        val argument = element.callExpression!!.valueArguments.single().getArgumentExpression()!!
+        val receiver = element.receiverExpression
 
         val psiFactory = KtPsiFactory(element)
 
-        val prefixExpression = element.getParent() as? KtPrefixExpression
-        val expression = if (prefixExpression != null && prefixExpression.getOperationToken() == KtTokens.EXCL) {
+        val prefixExpression = element.parent as? KtPrefixExpression
+        val expression = if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) {
             prefixExpression.replace(psiFactory.createExpressionByPattern("$0 !in $1", argument, receiver))
         }
         else {
@@ -63,10 +63,10 @@ public class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifi
         // Append semicolon to previous statement if needed
         if (argument is KtLambdaExpression) {
             val previousElement = KtPsiUtil.skipSiblingsBackwardByPredicate(expression) {
-                it.getNode().getElementType() in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+                it!!.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
             }
             if (previousElement != null && previousElement is KtExpression) {
-                previousElement.getParent()!!.addAfter(psiFactory.createSemicolon(), previousElement)
+                previousElement.parent!!.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }
     }

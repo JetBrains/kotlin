@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-public class LazyScriptDescriptor(
+class LazyScriptDescriptor(
         private val resolveSession: ResolveSession,
         containingDeclaration: DeclarationDescriptor,
         name: Name,
@@ -58,7 +58,7 @@ public class LazyScriptDescriptor(
         return visitor.visitScriptDescriptor(this, data)
     }
 
-    protected override fun createMemberScope(
+    override fun createMemberScope(
             c: LazyClassContext,
             declarationProvider: ClassMemberDeclarationProvider): LazyScriptClassMemberScope {
         return LazyScriptClassMemberScope(

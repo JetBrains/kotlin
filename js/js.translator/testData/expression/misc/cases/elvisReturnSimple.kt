@@ -8,11 +8,11 @@ package foo
 
 fun stringLen(s : String?) : Int {
     val s1 : String = s ?: return 0
-    return s1.length()
+    return s1.length
 }
 
 fun stringReturnInLeftLen(s : String?) : Int {
-    val s1 = (if (s != null) { return s.length() } else { null }) ?: return 0
+    val s1 = (if (s != null) { return s.length } else { null }) ?: return 0
 }
 
 fun box(): String {

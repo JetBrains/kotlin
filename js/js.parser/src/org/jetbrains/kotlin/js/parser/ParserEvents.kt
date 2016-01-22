@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.js.parser
 
 import com.google.gwt.dev.js.rhino.*
 
-public object ParserEvents {
+object ParserEvents {
 
-    public class OnFunctionParsingStart
+    class OnFunctionParsingStart
 
-    public class OnFunctionParsingEnd(public val tokenStream: TokenStream)
+    class OnFunctionParsingEnd(val tokenStream: TokenStream)
 }

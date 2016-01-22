@@ -23,25 +23,25 @@ import org.jetbrains.kotlin.util.aliasImportMap
 
 fun <TDeclaration : KtCallableDeclaration> indexTopLevelExtension(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
     if (stub.isExtension()) {
-        val declaration = stub.getPsi()
-        declaration.getReceiverTypeReference()!!.typeElement?.index(declaration, sink)
+        val declaration = stub.psi
+        declaration.receiverTypeReference!!.typeElement?.index(declaration, sink)
     }
 }
 
 private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(declaration: TDeclaration, sink: IndexSink) {
     fun occurrence(typeName: String) {
-        val name = declaration.getName() ?: return
-        sink.occurrence(KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE.getKey(),
+        val name = declaration.name ?: return
+        sink.occurrence(KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE.key,
                         KotlinTopLevelExtensionsByReceiverTypeIndex.buildKey(typeName, name))
     }
 
     when (this) {
         is KtUserType -> {
-            var referenceName = getReferencedName() ?: return
+            var referenceName = referencedName ?: return
 
-            val typeParameter = declaration.getTypeParameters().firstOrNull { it.getName() == referenceName }
+            val typeParameter = declaration.typeParameters.firstOrNull { it.name == referenceName }
             if (typeParameter != null) {
-                val bound = typeParameter.getExtendsBound()
+                val bound = typeParameter.extendsBound
                 if (bound != null) {
                     bound.typeElement?.index(declaration, sink)
                 }
@@ -56,10 +56,10 @@ private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(declarati
             aliasImportMap()[referenceName].forEach { occurrence(it) }
         }
 
-        is KtNullableType -> getInnerType()?.index(declaration, sink)
+        is KtNullableType -> innerType?.index(declaration, sink)
 
         is KtFunctionType -> {
-            val arity = getParameters().size() + (if (getReceiverTypeReference() != null) 1 else 0)
+            val arity = parameters.size + (if (receiverTypeReference != null) 1 else 0)
             occurrence("Function$arity")
         }
 

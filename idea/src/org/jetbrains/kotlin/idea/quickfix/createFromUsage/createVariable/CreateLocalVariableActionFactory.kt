@@ -38,7 +38,7 @@ import java.util.*
 
 object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtNameReferenceExpression>()) ?: return null
+        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, KtNameReferenceExpression::class.java) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
         if (refExpr.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) return null
 

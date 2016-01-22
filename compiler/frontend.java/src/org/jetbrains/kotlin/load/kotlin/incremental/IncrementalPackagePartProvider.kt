@@ -43,8 +43,7 @@ internal class IncrementalPackagePartProvider private constructor(
     }
 
     companion object {
-        @JvmStatic
-        public fun create(
+        @JvmStatic fun create(
                 parent: PackagePartProvider,
                 sourceFiles: Collection<KtFile>,
                 targets: List<TargetId>?,

@@ -16,71 +16,65 @@
 
 package org.jetbrains.kotlin.utils
 
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.io.File
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
-public class KotlinJavascriptMetadata(public val abiVersion: Int, public val moduleName: String, public val body: ByteArray) {
-    public val isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
+class KotlinJavascriptMetadata(val abiVersion: Int, val moduleName: String, val body: ByteArray) {
+    val isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
 }
 
-public object KotlinJavascriptMetadataUtils {
-    public val JS_EXT: String = ".js"
-    public val META_JS_SUFFIX: String = ".meta.js"
-    public val VFS_PROTOCOL: String = "kotlin-js-meta"
+// TODO: move to JS modules
+class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
+    override fun isCompatible() = this.isCompatibleTo(INSTANCE)
+
+    companion object {
+        @JvmField
+        val INSTANCE = JsBinaryVersion(0, 3, 0)
+
+        @JvmField
+        val INVALID_VERSION = JsBinaryVersion()
+    }
+}
+
+object KotlinJavascriptMetadataUtils {
+    const val JS_EXT: String = ".js"
+    const val META_JS_SUFFIX: String = ".meta.js"
+    const val VFS_PROTOCOL: String = "kotlin-js-meta"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toPattern()
+
     /**
      * Matches string like <name>.kotlin_module_metadata(<abi version>, <module name>, <base64 data>)
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toPattern()
 
-    @JvmStatic
-    public val ABI_VERSION: Int = 3
+    @JvmField val ABI_VERSION: Int = JsBinaryVersion.INSTANCE.minor
 
-    public fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
+    fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
 
-    @JvmStatic
-    public fun isAbiVersionCompatible(abiVersion: Int): Boolean = abiVersion == ABI_VERSION
+    @JvmStatic fun isAbiVersionCompatible(abiVersion: Int): Boolean = abiVersion == ABI_VERSION
 
-    @JvmStatic
-    public fun hasMetadata(text: String): Boolean =
+    @JvmStatic fun hasMetadata(text: String): Boolean =
             KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
-    public fun hasMetadataWithIncompatibleAbiVersion(text: String): Boolean {
-        val matcher = METADATA_PATTERN.matcher(text)
-        while (matcher.find()) {
-            var abiVersion = matcher.group(1).toInt()
-            if (abiVersion != ABI_VERSION) return true
-        }
-        return false
-    }
-
-    public fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
+    fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
         "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME($ABI_VERSION, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
 
-    @JvmStatic
-    public fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
-        assert(file.exists()) { "Library " + file + " not found" }
+    @JvmStatic fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
+        assert(file.exists()) { "Library $file not found" }
         val metadataList = arrayListOf<KotlinJavascriptMetadata>()
-        LibraryUtils.traverseJsLibrary(file) { content, relativePath ->
-            var path = file.getPath()
-
-            if (relativePath.isNotBlank()) {
-                path += "/$relativePath"
-            }
-
+        JsLibraryUtils.traverseJsLibrary(file) { content, relativePath ->
             parseMetadata(content, metadataList)
         }
 
         return metadataList
     }
 
-    @JvmStatic
-    public fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
+    @JvmStatic fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
 
-    @JvmStatic
-    public fun parseMetadata(text: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
+    @JvmStatic fun parseMetadata(text: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
         // Check for literal pattern first in order to reduce time for large files without metadata
         if (!KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find()) return
 

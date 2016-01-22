@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 
-public class ReplaceGetOrSetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
+class ReplaceGetOrSetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
         ReplaceGetOrSetIntention(), ReplaceGetOrSetInspection.additionalChecker
 
 ) {
@@ -71,9 +71,9 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
         if (!target.isValidOperator() || target.name !in operatorNames) return null
 
-        if (callExpression.getTypeArgumentList() != null) return null
+        if (callExpression.typeArgumentList != null) return null
 
-        val arguments = callExpression.getValueArguments()
+        val arguments = callExpression.valueArguments
         if (arguments.isEmpty()) return null
         if (arguments.any { it.isNamed() }) return null
 
@@ -83,20 +83,16 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
 
         text = "Replace '${target.name.asString()}' call with indexing operator"
 
-        return callExpression.getCalleeExpression()!!.getTextRange()
+        return callExpression.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtDotQualifiedExpression) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val isSet = element.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor.name == OperatorNameConventions.SET
         val allArguments = element.callExpression!!.valueArguments
         assert(allArguments.isNotEmpty())
 
         val expression = KtPsiFactory(element).buildExpression {
-            appendExpression(element.getReceiverExpression())
+            appendExpression(element.receiverExpression)
 
             appendFixedText("[")
 

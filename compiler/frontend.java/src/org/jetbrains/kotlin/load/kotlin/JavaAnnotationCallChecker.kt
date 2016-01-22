@@ -41,11 +41,11 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.annotation.Target
 
-public class JavaAnnotationCallChecker : CallChecker {
+class JavaAnnotationCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
-        val resultingDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
+        val resultingDescriptor = resolvedCall.resultingDescriptor.original
         if (resultingDescriptor !is JavaConstructorDescriptor ||
-            resultingDescriptor.getContainingDeclaration().getKind() != ClassKind.ANNOTATION_CLASS) return
+            resultingDescriptor.containingDeclaration.kind != ClassKind.ANNOTATION_CLASS) return
 
         reportErrorsOnPositionedArguments(resolvedCall, context)
         reportDeprecatedJavaAnnotation(resolvedCall, context)
@@ -73,7 +73,7 @@ public class JavaAnnotationCallChecker : CallChecker {
             argument: Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>,
             diagnostic: DiagnosticFactory0<KtExpression>
     ) {
-        argument.getValue().getArguments().forEach {
+        argument.value.arguments.forEach {
             if (it.getArgumentExpression() != null) {
                 context.trace.report(
                         diagnostic.on(

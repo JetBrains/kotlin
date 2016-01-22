@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateUnsupportedOrSuperCall
-import org.jetbrains.kotlin.idea.core.refactoring.j2k
+import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.setupEditorSelection
 import org.jetbrains.kotlin.idea.quickfix.insertMember
 import org.jetbrains.kotlin.idea.testIntegration.findSuitableFrameworks
@@ -93,24 +93,24 @@ abstract class KotlinGenerateTestSupportActionBase(
         }
     }
 
-    public class SetUp : KotlinGenerateTestSupportActionBase(MethodKind.SET_UP) {
+    class SetUp : KotlinGenerateTestSupportActionBase(MethodKind.SET_UP) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             return framework.findSetUpMethod(targetClass.toLightClass()!!) == null
         }
     }
 
-    public class Test : KotlinGenerateTestSupportActionBase(MethodKind.TEST) {
+    class Test : KotlinGenerateTestSupportActionBase(MethodKind.TEST) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject) = true
     }
 
-    public class Data : KotlinGenerateTestSupportActionBase(MethodKind.DATA) {
+    class Data : KotlinGenerateTestSupportActionBase(MethodKind.DATA) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             if (framework !is JavaTestFramework) return false
             return framework.findParametersMethod(targetClass.toLightClass()) == null
         }
     }
 
-    public class TearDown : KotlinGenerateTestSupportActionBase(MethodKind.TEAR_DOWN) {
+    class TearDown : KotlinGenerateTestSupportActionBase(MethodKind.TEAR_DOWN) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             return framework.findTearDownMethod(targetClass.toLightClass()!!) == null
         }
@@ -179,7 +179,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 setupEditorSelection(editor, functionInPlace)
             }
             catch (e: IncorrectOperationException) {
-                HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.getMessage())
+                HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
             }
         }
     }

@@ -12,12 +12,12 @@ object O {
 
 fun box(): String {
     val foo = A::foo
-    assertEquals(listOf(javaClass<A>(), javaClass<java.lang.Long>()), foo.parameters.map { it.type.javaType })
+    assertEquals(listOf(A::class.java, java.lang.Long::class.java), foo.parameters.map { it.type.javaType })
     assertEquals(java.lang.Long.TYPE, foo.returnType.javaType)
 
     val bar = O::class.members.single { it.name == "bar" }
-    assertEquals(listOf(javaClass<O>(), javaClass<A>()), bar.parameters.map { it.type.javaType })
-    assertEquals(javaClass<String>(), bar.returnType.javaType)
+    assertEquals(listOf(O::class.java, A::class.java), bar.parameters.map { it.type.javaType })
+    assertEquals(String::class.java, bar.returnType.javaType)
 
     return "OK"
 }

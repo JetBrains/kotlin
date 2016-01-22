@@ -21,7 +21,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-public open class KtLightClassForInterfaceDefaultImpls(
+open class KtLightClassForInterfaceDefaultImpls(
         classFqName: FqName,
         classOrObject: KtClassOrObject)
 : KtLightClassForExplicitDeclaration(classFqName, classOrObject){

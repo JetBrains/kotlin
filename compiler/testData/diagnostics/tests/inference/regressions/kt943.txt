@@ -2,6 +2,6 @@ package
 
 package maze {
     public inline fun </*0*/ T> comparator(/*0*/ fn: (T, T) -> kotlin.Int): java.util.Comparator<T>
-    public fun foo(/*0*/ lines: kotlin.List<kotlin.String>): kotlin.Unit
+    public fun foo(/*0*/ lines: kotlin.collections.List<kotlin.String>): kotlin.Unit
     public fun </*0*/ T : kotlin.Any> T?.sure(): T
 }

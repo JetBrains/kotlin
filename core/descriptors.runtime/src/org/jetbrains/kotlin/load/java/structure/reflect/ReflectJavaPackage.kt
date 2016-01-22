@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public class ReflectJavaPackage(private val fqName: FqName) : ReflectJavaElement(), JavaPackage {
+class ReflectJavaPackage(private val fqName: FqName) : ReflectJavaElement(), JavaPackage {
     override fun getFqName() = fqName
 
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
@@ -38,5 +38,5 @@ public class ReflectJavaPackage(private val fqName: FqName) : ReflectJavaElement
 
     override fun hashCode() = fqName.hashCode()
 
-    override fun toString() = javaClass.getName() + ": " + fqName
+    override fun toString() = javaClass.name + ": " + fqName
 }

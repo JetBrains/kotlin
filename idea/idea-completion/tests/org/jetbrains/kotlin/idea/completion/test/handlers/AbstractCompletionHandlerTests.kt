@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.io.File
 
-public abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: CompletionType) : CompletionHandlerTestBase() {
+abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: CompletionType) : CompletionHandlerTestBase() {
     private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
     private val LOOKUP_STRING_PREFIX = "ELEMENT:"
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
@@ -38,8 +38,8 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
         setUpFixture(testPath)
 
         val settingManager = CodeStyleSettingsManager.getInstance()
-        val tempSettings = settingManager.getCurrentSettings().clone()
-        settingManager.setTemporarySettings(tempSettings)
+        val tempSettings = settingManager.currentSettings.clone()
+        settingManager.temporarySettings = tempSettings
         try {
             val fileText = FileUtil.loadFile(File(testPath))
             val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
@@ -56,16 +56,16 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
-            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(getProject())
+            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
             for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {
                 val index = line.indexOfOrNull('=') ?: error("Invalid code style setting '$line': '=' expected")
                 val settingName = line.substring(0, index).trim()
                 val settingValue = line.substring(index + 1).trim()
                 val field = codeStyleSettings.javaClass.getDeclaredField(settingName)
-                when (field.getType().getName()) {
+                when (field.type.name) {
                     "boolean" -> field.setBoolean(codeStyleSettings, settingValue.toBoolean())
                     "int" -> field.setInt(codeStyleSettings, settingValue.toInt())
-                    else -> error("Unsupported setting type: ${field.getType()}")
+                    else -> error("Unsupported setting type: ${field.type}")
                 }
             }
 
@@ -83,10 +83,10 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
 
-public abstract class AbstractBasicCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)
+abstract class AbstractBasicCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)
 
-public abstract class AbstractSmartCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.SMART)
+abstract class AbstractSmartCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.SMART)
 
-public abstract class AbstractCompletionCharFilterTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)
+abstract class AbstractCompletionCharFilterTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)
 
-public abstract class AbstractKeywordCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)
+abstract class AbstractKeywordCompletionHandlerTest() : AbstractCompletionHandlerTest(CompletionType.BASIC)

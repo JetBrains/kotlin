@@ -42,6 +42,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
 
     private final Map<ClassDescriptor, ClassDescriptor> mutableToReadOnly = new HashMap<ClassDescriptor, ClassDescriptor>();
     private final Map<ClassDescriptor, ClassDescriptor> readOnlyToMutable = new HashMap<ClassDescriptor, ClassDescriptor>();
+    private final CompanionObjectMapping companionObjectMapping;
 
     private JavaToKotlinClassMap() {
         KotlinBuiltIns builtIns = JvmBuiltIns.getInstance();
@@ -69,7 +70,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             add(ClassId.topLevel(jvmType.getWrapperFqName()), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
         }
 
-        CompanionObjectMapping companionObjectMapping = new CompanionObjectMapping(builtIns);
+        companionObjectMapping = new CompanionObjectMapping(builtIns);
         for (ClassDescriptor descriptor : companionObjectMapping.allClassesWithIntrinsicCompanions()) {
             ClassDescriptor companion = descriptor.getCompanionObjectDescriptor();
             assert companion != null : "No companion object found for " + descriptor;
@@ -116,6 +117,10 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     @Nullable
     public ClassId mapKotlinToJava(@NotNull FqNameUnsafe kotlinFqName) {
         return kotlinToJava.get(kotlinFqName);
+    }
+
+    public boolean isMappedCompanion(@NotNull ClassDescriptor descriptor) {
+        return companionObjectMapping.hasMappingToObject(descriptor);
     }
 
     private void add(

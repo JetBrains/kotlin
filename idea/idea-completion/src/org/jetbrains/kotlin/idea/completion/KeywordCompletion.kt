@@ -40,12 +40,13 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 open class KeywordLookupObject
 
 object KeywordCompletion {
     private val NON_ACTUAL_KEYWORDS = setOf(TYPE_ALIAS_KEYWORD)
-    private val ALL_KEYWORDS = (KEYWORDS.getTypes() + SOFT_KEYWORDS.getTypes())
+    private val ALL_KEYWORDS = (KEYWORDS.types + SOFT_KEYWORDS.types)
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as KtKeywordToken }
 
@@ -57,18 +58,18 @@ object KeywordCompletion {
             ANNOTATION_KEYWORD to CLASS_KEYWORD
     )
 
-    public fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
+    fun complete(position: PsiElement, prefix: String, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
 
         val parserFilter = buildFilter(position)
         for (keywordToken in ALL_KEYWORDS) {
-            var keyword = keywordToken.getValue()
+            var keyword = keywordToken.value
 
             val nextKeyword = COMPOUND_KEYWORDS[keywordToken]
             if (nextKeyword != null) {
                 fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
 
-                var next = position.nextLeaf { !(it.isSpace() || it.getText() == "$") }?.getText()
+                var next = position.nextLeaf { !(it.isSpace() || it.text == "$") }?.text
                 if (next != null && next.startsWith("$")) {
                     next = next.substring(1)
                 }
@@ -108,8 +109,8 @@ object KeywordCompletion {
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),
-            ParentFilter(ClassFilter(javaClass<KtLiteralStringTemplateEntry>())),
-            ParentFilter(ClassFilter(javaClass<KtConstantExpression>())),
+            ParentFilter(ClassFilter(KtLiteralStringTemplateEntry::class.java)),
+            ParentFilter(ClassFilter(KtConstantExpression::class.java)),
             LeftNeighbour(TextFilter(".")),
             LeftNeighbour(TextFilter("?."))
     ))
@@ -128,29 +129,44 @@ object KeywordCompletion {
         }
 
         override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
-            val parent = (element as? PsiElement)?.getParent()
-            return parent != null && (getFilter()?.isAcceptable(parent, context) ?: true)
+            val parent = (element as? PsiElement)?.parent
+            return parent != null && (filter?.isAcceptable(parent, context) ?: true)
         }
     }
 
     private fun buildFilter(position: PsiElement): (KtKeywordToken) -> Boolean {
-        var parent = position.getParent()
+        var parent = position.parent
         var prevParent = position
         while (parent != null) {
             when (parent) {
                 is KtBlockExpression -> {
-                    return buildFilterWithContext("fun foo() { ", prevParent, position)
+                    val prefixText = "fun foo() { "
+                    if (prevParent is KtExpression) {
+                        return buildFilterWithContext(prefixText, prevParent, position)
+                    }
+                    else {
+                        val lastExpression = prevParent
+                                .siblings(forward = false, withItself = false)
+                                .firstIsInstanceOrNull<KtExpression>()
+                        if (lastExpression != null) {
+                            val contextAfterExpression = lastExpression
+                                    .siblings(forward = true, withItself = false)
+                                    .takeWhile { it != prevParent }
+                                    .joinToString { it.text }
+                            return buildFilterWithContext(prefixText + "x" + contextAfterExpression, prevParent, position)
+                        }
+                    }
                 }
 
                 is KtWithExpressionInitializer -> {
-                    val initializer = parent.getInitializer()
+                    val initializer = parent.initializer
                     if (prevParent == initializer) {
                         return buildFilterWithContext("val v = ", initializer!!, position)
                     }
                 }
 
                 is KtParameter -> {
-                    val default = parent.getDefaultValue()
+                    val default = parent.defaultValue
                     if (prevParent == default) {
                         return buildFilterWithContext("val v = ", default!!, position)
                     }
@@ -184,8 +200,8 @@ object KeywordCompletion {
                                        contextElement: PsiElement,
                                        position: PsiElement): (KtKeywordToken) -> Boolean {
         val offset = position.getStartOffsetInAncestor(contextElement)
-        val truncatedContext = contextElement.getText()!!.substring(0, offset)
-        return buildFilterByText(prefixText + truncatedContext, contextElement.getProject())
+        val truncatedContext = contextElement.text!!.substring(0, offset)
+        return buildFilterByText(prefixText + truncatedContext, contextElement.project)
     }
 
     private fun buildFilterWithReducedContext(prefixText: String,
@@ -193,7 +209,7 @@ object KeywordCompletion {
                                               position: PsiElement): (KtKeywordToken) -> Boolean {
         val builder = StringBuilder()
         buildReducedContextBefore(builder, position, contextElement)
-        return buildFilterByText(prefixText + builder.toString(), position.getProject())
+        return buildFilterByText(prefixText + builder.toString(), position.project)
     }
 
 
@@ -201,11 +217,11 @@ object KeywordCompletion {
         val psiFactory = KtPsiFactory(project)
         return fun (keywordTokenType): Boolean {
             val postfix = if (prefixText.endsWith("@")) ":X" else " X"
-            val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
-            val elementAt = file.findElementAt(prefixText.length())!!
+            val file = psiFactory.createFile(prefixText + keywordTokenType.value + postfix)
+            val elementAt = file.findElementAt(prefixText.length)!!
 
             when {
-                !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> return false
+                !elementAt.node!!.elementType.matchesKeyword(keywordTokenType) -> return false
 
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> return false
 
@@ -289,13 +305,13 @@ object KeywordCompletion {
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations
     private fun buildReducedContextBefore(builder: StringBuilder, position: PsiElement, scope: PsiElement?) {
         if (position == scope) return
-        val parent = position.getParent() ?: return
+        val parent = position.parent ?: return
 
         buildReducedContextBefore(builder, parent, scope)
 
         val prevDeclaration = position.siblings(forward = false, withItself = false).firstOrNull { it is KtDeclaration }
 
-        var child = parent.getFirstChild()
+        var child = parent.firstChild
         while (child != position) {
             if (child is KtDeclaration) {
                 if (child == prevDeclaration) {
@@ -303,17 +319,17 @@ object KeywordCompletion {
                 }
             }
             else {
-                builder.append(child!!.getText())
+                builder.append(child!!.text)
             }
 
-            child = child.getNextSibling()
+            child = child.nextSibling
         }
     }
 
     private fun StringBuilder.appendReducedText(element: PsiElement) {
-        var child = element.getFirstChild()
+        var child = element.firstChild
         if (child == null) {
-            append(element.getText()!!)
+            append(element.text!!)
         }
         else {
             while (child != null) {
@@ -322,13 +338,13 @@ object KeywordCompletion {
                     else -> appendReducedText(child)
                 }
 
-                child = child.getNextSibling()
+                child = child.nextSibling
             }
         }
     }
 
     private fun PsiElement.getStartOffsetInAncestor(ancestor: PsiElement): Int {
         if (ancestor == this) return 0
-        return getParent()!!.getStartOffsetInAncestor(ancestor) + getStartOffsetInParent()
+        return parent!!.getStartOffsetInAncestor(ancestor) + startOffsetInParent
     }
 }

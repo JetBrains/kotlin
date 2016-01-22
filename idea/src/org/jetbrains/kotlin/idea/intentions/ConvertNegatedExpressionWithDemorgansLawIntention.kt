@@ -21,35 +21,34 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class ConvertNegatedExpressionWithDemorgansLawIntention : SelfTargetingOffsetIndependentIntention<KtPrefixExpression>(javaClass(), "DeMorgan Law") {
-
+class ConvertNegatedExpressionWithDemorgansLawIntention : SelfTargetingOffsetIndependentIntention<KtPrefixExpression>(KtPrefixExpression::class.java, "DeMorgan Law") {
     override fun isApplicableTo(element: KtPrefixExpression): Boolean {
-        val prefixOperator = element.getOperationReference().getReferencedNameElementType()
+        val prefixOperator = element.operationReference.getReferencedNameElementType()
         if (prefixOperator != KtTokens.EXCL) return false
 
-        val parenthesizedExpression = element.getBaseExpression() as? KtParenthesizedExpression
-        val baseExpression = parenthesizedExpression?.getExpression() as? KtBinaryExpression ?: return false
+        val parenthesizedExpression = element.baseExpression as? KtParenthesizedExpression
+        val baseExpression = parenthesizedExpression?.expression as? KtBinaryExpression ?: return false
 
-        when (baseExpression.getOperationToken()) {
-            KtTokens.ANDAND -> setText("Replace '&&' with '||'")
-            KtTokens.OROR -> setText("Replace '||' with '&&'")
+        when (baseExpression.operationToken) {
+            KtTokens.ANDAND -> text = "Replace '&&' with '||'"
+            KtTokens.OROR -> text = "Replace '||' with '&&'"
             else -> return false
         }
 
         return splitBooleanSequence(baseExpression) != null
     }
 
-    override fun applyTo(element: KtPrefixExpression, editor: Editor) {
+    override fun applyTo(element: KtPrefixExpression, editor: Editor?) {
         applyTo(element)
     }
 
     fun applyTo(element: KtPrefixExpression) {
-        val parenthesizedExpression = element.getBaseExpression() as KtParenthesizedExpression
-        val baseExpression = parenthesizedExpression.getExpression() as KtBinaryExpression
+        val parenthesizedExpression = element.baseExpression as KtParenthesizedExpression
+        val baseExpression = parenthesizedExpression.expression as KtBinaryExpression
 
-        val operatorText = when (baseExpression.getOperationToken()) {
-            KtTokens.ANDAND -> KtTokens.OROR.getValue()
-            KtTokens.OROR -> KtTokens.ANDAND.getValue()
+        val operatorText = when (baseExpression.operationToken) {
+            KtTokens.ANDAND -> KtTokens.OROR.value
+            KtTokens.OROR -> KtTokens.ANDAND.value
             else -> throw IllegalArgumentException()
         }
 
@@ -64,19 +63,19 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : SelfTargetingOf
 
     private fun splitBooleanSequence(expression: KtBinaryExpression): List<KtExpression>? {
         val result = ArrayList<KtExpression>()
-        val firstOperator = expression.getOperationToken()
+        val firstOperator = expression.operationToken
 
         var remainingExpression: KtExpression = expression
         while (true) {
             if (remainingExpression !is KtBinaryExpression) break
 
-            val operation = remainingExpression.getOperationToken()
+            val operation = remainingExpression.operationToken
             if (operation != KtTokens.ANDAND && operation != KtTokens.OROR) break
 
             if (operation != firstOperator) return null //Boolean sequence must be homogenous
 
-            result.add(remainingExpression.getRight() ?: return null)
-            remainingExpression = remainingExpression.getLeft() ?: return null
+            result.add(remainingExpression.right ?: return null)
+            remainingExpression = remainingExpression.left ?: return null
         }
 
         result.add(remainingExpression)

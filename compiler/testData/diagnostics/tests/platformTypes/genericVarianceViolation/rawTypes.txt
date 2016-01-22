@@ -1,11 +1,11 @@
 package
 
-public fun main(/*0*/ a: A, /*1*/ ml: kotlin.MutableList<kotlin.String>, /*2*/ l: kotlin.List<kotlin.String>): kotlin.Unit
+public fun main(/*0*/ a: A, /*1*/ ml: kotlin.collections.MutableList<kotlin.String>, /*2*/ l: kotlin.collections.List<kotlin.String>): kotlin.Unit
 
 public open class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)List<(raw) kotlin.Any?>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

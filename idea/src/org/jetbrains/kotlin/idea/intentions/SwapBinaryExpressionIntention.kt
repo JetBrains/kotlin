@@ -27,35 +27,35 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(javaClass(), "Flip binary expression"), LowPriorityAction {
+class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Flip binary expression"), LowPriorityAction {
     companion object {
         private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
         private val SUPPORTED_OPERATION_NAMES = SUPPORTED_OPERATIONS.mapNotNull { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet() +
-                                        setOf("xor", "or", "and", "equals", "identityEquals")
+                                        setOf("xor", "or", "and", "equals")
     }
 
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
-        val opRef = element.getOperationReference()
-        if (!opRef.getTextRange().containsOffset(caretOffset)) return false
+        val opRef = element.operationReference
+        if (!opRef.textRange.containsOffset(caretOffset)) return false
 
         if (leftSubject(element) == null || rightSubject(element) == null) {
             return false
         }
 
-        val operationToken = element.getOperationToken()
-        val operationTokenText = opRef.getText()
+        val operationToken = element.operationToken
+        val operationTokenText = opRef.text
         if (operationToken in SUPPORTED_OPERATIONS
                 || operationToken == IDENTIFIER && operationTokenText in SUPPORTED_OPERATION_NAMES) {
-            setText("Flip '$operationTokenText'")
+            text = "Flip '$operationTokenText'"
             return true
         }
         return false
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         // Have to use text here to preserve names like "plus"
-        val operator = element.getOperationReference().getText()!!
+        val operator = element.operationReference.text!!
         val convertedOperator = when (operator) {
             ">" -> "<"
             "<" -> ">"
@@ -69,15 +69,15 @@ public class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpr
         val leftCopy = left.copied()
         left.replace(rightCopy)
         right.replace(leftCopy)
-        element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $convertedOperator $1" , element.getLeft()!!, element.getRight()!!))
+        element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $convertedOperator $1", element.left!!, element.right!!))
     }
 
     private fun leftSubject(element: KtBinaryExpression): KtExpression? {
-        return firstDescendantOfTighterPrecedence(element.getLeft(), PsiPrecedences.getPrecedence(element), KtBinaryExpression::getRight)
+        return firstDescendantOfTighterPrecedence(element.left, PsiPrecedences.getPrecedence(element), KtBinaryExpression::getRight)
     }
 
     private fun rightSubject(element: KtBinaryExpression): KtExpression? {
-        return firstDescendantOfTighterPrecedence(element.getRight(), PsiPrecedences.getPrecedence(element), KtBinaryExpression::getLeft)
+        return firstDescendantOfTighterPrecedence(element.right, PsiPrecedences.getPrecedence(element), KtBinaryExpression::getLeft)
     }
 
     private fun firstDescendantOfTighterPrecedence(expression: KtExpression?, precedence: Int, getChild: KtBinaryExpression.() -> KtExpression?): KtExpression? {

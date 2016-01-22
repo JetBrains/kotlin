@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.impl.source.codeStyle.PreFormatProcessor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 class KotlinPreFormatProcessor : PreFormatProcessor {
@@ -34,7 +35,8 @@ class KotlinPreFormatProcessor : PreFormatProcessor {
             if (!klass.isEnum()) return
 
             val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
-            if (KtPsiUtil.skipTrailingWhitespacesAndComments(lastEntry ?: classBody.firstChild)?.node?.elementType == KtTokens.SEMICOLON) return
+            if (lastEntry != null && lastEntry.allChildren.any { it.node.elementType == KtTokens.SEMICOLON }) return
+            if (lastEntry == null && classBody.allChildren.any { it.node.elementType == KtTokens.SEMICOLON }) return
 
             val semicolon = KtPsiFactory(klass).createSemicolon()
             classBody.addAfter(semicolon, lastEntry)

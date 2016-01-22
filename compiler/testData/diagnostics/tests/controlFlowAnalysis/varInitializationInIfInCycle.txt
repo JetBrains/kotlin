@@ -1,4 +1,4 @@
 package
 
-public fun foo(/*0*/ numbers: kotlin.Collection<kotlin.Int>): kotlin.Unit
+public fun foo(/*0*/ numbers: kotlin.collections.Collection<kotlin.Int>): kotlin.Unit
 public fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>

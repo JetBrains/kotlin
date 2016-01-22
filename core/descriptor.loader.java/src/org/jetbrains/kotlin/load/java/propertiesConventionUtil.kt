@@ -32,11 +32,11 @@ fun propertyNamesBySetMethodName(methodName: Name)
         = listOf(propertyNameBySetMethodName(methodName, false), propertyNameBySetMethodName(methodName, true)).filterNotNull()
 
 private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String, removePrefix: Boolean = true, addPrefix: String? = null): Name? {
-    if (methodName.isSpecial()) return null
-    val identifier = methodName.getIdentifier()
+    if (methodName.isSpecial) return null
+    val identifier = methodName.identifier
     if (!identifier.startsWith(prefix)) return null
-    if (identifier.length() == prefix.length()) return null
-    if (identifier[prefix.length()] in 'a'..'z') return null
+    if (identifier.length == prefix.length) return null
+    if (identifier[prefix.length] in 'a'..'z') return null
 
     if (addPrefix != null) {
         assert(removePrefix)

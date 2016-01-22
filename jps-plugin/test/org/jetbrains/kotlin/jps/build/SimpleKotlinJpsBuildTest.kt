@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
+class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     override fun setUp() {
         super.setUp()
         workDir = KotlinTestUtils.tmpDirForTest(this)
     }
 
-    public fun testLoadingKotlinFromDifferentModules() {
+    fun testLoadingKotlinFromDifferentModules() {
         val aFile = createFile("m1/K.kt",
                                """
                                    package m1;
@@ -65,7 +65,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     // TODO: add JS tests
-    public fun testDaemon() {
+    fun testDaemon() {
         System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY, "")
         System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
         // spaces in the name to test proper file name handling

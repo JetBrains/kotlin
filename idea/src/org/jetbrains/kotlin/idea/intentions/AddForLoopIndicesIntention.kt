@@ -24,8 +24,8 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(javaClass(), "Add indices to 'for' loop"), LowPriorityAction {
+class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Add indices to 'for' loop"), LowPriorityAction {
     private val WITH_INDEX_NAME = "withIndex"
     private val WITH_INDEX_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
 
@@ -56,7 +56,8 @@ public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpre
         return TextRange(element.startOffset, element.body?.startOffset ?: element.endOffset)
     }
 
-    override fun applyTo(element: KtForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val loopRange = element.loopRange!!
         val loopParameter = element.loopParameter!!
         val psiFactory = KtPsiFactory(element)

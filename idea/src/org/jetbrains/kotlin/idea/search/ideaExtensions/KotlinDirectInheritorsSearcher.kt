@@ -28,25 +28,25 @@ import org.jetbrains.kotlin.idea.search.fileScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
-    public override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {
-        val baseClass = queryParameters.getClassToProcess()
+open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
+    override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {
+        val baseClass = queryParameters.classToProcess
         if (baseClass == null) return
 
-        val name = baseClass.getName()
+        val name = baseClass.name
         if (name == null) return
 
-        val originalScope = queryParameters.getScope()
+        val originalScope = queryParameters.scope
         val scope = if (originalScope is GlobalSearchScope)
             originalScope
         else
-            baseClass.getContainingFile()?.let { file -> file.fileScope() }
+            baseClass.containingFile?.let { file -> file.fileScope() }
 
         if (scope == null) return
 
         runReadAction {
-            val noLibrarySourceScope = KotlinSourceFilterScope.sourceAndClassFiles(scope, baseClass.getProject())
-            KotlinSuperClassIndex.getInstance().get(name, baseClass.getProject(), noLibrarySourceScope).asSequence()
+            val noLibrarySourceScope = KotlinSourceFilterScope.sourceAndClassFiles(scope, baseClass.project)
+            KotlinSuperClassIndex.getInstance().get(name, baseClass.project, noLibrarySourceScope).asSequence()
                     .mapNotNull { candidate -> SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate)}
                     .filter { candidate -> candidate.isInheritor(baseClass, false) }
                     .forEach { candidate -> consumer.process(candidate) }

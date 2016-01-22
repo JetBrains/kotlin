@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 import static org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMangledNameForDescriptor;
@@ -51,17 +52,6 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
     @NotNull
     public static final KotlinFunctionIntrinsic KOTLIN_EQUALS = new KotlinFunctionIntrinsic("equals");
-    @NotNull
-    public static final FunctionIntrinsic IDENTITY_EQUALS = new FunctionIntrinsic() {
-        @NotNull
-        @Override
-        public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
-        ) {
-            assert arguments.size() == 1 : "Unexpected argument size for kotlin.identityEquals: " + arguments.size();
-            return new JsBinaryOperation(JsBinaryOperator.REF_EQ, receiver, arguments.get(0));
-        }
-    };
 
     @NotNull
     public static final DescriptorPredicate HASH_CODE_IN_ANY = pattern("kotlin", "Any", "hashCode");
@@ -138,17 +128,16 @@ public final class TopLevelFIF extends CompositeFIF {
 
     private TopLevelFIF() {
         add(EQUALS_IN_ANY, KOTLIN_EQUALS);
-        add(pattern("kotlin", "toString").isExtensionOf("kotlin.Any"), TO_STRING);
-        add(pattern("kotlin", "equals").isExtensionOf("kotlin.Any"), KOTLIN_EQUALS);
-        add(pattern("kotlin", "identityEquals").isExtensionOf("kotlin.Any"), IDENTITY_EQUALS);
+        add(pattern("kotlin", "toString").isExtensionOf(FQ_NAMES.any.asString()), TO_STRING);
+        add(pattern("kotlin", "equals").isExtensionOf(FQ_NAMES.any.asString()), KOTLIN_EQUALS);
         add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
-        add(pattern("kotlin", "iterator").isExtensionOf("kotlin.Iterator"), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("kotlin", "iterator").isExtensionOf(FQ_NAMES.iterator.asString()), RETURN_RECEIVER_INTRINSIC);
 
-        add(pattern("kotlin", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
-        add(pattern("kotlin.js", "set").isExtensionOf("kotlin.MutableMap"), NATIVE_MAP_SET);
+        add(pattern("kotlin.collections", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
+        add(pattern("kotlin.js", "set").isExtensionOf(FQ_NAMES.mutableMap.asString()), NATIVE_MAP_SET);
 
         add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
@@ -200,7 +189,7 @@ public final class TopLevelFIF extends CompositeFIF {
                 }
             }
 
-            String mangledName = getStableMangledNameForDescriptor(JsPlatform.INSTANCE$.getBuiltIns().getMutableMap(), operationName());
+            String mangledName = getStableMangledNameForDescriptor(JsPlatform.INSTANCE.getBuiltIns().getMutableMap(), operationName());
 
             return new JsInvocation(new JsNameRef(mangledName, thisOrReceiver), arguments);
         }

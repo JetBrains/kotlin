@@ -517,7 +517,7 @@ public class JsAstMapper {
                 toForIn.setBody(bodyStmt);
             }
             else {
-                toForIn.setBody(JsEmpty.INSTANCE$);
+                toForIn.setBody(JsEmpty.INSTANCE);
             }
 
             return toForIn;
@@ -545,7 +545,7 @@ public class JsAstMapper {
                 toFor.setBody(bodyStmt);
             }
             else {
-                toFor.setBody(JsEmpty.INSTANCE$);
+                toFor.setBody(JsEmpty.INSTANCE);
             }
             return toFor;
         }
@@ -892,7 +892,7 @@ public class JsAstMapper {
         else {
             // When map() returns null, we return an empty statement.
             //
-            return JsEmpty.INSTANCE$;
+            return JsEmpty.INSTANCE;
         }
     }
 

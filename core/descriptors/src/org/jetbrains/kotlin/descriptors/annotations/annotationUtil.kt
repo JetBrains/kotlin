@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.types.Variance
 
-public fun KotlinBuiltIns.createDeprecatedAnnotation(
+fun KotlinBuiltIns.createDeprecatedAnnotation(
         message: String,
         replaceWith: String,
-        level: DeprecationLevel = DeprecationLevel.WARNING
+        level: String = "WARNING"
 ): AnnotationDescriptor {
     val deprecatedAnnotation = deprecatedAnnotation
     val parameters = deprecatedAnnotation.unsubstitutedPrimaryConstructor!!.valueParameters
@@ -52,7 +52,7 @@ public fun KotlinBuiltIns.createDeprecatedAnnotation(
                                     SourceElement.NO_SOURCE
                             )
                     ),
-                    parameters["level"] to EnumValue(getDeprecationLevelEnumEntry(level)!!)
+                    parameters["level"] to EnumValue(getDeprecationLevelEnumEntry(level) ?: error("Deprecation level $level not found"))
             ),
             SourceElement.NO_SOURCE)
 }

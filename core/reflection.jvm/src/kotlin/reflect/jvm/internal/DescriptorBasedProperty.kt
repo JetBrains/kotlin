@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.Field
 import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
@@ -50,7 +51,9 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
         when (jvmSignature) {
             is KotlinProperty -> {
                 JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver, jvmSignature.typeTable)?.let {
-                    container.findFieldBySignature(jvmSignature.proto, jvmSignature.nameResolver, it.name)
+                    container.findFieldBySignature(
+                            it.name, JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor.containingDeclaration)
+                    )
                 }
             }
             is JavaField -> jvmSignature.field

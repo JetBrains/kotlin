@@ -65,14 +65,14 @@ class CollectionStubMethodGenerator(
             val (child, typeParameters) = createSyntheticSubclass()
             // If the original class has any type parameters, we copied them and now we need to substitute types of the newly created type
             // parameters as arguments for the type parameters of the original class
-            val parentType = newType(descriptor, typeParameters.map { TypeProjectionImpl(it.getDefaultType()) })
+            val parentType = newType(descriptor, typeParameters.map { TypeProjectionImpl(it.defaultType) })
 
             // Now we need to determine the arguments which should be substituted for the MutableCollection super class. To do that,
             // we look for type arguments which were substituted in the inheritance of the original class from Collection and use them
             // to construct the needed MutableCollection type. Since getAllSupertypes() may return several types which correspond to the
             // Collection class descriptor, we find the most specific one (which is guaranteed to exist by front-end)
             val readOnlyCollectionType = TypeUtils.getAllSupertypes(parentType).findMostSpecificTypeForClass(readOnlyClass)
-            val mutableCollectionType = newType(mutableClass, readOnlyCollectionType.getArguments())
+            val mutableCollectionType = newType(mutableClass, readOnlyCollectionType.arguments)
 
             child.addSupertype(parentType)
             child.addSupertype(mutableCollectionType)
@@ -81,10 +81,10 @@ class CollectionStubMethodGenerator(
             // Bind fake overrides and for each fake override originated from the MutableCollection, save its signature to generate a stub
             // or save its descriptor to generate all the needed bridges
             for (method in findFakeOverridesForMethodsFromMutableCollection(child, mutableClass)) {
-                if (method.getModality() == Modality.ABSTRACT) {
+                if (method.modality == Modality.ABSTRACT) {
                     // If the fake override is abstract and it's _declared_ as abstract in the class, skip it because the method is already
                     // present in the bytecode (abstract) and we don't want a duplicate signature error
-                    if (method.findOverriddenFromDirectSuperClass(descriptor)?.getKind() == DECLARATION) continue
+                    if (method.findOverriddenFromDirectSuperClass(descriptor)?.kind == DECLARATION) continue
 
                     // Otherwise we can safely generate the stub with the substituted signature
                     val signature = method.signature()
@@ -160,18 +160,18 @@ class CollectionStubMethodGenerator(
 
         val collectionClasses = with(descriptor.builtIns) {
             listOf(
-                    pair(getCollection(), getMutableCollection()),
-                    pair(getSet(), getMutableSet()),
-                    pair(getList(), getMutableList()),
-                    pair(getMap(), getMutableMap()),
-                    pair(getMapEntry(), getMutableMapEntry()),
-                    pair(getIterable(), getMutableIterable()),
-                    pair(getIterator(), getMutableIterator()),
-                    pair(getListIterator(), getMutableListIterator())
+                    pair(collection, mutableCollection),
+                    pair(set, mutableSet),
+                    pair(list, mutableList),
+                    pair(map, mutableMap),
+                    pair(mapEntry, mutableMapEntry),
+                    pair(iterable, mutableIterable),
+                    pair(iterator, mutableIterator),
+                    pair(listIterator, mutableListIterator)
             )
         }
 
-        val allSuperClasses = TypeUtils.getAllSupertypes(descriptor.getDefaultType()).classes().toHashSet()
+        val allSuperClasses = TypeUtils.getAllSupertypes(descriptor.defaultType).classes().toHashSet()
 
         val ourSuperCollectionClasses = collectionClasses.filter { pair ->
             pair.readOnlyClass in allSuperClasses && pair.mutableClass !in allSuperClasses
@@ -180,13 +180,13 @@ class CollectionStubMethodGenerator(
 
         // Filter out built-in classes which are overridden by other built-in classes in the list, to avoid duplicating methods.
         val redundantClasses = ourSuperCollectionClasses.flatMapTo(HashSet<ClassDescriptor>()) { pair ->
-            pair.readOnlyClass.getTypeConstructor().getSupertypes().classes()
+            pair.readOnlyClass.typeConstructor.supertypes.classes()
         }
         return ourSuperCollectionClasses.filter { klass -> klass.readOnlyClass !in redundantClasses }
     }
 
     private fun Collection<KotlinType>.classes(): Collection<ClassDescriptor> =
-            this.map { it.getConstructor().getDeclarationDescriptor() as ClassDescriptor }
+            this.map { it.constructor.declarationDescriptor as ClassDescriptor }
 
     private fun findFakeOverridesForMethodsFromMutableCollection(
             klass: ClassDescriptor,
@@ -212,9 +212,9 @@ class CollectionStubMethodGenerator(
     }
 
     private fun Collection<KotlinType>.findMostSpecificTypeForClass(klass: ClassDescriptor): KotlinType {
-        val types = this.filter { it.getConstructor().getDeclarationDescriptor() == klass }
+        val types = this.filter { it.constructor.declarationDescriptor == klass }
         if (types.isEmpty()) error("No supertype of $klass in $this")
-        if (types.size() == 1) return types.first()
+        if (types.size == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
             types.all { other -> KotlinTypeChecker.DEFAULT.isSubtypeOf(type, other) }
@@ -222,19 +222,19 @@ class CollectionStubMethodGenerator(
     }
 
     private fun createSyntheticSubclass(): Pair<MutableClassDescriptor, List<TypeParameterDescriptor>> {
-        val child = MutableClassDescriptor(descriptor.getContainingDeclaration(), ClassKind.CLASS, false,
-                                           Name.special("<synthetic inheritor of ${descriptor.getName()}>"), descriptor.getSource())
-        child.setModality(Modality.FINAL)
-        child.setVisibility(Visibilities.PUBLIC)
-        val typeParameters = descriptor.getTypeConstructor().getParameters()
-        val newTypeParameters = ArrayList<TypeParameterDescriptor>(typeParameters.size())
+        val child = MutableClassDescriptor(descriptor.containingDeclaration, ClassKind.CLASS, false,
+                                           Name.special("<synthetic inheritor of ${descriptor.name}>"), descriptor.source)
+        child.modality = Modality.FINAL
+        child.visibility = Visibilities.PUBLIC
+        val typeParameters = descriptor.typeConstructor.parameters
+        val newTypeParameters = ArrayList<TypeParameterDescriptor>(typeParameters.size)
         DescriptorSubstitutor.substituteTypeParameters(typeParameters, TypeSubstitution.EMPTY, child, newTypeParameters)
         child.setTypeParameterDescriptors(typeParameters)
         return Pair(child, newTypeParameters)
     }
 
     private fun FunctionDescriptor.findOverriddenFromDirectSuperClass(classDescriptor: ClassDescriptor): FunctionDescriptor? {
-        return this.getOverriddenDescriptors().firstOrNull { it.getContainingDeclaration() == classDescriptor }
+        return this.overriddenDescriptors.firstOrNull { it.containingDeclaration == classDescriptor }
     }
 
     private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): KotlinType {
@@ -246,13 +246,13 @@ class CollectionStubMethodGenerator(
     private fun generateMethodStub(signature: JvmMethodSignature, synthetic: Boolean) {
         // TODO: investigate if it makes sense to generate abstract stubs in traits
         var access = ACC_PUBLIC
-        if (descriptor.getKind() == ClassKind.INTERFACE) access = access or ACC_ABSTRACT
+        if (descriptor.kind == ClassKind.INTERFACE) access = access or ACC_ABSTRACT
         if (synthetic) access = access or ACC_SYNTHETIC
 
-        val asmMethod = signature.getAsmMethod()
-        val genericSignature = if (synthetic) null else signature.getGenericsSignature()
-        val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, asmMethod.getName(), asmMethod.getDescriptor(), genericSignature, null)
-        if (descriptor.getKind() != ClassKind.INTERFACE) {
+        val asmMethod = signature.asmMethod
+        val genericSignature = if (synthetic) null else signature.genericsSignature
+        val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, asmMethod.name, asmMethod.descriptor, genericSignature, null)
+        if (descriptor.kind != ClassKind.INTERFACE) {
             mv.visitCode()
             AsmUtil.genThrow(InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection")
             FunctionCodegen.endVisit(mv, "built-in stub for $signature", null)

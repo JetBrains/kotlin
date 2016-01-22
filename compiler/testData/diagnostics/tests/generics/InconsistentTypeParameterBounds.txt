@@ -12,37 +12,37 @@ public interface B : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface ListA : kotlin.List<A> {
+public interface ListA : kotlin.collections.List<A> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: A): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<A>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<A>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): A
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: A): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<A>
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<A>
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: A): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.ListIterator<A>
-    public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<A>
-    public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<A>
+    public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.ListIterator<A>
+    public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<A>
+    public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<A>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface ListB : kotlin.List<B> {
+public interface ListB : kotlin.collections.List<B> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: B): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<B>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): B
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: B): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<B>
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<B>
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: B): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.ListIterator<B>
-    public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<B>
-    public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<B>
+    public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.ListIterator<B>
+    public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<B>
+    public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<B>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

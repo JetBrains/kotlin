@@ -16,68 +16,67 @@
 
 package org.jetbrains.kotlin.idea.structureView
 
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import com.intellij.util.ui.tree.TreeUtil
-import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
-import com.intellij.ide.util.FileStructurePopup
 import com.intellij.ide.actions.ViewStructureAction
+import com.intellij.ide.util.FileStructurePopup
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.ui.Queryable.PrintInfo
-import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
+import com.intellij.util.ui.tree.TreeUtil
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.configureWithExtraFile
+import java.io.File
 
-public abstract class AbstractKotlinFileStructureTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractKotlinFileStructureTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/structureView/fileStructure"
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         myFixture.configureWithExtraFile(path)
 
-        val textEditor = TextEditorProvider.getInstance()!!.getTextEditor(myFixture.getEditor())
-        val popup = ViewStructureAction.createPopup(myFixture.getProject(), textEditor)
+        val textEditor = TextEditorProvider.getInstance()!!.getTextEditor(myFixture.editor)
+        val popup = ViewStructureAction.createPopup(myFixture.project, textEditor)
 
         if (popup == null) throw AssertionError("popup mustn't be null")
 
         popup.createCenterPanel()
-        popup.getTreeBuilder().getUi()!!.getUpdater()!!.setPassThroughMode(true)
+        popup.treeBuilder.ui!!.updater!!.setPassThroughMode(true)
         popup.update()
 
         popup.setup()
 
         val printInfo = PrintInfo(arrayOf("text"), arrayOf("location"))
-        val popupText = StructureViewUtil.print(popup.getTree(), false, printInfo, null)
+        val popupText = StructureViewUtil.print(popup.tree, false, printInfo, null)
         KotlinTestUtils.assertEqualsToFile(File("${FileUtil.getNameWithoutExtension(path)}.after"), popupText)
     }
 
     protected fun FileStructurePopup.setup() {
-        val fileText = FileUtil.loadFile(File(getTestDataPath(), fileName()), true)
+        val fileText = FileUtil.loadFile(File(testDataPath, fileName()), true)
 
         val withInherited = InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_INHERITED")
-        setTreeActionState(javaClass<KotlinInheritedMembersNodeProvider>(), withInherited)
+        setTreeActionState(KotlinInheritedMembersNodeProvider::class.java, withInherited)
     }
 
-    public fun FileStructurePopup.update() {
-        getTreeBuilder().refilter()!!.doWhenProcessed {
+    fun FileStructurePopup.update() {
+        treeBuilder.refilter()!!.doWhenProcessed {
             getStructure().rebuild()
             updateRecursively(getRootNode())
-            getTreeBuilder().updateFromRoot()
+            treeBuilder.updateFromRoot()
 
-            TreeUtil.expandAll(getTree())
+            TreeUtil.expandAll(tree)
         }
     }
 
-    fun FileStructurePopup.getFileStructureSpeedSearch() = getSpeedSearch() as FileStructurePopup.MyTreeSpeedSearch
+    fun FileStructurePopup.getFileStructureSpeedSearch() = speedSearch as FileStructurePopup.MyTreeSpeedSearch
 
-    fun FileStructurePopup.getStructure() = getTreeBuilder().getTreeStructure() as FilteringTreeStructure
+    fun FileStructurePopup.getStructure() = treeBuilder.treeStructure as FilteringTreeStructure
 
-    fun FileStructurePopup.getRootNode() = getTreeBuilder().getRootElement() as FilteringTreeStructure.FilteringNode
+    fun FileStructurePopup.getRootNode() = treeBuilder.rootElement as FilteringTreeStructure.FilteringNode
 
     fun FileStructurePopup.updateRecursively(node: FilteringTreeStructure.FilteringNode) {
         node.update()

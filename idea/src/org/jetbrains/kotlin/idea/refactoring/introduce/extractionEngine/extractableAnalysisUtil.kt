@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
 import org.jetbrains.kotlin.descriptors.*
@@ -45,7 +46,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
+import org.jetbrains.kotlin.idea.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
@@ -114,7 +115,7 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
                     doTraversal(it.body.enterInstruction)
             }
 
-            true
+            TraverseInstructionResult.CONTINUE
         }
     }
 
@@ -350,7 +351,7 @@ private fun ExtractionData.analyzeControlFlow(
                              + outDeclarations.map { it.renderForMessage(bindingContext)!! }).sorted()
                     return controlFlow to ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
                 }
-                OutputValueBoxer::AsList
+                { outputValues -> OutputValueBoxer.AsList(outputValues) } // KT-8596
             }
 
             else -> controlFlow.boxerFactory

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +43,8 @@ import static org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
 import static org.jetbrains.kotlin.resolve.BindingContext.IMPLICIT_RECEIVER_SMARTCAST;
 import static org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST;
 
+// We do not want to make methods static to keep SmartCastManager as a component
+@SuppressWarnings("MethodMayBeStatic")
 public class SmartCastManager {
 
     @NotNull
@@ -73,12 +75,12 @@ public class SmartCastManager {
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        final List<KotlinType> variants = getSmartCastVariants(receiverToCast, bindingContext,
-                                                               containingDeclarationOrModule, dataFlowInfo);
+        final List<KotlinType> variants = CollectionsKt.distinct(
+                getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo));
         return CollectionsKt.filter(variants, new Function1<KotlinType, Boolean>() {
             @Override
             public Boolean invoke(final KotlinType type) {
-                return !CollectionsKt.any(variants, new Function1<KotlinType, Boolean>() {
+                return CollectionsKt.none(variants, new Function1<KotlinType, Boolean>() {
                     @Override
                     public Boolean invoke(KotlinType another) {
                         return another != type && KotlinTypeChecker.DEFAULT.isSubtypeOf(another, type);

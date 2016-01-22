@@ -38,7 +38,7 @@ class DefaultImplsClassContext(
     override fun getAccessors(): Collection<AccessorForCallableDescriptor<*>> {
         val accessors = super.getAccessors()
         val alreadyExistKeys = accessors.map ({ Pair(it.calleeDescriptor, it.superCallTarget) })
-        val filtered = interfaceContext.accessors.toMap ({ Pair(it.calleeDescriptor, it.superCallTarget) }, {it}) - alreadyExistKeys
+        val filtered = interfaceContext.accessors.toMapBy({ Pair(it.calleeDescriptor, it.superCallTarget) }, { it }) - alreadyExistKeys
         return accessors + filtered.values
     }
 }

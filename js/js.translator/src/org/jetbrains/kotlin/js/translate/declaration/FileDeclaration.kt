@@ -39,7 +39,7 @@ class FileDeclarationVisitor(
 
     private val initializer = JsAstUtils.createFunctionWithEmptyBody(context.scope())
     private val initializerContext = context.contextWithScope(initializer)
-    private val initializerStatements = initializer.getBody().getStatements()
+    private val initializerStatements = initializer.body.statements
     private val initializerVisitor = InitializerVisitor(initializerStatements)
 
     fun computeInitializer(): JsFunction? {
@@ -50,21 +50,21 @@ class FileDeclarationVisitor(
         }
     }
 
-    public override fun visitClass(expression: KtClass, context: TranslationContext?): Void? {
+    override fun visitClass(expression: KtClass, context: TranslationContext?): Void? {
         result.addAll(ClassTranslator.translate(expression, context!!))
         return null
     }
 
-    public override fun visitObjectDeclaration(declaration: KtObjectDeclaration, context: TranslationContext?): Void? {
+    override fun visitObjectDeclaration(declaration: KtObjectDeclaration, context: TranslationContext?): Void? {
         InitializerUtils.generateObjectInitializer(declaration, initializerStatements, context!!)
         return null
     }
 
-    public override fun visitProperty(expression: KtProperty, context: TranslationContext?): Void? {
+    override fun visitProperty(expression: KtProperty, context: TranslationContext?): Void? {
         context!! // hack
 
         super.visitProperty(expression, context)
-        val initializer = expression.getInitializer()
+        val initializer = expression.initializer
         if (initializer != null) {
             val value = Translation.translateAsExpression(initializer, initializerContext)
             val propertyDescriptor: PropertyDescriptor = getPropertyDescriptor(context.bindingContext(), expression)
@@ -78,7 +78,7 @@ class FileDeclarationVisitor(
         return null
     }
 
-    public override fun visitAnonymousInitializer(expression: KtAnonymousInitializer, context: TranslationContext?): Void? {
+    override fun visitAnonymousInitializer(expression: KtAnonymousInitializer, context: TranslationContext?): Void? {
         expression.accept(initializerVisitor, initializerContext)
         return null
     }

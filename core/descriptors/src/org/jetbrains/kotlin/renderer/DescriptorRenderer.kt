@@ -26,45 +26,45 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 
-public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
-    public fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
+abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
+    fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
         val options = (this as DescriptorRendererImpl).options.copy()
         options.changeOptions()
         options.lock()
         return DescriptorRendererImpl(options)
     }
 
-    public abstract fun renderType(type: KotlinType): String
+    abstract fun renderType(type: KotlinType): String
 
-    public abstract fun renderTypeArguments(typeArguments: List<TypeProjection>): String
+    abstract fun renderTypeArguments(typeArguments: List<TypeProjection>): String
 
-    public abstract fun renderTypeProjection(typeProjection: TypeProjection): String
+    abstract fun renderTypeProjection(typeProjection: TypeProjection): String
 
-    public abstract fun renderTypeConstructor(typeConstructor: TypeConstructor): String
+    abstract fun renderTypeConstructor(typeConstructor: TypeConstructor): String
 
-    public abstract fun renderClassifierName(klass: ClassifierDescriptor): String
+    abstract fun renderClassifierName(klass: ClassifierDescriptor): String
 
-    public abstract fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget? = null): String
+    abstract fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget? = null): String
 
     override abstract fun render(declarationDescriptor: DeclarationDescriptor): String
 
-    public abstract fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
+    abstract fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
 
-    public fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String
+    fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String
             = renderValueParameters(functionDescriptor.valueParameters, functionDescriptor.hasSynthesizedParameterNames())
 
-    public abstract fun renderName(name: Name): String
+    abstract fun renderName(name: Name): String
 
-    public abstract fun renderFqName(fqName: FqNameUnsafe): String
+    abstract fun renderFqName(fqName: FqNameUnsafe): String
 
-    public interface ValueParametersHandler {
-        public fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder)
-        public fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder)
+    interface ValueParametersHandler {
+        fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder)
+        fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder)
 
-        public fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
-        public fun appendAfterValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
+        fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
+        fun appendAfterValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
 
-        public object DEFAULT : ValueParametersHandler {
+        object DEFAULT : ValueParametersHandler {
             override fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder) {
                 builder.append("(")
             }
@@ -85,29 +85,29 @@ public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
     }
 
     companion object {
-        public fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
+        fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
             val options = DescriptorRendererOptionsImpl()
             options.changeOptions()
             options.lock()
             return DescriptorRendererImpl(options)
         }
 
-        public val COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
+        @JvmField val COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
             withDefinedIn = false
         }
 
-        public val COMPACT: DescriptorRenderer = withOptions {
+        @JvmField val COMPACT: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
         }
 
-        public val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
+        @JvmField val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             modifiers = emptySet()
             nameShortness = NameShortness.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
-        public val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
+        @JvmField val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
             nameShortness = NameShortness.SHORT
@@ -119,35 +119,35 @@ public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
             startFromName = true
         }
 
-        public val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
+        @JvmField val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        public val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
+        @JvmField val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
             nameShortness = NameShortness.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
-        public val DEBUG_TEXT: DescriptorRenderer = withOptions {
+        @JvmField val DEBUG_TEXT: DescriptorRenderer = withOptions {
             debugMode = true
             nameShortness = NameShortness.FULLY_QUALIFIED
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        public val FLEXIBLE_TYPES_FOR_CODE: DescriptorRenderer = withOptions {
+        @JvmField val FLEXIBLE_TYPES_FOR_CODE: DescriptorRenderer = withOptions {
             flexibleTypesForCode = true
         }
 
-        public val HTML: DescriptorRenderer = withOptions {
+        @JvmField val HTML: DescriptorRenderer = withOptions {
             textFormat = RenderingFormat.HTML
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        public fun getClassKindPrefix(klass: ClassDescriptor): String {
-            if (klass.isCompanionObject()) {
+        fun getClassKindPrefix(klass: ClassDescriptor): String {
+            if (klass.isCompanionObject) {
                 return "companion object"
             }
-            return when (klass.getKind()) {
+            return when (klass.kind) {
                 ClassKind.CLASS -> "class"
                 ClassKind.INTERFACE -> "interface"
                 ClassKind.ENUM_CLASS -> "enum class"
@@ -159,38 +159,38 @@ public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
     }
 }
 
-public interface DescriptorRendererOptions {
-    public var nameShortness: NameShortness
-    public var withDefinedIn: Boolean
-    public var modifiers: Set<DescriptorRendererModifier>
-    public var startFromName: Boolean
-    public var debugMode: Boolean
-    public var classWithPrimaryConstructor: Boolean
-    public var verbose: Boolean
-    public var unitReturnType: Boolean
-    public var withoutReturnType: Boolean
-    public var normalizedVisibilities: Boolean
-    public var showInternalKeyword: Boolean
-    public var prettyFunctionTypes: Boolean
-    public var uninferredTypeParameterAsName: Boolean
-    public var overrideRenderingPolicy: OverrideRenderingPolicy
-    public var valueParametersHandler: DescriptorRenderer.ValueParametersHandler
-    public var textFormat: RenderingFormat
-    public var excludedAnnotationClasses: Set<FqName>
-    public var excludedTypeAnnotationClasses: Set<FqName>
-    public var includePropertyConstant: Boolean
-    public var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
-    public var withoutTypeParameters: Boolean
-    public var receiverAfterName: Boolean
-    public var renderCompanionObjectName: Boolean
-    public var withoutSuperTypes: Boolean
-    public var typeNormalizer: (KotlinType) -> KotlinType
-    public var renderDefaultValues: Boolean
-    public var flexibleTypesForCode: Boolean
-    public var secondaryConstructorsAsPrimary: Boolean
-    public var renderAccessors: Boolean
-    public var renderDefaultAnnotationArguments: Boolean
-    public var alwaysRenderModifiers: Boolean
+interface DescriptorRendererOptions {
+    var nameShortness: NameShortness
+    var withDefinedIn: Boolean
+    var modifiers: Set<DescriptorRendererModifier>
+    var startFromName: Boolean
+    var debugMode: Boolean
+    var classWithPrimaryConstructor: Boolean
+    var verbose: Boolean
+    var unitReturnType: Boolean
+    var withoutReturnType: Boolean
+    var normalizedVisibilities: Boolean
+    var showInternalKeyword: Boolean
+    var prettyFunctionTypes: Boolean
+    var uninferredTypeParameterAsName: Boolean
+    var overrideRenderingPolicy: OverrideRenderingPolicy
+    var valueParametersHandler: DescriptorRenderer.ValueParametersHandler
+    var textFormat: RenderingFormat
+    var excludedAnnotationClasses: Set<FqName>
+    var excludedTypeAnnotationClasses: Set<FqName>
+    var includePropertyConstant: Boolean
+    var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
+    var withoutTypeParameters: Boolean
+    var receiverAfterName: Boolean
+    var renderCompanionObjectName: Boolean
+    var withoutSuperTypes: Boolean
+    var typeNormalizer: (KotlinType) -> KotlinType
+    var renderDefaultValues: Boolean
+    var flexibleTypesForCode: Boolean
+    var secondaryConstructorsAsPrimary: Boolean
+    var renderAccessors: Boolean
+    var renderDefaultAnnotationArguments: Boolean
+    var alwaysRenderModifiers: Boolean
 }
 
 object ExcludedTypeAnnotations {
@@ -198,37 +198,52 @@ object ExcludedTypeAnnotations {
             FqName("org.jetbrains.annotations.ReadOnly"),
             FqName("org.jetbrains.annotations.Mutable"),
             FqName("org.jetbrains.annotations.NotNull"),
-            FqName("org.jetbrains.annotations.Nullable"))
+            FqName("org.jetbrains.annotations.Nullable"),
+            FqName("android.support.annotation.Nullable"),
+            FqName("android.support.annotation.NonNull"),
+            FqName("org.eclipse.jdt.annotation.Nullable"),
+            FqName("org.eclipse.jdt.annotation.NonNull"),
+            FqName("org.checkerframework.checker.nullness.qual.Nullable"),
+            FqName("org.checkerframework.checker.nullness.qual.NonNull"),
+            FqName("javax.annotation.Nonnull"),
+            FqName("javax.annotation.Nullable"),
+            FqName("javax.annotation.CheckForNull"),
+            FqName("edu.umd.cs.findbugs.annotations.NonNull"),
+            FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
+            FqName("edu.umd.cs.findbugs.annotations.Nullable"),
+            FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
+            FqName("lombok.NonNull")
+    )
 
     val internalAnnotationsForResolve = setOf(
             FqName("kotlin.internal.NoInfer"),
             FqName("kotlin.internal.Exact"))
 }
 
-public enum class RenderingFormat {
+enum class RenderingFormat {
     PLAIN,
     HTML
 }
 
-public enum class NameShortness {
+enum class NameShortness {
     SHORT,
     FULLY_QUALIFIED,
     SOURCE_CODE_QUALIFIED // for local declarations qualified up to function scope
 }
 
-public enum class OverrideRenderingPolicy {
+enum class OverrideRenderingPolicy {
     RENDER_OVERRIDE,
     RENDER_OPEN,
     RENDER_OPEN_OVERRIDE
 }
 
-public enum class ParameterNameRenderingPolicy {
+enum class ParameterNameRenderingPolicy {
     ALL,
     ONLY_NON_SYNTHESIZED,
     NONE
 }
 
-public enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
+enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     VISIBILITY(true),
     MODALITY(true),
     OVERRIDE(true),
@@ -240,7 +255,10 @@ public enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     ;
 
     companion object {
+        @JvmField
         val DEFAULTS = DescriptorRendererModifier.values().filter { it.includeByDefault }.toSet()
+
+        @JvmField
         val ALL = DescriptorRendererModifier.values().toSet()
     }
 }

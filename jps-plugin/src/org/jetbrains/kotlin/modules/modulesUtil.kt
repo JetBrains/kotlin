@@ -18,5 +18,5 @@ package org.jetbrains.kotlin.modules
 
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 
-public fun TargetId(moduleBuildTarget: ModuleBuildTarget): TargetId =
+fun TargetId(moduleBuildTarget: ModuleBuildTarget): TargetId =
         TargetId(moduleBuildTarget.id, moduleBuildTarget.targetType.typeId)

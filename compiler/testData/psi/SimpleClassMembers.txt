@@ -55,19 +55,7 @@ JetFile: SimpleClassMembers.kt
             PsiElement(var)('var')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('f')
-          PsiWhiteSpace('\n\n        ')
-          TYPEDEF
-            PsiElement(typealias)('typealias')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('foo')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
-          PsiWhiteSpace('\n\n    ')
+          PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       CLASS
@@ -234,19 +222,7 @@ JetFile: SimpleClassMembers.kt
             PsiElement(var)('var')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('f')
-          PsiWhiteSpace('\n\n        ')
-          TYPEDEF
-            PsiElement(typealias)('typealias')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('foo')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('bar')
-          PsiWhiteSpace('\n\n    ')
+          PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       FUN
@@ -266,18 +242,6 @@ JetFile: SimpleClassMembers.kt
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace('\n\n    ')
-      TYPEDEF
-        PsiElement(typealias)('typealias')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST

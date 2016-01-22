@@ -91,31 +91,5 @@ JetFile: LocalDeclarations.kt
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('4')
-      PsiWhiteSpace('\n    ')
-      TYPEDEF
-        PsiElement(typealias)('typealias')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('f')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace('  ')
-        TYPE_REFERENCE
-          FUNCTION_TYPE
-            FUNCTION_TYPE_RECEIVER
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('T')
-            PsiElement(DOT)('.')
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
-            PsiWhiteSpace(' ')
-            PsiElement(ARROW)('->')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Unit')
-      PsiWhiteSpace('\n\n')
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

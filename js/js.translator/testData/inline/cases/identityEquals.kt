@@ -3,11 +3,11 @@ package foo
 class A
 
 inline fun compare1(a: A): Boolean {
-    return a.identityEquals(a)
+    return a === a
 }
 
 inline fun compare2(a1: A, a2: A): Boolean {
-    return a1.identityEquals(a2)
+    return a1 === a2
 }
 
 fun box(): String {

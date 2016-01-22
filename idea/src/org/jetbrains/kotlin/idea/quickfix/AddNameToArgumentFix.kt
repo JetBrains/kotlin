@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtValueArgument>(argument) {
+class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtValueArgument>(argument) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
@@ -49,7 +49,7 @@ public class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAct
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val possibleNames = calculatePossibleArgumentNames()
         assert(possibleNames.isNotEmpty()) { "isAvailable() should be checked before invoke()" }
-        if (possibleNames.size() == 1 || editor == null || !editor.component.isShowing) {
+        if (possibleNames.size == 1 || editor == null || !editor.component.isShowing) {
             addName(project, element, possibleNames.first())
         }
         else {

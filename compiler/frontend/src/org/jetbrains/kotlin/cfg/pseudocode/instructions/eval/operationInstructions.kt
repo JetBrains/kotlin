@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-public abstract class OperationInstruction protected constructor(
+abstract class OperationInstruction protected constructor(
         element: KtElement,
         lexicalScope: LexicalScope,
         override val inputValues: List<PseudoValue>
@@ -53,16 +53,16 @@ public abstract class OperationInstruction protected constructor(
     }
 }
 
-public class CallInstruction private constructor(
+class CallInstruction private constructor(
         element: KtElement,
         lexicalScope: LexicalScope,
         val resolvedCall: ResolvedCall<*>,
         override val receiverValues: Map<PseudoValue, ReceiverValue>,
-        public val arguments: Map<PseudoValue, ValueParameterDescriptor>
-) : OperationInstruction(element, lexicalScope, (receiverValues.keySet() as Collection<PseudoValue>) + arguments.keySet()), InstructionWithReceivers {
+        val arguments: Map<PseudoValue, ValueParameterDescriptor>
+) : OperationInstruction(element, lexicalScope, (receiverValues.keys as Collection<PseudoValue>) + arguments.keys), InstructionWithReceivers {
     // as is necessary above: see KT-10384
 
-    public constructor (
+    constructor (
             element: KtElement,
             lexicalScope: LexicalScope,
             resolvedCall: ResolvedCall<*>,
@@ -85,7 +85,7 @@ public class CallInstruction private constructor(
             CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(resultValue)
 
     override fun toString() =
-            renderInstruction("call", "${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()}")
+            renderInstruction("call", "${render(element)}, ${resolvedCall.resultingDescriptor!!.name}")
 }
 
 // Introduces black-box operation
@@ -93,13 +93,13 @@ public class CallInstruction private constructor(
 //      consume input values (so that they aren't considered unused)
 //      denote value transformation which can't be expressed by other instructions (such as call or read)
 //      pass more than one value to instruction which formally requires only one (e.g. jump)
-public class MagicInstruction(
+class MagicInstruction(
         element: KtElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>,
         val kind: MagicKind
 ) : OperationInstruction(element, lexicalScope, inputValues) {
-    public constructor (
+    constructor (
             element: KtElement,
             valueElement: KtElement?,
             lexicalScope: LexicalScope,
@@ -110,7 +110,7 @@ public class MagicInstruction(
         setResult(factory, valueElement)
     }
 
-    public val synthetic: Boolean get() = outputValue.element == null
+    val synthetic: Boolean get() = outputValue.element == null
 
     override val outputValue: PseudoValue
         get() = resultValue!!
@@ -125,7 +125,7 @@ public class MagicInstruction(
     override fun toString() = renderInstruction("magic[$kind]", render(element))
 }
 
-public enum class MagicKind(val sideEffectFree: Boolean = false) {
+enum class MagicKind(val sideEffectFree: Boolean = false) {
     // builtin operations
     STRING_TEMPLATE(true),
     AND(true),
@@ -143,7 +143,8 @@ public enum class MagicKind(val sideEffectFree: Boolean = false) {
     UNRESOLVED_CALL(),
     UNSUPPORTED_ELEMENT(),
     UNRECOGNIZED_WRITE_RHS(),
-    FAKE_INITIALIZER()
+    FAKE_INITIALIZER(),
+    EXHAUSTIVE_WHEN_ELSE()
 }
 
 // Merges values produced by alternative control-flow paths (such as 'if' branches)
@@ -152,7 +153,7 @@ class MergeInstruction private constructor(
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>
 ): OperationInstruction(element, lexicalScope, inputValues) {
-    public constructor (
+    constructor (
             element: KtElement,
             lexicalScope: LexicalScope,
             inputValues: List<PseudoValue>,

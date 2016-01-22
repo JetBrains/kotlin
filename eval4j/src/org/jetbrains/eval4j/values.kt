@@ -19,9 +19,9 @@ package org.jetbrains.eval4j
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 
-public interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
-    public val asmType: Type
-    public val valid: Boolean
+interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
+    val asmType: Type
+    val valid: Boolean
     override fun getSize(): Int = asmType.size
 
     override fun toString(): String
@@ -57,7 +57,7 @@ abstract class AbstractValueBase<V>(
         override val asmType: Type
 ) : Value {
     override val valid = true
-    public abstract val value: V
+    abstract val value: V
 
     override fun toString() = "$value: $asmType"
 
@@ -81,7 +81,7 @@ class IntValue(value: Int, asmType: Type): AbstractValue<Int>(value, asmType)
 class LongValue(value: Long): AbstractValue<Long>(value, Type.LONG_TYPE)
 class FloatValue(value: Float): AbstractValue<Float>(value, Type.FLOAT_TYPE)
 class DoubleValue(value: Double): AbstractValue<Double>(value, Type.DOUBLE_TYPE)
-public open class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
+open class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
 class NewObjectValue(asmType: Type): ObjectValue(null, asmType) {
     override var value: Any? = null
         get(): Any? {
@@ -99,7 +99,7 @@ fun int(v: Int) = IntValue(v, Type.INT_TYPE)
 fun long(v: Long) = LongValue(v)
 fun float(v: Float) = FloatValue(v)
 fun double(v: Double) = DoubleValue(v)
-//fun <T> obj(v: T, t: Type = if (v != null) Type.getType(v.javaClass) else Type.getType(javaClass<Any>())) = ObjectValue(v, t)
+//fun <T> obj(v: T, t: Type = if (v != null) Type.getType(v.javaClass) else Type.getType(Any::class.java)) = ObjectValue(v, t)
 
 val NULL_VALUE = ObjectValue(null, Type.getObjectType("null"))
 

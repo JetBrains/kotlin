@@ -20,18 +20,16 @@ class FilesTest {
     @test fun testCreateTempDir() {
         val dirSuf = System.currentTimeMillis().toString()
         val dir1 = createTempDir("temp", dirSuf)
-        assert(dir1.exists() && dir1.isDirectory() && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
-        try {
+        assertTrue(dir1.exists() && dir1.isDirectory && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
+        assertFailsWith(IllegalArgumentException::class) {
             createTempDir("a")
-            assert(false)
-        } catch(e: IllegalArgumentException) {
         }
 
         val dir2 = createTempDir("temp")
-        assert(dir2.exists() && dir2.isDirectory() && dir2.name.endsWith(".tmp"))
+        assertTrue(dir2.exists() && dir2.isDirectory && dir2.name.endsWith(".tmp"))
 
         val dir3 = createTempDir()
-        assert(dir3.exists() && dir3.isDirectory())
+        assertTrue(dir3.exists() && dir3.isDirectory)
 
         dir1.delete()
         dir2.delete()
@@ -41,17 +39,16 @@ class FilesTest {
     @test fun testCreateTempFile() {
         val fileSuf = System.currentTimeMillis().toString()
         val file1 = createTempFile("temp", fileSuf)
-        assert(file1.exists() && file1.name.startsWith("temp") && file1.name.endsWith(fileSuf))
-        try {
+        assertTrue(file1.exists() && file1.name.startsWith("temp") && file1.name.endsWith(fileSuf))
+        assertFailsWith(IllegalArgumentException::class) {
             createTempFile("a")
-            assert(false)
-        } catch(e: IllegalArgumentException) {
         }
+
         val file2 = createTempFile("temp")
-        assert(file2.exists() && file2.name.endsWith(".tmp"))
+        assertTrue(file2.exists() && file2.name.endsWith(".tmp"))
 
         val file3 = createTempFile()
-        assert(file3.exists())
+        assertTrue(file3.exists())
 
         file1.delete()
         file2.delete()
@@ -66,10 +63,10 @@ class FilesTest {
         createTempFile("temp3", ".kt", dir)
 
         // This line works only with Kotlin File.listFiles(filter)
-        val result = dir.listFiles { it.getName().endsWith(".kt") }
+        val result = dir.listFiles { it -> it.name.endsWith(".kt") } // todo ambiguity on SAM
         assertEquals(2, result!!.size)
         // This line works both with Kotlin File.listFiles(filter) and the same Java function because of SAM
-        val result2 = dir.listFiles { it -> it.getName().endsWith(".kt") }
+        val result2 = dir.listFiles { it -> it.name.endsWith(".kt") }
         assertEquals(2, result2!!.size)
     }
 
@@ -77,43 +74,43 @@ class FilesTest {
         val file1 = File("/foo/bar/baz")
         val file2 = File("/foo/baa/ghoo")
 
-        assertEquals("../../bar/baz", file1.relativeToFile(file2).invariantSeparatorsPath)
+        assertEquals("../../bar/baz", file1.relativeTo(file2).invariantSeparatorsPath)
 
         val file3 = File("/foo/bar")
 
-        assertEquals("baz", file1.relativeTo(file3))
-        assertEquals("..", file3.relativeTo(file1))
+        assertEquals("baz", file1.toRelativeString(file3))
+        assertEquals("..", file3.toRelativeString(file1))
 
         val file4 = File("/foo/bar/")
 
-        assertEquals("baz", file1.relativeTo(file4))
-        assertEquals("..", file4.relativeTo(file1))
-        assertEquals("", file3.relativeTo(file4))
-        assertEquals("", file4.relativeTo(file3))
+        assertEquals("baz", file1.toRelativeString(file4))
+        assertEquals("..", file4.toRelativeString(file1))
+        assertEquals("", file3.toRelativeString(file4))
+        assertEquals("", file4.toRelativeString(file3))
 
         val file5 = File("/foo/baran")
 
-        assertEquals("../bar", file3.relativeToFile(file5).invariantSeparatorsPath)
-        assertEquals("../baran", file5.relativeToFile(file3).invariantSeparatorsPath)
-        assertEquals("../bar", file4.relativeToFile(file5).invariantSeparatorsPath)
-        assertEquals("../baran", file5.relativeToFile(file4).invariantSeparatorsPath)
+        assertEquals("../bar", file3.relativeTo(file5).invariantSeparatorsPath)
+        assertEquals("../baran", file5.relativeTo(file3).invariantSeparatorsPath)
+        assertEquals("../bar", file4.relativeTo(file5).invariantSeparatorsPath)
+        assertEquals("../baran", file5.relativeTo(file4).invariantSeparatorsPath)
 
         if (isBackslashSeparator) {
             val file6 = File("C:\\Users\\Me")
             val file7 = File("C:\\Users\\Me\\Documents")
 
-            assertEquals("..", file6.relativeTo(file7))
-            assertEquals("Documents", file7.relativeTo(file6))
+            assertEquals("..", file6.toRelativeString(file7))
+            assertEquals("Documents", file7.toRelativeString(file6))
 
             val file8 = File("""\\my.host\home/user/documents/vip""")
             val file9 = File("""\\my.host\home/other/images/nice""")
 
-            assertEquals("../../../user/documents/vip", file8.relativeToFile(file9).invariantSeparatorsPath)
-            assertEquals("../../../other/images/nice", file9.relativeToFile(file8).invariantSeparatorsPath)
+            assertEquals("../../../user/documents/vip", file8.relativeTo(file9).invariantSeparatorsPath)
+            assertEquals("../../../other/images/nice", file9.relativeTo(file8).invariantSeparatorsPath)
         }
 
         if (isCaseInsensitiveFileSystem) {
-            assertEquals("bar", File("C:/bar").relativeTo(File("c:/")))
+            assertEquals("bar", File("C:/bar").toRelativeString(File("c:/")))
         }
     }
 
@@ -121,31 +118,32 @@ class FilesTest {
         val nested = File("foo/bar")
         val base = File("foo")
 
-        assertEquals("bar", nested.relativeTo(base))
-        assertEquals("..", base.relativeTo(nested))
+        assertEquals("bar", nested.toRelativeString(base))
+        assertEquals("..", base.toRelativeString(nested))
 
         val empty = File("")
         val current = File(".")
         val parent = File("..")
         val outOfRoot = File("../bar")
 
-        assertEquals(File("../bar"), File(outOfRoot.relativeTo(empty)))
-        assertEquals(File("../../bar"), File(outOfRoot.relativeTo(base)))
-        assertEquals("bar", outOfRoot.relativeTo(parent))
-        assertEquals("..", parent.relativeTo(outOfRoot))
+        assertEquals(File("../bar"), outOfRoot.relativeTo(empty))
+        assertEquals(File("../../bar"), outOfRoot.relativeTo(base))
+        assertEquals("bar", outOfRoot.toRelativeString(parent))
+        assertEquals("..", parent.toRelativeString(outOfRoot))
 
         val root = File("/root")
         val files = listOf(nested, base, empty, outOfRoot, current, parent)
         val bases = listOf(nested, base, empty, current)
 
         for (file in files)
-            assertEquals("", file.relativeTo(file), "file should have empty path relative to itself: $file")
+            assertEquals("", file.toRelativeString(file), "file should have empty path relative to itself: $file")
 
         for (file in files) {
             for (base in bases) {
                 val rootedFile = root.resolve(file)
                 val rootedBase = root.resolve(base)
                 assertEquals(file.relativeTo(base), rootedFile.relativeTo(rootedBase), "nested: $file, base: $base")
+                assertEquals(file.toRelativeString(base), rootedFile.toRelativeString(rootedBase), "strings, nested: $file, base: $base")
             }
         }
     }
@@ -178,15 +176,16 @@ class FilesTest {
     }
 
     @test fun relativeTo() {
-        assertEquals("kotlin", File("src/kotlin").relativeTo(File("src")))
-        assertEquals("", File("dir").relativeTo(File("dir")))
-        assertEquals("..", File("dir").relativeTo(File("dir/subdir")))
-        assertEquals(File("../../test"), File("test").relativeToFile(File("dir/dir")))
+        assertEquals("kotlin", File("src/kotlin").toRelativeString(File("src")))
+        assertEquals("", File("dir").toRelativeString(File("dir")))
+        assertEquals("..", File("dir").toRelativeString(File("dir/subdir")))
+        assertEquals(File("../../test"), File("test").relativeTo(File("dir/dir")))
     }
 
+/*
     private fun checkFilePathComponents(f: File, root: File, elements: List<String>) {
         assertEquals(root, f.root)
-        val components = f.filePathComponents()
+        val components = f.toComponents()
         assertEquals(root, components.root)
         assertEquals(elements, components.segments.map { it.toString() })
     }
@@ -211,25 +210,26 @@ class FilesTest {
         checkFilePathComponents(File("."), File(""), listOf("."))
         checkFilePathComponents(File(".."), File(""), listOf(".."))
     }
+*/
 
     @test fun fileRoot() {
         val rooted = File("/foo/bar")
         assertTrue(rooted.isRooted)
-        assertEquals("/", rooted.root.invariantSeparatorsPath)
+//        assertEquals("/", rooted.root.invariantSeparatorsPath)
 
         if (isBackslashSeparator) {
             val diskRooted = File("""C:\foo\bar""")
             assertTrue(rooted.isRooted)
-            assertEquals("""C:\""", diskRooted.rootName)
+//            assertEquals("""C:\""", diskRooted.rootName)
 
             val networkRooted = File("""\\network\share\""")
             assertTrue(networkRooted.isRooted)
-            assertEquals("""\\network\share""", networkRooted.rootName)
+//            assertEquals("""\\network\share""", networkRooted.rootName)
         }
 
         val relative = File("foo/bar")
         assertFalse(relative.isRooted)
-        assertEquals("", relative.rootName)
+//        assertEquals("", relative.rootName)
     }
 
     @test fun startsWith() {
@@ -275,6 +275,7 @@ class FilesTest {
         }
     }
 
+/*
     @test fun subPath() {
         if (isBackslashSeparator) {
             // Check only in Windows
@@ -285,6 +286,7 @@ class FilesTest {
         assertEquals(File("foo"), File("/foo/bar/gav/hi").subPath(0, 1))
         assertEquals(File("gav/hi"), File("/foo/bar/gav/hi").subPath(2, 4))
     }
+*/
 
     @test fun normalize() {
         assertEquals(File("/foo/bar/baaz"), File("/foo/./bar/gav/../baaz").normalize())
@@ -351,47 +353,24 @@ class FilesTest {
         assertEquals("log", File("/my.dir/log").nameWithoutExtension)
     }
 
-    @test fun separatorsToSystem() {
-        var path = "/aaa/bbb/ccc"
-        assertEquals(path.replace("/", File.separator), File(path).separatorsToSystem())
-
-        path = "C:\\Program Files\\My Awesome Program"
-        assertEquals(path.replace("\\", File.separator), File(path).separatorsToSystem())
-
-        path = "/Libraries\\Java:/Libraries/Python:/Libraries/Ruby"
-        assertEquals(path.replace(":", File.pathSeparator), path.pathSeparatorsToSystem())
-
-        path = "/Libraries\\Java;/Libraries/Python;/Libraries/Ruby"
-        assertEquals(path.replace(";", File.pathSeparator), path.pathSeparatorsToSystem())
-
-        path = "/Libraries\\Java;/Libraries/Python:\\Libraries/Ruby"
-        assertEquals(path.replace("/", File.separator).replace("\\", File.separator)
-                .replace(":", File.pathSeparator).replace(";", File.pathSeparator), path.allSeparatorsToSystem())
-
-        assertEquals("test", "test".allSeparatorsToSystem())
-    }
-
     @test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
-        srcFile.writeText("Hello, World!", "UTF8")
-        try {
+        srcFile.writeText("Hello, World!")
+        assertFailsWith(FileAlreadyExistsException::class) {
             srcFile.copyTo(dstFile)
-            assert(false)
-        } catch (e: FileAlreadyExistsException) {
-            println(e.message)
         }
 
         var len = srcFile.copyTo(dstFile, overwrite = true)
         assertEquals(13L, len)
-        assertEquals(srcFile.readText(), dstFile.readText("UTF8"))
+        assertEquals(srcFile.readText(), dstFile.readText(Charsets.UTF_8))
 
-        assert(dstFile.delete())
+        assertTrue(dstFile.delete())
         len = srcFile.copyTo(dstFile)
         assertEquals(13L, len)
-        assertEquals(srcFile.readText("UTF8"), dstFile.readText())
+        assertEquals(srcFile.readText(Charsets.UTF_8), dstFile.readText())
 
-        assert(dstFile.delete())
+        assertTrue(dstFile.delete())
         dstFile.mkdir()
         val child = File(dstFile, "child")
         child.createNewFile()
@@ -400,30 +379,27 @@ class FilesTest {
         val copy = dstFile.resolve(srcFile.name)
         assertEquals(srcFile.readText(), copy.readText())
 
-        assert(srcFile.delete())
-        assert(child.delete() && copy.delete() && dstFile.delete())
+        assertTrue(srcFile.delete())
+        assertTrue(child.delete() && copy.delete() && dstFile.delete())
 
-        try {
+        assertFailsWith(NoSuchFileException::class) {
             srcFile.copyTo(dstFile)
-            assert(false)
-        } catch (e: NoSuchFileException) {
         }
 
         srcFile.mkdir()
-        try {
+
+        assertFailsWith(IllegalArgumentException::class) {
             srcFile.copyTo(dstFile)
-            assert(false)
-        } catch (e: IllegalArgumentException) {
         }
         srcFile.delete()
     }
 
     @test fun copyToNameWithoutParent() {
-        val currentDir = File("").getAbsoluteFile()!!
+        val currentDir = File("").absoluteFile!!
         val srcFile = createTempFile()
         val dstFile = createTempFile(directory = currentDir)
         try {
-            srcFile.writeText("Hello, World!", "UTF8")
+            srcFile.writeText("Hello, World!", Charsets.UTF_8)
             dstFile.delete()
 
             val dstRelative = File(dstFile.name)
@@ -447,9 +423,9 @@ class FilesTest {
         File(dir, "test1.txt").createNewFile()
         File(subDir, "test2.txt").createNewFile()
 
-        assert(dir.deleteRecursively())
-        assert(!dir.exists())
-        assert(!dir.deleteRecursively())
+        assertTrue(dir.deleteRecursively())
+        assertFalse(dir.exists())
+        assertTrue(dir.deleteRecursively())
     }
 
     @test fun deleteRecursivelyWithFail() {
@@ -458,7 +434,7 @@ class FilesTest {
         try {
             if (restricted.setReadable(false)) {
                 if (File(basedir, "7.txt").setReadable(false)) {
-                    basedir.deleteRecursively()
+                    assertFalse(basedir.deleteRecursively(), "Expected incomplete recursive deletion.")
                     restricted.setReadable(true)
                     File(basedir, "7.txt").setReadable(true)
                     var i = 0
@@ -481,9 +457,9 @@ class FilesTest {
         dst.delete()
         fun check() {
             for (file in src.walkTopDown()) {
-                val dstFile = File(dst, file.relativeTo(src))
-                assert(dstFile.exists())
-                if (dstFile.isFile()) {
+                val dstFile = dst.resolve(file.relativeTo(src))
+                assertTrue(dstFile.exists())
+                if (dstFile.isFile) {
                     assertEquals(file.readText(), dstFile.readText())
                 }
 
@@ -500,13 +476,11 @@ class FilesTest {
             file2.writeText("wazzup")
             createTempDir(prefix = "d1_", directory = subDir2)
 
-            assert(src.copyRecursively(dst))
+            assertTrue(src.copyRecursively(dst))
             check()
 
-            try {
+            assertFailsWith(FileAlreadyExistsException::class) {
                 src.copyRecursively(dst)
-                assert(false)
-            } catch (e: FileAlreadyExistsException) {
             }
 
             var conflicts = 0
@@ -519,13 +493,13 @@ class FilesTest {
                     throw e
                 }
             }
-            assert(conflicts == 2)
+            assertEquals(2, conflicts)
 
             if (subDir1.setReadable(false)) {
                 try {
                     dst.deleteRecursively()
                     var caught = false
-                    assert(src.copyRecursively(dst) {
+                    assertTrue(src.copyRecursively(dst) {
                         file: File, e: IOException ->
                         if (e is AccessDeniedException) {
                             caught = true
@@ -534,7 +508,7 @@ class FilesTest {
                             throw e
                         }
                     })
-                    assert(caught)
+                    assertTrue(caught)
                     check()
                 } finally {
                     subDir1.setReadable(true)
@@ -543,13 +517,11 @@ class FilesTest {
 
             src.deleteRecursively()
             dst.deleteRecursively()
-            try {
+            assertFailsWith(NoSuchFileException::class) {
                 src.copyRecursively(dst)
-                assert(false)
-            } catch (e: NoSuchFileException) {
             }
 
-            assert(!src.copyRecursively(dst) {
+            assertFalse(src.copyRecursively(dst) {
                 file: File, e: IOException ->
                 OnErrorAction.TERMINATE
             })

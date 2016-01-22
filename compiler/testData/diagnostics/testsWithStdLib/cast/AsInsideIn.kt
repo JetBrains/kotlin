@@ -2,8 +2,8 @@
 interface A
 class B : A
 fun foo1(list: List<A>, arg: B?): Boolean {
-    // contains(T): Boolean is deprecated
-    return arg <!DEPRECATION!>in<!> list
+    // Type mismatch
+    return <!TYPE_MISMATCH!>arg<!> in list
 }
 fun foo2(list: List<A>, arg: B?): Boolean {
     // FAKE: no cast needed

@@ -1,6 +1,6 @@
 package
 
 package demo {
-    public fun </*0*/ T> filter(/*0*/ list: kotlin.Array<T>, /*1*/ filter: (T) -> kotlin.Boolean): kotlin.List<T>
+    public fun </*0*/ T> filter(/*0*/ list: kotlin.Array<T>, /*1*/ filter: (T) -> kotlin.Boolean): kotlin.collections.List<T>
     public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 }

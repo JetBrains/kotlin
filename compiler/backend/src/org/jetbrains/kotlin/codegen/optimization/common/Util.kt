@@ -16,26 +16,25 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 val AbstractInsnNode.isMeaningful: Boolean get() =
-    when (this.getType()) {
+    when (this.type) {
         AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME -> false
         else -> true
     }
 
-public class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequence<AbstractInsnNode> {
-    public constructor(insnList: InsnList) : this(insnList.getFirst(), null)
+class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequence<AbstractInsnNode> {
+    constructor(insnList: InsnList) : this(insnList.first, null)
 
     override fun iterator(): Iterator<AbstractInsnNode> {
         return object : Iterator<AbstractInsnNode> {
             var current: AbstractInsnNode? = from
             override fun next(): AbstractInsnNode {
                 val result = current
-                current = current!!.getNext()
+                current = current!!.next
                 return result!!
             }
             override fun hasNext() = current != to
@@ -59,11 +58,11 @@ fun MethodNode.prepareForEmitting() {
 
     // We should remove linenumbers after last meaningful instruction
     // because they point to index of non-existing instruction and it leads to VerifyError
-    var current = instructions.getLast()
+    var current = instructions.last
     while (!current.isMeaningful) {
-        val prev = current.getPrevious()
+        val prev = current.previous
 
-        if (current.getType() == AbstractInsnNode.LINE) {
+        if (current.type == AbstractInsnNode.LINE) {
             instructions.remove(current)
         }
 
@@ -71,7 +70,7 @@ fun MethodNode.prepareForEmitting() {
     }
 }
 
-abstract class BasicValueWrapper(val wrappedValue: BasicValue?) : BasicValue(wrappedValue?.getType()) {
+abstract class BasicValueWrapper(val wrappedValue: BasicValue?) : BasicValue(wrappedValue?.type) {
     val basicValue: BasicValue? get() = (wrappedValue as? BasicValueWrapper)?.basicValue ?: wrappedValue
 
     override fun equals(other: Any?): Boolean {
@@ -80,20 +79,41 @@ abstract class BasicValueWrapper(val wrappedValue: BasicValue?) : BasicValue(wra
 }
 
 inline fun AbstractInsnNode.findNextOrNull(predicate: (AbstractInsnNode) -> Boolean): AbstractInsnNode? {
-    var finger = this.getNext()
+    var finger = this.next
     while (finger != null && !predicate(finger)) {
-        finger = finger.getNext()
+        finger = finger.next
     }
     return finger
 }
 
 inline fun AbstractInsnNode.findPreviousOrNull(predicate: (AbstractInsnNode) -> Boolean): AbstractInsnNode? {
-    var finger = this.getPrevious()
+    var finger = this.previous
     while (finger != null && !predicate(finger)) {
-        finger = finger.getPrevious()
+        finger = finger.previous
     }
     return finger
 }
 
 fun AbstractInsnNode.hasOpcode(): Boolean =
-        getOpcode() >= 0
+        opcode >= 0
+
+//   See InstructionAdapter
+//
+//   public void iconst(final int cst) {
+//       if (cst >= -1 && cst <= 5) {
+//           mv.visitInsn(Opcodes.ICONST_0 + cst);
+//       } else if (cst >= Byte.MIN_VALUE && cst <= Byte.MAX_VALUE) {
+//           mv.visitIntInsn(Opcodes.BIPUSH, cst);
+//       } else if (cst >= Short.MIN_VALUE && cst <= Short.MAX_VALUE) {
+//           mv.visitIntInsn(Opcodes.SIPUSH, cst);
+//       } else {
+//           mv.visitLdcInsn(new Integer(cst));
+//       }
+//   }
+val AbstractInsnNode.intConstant: Int? get() =
+    when (opcode) {
+        in ICONST_M1..ICONST_5 -> opcode - ICONST_0
+        BIPUSH, SIPUSH -> (this as IntInsnNode).operand
+        LDC -> (this as LdcInsnNode).cst as? Int
+        else -> null
+    }

@@ -3,6 +3,6 @@ class C @kotlin.jvm.JvmOverloads constructor(s1: String, s2: String = "K") {
 }
 
 fun box(): String {
-    val c = (javaClass<C>().getConstructor(javaClass<String>()).newInstance("O"))
+    val c = (C::class.java.getConstructor(String::class.java).newInstance("O"))
     return c.status
 }

@@ -1,13 +1,13 @@
 package
 
 package a {
-    public fun foo(/*0*/ b: kotlin.Map.Entry<kotlin.String, kotlin.String>): kotlin.Map.Entry<kotlin.String, kotlin.String>
+    public fun foo(/*0*/ b: kotlin.collections.Map.Entry<kotlin.String, kotlin.String>): kotlin.collections.Map.Entry<kotlin.String, kotlin.String>
 }
 
 package b {
-    public fun bar(/*0*/ b: kotlin.Map.Entry<kotlin.String, kotlin.String>): kotlin.Map.Entry<kotlin.String, kotlin.String>
+    public fun bar(/*0*/ b: kotlin.collections.Map.Entry<kotlin.String, kotlin.String>): kotlin.collections.Map.Entry<kotlin.String, kotlin.String>
 }
 
 package c {
-    public fun fff(/*0*/ b: kotlin.Map.Entry<kotlin.String, kotlin.String>): kotlin.Map.Entry<kotlin.String, kotlin.String>
+    public fun fff(/*0*/ b: kotlin.collections.Map.Entry<kotlin.String, kotlin.String>): kotlin.collections.Map.Entry<kotlin.String, kotlin.String>
 }

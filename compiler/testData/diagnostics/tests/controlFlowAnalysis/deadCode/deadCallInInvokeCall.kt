@@ -1,5 +1,5 @@
 fun testInvoke() {
-    operator fun Nothing.invoke() = this
+    operator fun Nothing.invoke(): Nothing = this
     todo()<!UNREACHABLE_CODE!>()<!>
 }
 

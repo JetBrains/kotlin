@@ -26,21 +26,21 @@ internal class ReferenceTracker<Reference, RemoveCandidate : JsNode> {
     private val referenceFromTo = IdentityHashMap<Reference, MutableSet<Reference>>()
     private val visited = IdentitySet<Reference>()
 
-    public val removable: List<RemoveCandidate>
+    val removable: List<RemoveCandidate>
         get() {
             return reachable
                         .filter { !it.value }
                         .map { removableCandidates.get(it.key)!! }
         }
 
-    public fun addCandidateForRemoval(reference: Reference, candidate: RemoveCandidate) {
+    fun addCandidateForRemoval(reference: Reference, candidate: RemoveCandidate) {
         assert(!isKnown(reference)) { "Candidate for removal cannot be reassigned: $candidate" }
 
         removableCandidates.put(reference, candidate)
         reachable.put(reference, false)
     }
 
-    public fun addRemovableReference(referrer: Reference, referenced: Reference) {
+    fun addRemovableReference(referrer: Reference, referenced: Reference) {
         if (!isKnown(referenced)) return
 
         getReferencedBy(referrer).add(referenced)
@@ -50,7 +50,7 @@ internal class ReferenceTracker<Reference, RemoveCandidate : JsNode> {
         }
     }
 
-    public fun markReachable(reference: Reference) {
+    fun markReachable(reference: Reference) {
         if (!isKnown(reference)) return
 
         visited.add(reference)

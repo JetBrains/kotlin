@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -46,12 +46,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
-            val isTopLevelClass = !it.isNestedClass()
-            isTopLevelClass && it.asSingleFqName() in JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES
+            val isTopLevelClass = !it.isNestedClass
+            isTopLevelClass && it.asSingleFqName() in ANNOTATIONS_COPIED_TO_TYPES
         }
 
         val effectiveParent =
-                if (type.getNullable()) KotlinPlaceHolderStubImpl<KtNullableType>(typeReference, KtStubElementTypes.NULLABLE_TYPE)
+                if (type.nullable) KotlinPlaceHolderStubImpl<KtNullableType>(typeReference, KtStubElementTypes.NULLABLE_TYPE)
                 else typeReference
 
         fun createTypeParameterStub(name: Name) {
@@ -68,7 +68,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     private fun createClassReferenceTypeStub(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassId>) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
-            val id = c.nameResolver.getString(type.getFlexibleTypeCapabilitiesId())
+            val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
             if (id == DynamicTypeCapabilities.id) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(parent, KtStubElementTypes.DYNAMIC_TYPE)
@@ -78,9 +78,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val classId = c.nameResolver.getClassId(type.className)
         val shouldBuildAsFunctionType = KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
-                                        && type.getArgumentList().none { it.getProjection() == Projection.STAR }
+                                        && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
-            val extension = annotations.any { annotation -> annotation.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extension }
+            val extension = annotations.any { annotation ->
+                val fqName = annotation.asSingleFqName()
+                fqName == KotlinBuiltIns.FQ_NAMES.extensionFunctionType || fqName == KotlinBuiltIns.FQ_NAMES.deprecatedExtensionAnnotation
+            }
             createFunctionTypeStub(parent, type, extension)
             return
         }
@@ -104,7 +107,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeArgumentsListStub = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(typeStub, KtStubElementTypes.TYPE_ARGUMENT_LIST)
         typeArgumentProtoList.forEach { typeArgumentProto ->
             val projectionKind = typeArgumentProto.projection.toProjectionKind()
-            val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal())
+            val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal)
             if (projectionKind != KtProjectionKind.STAR) {
                 val modifierKeywordToken = projectionKind.token as? KtModifierKeywordToken
                 createModifierListStub(typeProjection, modifierKeywordToken.singletonOrEmptyList())
@@ -132,7 +135,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
         val typeArgumentsWithoutReceiverAndReturnType
-                = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size() - 1)
+                = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size - 1)
         typeArgumentsWithoutReceiverAndReturnType.forEach { argument ->
             val parameter = KotlinParameterStubImpl(
                     parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false
@@ -230,11 +233,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             typeParameterProto: ProtoBuf.TypeParameter
     ) {
         val modifiers = ArrayList<KtModifierKeywordToken>()
-        when (typeParameterProto.getVariance()) {
+        when (typeParameterProto.variance) {
             Variance.IN -> modifiers.add(KtTokens.IN_KEYWORD)
             Variance.OUT -> modifiers.add(KtTokens.OUT_KEYWORD)
         }
-        if (typeParameterProto.getReified()) {
+        if (typeParameterProto.reified) {
             modifiers.add(KtTokens.REIFIED_KEYWORD)
         }
         createModifierListStub(typeParameterStub, modifiers)

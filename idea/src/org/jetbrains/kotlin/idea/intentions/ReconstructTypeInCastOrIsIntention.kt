@@ -27,31 +27,31 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
-public class ReconstructTypeInCastOrIsIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
+class ReconstructTypeInCastOrIsIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(KtTypeReference::class.java, "Replace by reconstructed type"), LowPriorityAction {
     override fun isApplicableTo(element: KtTypeReference): Boolean {
         // Only user types (like Foo) are interesting
         val typeElement = element.typeElement as? KtUserType ?: return false
 
         // If there are generic arguments already, there's nothing to reconstruct
-        if (typeElement.getTypeArguments().isNotEmpty()) return false
+        if (typeElement.typeArguments.isNotEmpty()) return false
 
         // We must be on the RHS of as/as?/is/!is or inside an is/!is-condition in when()
         val expression = element.getParentOfType<KtExpression>(true)
         if (expression !is KtBinaryExpressionWithTypeRHS && element.getParentOfType<KtWhenConditionIsPattern>(true) == null) return false
 
         val type = getReconstructedType(element)
-        if (type == null || type.isError()) return false
+        if (type == null || type.isError) return false
 
         // No type parameters expected => nothing to reconstruct
-        if (type.getConstructor().getParameters().isEmpty()) return false
+        if (type.constructor.parameters.isEmpty()) return false
 
         val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        setText("Replace by '$typePresentation'")
+        text = "Replace by '$typePresentation'"
 
         return true
     }
 
-    override fun applyTo(element: KtTypeReference, editor: Editor) {
+    override fun applyTo(element: KtTypeReference, editor: Editor?) {
         val type = getReconstructedType(element)!!
         val newType = KtPsiFactory(element).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
         ShortenReferences.DEFAULT.process(element.replaced(newType))

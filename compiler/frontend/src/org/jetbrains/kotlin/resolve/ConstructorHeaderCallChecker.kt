@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 
-public object ConstructorHeaderCallChecker : CallChecker {
+object ConstructorHeaderCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val dispatchReceiverClass = resolvedCall.dispatchReceiver.classDescriptorForImplicitReceiver
         val extensionReceiverClass = resolvedCall.extensionReceiver.classDescriptorForImplicitReceiver

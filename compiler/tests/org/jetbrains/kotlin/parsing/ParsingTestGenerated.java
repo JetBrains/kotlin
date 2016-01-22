@@ -727,18 +727,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
-        @TestMetadata("TypeDef.kt")
-        public void testTypeDef() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeDef.kt");
-            doParsingTest(fileName);
-        }
-
-        @TestMetadata("TypeDef_ERR.kt")
-        public void testTypeDef_ERR() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeDef_ERR.kt");
-            doParsingTest(fileName);
-        }
-
         @TestMetadata("TypeExpressionAmbiguities_ERR.kt")
         public void testTypeExpressionAmbiguities_ERR() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeExpressionAmbiguities_ERR.kt");
@@ -748,6 +736,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestMetadata("TypeParametersBeforeName.kt")
         public void testTypeParametersBeforeName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypeParametersBeforeName.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("TypealiasIsKeyword.kt")
+        public void testTypealiasIsKeyword() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TypealiasIsKeyword.kt");
             doParsingTest(fileName);
         }
 
@@ -840,12 +834,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("ShortAnnotations.kt")
             public void testShortAnnotations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/ShortAnnotations.kt");
-                doParsingTest(fileName);
-            }
-
-            @TestMetadata("TypeAnnotations.kt")
-            public void testTypeAnnotations() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/TypeAnnotations.kt");
                 doParsingTest(fileName);
             }
 
@@ -1001,6 +989,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 public static class OnField extends AbstractParsingTest {
                     public void testAllFilesPresentInOnField() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/targeted/onField"), Pattern.compile("^(.*)\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("delegate.kt")
+                    public void testDelegate() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/annotation/targeted/onField/delegate.kt");
+                        doParsingTest(fileName);
                     }
 
                     @TestMetadata("fqName.kt")
@@ -2157,6 +2151,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("initRecovery.kt")
             public void testInitRecovery() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/initRecovery.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("InterfaceInExpressionPosition.kt")
+            public void testInterfaceInExpressionPosition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/InterfaceInExpressionPosition.kt");
                 doParsingTest(fileName);
             }
 

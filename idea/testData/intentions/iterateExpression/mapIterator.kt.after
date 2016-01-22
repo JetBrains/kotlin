@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun test() {
+    for ((i, s) in mapOf(1 to "1", 2 to "2")) {
+        <caret>
+    }
+}

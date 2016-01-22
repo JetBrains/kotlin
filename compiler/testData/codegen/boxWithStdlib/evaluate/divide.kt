@@ -9,7 +9,7 @@ annotation class Ann(
 @Ann(1 / 1, 1 / 1, 1 / 1, 1 / 1) class MyClass
 
 fun box(): String {
-    val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!
+    val annotation = MyClass::class.java.getAnnotation(Ann::class.java)!!
     if (annotation.b != 1.toByte()) return "fail 1"
     if (annotation.s != 1.toShort()) return "fail 2"
     if (annotation.i != 1) return "fail 2"

@@ -45,7 +45,7 @@ class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) :
 
 }
 
-public fun Attributes.toMap(): HashMap<String, String> {
+fun Attributes.toMap(): HashMap<String, String> {
     val res = HashMap<String, String>()
     for (index in 0..length - 1) {
         val attrName = getLocalName(index)!!

@@ -95,6 +95,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ArrayClassLiteral.kt")
+    public void testArrayClassLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ArrayClassLiteral.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AutoCompleteAfterAs1.kt")
     public void testAutoCompleteAfterAs1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/AutoCompleteAfterAs1.kt");
@@ -512,6 +518,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("JavaStaticMethodInsertsImport.kt")
     public void testJavaStaticMethodInsertsImport() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/JavaStaticMethodInsertsImport.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt10602.kt")
+    public void testKt10602() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/kt10602.kt");
         doTest(fileName);
     }
 

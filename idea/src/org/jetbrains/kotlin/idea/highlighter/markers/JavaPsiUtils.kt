@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -32,8 +33,8 @@ fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
     val classes = HashSet<PsiClass>()
     for (method in methods) {
         ProgressManager.checkCanceled()
-        val parentClass = method.getContainingClass()
-        if (parentClass != null && CommonClassNames.JAVA_LANG_OBJECT != parentClass.getQualifiedName()) {
+        val parentClass = method.containingClass
+        if (parentClass != null && CommonClassNames.JAVA_LANG_OBJECT != parentClass.qualifiedName) {
             classes.add(parentClass)
         }
     }
@@ -45,14 +46,14 @@ internal fun getPsiClass(element: PsiElement?): PsiClass? {
     return when {
         element == null -> null
         element is PsiClass -> element
-        element is KtClass -> LightClassUtil.getPsiClass(element)
-        element.getParent() is KtClass -> LightClassUtil.getPsiClass(element.getParent() as KtClass)
+        element is KtClass -> element.toLightClass()
+        element.parent is KtClass -> (element.parent as KtClass).toLightClass()
         else -> null
     }
 }
 
 internal fun getPsiMethod(element: PsiElement?): PsiMethod? {
-    val parent = element?.getParent()
+    val parent = element?.parent
     return when {
         element == null -> null
         element is PsiMethod -> element

@@ -19,6 +19,12 @@
             <artifactId>kotlin-runtime</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -33,7 +39,7 @@
 
                  <configuration>
                      <args>
-                         <arg>-Xmultifile-facades-open</arg>
+                         <arg>-Xallow-kotlin-package</arg>
                      </args>
                  </configuration>
 

@@ -3,7 +3,7 @@ package multilineExpressionAtBreakpoint
 fun main(args: Array<String>) {
     //Breakpoint!
     args
-        .size()
+        .size
         .downTo(0)
 }
 

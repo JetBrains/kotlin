@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
@@ -54,9 +53,8 @@ class ReplFileScopeProvider(
         moduleDescriptor: ModuleDescriptor,
         qualifiedExpressionResolver: QualifiedExpressionResolver,
         bindingTrace: BindingTrace,
-        ktImportsFactory: KtImportsFactory,
-        additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
-) : FileScopeProviderImpl(topLevelDescriptorProvider, storageManager, moduleDescriptor, qualifiedExpressionResolver, bindingTrace, ktImportsFactory, additionalScopes) {
+        ktImportsFactory: KtImportsFactory
+) : FileScopeProviderImpl(topLevelDescriptorProvider, storageManager, moduleDescriptor, qualifiedExpressionResolver, bindingTrace, ktImportsFactory) {
 
     override fun getFileResolutionScope(file: KtFile): LexicalScope
             = lastLineScopeProvider.lastLineScope ?: super.getFileResolutionScope(file)

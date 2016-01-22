@@ -1,0 +1,19 @@
+package
+
+public val test: X2
+public fun </*0*/ T2> foo(/*0*/ xf: () -> T2, /*1*/ f: (T2) -> T2): X2
+public fun </*0*/ T1> foo(/*0*/ x: T1, /*1*/ f: (T1) -> T1): X1
+
+public object X1 {
+    private constructor X1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object X2 {
+    private constructor X2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

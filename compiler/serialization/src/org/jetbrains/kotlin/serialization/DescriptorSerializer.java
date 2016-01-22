@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.serialization;
 
 import com.google.protobuf.MessageLite;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -174,7 +174,6 @@ public class DescriptorSerializer {
         for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedInnerClassesScope()))) {
             int name = getSimpleNameIndex(descriptor.getName());
             if (isEnumEntry(descriptor)) {
-                builder.addEnumEntryName(name);
                 builder.addEnumEntry(enumEntryProto((ClassDescriptor) descriptor));
             }
             else {
@@ -588,7 +587,7 @@ public class DescriptorSerializer {
             builder.setTypeTable(typeTableProto);
         }
 
-        extension.serializePackage(fragments, builder);
+        extension.serializePackage(builder);
 
         return builder;
     }
@@ -610,6 +609,8 @@ public class DescriptorSerializer {
         if (typeTableProto != null) {
             builder.setTypeTable(typeTableProto);
         }
+
+        extension.serializePackage(builder);
 
         return builder;
     }

@@ -1,0 +1,7 @@
+fun (String.() -> String).foo(x : String) {
+    val function = this
+    x.function()
+    x.function()
+    val t = function
+    val tt = function
+}

@@ -5,10 +5,10 @@ operator fun <T, V> Function1<T, V>.unaryMinus() = this
 inline operator fun <T, V> Function1<T, V>.inc() = <!USAGE_IS_NOT_INLINABLE!>this<!>
 operator fun <T, V> Function1<T, V>.dec() = this
 
-inline operator fun <T, V> @Extension Function2<T, T, V>.unaryPlus(){}
-operator fun <T, V> @Extension Function2<T, T, V>.unaryMinus(){}
-inline operator fun <T, V> @Extension Function2<T, T, V>.inc() = <!USAGE_IS_NOT_INLINABLE!>this<!>
-operator fun <T, V> @Extension Function2<T, T, V>.dec() = this
+inline operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.unaryPlus(){}
+operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.unaryMinus(){}
+inline operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.inc() = <!USAGE_IS_NOT_INLINABLE!>this<!>
+operator fun <T, V> @ExtensionFunctionType Function2<T, T, V>.dec() = this
 
 inline fun <T, V> inlineFunWithInvoke(s: (p: T) -> V, ext: T.(p: T) -> V) {
     +s

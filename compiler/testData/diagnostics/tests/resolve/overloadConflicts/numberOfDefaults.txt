@@ -1,0 +1,19 @@
+package
+
+public val test: Right
+public fun overloadedFun(/*0*/ b: kotlin.Any = ..., /*1*/ c: kotlin.Any = ..., /*2*/ e: kotlin.String = ..., /*3*/ x: kotlin.String = ..., /*4*/ y: kotlin.String = ...): Wrong
+public fun overloadedFun(/*0*/ c: kotlin.Any = ..., /*1*/ b: kotlin.String = ..., /*2*/ f: kotlin.Any = ...): Right
+
+public object Right {
+    private constructor Right()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Wrong {
+    private constructor Wrong()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

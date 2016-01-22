@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
 // We don't need to track lookups here since this scope used only for introduce special Enum class members
-public class StaticScopeForKotlinClass(
+class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
 ) : MemberScopeImpl() {
     override fun getContributedClassifier(name: Name, location: LookupLocation) = null // TODO
 
     private val functions: List<FunctionDescriptor> by lazy {
-        if (containingClass.getKind() != ClassKind.ENUM_CLASS) {
+        if (containingClass.kind != ClassKind.ENUM_CLASS) {
             listOf<FunctionDescriptor>()
         }
         else {
@@ -55,7 +55,7 @@ public class StaticScopeForKotlinClass(
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = properties.filterTo(ArrayList(1)) { it.name == name }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.name == name }
 
     override fun printScopeStructure(p: Printer) {
         p.println("Static scope for $containingClass")

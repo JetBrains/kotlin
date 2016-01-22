@@ -2,7 +2,7 @@ package arrays
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: arrayOf(1, 2).map { it.toString() }
@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 // EXPRESSION: arrayOf(1, 2).count()
 // RESULT: 2: I
 
-// EXPRESSION: arrayOf(1, 2).size()
+// EXPRESSION: arrayOf(1, 2).size
 // RESULT: 2: I
 
 // EXPRESSION: arrayOf(1, 2).first()

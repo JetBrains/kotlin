@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldAssignmentToIfIntention : SelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace assignment with 'if' expression"), LowPriorityAction {
+class UnfoldAssignmentToIfIntention : SelfTargetingRangeIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace assignment with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
-        if (element.getOperationToken() !in KtTokens.ALL_ASSIGNMENTS) return null
-        if (element.getLeft() == null) return null
-        val right = element.getRight() as? KtIfExpression ?: return null
-        return TextRange(element.startOffset, right.getIfKeyword().endOffset)
+        if (element.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
+        if (element.left == null) return null
+        val right = element.right as? KtIfExpression ?: return null
+        return TextRange(element.startOffset, right.ifKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         BranchedUnfoldingUtils.unfoldAssignmentToIf(element, editor)
     }
 }

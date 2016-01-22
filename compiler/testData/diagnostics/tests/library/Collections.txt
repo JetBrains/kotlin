@@ -2,12 +2,12 @@ package
 
 package collections {
     public fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
-    public fun </*0*/ T> testCollection(/*0*/ c: kotlin.Collection<T>, /*1*/ t: T): kotlin.Unit
-    public fun </*0*/ T> testList(/*0*/ l: kotlin.List<T>, /*1*/ t: T): kotlin.Unit
-    public fun </*0*/ K, /*1*/ V> testMap(/*0*/ m: kotlin.Map<K, V>): kotlin.Unit
-    public fun </*0*/ T> testMutableCollection(/*0*/ c: kotlin.MutableCollection<T>, /*1*/ t: T): kotlin.Unit
-    public fun </*0*/ T> testMutableList(/*0*/ l: kotlin.MutableList<T>, /*1*/ t: T): kotlin.Unit
-    public fun </*0*/ K, /*1*/ V> testMutableMap(/*0*/ m: kotlin.MutableMap<K, V>): kotlin.Unit
-    public fun </*0*/ T> testMutableSet(/*0*/ s: kotlin.MutableSet<T>, /*1*/ t: T): kotlin.Unit
-    public fun </*0*/ T> testSet(/*0*/ s: kotlin.Set<T>, /*1*/ t: T): kotlin.Unit
+    public fun </*0*/ T> testCollection(/*0*/ c: kotlin.collections.Collection<T>, /*1*/ t: T): kotlin.Unit
+    public fun </*0*/ T> testList(/*0*/ l: kotlin.collections.List<T>, /*1*/ t: T): kotlin.Unit
+    public fun </*0*/ K, /*1*/ V> testMap(/*0*/ m: kotlin.collections.Map<K, V>): kotlin.Unit
+    public fun </*0*/ T> testMutableCollection(/*0*/ c: kotlin.collections.MutableCollection<T>, /*1*/ t: T): kotlin.Unit
+    public fun </*0*/ T> testMutableList(/*0*/ l: kotlin.collections.MutableList<T>, /*1*/ t: T): kotlin.Unit
+    public fun </*0*/ K, /*1*/ V> testMutableMap(/*0*/ m: kotlin.collections.MutableMap<K, V>): kotlin.Unit
+    public fun </*0*/ T> testMutableSet(/*0*/ s: kotlin.collections.MutableSet<T>, /*1*/ t: T): kotlin.Unit
+    public fun </*0*/ T> testSet(/*0*/ s: kotlin.collections.Set<T>, /*1*/ t: T): kotlin.Unit
 }

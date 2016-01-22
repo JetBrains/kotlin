@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import java.util.*
 
-public object IdeaReferenceSearcher: ReferenceSearcher {
+object IdeaReferenceSearcher: ReferenceSearcher {
     override fun findLocalUsages(element: PsiElement, scope: PsiElement) = ReferencesSearch.search(element, LocalSearchScope(scope)).findAll()
 
     override fun hasInheritors(`class`: PsiClass) = ClassInheritorsSearch.search(`class`, false).any()
@@ -41,12 +41,12 @@ public object IdeaReferenceSearcher: ReferenceSearcher {
     override fun findUsagesForExternalCodeProcessing(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference> {
         val fileTypes = ArrayList<FileType>()
         if (searchJava) {
-            fileTypes.add(JavaLanguage.INSTANCE.getAssociatedFileType()!!)
+            fileTypes.add(JavaLanguage.INSTANCE.associatedFileType!!)
         }
         if (searchKotlin) {
-            fileTypes.add(KotlinLanguage.INSTANCE.getAssociatedFileType()!!)
+            fileTypes.add(KotlinLanguage.INSTANCE.associatedFileType!!)
         }
-        val searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), *fileTypes.toTypedArray())
+        val searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.project), *fileTypes.toTypedArray())
         return ReferencesSearch.search(element, searchScope).findAll()
     }
 }

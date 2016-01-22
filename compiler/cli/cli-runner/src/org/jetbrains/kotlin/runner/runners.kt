@@ -85,7 +85,7 @@ class JarRunner(private val path: String) : AbstractRunner() {
                 }
             }
             catch (e: IOException) {
-                throw RunnerException("could not read manifest from " + path + ": " + e.getMessage())
+                throw RunnerException("could not read manifest from " + path + ": " + e.message)
             }
             ?: throw RunnerException("no Main-Class entry found in manifest in $path")
 

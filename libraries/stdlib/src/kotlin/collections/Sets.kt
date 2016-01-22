@@ -31,6 +31,8 @@ public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elemen
 /** Returns an empty read-only set.  The returned set is serializable (JVM). */
 public fun <T> setOf(): Set<T> = emptySet()
 
+/** Returns a new [MutableSet] with the given elements. */
+public fun <T> mutableSetOf(vararg elements: T): MutableSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /** Returns a new [HashSet] with the given elements. */
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))

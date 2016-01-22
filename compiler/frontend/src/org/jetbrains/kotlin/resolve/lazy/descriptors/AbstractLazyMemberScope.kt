@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider>
+abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider>
 protected constructor(
         protected val c: LazyClassContext,
         protected val declarationProvider: DP,
@@ -99,7 +99,7 @@ protected constructor(
         return propertyDescriptors(name)
     }
 
-    public fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
+    fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
         val result = LinkedHashSet<PropertyDescriptor>()
 
         val declarations = declarationProvider.getPropertyDeclarations(name)
@@ -127,7 +127,7 @@ protected constructor(
             location: LookupLocation
     ): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
-        val result = LinkedHashSet<DeclarationDescriptor>(declarations.size())
+        val result = LinkedHashSet<DeclarationDescriptor>(declarations.size)
         for (declaration in declarations) {
             if (declaration is KtClassOrObject) {
                 val name = declaration.nameAsSafeName
@@ -159,9 +159,8 @@ protected constructor(
                     result.addAll(classDescriptors(name))
                 }
             }
-            else if (declaration is KtTypedef || declaration is KtDestructuringDeclaration) {
-                // Do nothing for typedefs as they are not supported.
-                // MultiDeclarations are not supported on global level too.
+            else if (declaration is KtDestructuringDeclaration) {
+                // MultiDeclarations are not supported on global level
             }
             else {
                 throw IllegalArgumentException("Unsupported declaration kind: " + declaration)
@@ -176,7 +175,7 @@ protected constructor(
     abstract override fun toString(): String
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), " {")
+        p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
         p.println("thisDescriptor = ", thisDescriptor)

@@ -27,7 +27,7 @@ object KotlinFileReferencesResolver {
             resolveQualifiers: Boolean = true,
             resolveShortNames: Boolean = true
     ): Map<KtReferenceExpression, BindingContext> {
-        return (element.getContainingFile() as? KtFile)?.let { file ->
+        return (element.containingFile as? KtFile)?.let { file ->
             resolve(file, listOf(element), resolveQualifiers, resolveShortNames)
         } ?: Collections.emptyMap()
     }
@@ -52,15 +52,15 @@ object KotlinFileReferencesResolver {
         private val resolutionFacade = file.getResolutionFacade()
         private val resolveMap = LinkedHashMap<KtReferenceExpression, BindingContext>()
 
-        public val result: Map<KtReferenceExpression, BindingContext> = resolveMap
+        val result: Map<KtReferenceExpression, BindingContext> = resolveMap
 
         override fun visitUserType(userType: KtUserType) {
             if (resolveQualifiers) {
                 userType.acceptChildren(this)
             }
 
-            if (resolveShortNames || userType.getQualifier() != null) {
-                val referenceExpression = userType.getReferenceExpression()
+            if (resolveShortNames || userType.qualifier != null) {
+                val referenceExpression = userType.referenceExpression
                 if (referenceExpression != null) {
                     resolveMap[referenceExpression] = resolutionFacade.analyze(referenceExpression)
                 }
@@ -68,16 +68,16 @@ object KotlinFileReferencesResolver {
         }
 
         override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
-            val receiverExpression = expression.getReceiverExpression()
+            val receiverExpression = expression.receiverExpression
             if (resolveQualifiers || resolutionFacade.analyze(expression)[BindingContext.QUALIFIER, receiverExpression] == null) {
                 receiverExpression.accept(this)
             }
 
-            val referenceExpression = expression.getSelectorExpression()?.referenceExpression()
+            val referenceExpression = expression.selectorExpression?.referenceExpression()
             if (referenceExpression != null) {
                 resolveMap[referenceExpression] = resolutionFacade.analyze(referenceExpression)
             }
-            expression.getSelectorExpression()?.accept(this)
+            expression.selectorExpression?.accept(this)
         }
 
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
@@ -89,4 +89,4 @@ object KotlinFileReferencesResolver {
 }
 
 fun KtExpression.referenceExpression(): KtReferenceExpression? =
-        (if (this is KtCallExpression) getCalleeExpression() else this) as? KtReferenceExpression
+        (if (this is KtCallExpression) calleeExpression else this) as? KtReferenceExpression

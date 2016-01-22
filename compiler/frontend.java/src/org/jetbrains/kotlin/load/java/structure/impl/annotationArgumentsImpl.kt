@@ -25,7 +25,7 @@ abstract class JavaAnnotationArgumentImpl(
 ) : JavaAnnotationArgument {
     companion object Factory {
         fun create(argument: PsiAnnotationMemberValue, name: Name?): JavaAnnotationArgument {
-            val value = JavaPsiFacade.getInstance(argument.getProject()).getConstantEvaluationHelper().computeConstantExpression(argument)
+            val value = JavaPsiFacade.getInstance(argument.project).constantEvaluationHelper.computeConstantExpression(argument)
             if (value is Enum<*>) {
                 return JavaEnumValueAnnotationArgumentImpl(argument as PsiReferenceExpression, name)
             }
@@ -53,7 +53,7 @@ class JavaArrayAnnotationArgumentImpl(
         private val psiValue: PsiArrayInitializerMemberValue,
         name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaArrayAnnotationArgument {
-    override fun getElements() = psiValue.getInitializers().map { JavaAnnotationArgumentImpl.create(it, null) }
+    override fun getElements() = psiValue.initializers.map { JavaAnnotationArgumentImpl.create(it, null) }
 }
 
 class JavaEnumValueAnnotationArgumentImpl(
@@ -65,7 +65,7 @@ class JavaEnumValueAnnotationArgumentImpl(
         return when (element) {
             null -> null
             is PsiEnumConstant -> JavaFieldImpl(element)
-            else -> throw IllegalStateException("Reference argument should be an enum value, but was $element: ${element.getText()}")
+            else -> throw IllegalStateException("Reference argument should be an enum value, but was $element: ${element.text}")
         }
     }
 }
@@ -74,7 +74,7 @@ class JavaClassObjectAnnotationArgumentImpl(
         private val psiExpression: PsiClassObjectAccessExpression,
         name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaClassObjectAnnotationArgument {
-    override fun getReferencedType() = JavaTypeImpl.create(psiExpression.getOperand().getType())
+    override fun getReferencedType() = JavaTypeImpl.create(psiExpression.operand.type)
 }
 
 class JavaAnnotationAsAnnotationArgumentImpl(

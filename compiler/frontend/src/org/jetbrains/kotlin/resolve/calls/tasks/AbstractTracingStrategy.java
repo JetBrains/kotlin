@@ -21,6 +21,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
@@ -29,13 +30,13 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
@@ -80,13 +81,19 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void wrongReceiverType(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor receiverParameter, @NotNull ReceiverValue receiverArgument) {
-        if (receiverArgument instanceof ExpressionReceiver) {
-            ExpressionReceiver expressionReceiver = (ExpressionReceiver)receiverArgument;
-            trace.report(TYPE_MISMATCH.on(expressionReceiver.getExpression(), receiverParameter.getType(), receiverArgument.getType()));
-        }
-        else {
-            trace.report(TYPE_MISMATCH.on(reference, receiverParameter.getType(), receiverArgument.getType()));
+    public void wrongReceiverType(
+            @NotNull BindingTrace trace,
+            @NotNull ReceiverParameterDescriptor receiverParameter,
+            @NotNull ReceiverValue receiverArgument,
+            @NotNull ResolutionContext<?> c
+    ) {
+        KtExpression reportOn = receiverArgument instanceof ExpressionReceiver
+                                ? ((ExpressionReceiver) receiverArgument).getExpression()
+                                : reference;
+
+        if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(
+                c, reportOn, receiverParameter.getType(), receiverArgument.getType())) {
+            trace.report(TYPE_MISMATCH.on(reportOn, receiverParameter.getType(), receiverArgument.getType()));
         }
     }
 
@@ -180,6 +187,9 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
                     trace.report(UNSAFE_INFIX_CALL.on(reference, left.getText(), operationString.asString(), right.getText()));
                 }
             }
+            else if (isCallForImplicitInvoke) {
+                trace.report(UNSAFE_IMPLICIT_INVOKE_CALL.on(reference, type));
+            }
             else {
                 trace.report(UNSAFE_CALL.on(reference, type));
             }
@@ -192,7 +202,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData data) {
+    public void typeInferenceFailed(@NotNull ResolutionContext<?> context, @NotNull InferenceErrorData data) {
         ConstraintSystem constraintSystem = data.constraintSystem;
         ConstraintSystemStatus status = constraintSystem.getStatus();
         assert !status.isSuccessful() : "Report error only for not successful constraint system";
@@ -202,6 +212,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
             return;
         }
+        BindingTrace trace = context.trace;
         if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) {
             KotlinType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
@@ -212,7 +223,10 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             assert substitutedReturnType != null; //todo
 
             assert !noExpectedType(data.expectedType) : "Expected type doesn't exist, but there is an expected type mismatch error";
-            trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(call.getCallElement(), data.expectedType, substitutedReturnType));
+            if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(
+                    context, call.getCallElement(), data.expectedType, substitutedReturnType)) {
+                trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(call.getCallElement(), data.expectedType, substitutedReturnType));
+            }
         }
         else if (status.hasCannotCaptureTypesError()) {
             trace.report(TYPE_INFERENCE_CANNOT_CAPTURE_TYPES.on(reference, data));

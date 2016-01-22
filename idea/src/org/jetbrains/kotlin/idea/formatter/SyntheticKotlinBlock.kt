@@ -27,7 +27,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.formatting.ASTBlock
 
-public class SyntheticKotlinBlock(
+class SyntheticKotlinBlock(
         private val node: ASTNode,
         private val subBlocks: MutableList<Block>,
         private val alignment: Alignment?,
@@ -37,8 +37,8 @@ public class SyntheticKotlinBlock(
 ) : ASTBlock {
 
     private val textRange = TextRange(
-            subBlocks.first().getTextRange().getStartOffset(),
-            subBlocks.last().getTextRange().getEndOffset())
+            subBlocks.first().textRange.startOffset,
+            subBlocks.last().textRange.endOffset)
 
     override fun getTextRange(): TextRange = textRange
     override fun getSubBlocks() = subBlocks
@@ -46,11 +46,11 @@ public class SyntheticKotlinBlock(
     override fun getIndent() = indent
     override fun getAlignment() = alignment
     override fun getChildAttributes(newChildIndex: Int) = ChildAttributes(getIndent(), null)
-    override fun isIncomplete() = getSubBlocks().last().isIncomplete()
+    override fun isIncomplete() = getSubBlocks().last().isIncomplete
     override fun isLeaf() = false
     override fun getNode() = node
     override fun getSpacing(child1: Block?, child2: Block): Spacing? =
-            spacingBuilder.getSpacing(KotlinSpacingBuilder.SpacingNodeBlock(node.getTreeParent()!!), child1, child2)
+            spacingBuilder.getSpacing(KotlinSpacingBuilder.SpacingNodeBlock(node.treeParent!!), child1, child2)
 
 
     override fun toString(): String {
@@ -60,7 +60,7 @@ public class SyntheticKotlinBlock(
         loop@
         while (treeNode == null) when (child) {
             is AbstractBlock -> {
-                treeNode = child.getNode()
+                treeNode = child.node
             }
             is SyntheticKotlinBlock -> {
                 child = child.getSubBlocks().first()
@@ -70,15 +70,15 @@ public class SyntheticKotlinBlock(
 
         val textRange = getTextRange()
         if (treeNode != null) {
-            val psi = treeNode.getPsi()
+            val psi = treeNode.psi
             if (psi != null) {
-                val file = psi.getContainingFile()
+                val file = psi.containingFile
                 if (file != null) {
-                    return file.getText()!!.subSequence(textRange.getStartOffset(), textRange.getEndOffset()).toString() + " " + textRange
+                    return file.text!!.subSequence(textRange.startOffset, textRange.endOffset).toString() + " " + textRange
                 }
             }
         }
 
-        return javaClass.getName() + ": " + textRange
+        return javaClass.name + ": " + textRange
     }
 }

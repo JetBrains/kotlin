@@ -88,32 +88,13 @@ public class AnonymousObjectTransformer {
         reader.accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
-                if (signature != null) {
-                    ReifiedTypeInliner.SignatureReificationResult signatureResult = inliningContext.reifedTypeInliner.reifySignature(signature);
-                    signature = signatureResult.getNewSignature();
-                    transformationResult.getReifiedTypeParametersUsages().mergeAll(signatureResult.getTypeParametersUsages());
-                }
+                InlineCodegenUtil.assertVersionNotGreaterThanJava6(version, name);
                 super.visit(version, access, name, signature, superName, interfaces);
             }
 
             @Override
-            public void visitInnerClass(String name, String outerName, String innerName, int access) {
+            public void visitInnerClass(@NotNull String name, String outerName, String innerName, int access) {
                 innerClassNodes.add(new InnerClassNode(name, outerName, innerName, access));
-            }
-
-            @Override
-            public void visitOuterClass(@NotNull String owner, String name, String desc) {
-                InliningContext parent = inliningContext.getParent();
-                assert parent != null : "Context for transformer should have parent one: " + inliningContext;
-
-                //we don't write owner info for lamdbas and SAMs just only for objects
-                if (parent.isRoot() || parent.isInliningLambdaRootContext()) {
-                    //TODO: think about writing method info - there is some problem with new constructor desc calculation
-                    super.visitOuterClass(inliningContext.getParent().getClassNameToInline(), null, null);
-                    return;
-                }
-
-                super.visitOuterClass(owner, name, desc);
             }
 
             @Override
@@ -162,7 +143,7 @@ public class AnonymousObjectTransformer {
             }
             else {
                 //seems we can't do any clever mapping cause we don't know any about original class name
-                sourceMapper = IdenticalSourceMapper.INSTANCE$;
+                sourceMapper = IdenticalSourceMapper.INSTANCE;
             }
             if (sourceInfo != null && !InlineCodegenUtil.GENERATE_SMAP) {
                 classBuilder.visitSource(sourceInfo, debugInfo);
@@ -172,7 +153,7 @@ public class AnonymousObjectTransformer {
             if (sourceInfo != null) {
                 classBuilder.visitSource(sourceInfo, debugInfo);
             }
-            sourceMapper = IdenticalSourceMapper.INSTANCE$;
+            sourceMapper = IdenticalSourceMapper.INSTANCE;
         }
 
         ParametersBuilder allCapturedParamBuilder = ParametersBuilder.newBuilder();
@@ -180,7 +161,7 @@ public class AnonymousObjectTransformer {
         List<CapturedParamInfo> additionalFakeParams =
                 extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder,
                                                             anonymousObjectGen, parentRemapper);
-        List<MethodVisitor> deferringMethods = new ArrayList();
+        List<MethodVisitor> deferringMethods = new ArrayList<MethodVisitor>();
 
         for (MethodNode next : methodsToTransform) {
             MethodVisitor deferringVisitor = newMethod(classBuilder, next);
@@ -206,14 +187,22 @@ public class AnonymousObjectTransformer {
 
         SourceMapper.Companion.flushToClassBuilder(sourceMapper, classBuilder);
 
+        ClassVisitor visitor = classBuilder.getVisitor();
         for (InnerClassNode node : innerClassNodes) {
-            classBuilder.getVisitor().visitInnerClass(node.name, node.outerName, node.innerName, node.access);
+            visitor.visitInnerClass(node.name, node.outerName, node.innerName, node.access);
         }
+
+        writeOuterInfo(visitor);
 
         classBuilder.done();
 
         anonymousObjectGen.setNewLambdaType(newLambdaType);
         return transformationResult;
+    }
+
+    private void writeOuterInfo(@NotNull ClassVisitor visitor) {
+        InlineCallSiteInfo info = inliningContext.getCallSiteInfo();
+        visitor.visitOuterClass(info.getOwnerClassName(), info.getFunctionName(), info.getFunctionDesc());
     }
 
     @NotNull
@@ -248,9 +237,20 @@ public class AnonymousObjectTransformer {
                                                    parameters, anonymousObjectGen.getCapturedLambdasToInline(),
                                                    parentRemapper, isConstructor);
 
-        MethodInliner inliner = new MethodInliner(sourceNode, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
-                                                  remapper, isSameModule, "Transformer for " + anonymousObjectGen.getOwnerInternalName(),
-                                                  sourceMapper);
+        MethodInliner inliner =
+                new MethodInliner(
+                        sourceNode,
+                        parameters,
+                        inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
+                        remapper,
+                        isSameModule,
+                        "Transformer for " + anonymousObjectGen.getOwnerInternalName(),
+                        sourceMapper,
+                        new InlineCallSiteInfo(
+                                anonymousObjectGen.getOwnerInternalName(),
+                                sourceNode.name,
+                                isConstructor ? anonymousObjectGen.getNewConstructorDescriptor() : sourceNode.desc)
+                );
 
         InlineResult result = inliner.doInline(deferringVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
         result.getReifiedTypeParametersUsages().mergeAll(typeParametersToReify);
@@ -289,6 +289,8 @@ public class AnonymousObjectTransformer {
         }
 
         String constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, descTypes.toArray(new Type[descTypes.size()]));
+        //TODO for inline method make public class
+        anonymousObjectGen.setNewConstructorDescriptor(constructorDescriptor);
         MethodVisitor constructorVisitor = classBuilder.newMethod(NO_ORIGIN,
                                                                   AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
                                                                   "<init>", constructorDescriptor,
@@ -329,8 +331,6 @@ public class AnonymousObjectTransformer {
         inlineMethodAndUpdateGlobalResult(anonymousObjectGen, parentRemapper, capturedFieldInitializer, constructor, constructorInlineBuilder, true);
         constructorVisitor.visitEnd();
         AsmUtil.genClosureFields(TransformationUtilsKt.toNameTypePair(TransformationUtilsKt.filterSkipped(newFieldsWithSkipped)), classBuilder);
-        //TODO for inline method make public class
-        anonymousObjectGen.setNewConstructorDescriptor(constructorDescriptor);
     }
 
     @NotNull
@@ -348,7 +348,11 @@ public class AnonymousObjectTransformer {
     @NotNull
     private ClassBuilder createClassBuilder() {
         ClassBuilder classBuilder = state.getFactory().newVisitor(NO_ORIGIN, newLambdaType, inliningContext.getRoot().callElement.getContainingFile());
-        return new RemappingClassBuilder(classBuilder, inliningContext.typeRemapper);
+
+        return new RemappingClassBuilder(
+                classBuilder,
+                new AsmTypeRemapper(inliningContext.typeRemapper, inliningContext.getRoot().typeParameterMappings == null, transformationResult)
+        );
     }
 
     @NotNull

@@ -38,11 +38,11 @@ val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
 val KOTLIN_NULL_PTR_EXCEPTION_FQ = "kotlin.KotlinNullPointerException"
 
 fun KtBinaryExpression.expressionComparedToNull(): KtExpression? {
-    val operationToken = this.getOperationToken()
+    val operationToken = this.operationToken
     if (operationToken != KtTokens.EQEQ && operationToken != KtTokens.EXCLEQ) return null
 
-    val right = this.getRight() ?: return null
-    val left = this.getLeft() ?: return null
+    val right = this.right ?: return null
+    val left = this.left ?: return null
 
     val rightIsNull = right.isNullExpression()
     val leftIsNull = left.isNullExpression()
@@ -53,31 +53,31 @@ fun KtBinaryExpression.expressionComparedToNull(): KtExpression? {
 fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
     val innerExpression = KtPsiUtil.safeDeparenthesize(this)
     if (innerExpression is KtBlockExpression) {
-        val statement = innerExpression.getStatements().singleOrNull() ?: return this
+        val statement = innerExpression.statements.singleOrNull() ?: return this
         return KtPsiUtil.safeDeparenthesize(statement)
     }
     return innerExpression
 }
 
-fun KtExpression?.isNullExpression(): Boolean = this?.unwrapBlockOrParenthesis()?.getNode()?.getElementType() == KtNodeTypes.NULL
+fun KtExpression?.isNullExpression(): Boolean = this?.unwrapBlockOrParenthesis()?.node?.elementType == KtNodeTypes.NULL
 
-fun KtExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is KtBlockExpression && this.getStatements().isEmpty()
+fun KtExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is KtBlockExpression && this.statements.isEmpty()
 
 fun KtThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
-    val thrownExpression = this.getThrownExpression()
+    val thrownExpression = this.thrownExpression
     if (thrownExpression !is KtCallExpression) return false
 
     val context = this.analyze(BodyResolveMode.PARTIAL)
     val nameExpression = thrownExpression.calleeExpression as? KtNameReferenceExpression ?: return false
     val descriptor = context[BindingContext.REFERENCE_TARGET, nameExpression]
-    val declDescriptor = descriptor?.getContainingDeclaration() ?: return false
+    val declDescriptor = descriptor?.containingDeclaration ?: return false
 
     val exceptionName = DescriptorUtils.getFqName(declDescriptor).asString()
-    return (exceptionName == NULL_PTR_EXCEPTION_FQ || exceptionName == KOTLIN_NULL_PTR_EXCEPTION_FQ) && thrownExpression.getValueArguments().isEmpty()
+    return (exceptionName == NULL_PTR_EXCEPTION_FQ || exceptionName == KOTLIN_NULL_PTR_EXCEPTION_FQ) && thrownExpression.valueArguments.isEmpty()
 }
 
 fun KtExpression.evaluatesTo(other: KtExpression): Boolean {
-    return this.unwrapBlockOrParenthesis().getText() == other.getText()
+    return this.unwrapBlockOrParenthesis().text == other.text
 }
 
 fun KtExpression.convertToIfNotNullExpression(conditionLhs: KtExpression, thenClause: KtExpression, elseClause: KtExpression?): KtIfExpression {
@@ -94,9 +94,9 @@ fun KtExpression.convertToIfStatement(condition: KtExpression, thenClause: KtExp
     return replaced(KtPsiFactory(this).createIf(condition, thenClause, elseClause))
 }
 
-fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor) {
-    val project = this.getProject()
-    val occurrenceInConditional = (this.getCondition() as KtBinaryExpression).getLeft()!!
+fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor?) {
+    val project = this.project
+    val occurrenceInConditional = (this.condition as KtBinaryExpression).left!!
     KotlinIntroduceVariableHandler.doRefactoring(project,
                                                  editor,
                                                  occurrenceInConditional,
@@ -104,7 +104,7 @@ fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpressi
                                                  null)
 }
 
-fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
+fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor?) {
     val declaration = this.mainReference.resolve() as? KtProperty ?: return
 
     val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
@@ -114,21 +114,21 @@ fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(e
     val scope = LocalSearchScope(enclosingElement!!)
 
     val references = ReferencesSearch.search(declaration, scope).findAll()
-    if (references.size() == 1) {
-        KotlinInlineValHandler().inlineElement(this.getProject(), editor, declaration)
+    if (references.size == 1) {
+        KotlinInlineValHandler().inlineElement(this.project, editor, declaration)
     }
 }
 
-fun KtSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Editor) {
-    (this.getReceiverExpression() as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+fun KtSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Editor?) {
+    (this.receiverExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor) {
-    (this.getLeft() as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+fun KtBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor?) {
+    (this.left as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor) {
-    (this.getBaseExpression() as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor?) {
+    (this.baseExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
 fun KtExpression.isStableVariable(): Boolean {

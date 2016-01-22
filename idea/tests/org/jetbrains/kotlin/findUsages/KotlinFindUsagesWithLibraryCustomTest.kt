@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import kotlin.test.assertEquals
 
-public class KotlinFindUsagesWithLibraryCustomTest : AbstractKotlinFindUsagesWithLibraryTest() {
-    public fun testFindUsagesForLocalClassProperty() {
-        val libraryFile = FilenameIndex.getFilesByName(getProject(), "library.kt", myFixture.getModule().getModuleWithLibrariesScope()).first()
-        val indexOf = libraryFile.getText().indexOf("localClassProperty")
+class KotlinFindUsagesWithLibraryCustomTest : AbstractKotlinFindUsagesWithLibraryTest() {
+    fun testFindUsagesForLocalClassProperty() {
+        val libraryFile = FilenameIndex.getFilesByName(getProject(), "library.kt", myFixture.module.moduleWithLibrariesScope).first()
+        val indexOf = libraryFile.text.indexOf("localClassProperty")
         val jetParameter = libraryFile.findElementAt(indexOf)!!.getStrictParentOfType<KtParameter>()!!
         val usages = findUsages(jetParameter.getOriginalElement(), null, false)
-        assertEquals(2, usages.size())
+        assertEquals(2, usages.size)
     }
 }

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-public class AddGenericUpperBoundFix(
+class AddGenericUpperBoundFix(
         typeParameter: KtTypeParameter,
         upperBound: KotlinType
 ) : KotlinQuickFixAction<KtTypeParameter>(typeParameter) {

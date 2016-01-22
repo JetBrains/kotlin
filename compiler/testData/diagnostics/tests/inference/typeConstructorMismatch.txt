@@ -1,7 +1,7 @@
 package
 
 package typeConstructorMismatch {
-    public fun </*0*/ R> elemAndList(/*0*/ r: R, /*1*/ t: kotlin.List<R>): R
-    public fun test(/*0*/ set: kotlin.Set<kotlin.String>): kotlin.Unit
-    public fun </*0*/ R> R.elemAndListWithReceiver(/*0*/ r: R, /*1*/ t: kotlin.List<R>): R
+    public fun </*0*/ R> elemAndList(/*0*/ r: R, /*1*/ t: kotlin.collections.List<R>): R
+    public fun test(/*0*/ set: kotlin.collections.Set<kotlin.String>): kotlin.Unit
+    public fun </*0*/ R> R.elemAndListWithReceiver(/*0*/ r: R, /*1*/ t: kotlin.collections.List<R>): R
 }

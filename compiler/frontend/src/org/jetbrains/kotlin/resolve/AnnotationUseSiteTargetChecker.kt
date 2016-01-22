@@ -21,13 +21,14 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 
-public object AnnotationUseSiteTargetChecker {
+object AnnotationUseSiteTargetChecker {
 
-    public fun check(annotated: KtAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
+    fun check(annotated: KtAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
         trace.checkDeclaration(annotated, descriptor)
 
         if (annotated is KtFunction) {
             for (parameter in annotated.valueParameters) {
+                if (parameter.hasValOrVar()) continue
                 val parameterDescriptor = trace.bindingContext[BindingContext.VALUE_PARAMETER, parameter] ?: continue
                 trace.checkDeclaration(parameter, parameterDescriptor)
             }
@@ -45,6 +46,7 @@ public object AnnotationUseSiteTargetChecker {
             when (target) {
                 AnnotationUseSiteTarget.RECEIVER -> {}
                 AnnotationUseSiteTarget.FIELD,
+                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD,
                 AnnotationUseSiteTarget.PROPERTY,
                 AnnotationUseSiteTarget.PROPERTY_GETTER,
                 AnnotationUseSiteTarget.PROPERTY_SETTER,
@@ -62,9 +64,10 @@ public object AnnotationUseSiteTargetChecker {
             val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
 
             when (target) {
-                AnnotationUseSiteTarget.FIELD -> checkIfProperty(annotated, annotation)
-                AnnotationUseSiteTarget.PROPERTY -> checkIfProperty(annotated, annotation)
-                AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfProperty(annotated, annotation)
+                AnnotationUseSiteTarget.FIELD -> checkIfHasBackingField(annotated, descriptor, annotation)
+                AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.PROPERTY_GETTER -> {}
+                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> checkIfDelegatedProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
                     if (annotated !is KtParameter) {
@@ -87,6 +90,22 @@ public object AnnotationUseSiteTargetChecker {
         }
     }
 
+    private fun BindingTrace.checkIfDelegatedProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry) {
+        if (annotated is KtProperty && !annotated.hasDelegate() || annotated is KtParameter && annotated.hasValOrVar()) {
+            report(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE.on(annotation))
+        }
+    }
+
+    private fun BindingTrace.checkIfHasBackingField(annotated: KtAnnotated, descriptor: DeclarationDescriptor, annotation: KtAnnotationEntry) {
+        if (annotated is KtProperty && annotated.hasDelegate() &&
+            descriptor is PropertyDescriptor && get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) != true) {
+            report(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD.on(annotation))
+        }
+    }
+
+    private fun KtAnnotationEntry.useSiteDescription() =
+            useSiteTarget?.getAnnotationUseSiteTarget()?.renderName ?: "unknown target" // should not happen
+
     private fun BindingTrace.checkIfMutableProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry) {
         if (!checkIfProperty(annotated, annotation)) return
 
@@ -96,7 +115,9 @@ public object AnnotationUseSiteTargetChecker {
             annotated.isMutable
         else false
 
-        if (!isMutable) report(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE.on(annotation))
+        if (!isMutable) {
+            report(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE.on(annotation, annotation.useSiteDescription()))
+        }
     }
 
     private fun BindingTrace.checkIfProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry): Boolean {
@@ -106,8 +127,7 @@ public object AnnotationUseSiteTargetChecker {
             annotated.hasValOrVar()
         else false
 
-        val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget()?.renderName ?: "unknown target" // should not happen
-        if (!isProperty) report(INAPPLICABLE_TARGET_ON_PROPERTY.on(annotation, target))
+        if (!isProperty) report(INAPPLICABLE_TARGET_ON_PROPERTY.on(annotation, annotation.useSiteDescription()))
         return isProperty
     }
 }

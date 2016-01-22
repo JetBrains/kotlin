@@ -43,7 +43,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public enum class AndroidClassType(className: String, val supportsCache: Boolean = false, val fragment: Boolean = false) {
+enum class AndroidClassType(className: String, val supportsCache: Boolean = false, val fragment: Boolean = false) {
     ACTIVITY(AndroidConst.ACTIVITY_FQNAME, supportsCache = true),
     FRAGMENT(AndroidConst.FRAGMENT_FQNAME, supportsCache = true, fragment = true),
     SUPPORT_FRAGMENT_ACTIVITY(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME, supportsCache = true),
@@ -51,10 +51,10 @@ public enum class AndroidClassType(className: String, val supportsCache: Boolean
     VIEW(AndroidConst.VIEW_FQNAME),
     UNKNOWN("");
 
-    public val internalClassName: String = className.replace('.', '/')
+    val internalClassName: String = className.replace('.', '/')
 
-    public companion object {
-        public fun getClassType(descriptor: ClassifierDescriptor): AndroidClassType {
+    companion object {
+        fun getClassType(descriptor: ClassifierDescriptor): AndroidClassType {
             fun getClassTypeInternal(name: String): AndroidClassType? = when (name) {
                 AndroidConst.ACTIVITY_FQNAME -> AndroidClassType.ACTIVITY
                 AndroidConst.FRAGMENT_FQNAME -> AndroidClassType.FRAGMENT
@@ -86,7 +86,7 @@ public enum class AndroidClassType(className: String, val supportsCache: Boolean
     }
 }
 
-public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
+class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     companion object {
         private val PROPERTY_NAME = "_\$_findViewCache"
         private val CACHED_FIND_VIEW_BY_ID_METHOD_NAME = "_\$_findCachedViewById"

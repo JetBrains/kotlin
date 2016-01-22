@@ -23,7 +23,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 
-public open class QuickFixWithDelegateFactory(
+open class QuickFixWithDelegateFactory(
         private val delegateFactory: () -> IntentionAction?
 ) : IntentionAction {
     private val familyName: String
@@ -59,11 +59,11 @@ public open class QuickFixWithDelegateFactory(
     }
 }
 
-public class LowPriorityQuickFixWithDelegateFactory(
+class LowPriorityQuickFixWithDelegateFactory(
         delegateFactory: () -> IntentionAction?
 ): QuickFixWithDelegateFactory(delegateFactory), LowPriorityAction
 
-public class HighPriorityQuickFixWithDelegateFactory(
+class HighPriorityQuickFixWithDelegateFactory(
         delegateFactory: () -> IntentionAction?
 ): QuickFixWithDelegateFactory(delegateFactory), HighPriorityAction
 
@@ -76,5 +76,13 @@ fun IntentionAction.detectPriority(): IntentionActionPriority {
         is LowPriorityAction -> IntentionActionPriority.LOW
         is HighPriorityAction -> IntentionActionPriority.HIGH
         else -> IntentionActionPriority.NORMAL
+    }
+}
+
+fun QuickFixWithDelegateFactory(priority: IntentionActionPriority, createAction: () -> IntentionAction?): QuickFixWithDelegateFactory {
+    return when (priority) {
+        IntentionActionPriority.NORMAL -> QuickFixWithDelegateFactory(createAction)
+        IntentionActionPriority.HIGH -> HighPriorityQuickFixWithDelegateFactory(createAction)
+        IntentionActionPriority.LOW -> LowPriorityQuickFixWithDelegateFactory(createAction)
     }
 }

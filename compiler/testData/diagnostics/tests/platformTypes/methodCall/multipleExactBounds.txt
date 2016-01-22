@@ -27,7 +27,7 @@ public interface ResolverForProject</*0*/ M1, /*1*/ R1> {
 }
 
 public final class ResolverForProjectImpl</*0*/ M : ModuleInfo, /*1*/ R : ResolverForModule> : ResolverForProject<M, R> {
-    public constructor ResolverForProjectImpl</*0*/ M : ModuleInfo, /*1*/ R : ResolverForModule>(/*0*/ descriptorByModule: kotlin.Map<M, ModuleDescriptorImpl>, /*1*/ delegateResolver: ResolverForProject<M, R>)
+    public constructor ResolverForProjectImpl</*0*/ M : ModuleInfo, /*1*/ R : ResolverForModule>(/*0*/ descriptorByModule: kotlin.collections.Map<M, ModuleDescriptorImpl>, /*1*/ delegateResolver: ResolverForProject<M, R>)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

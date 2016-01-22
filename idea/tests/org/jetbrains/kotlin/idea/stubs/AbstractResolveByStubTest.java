@@ -43,13 +43,13 @@ public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCas
         configureByFile(path);
         TestUtilsKt.configureAs(getModule(), KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
         boolean shouldFail = getTestName(false).equals("ClassWithConstVal");
-        AstAccessControl.INSTANCE$.testWithControlledAccessToAst(
+        AstAccessControl.INSTANCE.testWithControlledAccessToAst(
                 shouldFail, getProject(), getTestRootDisposable(),
                 new Function0<Unit>() {
                     @Override
                     public Unit invoke() {
                         performTest(path, checkPrimaryConstructors, checkPropertyAccessors);
-                        return Unit.INSTANCE$;
+                        return Unit.INSTANCE;
                     }
                 }
         );

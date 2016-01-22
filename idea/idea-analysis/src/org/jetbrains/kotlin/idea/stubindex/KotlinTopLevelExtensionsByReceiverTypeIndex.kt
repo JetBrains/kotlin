@@ -19,25 +19,26 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
-public class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<KtCallableDeclaration>() {
+class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<KtCallableDeclaration>() {
 
     override fun getKey() = KEY
 
     override fun get(s: String, project: Project, scope: GlobalSearchScope)
-            = super.get(s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project))
+            = StubIndex.getElements(KEY, s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project), KtCallableDeclaration::class.java)
 
     companion object {
-        private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(javaClass<KotlinTopLevelExtensionsByReceiverTypeIndex>())
+        private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(KotlinTopLevelExtensionsByReceiverTypeIndex::class.java)
         private val SEPARATOR = '\n'
 
-        public val INSTANCE: KotlinTopLevelExtensionsByReceiverTypeIndex = KotlinTopLevelExtensionsByReceiverTypeIndex()
+        val INSTANCE: KotlinTopLevelExtensionsByReceiverTypeIndex = KotlinTopLevelExtensionsByReceiverTypeIndex()
 
-        public fun buildKey(receiverTypeName: String, callableName: String): String = receiverTypeName + SEPARATOR + callableName
+        fun buildKey(receiverTypeName: String, callableName: String): String = receiverTypeName + SEPARATOR + callableName
 
-        public fun receiverTypeNameFromKey(key: String): String = key.substringBefore(SEPARATOR, "")
+        fun receiverTypeNameFromKey(key: String): String = key.substringBefore(SEPARATOR, "")
 
-        public fun callableNameFromKey(key: String): String = key.substringAfter(SEPARATOR, "")
+        fun callableNameFromKey(key: String): String = key.substringAfter(SEPARATOR, "")
     }
 }

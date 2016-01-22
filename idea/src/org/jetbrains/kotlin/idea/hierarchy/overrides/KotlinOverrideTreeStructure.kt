@@ -30,7 +30,7 @@ class KotlinOverrideTreeStructure(project: Project, val element: PsiElement) : H
     val javaTreeStructures = element.toLightMethods().map { method -> MethodHierarchyTreeStructure(project, method) }
 
     init {
-        setBaseElement(javaTreeStructures.first().getBaseDescriptor()!!)
+        setBaseElement(javaTreeStructures.first().baseDescriptor!!)
     }
 
     override fun buildChildren(descriptor: HierarchyNodeDescriptor): Array<Any> {

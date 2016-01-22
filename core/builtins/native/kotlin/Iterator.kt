@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.collections
 
 /**
  * An iterator over a collection or another entity that can be represented as a sequence of elements.

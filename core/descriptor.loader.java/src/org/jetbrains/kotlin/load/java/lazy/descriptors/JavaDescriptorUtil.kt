@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 
 
 // Currently getter is null iff it's loaded from Java field
-public val PropertyDescriptor.isJavaField: Boolean
+val PropertyDescriptor.isJavaField: Boolean
     get() = getter == null

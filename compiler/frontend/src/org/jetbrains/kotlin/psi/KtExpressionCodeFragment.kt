@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
-public class KtExpressionCodeFragment(
+class KtExpressionCodeFragment(
         project: Project,
         name: String,
         text: CharSequence,
@@ -28,5 +28,5 @@ public class KtExpressionCodeFragment(
         context: PsiElement?
 ) : KtCodeFragment(project, name, text, imports, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, context) {
 
-    override fun getContentElement() = findChildByClass(javaClass<KtExpression>())
+    override fun getContentElement() = findChildByClass(KtExpression::class.java)
 }

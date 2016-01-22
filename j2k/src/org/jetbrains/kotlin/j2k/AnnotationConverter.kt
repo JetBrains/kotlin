@@ -31,16 +31,16 @@ class AnnotationConverter(private val converter: Converter) {
             + NullableNotNullManager.getInstance(converter.project).nullables
             + listOf(CommonClassNames.JAVA_LANG_OVERRIDE, ElementType::class.java.name)).toSet()
 
-    public fun isImportNotRequired(annotationName: String): Boolean {
+    fun isImportNotRequired(annotationName: String): Boolean {
         return annotationName in annotationsToRemove || annotationName == Target::class.java.name
     }
 
-    public fun convertAnnotations(owner: PsiModifierListOwner): Annotations
+    fun convertAnnotations(owner: PsiModifierListOwner): Annotations
             = convertAnnotationsOnly(owner) + convertModifiersToAnnotations(owner)
 
     private fun convertAnnotationsOnly(owner: PsiModifierListOwner): Annotations {
         val modifierList = owner.modifierList
-        val annotations = modifierList?.annotations?.filter { !annotationsToRemove.containsRaw(it.qualifiedName) }
+        val annotations = modifierList?.annotations?.filter { it.qualifiedName !in annotationsToRemove }
 
         var convertedAnnotations: List<Annotation> = if (annotations != null && annotations.isNotEmpty()) {
             val newLines = if (!modifierList!!.isInSingleLine()) {
@@ -99,7 +99,7 @@ class AnnotationConverter(private val converter: Converter) {
         return expr.referenceName?.let { JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(it) } ?: emptySet()
     }
 
-    public fun convertAnnotation(annotation: PsiAnnotation, newLineAfter: Boolean): Annotation? {
+    fun convertAnnotation(annotation: PsiAnnotation, newLineAfter: Boolean): Annotation? {
         val qualifiedName = annotation.qualifiedName
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.parameterList.attributes.isEmpty()) {
             val deferredExpression = converter.deferredElement<Expression> { LiteralExpression("\"\"").assignNoPrototype() }
@@ -151,7 +151,7 @@ class AnnotationConverter(private val converter: Converter) {
         return Annotation(name, arguments, newLineAfter).assignPrototype(annotation)
     }
 
-    public fun convertAnnotationMethodDefault(method: PsiAnnotationMethod): DeferredElement<Expression>? {
+    fun convertAnnotationMethodDefault(method: PsiAnnotationMethod): DeferredElement<Expression>? {
         val value = method.defaultValue ?: return null
         return converter.deferredElement(convertAttributeValue(value, method.returnType, false, false).single())
     }

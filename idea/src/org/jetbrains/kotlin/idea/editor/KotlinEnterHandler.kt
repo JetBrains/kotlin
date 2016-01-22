@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
-public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
+class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinEnterHandler>())
+        private val LOG = Logger.getInstance(KotlinEnterHandler::class.java)
         private val FORCE_INDENT_IN_LAMBDA_AFTER = TokenSet.create(KtTokens.ARROW, KtTokens.LBRACE)
     }
 
@@ -57,11 +57,11 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
 
         if (!CodeInsightSettings.getInstance()!!.SMART_INDENT_ON_ENTER) return EnterHandlerDelegate.Result.Continue
 
-        val document = editor.getDocument()
-        val text = document.getCharsSequence()
+        val document = editor.document
+        val text = document.charsSequence
         val caretOffset = caretOffsetRef.get()!!.toInt()
 
-        if (caretOffset !in 0..text.length()) return EnterHandlerDelegate.Result.Continue
+        if (caretOffset !in 0..text.length) return EnterHandlerDelegate.Result.Continue
 
         val elementAt = file.findElementAt(caretOffset)
         if (elementAt is PsiWhiteSpace && ("\n" in elementAt.getText()!!)) return EnterHandlerDelegate.Result.Continue
@@ -70,15 +70,15 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
         val elementBefore = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(file, caretOffset);
         val elementAfter = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceBefore(file, caretOffset);
 
-        val isAfterLBraceOrArrow = elementBefore != null && elementBefore.getNode()!!.getElementType() in FORCE_INDENT_IN_LAMBDA_AFTER
-        val isBeforeRBrace = elementAfter == null || elementAfter.getNode()!!.getElementType() == KtTokens.RBRACE
+        val isAfterLBraceOrArrow = elementBefore != null && elementBefore.node!!.elementType in FORCE_INDENT_IN_LAMBDA_AFTER
+        val isBeforeRBrace = elementAfter == null || elementAfter.node!!.elementType == KtTokens.RBRACE
 
-        if (isAfterLBraceOrArrow && isBeforeRBrace && (elementBefore!!.getParent() is KtFunctionLiteral)) {
+        if (isAfterLBraceOrArrow && isBeforeRBrace && (elementBefore!!.parent is KtFunctionLiteral)) {
             originalHandler?.execute(editor, dataContext)
             PsiDocumentManager.getInstance(file.getProject()).commitDocument(document)
 
             try {
-                CodeStyleManager.getInstance(file.getProject())!!.adjustLineIndent(file, editor.getCaretModel().getOffset())
+                CodeStyleManager.getInstance(file.getProject())!!.adjustLineIndent(file, editor.caretModel.offset)
             }
             catch (e: IncorrectOperationException) {
                 LOG.error(e);
@@ -101,13 +101,13 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
         val psiAtOffset = psiFile.findElementAt(caretOffset) ?: return false
         val stringTemplate = psiAtOffset.getStrictParentOfType<KtStringTemplateExpression>() ?: return false
         if (!stringTemplate.isSingleQuoted()) return false
-        val tokenType = psiAtOffset.getNode().getElementType()
+        val tokenType = psiAtOffset.node.elementType
         when (tokenType) {
             KtTokens.CLOSING_QUOTE, KtTokens.REGULAR_STRING_PART, KtTokens.ESCAPE_SEQUENCE,
             KtTokens.SHORT_TEMPLATE_ENTRY_START, KtTokens.LONG_TEMPLATE_ENTRY_START -> {
-                val doc = editor.getDocument()
+                val doc = editor.document
                 var caretAdvance = 1
-                if (stringTemplate.getParent() is KtDotQualifiedExpression) {
+                if (stringTemplate.parent is KtDotQualifiedExpression) {
                     doc.insertString(stringTemplate.endOffset, ")")
                     doc.insertString(stringTemplate.startOffset, "(")
                     caretOffset++

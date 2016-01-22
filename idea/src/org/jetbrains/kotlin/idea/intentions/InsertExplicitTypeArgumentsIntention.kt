@@ -29,35 +29,35 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallExpression>(javaClass(), "Add explicit type arguments"), LowPriorityAction {
+class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallExpression>(KtCallExpression::class.java, "Add explicit type arguments"), LowPriorityAction {
     override fun applicabilityRange(element: KtCallExpression): TextRange? {
-        return if (isApplicableTo(element, element.analyze())) element.getCalleeExpression()!!.getTextRange() else null
+        return if (isApplicableTo(element, element.analyze())) element.calleeExpression!!.textRange else null
     }
 
-    override fun applyTo(element: KtCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val argumentList = createTypeArguments(element, element.analyze())!!
 
-        val callee = element.getCalleeExpression()!!
+        val callee = element.calleeExpression!!
         val newArgumentList = element.addAfter(argumentList, callee) as KtTypeArgumentList
 
         ShortenReferences.DEFAULT.process(newArgumentList)
     }
 
     companion object {
-        public fun isApplicableTo(element: KtCallExpression, bindingContext: BindingContext): Boolean {
-            if (!element.getTypeArguments().isEmpty()) return false
-            if (element.getCalleeExpression() == null) return false
+        fun isApplicableTo(element: KtCallExpression, bindingContext: BindingContext): Boolean {
+            if (!element.typeArguments.isEmpty()) return false
+            if (element.calleeExpression == null) return false
 
             val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
-            val typeArgs = resolvedCall.getTypeArguments()
-            return typeArgs.isNotEmpty() && typeArgs.values().none { ErrorUtils.containsErrorType(it) }
+            val typeArgs = resolvedCall.typeArguments
+            return typeArgs.isNotEmpty() && typeArgs.values.none { ErrorUtils.containsErrorType(it) }
         }
 
-        public fun createTypeArguments(element: KtCallExpression, bindingContext: BindingContext): KtTypeArgumentList? {
+        fun createTypeArguments(element: KtCallExpression, bindingContext: BindingContext): KtTypeArgumentList? {
             val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
 
-            val args = resolvedCall.getTypeArguments()
-            val types = resolvedCall.getCandidateDescriptor().getTypeParameters()
+            val args = resolvedCall.typeArguments
+            val types = resolvedCall.candidateDescriptor.typeParameters
 
             val text = types.map { IdeDescriptorRenderers.SOURCE_CODE.renderType(args[it]!!) }.joinToString(", ", "<", ">")
 

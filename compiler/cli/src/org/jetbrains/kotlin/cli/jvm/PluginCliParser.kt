@@ -20,14 +20,13 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.utils.valuesToMap
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.*
 
 
-public object PluginCliParser {
+object PluginCliParser {
 
     @JvmStatic
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
@@ -36,10 +35,10 @@ public object PluginCliParser {
                         ?.map { File(it).toURI().toURL() }
                         ?.toTypedArray()
                         ?: arrayOf<URL>(),
-                javaClass.getClassLoader()
+                javaClass.classLoader
         )
 
-        val componentRegistrars = ServiceLoader.load(javaClass<ComponentRegistrar>(), classLoader).toArrayList()
+        val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toArrayList()
         componentRegistrars.addAll(BundledCompilerPlugins.componentRegistrars)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
@@ -56,11 +55,11 @@ public object PluginCliParser {
             it.pluginId
         } ?: mapOf()
 
-        val commandLineProcessors = ServiceLoader.load(javaClass<CommandLineProcessor>(), classLoader).toArrayList()
+        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toArrayList()
         commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
 
         for (processor in commandLineProcessors) {
-            val declaredOptions = processor.pluginOptions.valuesToMap { it.name }
+            val declaredOptions = processor.pluginOptions.toMapBy { it.name }
             val optionsToValues = MultiMap<CliOption, CliOptionValue>()
 
             for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {
@@ -79,7 +78,7 @@ public object PluginCliParser {
                             processor.pluginOptions,
                             "Required plugin option not present: ${processor.pluginId}:${option.name}")
                 }
-                if (!option.allowMultipleOccurrences && values.size() > 1) {
+                if (!option.allowMultipleOccurrences && values.size > 1) {
                     throw PluginCliOptionProcessingException(
                             processor.pluginId,
                             processor.pluginOptions,
@@ -94,7 +93,7 @@ public object PluginCliParser {
     }
 }
 
-private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : ClassLoader(Thread.currentThread().getContextClassLoader()) {
+private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : ClassLoader(Thread.currentThread().contextClassLoader) {
     private val childClassLoader: SelfThenParentURLClassLoader = SelfThenParentURLClassLoader(urls, parent)
 
     @Synchronized

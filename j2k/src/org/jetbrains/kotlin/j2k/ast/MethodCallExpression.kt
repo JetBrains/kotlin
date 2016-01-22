@@ -32,19 +32,19 @@ class MethodCallExpression(
     }
 
     companion object {
-        public fun buildNotNull(receiver: Expression?,
+        fun buildNotNull(receiver: Expression?,
                                 methodName: String,
                                 arguments: List<Expression> = listOf(),
                                 typeArguments: List<Type> = listOf()): MethodCallExpression
                 = build(receiver, methodName, arguments, typeArguments, false)
 
-        public fun buildNullable(receiver: Expression?,
+        fun buildNullable(receiver: Expression?,
                                  methodName: String,
                                  arguments: List<Expression> = listOf(),
                                  typeArguments: List<Type> = listOf()): MethodCallExpression
                 = build(receiver, methodName, arguments, typeArguments, true)
 
-        public fun build(receiver: Expression?,
+        fun build(receiver: Expression?,
                          methodName: String,
                          arguments: List<Expression>,
                          typeArguments: List<Type>,

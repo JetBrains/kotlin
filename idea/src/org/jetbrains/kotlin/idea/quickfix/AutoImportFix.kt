@@ -61,7 +61,7 @@ import java.util.*
 internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
         KotlinQuickFixAction<T>(expression), HighPriorityAction, HintAction {
 
-    private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
+    private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount
 
     private val suggestionCount: Int by CachedValueProperty(
             calculator = { computeSuggestions().size },
@@ -73,9 +73,9 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
     protected abstract fun getCallTypeAndReceiver(): CallTypeAndReceiver<*, *>
 
     override fun showHint(editor: Editor): Boolean {
-        if (!element.isValid() || isOutdated()) return false
+        if (!element.isValid || isOutdated()) return false
 
-        if (ApplicationManager.getApplication().isUnitTestMode() && HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) return false
+        if (ApplicationManager.getApplication().isUnitTestMode && HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) return false
 
         if (suggestionCount == 0) return false
 
@@ -97,15 +97,15 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
 
     override fun startInWriteAction() = true
 
-    private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
+    private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount
 
     protected open fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
         return createSingleImportAction(project, editor, element, computeSuggestions())
     }
 
     fun computeSuggestions(): Collection<DeclarationDescriptor> {
-        if (!element.isValid()) return listOf()
-        if (element.getContainingFile() !is KtFile) return emptyList()
+        if (!element.isValid) return listOf()
+        if (element.containingFile !is KtFile) return emptyList()
 
         val callTypeAndReceiver = getCallTypeAndReceiver()
 
@@ -123,7 +123,7 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
         val nameStr = name.asString()
         if (nameStr.isEmpty()) return emptyList()
 
-        val file = element.getContainingFile() as KtFile
+        val file = element.containingFile as KtFile
 
         fun filterByCallType(descriptor: DeclarationDescriptor) = callTypeAndReceiver.callType.descriptorKindFilter.accepts(descriptor)
 
@@ -131,9 +131,9 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
 
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
-        val diagnostics = bindingContext.getDiagnostics().forElement(element)
+        val diagnostics = bindingContext.diagnostics.forElement(element)
 
-        if (!diagnostics.any { it.getFactory() in getSupportedErrors() }) return emptyList()
+        if (!diagnostics.any { it.factory in getSupportedErrors() }) return emptyList()
 
         val resolutionFacade = element.getResolutionFacade()
 
@@ -193,7 +193,7 @@ internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFix
                     val elementType = element.firstChild.node.elementType
                     if (elementType in OperatorConventions.ASSIGNMENT_OPERATIONS) {
                         val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[elementType]
-                        val counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(counterpart)
+                        val counterpartName = OperatorConventions.BINARY_OPERATION_NAMES[counterpart]
                         if (counterpartName != null) {
                             return@run listOf(conventionName, counterpartName)
                         }
@@ -214,7 +214,7 @@ internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFix
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.getPsiElement() as? KtSimpleNameExpression)?.let { AutoImportFix(it) }
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let { AutoImportFix(it) }
 
         override fun isApplicableForCodeFragment() = true
 

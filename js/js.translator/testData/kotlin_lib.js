@@ -200,6 +200,7 @@
     Kotlin.UnsupportedOperationException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IndexOutOfBoundsException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IOException = createClassNowWithMessage(Kotlin.Exception);
+    Kotlin.AssertionError = createClassNowWithMessage(Kotlin.Error);
 
     Kotlin.throwNPE = function (message) {
         throw new Kotlin.NullPointerException(message);
@@ -253,7 +254,7 @@
      */
     lazyInitClasses.ArrayIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.MutableIterator];
+            return [Kotlin.modules['builtins'].kotlin.collections.MutableIterator];
         },
         /** @constructs */
         function (array) {
@@ -285,7 +286,7 @@
      */
     lazyInitClasses.ListIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.ListIterator];  // TODO: MutableListIterator
+            return [Kotlin.modules['builtins'].kotlin.collections.ListIterator];  // TODO: MutableListIterator
         },
         /** @constructs */
         function (list, index) {
@@ -357,9 +358,9 @@
 
     lazyInitClasses.AbstractCollection = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.MutableCollection];
+            return [Kotlin.modules['builtins'].kotlin.collections.MutableCollection];
         }, null, {
-        addAll_4fm7v2$: function (collection) {
+        addAll_wtfk93$: function (collection) {
             var modified = false;
             var it = collection.iterator();
             while (it.hasNext()) {
@@ -369,7 +370,7 @@
             }
             return modified
         },
-        removeAll_4fm7v2$: function (c) {
+        removeAll_wtfk93$: function (c) {
             var modified = false;
             var it = this.iterator();
             while (it.hasNext()) {
@@ -380,7 +381,7 @@
             }
             return modified
         },
-        retainAll_4fm7v2$: function (c) {
+        retainAll_wtfk93$: function (c) {
             var modified = false;
             var it = this.iterator();
             while (it.hasNext()) {
@@ -395,7 +396,7 @@
             // TODO: implement with mutable iterator
             throw new Kotlin.NotImplementedError("Not implemented yet, see KT-7809");
         },
-        containsAll_4fm7v2$: function (c) {
+        containsAll_wtfk93$: function (c) {
             var it = c.iterator();
             while (it.hasNext()) {
                 if (!this.contains_za3rmp$(it.next())) return false;
@@ -451,7 +452,7 @@
      */
     lazyInitClasses.AbstractList = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.MutableList, Kotlin.AbstractCollection];
+            return [Kotlin.modules['builtins'].kotlin.collections.MutableList, Kotlin.AbstractCollection];
         }, null, {
         iterator: function () {
             return new Kotlin.ListIterator(this);
@@ -469,7 +470,7 @@
             this.add_vux3hl$(this.size, element);
             return true;
         },
-        addAll_9cca64$: function (index, collection) {
+        addAll_j97iir$: function (index, collection) {
             // TODO: implement
             throw new Kotlin.NotImplementedError("Not implemented yet, see KT-7809");
         },
@@ -593,7 +594,7 @@
             add_vux3hl$: function (index, element) {
                 this.array.splice(index, 0, element);
             },
-            addAll_4fm7v2$: function (collection) {
+            addAll_wtfk93$: function (collection) {
                 if (collection.size == 0) {
                     return false;
                 }
@@ -769,7 +770,7 @@
 
     lazyInitClasses.RangeIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Iterator];
+            return [Kotlin.modules['builtins'].kotlin.collections.Iterator];
         },
         function (start, end, step) {
             this.start = start;
@@ -855,21 +856,15 @@
 
     lazyInitClasses.NumberProgression = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Iterable];
+            return [Kotlin.modules['builtins'].kotlin.collections.Iterable];
         },
         function (start, end, step) {
-            this.start = start;
-            this.endInclusive = end;
             this.first = start;
             this.last = getProgressionFinalElement(start, end, step);
             this.step = step;
-            this.increment = step;
             if (this.step === 0)
                 throw new Kotlin.IllegalArgumentException('Step must be non-zero');
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             iterator: function () {
                 return new Kotlin.RangeIterator(this.first, this.last, this.step);
             },
@@ -887,16 +882,13 @@
 
     lazyInitClasses.NumberRange = Kotlin.createClass(
         function() {
-            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.NumberProgression]
+            return [Kotlin.modules['builtins'].kotlin.ranges.ClosedRange, Kotlin.NumberProgression]
         },
         function $fun(start, endInclusive) {
             $fun.baseInitializer.call(this, start, endInclusive, 1);
             this.start = start;
             this.endInclusive = endInclusive;
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             contains_htax2k$: function (item) {
                 return this.start <= item && item <= this.endInclusive;
             },
@@ -920,7 +912,7 @@
 
     lazyInitClasses.LongRangeIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Iterator];
+            return [Kotlin.modules['builtins'].kotlin.collections.Iterator];
         },
          function (start, end, step) {
              this.start = start;
@@ -943,21 +935,15 @@
 
     lazyInitClasses.LongProgression = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Iterable];
+            return [Kotlin.modules['builtins'].kotlin.collections.Iterable];
         },
         function (start, end, step) {
-            this.start = start;
-            this.endInclusive = end;
             this.first = start;
             this.last = getProgressionFinalElementLong(start, end, step);
             this.step = step;
-            this.increment = step;
             if (this.step.isZero())
                 throw new Kotlin.IllegalArgumentException('Step must be non-zero');
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             iterator: function () {
                 return new Kotlin.LongRangeIterator(this.first, this.last, this.step);
             },
@@ -975,16 +961,13 @@
 
     lazyInitClasses.LongRange = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.LongProgression];
+            return [Kotlin.modules['builtins'].kotlin.ranges.ClosedRange, Kotlin.LongProgression];
         },
         function $fun(start, endInclusive) {
             $fun.baseInitializer.call(this, start, endInclusive, Kotlin.Long.ONE);
             this.start = start;
             this.endInclusive = endInclusive;
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             contains_htax2k$: function (item) {
                 return this.start.compareTo_za3rmp$(item) <= 0 && item.compareTo_za3rmp$(this.endInclusive) <= 0;
             },
@@ -1022,23 +1005,17 @@
 
     lazyInitClasses.CharProgression = Kotlin.createClassNow(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Iterable];
+            return [Kotlin.modules['builtins'].kotlin.collections.Iterable];
         },
         function (start, end, step) {
-            this.start = start;
-            this.endInclusive = end;
             this.first = start;
             this.startCode = start.charCodeAt(0);
             this.endCode = getProgressionFinalElement(this.startCode, end.charCodeAt(0), step);
             this.last = String.fromCharCode(this.endCode);
             this.step = step;
-            this.increment = step;
-            if (this.increment === 0)
+            if (this.step === 0)
                 throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             iterator: function () {
                 return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.step);
             },
@@ -1057,16 +1034,13 @@
 
     lazyInitClasses.CharRange = Kotlin.createClass(
         function() {
-            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.CharProgression]
+            return [Kotlin.modules['builtins'].kotlin.ranges.ClosedRange, Kotlin.CharProgression]
         },
         function $fun(start, endInclusive) {
             $fun.baseInitializer.call(this, start, endInclusive, 1);
             this.start = start;
             this.endInclusive = endInclusive;
         }, {
-            end: { get: function () {
-                return this.endInclusive;
-            }},
             contains_htax2k$: function (item) {
                 return this.start <= item && item <= this.endInclusive;
             },

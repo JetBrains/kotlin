@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.*
 
-public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlinConverterTest() {
-    public fun doTest(dirPath: String) {
+abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlinConverterTest() {
+    fun doTest(dirPath: String) {
         val project = LightPlatformTestCase.getProject()!!
         val psiManager = PsiManager.getInstance(project)
 

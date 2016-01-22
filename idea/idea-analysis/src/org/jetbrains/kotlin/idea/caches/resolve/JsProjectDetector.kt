@@ -24,11 +24,10 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 
 //TODO: this should go away to support cross-platform projects
-public object JsProjectDetector {
-    @JvmStatic
-    public fun isJsProject(project: Project): Boolean {
+object JsProjectDetector {
+    @JvmStatic fun isJsProject(project: Project): Boolean {
         return CachedValuesManager.getManager(project).getCachedValue(project) {
-            val result = ModuleManager.getInstance(project).getModules().any { ProjectStructureUtil.isJsKotlinModule(it) }
+            val result = ModuleManager.getInstance(project).modules.any { ProjectStructureUtil.isJsKotlinModule(it) }
             CachedValueProvider.Result(result, ProjectRootModificationTracker.getInstance(project))
         }
     }

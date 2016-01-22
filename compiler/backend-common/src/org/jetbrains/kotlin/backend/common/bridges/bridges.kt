@@ -19,22 +19,22 @@ package org.jetbrains.kotlin.backend.common.bridges
 import org.jetbrains.kotlin.utils.DFS
 import java.util.HashSet
 
-public interface FunctionHandle {
-    public val isDeclaration: Boolean
-    public val isAbstract: Boolean
+interface FunctionHandle {
+    val isDeclaration: Boolean
+    val isAbstract: Boolean
 
-    public fun getOverridden(): Iterable<FunctionHandle>
+    fun getOverridden(): Iterable<FunctionHandle>
 }
 
-public data class Bridge<Signature>(
-        public val from: Signature,
-        public val to: Signature
+data class Bridge<Signature>(
+        val from: Signature,
+        val to: Signature
 ) {
     override fun toString() = "$from -> $to"
 }
 
 
-public fun <Function : FunctionHandle, Signature> generateBridges(
+fun <Function : FunctionHandle, Signature> generateBridges(
         function: Function,
         signature: (Function) -> Signature
 ): Set<Bridge<Signature>> {
@@ -69,7 +69,7 @@ public fun <Function : FunctionHandle, Signature> generateBridges(
     return bridgesToGenerate.map { Bridge(it, method) }.toSet()
 }
 
-public fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function): MutableSet<Function> {
+fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function): MutableSet<Function> {
     val collector = object : DFS.NodeHandlerWithListResult<Function, Function>() {
         override fun afterChildren(current: Function) {
             if (current.isDeclaration) {
@@ -86,7 +86,7 @@ public fun <Function : FunctionHandle> findAllReachableDeclarations(function: Fu
  * Given a concrete function, finds an implementation (a concrete declaration) of this function in the supertypes.
  * The implementation is guaranteed to exist because if it wouldn't, the given function would've been abstract
  */
-public fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function): Function {
+fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function): Function {
     require(!function.isAbstract, { "Only concrete functions have implementations: $function" })
 
     if (function.isDeclaration) return function
@@ -109,7 +109,7 @@ public fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Fu
     result.removeAll(toRemove)
 
     val concreteRelevantDeclarations = result.filter { !it.isAbstract }
-    if (concreteRelevantDeclarations.size() != 1) {
+    if (concreteRelevantDeclarations.size != 1) {
         error("Concrete fake override $function should have exactly one concrete super-declaration: $concreteRelevantDeclarations")
     }
 

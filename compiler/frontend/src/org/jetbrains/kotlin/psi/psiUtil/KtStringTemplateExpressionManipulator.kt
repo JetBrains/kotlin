@@ -22,15 +22,15 @@ import com.intellij.psi.AbstractElementManipulator
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
-public class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
+class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
     override fun handleContentChange(element: KtStringTemplateExpression, range: TextRange, newContent: String): KtStringTemplateExpression? {
-        val node = element.getNode()
+        val node = element.node
         val content = if (element.isSingleQuoted()) StringUtil.escapeStringCharacters(newContent) else newContent
-        val oldText = node.getText()
-        val newText = oldText.substring(0, range.getStartOffset()) + content + oldText.substring(range.getEndOffset())
-        val expression = KtPsiFactory(element.getProject()).createExpression(newText)
-        node.replaceAllChildrenToChildrenOf(expression.getNode())
-        return node.getPsi(javaClass())
+        val oldText = node.text
+        val newText = oldText.substring(0, range.startOffset) + content + oldText.substring(range.endOffset)
+        val expression = KtPsiFactory(element.project).createExpression(newText)
+        node.replaceAllChildrenToChildrenOf(expression.node)
+        return node.getPsi(KtStringTemplateExpression::class.java)
     }
 
     override fun getRangeInElement(element: KtStringTemplateExpression): TextRange {

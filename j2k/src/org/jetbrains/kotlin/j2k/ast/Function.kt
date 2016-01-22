@@ -42,7 +42,7 @@ class Function(
     override val parameterList: ParameterList
         get() = super.parameterList!!
 
-    protected override fun presentationModifiers(): Modifiers {
+    override fun presentationModifiers(): Modifiers {
         var modifiers = this.modifiers
         if (isInInterface) {
             modifiers = modifiers.without(Modifier.ABSTRACT)

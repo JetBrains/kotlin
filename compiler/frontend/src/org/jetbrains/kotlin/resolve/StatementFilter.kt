@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
-public open class StatementFilter {
+open class StatementFilter {
 
-    public open val filter: ((KtExpression) -> Boolean)?
+    open val filter: ((KtExpression) -> Boolean)?
         get() = null
 
     companion object {
-        public val NONE: StatementFilter = StatementFilter()
+        @JvmField val NONE: StatementFilter = StatementFilter()
     }
 }
 

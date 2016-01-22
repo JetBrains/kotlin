@@ -52,10 +52,10 @@ fun generate(): String {
 
     val builtIns = TargetPlatform.Default.builtIns
     @Suppress("UNCHECKED_CAST")
-    val allPrimitiveTypes = builtIns.getBuiltInsPackageScope().getContributedDescriptors()
-            .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.getDefaultType()) } as List<ClassDescriptor>
+    val allPrimitiveTypes = builtIns.builtInsPackageScope.getContributedDescriptors()
+            .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.defaultType) } as List<ClassDescriptor>
 
-    for (descriptor in allPrimitiveTypes + builtIns.getString()) {
+    for (descriptor in allPrimitiveTypes + builtIns.string) {
         @Suppress("UNCHECKED_CAST")
         val functions = descriptor.getMemberScope(listOf()).getContributedDescriptors()
                 .filter { it is CallableDescriptor && !EXCLUDED_FUNCTIONS.contains(it.getName().asString()) } as List<CallableDescriptor>
@@ -63,10 +63,10 @@ fun generate(): String {
         for (function in functions) {
             val parametersTypes = function.getParametersTypes()
 
-            when (parametersTypes.size()) {
-                1 -> unaryOperationsMap.add(Triple(function.getName().asString(), parametersTypes, function is FunctionDescriptor))
-                2 -> binaryOperationsMap.add(function.getName().asString() to parametersTypes)
-                else -> throw IllegalStateException("Couldn't add following method from builtins to operations map: ${function.getName()} in class ${descriptor.getName()}")
+            when (parametersTypes.size) {
+                1 -> unaryOperationsMap.add(Triple(function.name.asString(), parametersTypes, function is FunctionDescriptor))
+                2 -> binaryOperationsMap.add(function.name.asString() to parametersTypes)
+                else -> throw IllegalStateException("Couldn't add following method from builtins to operations map: ${function.name} in class ${descriptor.name}")
             }
         }
     }
@@ -162,11 +162,11 @@ private fun KotlinType.isIntegerType(): Boolean {
 
 
 private fun CallableDescriptor.getParametersTypes(): List<KotlinType> {
-    val list = arrayListOf((getContainingDeclaration() as ClassDescriptor).getDefaultType())
-    getValueParameters().map { it.getType() }.forEach {
+    val list = arrayListOf((containingDeclaration as ClassDescriptor).defaultType)
+    valueParameters.map { it.type }.forEach {
         list.add(TypeUtils.makeNotNullable(it))
     }
     return list
 }
 
-private fun KotlinType.asString(): String = getConstructor().getDeclarationDescriptor()!!.getName().asString().toUpperCase()
+private fun KotlinType.asString(): String = constructor.declarationDescriptor!!.name.asString().toUpperCase()

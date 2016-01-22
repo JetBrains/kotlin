@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.editor.Document
 
-val PsiElement.range: TextRange get() = getTextRange()!!
-val TextRange.start: Int get() = getStartOffset()
-val TextRange.end: Int get() = getEndOffset()
+val PsiElement.range: TextRange get() = textRange!!
+val TextRange.start: Int get() = startOffset
+val TextRange.end: Int get() = endOffset
 
 fun PsiElement.startLine(doc: Document): Int = doc.getLineNumber(range.start)
-fun PsiElement?.isWithCaret(caret: Int) = this?.getTextRange()?.contains(caret) == true
+fun PsiElement?.isWithCaret(caret: Int) = this?.textRange?.contains(caret) == true

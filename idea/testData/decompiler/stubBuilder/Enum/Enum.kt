@@ -8,6 +8,9 @@ enum class Enum {
     open fun f() = 3
 
     companion object {
+        @Ann
         val c: Int = 1
     }
 }
+
+annotation class Ann

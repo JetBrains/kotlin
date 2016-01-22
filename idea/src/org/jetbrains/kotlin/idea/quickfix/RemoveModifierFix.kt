@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.Variance
 
-public class RemoveModifierFix(
+class RemoveModifierFix(
         element: KtModifierListOwner,
         private val modifier: KtModifierKeywordToken,
         private val isRedundant: Boolean
@@ -59,7 +59,7 @@ public class RemoveModifierFix(
         invoke()
     }
 
-    public fun invoke() {
+    fun invoke() {
         //TODO: without this copy&replace we get bad formatting on removing last modifier
         val newElement = element.copy() as KtModifierListOwner
         newElement.removeModifier(modifier)
@@ -67,16 +67,16 @@ public class RemoveModifierFix(
     }
 
     companion object {
-        public fun createRemoveModifierFromListOwnerFactory(modifier: KtModifierKeywordToken, isRedundant: Boolean = false): KotlinSingleIntentionActionFactory {
+        fun createRemoveModifierFromListOwnerFactory(modifier: KtModifierKeywordToken, isRedundant: Boolean = false): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
-                    val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtModifierListOwner>()) ?: return null
+                    val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, KtModifierListOwner::class.java) ?: return null
                     return RemoveModifierFix(modifierListOwner, modifier, isRedundant)
                 }
             }
         }
 
-        public fun createRemoveModifierFactory(isRedundant: Boolean = false): KotlinSingleIntentionActionFactory {
+        fun createRemoveModifierFactory(isRedundant: Boolean = false): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
                     val psiElement = diagnostic.psiElement
@@ -87,7 +87,7 @@ public class RemoveModifierFix(
             }
         }
 
-        public fun createRemoveProjectionFactory(isRedundant: Boolean): KotlinSingleIntentionActionFactory {
+        fun createRemoveProjectionFactory(isRedundant: Boolean): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
                     val projection = diagnostic.psiElement as KtTypeProjection
@@ -97,7 +97,7 @@ public class RemoveModifierFix(
             }
         }
 
-        public fun createRemoveVarianceFactory(): KotlinSingleIntentionActionFactory {
+        fun createRemoveVarianceFactory(): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
                     val psiElement = diagnostic.psiElement as KtTypeParameter

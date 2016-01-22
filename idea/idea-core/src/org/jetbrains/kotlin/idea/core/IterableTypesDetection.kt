@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -30,9 +31,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker
+import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
-public class IterableTypesDetection(
+class IterableTypesDetection(
         private val project: Project,
         private val forLoopConventionsChecker: ForLoopConventionsChecker
 ) {
@@ -40,7 +42,7 @@ public class IterableTypesDetection(
         private val iteratorName = Name.identifier("iterator")
     }
 
-    public fun createDetector(scope: LexicalScope): IterableTypesDetector {
+    fun createDetector(scope: LexicalScope): IterableTypesDetector {
         return Detector(scope)
     }
     private inner class Detector(private val scope: LexicalScope): IterableTypesDetector {
@@ -48,8 +50,8 @@ public class IterableTypesDetection(
 
         private val typesWithExtensionIterator: Collection<KotlinType> = scope
                 .collectFunctions(iteratorName, NoLookupLocation.FROM_IDE)
-                .mapNotNull { it.extensionReceiverParameter }
-                .map { it.type }
+                .filter { it.isValidOperator() }
+                .mapNotNull { it.extensionReceiverParameter?.type }
 
         override fun isIterable(type: FuzzyType, loopVarType: KotlinType?): Boolean {
             val elementType = elementType(type) ?: return false
@@ -79,15 +81,18 @@ public class IterableTypesDetection(
 
         private fun canBeIterable(type: FuzzyType): Boolean {
             return type.type.memberScope.getContributedFunctions(iteratorName, NoLookupLocation.FROM_IDE).isNotEmpty() ||
-                   typesWithExtensionIterator.any { type.checkIsSubtypeOf(it) != null }
+                   typesWithExtensionIterator.any {
+                       val freeParams = it.arguments.mapNotNull { it.type.constructor.declarationDescriptor as? TypeParameterDescriptor }
+                       type.checkIsSubtypeOf(FuzzyType(it, freeParams)) != null
+                   }
         }
     }
 }
 
-public interface IterableTypesDetector {
-    public fun isIterable(type: KotlinType, loopVarType: KotlinType? = null): Boolean
+interface IterableTypesDetector {
+    fun isIterable(type: KotlinType, loopVarType: KotlinType? = null): Boolean
 
-    public fun isIterable(type: FuzzyType, loopVarType: KotlinType? = null): Boolean
+    fun isIterable(type: FuzzyType, loopVarType: KotlinType? = null): Boolean
 
-    public fun elementType(type: KotlinType): FuzzyType?
+    fun elementType(type: KotlinType): FuzzyType?
 }

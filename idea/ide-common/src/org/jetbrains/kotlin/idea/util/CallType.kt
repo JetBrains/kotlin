@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
-public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: DescriptorKindFilter) {
+sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: DescriptorKindFilter) {
     object UNKNOWN : CallType<Nothing?>(DescriptorKindFilter.ALL)
 
     object DEFAULT : CallType<Nothing?>(DescriptorKindFilter.ALL)
@@ -62,7 +62,7 @@ public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: D
 
     object TYPE : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry)
 
-    object DELEGATE : CallType<KtExpression?>(DescriptorKindFilter.FUNCTIONS)
+    object DELEGATE : CallType<KtExpression?>(DescriptorKindFilter.FUNCTIONS exclude NonOperatorExclude)
 
     object ANNOTATION : CallType<KtExpression?>(DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude)
 
@@ -93,7 +93,7 @@ public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: D
     private object NonAnnotationClassifierExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor !is ClassifierDescriptor) return false
-            return descriptor !is ClassDescriptor || descriptor.getKind() != ClassKind.ANNOTATION_CLASS
+            return descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS
         }
 
         override val fullyExcludedDescriptorKinds: Int get() = 0
@@ -108,7 +108,7 @@ public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: D
     }
 }
 
-public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : CallType<TReceiver>>(
+sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : CallType<TReceiver>>(
         val callType: TCallType,
         val receiver: TReceiver
 ) {
@@ -127,7 +127,7 @@ public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : Call
     class ANNOTATION(receiver: KtExpression?) : CallTypeAndReceiver<KtExpression?, CallType.ANNOTATION>(CallType.ANNOTATION, receiver)
 
     companion object {
-        public fun detect(expression: KtSimpleNameExpression): CallTypeAndReceiver<*, *> {
+        fun detect(expression: KtSimpleNameExpression): CallTypeAndReceiver<*, *> {
             val parent = expression.parent
             if (parent is KtCallableReferenceExpression) {
                 return CallTypeAndReceiver.CALLABLE_REFERENCE(parent.typeReference)
@@ -205,7 +205,7 @@ public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : Call
     }
 }
 
-public fun CallTypeAndReceiver<*, *>.receiverTypes(
+fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
         contextElement: PsiElement,
         moduleDescriptor: ModuleDescriptor,

@@ -29,19 +29,19 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtParameter>(javaClass(), "Convert parameter to receiver") {
+class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtParameter>(KtParameter::class.java, "Convert parameter to receiver") {
     override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
-        val identifier = element.getNameIdentifier() ?: return false
-        if (!identifier.getTextRange().containsOffset(caretOffset)) return false
-        if (element.isVarArg()) return false
+        val identifier = element.nameIdentifier ?: return false
+        if (!identifier.textRange.containsOffset(caretOffset)) return false
+        if (element.isVarArg) return false
         val function = element.getStrictParentOfType<KtNamedFunction>() ?: return false
-        return function.getValueParameterList() == element.getParent() && function.getReceiverTypeReference() == null
+        return function.valueParameterList == element.parent && function.receiverTypeReference == null
     }
 
     private fun configureChangeSignature(parameterIndex: Int): KotlinChangeSignatureConfiguration {
         return object : KotlinChangeSignatureConfiguration {
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                return originalDescriptor.modify { it.receiver = originalDescriptor.getParameters()[parameterIndex] }
+                return originalDescriptor.modify { it.receiver = originalDescriptor.parameters[parameterIndex] }
             }
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
@@ -50,11 +50,11 @@ public class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtPara
 
     override fun startInWriteAction() = false
 
-    override fun applyTo(element: KtParameter, editor: Editor) {
+    override fun applyTo(element: KtParameter, editor: Editor?) {
         val function = element.getStrictParentOfType<KtNamedFunction>() ?: return
-        val parameterIndex = function.getValueParameters().indexOf(element)
+        val parameterIndex = function.valueParameters.indexOf(element)
         val context = function.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
-        runChangeSignature(element.project, descriptor, configureChangeSignature(parameterIndex), element, getText())
+        runChangeSignature(element.project, descriptor, configureChangeSignature(parameterIndex), element, text)
     }
 }

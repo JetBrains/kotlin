@@ -9,7 +9,7 @@ fun box(): String {
         a as Array<String>
     }
     catch (e: TypeCastException) {
-        if (e.getMessage() != "null cannot be cast to non-null type kotlin.Array<kotlin.String>") {
+        if (e.message != "null cannot be cast to non-null type kotlin.Array<kotlin.String>") {
             return "Fail 1: $e"
         }
     }
@@ -19,7 +19,7 @@ fun box(): String {
         x as String
     }
     catch (e: TypeCastException) {
-        if (e.getMessage() != "null cannot be cast to non-null type kotlin.String") {
+        if (e.message != "null cannot be cast to non-null type kotlin.String") {
             return "Fail 2: $e"
         }
     }

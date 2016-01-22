@@ -72,13 +72,13 @@ private enum class RenameType {
     BUNDLE_PROPERTY
 }
 
-public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
+abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     inner class TestContext(
             val project: Project = getProject()!!,
             val javaFacade: JavaPsiFacade = getJavaFacade()!!,
             val module: Module = getModule()!!)
 
-    public open fun doTest(path : String) {
+    open fun doTest(path : String) {
         val fileText = FileUtil.loadFile(File(path), true)
 
         val jsonParser = JsonParser()
@@ -112,7 +112,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 Assert.fail("""Hint "$hintDirective" was expected""")
             }
 
-            if (renameObject["checkErrorsAfter"]?.getAsBoolean() ?: false) {
+            if (renameObject["checkErrorsAfter"]?.asBoolean ?: false) {
                 val psiManager = PsiManager.getInstance(myProject)
                 val visitor = object : VirtualFileVisitor<Any>() {
                     override fun visitFile(file: VirtualFile): Boolean {
@@ -121,7 +121,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                     }
                 }
 
-                for (sourceRoot in ModuleRootManager.getInstance(myModule).getSourceRoots()) {
+                for (sourceRoot in ModuleRootManager.getInstance(myModule).sourceRoots) {
                     VfsUtilCore.visitChildrenRecursively(sourceRoot, visitor)
                 }
             }
@@ -129,7 +129,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         catch (e : Exception) {
             if (e !is RefactoringErrorHintException && e !is ConflictsInTestsException) throw e
 
-            val hintExceptionUnquoted = StringUtil.unquoteString(e.getMessage()!!)
+            val hintExceptionUnquoted = StringUtil.unquoteString(e.message!!)
             if (hintDirective != null) {
                 Assert.assertEquals(hintDirective, hintExceptionUnquoted)
             }
@@ -148,16 +148,16 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)!!
 
             val MARKER_TEXT = "/*rename*/"
-            val marker = psiFile.getText().indexOf(MARKER_TEXT)
+            val marker = psiFile.text.indexOf(MARKER_TEXT)
             assert(marker != -1)
 
-            val toRename = if (renameParamsObject["byRef"]?.getAsBoolean() ?: false) {
+            val toRename = if (renameParamsObject["byRef"]?.asBoolean ?: false) {
                 val editor = createEditor(mainFile)
-                editor.getCaretModel().moveToOffset(marker + MARKER_TEXT.length())
-                TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted())!!
+                editor.caretModel.moveToOffset(marker + MARKER_TEXT.length)
+                TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().allAccepted)!!
             }
             else {
-                psiFile.findElementAt(marker + MARKER_TEXT.length())!!.getNonStrictParentOfType<PsiNamedElement>()!!
+                psiFile.findElementAt(marker + MARKER_TEXT.length)!!.getNonStrictParentOfType<PsiNamedElement>()!!
             }
             val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
 
@@ -185,7 +185,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         doTestCommittingDocuments { rootDir, rootAfter ->
             val aClass = context.javaFacade.findClass(classFQN, GlobalSearchScope.moduleScope(context.module))!!
 
-            val methodText = context.javaFacade.getElementFactory().createMethodFromText(methodSignature + "{}", null)
+            val methodText = context.javaFacade.elementFactory.createMethodFromText(methodSignature + "{}", null)
             val method = aClass.findMethodBySignature(methodText, false)
 
             if (method == null) throw IllegalStateException("Method with signature '$methodSignature' wasn't found in class $classFQN")
@@ -225,10 +225,10 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
             val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as KtFile
 
-            val fileFqn = jetFile.getPackageFqName()
+            val fileFqn = jetFile.packageFqName
             Assert.assertTrue("File '${mainFilePath}' should have package containing ${fqn}", fileFqn.isSubpackageOf(fqn))
 
-            val packageSegment = jetFile.getPackageDirective()!!.getPackageNames()[fqn.pathSegments().size() - 1]
+            val packageSegment = jetFile.packageDirective!!.packageNames[fqn.pathSegments().size - 1]
             val segmentReference = packageSegment.mainReference
 
             val psiElement = segmentReference.resolve()!!
@@ -321,16 +321,16 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         super.doTest(MultiFileTestCase.PerformAction { rootDir, rootAfter ->
             action(rootDir, rootAfter)
 
-            PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
+            PsiDocumentManager.getInstance(project!!).commitAllDocuments()
             FileDocumentManager.getInstance().saveAllDocuments()
         }, getTestDirName(true))
     }
 
-    protected override fun getTestRoot() : String {
+    override fun getTestRoot() : String {
         return "/refactoring/rename/"
     }
 
-    protected override fun getTestDataPath() : String {
+    override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase()
     }
 }

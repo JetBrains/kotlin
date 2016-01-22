@@ -27,7 +27,7 @@ import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassFqName
-import org.jetbrains.kotlin.idea.core.refactoring.toVirtualFile
+import org.jetbrains.kotlin.idea.refactoring.toVirtualFile
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
@@ -41,7 +41,7 @@ import java.net.URLClassLoader
 private var MOCK_LIBRARY_JAR: File? = null
 private val MOCK_LIBRARY_SOURCES = PluginTestCaseBase.getTestDataPathBase() + "/debugger/mockLibraryForExceptionFilter"
 
-public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
+abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
     override fun getTestDataPath() = ""
 
     protected fun doTest(path: String) {
@@ -58,7 +58,7 @@ public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCa
         val classLoader: URLClassLoader
         if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_MOCK_LIBRARY: ") ?: false) {
             if (MOCK_LIBRARY_JAR == null) {
-                MOCK_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(MOCK_LIBRARY_SOURCES, "mockLibrary", true)
+                MOCK_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(MOCK_LIBRARY_SOURCES, "mockLibrary", true, false)
             }
 
             val mockLibraryJar = MOCK_LIBRARY_JAR ?: throw AssertionError("Mock library JAR is null")

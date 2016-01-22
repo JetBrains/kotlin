@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 
-public class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtNamedFunction) return
-        if (psiElement.getBodyExpression() != null|| psiElement.getEqualsToken() != null) return
+        if (psiElement.bodyExpression != null || psiElement.equalsToken != null) return
 
         val parentDeclaration = psiElement.getStrictParentOfType<KtDeclaration>()
         if (parentDeclaration is KtClassOrObject) {
@@ -40,7 +40,7 @@ public class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.
             }
         }
 
-        val doc = editor.getDocument()
+        val doc = editor.document
         var endOffset = psiElement.range.end
 
         if (psiElement.getText()?.last() == ';') {

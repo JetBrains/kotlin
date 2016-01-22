@@ -11,7 +11,7 @@ class IOStreamsTest {
         var writer: Writer? = null
         try {
             writer = tmpFile.outputStream().writer()
-            writer!!.write("Hello, World!")
+            writer.write("Hello, World!")
         } finally {
             writer?.close()
         }
@@ -19,7 +19,7 @@ class IOStreamsTest {
         var reader: BufferedReader? = null
         try {
             reader = tmpFile.inputStream().reader().buffered()
-            act = reader!!.readLine()
+            act = reader.readLine()
         } finally {
             reader?.close()
         }

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 
-public class SubroutineEnterInstruction(
-        public val subroutine: KtElement,
+class SubroutineEnterInstruction(
+        val subroutine: KtElement,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(subroutine, lexicalScope) {
     override fun accept(visitor: InstructionVisitor) {

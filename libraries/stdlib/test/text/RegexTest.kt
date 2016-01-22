@@ -69,28 +69,62 @@ class RegexTest {
 
         val matches = pattern.findAll(input).toList()
         assertTrue(matches.all { it.groups.size == 3 })
-        val m1 = matches[0]
-        assertEquals("1a", m1.groups[0]?.value)
-        assertEquals("1", m1.groups[1]?.value)
-        assertEquals("a", m1.groups[2]?.value)
 
-        val m2 = matches[1]
-        assertEquals("2", m2.groups[1]?.value)
-        assertEquals("b", m2.groups[2]?.value)
+        matches[0].let { m ->
+            assertEquals("1a", m.groups[0]?.value)
+            assertEquals("1", m.groups[1]?.value)
+            assertEquals("a", m.groups[2]?.value)
+
+            assertEquals(listOf("1a", "1", "a"), m.groupValues)
+
+            val (g1, g2) = m.destructured
+            assertEquals("1", g1)
+            assertEquals("a", g2)
+            assertEquals(listOf("1", "a"), m.destructured.toList())
+        }
+
+        matches[1].let { m ->
+            assertEquals("2b", m.groups[0]?.value)
+            assertEquals("2", m.groups[1]?.value)
+            assertEquals("b", m.groups[2]?.value)
+
+            assertEquals(listOf("2b", "2", "b"), m.groupValues)
+
+            val (g1, g2) = m.destructured
+            assertEquals("2", g1)
+            assertEquals("b", g2)
+            assertEquals(listOf("2", "b"), m.destructured.toList())
+        }
     }
 
     @test fun matchOptionalGroup() {
         val pattern = "(hi)|(bye)".toRegex(RegexOption.IGNORE_CASE)
 
-        val m1 = pattern.find("Hi!")!!
-        assertEquals(3, m1.groups.size)
-        assertEquals("Hi", m1.groups[1]?.value)
-        assertEquals(null, m1.groups[2])
+        pattern.find("Hi!")!!.let { m ->
+            assertEquals(3, m.groups.size)
+            assertEquals("Hi", m.groups[1]?.value)
+            assertEquals(null, m.groups[2])
 
-        val m2 = pattern.find("bye...")!!
-        assertEquals(3, m2.groups.size)
-        assertEquals(null, m2.groups[1])
-        assertEquals("bye", m2.groups[2]?.value)
+            assertEquals(listOf("Hi", "Hi", ""), m.groupValues)
+
+            val (g1, g2) = m.destructured
+            assertEquals("Hi", g1)
+            assertEquals("", g2)
+            assertEquals(listOf("Hi", ""), m.destructured.toList())
+        }
+
+        pattern.find("bye...")!!.let { m ->
+            assertEquals(3, m.groups.size)
+            assertEquals(null, m.groups[1])
+            assertEquals("bye", m.groups[2]?.value)
+
+            assertEquals(listOf("bye", "", "bye"), m.groupValues)
+
+            val (g1, g2) = m.destructured
+            assertEquals("", g1)
+            assertEquals("bye", g2)
+            assertEquals(listOf("", "bye"), m.destructured.toList())
+        }
     }
 
     @test fun matchMultiline() {

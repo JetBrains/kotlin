@@ -22,47 +22,44 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-public class KotlinParameterInfo @JvmOverloads constructor (
+class KotlinParameterInfo @JvmOverloads constructor (
         val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
-        type: KotlinType? = null,
+        val originalTypeInfo: KotlinTypeInfo = KotlinTypeInfo(false),
         var defaultValueForParameter: KtExpression? = null,
         var defaultValueForCall: KtExpression? = null,
         var valOrVar: KotlinValVar = KotlinValVar.None,
         val modifierList: KtModifierList? = null
 ): ParameterInfo {
-    val originalType: KotlinType? = type
-    var currentTypeText: String = getOldTypeText()
+    var currentTypeInfo: KotlinTypeInfo = originalTypeInfo
 
-    public val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
+    val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
 
     init {
-        val file = defaultValueForCall?.getContainingFile() as? KtFile
+        val file = defaultValueForCall?.containingFile as? KtFile
         defaultValueParameterReferences =
-                if (defaultValueForCall != null && file != null && (file.isPhysical() || file.analysisContext != null)) {
-                    val project = file.getProject()
+                if (defaultValueForCall != null && file != null && (file.isPhysical || file.analysisContext != null)) {
+                    val project = file.project
                     val map = LinkedHashMap<PsiReference, DeclarationDescriptor>()
 
                     defaultValueForCall!!.accept(
                             object : KtTreeVisitorVoid() {
                                 private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
                                     return if (parameter is ValueParameterDescriptor &&
-                                               compareDescriptors(project, parameter.getContainingDeclaration(), callableDescriptor)) {
+                                               compareDescriptors(project, parameter.containingDeclaration, callableDescriptor)) {
                                         parameter
                                     } else null
                                 }
@@ -70,12 +67,12 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                                 private fun selfReceiverOrNull(receiverDescriptor: DeclarationDescriptor?): DeclarationDescriptor? {
                                     if (compareDescriptors(project,
                                                            receiverDescriptor,
-                                                           callableDescriptor.getExtensionReceiverParameter()?.getContainingDeclaration())) {
+                                                           callableDescriptor.extensionReceiverParameter?.containingDeclaration)) {
                                         return receiverDescriptor
                                     }
                                     if (compareDescriptors(project,
                                                            receiverDescriptor,
-                                                           callableDescriptor.getDispatchReceiverParameter()?.getContainingDeclaration())) {
+                                                           callableDescriptor.dispatchReceiverParameter?.containingDeclaration)) {
                                         return receiverDescriptor
                                     }
                                     return null
@@ -100,12 +97,12 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                                     }
 
                                     val resolvedCall = expression.getResolvedCall(context) ?: return null
-                                    (resolvedCall.getResultingDescriptor() as? ReceiverParameterDescriptor)?.let {
-                                        return if (selfReceiverOrNull(it.getContainingDeclaration()) != null) it else null
+                                    (resolvedCall.resultingDescriptor as? ReceiverParameterDescriptor)?.let {
+                                        return if (selfReceiverOrNull(it.containingDeclaration) != null) it else null
                                     }
 
-                                    selfReceiverOrNull(resolvedCall.getExtensionReceiver() as? ImplicitReceiver)?.let { return it }
-                                    selfReceiverOrNull(resolvedCall.getDispatchReceiver() as? ImplicitReceiver)?.let { return it }
+                                    selfReceiverOrNull(resolvedCall.extensionReceiver as? ImplicitReceiver)?.let { return it }
+                                    selfReceiverOrNull(resolvedCall.dispatchReceiver as? ImplicitReceiver)?.let { return it }
 
                                     return null
                                 }
@@ -125,11 +122,9 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                 }
     }
 
-    private fun getOldTypeText() = originalType?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""
-
     override fun getOldIndex(): Int = originalIndex
 
-    public val isNewParameter: Boolean
+    val isNewParameter: Boolean
         get() = originalIndex == -1
 
     override fun getDefaultValue(): String? = null
@@ -140,9 +135,9 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         this.name = name ?: ""
     }
 
-    override fun getTypeText(): String = currentTypeText
+    override fun getTypeText(): String = currentTypeInfo.render()
 
-    public val isTypeChanged: Boolean get() = getOldTypeText() != currentTypeText
+    val isTypeChanged: Boolean get() = !currentTypeInfo.isEquivalentTo(originalTypeInfo)
 
     override fun isUseAnySingleVariable(): Boolean = false
 
@@ -150,27 +145,29 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         throw UnsupportedOperationException()
     }
 
-    public fun renderType(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
-        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return currentTypeText
-        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return currentTypeText
-        val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
-        return parameterType.renderTypeWithSubstitution(typeSubstitutor, currentTypeText, true)
+    fun renderType(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+        val defaultRendering = currentTypeInfo.render()
+        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
+        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
+        val parameterType = currentBaseFunction.valueParameters[parameterIndex].type
+        if (parameterType.isError) return defaultRendering
+        return parameterType.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, true)
     }
 
-    public fun getInheritedName(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    fun getInheritedName(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         if (!inheritedCallable.isInherited) return name
 
         val baseFunction = inheritedCallable.baseFunction
         val baseFunctionDescriptor = baseFunction.originalCallableDescriptor
 
         val inheritedFunctionDescriptor = inheritedCallable.originalCallableDescriptor
-        val inheritedParameterDescriptors = inheritedFunctionDescriptor.getValueParameters()
+        val inheritedParameterDescriptors = inheritedFunctionDescriptor.valueParameters
         if (originalIndex < 0
-            || originalIndex >= baseFunctionDescriptor.getValueParameters().size()
-            || originalIndex >= inheritedParameterDescriptors.size()) return name
+            || originalIndex >= baseFunctionDescriptor.valueParameters.size
+            || originalIndex >= inheritedParameterDescriptors.size) return name
 
-        val inheritedParamName = inheritedParameterDescriptors.get(originalIndex).getName().asString()
-        val oldParamName = baseFunctionDescriptor.getValueParameters().get(originalIndex).getName().asString()
+        val inheritedParamName = inheritedParameterDescriptors[originalIndex].name.asString()
+        val oldParamName = baseFunctionDescriptor.valueParameters[originalIndex].name.asString()
 
         return when {
             oldParamName == inheritedParamName && inheritedFunctionDescriptor !is AnonymousFunctionDescriptor -> name
@@ -178,22 +175,22 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         }
     }
 
-    public fun requiresExplicitType(inheritedCallable: KotlinCallableDefinitionUsage<*>): Boolean {
+    fun requiresExplicitType(inheritedCallable: KotlinCallableDefinitionUsage<*>): Boolean {
         val inheritedFunctionDescriptor = inheritedCallable.originalCallableDescriptor
         if (inheritedFunctionDescriptor !is AnonymousFunctionDescriptor) return true
 
         if (originalIndex < 0) return !inheritedCallable.hasExpectedType
 
-        val inheritedParameterDescriptor = inheritedFunctionDescriptor.getValueParameters().get(originalIndex)
+        val inheritedParameterDescriptor = inheritedFunctionDescriptor.valueParameters[originalIndex]
         val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? KtParameter ?: return false
-        return parameter.getTypeReference() != null
+        return parameter.typeReference != null
     }
 
-    public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val buffer = StringBuilder()
 
         if (modifierList != null) {
-            buffer.append(modifierList.getText()).append(' ')
+            buffer.append(modifierList.text).append(' ')
         }
 
         if (valOrVar != KotlinValVar.None) {
@@ -207,7 +204,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         }
 
         if (!inheritedCallable.isInherited) {
-            defaultValueForParameter?.let { buffer.append(" = ").append(it.getText()) }
+            defaultValueForParameter?.let { buffer.append(" = ").append(it.text) }
         }
 
         return buffer.toString()

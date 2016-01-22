@@ -1,5 +1,5 @@
 class A(s: String) {
-    val v = s.<caret>length()
+    val v = s.<caret>length
 }
 
 // EXIST: hashCode

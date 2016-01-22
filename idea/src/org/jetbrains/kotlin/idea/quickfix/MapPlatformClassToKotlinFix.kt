@@ -149,8 +149,7 @@ class MapPlatformClassToKotlinFix(
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtReferenceExpression, Companion.Data>() {
-        data class Data(val element: KtReferenceExpression,
-                        val platformClass: ClassDescriptor,
+        data class Data(val platformClass: ClassDescriptor,
                         val possibleClasses: Collection<ClassDescriptor>)
 
         override fun getElementOfInterest(diagnostic: Diagnostic): KtReferenceExpression?
@@ -160,11 +159,11 @@ class MapPlatformClassToKotlinFix(
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val platformClass = resolveToClass(element, context) ?: return null
             val possibleClasses = Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN.cast(diagnostic).a
-            return Data(element, platformClass, possibleClasses)
+            return Data(platformClass, possibleClasses)
         }
 
-        override fun createFix(data: Data): IntentionAction? {
-            return MapPlatformClassToKotlinFix(data.element, data.platformClass, data.possibleClasses)
+        override fun createFix(originalElement: KtReferenceExpression, data: Data): IntentionAction? {
+            return MapPlatformClassToKotlinFix(originalElement, data.platformClass, data.possibleClasses)
         }
 
         private fun resolveToClass(referenceExpression: KtReferenceExpression, context: BindingContext): ClassDescriptor? {

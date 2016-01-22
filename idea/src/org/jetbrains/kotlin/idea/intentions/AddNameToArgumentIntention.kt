@@ -24,24 +24,23 @@ import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddNameToArgumentIntention
-  : SelfTargetingIntention<KtValueArgument>(javaClass(), "Add name to argument"), LowPriorityAction {
+class AddNameToArgumentIntention
+  : SelfTargetingIntention<KtValueArgument>(KtValueArgument::class.java, "Add name to argument"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
         val name = detectNameToAdd(element) ?: return false
 
-        setText("Add '$name =' to argument")
+        text = "Add '$name =' to argument"
 
         if (expression is KtLambdaExpression) {
-            val range = expression.getTextRange()
+            val range = expression.textRange
             return caretOffset == range.start || caretOffset == range.end
         }
 
@@ -51,7 +50,7 @@ public class AddNameToArgumentIntention
     override fun allowCaretInsideElement(element: PsiElement)
             = element !is KtValueArgumentList && element !is KtContainerNode
 
-    override fun applyTo(element: KtValueArgument, editor: Editor) {
+    override fun applyTo(element: KtValueArgument, editor: Editor?) {
         val name = detectNameToAdd(element)!!
         val newArgument = KtPsiFactory(element).createArgument(element.getArgumentExpression()!!, name, element.getSpreadElement() != null)
         element.replace(newArgument)
@@ -61,21 +60,21 @@ public class AddNameToArgumentIntention
         if (argument.isNamed()) return null
         if (argument is KtLambdaArgument) return null
 
-        val argumentList = argument.getParent() as? KtValueArgumentList ?: return null
+        val argumentList = argument.parent as? KtValueArgumentList ?: return null
         if (argument != argumentList.arguments.last { !it.isNamed() }) return null
 
-        val callExpr = argumentList.getParent() as? KtExpression ?: return null
+        val callExpr = argumentList.parent as? KtCallElement ?: return null
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze(BodyResolveMode.PARTIAL)) ?: return null
         val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return null
         if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return null
 
-        if (!resolvedCall.getResultingDescriptor().hasStableParameterNames()) return null
+        if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
 
         if (argumentMatch.valueParameter.varargElementType != null) {
-            val varargArgument = resolvedCall.getValueArguments()[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
-            if (varargArgument.getArguments().size() != 1) return null
+            val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
+            if (varargArgument.arguments.size != 1) return null
         }
 
-        return argumentMatch.valueParameter.getName()
+        return argumentMatch.valueParameter.name
     }
 }

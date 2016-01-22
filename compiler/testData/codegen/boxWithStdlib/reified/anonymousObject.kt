@@ -7,7 +7,7 @@ abstract class A {
 inline fun<reified T : Any> foo(): A {
     return object : A() {
         override fun f(): String {
-            return javaClass<T>().getName()
+            return T::class.java.getName()
         }
     }
 }

@@ -1,5 +1,5 @@
 package
 
 package n {
-    public fun bar(): kotlin.Iterator<kotlin.Int>?
+    public fun bar(): kotlin.collections.Iterator<kotlin.Int>?
 }

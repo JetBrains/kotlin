@@ -8,7 +8,7 @@ type: Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>
     typeProjection: List<Int?>
     psi: val foo = getT<Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>>()
     type: List<Int?>
-        typeParameter: <out E> defined in kotlin.List
+        typeParameter: <out E> defined in kotlin.collections.List
         typeProjection: Int?
         psi: val foo = getT<Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>>()
         type: Int?
@@ -21,7 +21,7 @@ type: Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>
         typeProjection: List<Int?>?
         psi: val foo = getT<Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>>()
         type: List<Int?>?
-            typeParameter: <out E> defined in kotlin.List
+            typeParameter: <out E> defined in kotlin.collections.List
             typeProjection: Int?
             psi: val foo = getT<Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>>()
             type: Int?
@@ -30,7 +30,7 @@ type: Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>
         typeProjection: List<Int>?
         psi: val foo = getT<Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>>()
         type: List<Int>?
-            typeParameter: <out E> defined in kotlin.List
+            typeParameter: <out E> defined in kotlin.collections.List
             typeProjection: Int
             psi: val foo = getT<Pair<List<Int?>, Pair<List<Int?>?, List<Int>?>>>()
             type: Int

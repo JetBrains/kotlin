@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
-public class ClassDeserializer(private val components: DeserializationComponents) {
+class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
             components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }
 
     // Additional ClassDataWithSource parameter is needed to avoid calling ClassDataFinder#findClassData()
     // if it is already computed at the call site
-    public fun deserializeClass(classId: ClassId, classDataWithSource: ClassDataWithSource? = null): ClassDescriptor? =
+    fun deserializeClass(classId: ClassId, classDataWithSource: ClassDataWithSource? = null): ClassDescriptor? =
             classes(ClassKey(classId, classDataWithSource))
 
     private fun createClass(key: ClassKey): ClassDescriptor? {
@@ -48,7 +48,7 @@ public class ClassDeserializer(private val components: DeserializationComponents
         }
         else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
-            assert(fragments.size() == 1) { "There should be exactly one package: $fragments, class id is $classId" }
+            assert(fragments.size == 1) { "There should be exactly one package: $fragments, class id is $classId" }
 
             val fragment = fragments.single()
             if (fragment is DeserializedPackageFragment) {
@@ -56,7 +56,7 @@ public class ClassDeserializer(private val components: DeserializationComponents
                 if (!fragment.hasTopLevelClass(classId.shortClassName)) return null
             }
 
-            components.createContext(fragment, nameResolver, TypeTable(classProto.typeTable))
+            components.createContext(fragment, nameResolver, TypeTable(classProto.typeTable), packagePartSource = null)
         }
 
         return DeserializedClassDescriptor(outerContext, classProto, nameResolver, sourceElement)

@@ -25,8 +25,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -34,8 +34,8 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class IntentionBasedInspection<TElement : KtElement>(
-        public val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
+abstract class IntentionBasedInspection<TElement : KtElement>(
+        val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
         protected val problemText: String?,
         protected val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
@@ -43,7 +43,7 @@ public abstract class IntentionBasedInspection<TElement : KtElement>(
     constructor(intention: SelfTargetingRangeIntention<TElement>, additionalChecker: (TElement) -> Boolean = { true })
     : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
 
-    public data class IntentionData<TElement : KtElement>(
+    data class IntentionData<TElement : KtElement>(
             val intention: SelfTargetingRangeIntention<TElement>,
             val additionalChecker: (TElement) -> Boolean = { true }
     )
@@ -51,7 +51,7 @@ public abstract class IntentionBasedInspection<TElement : KtElement>(
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
-                if (!elementType.isInstance(element) || element.getTextLength() == 0) return
+                if (!elementType.isInstance(element) || element.textLength == 0) return
 
                 @Suppress("UNCHECKED_CAST")
                 val targetElement = element as TElement
@@ -62,9 +62,9 @@ public abstract class IntentionBasedInspection<TElement : KtElement>(
                 for ((intention, additionalChecker) in intentions) {
                     synchronized(intention) {
                         val range = intention.applicabilityRange(targetElement)?.let { range ->
-                            val elementRange = targetElement.getTextRange()
+                            val elementRange = targetElement.textRange
                             assert(range in elementRange) { "Wrong applicabilityRange() result for $intention - should be within element's range" }
-                            range.shiftRight(-elementRange.getStartOffset())
+                            range.shiftRight(-elementRange.startOffset)
                         }
 
                         if (range != null && additionalChecker(targetElement)) {
@@ -96,7 +96,7 @@ public abstract class IntentionBasedInspection<TElement : KtElement>(
     ) : LocalQuickFixOnPsiElement(targetElement), IntentionAction {
 
         // store text into variable because intention instance is shared and may change its text later
-        override fun getFamilyName() = intention.getFamilyName()
+        override fun getFamilyName() = intention.familyName
 
         override fun getText(): String = text
 
@@ -118,14 +118,13 @@ public abstract class IntentionBasedInspection<TElement : KtElement>(
             assert(startElement == endElement)
             if (!isAvailable(project, file, startElement, endElement)) return
 
-            startElement.getOrCreateEditor()?.let { editor ->
-                editor.getCaretModel().moveToOffset(startElement.getTextOffset())
-                intention.applyTo(startElement as TElement, editor)
-            }
+            val editor = startElement.findExistingEditor()
+            editor?.caretModel?.moveToOffset(startElement.textOffset)
+            intention.applyTo(startElement as TElement, editor)
         }
 
-        private fun PsiElement.getOrCreateEditor(): Editor? {
-            val file = getContainingFile()?.getVirtualFile() ?: return null
+        private fun PsiElement.findExistingEditor(): Editor? {
+            val file = containingFile?.virtualFile ?: return null
             val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
 
             val editorFactory = EditorFactory.getInstance()

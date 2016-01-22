@@ -21,23 +21,23 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
-    public constructor(node: ASTNode) : super(node)
-    public constructor(stub: KotlinPlaceHolderStub<KtSecondaryConstructor>) : super(stub, KtStubElementTypes.SECONDARY_CONSTRUCTOR)
+class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
+    constructor(node: ASTNode) : super(node)
+    constructor(stub: KotlinPlaceHolderStub<KtSecondaryConstructor>) : super(stub, KtStubElementTypes.SECONDARY_CONSTRUCTOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitSecondaryConstructor(this, data)
 
     override fun getContainingClassOrObject() = getParent().getParent() as KtClassOrObject
 
-    override fun getBodyExpression() = findChildByClass(javaClass<KtBlockExpression>())
+    override fun getBodyExpression() = findChildByClass(KtBlockExpression::class.java)
 
     override fun getConstructorKeyword() = notNullChild<PsiElement>(super.getConstructorKeyword())
 
-    public fun getDelegationCall(): KtConstructorDelegationCall = findNotNullChildByClass(javaClass<KtConstructorDelegationCall>())
+    fun getDelegationCall(): KtConstructorDelegationCall = findNotNullChildByClass(KtConstructorDelegationCall::class.java)
 
-    public fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit()
+    fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit()
 
-    public fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall {
+    fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall {
         val psiFactory = KtPsiFactory(getProject())
         val current = getDelegationCall()
 

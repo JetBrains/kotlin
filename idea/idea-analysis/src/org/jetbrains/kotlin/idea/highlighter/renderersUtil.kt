@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.types.ErrorUtils
 private val RED_TEMPLATE = "<font color=red><b>%s</b></font>"
 private val STRONG_TEMPLATE = "<b>%s</b>"
 
-public fun renderStrong(o: Any): String = STRONG_TEMPLATE.format(o)
+fun renderStrong(o: Any): String = STRONG_TEMPLATE.format(o)
 
-public fun renderError(o: Any): String = RED_TEMPLATE.format(o)
+fun renderError(o: Any): String = RED_TEMPLATE.format(o)
 
-public fun renderStrong(o: Any, error: Boolean): String = (if (error) RED_TEMPLATE else STRONG_TEMPLATE).format(o)
+fun renderStrong(o: Any, error: Boolean): String = (if (error) RED_TEMPLATE else STRONG_TEMPLATE).format(o)
 
 private val HTML_FOR_UNINFERRED_TYPE_PARAMS: DescriptorRenderer = DescriptorRenderer.withOptions {
     uninferredTypeParameterAsName = true
@@ -54,7 +54,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
 
     fun renderParameter(parameter: ValueParameterDescriptor): String {
         val varargElementType = parameter.varargElementType
-        val parameterType = varargElementType ?: parameter.getType()
+        val parameterType = varargElementType ?: parameter.type
         val renderedParameter =
                 (if (varargElementType != null) "<b>vararg</b> " else "") +
                 htmlRenderer.renderType(parameterType) +
@@ -66,50 +66,50 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
     }
 
     fun appendTypeParametersSubstitution() {
-        val parametersToArgumentsMap = resolvedCall.getTypeArguments()
+        val parametersToArgumentsMap = resolvedCall.typeArguments
         fun TypeParameterDescriptor.isInferred(): Boolean {
             val typeArgument = parametersToArgumentsMap[this]
             if (typeArgument == null) return false
             return !ErrorUtils.isUninferredParameter(typeArgument)
         }
 
-        val typeParameters = resolvedCall.getCandidateDescriptor().getTypeParameters()
+        val typeParameters = resolvedCall.candidateDescriptor.typeParameters
         val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition { parameter -> parameter.isInferred() }
 
         append("<br/>$indent<i>where</i> ")
         if (!notInferredTypeParameters.isEmpty()) {
-            append(notInferredTypeParameters.map { typeParameter -> renderError(typeParameter.getName()) }.joinToString())
+            append(notInferredTypeParameters.map { typeParameter -> renderError(typeParameter.name) }.joinToString())
             append("<i> cannot be inferred</i>")
             if (!inferredTypeParameters.isEmpty()) {
                 append("; ")
             }
         }
 
-        val typeParameterToTypeArgumentMap = resolvedCall.getTypeArguments()
+        val typeParameterToTypeArgumentMap = resolvedCall.typeArguments
         if (!inferredTypeParameters.isEmpty()) {
             append(inferredTypeParameters.map { typeParameter ->
-                    "${typeParameter.getName()} = ${htmlRenderer.renderType(typeParameterToTypeArgumentMap[typeParameter]!!)}"
+                    "${typeParameter.name} = ${htmlRenderer.renderType(typeParameterToTypeArgumentMap[typeParameter]!!)}"
                 }.joinToString())
         }
     }
 
-    val resultingDescriptor = resolvedCall.getResultingDescriptor()
-    val receiverParameter = resultingDescriptor.getExtensionReceiverParameter()
+    val resultingDescriptor = resolvedCall.resultingDescriptor
+    val receiverParameter = resultingDescriptor.extensionReceiverParameter
     if (receiverParameter != null) {
-        append(htmlRenderer.renderType(receiverParameter.getType())).append(".")
+        append(htmlRenderer.renderType(receiverParameter.type)).append(".")
     }
-    append(resultingDescriptor.getName()).append("(")
-    append(resultingDescriptor.getValueParameters().map { parameter -> renderParameter(parameter) }.joinToString())
+    append(resultingDescriptor.name).append("(")
+    append(resultingDescriptor.valueParameters.map { parameter -> renderParameter(parameter) }.joinToString())
     append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
-    if (!resolvedCall.getCandidateDescriptor().getTypeParameters().isEmpty()) {
+    if (!resolvedCall.candidateDescriptor.typeParameters.isEmpty()) {
         appendTypeParametersSubstitution()
         append("<i> for </i><br/>$indent")
-        append(htmlRenderer.render(resolvedCall.getCandidateDescriptor()))
+        append(htmlRenderer.render(resolvedCall.candidateDescriptor))
     }
     else {
         append(" <i>defined in</i> ")
-        val containingDeclaration = resultingDescriptor.getContainingDeclaration()
+        val containingDeclaration = resultingDescriptor.containingDeclaration
         val fqName = DescriptorUtils.getFqName(containingDeclaration)
         append(if (fqName.isRoot) "root package" else fqName.asString())
     }

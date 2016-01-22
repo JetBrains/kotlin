@@ -25,25 +25,25 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
-public interface Eval {
-    public fun loadClass(classType: Type): Value
-    public fun loadString(str: String): Value
-    public fun newInstance(classType: Type): Value
-    public fun isInstanceOf(value: Value, targetType: Type): Boolean
+interface Eval {
+    fun loadClass(classType: Type): Value
+    fun loadString(str: String): Value
+    fun newInstance(classType: Type): Value
+    fun isInstanceOf(value: Value, targetType: Type): Boolean
 
-    public fun newArray(arrayType: Type, size: Int): Value
-    public fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value
-    public fun getArrayLength(array: Value): Value
-    public fun getArrayElement(array: Value, index: Value): Value
-    public fun setArrayElement(array: Value, index: Value, newValue: Value)
+    fun newArray(arrayType: Type, size: Int): Value
+    fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value
+    fun getArrayLength(array: Value): Value
+    fun getArrayElement(array: Value, index: Value): Value
+    fun setArrayElement(array: Value, index: Value, newValue: Value)
 
-    public fun getStaticField(fieldDesc: FieldDescription): Value
-    public fun setStaticField(fieldDesc: FieldDescription, newValue: Value)
-    public fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value
+    fun getStaticField(fieldDesc: FieldDescription): Value
+    fun setStaticField(fieldDesc: FieldDescription, newValue: Value)
+    fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value
 
-    public fun getField(instance: Value, fieldDesc: FieldDescription): Value
-    public fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value)
-    public fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean = false): Value
+    fun getField(instance: Value, fieldDesc: FieldDescription): Value
+    fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value)
+    fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean = false): Value
 }
 
 class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(ASM5) {
@@ -203,7 +203,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
         }
     }
 
-    public fun checkUnaryCondition(value: Value, opcode: Int): Boolean {
+    fun checkUnaryCondition(value: Value, opcode: Int): Boolean {
         return when (opcode) {
             IFEQ -> value.int == 0
             IFNE -> value.int != 0
@@ -312,7 +312,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
         }
     }
 
-    public fun checkBinaryCondition(value1: Value, value2: Value, opcode: Int): Boolean {
+    fun checkBinaryCondition(value1: Value, value2: Value, opcode: Int): Boolean {
         return when (opcode) {
             IF_ICMPEQ -> value1.int == value2.int
             IF_ICMPNE -> value1.int != value2.int

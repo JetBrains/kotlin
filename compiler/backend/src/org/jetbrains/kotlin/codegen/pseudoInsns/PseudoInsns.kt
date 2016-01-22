@@ -23,9 +23,9 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
-public val PSEUDO_INSN_CALL_OWNER: String = "kotlin/jvm/internal/\$PseudoInsn"
+val PSEUDO_INSN_CALL_OWNER: String = "kotlin/jvm/internal/\$PseudoInsn"
 
-public enum class PseudoInsn(val signature: String = "()V") {
+enum class PseudoInsn(val signature: String = "()V") {
     FIX_STACK_BEFORE_JUMP(),
     FAKE_ALWAYS_TRUE_IFEQ("()I"),
     FAKE_ALWAYS_FALSE_IFEQ("()I"),
@@ -33,36 +33,36 @@ public enum class PseudoInsn(val signature: String = "()V") {
     RESTORE_STACK_IN_TRY_CATCH()
     ;
 
-    public fun emit(iv: InstructionAdapter) {
+    fun emit(iv: InstructionAdapter) {
         iv.invokestatic(PSEUDO_INSN_CALL_OWNER, toString(), signature, false)
     }
 
-    public fun createInsnNode(): MethodInsnNode =
+    fun createInsnNode(): MethodInsnNode =
             MethodInsnNode(Opcodes.INVOKESTATIC, PSEUDO_INSN_CALL_OWNER, toString(), signature, false)
 
-    public fun isa(node: AbstractInsnNode): Boolean =
+    fun isa(node: AbstractInsnNode): Boolean =
             this == parsePseudoInsnOrNull(node)
 }
 
-public fun isPseudoInsn(insn: AbstractInsnNode): Boolean =
+fun isPseudoInsn(insn: AbstractInsnNode): Boolean =
         insn is MethodInsnNode && insn.getOpcode() == Opcodes.INVOKESTATIC && insn.owner == PSEUDO_INSN_CALL_OWNER
 
-public fun parsePseudoInsnOrNull(insn: AbstractInsnNode): PseudoInsn? =
+fun parsePseudoInsnOrNull(insn: AbstractInsnNode): PseudoInsn? =
         if (isPseudoInsn(insn))
             PseudoInsn.valueOf((insn as MethodInsnNode).name)
         else null
 
-public fun InstructionAdapter.fixStackAndJump(label: Label) {
+fun InstructionAdapter.fixStackAndJump(label: Label) {
     PseudoInsn.FIX_STACK_BEFORE_JUMP.emit(this)
     this.goTo(label)
 }
 
-public fun InstructionAdapter.fakeAlwaysTrueIfeq(label: Label) {
+fun InstructionAdapter.fakeAlwaysTrueIfeq(label: Label) {
     PseudoInsn.FAKE_ALWAYS_TRUE_IFEQ.emit(this)
     this.ifeq(label)
 }
 
-public fun InstructionAdapter.fakeAlwaysFalseIfeq(label: Label) {
+fun InstructionAdapter.fakeAlwaysFalseIfeq(label: Label) {
     PseudoInsn.FAKE_ALWAYS_FALSE_IFEQ.emit(this)
     this.ifeq(label)
 }

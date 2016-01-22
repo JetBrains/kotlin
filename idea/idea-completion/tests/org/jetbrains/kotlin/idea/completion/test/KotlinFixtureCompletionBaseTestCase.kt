@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import java.io.File
 
-public abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtureTestCase() {
-    public abstract fun getPlatform(): TargetPlatform
+abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtureTestCase() {
+    abstract fun getPlatform(): TargetPlatform
 
     protected open fun complete(completionType: CompletionType, invocationCount: Int): Array<LookupElement>?
             = myFixture.complete(completionType, invocationCount)
@@ -33,16 +33,21 @@ public abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsig
     protected abstract fun defaultCompletionType(): CompletionType
     protected open fun defaultInvocationCount(): Int = 0
 
-    public open fun doTest(testPath: String) {
+    open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
         val fileText = FileUtil.loadFile(File(testPath), true)
+
+        if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
+            myFixture.doHighlighting()
+        }
+
         testCompletion(fileText, getPlatform(), { completionType, count -> complete(completionType, count) }, defaultCompletionType(), defaultInvocationCount())
     }
 
     protected open fun setUpFixture(testPath: String) {
         //TODO: this is a hacky workaround for js second completion tests failing with PsiInvalidElementAccessException
-        LibraryModificationTracker.getInstance(getProject()).incModificationCount()
+        LibraryModificationTracker.getInstance(project).incModificationCount()
 
         myFixture.configureByFile(testPath)
     }

@@ -32,18 +32,17 @@ import org.junit.runner.RunWith
 
 @TestMetadata("idea/testData/quickfix.special")
 @TestDataPath("\$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners::class)
-public class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCase() {
+@RunWith(JUnit3RunnerWithInners::class) class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
     private val TEST_DATA_DIR = "idea/testData/quickfix.special/deprecatedSymbolUsage"
 
-    public fun testMemberInCompiledClass() {
+    fun testMemberInCompiledClass() {
         doTest("matches(input)")
     }
 
-    public fun testDefaultParameterValuesFromLibrary() {
+    fun testDefaultParameterValuesFromLibrary() {
         doTest("""prefix + joinTo(StringBuilder(), separator, "", postfix, limit, truncated, transform)""")
     }
 
@@ -51,11 +50,11 @@ public class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixture
         val testPath = KotlinTestUtils.navigationMetadata(TEST_DATA_DIR + "/" + getTestName(true) + ".kt")
         myFixture.configureByFile(testPath)
 
-        val offset = getEditor().caretModel.offset
-        val element = getFile().findElementAt(offset)
+        val offset = editor.caretModel.offset
+        val element = file.findElementAt(offset)
         val nameExpression = element!!.parents.firstIsInstance<KtSimpleNameExpression>()
-        getProject().executeWriteCommand("") {
-            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern, emptyList())).invoke(getProject(), getEditor(), getFile())
+        project.executeWriteCommand("") {
+            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern, emptyList())).invoke(project, editor, file)
         }
 
         myFixture.checkResultByFile("$testPath.after")

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
-public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
+class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     private final val MODULE_NAME = "module"
     private final val BASE_DIR = "compiler/testData/serialization"
 
@@ -80,7 +80,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     private fun deserialize(metaFile: File): ModuleDescriptorImpl {
         val module = KotlinTestUtils.createEmptyModule("<$MODULE_NAME>", JsPlatform)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(metaFile)
-        assert(metadata.size() == 1)
+        assert(metadata.size == 1)
 
         val provider = KotlinJavascriptSerializationUtil.createPackageFragmentProvider(module, metadata[0].body, LockBasedStorageManager())
                 .sure { "No package fragment provider was created" }

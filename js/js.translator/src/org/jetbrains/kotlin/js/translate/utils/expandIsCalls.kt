@@ -22,12 +22,12 @@ import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 
-public fun expandIsCalls(node: JsNode, context: TranslationContext) {
+fun expandIsCalls(node: JsNode, context: TranslationContext) {
     val visitor = object : JsVisitorWithContextImpl() {
-        override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
-            val callee = x.getQualifier() as? JsInvocation
-            val instance = x.getArguments().firstOrNull()
-            val type = callee?.getArguments()?.firstOrNull()
+        override fun visit(x: JsInvocation, ctx: JsContext<JsNode>): Boolean {
+            val callee = x.qualifier as? JsInvocation
+            val instance = x.arguments.firstOrNull()
+            val type = callee?.arguments?.firstOrNull()
 
             val replacement = when (callee?.typeCheck) {
                 TypeCheck.TYPEOF -> typeOfIs(instance!!, type as JsStringLiteral)

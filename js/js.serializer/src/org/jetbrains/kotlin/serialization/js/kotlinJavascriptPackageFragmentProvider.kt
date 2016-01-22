@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
-public fun createKotlinJavascriptPackageFragmentProvider(
+fun createKotlinJavascriptPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         packageFqNames: Set<FqName>,
@@ -54,7 +54,7 @@ public fun createKotlinJavascriptPackageFragmentProvider(
     localClassResolver.setDeserializationComponents(components)
 
     for (packageFragment in packageFragments) {
-        packageFragment.setDeserializationComponents(components)
+        packageFragment.components = components
     }
 
     return provider

@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.SetsKt;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
@@ -39,7 +36,6 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -52,8 +48,15 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
 public class CompileTimeConstantUtils {
 
     private final static Set<String> ARRAY_CALL_NAMES = SetsKt.hashSetOf(
-            "kotlin.arrayOf", "kotlin.doubleArrayOf", "kotlin.floatArrayOf", "kotlin.longArrayOf", "kotlin.intArrayOf", "kotlin.charArrayOf",
-            "kotlin.shortArrayOf", "kotlin.byteArrayOf", "kotlin.booleanArrayOf"
+            "kotlin.arrayOf",
+            "kotlin.doubleArrayOf",
+            "kotlin.floatArrayOf",
+            "kotlin.longArrayOf",
+            "kotlin.intArrayOf",
+            "kotlin.charArrayOf",
+            "kotlin.shortArrayOf",
+            "kotlin.byteArrayOf",
+            "kotlin.booleanArrayOf"
     );
 
     public static void checkConstructorParametersType(@NotNull List<KtParameter> parameters, @NotNull BindingTrace trace) {
@@ -107,33 +110,20 @@ public class CompileTimeConstantUtils {
         return false;
     }
 
-    @Nullable
-    public static String getIntrinsicAnnotationArgument(@NotNull Annotated annotatedDescriptor) {
-        AnnotationDescriptor intrinsicAnnotation =
-                annotatedDescriptor.getAnnotations().findAnnotation(new FqName("kotlin.jvm.internal.Intrinsic"));
-        if (intrinsicAnnotation == null) return null;
-
-        Collection<ConstantValue<?>> values = intrinsicAnnotation.getAllValueArguments().values();
-        if (values.isEmpty()) return null;
-
-        Object value = values.iterator().next().getValue();
-        return value instanceof String ? (String) value : null;
-    }
-
     public static boolean isArrayMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
         return ARRAY_CALL_NAMES.contains(DescriptorUtils.getFqName(resolvedCall.getCandidateDescriptor()).asString());
     }
 
     public static boolean canBeReducedToBooleanConstant(
             @Nullable KtExpression expression,
-            @NotNull BindingTrace trace,
+            @NotNull BindingContext context,
             @Nullable Boolean expectedValue
     ) {
         KtExpression effectiveExpression = KtPsiUtil.deparenthesize(expression);
 
         if (effectiveExpression == null) return false;
 
-        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.getConstant(effectiveExpression, trace.getBindingContext());
+        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.getConstant(effectiveExpression, context);
         if (!(compileTimeConstant instanceof TypedCompileTimeConstant) || compileTimeConstant.getUsesVariableAsConstant()) return false;
 
         ConstantValue constantValue = ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue();

@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.jvm.compiler.AbstractSMAPBaseTest
 import java.io.File
 
-public abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest(), AbstractSMAPBaseTest {
+abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest(), AbstractSMAPBaseTest {
 
-    public fun doTestMultiFileWithInlineCheck(firstFileName: String) {
+    fun doTestMultiFileWithInlineCheck(firstFileName: String) {
         val fileName = relativePath(File(firstFileName))
         val inputFiles = listOf(fileName, fileName.substringBeforeLast("1.kt") + "2.kt")
 
         doTestMultiFile(inputFiles)
         try {
-            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.getPsiFiles())
-            checkSMAP(myFiles.getPsiFiles(), generateClassesInFile().getClassFiles())
+            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.psiFiles)
+            checkSMAP(myFiles.psiFiles, generateClassesInFile().getClassFiles())
         }
         catch (e: Throwable) {
             System.out.println(generateToText())

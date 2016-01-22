@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldPropertyToIfIntention : SelfTargetingRangeIntention<KtProperty>(javaClass(), "Replace property initializer with 'if' expression"), LowPriorityAction {
+class UnfoldPropertyToIfIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Replace property initializer with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtProperty): TextRange? {
-        if (!element.isLocal()) return null
-        val initializer = element.getInitializer() as? KtIfExpression ?: return null
-        return TextRange(element.startOffset, initializer.getIfKeyword().endOffset)
+        if (!element.isLocal) return null
+        val initializer = element.initializer as? KtIfExpression ?: return null
+        return TextRange(element.startOffset, initializer.ifKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         val assignment = splitPropertyDeclaration(element)
         BranchedUnfoldingUtils.unfoldAssignmentToIf(assignment, editor)
     }

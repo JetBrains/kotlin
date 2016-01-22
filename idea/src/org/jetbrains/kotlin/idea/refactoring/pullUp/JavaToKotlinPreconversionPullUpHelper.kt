@@ -30,8 +30,8 @@ import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
-import org.jetbrains.kotlin.idea.core.refactoring.j2k
-import org.jetbrains.kotlin.idea.core.refactoring.j2kText
+import org.jetbrains.kotlin.idea.refactoring.j2k
+import org.jetbrains.kotlin.idea.refactoring.j2kText
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class JavaToKotlinPreconversionPullUpHelper(
+class JavaToKotlinPreconversionPullUpHelper(
         private val data: PullUpData,
         private val dummyTargetClass: PsiClass,
         private val javaHelper: JavaPullUpHelper
@@ -133,7 +133,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
         membersToDummyDeclarations[member] = addMemberToTarget(dummyDeclaration, memberOwner)
     }
 
-    private fun getCurrentSuperInterfaceCount() = dummyTargetClass.implementsList?.referenceElements?.size() ?: 0
+    private fun getCurrentSuperInterfaceCount() = dummyTargetClass.implementsList?.referenceElements?.size ?: 0
 
     override fun postProcessMember(member: PsiMember) {
         javaHelper.postProcessMember(member)

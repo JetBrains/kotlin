@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-public class KotlinSourcePositionProvider: SourcePositionProvider() {
+class KotlinSourcePositionProvider: SourcePositionProvider() {
     override fun computeSourcePosition(descriptor: NodeDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
-        if (context.getFrameProxy() == null) return null
+        if (context.frameProxy == null) return null
 
         if (descriptor is FieldDescriptor) {
             return computeSourcePosition(descriptor, project, context, nearest)
@@ -62,22 +62,22 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
 
     private fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
         val place = PositionUtil.getContextElement(context) ?: return null
-        if (place.getContainingFile() !is KtFile) return null
+        if (place.containingFile !is KtFile) return null
 
         val contextElement = KotlinCodeFragmentFactory.getContextElement(place) ?: return null
 
-        val codeFragment = KtPsiFactory(project).createExpressionCodeFragment(descriptor.getName(), contextElement)
+        val codeFragment = KtPsiFactory(project).createExpressionCodeFragment(descriptor.name, contextElement)
         val expression = codeFragment.getContentElement()
         if (expression is KtSimpleNameExpression) {
             val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
             val declarationDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, expression, false)
-            val sourceElement = declarationDescriptor?.getSource()
+            val sourceElement = declarationDescriptor?.source
             if (sourceElement is KotlinSourceElement) {
                 val element = sourceElement.getPsi() ?: return null
                 if (nearest) {
-                    return DebuggerContextUtil.findNearest(context, element, element.getContainingFile())
+                    return DebuggerContextUtil.findNearest(context, element, element.containingFile)
                 }
-                return SourcePosition.createFromOffset(element.getContainingFile(), element.getTextOffset())
+                return SourcePosition.createFromOffset(element.containingFile, element.textOffset)
             }
         }
 
@@ -85,33 +85,33 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
     }
 
     private fun computeSourcePosition(descriptor: FieldDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
-        val fieldName = descriptor.getField().name()
+        val fieldName = descriptor.field.name()
         if (fieldName == AsmUtil.CAPTURED_THIS_FIELD || fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD) {
             return null
         }
 
-        val type = descriptor.getField().declaringType()
-        val myClass = findClassByType(project, type, context)?.getNavigationElement() as? KtClassOrObject ?: return null
+        val type = descriptor.field.declaringType()
+        val myClass = findClassByType(project, type, context)?.navigationElement as? KtClassOrObject ?: return null
 
-        val field = myClass.getDeclarations().firstOrNull { fieldName == it.getName() } ?: return null
+        val field = myClass.declarations.firstOrNull { fieldName == it.name } ?: return null
 
         if (nearest) {
-            return DebuggerContextUtil.findNearest(context, field, myClass.getContainingFile())
+            return DebuggerContextUtil.findNearest(context, field, myClass.containingFile)
         }
-        return SourcePosition.createFromOffset(field.getContainingFile(), field.getTextOffset())
+        return SourcePosition.createFromOffset(field.containingFile, field.textOffset)
     }
 
     private fun findClassByType(project: Project, type: ReferenceType, context: DebuggerContextImpl): PsiElement? {
-        val session = context.getDebuggerSession()
-        val scope = if (session != null) session.getSearchScope() else GlobalSearchScope.allScope(project)
-        val className = JvmClassName.byInternalName(type.name()).getFqNameForClassNameWithoutDollars().asString()
+        val session = context.debuggerSession
+        val scope = if (session != null) session.searchScope else GlobalSearchScope.allScope(project)
+        val className = JvmClassName.byInternalName(type.name()).fqNameForClassNameWithoutDollars.asString()
 
         val myClass = JavaPsiFacade.getInstance(project).findClass(className, scope)
         if (myClass != null) return myClass
 
         val position = getLastSourcePosition(type, context)
         if (position != null) {
-            val element = position.getElementAt()
+            val element = position.elementAt
             if (element != null) {
                 return element.getStrictParentOfType<KtClassOrObject>()
             }
@@ -120,13 +120,13 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
     }
 
     private fun getLastSourcePosition(type: ReferenceType, context: DebuggerContextImpl): SourcePosition? {
-        val debugProcess = context.getDebugProcess()
+        val debugProcess = context.debugProcess
         if (debugProcess != null) {
             try {
                 val locations = type.allLineLocations()
                 if (!locations.isEmpty()) {
                     val lastLocation = locations.get(locations.size - 1)
-                    return debugProcess.getPositionManager().getSourcePosition(lastLocation)
+                    return debugProcess.positionManager.getSourcePosition(lastLocation)
                 }
             }
             catch (ignored: AbsentInformationException) {

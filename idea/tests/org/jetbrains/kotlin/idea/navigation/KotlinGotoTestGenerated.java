@@ -112,6 +112,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             doSymbolTest(fileName);
         }
 
+        @TestMetadata("builtInInt.kt")
+        public void testBuiltInInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/builtInInt.kt");
+            doSymbolTest(fileName);
+        }
+
         @TestMetadata("functions.kt")
         public void testFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/functions.kt");

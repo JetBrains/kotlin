@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public class AnnotationSerializer(private val stringTable: StringTable) {
-    public fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation {
+class AnnotationSerializer(private val stringTable: StringTable) {
+    fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {
             val annotationClass = annotation.type.constructor.declarationDescriptor as? ClassDescriptor
                                   ?: error("Annotation type is not a class: ${annotation.type}")

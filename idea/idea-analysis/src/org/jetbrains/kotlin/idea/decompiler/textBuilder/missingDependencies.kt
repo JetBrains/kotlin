@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
@@ -63,14 +64,17 @@ internal class PackageFragmentProviderForMissingDependencies(val moduleDescripto
 private class MissingDependencyErrorClassDescriptor(
         containing: DeclarationDescriptor,
         override val fullFqName: FqName
-) : MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, ClassKind.CLASS, listOf(), SourceElement.NO_SOURCE) {
+) : MissingDependencyErrorClass, ClassDescriptorImpl(
+        containing, fullFqName.shortName(), Modality.OPEN, ClassKind.CLASS, listOf(containing.builtIns.nullableAnyType),
+        SourceElement.NO_SOURCE
+) {
 
     private val scope = ScopeWithMissingDependencies(fullFqName, this)
 
     init {
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), Visibilities.DEFAULT_VISIBILITY)
-        emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
+        emptyConstructor.returnType = createErrorType("<ERROR RETURN TYPE>")
         initialize(MemberScope.Empty, setOf(emptyConstructor), emptyConstructor)
     }
 

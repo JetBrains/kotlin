@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
-public class FakeCallResolver(
+class FakeCallResolver(
         private val project: Project,
         private val callResolver: CallResolver
 ) {
-    public fun resolveFakeCall(
+    fun resolveFakeCall(
             context: ExpressionTypingContext,
             receiver: ReceiverValue?,
             name: Name,
@@ -46,12 +46,12 @@ public class FakeCallResolver(
         val traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name)
         val fakeArguments = ArrayList<KtExpression>()
         for (type in argumentTypes) {
-            fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size(), type))
+            fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size, type))
         }
         return makeAndResolveFakeCall(receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), fakeArguments, name, callElement).second
     }
 
-    public fun resolveFakeCall(
+    fun resolveFakeCall(
             context: ExpressionTypingContext,
             receiver: ReceiverValue,
             name: Name,
@@ -60,7 +60,7 @@ public class FakeCallResolver(
         return resolveFakeCall(receiver, context, emptyList(), name, callElement)
     }
 
-    public fun resolveFakeCall(
+    fun resolveFakeCall(
             receiver: ReceiverValue,
             context: ExpressionTypingContext,
             valueArguments: List<KtExpression>,
@@ -70,7 +70,7 @@ public class FakeCallResolver(
         return makeAndResolveFakeCall(receiver, context, valueArguments, name, callElement).second
     }
 
-    public fun makeAndResolveFakeCall(
+    fun makeAndResolveFakeCall(
             receiver: ReceiverValue?,
             context: ExpressionTypingContext,
             valueArguments: List<KtExpression>,
@@ -88,8 +88,7 @@ public class FakeCallResolver(
         }
     }
 
-    @JvmOverloads
-    public fun makeAndResolveFakeCallInContext(
+    @JvmOverloads fun makeAndResolveFakeCallInContext(
             receiver: ReceiverValue?,
             context: ExpressionTypingContext,
             valueArguments: List<KtExpression>,

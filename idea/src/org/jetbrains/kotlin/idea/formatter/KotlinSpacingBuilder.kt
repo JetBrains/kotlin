@@ -65,9 +65,9 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
         fun inPosition(parent: IElementType? = null, left: IElementType? = null, right: IElementType? = null): CustomSpacingBuilder {
             conditions.add {
                 p, l, r ->
-                (parent == null || p.getNode()!!.getElementType() == parent) &&
-                (left == null || l.getNode()!!.getElementType() == left) &&
-                (right == null || r.getNode()!!.getElementType() == right)
+                (parent == null || p.node!!.elementType == parent) &&
+                (left == null || l.node!!.elementType == left) &&
+                (right == null || r.node!!.elementType == right)
             }
             return this
         }
@@ -75,7 +75,7 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
         fun lineBreakIfLineBreakInParent(numSpacesOtherwise: Int, allowBlankLines: Boolean = true) {
             newRule {
                 p, l, r ->
-                Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, p.getTextRange(),
+                Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, p.textRange,
                                                  codeStyleSettings.KEEP_LINE_BREAKS,
                                                  if (allowBlankLines) codeStyleSettings.KEEP_BLANK_LINES_IN_CODE else 0)
             }
@@ -89,7 +89,7 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
                         minimumLineFeeds = numberOfLineFeedsOtherwise,
                         keepLineBreaks = codeStyleSettings.KEEP_LINE_BREAKS,
                         keepBlankLines = codeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
-                        dependency = left.getTextRange(), rule = dependentSpacingRule)
+                        dependency = left.textRange, rule = dependentSpacingRule)
             }
         }
 
@@ -118,8 +118,8 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
 
             if (spacing != null) {
                 // TODO: it's a severe hack but I don't know how to implement it in other way
-                if (child1.getNode().getElementType() == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
-                    val isBeforeBlock = child2.getNode().getElementType() == KtNodeTypes.BLOCK || child2.getNode().getFirstChildNode()?.getElementType() == KtNodeTypes.BLOCK
+                if (child1.node.elementType == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
+                    val isBeforeBlock = child2.node.elementType == KtNodeTypes.BLOCK || child2.node.firstChildNode?.elementType == KtNodeTypes.BLOCK
                     val keepBlankLines = if (isBeforeBlock) 0 else codeStyleSettings.KEEP_BLANK_LINES_IN_CODE
                     return Spacing.createSpacing(0, 0, 1, true, keepBlankLines)
                 }

@@ -46,7 +46,6 @@ public class SimpleTestClassModel implements TestClassModel {
     private final Pattern filenamePattern;
     @Nullable
     private final Boolean checkFilenameStartsLowerCase;
-    private final boolean withTestRootMethod;
     @NotNull
     private final String doTestMethodName;
     @NotNull
@@ -69,8 +68,7 @@ public class SimpleTestClassModel implements TestClassModel {
             @NotNull String doTestMethodName,
             @NotNull String testClassName,
             @NotNull TargetBackend targetBackend,
-            @NotNull Collection<String> excludeDirs,
-            boolean withTestRootMethod
+            @NotNull Collection<String> excludeDirs
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -80,7 +78,6 @@ public class SimpleTestClassModel implements TestClassModel {
         this.testClassName = testClassName;
         this.targetBackend = targetBackend;
         this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
-        this.withTestRootMethod = withTestRootMethod;
         this.excludeDirs = excludeDirs.isEmpty() ? Collections.<String>emptySet() : new LinkedHashSet<String>(excludeDirs);
     }
 
@@ -100,8 +97,7 @@ public class SimpleTestClassModel implements TestClassModel {
                         String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
                         children.add(new SimpleTestClassModel(
                                              file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
-                                             doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
-                                             withTestRootMethod)
+                                             doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()))
                         );
                     }
                 }
@@ -178,10 +174,6 @@ public class SimpleTestClassModel implements TestClassModel {
                 }
                 Collections.sort(result, BY_NAME);
 
-                if (withTestRootMethod) {
-                    result.add(new TestRootsMethodModel());
-                }
-
                 testMethods = result;
             }
         }
@@ -190,7 +182,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
     @Override
     public boolean isEmpty() {
-        boolean noTestMethods = withTestRootMethod ? getMethods().size() == 2 : getMethods().size() == 1;
+        boolean noTestMethods = getMethods().size() == 1;
         return noTestMethods && getInnerTestClasses().isEmpty();
     }
 
@@ -209,30 +201,6 @@ public class SimpleTestClassModel implements TestClassModel {
     @Override
     public String getName() {
         return testClassName;
-    }
-
-    private class TestRootsMethodModel implements MethodModel {
-        @NotNull
-        @Override
-        public String getName() {
-            return "getTestsRoot";
-        }
-
-        @Override
-        public void generateBody(@NotNull Printer p) {
-            p.println(String.format("return \"%s\";", KotlinTestUtils.getFilePath(rootFile)));
-        }
-
-        @Override
-        public void generateSignature(@NotNull Printer p) {
-            p.print(String.format("public String %s()", getName()));
-        }
-
-        @Nullable
-        @Override
-        public String getDataString() {
-            return null;
-        }
     }
 
     private class TestAllFilesPresentMethodModel implements TestMethodModel {

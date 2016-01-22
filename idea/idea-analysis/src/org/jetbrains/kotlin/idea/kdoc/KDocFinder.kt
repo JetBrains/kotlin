@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 object KDocFinder {
     fun findKDoc(declaration: DeclarationDescriptor): KDocTag? {
         if (declaration is DeclarationDescriptorWithSource) {
-            var psiDeclaration = (declaration.getSource() as? PsiSourceElement)?.psi?.getNavigationElement()
+            var psiDeclaration = (declaration.source as? PsiSourceElement)?.psi?.navigationElement
             // KDoc for primary constructor is located inside of its class KDoc
             if (psiDeclaration is KtPrimaryConstructor) {
                 psiDeclaration = psiDeclaration.getContainingClassOrObject()
             }
 
             if (psiDeclaration is KtDeclaration) {
-                val kdoc = psiDeclaration.getDocComment()
+                val kdoc = psiDeclaration.docComment
                 if (kdoc != null) {
                     if (declaration is ConstructorDescriptor) {
                         // ConstructorDescriptor resolves to the same JetDeclaration
@@ -50,7 +50,7 @@ object KDocFinder {
         }
 
         if (declaration is PropertyDescriptor) {
-            val containingClassDescriptor = declaration.getContainingDeclaration() as? ClassDescriptor
+            val containingClassDescriptor = declaration.containingDeclaration as? ClassDescriptor
             if (containingClassDescriptor != null) {
                 val classKDoc = findKDoc(containingClassDescriptor)?.getParentOfType<KDoc>(false)
                 if (classKDoc != null) {
@@ -64,8 +64,8 @@ object KDocFinder {
         }
 
         if (declaration is CallableDescriptor) {
-            for (baseDescriptor in declaration.getOverriddenDescriptors()) {
-                val baseKDoc = findKDoc(baseDescriptor.getOriginal())
+            for (baseDescriptor in declaration.overriddenDescriptors) {
+                val baseKDoc = findKDoc(baseDescriptor.original)
                 if (baseKDoc != null) {
                     return baseKDoc
                 }

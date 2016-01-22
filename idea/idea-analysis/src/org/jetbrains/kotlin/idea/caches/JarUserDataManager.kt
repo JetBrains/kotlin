@@ -26,7 +26,7 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.util.concurrent.atomic.AtomicBoolean
 
-public object JarUserDataManager {
+object JarUserDataManager {
     enum class State {
         INIT,
         HAS_FILE,
@@ -37,11 +37,11 @@ public object JarUserDataManager {
 
     val fileAttributeService: FileAttributeService? = ServiceManager.getService(FileAttributeService::class.java)
 
-    public fun register(counter: JarBooleanPropertyCounter) {
+    fun register(counter: JarBooleanPropertyCounter) {
         fileAttributeService?.register(counter.key.toString(), version)
     }
 
-    public fun hasFileWithProperty(counter: JarBooleanPropertyCounter, file: VirtualFile): Boolean? {
+    fun hasFileWithProperty(counter: JarBooleanPropertyCounter, file: VirtualFile): Boolean? {
         val localJarFile = JarFileSystemUtil.findLocalJarFile(file) ?: return null
 
         val stored = localJarFile.getUserData(counter.key)
@@ -52,8 +52,8 @@ public object JarUserDataManager {
         }
 
         if (stored == null && fileAttributeService != null) {
-            val savedData = fileAttributeService.readAttribute(counter.key.toString(), localJarFile, State::class.java)
-            if (savedData != null && savedData.value != null) {
+            val savedData = fileAttributeService.readEnumAttribute(counter.key.toString(), localJarFile, State::class.java)
+            if (savedData != null) {
                 val hasFileWithProperty = savedData.value == State.HAS_FILE
 
                 storeUserData(counter, localJarFile, hasFileWithProperty, savedData.timeStamp)
@@ -91,7 +91,7 @@ public object JarUserDataManager {
 
                 val state = if (hasFileWithProperty) State.HAS_FILE else State.NO_FILE
 
-                val savedData = fileAttributeService?.writeAttribute(counter.key.toString(), localJarFile, state)
+                val savedData = fileAttributeService?.writeEnumAttribute(counter.key.toString(), localJarFile, state)
 
                 storeUserData(counter, localJarFile, hasFileWithProperty, (savedData?.timeStamp ?: localJarFile.timeStamp))
             }
@@ -100,7 +100,6 @@ public object JarUserDataManager {
 
     private fun storeUserData(counter: JarBooleanPropertyCounter, localJarFile: VirtualFile,
                               hasFileWithProperty: Boolean?, timestamp: Long? = null) {
-        assert(localJarFile.isInLocalFileSystem)
         assert((timestamp == null) == (hasFileWithProperty == null)) { "Using empty timestamp is only allowed for storing not counted value" }
 
         localJarFile.putUserData(counter.key,
@@ -108,19 +107,19 @@ public object JarUserDataManager {
     }
 
     object JarFileSystemUtil {
-        public fun findJarFileRoot(inJarFile: VirtualFile): VirtualFile? {
-            if (!inJarFile.getUrl().startsWith("jar://")) return null
+        fun findJarFileRoot(inJarFile: VirtualFile): VirtualFile? {
+            if (!inJarFile.url.startsWith("jar://")) return null
 
             var jarFile = inJarFile
-            while (jarFile.getParent() != null) jarFile = jarFile.getParent()
+            while (jarFile.parent != null) jarFile = jarFile.parent
 
             return jarFile
         }
 
-        public fun findLocalJarFile(inJarFile: VirtualFile): VirtualFile? {
-            if (!inJarFile.getUrl().startsWith("jar://")) return null
+        fun findLocalJarFile(inJarFile: VirtualFile): VirtualFile? {
+            if (!inJarFile.url.startsWith("jar://")) return null
 
-            val path = inJarFile.getPath()
+            val path = inJarFile.path
 
             val jarSeparatorIndex = path.indexOf(URLUtil.JAR_SEPARATOR)
             assert(jarSeparatorIndex >= 0) { "Path passed to JarFileSystem must have jar separator '!/': $path" }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiSubstitutorImpl;
-import kotlin.ArraysKt;
+import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

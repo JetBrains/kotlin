@@ -31,48 +31,47 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import org.jetbrains.kotlin.utils.fileUtils.readTextOrEmpty
 import java.io.File
 import java.util.ArrayList
 
-public abstract class TranslationResult protected constructor(public val diagnostics: Diagnostics) {
+abstract class TranslationResult protected constructor(val diagnostics: Diagnostics) {
 
-    public class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
+    class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
 
-    public class Success(
+    class Success(
             private val config: Config,
             private val files: List<KtFile>,
-            public val program: JsProgram,
+            val program: JsProgram,
             diagnostics: Diagnostics,
             private val moduleDescriptor: ModuleDescriptor
     ) : TranslationResult(diagnostics) {
-        public fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
+        fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
 
-        public fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
+        fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
             val output = TextOutputImpl()
             val sourceMapBuilder = when {
-                config.isSourcemap() -> SourceMap3Builder(outputFile, output, SourceMapBuilderConsumer())
+                config.isSourcemap -> SourceMap3Builder(outputFile, output, SourceMapBuilderConsumer())
                 else -> null
             }
 
             val code = getCode(output, sourceMapBuilder)
-            val prefix = outputPrefixFile?.readTextOrEmpty() ?: ""
-            val postfix = outputPostfixFile?.readTextOrEmpty() ?: ""
+            val prefix = outputPrefixFile?.readText() ?: ""
+            val postfix = outputPostfixFile?.readText() ?: ""
             val sourceFiles = files.map {
-                val virtualFile = it.getOriginalFile().getVirtualFile()
+                val virtualFile = it.originalFile.virtualFile
 
                 when {
-                    virtualFile == null -> File(it.getName())
+                    virtualFile == null -> File(it.name)
                     else -> VfsUtilCore.virtualToIoFile(virtualFile)
                 }
             }
 
-            val jsFile = SimpleOutputFile(sourceFiles, outputFile.getName(), prefix + code + postfix)
+            val jsFile = SimpleOutputFile(sourceFiles, outputFile.name, prefix + code + postfix)
             val outputFiles = arrayListOf<OutputFile>(jsFile)
 
-            if (config.isMetaInfo()) {
-                val metaFileName = KotlinJavascriptMetadataUtils.replaceSuffix(outputFile.getName())
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(config.getModuleId(), moduleDescriptor)
+            if (config.isMetaInfo) {
+                val metaFileName = KotlinJavascriptMetadataUtils.replaceSuffix(outputFile.name)
+                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(config.moduleId, moduleDescriptor)
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
@@ -87,7 +86,7 @@ public abstract class TranslationResult protected constructor(public val diagnos
 
             if (sourceMapBuilder != null) {
                 sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix))
-                val sourceMapFile = SimpleOutputFile(sourceFiles, sourceMapBuilder.getOutFile().getName(), sourceMapBuilder.build())
+                val sourceMapFile = SimpleOutputFile(sourceFiles, sourceMapBuilder.outFile.name, sourceMapBuilder.build())
                 outputFiles.add(sourceMapFile)
             }
 

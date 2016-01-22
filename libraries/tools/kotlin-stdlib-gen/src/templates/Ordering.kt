@@ -7,20 +7,18 @@ fun ordering(): List<GenericFunction> {
 
     templates add f("reverse()") {
         doc { f -> "Reverses ${f.element.pluralize()} in the ${f.collection} in-place." }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(Lists, InvariantArraysOfObjects, ArraysOfPrimitives)
         customReceiver(Lists) { "MutableList<T>" }
         returns { "Unit" }
         body { f ->
-            val _this = if (f == ArraysOfObjects) "_this" else "this"
             """
             val midPoint = (size / 2) - 1
             if (midPoint < 0) return
-            ${if (f == ArraysOfObjects) "val _this = this as Array<T>" else "" }
             var reverseIndex = lastIndex
             for (index in 0..midPoint) {
-                val tmp = $_this[index]
-                $_this[index] = $_this[reverseIndex]
-                $_this[reverseIndex] = tmp
+                val tmp = this[index]
+                this[index] = this[reverseIndex]
+                this[reverseIndex] = tmp
                 reverseIndex--
             }
             """
@@ -62,12 +60,12 @@ fun ordering(): List<GenericFunction> {
 
     templates add f("reversedArray()") {
         doc { "Returns an array with elements of this array in reversed order." }
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
-        body(ArraysOfObjects) {
+        body(InvariantArraysOfObjects) {
             """
             if (isEmpty()) return this
-            val result = arrayOfNulls(this, size) as Array<T>
+            val result = arrayOfNulls(this, size)
             val lastIndex = lastIndex
             for (i in 0..lastIndex)
                 result[lastIndex - i] = this[i]
@@ -134,7 +132,7 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedArray()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc {
             "Returns an array with all elements of this array sorted according to their natural sort order."
@@ -196,14 +194,14 @@ fun ordering(): List<GenericFunction> {
     }
 
     templates add f("sortedArrayDescending()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc {
             "Returns an array with all elements of this array sorted descending according to their natural sort order."
         }
         typeParam("T : Comparable<T>")
         returns("SELF")
-        body(ArraysOfObjects) {
+        body(InvariantArraysOfObjects) {
             """
             if (isEmpty()) return this
             return this.copyOf().apply { sortWith(reverseOrder()) }

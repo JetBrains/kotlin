@@ -6,8 +6,8 @@ fun baz(s: String?): String {
         val u: String? = null
         when (u) {
             null -> ""
-            else -> u
+            else -> <!DEBUG_INFO_SMARTCAST!>u<!>
         }
     }
-    return <!DEBUG_INFO_SMARTCAST!>t<!>
+    return t
 }

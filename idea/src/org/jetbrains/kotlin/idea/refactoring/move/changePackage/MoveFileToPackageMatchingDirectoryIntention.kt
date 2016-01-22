@@ -19,38 +19,35 @@ package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 import com.intellij.CommonBundle
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.Messages
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.RefactoringMessageUtil
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.KtPackageDirective
-import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 
-public class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
-        javaClass(), "", "Move file to package-matching directory"
+class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
+        KtPackageDirective::class.java, "", "Move file to package-matching directory"
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {
         if (element.getContainingKtFile().packageMatchesDirectory()) return false
 
-        val qualifiedName = element.getQualifiedName()
+        val qualifiedName = element.qualifiedName
         val dirName = if (qualifiedName.isEmpty()) "source root" else "'${qualifiedName.replace('.', '/')}'"
-        setText("Move file to $dirName")
+        text = "Move file to $dirName"
         return true
     }
 
-    override fun applyTo(element: KtPackageDirective, editor: Editor) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         val file = element.getContainingKtFile()
-        val project = file.getProject()
+        val project = file.project
         val targetDirectory = MoveClassesOrPackagesUtil.chooseDestinationPackage(
                 project,
-                element.getQualifiedName(),
-                file.getContainingDirectory()
+                element.qualifiedName,
+                file.containingDirectory
         ) ?: return
 
-        RefactoringMessageUtil.checkCanCreateFile(targetDirectory, file.getName())?.let {
+        RefactoringMessageUtil.checkCanCreateFile(targetDirectory, file.name)?.let {
             Messages.showMessageDialog(project, it, CommonBundle.getErrorTitle(), Messages.getErrorIcon())
             return
         }

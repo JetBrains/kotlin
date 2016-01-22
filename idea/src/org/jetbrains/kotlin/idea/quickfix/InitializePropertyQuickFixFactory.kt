@@ -31,11 +31,12 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.appendElement
 import org.jetbrains.kotlin.idea.core.getOrCreateBody
-import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
+import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
@@ -76,7 +77,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                         val newParam = KotlinParameterInfo(
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = propertyDescriptor.name.asString(),
-                                type = propertyDescriptor.type,
+                                originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
                                 valOrVar = element.valOrVarKeyword.toValVar(),
                                 modifierList = element.modifierList,
                                 defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
@@ -102,11 +103,12 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
 
                 val classDescriptor = klass.resolveToDescriptorIfAny() as? ClassDescriptorWithResolutionScopes ?: return
                 val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
-                val constructorPointer = constructorDescriptor.source.getPsi()?.createSmartPointer()
+                val contextElement = constructorDescriptor.source.getPsi() ?: return
+                val constructorPointer = contextElement.createSmartPointer()
                 val config = configureChangeSignature(propertyDescriptor)
-                val changeSignature = { runChangeSignature(project, constructorDescriptor, config, element, text) }
+                val changeSignature = { runChangeSignature(project, constructorDescriptor, config, contextElement, text) }
                 changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-                    val constructorOrClass = constructorPointer?.element
+                    val constructorOrClass = constructorPointer.element
                     val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.getPrimaryConstructor()
                     constructor?.getValueParameters()?.lastOrNull()?.replace(parameterToInsert)
                 }
@@ -134,7 +136,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                         val newParam = KotlinParameterInfo(
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = KotlinNameSuggester.suggestNameByName(propertyDescriptor.name.asString(), validator),
-                                type = propertyDescriptor.type,
+                                originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
                                 defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
                         )
                         it.addParameter(newParam)
@@ -186,7 +188,9 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 classDescriptor.secondaryConstructors
             }
 
-            processConstructors(project, propertyDescriptor, constructorDescriptors.iterator())
+            project.runWithElementsToShortenIsEmptyIgnored {
+                processConstructors(project, propertyDescriptor, constructorDescriptors.iterator())
+            }
         }
     }
 

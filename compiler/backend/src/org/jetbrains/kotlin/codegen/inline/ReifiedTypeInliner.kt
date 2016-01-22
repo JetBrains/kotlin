@@ -16,80 +16,95 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
-import org.jetbrains.kotlin.codegen.generateNullCheckForNonSafeAs
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
-import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
+import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.makeNullableIfNeeded
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.signature.SignatureReader
-import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.tree.*
 
-private class ParameterNameAndNullability(val name: String, val nullable: Boolean)
+class ReificationArgument(
+        val parameterName: String, val nullable: Boolean, val arrayDepth: Int
+) {
+    fun asString() = "[".repeat(arrayDepth) + parameterName + (if (nullable) "?" else "")
+    fun combine(replacement: ReificationArgument) =
+            ReificationArgument(
+                    replacement.parameterName,
+                    this.nullable || (replacement.nullable && this.arrayDepth == 0),
+                    this.arrayDepth + replacement.arrayDepth)
 
-public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
+    fun reify(replacementAsmType: Type, kotlinType: KotlinType) =
+            Pair(Type.getType("[".repeat(arrayDepth) + replacementAsmType), kotlinType.arrayOf(arrayDepth).makeNullableIfNeeded(nullable))
+
+    private fun KotlinType.arrayOf(arrayDepth: Int): KotlinType {
+        val builtins = this.builtIns
+        var currentType = this
+
+        repeat(arrayDepth) {
+            currentType = builtins.getArrayType(Variance.INVARIANT, currentType)
+        }
+
+        return currentType
+    }
+}
+
+class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) {
+
+    enum class OperationKind {
+        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
+
+        val id: Int get() = ordinal
+    }
 
     companion object {
-        public val NEW_ARRAY_MARKER_METHOD_NAME: String = "reifyNewArray"
-        public val CHECKCAST_MARKER_METHOD_NAME: String = "reifyCheckcast"
-        public val SAFE_CHECKCAST_MARKER_METHOD_NAME: String = "reifySafeCheckcast"
-        public val INSTANCEOF_MARKER_METHOD_NAME: String = "reifyInstanceof"
-        public val JAVA_CLASS_MARKER_METHOD_NAME: String = "reifyJavaClass"
-        public val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME: String = "needClassReification"
+        @JvmField val REIFIED_OPERATION_MARKER_METHOD_NAME = "reifiedOperationMarker"
+        @JvmField val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME = "needClassReification"
 
-        private val PARAMETRISED_MARKERS = ImmutableSet.of(
-                NEW_ARRAY_MARKER_METHOD_NAME,
-                CHECKCAST_MARKER_METHOD_NAME, SAFE_CHECKCAST_MARKER_METHOD_NAME,
-                INSTANCEOF_MARKER_METHOD_NAME, JAVA_CLASS_MARKER_METHOD_NAME
-        )
-
-        private fun isParametrisedReifiedMarker(insn: AbstractInsnNode) =
-                isReifiedMarker(insn) { PARAMETRISED_MARKERS.contains(it) }
+        private fun isOperationReifiedMarker(insn: AbstractInsnNode) =
+                isReifiedMarker(insn) { it == REIFIED_OPERATION_MARKER_METHOD_NAME }
 
         private fun isReifiedMarker(insn: AbstractInsnNode, namePredicate: (String) -> Boolean): Boolean {
-            if (insn.getOpcode() != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
+            if (insn.opcode != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
             return insn.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME && namePredicate(insn.name)
         }
 
-        @JvmStatic
-        public fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
+        @JvmStatic fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
                 isReifiedMarker(insn) { s -> s == NEED_CLASS_REIFICATION_MARKER_METHOD_NAME }
 
-        @JvmStatic
-        public fun putNeedClassReificationMarker(v: MethodVisitor) {
+        @JvmStatic fun putNeedClassReificationMarker(v: MethodVisitor) {
             v.visitMethodInsn(
                     Opcodes.INVOKESTATIC,
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, NEED_CLASS_REIFICATION_MARKER_METHOD_NAME,
                     Type.getMethodDescriptor(Type.VOID_TYPE), false
             );
         }
-
-        @JvmStatic
-        public fun isNullableMarkerInstruction(marker: String) = INSTANCEOF_MARKER_METHOD_NAME == marker ||
-                                                                 CHECKCAST_MARKER_METHOD_NAME == marker
     }
 
     private var maxStackSize = 0
+
+    private val hasReifiedParameters = parametersMapping?.hasReifiedParameters() ?: false
 
     /**
      * @return set of type parameters' identifiers contained in markers that should be reified further
      * e.g. when we're generating inline function containing reified T
      * and another function containing reifiable parts is inlined into that function
      */
-    public fun reifyInstructions(node: MethodNode): ReifiedTypeParametersUsages {
-        if (parametersMapping == null) return ReifiedTypeParametersUsages()
+    fun reifyInstructions(node: MethodNode): ReifiedTypeParametersUsages {
+        if (!hasReifiedParameters) return ReifiedTypeParametersUsages()
+
         val instructions = node.instructions
         maxStackSize = 0
         var result = ReifiedTypeParametersUsages()
         for (insn in instructions.toArray()) {
-            if (isParametrisedReifiedMarker(insn)) {
+            if (isOperationReifiedMarker(insn)) {
                 val newName: String? = processReifyMarker(insn as MethodInsnNode, instructions)
                 if (newName != null) {
                     result.addUsedReifiedParameter(newName)
@@ -101,143 +116,81 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         return result
     }
 
-    public fun reifySignature(oldSignature: String): SignatureReificationResult {
-        if (parametersMapping == null) return SignatureReificationResult(oldSignature, ReifiedTypeParametersUsages())
-
-        val signatureRemapper = object : SignatureWriter() {
-            var typeParamsToReify = ReifiedTypeParametersUsages()
-            override fun visitTypeVariable(name: String?) {
-                val mapping = getMappingByName(name) ?:
-                              return super.visitTypeVariable(name)
-                if (mapping.newName != null) {
-                    typeParamsToReify.addUsedReifiedParameter(mapping.newName)
-                    return super.visitTypeVariable(mapping.newName)
-                }
-
-                // else TypeVariable is replaced by concrete type
-                SignatureReader(mapping.signature).accept(this)
-            }
-
-            override fun visitFormalTypeParameter(name: String?) {
-                val mapping = getMappingByName(name) ?:
-                              return super.visitFormalTypeParameter(name)
-                if (mapping.newName != null) {
-                    typeParamsToReify.addUsedReifiedParameter(mapping.newName)
-                    super.visitFormalTypeParameter(mapping.newName)
-                }
-            }
-
-            private fun getMappingByName(name: String?) = parametersMapping[name!!]
-        }
-
-        SignatureReader(oldSignature).accept(signatureRemapper)
-
-        return SignatureReificationResult(signatureRemapper.toString(), signatureRemapper.typeParamsToReify)
-    }
-
-    data class SignatureReificationResult(val newSignature: String, val typeParametersUsages: ReifiedTypeParametersUsages)
-
     /**
      * @return new type parameter identifier if this marker should be reified further
      * or null if it shouldn't
      */
     private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): String? {
-        val parameter = getParameter(insn) ?: return null
-        val mapping = parametersMapping?.get(parameter.name) ?: return null
-        val kotlinType =
-                if (isNullableMarkerInstruction(insn.name) && parameter.nullable)
-                    TypeUtils.makeNullable(mapping.type)
-                else
-                    mapping.type
+        val operationKind = insn.operationKind ?: return null
+        val reificationArgument = insn.reificationArgument ?: return null
+        val mapping = parametersMapping?.get(reificationArgument.parameterName) ?: return null
 
-
-        val asmType = mapping.asmType
-        if (asmType != null) {
+        if (mapping.asmType != null) {
             // process* methods return false if marker should be reified further
             // or it's invalid (may be emitted explicitly in code)
             // they return true if instruction is reified and marker can be deleted
-            if (when (insn.name) {
-                NEW_ARRAY_MARKER_METHOD_NAME -> processNewArray(insn, asmType)
-                CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, kotlinType, asmType, safe = false)
-                SAFE_CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, kotlinType, asmType, safe = true)
-                INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, instructions, kotlinType, asmType)
-                JAVA_CLASS_MARKER_METHOD_NAME -> processJavaClass(insn, asmType)
-                else -> false
+            val (asmType, kotlinType) = reificationArgument.reify(mapping.asmType, mapping.type)
+
+            if (when (operationKind) {
+                OperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
+                OperationKind.AS -> processAs(insn, instructions, kotlinType, asmType, safe = false)
+                OperationKind.SAFE_AS -> processAs(insn, instructions, kotlinType, asmType, safe = true)
+                OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
+                OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
             }) {
-                instructions.remove(insn.getPrevious()!!)
-                instructions.remove(insn)
+                instructions.remove(insn.previous.previous!!) // PUSH operation ID
+                instructions.remove(insn.previous!!) // PUSH type parameter
+                instructions.remove(insn) // INVOKESTATIC marker method
             }
 
             return null
         } else {
-            val nullableSuffix = if (isNullableMarkerInstruction(insn.name) && kotlinType.isMarkedNullable) "?" else ""
-            instructions.set(insn.previous!!, LdcInsnNode(mapping.newName + nullableSuffix))
-            return mapping.newName
+            val newReificationArgument = reificationArgument.combine(mapping.reificationArgument!!)
+            instructions.set(insn.previous!!, LdcInsnNode(newReificationArgument.asString()))
+            return mapping.reificationArgument.parameterName
         }
     }
 
     private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
             processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
 
-    private fun processCheckcast(insn: MethodInsnNode,
-                                 instructions: InsnList,
-                                 jetType: KotlinType,
-                                 asmType: Type,
-                                 safe: Boolean) =
-            rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { instanceofInsn: AbstractInsnNode ->
-                if (instanceofInsn !is TypeInsnNode) return false
+    private fun processAs(insn: MethodInsnNode,
+                          instructions: InsnList,
+                          kotlinType: KotlinType,
+                          asmType: Type,
+                          safe: Boolean) =
+            rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
+                if (stubCheckcast !is TypeInsnNode) return false
 
-                addNullCheckForAsIfNeeded(insn.previous!!, instructions, jetType, safe)
-                TypeIntrinsics.checkcast(instanceofInsn, instructions, jetType, asmType, safe)
+                val newMethodNode = MethodNode(InlineCodegenUtil.API)
+                generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe)
+
+                instructions.insert(insn, newMethodNode.instructions)
+                instructions.remove(stubCheckcast)
+
+                // TODO: refine max stack calculation (it's not always as big as +4)
+                maxStackSize = Math.max(maxStackSize, 4)
+
                 return true
             }
 
-    private fun addNullCheckForAsIfNeeded(insn: AbstractInsnNode, instructions: InsnList, jetType: KotlinType, safe: Boolean) {
-        if (!safe && !TypeUtils.isNullableType(jetType)) {
-            val methodNode = MethodNode(InlineCodegenUtil.API)
-            generateNullCheckForNonSafeAs(InstructionAdapter(methodNode), jetType)
+    private fun processIs(insn: MethodInsnNode,
+                          instructions: InsnList,
+                          kotlinType: KotlinType,
+                          asmType: Type) =
+            rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
+                if (stubInstanceOf !is TypeInsnNode) return false
 
-            InlineCodegenUtil.insertNodeBefore(methodNode, instructions, insn)
-            maxStackSize = Math.max(maxStackSize, 4)
-        }
-    }
+                val newMethodNode = MethodNode(InlineCodegenUtil.API)
+                generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
 
-    private fun processInstanceof(insn: MethodInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) =
-            rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { instanceofInsn: AbstractInsnNode ->
-                if (instanceofInsn !is TypeInsnNode) return false
+                instructions.insert(insn, newMethodNode.instructions)
+                instructions.remove(stubInstanceOf)
 
-                addNullCheckForIsIfNeeded(insn, instructions, jetType)
-                TypeIntrinsics.instanceOf(instanceofInsn, instructions, jetType, asmType)
+                // TODO: refine max stack calculation (it's not always as big as +2)
+                maxStackSize = Math.max(maxStackSize, 2)
                 return true
             }
-
-    private fun addNullCheckForIsIfNeeded(insn: AbstractInsnNode, instructions: InsnList, type: KotlinType) {
-        if (TypeUtils.isNullableType(type)) {
-            val instanceOf = insn.next
-            insertNullCheckAround(instructions, insn.previous!!, instanceOf)
-            maxStackSize = Math.max(maxStackSize, 2)
-        }
-    }
-
-    private fun insertNullCheckAround(instructions: InsnList, start: AbstractInsnNode, end: AbstractInsnNode) {
-        val methodNode = MethodNode(InlineCodegenUtil.API)
-        var splitIndex: Int = -1
-        generateIsCheck(InstructionAdapter(methodNode), true) {
-            splitIndex = methodNode.instructions.size()
-        }
-        assert(splitIndex >= 0) {
-            "Split index should be non-negative, but $splitIndex"
-        }
-
-        val nullCheckInsns = methodNode.instructions.toArray()
-        nullCheckInsns.take(splitIndex).forEach {
-            instructions.insertBefore(start, it)
-        }
-
-        nullCheckInsns.drop(splitIndex).reversed().forEach {
-            instructions.insert(end, it)
-        }
-    }
 
     inline private fun rewriteNextTypeInsn(
             marker: MethodInsnNode,
@@ -250,61 +203,81 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     }
 
     private fun processNextTypeInsn(insn: MethodInsnNode, parameter: Type, expectedNextOpcode: Int): Boolean {
-        if (insn.getNext()?.getOpcode() != expectedNextOpcode) return false
-        (insn.getNext() as TypeInsnNode).desc = parameter.getInternalName()
+        if (insn.next?.opcode != expectedNextOpcode) return false
+        (insn.next as TypeInsnNode).desc = parameter.internalName
         return true
     }
 
     private fun processJavaClass(insn: MethodInsnNode, parameter: Type): Boolean {
-        val next = insn.getNext()
+        val next = insn.next
         if (next !is LdcInsnNode) return false
         next.cst = parameter
         return true
     }
 
-    private fun getParameter(insn: MethodInsnNode): ParameterNameAndNullability? {
-        val prev = insn.getPrevious()!!
+}
 
-        val parameterNameWithFlag = when (prev.getOpcode()) {
+private val MethodInsnNode.reificationArgument: ReificationArgument?
+    get() {
+        val prev = previous!!
+
+        val reificationArgumentRaw = when (prev.opcode) {
             Opcodes.LDC -> (prev as LdcInsnNode).cst as String
             else -> return null
         }
 
-        val parameterName = if (parameterNameWithFlag.endsWith("?")) parameterNameWithFlag.dropLast(1) else parameterNameWithFlag
-        return ParameterNameAndNullability(parameterName, parameterName !== parameterNameWithFlag)
-    }
-}
+        val arrayDepth = reificationArgumentRaw.indexOfFirst { it != '[' }
+        val parameterName = reificationArgumentRaw.substring(arrayDepth).removeSuffix("?")
+        val nullable = reificationArgumentRaw.endsWith('?')
 
-public class ReifiedTypeParameterMappings() {
-    private val mappingsByName = hashMapOf<String, ReifiedTypeParameterMapping>()
-
-    public fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String) {
-        mappingsByName[name] =  ReifiedTypeParameterMapping(name, type, asmType, newName = null, signature = signature)
+        return ReificationArgument(parameterName, nullable, arrayDepth)
     }
 
-    public fun addParameterMappingToNewParameter(name: String, type: KotlinType, newName: String) {
-        mappingsByName[name] = ReifiedTypeParameterMapping(name, type = type, asmType = null, newName = newName, signature = null)
+private val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind? get() =
+    previous?.previous?.intConstant?.let {
+        ReifiedTypeInliner.OperationKind.values().getOrNull(it)
     }
 
-    operator fun get(name: String): ReifiedTypeParameterMapping? {
+class TypeParameterMappings() {
+    private val mappingsByName = hashMapOf<String, TypeParameterMapping>()
+
+    fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String, isReified: Boolean) {
+        mappingsByName[name] =  TypeParameterMapping(name, type, asmType, reificationArgument = null, signature = signature, isReified = isReified)
+    }
+
+    fun addParameterMappingForFurtherReification(name: String, type: KotlinType, reificationArgument: ReificationArgument, isReified: Boolean) {
+        mappingsByName[name] = TypeParameterMapping(name, type, asmType = null, reificationArgument = reificationArgument, signature = null, isReified = isReified)
+    }
+
+    operator fun get(name: String): TypeParameterMapping? {
         return mappingsByName[name]
     }
+
+    fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
+
+    internal inline fun forEach(l: (TypeParameterMapping) -> Unit)  {
+        mappingsByName.values.forEach(l)
+    }
 }
 
-public class ReifiedTypeParameterMapping(
-        val name: String, val type: KotlinType, val asmType: Type?, val newName: String?, val signature: String?
+class TypeParameterMapping(
+        val name: String, val type: KotlinType,
+        val asmType: Type?,
+        val reificationArgument: ReificationArgument?,
+        val signature: String?,
+        val isReified: Boolean
 )
 
-public class ReifiedTypeParametersUsages {
+class ReifiedTypeParametersUsages {
     val usedTypeParameters: MutableSet<String> = hashSetOf()
 
-    public fun wereUsedReifiedParameters(): Boolean = usedTypeParameters.isNotEmpty()
+    fun wereUsedReifiedParameters(): Boolean = usedTypeParameters.isNotEmpty()
 
-    public fun addUsedReifiedParameter(name: String) {
+    fun addUsedReifiedParameter(name: String) {
         usedTypeParameters.add(name)
     }
 
-    public fun propagateChildUsagesWithinContext(child: ReifiedTypeParametersUsages, context: MethodContext) {
+    fun propagateChildUsagesWithinContext(child: ReifiedTypeParametersUsages, context: MethodContext) {
         if (!child.wereUsedReifiedParameters()) return
         // used for propagating reified TP usages from children member codegen to parent's
         // mark enclosing object-literal/lambda as needed reification iff
@@ -318,7 +291,7 @@ public class ReifiedTypeParametersUsages {
         }.forEach { usedTypeParameters.add(it) }
     }
 
-    public fun mergeAll(other: ReifiedTypeParametersUsages) {
+    fun mergeAll(other: ReifiedTypeParametersUsages) {
         if (!other.wereUsedReifiedParameters()) return
         usedTypeParameters.addAll(other.usedTypeParameters)
     }

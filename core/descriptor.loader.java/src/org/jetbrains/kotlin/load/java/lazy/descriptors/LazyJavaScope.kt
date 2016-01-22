@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
-import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
+import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberScopeImpl() {
+abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberScopeImpl() {
     protected abstract val ownerDescriptor: DeclarationDescriptor
 
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
@@ -118,8 +118,8 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
 
         val c = c.child(functionDescriptorImpl, method)
 
-        val methodTypeParameters = method.getTypeParameters().map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
-        val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.getValueParameters())
+        val methodTypeParameters = method.typeParameters.map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
+        val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.valueParameters)
 
         val returnType = computeMethodReturnType(method, annotations, c)
 
@@ -131,8 +131,8 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
                 effectiveSignature.typeParameters,
                 effectiveSignature.valueParameters,
                 effectiveSignature.returnType,
-                Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
-                method.getVisibility()
+                Modality.convertFromFlags(method.isAbstract, !method.isFinal),
+                method.visibility
         )
 
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
@@ -145,13 +145,13 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     }
 
     protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): KotlinType {
-        val annotationMethod = method.getContainingClass().isAnnotationType()
+        val annotationMethod = method.containingClass.isAnnotationType
         val returnTypeAttrs = LazyJavaTypeAttributes(
                 TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
                 allowFlexible = !annotationMethod,
                 isForAnnotationParameter = annotationMethod
         )
-        return c.typeResolver.transformJavaType(method.getReturnType(), returnTypeAttrs).let {
+        return c.typeResolver.transformJavaType(method.returnType, returnTypeAttrs).let {
             // Annotation arguments are never null in Java
             if (annotationMethod) TypeUtils.makeNotNullable(it) else it
         }
@@ -171,18 +171,18 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
             val annotations = c.resolveAnnotations(javaParameter)
             val typeUsage = LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, annotations)
             val (outType, varargElementType) =
-                    if (javaParameter.isVararg()) {
-                        val paramType = javaParameter.getType() as? JavaArrayType
+                    if (javaParameter.isVararg) {
+                        val paramType = javaParameter.type as? JavaArrayType
                                         ?: throw AssertionError("Vararg parameter should be an array: $javaParameter")
                         val outType = c.typeResolver.transformArrayType(paramType, typeUsage, true)
                         outType to c.module.builtIns.getArrayElementType(outType)
                     }
                     else {
-                        c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage) to null
+                        c.typeResolver.transformJavaType(javaParameter.type, typeUsage) to null
                     }
 
-            val name = if (function.getName().asString() == "equals" &&
-                           jValueParameters.size() == 1 &&
+            val name = if (function.name.asString() == "equals" &&
+                           jValueParameters.size == 1 &&
                            c.module.builtIns.getNullableAnyType() == outType) {
                 // This is a hack to prevent numerous warnings on Kotlin classes that inherit Java classes: if you override "equals" in such
                 // class without this hack, you'll be warned that in the superclass the name is "p0" (regardless of the fact that it's
@@ -192,7 +192,7 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
             }
             else {
                 // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
-                val javaName = javaParameter.getName()
+                val javaName = javaParameter.name
                 if (javaName == null) synthesizedNames = true
                 javaName ?: Name.identifier("p$index")
             }
@@ -264,10 +264,10 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     }
 
     private fun createPropertyDescriptor(field: JavaField): PropertyDescriptorImpl {
-        val isVar = !field.isFinal()
-        val visibility = field.getVisibility()
+        val isVar = !field.isFinal
+        val visibility = field.visibility
         val annotations = c.resolveAnnotations(field)
-        val propertyName = field.getName()
+        val propertyName = field.name
 
         return JavaPropertyDescriptor(ownerDescriptor, annotations, Modality.FINAL, visibility, isVar, propertyName,
                                       c.components.sourceElementFactory.source(field), /* original = */ null, /*isConst= */ field.isFinalStatic)
@@ -347,7 +347,7 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     override fun toString() = "Lazy scope for ${ownerDescriptor}"
     
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), " {")
+        p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
         p.println("containingDeclaration: ${ownerDescriptor}")

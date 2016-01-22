@@ -39,12 +39,12 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperExpression>(RemoveExplicitSuperQualifierIntention()), CleanupLocalInspectionTool {
+class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperExpression>(RemoveExplicitSuperQualifierIntention()), CleanupLocalInspectionTool {
     override val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-public class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSuperExpression>(javaClass(), "Remove explicit supertype qualification") {
+class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSuperExpression>(KtSuperExpression::class.java, "Remove explicit supertype qualification") {
     override fun applicabilityRange(element: KtSuperExpression): TextRange? {
         if (element.superTypeQualifier == null) return null
 
@@ -65,7 +65,7 @@ public class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention
         return TextRange(element.instanceReference.endOffset, element.labelQualifier?.startOffset ?: element.endOffset)
     }
 
-    override fun applyTo(element: KtSuperExpression, editor: Editor) {
+    override fun applyTo(element: KtSuperExpression, editor: Editor?) {
         element.replace(toNonQualified(element))
     }
 

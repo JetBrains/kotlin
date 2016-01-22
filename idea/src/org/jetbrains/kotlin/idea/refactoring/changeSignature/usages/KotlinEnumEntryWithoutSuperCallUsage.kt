@@ -20,9 +20,9 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : KotlinUsageInfo<KtEnumEntry>(enumEntry) {
+class KotlinEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : KotlinUsageInfo<KtEnumEntry>(enumEntry) {
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtEnumEntry, allUsages: Array<out UsageInfo>): Boolean {
-        if (changeInfo.newParameters.size() > 0) {
+        if (changeInfo.newParameters.size > 0) {
             val psiFactory = KtPsiFactory(element)
 
             val delegatorToSuperCall = (element.addAfter(

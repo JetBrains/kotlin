@@ -22,15 +22,15 @@ import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.IElementType
 
-public class LeafElementFilter(private val elementType: IElementType) : ElementFilter {
+class LeafElementFilter(private val elementType: IElementType) : ElementFilter {
 
     override fun isAcceptable(element: Any?, context: PsiElement?)
-            = element is LeafPsiElement && element.getElementType() == elementType
+            = element is LeafPsiElement && element.elementType == elementType
 
     override fun isClassAcceptable(hintClass: Class<*>)
             = LEAF_CLASS_FILTER.isClassAcceptable(hintClass)
 
     companion object {
-        private val LEAF_CLASS_FILTER = ClassFilter(javaClass<LeafPsiElement>())
+        private val LEAF_CLASS_FILTER = ClassFilter(LeafPsiElement::class.java)
     }
 }

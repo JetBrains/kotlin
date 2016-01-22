@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
-public class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl() {
+class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl() {
     override fun getContributedClassifier(name: Name, location: LookupLocation) = workerScope.getContributedClassifier(name, location) as? ClassDescriptor
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<ClassDescriptor> {

@@ -34,29 +34,29 @@ abstract class AbstractTypeBindingTest : KotlinLiteFixture() {
 
     protected fun doTest(path: String) {
         val testFile = File(path)
-        val testKtFile = loadJetFile(getProject(), testFile)
+        val testKtFile = loadJetFile(project, testFile)
 
-        val analyzeResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(getProject(), listOf(testKtFile), environment)
+        val analyzeResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(project, listOf(testKtFile), environment)
 
-        val testDeclaration = testKtFile.getDeclarations().last()!! as KtCallableDeclaration
+        val testDeclaration = testKtFile.declarations.last()!! as KtCallableDeclaration
 
         val typeBinding = testDeclaration.createTypeBindingForReturnType(analyzeResult.bindingContext)
 
         assertEqualsToFile(
                 testFile,
-                StringBuilder {
+                buildString {
                     append(removeLastComment(testKtFile))
                     append("/*\n")
 
                     MyPrinter(this).print(typeBinding)
 
                     append("*/")
-                }.toString()
+                }
         )
     }
 
     private fun removeLastComment(file: KtFile): String {
-        val fileText = file.getText()
+        val fileText = file.text
         val lastIndex = fileText.indexOf("/*")
         return if (lastIndex > 0) {
             fileText.substring(0, lastIndex)
@@ -75,7 +75,7 @@ abstract class AbstractTypeBindingTest : KotlinLiteFixture() {
             }
             println("typeParameter: ${argument.typeParameterDescriptor.render()}")
 
-            val projection = argument.typeProjection.getProjectionKind().label.let {
+            val projection = argument.typeProjection.projectionKind.label.let {
                 if (it.isNotEmpty())
                     "$it "
                 else
@@ -83,9 +83,9 @@ abstract class AbstractTypeBindingTest : KotlinLiteFixture() {
             }
 
             print("typeProjection: ")
-            if (argument.typeProjection.isStarProjection())
+            if (argument.typeProjection.isStarProjection)
                 printlnWithNoIndent("*")
-            else printlnWithNoIndent("${projection}${argument.typeProjection.getType().render()}")
+            else printlnWithNoIndent("${projection}${argument.typeProjection.type.render()}")
             print(argument.typeBinding)
             return this
         }
@@ -96,7 +96,7 @@ abstract class AbstractTypeBindingTest : KotlinLiteFixture() {
                 return this
             }
 
-            println("psi: ${binding.psiElement.getText()}")
+            println("psi: ${binding.psiElement.text}")
             println("type: ${binding.kotlinType.render()}")
 
             printCollection(binding.getArgumentBindings()) {

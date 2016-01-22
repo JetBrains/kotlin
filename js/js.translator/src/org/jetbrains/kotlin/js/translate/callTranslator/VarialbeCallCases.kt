@@ -85,7 +85,7 @@ object DefaultVariableAccessCase : VariableAccessCase() {
 object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
     override fun VariableAccessInfo.canBeApply(): Boolean {
         if(variableDescriptor is PropertyDescriptor) {
-            return isGetAccess() || (variableDescriptor as PropertyDescriptor).isVar()
+            return isGetAccess() || (variableDescriptor as PropertyDescriptor).isVar
         }
         return false
     }
@@ -100,20 +100,20 @@ object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
     override fun VariableAccessInfo.getDescriptor(): CallableDescriptor {
         val propertyDescriptor = variableDescriptor as PropertyDescriptor
         return if (isGetAccess()) {
-            propertyDescriptor.getGetter()!!
+            propertyDescriptor.getter!!
         } else {
-            propertyDescriptor.getSetter()!!
+            propertyDescriptor.setter!!
         }
     }
 }
 
 object SuperPropertyAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
-        val variableName = context.program().getStringLiteral(this.variableName.getIdent())
+        val variableName = context.program().getStringLiteral(this.variableName.ident)
         return if (isGetAccess())
-            JsInvocation(context.namer().getCallGetProperty(), JsLiteral.THIS, dispatchReceiver!!, variableName)
+            JsInvocation(context.namer().callGetProperty, JsLiteral.THIS, dispatchReceiver!!, variableName)
         else
-            JsInvocation(context.namer().getCallSetProperty(), JsLiteral.THIS, dispatchReceiver!!, variableName, value!!)
+            JsInvocation(context.namer().callSetProperty, JsLiteral.THIS, dispatchReceiver!!, variableName, value!!)
     }
 }
 

@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public interface LocalDescriptorResolver {
+interface LocalDescriptorResolver {
     fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor
 }
 
-public class CompilerLocalDescriptorResolver(
+class CompilerLocalDescriptorResolver(
         private val lazyDeclarationResolver: LazyDeclarationResolver
 ) : LocalDescriptorResolver {
     override fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor {

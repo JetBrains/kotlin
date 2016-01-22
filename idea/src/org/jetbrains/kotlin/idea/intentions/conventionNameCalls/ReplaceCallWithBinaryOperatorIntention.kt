@@ -29,32 +29,32 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace call with binary operator"), HighPriorityAction {
+class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace call with binary operator"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
 
         val resolvedCall = element.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
-        if (resolvedCall.getCall().getTypeArgumentList() != null) return null
-        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
+        if (resolvedCall.call.typeArgumentList != null) return null
+        val argument = resolvedCall.call.valueArguments.singleOrNull() ?: return null
         if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.index != 0) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
 
-        setText("Replace with '$operation' operator")
-        return element.callExpression!!.getCalleeExpression()!!.getTextRange()
+        text = "Replace with '$operation' operator"
+        return element.callExpression!!.calleeExpression!!.textRange
     }
 
-    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val operation = operation(element.calleeName)!!
-        val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
-        val receiver = element.getReceiverExpression()
+        val argument = element.callExpression!!.valueArguments.single().getArgumentExpression()!!
+        val receiver = element.receiverExpression
 
         element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $operation $1", receiver, argument))
     }
 
     private fun operation(functionName: String?): String? {
         if (functionName == null) return null
-        return OperatorConventions.BINARY_OPERATION_NAMES.inverse()[Name.identifier(functionName)]?.getValue()
+        return OperatorConventions.BINARY_OPERATION_NAMES.inverse()[Name.identifier(functionName)]?.value
     }
 }

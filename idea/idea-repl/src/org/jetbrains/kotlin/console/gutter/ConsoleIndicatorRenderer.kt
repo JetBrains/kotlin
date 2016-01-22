@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.console.gutter
 
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 
-public class ConsoleIndicatorRenderer(iconWithTooltip: IconWithTooltip) : GutterIconRenderer() {
+class ConsoleIndicatorRenderer(iconWithTooltip: IconWithTooltip) : GutterIconRenderer() {
     private val icon = iconWithTooltip.icon
     private val tooltip = iconWithTooltip.tooltip
 

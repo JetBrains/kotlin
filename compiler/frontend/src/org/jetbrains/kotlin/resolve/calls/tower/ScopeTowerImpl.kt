@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
@@ -42,6 +43,7 @@ internal class CandidateWithBoundDispatchReceiverImpl<D : CallableDescriptor>(
 internal class ScopeTowerImpl(
         resolutionContext: ResolutionContext<*>,
         override val dynamicScope: MemberScope,
+        override val syntheticScopes: SyntheticScopes,
         override val location: LookupLocation
 ): ScopeTower {
     override val dataFlowInfo: DataFlowDecorator = DataFlowDecoratorImpl(resolutionContext)
@@ -49,32 +51,6 @@ internal class ScopeTowerImpl(
 
     override val implicitReceivers = resolutionContext.scope.getImplicitReceiversHierarchy().
             mapNotNull { it.value.check { !it.type.containsError() } }
-
-    override val levels: List<ScopeTowerLevel> = createLevels()
-
-    private fun createLevels(): List<ScopeTowerLevel> {
-        val result = ArrayList<ScopeTowerLevel>()
-
-        // locals win
-        lexicalScope.parentsWithSelf.
-                filterIsInstance<LexicalScope>().
-                filter { it.kind.withLocalDescriptors }.
-                mapTo(result) { ScopeBasedTowerLevel(this, it) }
-
-        lexicalScope.parentsWithSelf.forEach { scope ->
-            if (scope is LexicalScope) {
-                if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
-
-                scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
-            }
-            else {
-                result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
-            }
-        }
-
-        return result
-    }
-
 }
 
 private class DataFlowDecoratorImpl(private val resolutionContext: ResolutionContext<*>): DataFlowDecorator {

@@ -2,8 +2,8 @@ package
 
 package h {
     public fun </*0*/ T> both(/*0*/ t1: T, /*1*/ t2: T): T
-    public fun </*0*/ R> elem(/*0*/ t: kotlin.List<R>): R
-    public fun </*0*/ R> elemAndList(/*0*/ r: R, /*1*/ t: kotlin.List<R>): R
+    public fun </*0*/ R> elem(/*0*/ t: kotlin.collections.List<R>): R
+    public fun </*0*/ R> elemAndList(/*0*/ r: R, /*1*/ t: kotlin.collections.List<R>): R
     public fun </*0*/ T> id(/*0*/ t: T): T
     public fun </*0*/ T> id1(/*0*/ t: T): T
     public fun </*0*/ T> list(/*0*/ value: T): java.util.ArrayList<T>

@@ -40,26 +40,26 @@ import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public class DeserializedClassDescriptor(
+class DeserializedClassDescriptor(
         outerContext: DeserializationContext,
         val classProto: ProtoBuf.Class,
         nameResolver: NameResolver,
         private val sourceElement: SourceElement
 ) : ClassDescriptor, AbstractClassDescriptor(
         outerContext.storageManager,
-        nameResolver.getClassId(classProto.getFqName()).getShortClassName()
+        nameResolver.getClassId(classProto.fqName).shortClassName
 ) {
-    private val modality = Deserialization.modality(Flags.MODALITY.get(classProto.getFlags()))
-    private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.getFlags()))
-    private val kindFromProto = Flags.CLASS_KIND.get(classProto.getFlags())
+    private val modality = Deserialization.modality(Flags.MODALITY.get(classProto.flags))
+    private val visibility = Deserialization.visibility(Flags.VISIBILITY.get(classProto.flags))
+    private val kindFromProto = Flags.CLASS_KIND.get(classProto.flags)
     private val kind = Deserialization.classKind(kindFromProto)
     private val isCompanion = kindFromProto == ProtoBuf.Class.Kind.COMPANION_OBJECT
-    private val isInner = Flags.IS_INNER.get(classProto.getFlags())
+    private val isInner = Flags.IS_INNER.get(classProto.flags)
     private val isData = Flags.IS_DATA.get(classProto.flags)
 
     val c = outerContext.childContext(this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable))
 
-    private val classId = nameResolver.getClassId(classProto.getFqName())
+    private val classId = nameResolver.getClassId(classProto.fqName)
 
     private val staticScope = StaticScopeForKotlinClass(this)
     private val typeConstructor = DeserializedClassTypeConstructor()
@@ -73,7 +73,7 @@ public class DeserializedClassDescriptor(
     private val companionObjectDescriptor = c.storageManager.createNullableLazyValue { computeCompanionObjectDescriptor() }
 
     private val annotations =
-            if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
+            if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
                 Annotations.EMPTY
             }
             else DeserializedAnnotations(c.storageManager) {
@@ -129,7 +129,7 @@ public class DeserializedClassDescriptor(
     private fun computeCompanionObjectDescriptor(): ClassDescriptor? {
         if (!classProto.hasCompanionObjectName()) return null
 
-        val companionObjectName = c.nameResolver.getName(classProto.getCompanionObjectName())
+        val companionObjectName = c.nameResolver.getName(classProto.companionObjectName)
         return memberScope.getContributedClassifier(companionObjectName, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor
     }
 
@@ -181,7 +181,7 @@ public class DeserializedClassDescriptor(
 
         override fun getSupertypes() = supertypes()
 
-        override fun isFinal(): Boolean = isFinal
+        override fun isFinal(): Boolean = isFinalClass
 
         override fun isDenotable() = true
 
@@ -273,38 +273,34 @@ public class DeserializedClassDescriptor(
         private fun nestedClassNames(): Set<Name> {
             val result = LinkedHashSet<Name>()
             val nameResolver = c.nameResolver
-            for (index in classProto.getNestedClassNameList()) {
+            for (index in classProto.nestedClassNameList) {
                 result.add(nameResolver.getName(index!!))
             }
             return result
         }
 
         fun all(): Collection<ClassDescriptor> {
-            val result = ArrayList<ClassDescriptor>(nestedClassNames.size())
+            val result = ArrayList<ClassDescriptor>(nestedClassNames.size)
             nestedClassNames.forEach { name -> result.addIfNotNull(findNestedClass(name)) }
             return result
         }
     }
 
     private inner class EnumEntryClassDescriptors {
-        private val oldEnumEntryNames = classProto.enumEntryNameList.mapTo(LinkedHashSet()) { c.nameResolver.getName(it) }
         private val enumEntryProtos = classProto.enumEntryList.toMapBy { c.nameResolver.getName(it.name) }
+        private val protoContainer =
+                ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, (containingDeclaration as? ClassDescriptor)?.kind)
 
         val enumEntryByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
 
-            val annotations = enumEntryProtos[name]?.let { proto ->
-                DeserializedAnnotations(c.storageManager) {
-                    c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(
-                            ProtoContainer(classProto, null, c.nameResolver, c.typeTable), proto
-                    )
-                }
-            } ?: if (name in oldEnumEntryNames) Annotations.EMPTY
-            else null
-
-            annotations?.let { annotations ->
+            enumEntryProtos[name]?.let { proto ->
                 EnumEntrySyntheticClassDescriptor.create(
-                        c.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames, annotations, SourceElement.NO_SOURCE
+                        c.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames,
+                        DeserializedAnnotations(c.storageManager) {
+                            c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(protoContainer, proto)
+                        },
+                        SourceElement.NO_SOURCE
                 )
             }
         }
@@ -331,7 +327,6 @@ public class DeserializedClassDescriptor(
         }
 
         fun all(): Collection<ClassDescriptor> =
-                (if (oldEnumEntryNames.isEmpty()) enumEntryProtos.keys else oldEnumEntryNames)
-                        .mapNotNull { name -> findEnumEntry(name) }
+                enumEntryProtos.keys.mapNotNull { name -> findEnumEntry(name) }
     }
 }

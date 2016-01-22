@@ -61,8 +61,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             val resolvedCall = expression.getResolvedCall(context.bindingContext())
             val appliedToDynamic =
                     resolvedCall != null &&
-                    with(resolvedCall.getDispatchReceiver()) {
-                        if (this != null) getType().isDynamic() else false
+                    with(resolvedCall.dispatchReceiver) {
+                        if (this != null) type.isDynamic() else false
                     }
 
             if (appliedToDynamic) {
@@ -74,8 +74,8 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         }
 
         private fun canUseSimpleEquals(expression: KtBinaryExpression, context: TranslationContext): Boolean {
-            val left = expression.getLeft()
-            assert(left != null) { "No left-hand side: " + expression.getText() }
+            val left = expression.left
+            assert(left != null) { "No left-hand side: " + expression.text }
             val typeName = JsDescriptorUtils.getNameIfStandardType(left!!, context)
             return typeName != null && NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.apply(typeName)
         }
@@ -88,13 +88,13 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    override public fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS
+    override fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS
 
-    override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
+    override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
             when {
                 (LONG_EQUALS_ANY.apply(descriptor)) -> LONG_EQUALS_ANY_INTRINSIC
 
-                DescriptorUtils.isEnumClass(descriptor.getContainingDeclaration()) -> EnumEqualsIntrinsic
+                DescriptorUtils.isEnumClass(descriptor.containingDeclaration) -> EnumEqualsIntrinsic
 
                 JsDescriptorUtils.isBuiltin(descriptor) ||
                 TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic

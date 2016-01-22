@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.getValue
 
-public class LazyJavaPackageScope(
+class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
         private val jPackage: JavaPackage,
         override val ownerDescriptor: LazyJavaPackageFragment
@@ -58,7 +58,7 @@ public class LazyJavaPackageScope(
         result
     }
 
-    public fun getFacadeSimpleNameForPartSimpleName(partName: String): String? =
+    fun getFacadeSimpleNameForPartSimpleName(partName: String): String? =
             partToFacade()[partName]
 
     private val deserializedPackageScope by c.storageManager.createLazyValue {

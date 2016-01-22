@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
 
-public class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStub, KtScript>(
+class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStub, KtScript>(
         debugName, KtScript::class.java, KotlinScriptStub::class.java
 ) {
 

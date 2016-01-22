@@ -47,6 +47,6 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 }

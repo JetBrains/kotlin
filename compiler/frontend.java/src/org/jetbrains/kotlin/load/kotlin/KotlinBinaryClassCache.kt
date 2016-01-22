@@ -52,7 +52,6 @@ class KotlinBinaryClassCache : Disposable {
     }
 
     companion object {
-
         fun getKotlinBinaryClass(file: VirtualFile, fileContent: ByteArray? = null): KotlinJvmBinaryClass? {
             if (file.fileType !== JavaClassFileType.INSTANCE) return null
 
@@ -62,14 +61,13 @@ class KotlinBinaryClassCache : Disposable {
             if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
                 return requestCache.virtualFileKotlinClass
             }
-            else {
-                val aClass = ApplicationManager.getApplication().runReadAction(Computable {
-                    //noinspection deprecation
-                    VirtualFileKotlinClass.create(file, fileContent)
-                })
 
-                return requestCache.cache(file, aClass)
-            }
+            val aClass = ApplicationManager.getApplication().runReadAction(Computable {
+                //noinspection deprecation
+                VirtualFileKotlinClass.create(file, fileContent)
+            })
+
+            return requestCache.cache(file, aClass)
         }
     }
 }

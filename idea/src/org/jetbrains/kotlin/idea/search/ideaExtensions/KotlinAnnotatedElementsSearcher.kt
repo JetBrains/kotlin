@@ -29,6 +29,7 @@ import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -40,13 +41,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, AnnotatedElementsSearch.Parameters> {
+class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, AnnotatedElementsSearch.Parameters> {
 
     override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: Processor<PsiModifierListOwner>): Boolean {
         return processAnnotatedMembers(p.annotationClass, p.scope) { declaration ->
             when (declaration) {
                 is KtClass -> {
-                    val lightClass = LightClassUtil.getPsiClass(declaration)
+                    val lightClass = declaration.toLightClass()
                     consumer.process(lightClass)
                 }
                 is KtNamedFunction, is KtSecondaryConstructor -> {
@@ -61,13 +62,13 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
     companion object {
         private val LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher")
 
-        public fun processAnnotatedMembers(annClass: PsiClass,
+        fun processAnnotatedMembers(annClass: PsiClass,
                                            useScope: SearchScope,
                                            preFilter: (KtAnnotationEntry) -> Boolean = { true },
                                            consumer: (KtDeclaration) -> Boolean): Boolean {
-            assert(annClass.isAnnotationType()) { "Annotation type should be passed to annotated members search" }
+            assert(annClass.isAnnotationType) { "Annotation type should be passed to annotated members search" }
 
-            val annotationFQN = annClass.getQualifiedName()
+            val annotationFQN = annClass.qualifiedName
             assert(annotationFQN != null)
 
             val candidates = getKotlinAnnotationCandidates(annClass, useScope)
@@ -83,7 +84,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
                     val context = elt.analyze(BodyResolveMode.PARTIAL)
                     val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt) ?: return true
 
-                    val descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor() ?: return true
+                    val descriptor = annotationDescriptor.type.constructor.declarationDescriptor ?: return true
                     if (!(DescriptorUtils.getFqName(descriptor).asString() == annotationFQN)) return true
 
                     if (!consumer(declaration)) return false
@@ -100,8 +101,8 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
         private fun getKotlinAnnotationCandidates(annClass: PsiClass, useScope: SearchScope): Collection<PsiElement> {
             return runReadAction(fun(): Collection<PsiElement> {
                 if (useScope is GlobalSearchScope) {
-                    val name = annClass.getName() ?: return emptyList()
-                    return KotlinAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
+                    val name = annClass.name ?: return emptyList()
+                    return KotlinAnnotationsIndex.getInstance().get(name, annClass.project, useScope)
                 }
 
                 return (useScope as LocalSearchScope).scope.flatMap { it.collectDescendantsOfType<KtAnnotationEntry>() }
@@ -113,7 +114,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
 
             val faultyContainer = PsiUtilCore.getVirtualFile(found)
             LOG.error("Non annotation in annotations list: $faultyContainer; element:$found")
-            if (faultyContainer != null && faultyContainer.isValid()) {
+            if (faultyContainer != null && faultyContainer.isValid) {
                 FileBasedIndex.getInstance().requestReindex(faultyContainer)
             }
 

@@ -27,24 +27,21 @@ import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
-public class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
+class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
 
     companion object {
         private val LOG = Logger.getInstance(TraceBasedErrorReporter::class.java)
 
-        public val ABI_VERSION_ERRORS: WritableSlice<String, AbiVersionErrorData> = Slices.createCollectiveSlice()
+        @JvmField
+        val METADATA_VERSION_ERRORS: WritableSlice<String, IncompatibleVersionErrorData> = Slices.createCollectiveSlice()
+
         // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
-        public val INCOMPLETE_HIERARCHY: WritableSlice<ClassDescriptor, MutableList<String>> = Slices.createCollectiveSlice()
+        @JvmField
+        val INCOMPLETE_HIERARCHY: WritableSlice<ClassDescriptor, MutableList<String>> = Slices.createCollectiveSlice()
     }
 
-    public data class AbiVersionErrorData(
-            public val actualVersion: BinaryVersion,
-            public val filePath: String,
-            public val classId: ClassId
-    )
-
-    override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
-        trace.record(ABI_VERSION_ERRORS, filePath, AbiVersionErrorData(actualVersion, filePath, classId))
+    override fun reportIncompatibleMetadataVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
+        trace.record(METADATA_VERSION_ERRORS, filePath, IncompatibleVersionErrorData(actualVersion, filePath, classId))
     }
 
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {

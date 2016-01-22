@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public class PackageFragmentProviderImpl(
+class PackageFragmentProviderImpl(
         private val packageFragments: Collection<PackageFragmentDescriptor>
 ) : PackageFragmentProvider {
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
@@ -28,6 +28,6 @@ public class PackageFragmentProviderImpl(
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> =
             packageFragments.asSequence()
                     .map { it.fqName }
-                    .filter { !it.isRoot() && it.parent() == fqName }
+                    .filter { !it.isRoot && it.parent() == fqName }
                     .toList()
 }

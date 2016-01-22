@@ -29,7 +29,7 @@ fun check(body: () -> Unit, signature: String): String? {
         return "Link error expected"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.getMessage() != signature) return "Fail $signature: " + e.getMessage()
+        if (e.message != signature) return "Fail $signature: " + e.message
     }
 
     return null

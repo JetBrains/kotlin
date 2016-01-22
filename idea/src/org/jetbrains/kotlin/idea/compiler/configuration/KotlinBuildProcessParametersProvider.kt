@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.compiler.configuration
 import com.intellij.compiler.server.BuildProcessParametersProvider
 import org.jetbrains.kotlin.idea.PluginStartupComponent
 
-public class KotlinBuildProcessParametersProvider(private val compilerWorkspaceSettings: KotlinCompilerWorkspaceSettings,
+class KotlinBuildProcessParametersProvider(private val compilerWorkspaceSettings: KotlinCompilerWorkspaceSettings,
                                                   private val kotlinPluginStartupComponent: PluginStartupComponent
 ): BuildProcessParametersProvider() {
     override fun getVMArguments(): MutableList<String> {

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtExpression
 
-public class AndroidExtensionPropertiesCallChecker : CallChecker {
+class AndroidExtensionPropertiesCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val expression = context.call.calleeExpression ?: return
 

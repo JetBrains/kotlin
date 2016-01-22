@@ -31,19 +31,19 @@ class Luhny() {
         // }
 
         if (it.isDigit()) {
-            digits.addLast(it.toInt() - '0'.toInt())
+            digits.addLast(it - '0')
         } else if (it == ' ' || it == '-') {
         } else {
             printAll()
         }
 
-        if (digits.size() > 16)
+        if (digits.size > 16)
           printOneDigit()
         check()
     }
 
     private fun check() {
-        val size = digits.size()
+        val size = digits.size
         if (size < 14) return
         val sum = digits.sum {i, d ->
             if (i % 2 == size % 2) double(d) else d
@@ -54,7 +54,7 @@ class Luhny() {
 //            sum += if (i % 2 == size % 2) double(d) else d
 //            i++
 //        }
-        if (sum % 10 == 0) toBeMasked = digits.size()
+        if (sum % 10 == 0) toBeMasked = digits.size
     }
 
     private fun double(d : Int) = d * 2 / 10 + d * 2 % 10

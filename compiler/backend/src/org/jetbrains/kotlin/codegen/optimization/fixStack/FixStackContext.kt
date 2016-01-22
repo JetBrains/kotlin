@@ -77,23 +77,23 @@ internal class FixStackContext(val methodNode: MethodNode) {
     }
 
     private fun visitFixStackBeforeJump(insnNode: AbstractInsnNode) {
-        val next = insnNode.getNext()
-        assert(next.getOpcode() == Opcodes.GOTO) { "${indexOf(insnNode)}: should be followed by GOTO" }
+        val next = insnNode.next
+        assert(next.opcode == Opcodes.GOTO) { "${indexOf(insnNode)}: should be followed by GOTO" }
         breakContinueGotoNodes.add(next as JumpInsnNode)
     }
 
     private fun visitFakeAlwaysTrueIfeq(insnNode: AbstractInsnNode) {
-        assert(insnNode.getNext().getOpcode() == Opcodes.IFEQ) { "${indexOf(insnNode)}: should be followed by IFEQ" }
+        assert(insnNode.next.opcode == Opcodes.IFEQ) { "${indexOf(insnNode)}: should be followed by IFEQ" }
         fakeAlwaysTrueIfeqMarkers.add(insnNode)
     }
 
     private fun visitFakeAlwaysFalseIfeq(insnNode: AbstractInsnNode) {
-        assert(insnNode.getNext().getOpcode() == Opcodes.IFEQ) { "${indexOf(insnNode)}: should be followed by IFEQ" }
+        assert(insnNode.next.opcode == Opcodes.IFEQ) { "${indexOf(insnNode)}: should be followed by IFEQ" }
         fakeAlwaysFalseIfeqMarkers.add(insnNode)
     }
 
     private fun visitSaveStackBeforeTry(insnNode: AbstractInsnNode) {
-        val tryStartLabel = insnNode.getNext()
+        val tryStartLabel = insnNode.next
         assert(tryStartLabel is LabelNode) { "${indexOf(insnNode)}: save should be followed by a label" }
         saveStackNodesForTryStartLabel[tryStartLabel as LabelNode] = insnNode
     }
@@ -107,7 +107,7 @@ internal class FixStackContext(val methodNode: MethodNode) {
         if (saveNodes.isEmpty()) {
             throw AssertionError("${indexOf(insnNode)}: in handler ${indexOf(restoreLabel)} restore is not matched with save")
         }
-        else if (saveNodes.size() > 1) {
+        else if (saveNodes.size > 1) {
             throw AssertionError("${indexOf(insnNode)}: in handler ${indexOf(restoreLabel)} restore is matched with several saves")
         }
         val saveNode = saveNodes.first()

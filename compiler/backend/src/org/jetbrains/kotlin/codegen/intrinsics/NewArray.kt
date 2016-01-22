@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class NewArray : IntrinsicMethod() {
+class NewArray : IntrinsicMethod() {
     override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
-        val jetType = resolvedCall.getResultingDescriptor().getReturnType()!!
+        val jetType = resolvedCall.resultingDescriptor.returnType!!
         val type = codegen.getState().typeMapper.mapType(jetType)
         return object : IntrinsicCallable(type, listOf(Type.INT_TYPE), null, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {

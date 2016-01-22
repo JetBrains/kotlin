@@ -28,8 +28,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.codegen.inline.FileMapping
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
-import org.jetbrains.kotlin.idea.core.refactoring.getLineCount
-import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
+import org.jetbrains.kotlin.idea.refactoring.getLineCount
+import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
@@ -74,7 +74,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
     private fun virtualFileForInlineCall(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): OpenFileHyperlinkInfo? {
         val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
 
-        if (ProjectRootsUtil.isInContent(project, file, false, true, false)) {
+        if (ProjectRootsUtil.isLibrarySourceFile(project, file)) {
             val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
 
             val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
@@ -82,7 +82,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
             return readDebugInfoForInlineFun(classFile.contentsToByteArray(), lineNumber, project)
         }
 
-        if (!ProjectRootsUtil.isInContent(project, file, true, false, false)) return null
+        if (!ProjectRootsUtil.isProjectSourceFile(project, file)) return null
 
         val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return null
         if (lineNumber <= linesInFile) return null

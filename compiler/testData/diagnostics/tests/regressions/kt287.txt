@@ -1,6 +1,6 @@
 package
 
-public val attributes: kotlin.Map<kotlin.String, kotlin.String>
-public fun attributes(): kotlin.Map<kotlin.String, kotlin.String>
-public fun foo(/*0*/ m: kotlin.Map<kotlin.String, kotlin.String>): kotlin.Unit
+public val attributes: kotlin.collections.Map<kotlin.String, kotlin.String>
+public fun attributes(): kotlin.collections.Map<kotlin.String, kotlin.String>
+public fun foo(/*0*/ m: kotlin.collections.Map<kotlin.String, kotlin.String>): kotlin.Unit
 public fun test(): kotlin.Unit

@@ -1,3 +1,3 @@
 package test
 
-public fun ff(/*0*/ p: kotlin.List<kotlin.CharSequence>): kotlin.Int
+public fun ff(/*0*/ p: kotlin.collections.List<kotlin.CharSequence>): kotlin.Int

@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -351,12 +351,12 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
     @NotNull
     protected TargetPlatform getPlatform() {
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 
     @NotNull
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return TargetPlatformKt.createModule(JvmPlatform.INSTANCE$, Name.special(moduleName), storageManager);
+        return TargetPlatformKt.createModule(JvmPlatform.INSTANCE, Name.special(moduleName), storageManager);
     }
 
     @NotNull

@@ -44,39 +44,39 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.io.File
 
-public class GenerationState @JvmOverloads constructor(
-        public val project: Project,
+class GenerationState @JvmOverloads constructor(
+        val project: Project,
         builderFactory: ClassBuilderFactory,
-        public val module: ModuleDescriptor,
+        val module: ModuleDescriptor,
         bindingContext: BindingContext,
-        public val files: List<KtFile>,
+        val files: List<KtFile>,
         disableCallAssertions: Boolean = true,
         disableParamAssertions: Boolean = true,
-        public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
+        val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
-        public val useTypeTableInSerializer: Boolean = false,
-        public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
-        public val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
+        val useTypeTableInSerializer: Boolean = false,
+        val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
+        val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
-        public val targetId: TargetId? = null,
+        val targetId: TargetId? = null,
         moduleName: String? = null,
         // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
         // partial compilation. Module chunks are treated as a single module.
         // TODO: get rid of it with the proper module infrastructure
-        public val outDirectory: File? = null,
-        public val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
-        public val generateOpenMultifileClasses: Boolean = false,
-        public val progress: Progress = Progress.DEAF
+        val outDirectory: File? = null,
+        val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
+        val generateOpenMultifileClasses: Boolean = false,
+        val progress: Progress = Progress.DEAF
 ) {
-    public abstract class GenerateClassFilter {
-        public abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
-        public abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
-        public abstract fun shouldGeneratePackagePart(jetFile: KtFile): Boolean
-        public abstract fun shouldGenerateScript(script: KtScript): Boolean
+    abstract class GenerateClassFilter {
+        abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
+        abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
+        abstract fun shouldGeneratePackagePart(jetFile: KtFile): Boolean
+        abstract fun shouldGenerateScript(script: KtScript): Boolean
 
         companion object {
-            public val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
+            @JvmField val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
                 override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean = true
 
                 override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean = true
@@ -88,58 +88,61 @@ public class GenerationState @JvmOverloads constructor(
         }
     }
 
-    public val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
+    val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
 
     private fun getIncrementalCacheForThisTarget() =
             if (incrementalCompilationComponents != null && targetId != null)
                 incrementalCompilationComponents.getIncrementalCache(targetId)
             else null
 
-    private val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
+    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
-    public val diagnostics: DiagnosticSink get() = extraJvmDiagnosticsTrace
-    public val collectedExtraJvmDiagnostics: Diagnostics = LazyJvmDiagnostics {
+    val diagnostics: DiagnosticSink get() = extraJvmDiagnosticsTrace
+    val collectedExtraJvmDiagnostics: Diagnostics = LazyJvmDiagnostics {
         duplicateSignatureFactory.reportDiagnostics()
         extraJvmDiagnosticsTrace.bindingContext.diagnostics
     }
 
-    public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
-    public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
-    public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
-    public val bindingContext: BindingContext = bindingTrace.getBindingContext()
-    public val typeMapper: JetTypeMapper = JetTypeMapper(this.bindingContext, classBuilderMode, fileClassesProvider, getIncrementalCacheForThisTarget(), this.moduleName)
-    public val intrinsics: IntrinsicMethods = IntrinsicMethods()
-    public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
-    public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
-    public val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    public val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
-    public val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
-    public val factory: ClassFileFactory
+    val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
+    val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
+    val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
+    val bindingContext: BindingContext = bindingTrace.bindingContext
+    val typeMapper: JetTypeMapper = JetTypeMapper(
+            this.bindingContext, classBuilderMode, fileClassesProvider, getIncrementalCacheForThisTarget(),
+            IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace), this.moduleName
+    )
+    val intrinsics: IntrinsicMethods = IntrinsicMethods()
+    val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
+    val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
+    val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
+    val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
+    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
+    val factory: ClassFileFactory
     private val duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
 
-    public val replSpecific = ForRepl()
+    val replSpecific = ForRepl()
 
     //TODO: should be refactored out
-    public class ForRepl {
-        public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
-        public var scriptResultFieldName: String? = null
-        public val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
-        public var hasResult: Boolean = false
+    class ForRepl {
+        var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
+        var scriptResultFieldName: String? = null
+        val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
+        var hasResult: Boolean = false
     }
 
-    public val isCallAssertionsEnabled: Boolean = !disableCallAssertions
+    val isCallAssertionsEnabled: Boolean = !disableCallAssertions
         @JvmName("isCallAssertionsEnabled") get
 
-    public val isParamAssertionsEnabled: Boolean = !disableParamAssertions
+    val isParamAssertionsEnabled: Boolean = !disableParamAssertions
         @JvmName("isParamAssertionsEnabled") get
 
-    public val isInlineEnabled: Boolean = !disableInline
+    val isInlineEnabled: Boolean = !disableInline
         @JvmName("isInlineEnabled") get
 
 
-    public val rootContext: CodegenContext<*> = RootContext(this)
+    val rootContext: CodegenContext<*> = RootContext(this)
 
     init {
         val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
@@ -161,7 +164,7 @@ public class GenerationState @JvmOverloads constructor(
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)
     }
 
-    public fun beforeCompile() {
+    fun beforeCompile() {
         markUsed()
 
         CodegenBinding.initTrace(this)
@@ -173,7 +176,7 @@ public class GenerationState @JvmOverloads constructor(
         used = true
     }
 
-    public fun destroy() {
+    fun destroy() {
         interceptedBuilderFactory.close()
     }
 }

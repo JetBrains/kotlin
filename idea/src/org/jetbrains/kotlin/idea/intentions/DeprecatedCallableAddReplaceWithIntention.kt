@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.quickfix.unblockDocument
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
@@ -42,20 +42,20 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
-public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<KtCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
+class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<KtCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
 
-public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
-        javaClass(), "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'Deprecated' annotation"
+class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
+        KtCallableDeclaration::class.java, "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'Deprecated' annotation"
 ) {
     private class ReplaceWith(val expression: String, vararg val imports: String)
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         val annotationEntry = element.deprecatedAnnotationWithNoReplaceWith() ?: return null
         if (element.suggestReplaceWith() == null) return null
-        return annotationEntry.getTextRange()
+        return annotationEntry.textRange
     }
 
-    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         val replaceWith = element.suggestReplaceWith()!!
 
         assert('\n' !in replaceWith.expression && '\r' !in replaceWith.expression) { "Formatted expression text should not contain \\n or \\r" }
@@ -69,9 +69,9 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
 
         // escape '$' if it's followed by a letter or '{'
         if (escapedText.contains('$')) {
-            escapedText = StringBuilder {
+            escapedText = StringBuilder().apply {
                 var i = 0
-                val length = escapedText.length()
+                val length = escapedText.length
                 while (i < length) {
                     val c = escapedText[i++]
                     if (c == '$' && i < length) {
@@ -85,7 +85,7 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
             }.toString()
         }
 
-        val argumentText = StringBuilder {
+        val argumentText = StringBuilder().apply {
             append("kotlin.ReplaceWith(\"")
             append(escapedText)
             append("\"")
@@ -95,30 +95,32 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
         }.toString()
 
         var argument = psiFactory.createArgument(psiFactory.createExpression(argumentText))
-        argument = annotationEntry.getValueArgumentList()!!.addArgument(argument)
+        argument = annotationEntry.valueArgumentList!!.addArgument(argument)
         argument = ShortenReferences.DEFAULT.process(argument) as KtValueArgument
 
-        PsiDocumentManager.getInstance(argument.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
-        editor.moveCaret(argument.getTextOffset())
+        editor?.apply {
+            unblockDocument()
+            moveCaret(argument.textOffset)
+        }
     }
 
     private fun KtCallableDeclaration.deprecatedAnnotationWithNoReplaceWith(): KtAnnotationEntry? {
         val bindingContext = this.analyze()
 //        val deprecatedConstructor = KotlinBuiltIns.getInstance().getDeprecatedAnnotation().getUnsubstitutedPrimaryConstructor()
-        for (entry in getAnnotationEntries()) {
+        for (entry in annotationEntries) {
             entry.analyze()
-            val resolvedCall = entry.getCalleeExpression().getResolvedCall(bindingContext) ?: continue
+            val resolvedCall = entry.calleeExpression.getResolvedCall(bindingContext) ?: continue
             if (!resolvedCall.isReallySuccess()) continue
 //            if (resolvedCall.getResultingDescriptor() != deprecatedConstructor) continue
 
             //TODO
-            val descriptor = resolvedCall.getResultingDescriptor().getContainingDeclaration()
+            val descriptor = resolvedCall.resultingDescriptor.containingDeclaration
             val descriptorFqName = DescriptorUtils.getFqName(descriptor).toSafe()
             if (descriptorFqName != KotlinBuiltIns.FQ_NAMES.deprecated) continue
 
-            val replaceWithArguments = resolvedCall.getValueArguments().entrySet()
-                    .single { it.key.getName().asString() == "replaceWith"/*TODO: kotlin.deprecated::replaceWith.name*/ }.value
-            return if (replaceWithArguments.getArguments().isEmpty()) entry else null
+            val replaceWithArguments = resolvedCall.valueArguments.entries
+                    .single { it.key.name.asString() == "replaceWith"/*TODO: kotlin.deprecated::replaceWith.name*/ }.value
+            return if (replaceWithArguments.arguments.isEmpty()) entry else null
         }
         return null
     }
@@ -128,8 +130,8 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
             is KtNamedFunction -> replacementExpressionFromBody()
 
             is KtProperty -> {
-                if (isVar()) return null //TODO
-                getGetter()?.replacementExpressionFromBody()
+                if (isVar) return null //TODO
+                getter?.replacementExpressionFromBody()
             }
 
             else -> null
@@ -146,7 +148,7 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
             }
 
             override fun visitBlockExpression(expression: KtBlockExpression) {
-                if (expression.getStatements().size() > 1) {
+                if (expression.statements.size > 1) {
                     isGood = false
                     return
                 }
@@ -155,7 +157,7 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
 
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val target = expression.analyze()[BindingContext.REFERENCE_TARGET, expression] as? DeclarationDescriptorWithVisibility ?: return
-                if (Visibilities.isPrivate((target.getVisibility()))) {
+                if (Visibilities.isPrivate((target.visibility))) {
                     isGood = false
                 }
             }
@@ -168,34 +170,34 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
 
         //TODO: check that no receivers that cannot be referenced from outside involved
 
-        val text = replacementExpression.getText()
+        val text = replacementExpression.text
         var expression = try {
             KtPsiFactory(this).createExpression(text.replace('\n', ' '))
         }
         catch(e: Throwable) { // does not parse in one line
             return null
         }
-        expression = CodeStyleManager.getInstance(getProject()).reformat(expression, true) as KtExpression
+        expression = CodeStyleManager.getInstance(project).reformat(expression, true) as KtExpression
 
-        return ReplaceWith(expression.getText(), *extractImports(replacementExpression).toTypedArray())
+        return ReplaceWith(expression.text, *extractImports(replacementExpression).toTypedArray())
     }
 
     private fun KtDeclarationWithBody.replacementExpressionFromBody(): KtExpression? {
-        val body = getBodyExpression() ?: return null
+        val body = bodyExpression ?: return null
         if (!hasBlockBody()) return body
         val block = body as? KtBlockExpression ?: return null
-        val statement = block.getStatements().singleOrNull() as? KtExpression ?: return null
-        val returnsUnit = (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor)?.getReturnType()?.isUnit() ?: return null
+        val statement = block.statements.singleOrNull() as? KtExpression ?: return null
+        val returnsUnit = (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor)?.returnType?.isUnit() ?: return null
         return when (statement) {
-            is KtReturnExpression -> statement.getReturnedExpression()
+            is KtReturnExpression -> statement.returnedExpression
             else -> if (returnsUnit) statement else null
         }
     }
 
     private fun extractImports(expression: KtExpression): Collection<String> {
         val file = expression.getContainingKtFile()
-        val currentPackageFqName = file.getPackageFqName()
-        val importHelper = ImportInsertHelper.getInstance(expression.getProject())
+        val currentPackageFqName = file.packageFqName
+        val importHelper = ImportInsertHelper.getInstance(expression.project)
 
         val result = ArrayList<String>()
         expression.accept(object : KtVisitorVoid(){
@@ -207,7 +209,7 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
                 if (target.isExtension || expression.getReceiverExpression() == null) {
                     val fqName = target.importableFqName ?: return
                     if (!importHelper.isImportedWithDefault(ImportPath(fqName, false), file)
-                        && (target.getContainingDeclaration() as? PackageFragmentDescriptor)?.fqName != currentPackageFqName) {
+                        && (target.containingDeclaration as? PackageFragmentDescriptor)?.fqName != currentPackageFqName) {
                         result.add(fqName.asString())
                     }
                 }

@@ -64,7 +64,7 @@ fun test3(): Int {
                 })
         return res
     } catch (e: RuntimeException) {
-        return e.getMessage()?.toInt2()!!
+        return e.message?.toInt2()!!
     }
 }
 

@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
-import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression
+import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 
-public class DiagnosticSuppressorForDebugger : DiagnosticsWithSuppression.DiagnosticSuppressor {
+class DiagnosticSuppressorForDebugger : DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
-        val element = diagnostic.getPsiElement()
-        val containingFile = element.getContainingFile()
+        val element = diagnostic.psiElement
+        val containingFile = element.containingFile
 
         if (containingFile is KtFile && containingFile.suppressDiagnosticsInDebugMode) {
-            val diagnosticFactory = diagnostic.getFactory()
+            val diagnosticFactory = diagnostic.factory
             return diagnosticFactory == Errors.INVISIBLE_MEMBER ||
                    diagnosticFactory == Errors.INVISIBLE_REFERENCE ||
                    diagnosticFactory == Errors.INVISIBLE_SETTER ||

@@ -38,7 +38,7 @@ fun PsiElement.isOverridableElement(): Boolean = when (this) {
     else -> false
 }
 
-public fun HierarchySearchRequest<*>.searchOverriders(): Query<PsiMethod> {
+fun HierarchySearchRequest<*>.searchOverriders(): Query<PsiMethod> {
     val psiMethods = runReadAction { originalElement.toLightMethods() }
     if (psiMethods.isEmpty()) return EmptyQuery.getEmptyQuery()
 
@@ -47,17 +47,17 @@ public fun HierarchySearchRequest<*>.searchOverriders(): Query<PsiMethod> {
             .reduce { query1, query2 -> MergeQuery(query1, query2)}
 }
 
-public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOverridingHierarchyTraverser) {
+object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOverridingHierarchyTraverser) {
     fun searchDirectOverriders(psiMethod: PsiMethod): Iterable<PsiMethod> {
         fun PsiMethod.isAcceptable(inheritor: PsiClass, baseMethod: PsiMethod, baseClass: PsiClass): Boolean =
                 when {
                     hasModifierProperty(PsiModifier.STATIC) -> false
                     baseMethod.hasModifierProperty(PsiModifier.PACKAGE_LOCAL) ->
-                        JavaPsiFacade.getInstance(getProject()).arePackagesTheSame(baseClass, inheritor)
+                        JavaPsiFacade.getInstance(project).arePackagesTheSame(baseClass, inheritor)
                     else -> true
                 }
 
-        val psiClass = psiMethod.getContainingClass()
+        val psiClass = psiMethod.containingClass
         if (psiClass == null) return Collections.emptyList()
 
         val classToMethod = HashMap<PsiClass, PsiMethod>()
@@ -65,7 +65,7 @@ public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMe
             override fun nextElements(current: PsiClass): Iterable<PsiClass> =
                     DirectClassInheritorsSearch.search(
                             current,
-                            current.getProject().allScope(),
+                            current.project.allScope(),
                             /* checkInheritance = */ true,
                             /* includeAnonymous = */ true
                     )
@@ -83,7 +83,7 @@ public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMe
             }
         }
 
-        return classToMethod.values()
+        return classToMethod.values
     }
 
     override fun isApplicable(request: HierarchySearchRequest<PsiMethod>): Boolean =

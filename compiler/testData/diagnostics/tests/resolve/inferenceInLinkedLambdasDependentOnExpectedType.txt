@@ -1,5 +1,5 @@
 package
 
-public fun </*0*/ T> emptyList(): kotlin.List<T>
-public fun </*0*/ T> foo(/*0*/ f: () -> kotlin.Collection<T>, /*1*/ p: (T) -> kotlin.Boolean): kotlin.Collection<T>
-public fun test(): kotlin.Collection<kotlin.Int>
+public fun </*0*/ T> emptyList(): kotlin.collections.List<T>
+public fun </*0*/ T> foo(/*0*/ f: () -> kotlin.collections.Collection<T>, /*1*/ p: (T) -> kotlin.Boolean): kotlin.collections.Collection<T>
+public fun test(): kotlin.collections.Collection<kotlin.Int>

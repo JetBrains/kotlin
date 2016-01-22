@@ -20,17 +20,17 @@ import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 
-public class FirstChildInParentFilter(val level: Int = 1) : PositionElementFilter() {
+class FirstChildInParentFilter(val level: Int = 1) : PositionElementFilter() {
     override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
         if (element !is PsiElement) return false
 
         var parent: PsiElement? = element
         for (i in 1..level) {
             if (parent == null) break
-            parent = parent.getContext()
+            parent = parent.context
         }
 
-        return (parent != null) && PsiTreeUtil.isAncestor(parent.getFirstChild(), element, true)
+        return (parent != null) && PsiTreeUtil.isAncestor(parent.firstChild, element, true)
     }
 
 

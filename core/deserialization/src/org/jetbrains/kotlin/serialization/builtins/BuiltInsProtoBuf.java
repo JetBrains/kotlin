@@ -7,7 +7,6 @@ public final class BuiltInsProtoBuf {
   private BuiltInsProtoBuf() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
-    registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.className);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.packageFqName);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.constructorAnnotation);
@@ -19,21 +18,857 @@ public final class BuiltInsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.typeParameterAnnotation);
   }
-  public static final int CLASS_NAME_FIELD_NUMBER = 150;
+  public interface BuiltInsOrBuilder
+      extends com.google.protobuf.MessageLiteOrBuilder {
+
+    // optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+     */
+    boolean hasStrings();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.StringTable getStrings();
+
+    // optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+     */
+    boolean hasQualifiedNames();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable getQualifiedNames();
+
+    // optional .org.jetbrains.kotlin.serialization.Package package = 3;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+     */
+    boolean hasPackage();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.Package getPackage();
+
+    // repeated .org.jetbrains.kotlin.serialization.Class class = 4;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Class> 
+        getClassList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.Class getClass(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    int getClassCount();
+  }
   /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.builtins.BuiltIns}
    */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Package,
-      java.util.List<java.lang.Integer>> className = com.google.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance(),
-        null,
-        null,
-        150,
-        com.google.protobuf.WireFormat.FieldType.INT32,
-        true);
+  public static final class BuiltIns extends
+      com.google.protobuf.GeneratedMessageLite
+      implements BuiltInsOrBuilder {
+    // Use BuiltIns.newBuilder() to construct.
+    private BuiltIns(com.google.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+
+    }
+    private BuiltIns(boolean noInit) {}
+
+    private static final BuiltIns defaultInstance;
+    public static BuiltIns getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public BuiltIns getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private BuiltIns(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = strings_.toBuilder();
+              }
+              strings_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(strings_);
+                strings_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+            case 18: {
+              org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                subBuilder = qualifiedNames_.toBuilder();
+              }
+              qualifiedNames_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(qualifiedNames_);
+                qualifiedNames_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000002;
+              break;
+            }
+            case 26: {
+              org.jetbrains.kotlin.serialization.ProtoBuf.Package.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = package_.toBuilder();
+              }
+              package_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Package.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(package_);
+                package_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
+              break;
+            }
+            case 34: {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                class_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.Class>();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              class_.add(input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Class.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          class_ = java.util.Collections.unmodifiableList(class_);
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static com.google.protobuf.Parser<BuiltIns> PARSER =
+        new com.google.protobuf.AbstractParser<BuiltIns>() {
+      public BuiltIns parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new BuiltIns(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BuiltIns> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;
+    public static final int STRINGS_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.serialization.ProtoBuf.StringTable strings_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+     */
+    public boolean hasStrings() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.StringTable getStrings() {
+      return strings_;
+    }
+
+    // optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;
+    public static final int QUALIFIED_NAMES_FIELD_NUMBER = 2;
+    private org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable qualifiedNames_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+     */
+    public boolean hasQualifiedNames() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable getQualifiedNames() {
+      return qualifiedNames_;
+    }
+
+    // optional .org.jetbrains.kotlin.serialization.Package package = 3;
+    public static final int PACKAGE_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.ProtoBuf.Package package_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+     */
+    public boolean hasPackage() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.Package getPackage() {
+      return package_;
+    }
+
+    // repeated .org.jetbrains.kotlin.serialization.Class class = 4;
+    public static final int CLASS_FIELD_NUMBER = 4;
+    private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Class> class_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Class> getClassList() {
+      return class_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.ProtoBuf.ClassOrBuilder> 
+        getClassOrBuilderList() {
+      return class_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    public int getClassCount() {
+      return class_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.Class getClass(int index) {
+      return class_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.ClassOrBuilder getClassOrBuilder(
+        int index) {
+      return class_.get(index);
+    }
+
+    private void initFields() {
+      strings_ = org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.getDefaultInstance();
+      qualifiedNames_ = org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.getDefaultInstance();
+      package_ = org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance();
+      class_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (hasQualifiedNames()) {
+        if (!getQualifiedNames().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasPackage()) {
+        if (!getPackage().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getClassCount(); i++) {
+        if (!getClass(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, strings_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, qualifiedNames_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, package_);
+      }
+      for (int i = 0; i < class_.size(); i++) {
+        output.writeMessage(4, class_.get(i));
+      }
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, strings_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, qualifiedNames_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, package_);
+      }
+      for (int i = 0; i < class_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, class_.get(i));
+      }
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.builtins.BuiltIns}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns, Builder>
+        implements org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltInsOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        strings_ = org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        qualifiedNames_ = org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        package_ = org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        class_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns build() {
+        org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns buildPartial() {
+        org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns result = new org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.strings_ = strings_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.qualifiedNames_ = qualifiedNames_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.package_ = package_;
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          class_ = java.util.Collections.unmodifiableList(class_);
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.class_ = class_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns other) {
+        if (other == org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns.getDefaultInstance()) return this;
+        if (other.hasStrings()) {
+          mergeStrings(other.getStrings());
+        }
+        if (other.hasQualifiedNames()) {
+          mergeQualifiedNames(other.getQualifiedNames());
+        }
+        if (other.hasPackage()) {
+          mergePackage(other.getPackage());
+        }
+        if (!other.class_.isEmpty()) {
+          if (class_.isEmpty()) {
+            class_ = other.class_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureClassIsMutable();
+            class_.addAll(other.class_);
+          }
+          
+        }
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (hasQualifiedNames()) {
+          if (!getQualifiedNames().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasPackage()) {
+          if (!getPackage().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getClassCount(); i++) {
+          if (!getClass(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.BuiltIns) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;
+      private org.jetbrains.kotlin.serialization.ProtoBuf.StringTable strings_ = org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+       */
+      public boolean hasStrings() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+       */
+      public org.jetbrains.kotlin.serialization.ProtoBuf.StringTable getStrings() {
+        return strings_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+       */
+      public Builder setStrings(org.jetbrains.kotlin.serialization.ProtoBuf.StringTable value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        strings_ = value;
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+       */
+      public Builder setStrings(
+          org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.Builder builderForValue) {
+        strings_ = builderForValue.build();
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+       */
+      public Builder mergeStrings(org.jetbrains.kotlin.serialization.ProtoBuf.StringTable value) {
+        if (((bitField0_ & 0x00000001) == 0x00000001) &&
+            strings_ != org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.getDefaultInstance()) {
+          strings_ =
+            org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.newBuilder(strings_).mergeFrom(value).buildPartial();
+        } else {
+          strings_ = value;
+        }
+
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.StringTable strings = 1;</code>
+       */
+      public Builder clearStrings() {
+        strings_ = org.jetbrains.kotlin.serialization.ProtoBuf.StringTable.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      // optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;
+      private org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable qualifiedNames_ = org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+       */
+      public boolean hasQualifiedNames() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+       */
+      public org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable getQualifiedNames() {
+        return qualifiedNames_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+       */
+      public Builder setQualifiedNames(org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        qualifiedNames_ = value;
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+       */
+      public Builder setQualifiedNames(
+          org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.Builder builderForValue) {
+        qualifiedNames_ = builderForValue.build();
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+       */
+      public Builder mergeQualifiedNames(org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable value) {
+        if (((bitField0_ & 0x00000002) == 0x00000002) &&
+            qualifiedNames_ != org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.getDefaultInstance()) {
+          qualifiedNames_ =
+            org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.newBuilder(qualifiedNames_).mergeFrom(value).buildPartial();
+        } else {
+          qualifiedNames_ = value;
+        }
+
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.QualifiedNameTable qualified_names = 2;</code>
+       */
+      public Builder clearQualifiedNames() {
+        qualifiedNames_ = org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      // optional .org.jetbrains.kotlin.serialization.Package package = 3;
+      private org.jetbrains.kotlin.serialization.ProtoBuf.Package package_ = org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+       */
+      public boolean hasPackage() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+       */
+      public org.jetbrains.kotlin.serialization.ProtoBuf.Package getPackage() {
+        return package_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+       */
+      public Builder setPackage(org.jetbrains.kotlin.serialization.ProtoBuf.Package value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        package_ = value;
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+       */
+      public Builder setPackage(
+          org.jetbrains.kotlin.serialization.ProtoBuf.Package.Builder builderForValue) {
+        package_ = builderForValue.build();
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+       */
+      public Builder mergePackage(org.jetbrains.kotlin.serialization.ProtoBuf.Package value) {
+        if (((bitField0_ & 0x00000004) == 0x00000004) &&
+            package_ != org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance()) {
+          package_ =
+            org.jetbrains.kotlin.serialization.ProtoBuf.Package.newBuilder(package_).mergeFrom(value).buildPartial();
+        } else {
+          package_ = value;
+        }
+
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Package package = 3;</code>
+       */
+      public Builder clearPackage() {
+        package_ = org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      // repeated .org.jetbrains.kotlin.serialization.Class class = 4;
+      private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Class> class_ =
+        java.util.Collections.emptyList();
+      private void ensureClassIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          class_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.Class>(class_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Class> getClassList() {
+        return java.util.Collections.unmodifiableList(class_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public int getClassCount() {
+        return class_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.ProtoBuf.Class getClass(int index) {
+        return class_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder setClass(
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Class value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureClassIsMutable();
+        class_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder setClass(
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Class.Builder builderForValue) {
+        ensureClassIsMutable();
+        class_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder addClass(org.jetbrains.kotlin.serialization.ProtoBuf.Class value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureClassIsMutable();
+        class_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder addClass(
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Class value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureClassIsMutable();
+        class_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder addClass(
+          org.jetbrains.kotlin.serialization.ProtoBuf.Class.Builder builderForValue) {
+        ensureClassIsMutable();
+        class_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder addClass(
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.Class.Builder builderForValue) {
+        ensureClassIsMutable();
+        class_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder addAllClass(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.Class> values) {
+        ensureClassIsMutable();
+        super.addAll(values, class_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder clearClass() {
+        class_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.Class class = 4;</code>
+       */
+      public Builder removeClass(int index) {
+        ensureClassIsMutable();
+        class_.remove(index);
+
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.builtins.BuiltIns)
+    }
+
+    static {
+      defaultInstance = new BuiltIns(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.builtins.BuiltIns)
+  }
+
   public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 151;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>

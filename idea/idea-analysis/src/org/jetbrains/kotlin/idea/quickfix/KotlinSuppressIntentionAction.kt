@@ -16,44 +16,79 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import com.intellij.codeInspection.SuppressIntentionAction
-import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.replaceFileAnnotationList
+import org.jetbrains.kotlin.resolve.BindingContext
 
-public class KotlinSuppressIntentionAction(
-        private val suppressAt: KtExpression,
-        private val diagnosticFactory: DiagnosticFactory<*>,
+class KotlinSuppressIntentionAction private constructor(
+        private val suppressAt: PsiElement,
+        private val suppressKey: String,
         private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
+    constructor(suppressAt: KtExpression,
+                suppressKey: String,
+                kind: AnnotationHostKind) : this(suppressAt as PsiElement, suppressKey, kind)
+
+    constructor(suppressAt: KtFile,
+                suppressKey: String,
+                kind: AnnotationHostKind) : this(suppressAt as PsiElement, suppressKey, kind)
 
     override fun getFamilyName() = KotlinBundle.message("suppress.warnings.family")
-    override fun getText() = KotlinBundle.message("suppress.warning.for", diagnosticFactory.getName(), kind.kind, kind.name)
+    override fun getText() = KotlinBundle.message("suppress.warning.for", suppressKey, kind.kind, kind.name)
 
-    override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid()
+    override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
-        val id = "\"${diagnosticFactory.getName()}\""
-        if (suppressAt is KtModifierListOwner) {
-            suppressAtModifierListOwner(suppressAt, id)
-        }
-        else if (suppressAt is KtAnnotatedExpression) {
-            suppressAtAnnotatedExpression(CaretBox(suppressAt, editor), id)
-        }
-        else if (suppressAt is KtExpression) {
-            suppressAtExpression(CaretBox(suppressAt, editor), id)
+        val id = "\"$suppressKey\""
+        when (suppressAt) {
+            is KtModifierListOwner ->
+                suppressAtModifierListOwner(suppressAt, id)
+
+            is KtAnnotatedExpression ->
+                suppressAtAnnotatedExpression(CaretBox(suppressAt, editor), id)
+
+            is KtExpression ->
+                suppressAtExpression(CaretBox(suppressAt, editor), id)
+
+            is KtFile ->
+                suppressAtFile(suppressAt, id)
         }
     }
 
+    private fun suppressAtFile(ktFile: KtFile, id: String) {
+        val psiFactory = KtPsiFactory(suppressAt)
+
+        val fileAnnotationList: KtFileAnnotationList? = ktFile.fileAnnotationList
+        if (fileAnnotationList == null) {
+            val newAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(suppressAnnotationText(id, false))
+            val createAnnotationList = replaceFileAnnotationList(ktFile, newAnnotationList)
+            ktFile.addAfter(psiFactory.createWhiteSpace(kind), createAnnotationList)
+
+            return
+        }
+
+        val suppressAnnotation: KtAnnotationEntry? = findSuppressAnnotation(fileAnnotationList)
+        if (suppressAnnotation == null) {
+            val newSuppressAnnotation = psiFactory.createFileAnnotation(suppressAnnotationText(id, false))
+            fileAnnotationList.add(psiFactory.createWhiteSpace(kind))
+            fileAnnotationList.add(newSuppressAnnotation) as KtAnnotationEntry
+
+            return
+        }
+        
+        addArgumentToSuppressAnnotation(suppressAnnotation, id)
+    }
+
     private fun suppressAtModifierListOwner(suppressAt: KtModifierListOwner, id: String) {
-        val modifierList = suppressAt.getModifierList()
+        val modifierList = suppressAt.modifierList
         val psiFactory = KtPsiFactory(suppressAt)
         if (modifierList == null) {
             // create a modifier list from scratch
@@ -67,7 +102,7 @@ public class KotlinSuppressIntentionAction(
             if (entry == null) {
                 // no [suppress] annotation
                 val newAnnotation = psiFactory.createAnnotationEntry(suppressAnnotationText(id))
-                val addedAnnotation = modifierList.addBefore(newAnnotation, modifierList.getFirstChild())
+                val addedAnnotation = modifierList.addBefore(newAnnotation, modifierList.firstChild)
                 val whiteSpace = psiFactory.createWhiteSpace(kind)
                 modifierList.addAfter(whiteSpace, addedAnnotation)
             }
@@ -101,8 +136,8 @@ public class KotlinSuppressIntentionAction(
         val copy = suppressAt.copy()!!
 
         val afterReplace = suppressAt.replace(annotatedExpression) as KtAnnotatedExpression
-        val toReplace = afterReplace.findElementAt(afterReplace.getTextLength() - 2)!!
-        assert (toReplace.getText() == placeholderText)
+        val toReplace = afterReplace.findElementAt(afterReplace.textLength - 2)!!
+        assert (toReplace.text == placeholderText)
         val result = toReplace.replace(copy)!!
 
         caretBox.positionCaretInCopy(result)
@@ -110,27 +145,36 @@ public class KotlinSuppressIntentionAction(
 
     private fun addArgumentToSuppressAnnotation(entry: KtAnnotationEntry, id: String) {
         // add new arguments to an existing entry
-        val args = entry.getValueArgumentList()
+        val args = entry.valueArgumentList
         val psiFactory = KtPsiFactory(entry)
         val newArgList = psiFactory.createCallArguments("($id)")
         if (args == null) {
             // new argument list
-            entry.addAfter(newArgList, entry.getLastChild())
+            entry.addAfter(newArgList, entry.lastChild)
         }
-        else if (args.getArguments().isEmpty()) {
+        else if (args.arguments.isEmpty()) {
             // replace '()' with a new argument list
             args.replace(newArgList)
         }
         else {
-            args.addArgument(newArgList.getArguments()[0])
+            args.addArgument(newArgList.arguments[0])
         }
     }
 
-    private fun suppressAnnotationText(id: String) = "@Suppress($id)"
+    private fun suppressAnnotationText(id: String, withAt: Boolean = true) = "${if (withAt) "@" else ""}${KotlinBuiltIns.FQ_NAMES.suppress.shortName()}($id)"
 
     private fun findSuppressAnnotation(annotated: KtAnnotated): KtAnnotationEntry? {
         val context = annotated.analyze()
-        for (entry in annotated.getAnnotationEntries()) {
+        return findSuppressAnnotation(context, annotated.annotationEntries)
+    }
+
+    private fun findSuppressAnnotation(annotationList: KtFileAnnotationList): KtAnnotationEntry? {
+        val context = annotationList.analyze()
+        return findSuppressAnnotation(context, annotationList.annotationEntries)
+    }
+
+    private fun findSuppressAnnotation(context: BindingContext, annotationEntries: List<KtAnnotationEntry>): KtAnnotationEntry? {
+        for (entry in annotationEntries) {
             val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
             if (annotationDescriptor != null && KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) {
                 return entry
@@ -140,7 +184,7 @@ public class KotlinSuppressIntentionAction(
     }
 }
 
-public class AnnotationHostKind(val kind: String, val name: String, val newLineNeeded: Boolean)
+class AnnotationHostKind(val kind: String, val name: String, val newLineNeeded: Boolean)
 
 private fun KtPsiFactory.createWhiteSpace(kind: AnnotationHostKind): PsiElement {
     return if (kind.newLineNeeded) createNewLine() else createWhiteSpace()
@@ -150,10 +194,10 @@ private class CaretBox<out E: KtExpression>(
         val expression: E,
         private val editor: Editor?
 ) {
-    private val offsetInExpression: Int = (editor?.getCaretModel()?.getOffset() ?: 0) - expression.getTextRange()!!.getStartOffset()
+    private val offsetInExpression: Int = (editor?.caretModel?.offset ?: 0) - expression.textRange!!.startOffset
 
     fun positionCaretInCopy(copy: PsiElement) {
         if (editor == null) return
-        editor.getCaretModel().moveToOffset(copy.getTextOffset() + offsetInExpression)
+        editor.caretModel.moveToOffset(copy.textOffset + offsetInExpression)
     }
 }

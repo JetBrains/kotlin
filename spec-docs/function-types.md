@@ -23,7 +23,7 @@ Kotlin lambdas are translated to subclasses of this abstract class, passing the 
 
 ## Extension functions
 
-Extension function type `T.(P) -> R` is now just a shorthand for `@Extension Function2<T, P, R>`.
+Extension function type `T.(P) -> R` is now just a shorthand for `@ExtensionFunctionType Function2<T, P, R>`.
 `kotlin.extension` is a **type annotation** defined in built-ins.
 So effectively functions and extension functions now have the same type,
 which means that everything which takes a function will work with an extension function and vice versa.
@@ -40,7 +40,7 @@ or an extension function expression where a function is expected and vice versa.
 If you really want to do that, change the shape, assign literal to a variable or use the `as` operator.
 
 So basically you can now safely coerce values between function and extension function types,
-but still should invoke them in the format which you specified in their type (with or without `@Extension`).
+but still should invoke them in the format which you specified in their type (with or without `@ExtensionFunctionType`).
 
 With this we'll get rid of classes `ExtensionFunction0`, `ExtensionFunction1`, ...
 and the rest of this article will deal only with usual functions.

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.diagnostics.Severity
 
-public class ReplOutputProcessor(
+class ReplOutputProcessor(
         private val runner: KotlinConsoleRunner
 ) {
     private val project = runner.project

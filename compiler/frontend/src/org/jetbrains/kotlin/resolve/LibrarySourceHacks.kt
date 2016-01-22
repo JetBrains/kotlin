@@ -21,17 +21,17 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 
-public object LibrarySourceHacks {
-    public val SKIP_TOP_LEVEL_MEMBERS: Key<Boolean> = Key.create<Boolean>("SKIP_TOP_LEVEL_MEMBERS") // used when analyzing library source
+object LibrarySourceHacks {
+    val SKIP_TOP_LEVEL_MEMBERS: Key<Boolean> = Key.create<Boolean>("SKIP_TOP_LEVEL_MEMBERS") // used when analyzing library source
 
-    public fun shouldSkip(member: CallableDescriptor): Boolean {
-        val original = member.getOriginal() as? CallableMemberDescriptor ?: return false
+    fun shouldSkip(member: CallableDescriptor): Boolean {
+        val original = member.original as? CallableMemberDescriptor ?: return false
 
-        if (original.getContainingDeclaration() !is PackageFragmentDescriptor) return false
+        if (original.containingDeclaration !is PackageFragmentDescriptor) return false
 
         val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(original) ?: return false
 
-        val file = declaration.getContainingFile()
+        val file = declaration.containingFile
         return file != null && (file.getUserData<Boolean>(SKIP_TOP_LEVEL_MEMBERS) ?: false)
     }
 }

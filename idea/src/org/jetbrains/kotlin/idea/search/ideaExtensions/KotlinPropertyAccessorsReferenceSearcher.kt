@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.synthetic.JavaSyntheticPropertiesScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
+class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
-        val method = queryParameters.getMethod()
+        val method = queryParameters.method
         val propertyName = propertyName(method) ?: return
 
-        val onlyKotlinFiles = queryParameters.getEffectiveSearchScope().restrictToKotlinSources()
+        val onlyKotlinFiles = queryParameters.effectiveSearchScope.restrictToKotlinSources()
 
-        queryParameters.getOptimizer()!!.searchWord(
+        queryParameters.optimizer!!.searchWord(
                 propertyName,
                 onlyKotlinFiles,
                 UsageSearchContext.IN_CODE,
@@ -55,6 +55,6 @@ public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiR
         val functionDescriptor = method.getJavaMethodDescriptor() ?: return null
         val syntheticExtensionsScope = JavaSyntheticPropertiesScope(LockBasedStorageManager(), LookupTracker.DO_NOTHING)
         val property = SyntheticJavaPropertyDescriptor.findByGetterOrSetter(functionDescriptor, syntheticExtensionsScope) ?: return null
-        return property.getName().asString()
+        return property.name.asString()
     }
 }

@@ -3,9 +3,9 @@ internal class A {
     private var l2: Long = 1
     private val l3 = 1L
     private var l4: Long = -1
-    private val l5 = 123456789101112
-    private val l6 = -123456789101112
-    private val l7 = +1
+    private val l5: Long = 123456789101112
+    private val l6: Long = -123456789101112
+    private val l7: Long = +1
     private val l8 = +1L
 
     fun foo1(l: Long) {

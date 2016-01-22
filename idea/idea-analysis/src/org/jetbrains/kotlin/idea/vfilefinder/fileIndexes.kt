@@ -20,16 +20,16 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.js.JsMetaFileUtils
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.name.FqName
 import java.io.DataInput
 import java.io.DataOutput
 import java.util.*
 
 abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<FqName>() {
-    public val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
+    val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
 
     private val KEY_DESCRIPTOR : KeyDescriptor<FqName> = object : KeyDescriptor<FqName> {
         override fun save(output: DataOutput, value: FqName) = output.writeUTF(value.asString())
@@ -67,7 +67,7 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
             }
 }
 
-public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(KotlinClassFileIndex::class.java) {
+object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(KotlinClassFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 
@@ -78,12 +78,12 @@ public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(K
     private val VERSION = 2
 
     private val INDEXER = indexer() { fileContent ->
-        val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(fileContent.file, fileContent.content)
-        if (kotlinClass != null && kotlinClass.classHeader.isCompatibleAbiVersion) kotlinClass.classId.asSingleFqName() else null
+        val headerInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file, fileContent.content)
+        if (headerInfo != null && headerInfo.classHeader.metadataVersion.isCompatible()) headerInfo.classId.asSingleFqName() else null
     }
 }
 
-public object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaFileIndex>(KotlinJavaScriptMetaFileIndex::class.java) {
+object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaFileIndex>(KotlinJavaScriptMetaFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 

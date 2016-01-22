@@ -44,11 +44,11 @@ import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.classFilesComparison.assertEqualDirectories
+import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
-import org.jetbrains.kotlin.jps.incremental.LookupStorageProvider
-import org.jetbrains.kotlin.jps.incremental.LookupSymbol
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -62,7 +62,7 @@ import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-public abstract class AbstractIncrementalJpsTest(
+abstract class AbstractIncrementalJpsTest(
         private val allowNoFilesWithSuffixInTestData: Boolean = false,
         private val checkDumpsCaseInsensitively: Boolean = false,
         private val allowNoBuildLogFileInTestData: Boolean = false
@@ -96,7 +96,7 @@ public abstract class AbstractIncrementalJpsTest(
     protected open val experimentalBuildLogFileName = "experimental-ic-build.log"
 
     private fun enableDebugLogging() {
-        com.intellij.openapi.diagnostic.Logger.setFactory(javaClass<TestLoggerFactory>())
+        com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
         TestLoggerFactory.dumpLogToStdout("")
         TestLoggerFactory.enableDebugLogging(myTestRootDisposable, "#org")
 
@@ -230,7 +230,7 @@ public abstract class AbstractIncrementalJpsTest(
 
             val modifications = ArrayList<Modification>()
             for (file in testDataDir.listFiles()!!) {
-                val fileName = file.getName()
+                val fileName = file.name
 
                 if (fileName.endsWith(newSuffix)) {
                     modifications.add(ModifyContent(getDirPrefix(fileName) + "/" + fileName.removeSuffix(newSuffix), file))
@@ -245,8 +245,8 @@ public abstract class AbstractIncrementalJpsTest(
             return modifications
         }
 
-        val haveFilesWithoutNumbers = testDataDir.listFiles { it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }?.isNotEmpty() ?: false
-        val haveFilesWithNumbers = testDataDir.listFiles { it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
+        val haveFilesWithoutNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }?.isNotEmpty() ?: false
+        val haveFilesWithNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
 
         if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
             fail("Bad test data format: files ending with both unnumbered and numbered $COMMANDS_AS_MESSAGE_PART were found")
@@ -326,7 +326,7 @@ public abstract class AbstractIncrementalJpsTest(
         for (line in dependenciesTxt.readLines()) {
             val split = line.split("->")
             val module = split[0]
-            val dependencies = if (split.size() > 1) split[1] else ""
+            val dependencies = if (split.size > 1) split[1] else ""
             val dependencyList = dependencies.split(",").filterNot { it.isEmpty() }
             result[module] = dependencyList.map(::parseDependency)
         }
@@ -380,13 +380,13 @@ public abstract class AbstractIncrementalJpsTest(
             createJavaMappingsDump(project)
 
     private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
-        return StringBuilder {
+        return buildString {
             for (target in project.allModuleTargets.sortedBy { it.presentableName }) {
                 append("<target $target>\n")
                 append(project.dataManager.getKotlinCache(target).dump())
                 append("</target $target>\n\n\n")
             }
-        }.toString()
+        }
     }
 
     private fun createLookupCacheDump(project: ProjectDescriptor): String {
@@ -395,7 +395,7 @@ public abstract class AbstractIncrementalJpsTest(
         p.println("Begin of Lookup Maps")
         p.println()
 
-        val lookupStorage = project.dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
+        val lookupStorage = project.dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
         lookupStorage.forceGC()
         p.print(lookupStorage.dump(lookupsDuringTest))
 
@@ -491,7 +491,7 @@ public abstract class AbstractIncrementalJpsTest(
             moduleNames = null
         }
         else {
-            val nameToModule = moduleDependencies.keySet()
+            val nameToModule = moduleDependencies.keys
                     .keysToMap { addModule(it, arrayOf(getAbsolutePath("$it/src")), null, null, jdk)!! }
 
             for ((moduleName, dependencies) in moduleDependencies) {
@@ -503,14 +503,15 @@ public abstract class AbstractIncrementalJpsTest(
                 }
             }
 
-            for (module in nameToModule.values()) {
+            for (module in nameToModule.values) {
                 val moduleName = module.name
                 prepareSources(relativePathToSrc = "$moduleName/src", filePrefix = moduleName + "_")
             }
 
-            moduleNames = nameToModule.keySet()
+            moduleNames = nameToModule.keys
         }
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
+        AbstractKotlinJpsBuildTestCase.addKotlinTestRuntimeDependency(myProject)
         return moduleNames
     }
 
@@ -522,7 +523,7 @@ public abstract class AbstractIncrementalJpsTest(
     // TODO replace with org.jetbrains.jps.builders.TestProjectBuilderLogger
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase() {
         private val logBuf = StringBuilder()
-        public val log: String
+        val log: String
             get() = logBuf.toString()
 
         val compiledFiles = hashSetOf<File>()

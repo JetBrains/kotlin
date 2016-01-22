@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVari
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(javaClass(), "Replace safe access expression with 'if' expression"), LowPriorityAction {
+class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(KtSafeQualifiedExpression::class.java, "Replace safe access expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtSafeQualifiedExpression): TextRange? {
-        if (element.getSelectorExpression() == null) return null
-        return element.getOperationTokenNode().getTextRange()
+        if (element.selectorExpression == null) return null
+        return element.operationTokenNode.textRange
     }
 
-    override fun applyTo(element: KtSafeQualifiedExpression, editor: Editor) {
-        val receiver = KtPsiUtil.safeDeparenthesize(element.getReceiverExpression())
-        val selector = element.getSelectorExpression()!!
+    override fun applyTo(element: KtSafeQualifiedExpression, editor: Editor?) {
+        val receiver = KtPsiUtil.safeDeparenthesize(element.receiverExpression)
+        val selector = element.selectorExpression!!
 
         val receiverIsStable = receiver.isStableVariable()
 
@@ -46,7 +46,7 @@ public class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQua
         val ifExpression = element.convertToIfNotNullExpression(receiver, dotQualified, elseClause)
 
         if (!receiverIsStable) {
-            val valueToExtract = (ifExpression.getThen() as KtDotQualifiedExpression).getReceiverExpression()
+            val valueToExtract = (ifExpression.then as KtDotQualifiedExpression).receiverExpression
             ifExpression.introduceValueForCondition(valueToExtract, editor)
         }
     }

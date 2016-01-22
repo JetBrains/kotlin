@@ -19,37 +19,29 @@ package kotlin.reflect.jvm
 import java.lang.reflect.Field
 import kotlin.reflect.*
 
-@Deprecated("Use kotlinProperty instead.", ReplaceWith("kotlinProperty"))
-public val Field.kotlin: KProperty<*>?
+@Deprecated("Use kotlinProperty instead.", ReplaceWith("kotlinProperty")) val Field.kotlin: KProperty<*>?
     get() = kotlinProperty
 
 
-@Deprecated("Use memberProperties instead.", ReplaceWith("memberProperties"))
-public val <T : Any> KClass<T>.properties: Collection<KProperty1<T, *>>
+@Deprecated("Use memberProperties instead.", ReplaceWith("memberProperties")) val <T : Any> KClass<T>.properties: Collection<KProperty1<T, *>>
     get() = memberProperties
 
-@Deprecated("Use extensionProperties instead.", ReplaceWith("extensionProperties"))
-public val <T : Any> KClass<T>.extensionProperties: Collection<KProperty2<T, *, *>>
+@Deprecated("Use extensionProperties instead.", ReplaceWith("extensionProperties")) val <T : Any> KClass<T>.extensionProperties: Collection<KProperty2<T, *, *>>
     get() = memberExtensionProperties
 
-@Deprecated("Use declaredMemberProperties instead.", ReplaceWith("declaredMemberProperties"))
-public val <T : Any> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
+@Deprecated("Use declaredMemberProperties instead.", ReplaceWith("declaredMemberProperties")) val <T : Any> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
     get() = declaredMemberProperties
 
-@Deprecated("Use declaredMemberExtensionProperties instead.", ReplaceWith("declaredMemberExtensionProperties"))
-public val <T : Any> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
+@Deprecated("Use declaredMemberExtensionProperties instead.", ReplaceWith("declaredMemberExtensionProperties")) val <T : Any> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = declaredMemberExtensionProperties
 
 
-@Deprecated("Use isAccessible instead.", ReplaceWith("isAccessible"))
-public var KProperty<*>.accessible: Boolean
+@Deprecated("Use isAccessible instead.", ReplaceWith("isAccessible")) var KProperty<*>.accessible: Boolean
     get() = isAccessible
     set(value) { isAccessible = value }
 
-@Deprecated("Moved to package kotlin.jvm", ReplaceWith("java"), level = DeprecationLevel.HIDDEN)
-public val <T : Any> KClass<T>.java: Class<T>
+@Deprecated("Moved to package kotlin.jvm", ReplaceWith("java"), level = DeprecationLevel.HIDDEN) val <T : Any> KClass<T>.java: Class<T>
     get() = java
 
-@Deprecated("Moved to package kotlin.jvm", ReplaceWith("kotlin"), level = DeprecationLevel.HIDDEN)
-public val <T : Any> Class<T>.kotlin: KClass<T>
+@Deprecated("Moved to package kotlin.jvm", ReplaceWith("kotlin"), level = DeprecationLevel.HIDDEN) val <T : Any> Class<T>.kotlin: KClass<T>
     get() = kotlin

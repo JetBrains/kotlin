@@ -37,17 +37,17 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import javax.swing.Icon
 
-public open class DescriptorMemberChooserObject(
+open class DescriptorMemberChooserObject(
         psiElement: PsiElement,
-        public open val descriptor: DeclarationDescriptor
+        open val descriptor: DeclarationDescriptor
 ) : PsiElementMemberChooserObject(psiElement, DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(psiElement, descriptor)), ClassMemberWithElement {
 
     override fun getParentNodeDelegate(): MemberChooserObject {
         val parent = descriptor.containingDeclaration ?: error("No parent for $descriptor")
 
         val declaration = if (psiElement is KtDeclaration) { // kotlin
-            PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<KtNamedDeclaration>())
-                ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<KtFile>())
+            PsiTreeUtil.getStubOrPsiParentOfType(psiElement, KtNamedDeclaration::class.java)
+                ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, KtFile::class.java)
         }
         else { // java or compiled
             (psiElement as PsiMember).containingClass
@@ -73,14 +73,14 @@ public open class DescriptorMemberChooserObject(
             nameShortness = NameShortness.SHORT
         }
 
-        public fun getText(descriptor: DeclarationDescriptor): String {
+        fun getText(descriptor: DeclarationDescriptor): String {
             return if (descriptor is ClassDescriptor)
                 descriptor.fqNameUnsafe.render()
             else
                 MEMBER_RENDERER.render(descriptor)
         }
 
-        public fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon {
+        fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon {
             if (declaration != null && declaration.isValid) {
                 val isClass = declaration is PsiClass || declaration is KtClass
                 val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY

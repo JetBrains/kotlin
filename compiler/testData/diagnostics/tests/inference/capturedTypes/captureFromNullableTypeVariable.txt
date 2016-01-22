@@ -2,4 +2,4 @@ package
 
 public fun test1(/*0*/ a: kotlin.Array<out kotlin.Int?>): kotlin.Unit
 public fun test2(/*0*/ vararg a: kotlin.Int? /*kotlin.Array<out kotlin.Int?>*/): kotlin.Unit
-public fun </*0*/ T : kotlin.Any> kotlin.Array<T?>.filterNotNull(): kotlin.List<T>
+public fun </*0*/ T : kotlin.Any> kotlin.Array<T?>.filterNotNull(): kotlin.collections.List<T>

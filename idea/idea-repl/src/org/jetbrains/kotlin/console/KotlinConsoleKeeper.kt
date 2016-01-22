@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 private val REPL_TITLE = "Kotlin REPL"
 
-public class KotlinConsoleKeeper(val project: Project) {
+class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
 
     fun getConsoleByVirtualFile(virtualFile: VirtualFile) = consoleMap[virtualFile]

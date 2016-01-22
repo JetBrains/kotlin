@@ -1,5 +1,5 @@
 package
 
 package n {
-    public fun foo(/*0*/ c: a.JC<kotlin.Int>, /*1*/ iterator: kotlin.Iterator<kotlin.Int>, /*2*/ iterable: kotlin.Iterable<kotlin.Int>): kotlin.Unit
+    public fun foo(/*0*/ c: a.JC<kotlin.Int>, /*1*/ iterator: kotlin.collections.Iterator<kotlin.Int>, /*2*/ iterable: kotlin.collections.Iterable<kotlin.Int>): kotlin.Unit
 }

@@ -25,23 +25,23 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-public class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpression>(javaClass(), "Replace with a 'forEach' function call") {
+class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpression>(KtForExpression::class.java, "Replace with a 'forEach' function call") {
     override fun isApplicableTo(element: KtForExpression, caretOffset: Int): Boolean {
-        val rParen = element.getRightParenthesis() ?: return false
+        val rParen = element.rightParenthesis ?: return false
         if (caretOffset > rParen.endOffset) return false // available only on the loop header, not in the body
-        return element.getLoopRange() != null && element.getLoopParameter() != null && element.getBody() != null
+        return element.loopRange != null && element.loopParameter != null && element.body != null
     }
 
-    override fun applyTo(element: KtForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor?) {
         val commentSaver = CommentSaver(element)
 
-        val body = element.getBody()!!
-        val loopParameter = element.getLoopParameter()!!
+        val body = element.body!!
+        val loopParameter = element.loopParameter!!
 
         val functionBodyArgument: Any = if (body is KtBlockExpression) body.contentRange() else body
 
         val foreachExpression = KtPsiFactory(element).createExpressionByPattern(
-                "$0.forEach{$1->$2}", element.getLoopRange()!!, loopParameter, functionBodyArgument)
+                "$0.forEach{$1->$2}", element.loopRange!!, loopParameter, functionBodyArgument)
         val result = element.replace(foreachExpression)
 
         commentSaver.restore(result)

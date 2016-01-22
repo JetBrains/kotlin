@@ -1,3 +1,3 @@
 package
 
-public fun calc(/*0*/ x: kotlin.List<kotlin.String>?, /*1*/ y: kotlin.List<kotlin.Int>?): kotlin.Unit
+public fun calc(/*0*/ x: kotlin.collections.List<kotlin.String>?, /*1*/ y: kotlin.collections.List<kotlin.Int>?): kotlin.Unit

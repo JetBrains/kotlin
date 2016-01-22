@@ -1,0 +1,53 @@
+Cleaning output files:
+out/production/module/A$Companion.class
+out/production/module/A.class
+End of files
+Compiling files:
+src/APartF.kt
+src/APartG.kt
+End of files
+Cleaning output files:
+out/production/module/AChild.class
+out/production/module/GetAKt.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UseFKt.class
+out/production/module/UseGKt.class
+out/production/module/UseHKt.class
+End of files
+Compiling files:
+src/AChild.kt
+src/getA.kt
+src/useF.kt
+src/useG.kt
+src/useH.kt
+End of files
+COMPILATION FAILED
+Unresolved reference: A
+Unresolved reference: A
+Unresolved reference: A
+Unresolved reference: A
+
+
+Cleaning output files:
+out/production/module/A.class
+End of files
+Cleaning output files:
+out/production/module/A__APartFKt.class
+out/production/module/A__APartGKt.class
+End of files
+Compiling files:
+src/AChild.kt
+src/APartF.kt
+src/APartG.kt
+src/useF.kt
+src/useG.kt
+End of files
+Cleaning output files:
+out/production/module/GetAChildKt.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UseJKt.class
+End of files
+Compiling files:
+src/getAChild.kt
+src/useJ.kt
+End of files

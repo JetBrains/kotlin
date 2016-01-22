@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.jvm.compiler;
 
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.CliBaseTest;
@@ -71,8 +71,13 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     @NotNull
     private File compileLibrary(@NotNull String sourcePath, @NotNull String... extraClassPath) {
         return MockLibraryUtil.compileLibraryToJar(
-                new File(getTestDataDirectory(), sourcePath).getPath(), "customKotlinLib", false, extraClassPath
+                new File(getTestDataDirectory(), sourcePath).getPath(), "customKotlinLib", false, false, extraClassPath
         );
+    }
+
+    @NotNull
+    private String normalizeOutput(@NotNull Pair<String, ExitCode> output) {
+        return CliBaseTest.getNormalizedCompilerOutput(output.getFirst(), output.getSecond(), getTestDataDirectory().getPath());
     }
 
     private void doTestWithTxt(@NotNull File... extraClassPath) throws Exception {
@@ -154,25 +159,23 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         File libSrc = new File(getTestDataDirectory(), "library/test/lib.kt");
 
-        Pair<String, ExitCode> pair1 = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+        Pair<String, ExitCode> outputLib = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
                 libSrc.getPath(),
                 "-classpath", tmpdir.getPath(),
                 "-d", tmpdir.getPath()
         ));
 
-        String outputLib = CliBaseTest.getNormalizedCompilerOutput(pair1.first, pair1.second, getTestDataDirectory().getPath());
-
         File mainSrc = new File(getTestDataDirectory(), "main.kt");
 
-        Pair<String, ExitCode> pair2 = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+        Pair<String, ExitCode> outputMain = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
                 mainSrc.getPath(),
                 "-classpath", tmpdir.getPath(),
                 "-d", tmpdir.getPath()
         ));
 
-        String outputMain = CliBaseTest.getNormalizedCompilerOutput(pair2.first, pair2.second, getTestDataDirectory().getPath());
-
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), outputLib + "\n" + outputMain);
+        KotlinTestUtils.assertEqualsToFile(
+                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputLib) + "\n" + normalizeOutput(outputMain)
+        );
     }
 
     public void testDuplicateObjectInBinaryAndSources() throws Exception {
@@ -215,7 +218,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         result.throwIfError();
 
         BindingContext bindingContext = result.getBindingContext();
-        AnalyzerWithCompilerReport.reportDiagnostics(bindingContext.getDiagnostics(), PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        AnalyzerWithCompilerReport.Companion.reportDiagnostics(bindingContext.getDiagnostics(), PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.getDiagnostics()));
     }
@@ -237,14 +240,13 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         File source = new File(getTestDataDirectory(), "source.kt");
 
-        Pair<String, ExitCode> pair = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+        Pair<String, ExitCode> output = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
                 source.getPath(),
                 "-classpath", tmpdir.getPath(),
                 "-d", tmpdir.getPath()
         ));
-        String output = CliBaseTest.getNormalizedCompilerOutput(pair.first, pair.second, getTestDataDirectory().getPath());
 
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 
     public void testIncompleteHierarchyInKotlin() throws Exception {
@@ -254,14 +256,13 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         File source = new File(getTestDataDirectory(), "source.kt");
 
-        Pair<String, ExitCode> pair = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+        Pair<String, ExitCode> output = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
                 source.getPath(),
                 "-classpath", library.getPath(),
                 "-d", tmpdir.getPath()
         ));
-        String output = CliBaseTest.getNormalizedCompilerOutput(pair.first, pair.second, getTestDataDirectory().getPath());
 
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 
     /*test source mapping generation when source info is absent*/

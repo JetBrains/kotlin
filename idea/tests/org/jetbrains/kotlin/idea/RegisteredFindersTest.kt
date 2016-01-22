@@ -23,18 +23,18 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.junit.Assert
 
-public class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
+class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
-    public fun testKnownNonClasspathFinder() {
+    fun testKnownNonClasspathFinder() {
         val expectedFindersNames = setOf("GantClassFinder", "GradleClassFinder").toMutableSet()
 
-        getProject().getExtensions<PsiElementFinder>(PsiElementFinder.EP_NAME).forEach { finder ->
+        project.getExtensions<PsiElementFinder>(PsiElementFinder.EP_NAME).forEach { finder ->
             if (finder is NonClasspathClassFinder) {
-                val name = finder.javaClass.getSimpleName()
+                val name = finder.javaClass.simpleName
                 val removed = expectedFindersNames.remove(name)
                 Assert.assertTrue("Unknown finder found: $finder, class name: $name, search in $expectedFindersNames.\n" +
-                                  "Consider updating ${javaClass<KotlinJavaPsiFacade>()}",
+                                  "Consider updating ${KotlinJavaPsiFacade::class.java}",
                                   removed)
             }
         }

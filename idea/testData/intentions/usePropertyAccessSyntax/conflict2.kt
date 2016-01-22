@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IS_APPLICABLE: false
+// IS_APPLICABLE: true
 import java.io.File
 
 val File.absolutePath: String get() = ""

@@ -23,34 +23,34 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtDoWhileExpression
 import org.jetbrains.kotlin.psi.KtBlockExpression
 
-public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtDoWhileExpression) return
 
-        val doc = editor.getDocument()
+        val doc = editor.document
         val start = psiElement.range.start
-        val body = psiElement.getBody()
+        val body = psiElement.body
 
-        val whileKeyword = psiElement.getWhileKeyword()
+        val whileKeyword = psiElement.whileKeyword
         if (body == null) {
             if (whileKeyword == null) {
-                doc.replaceString(start, start + "do".length(), "do {} while()")
+                doc.replaceString(start, start + "do".length, "do {} while()")
             }
             else {
-                doc.insertString(start + "do".length(), "{}")
+                doc.insertString(start + "do".length, "{}")
             }
             return
         }
         else if (whileKeyword != null && body !is KtBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
             doc.insertString(whileKeyword.range.start, "}")
-            doc.insertString(start + "do".length(), "{")
+            doc.insertString(start + "do".length, "{")
 
             return
         }
 
-        if (psiElement.getCondition() == null) {
-            val lParen = psiElement.getLeftParenthesis()
-            val rParen = psiElement.getRightParenthesis()
+        if (psiElement.condition == null) {
+            val lParen = psiElement.leftParenthesis
+            val rParen = psiElement.rightParenthesis
 
             when {
                 whileKeyword == null -> doc.insertString(psiElement.range.end, "while()")

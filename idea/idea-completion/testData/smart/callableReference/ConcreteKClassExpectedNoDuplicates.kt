@@ -8,7 +8,7 @@ fun f() {
 }
 
 // WITH_ORDER
-// EXIST: { lookupString: "Int::class", itemText: "Int::class", attributes: "" }
+// EXIST: { lookupString: "Int", itemText: "Int::class", attributes: "" }
 // EXIST: { lookupString: "object" }
 // EXIST: null
 // NOTHING_ELSE

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
+class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
 
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
         if (sourceElement is LeafPsiElement && sourceElement.parent is KtSimpleNameExpression) {

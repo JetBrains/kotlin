@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 
-public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
+class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
     override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
         return if (element == null) null else getText(element, originalElement, true)
@@ -66,7 +66,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
         val descriptors = resolveKDocLink(context.getResolutionFacade(), contextDescriptor, null, StringUtil.split(link, ","))
         val target = descriptors.firstOrNull()
         if (target is DeclarationDescriptorWithSource) {
-            val source = target.getSource()
+            val source = target.source
             return (source as? PsiSourceElement)?.psi
         }
         return null
@@ -80,7 +80,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
     }
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinQuickDocumentationProvider>())
+        private val LOG = Logger.getInstance(KotlinQuickDocumentationProvider::class.java)
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
             nameShortness = NameShortness.SHORT

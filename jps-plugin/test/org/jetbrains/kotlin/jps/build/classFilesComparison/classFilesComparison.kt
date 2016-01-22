@@ -21,10 +21,8 @@ import com.google.common.hash.Hashing
 import com.google.common.io.Files
 import com.google.protobuf.ExtensionRegistry
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassPartKind
+import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
@@ -57,7 +55,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
 
         val children = listFiles!!.sortedWith(compareBy ({ it.isDirectory }, { it.name } ))
         for (child in children) {
-            if (child.isDirectory()) {
+            if (child.isDirectory) {
                 p.println(child.name)
                 addDirContent(child)
             }
@@ -86,7 +84,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
 fun getAllRelativePaths(dir: File): Set<String> {
     val result = HashSet<String>()
     FileUtil.processFilesRecursively(dir) {
-        if (it!!.isFile()) {
+        if (it!!.isFile) {
             result.add(FileUtil.getRelativePath(dir, it)!!)
         }
 
@@ -140,23 +138,26 @@ fun classFileToString(classFile: File): String {
     val traceVisitor = TraceClassVisitor(PrintWriter(out))
     ClassReader(classFile.readBytes()).accept(traceVisitor, 0)
 
-    val classHeader = LocalFileKotlinClass.create(classFile)?.getClassHeader()
+    val classHeader = LocalFileKotlinClass.create(classFile)?.classHeader
 
-    val annotationDataEncoded = classHeader?.annotationData
+    val annotationDataEncoded = classHeader?.data
     if (annotationDataEncoded != null) {
         ByteArrayInputStream(BitEncoding.decodeBytes(annotationDataEncoded)).use {
             input ->
 
             out.write("\n------ string table types proto -----\n${DebugJvmProtoBuf.StringTableTypes.parseDelimitedFrom(input)}")
 
-            when {
-                classHeader!!.isCompatibleFileFacadeKind() ->
-                    out.write("\n------ file facade proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
-                classHeader.isCompatibleClassKind() ->
-                    out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")
-                classHeader.isCompatibleMultifileClassPartKind() ->
-                    out.write("\n------ multi-file part proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
+            if (!classHeader!!.metadataVersion.isCompatible()) {
+                error("Incompatible class ($classHeader): $classFile")
+            }
 
+            when (classHeader.kind) {
+                KotlinClassHeader.Kind.FILE_FACADE ->
+                    out.write("\n------ file facade proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
+                KotlinClassHeader.Kind.CLASS ->
+                    out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")
+                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ->
+                    out.write("\n------ multi-file part proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
                 else -> throw IllegalStateException()
             }
         }

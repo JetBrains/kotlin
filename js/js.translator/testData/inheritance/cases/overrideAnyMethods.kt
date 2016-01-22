@@ -17,7 +17,7 @@ fun String.myHashCode(): Int {
 class Foo(val name: String) {
     override fun equals(other: Any?): Boolean {
         if (other is Foo) return name == other.name
-        return this.identityEquals(other)
+        return this === other
     }
     override fun hashCode(): Int = name.myHashCode()
     override fun toString(): String = "Foo($name)"

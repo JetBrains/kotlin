@@ -1,0 +1,16 @@
+// WITH_RUNTIME
+//DISABLE-ERRORS
+enum class E {
+    A {
+        override val foo: Int
+            get() = throw UnsupportedOperationException()
+    }, B {
+        override val foo: Int
+            get() = throw UnsupportedOperationException()
+    }, C {
+        override val foo: Int
+            get() = throw UnsupportedOperationException()
+    };
+
+    abstract val <caret>foo: Int
+}

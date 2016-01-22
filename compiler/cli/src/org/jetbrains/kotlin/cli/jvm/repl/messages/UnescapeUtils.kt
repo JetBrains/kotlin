@@ -23,8 +23,8 @@ import java.io.ByteArrayInputStream
 import javax.xml.parsers.DocumentBuilderFactory
 
 // using '#' to avoid collisions with xml escaping
-public val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
-public val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
+val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
+val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
 
 fun parseXml(inputMessage: String): String {
     fun strToSource(s: String) = InputSource(ByteArrayInputStream(s.toByteArray()))

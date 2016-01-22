@@ -26,9 +26,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache;
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
-import org.jetbrains.kotlin.idea.decompiler.classFile.HasCompiledKotlinInJar;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -52,8 +52,7 @@ public class PluginStartupComponent implements ApplicationComponent {
     public void initComponent() {
         registerPathVariable();
 
-        JarUserDataManager.INSTANCE$.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE$);
-        JarUserDataManager.INSTANCE$.register(HasCompiledKotlinInJar.INSTANCE$);
+        JarUserDataManager.INSTANCE.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE);
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
 

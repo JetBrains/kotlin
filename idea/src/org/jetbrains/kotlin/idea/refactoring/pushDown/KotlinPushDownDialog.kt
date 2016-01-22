@@ -37,7 +37,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-public class KotlinPushDownDialog(
+class KotlinPushDownDialog(
         project: Project,
         private val memberInfos: List<KotlinMemberInfo>,
         private val sourceClass: KtClass
@@ -49,7 +49,7 @@ public class KotlinPushDownDialog(
 
     private var memberInfoModel: AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>? = null
 
-    public val selectedMemberInfos: List<KotlinMemberInfo>
+    val selectedMemberInfos: List<KotlinMemberInfo>
         get() = memberInfos.filter { it.isChecked && memberInfoModel?.isMemberEnabled(it) ?: false }
 
     override fun getDimensionServiceKey() = "#" + javaClass.name
@@ -95,10 +95,10 @@ public class KotlinPushDownDialog(
     }
 
     override fun doAction() {
-        if (!isOKActionEnabled()) return
+        if (!isOKActionEnabled) return
 
         JavaRefactoringSettings.getInstance().PUSH_DOWN_PREVIEW_USAGES = isPreviewUsages
 
-        invokeRefactoring(KotlinPushDownProcessor(getProject(), sourceClass, selectedMemberInfos))
+        invokeRefactoring(KotlinPushDownProcessor(project, sourceClass, selectedMemberInfos))
     }
 }

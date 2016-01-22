@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.codegen.state;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import kotlin.CollectionsKt;
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment;
@@ -38,10 +38,15 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.*;
@@ -66,6 +71,7 @@ import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -82,6 +88,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationCons
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -90,6 +97,7 @@ public class JetTypeMapper {
     private final ClassBuilderMode classBuilderMode;
     private final JvmFileClassesProvider fileClassesProvider;
     private final IncrementalCache incrementalCache;
+    private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
 
     public JetTypeMapper(
@@ -97,12 +105,14 @@ public class JetTypeMapper {
             @NotNull ClassBuilderMode classBuilderMode,
             @NotNull JvmFileClassesProvider fileClassesProvider,
             @Nullable IncrementalCache incrementalCache,
+            @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
         this.fileClassesProvider = fileClassesProvider;
         this.incrementalCache = incrementalCache;
+        this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
     }
 
@@ -404,10 +414,11 @@ public class JetTypeMapper {
         }
 
         TypeConstructor constructor = jetType.getConstructor();
-        DeclarationDescriptor descriptor = constructor.getDeclarationDescriptor();
         if (constructor instanceof IntersectionTypeConstructor) {
             jetType = CommonSupertypes.commonSupertype(new ArrayList<KotlinType>(constructor.getSupertypes()));
+            constructor = jetType.getConstructor();
         }
+        DeclarationDescriptor descriptor = constructor.getDeclarationDescriptor();
 
         if (descriptor == null) {
             throw new UnsupportedOperationException("no descriptor for type constructor of " + jetType);
@@ -691,17 +702,17 @@ public class JetTypeMapper {
             @NotNull TypeMappingMode mode
     ) {
         Variance projectionKind = projection.getProjectionKind();
-
-        if (mode.getSkipDeclarationSiteWildcards() && projectionKind == Variance.INVARIANT) {
-            return Variance.INVARIANT;
-        }
-
         Variance parameterVariance = parameter.getVariance();
+
         if (parameterVariance == Variance.INVARIANT) {
             return projectionKind;
         }
 
-        if (projectionKind == Variance.INVARIANT) {
+        if (mode.getSkipDeclarationSiteWildcards()) {
+            return Variance.INVARIANT;
+        }
+
+        if (projectionKind == Variance.INVARIANT || projectionKind == parameterVariance) {
             if (mode.getSkipDeclarationSiteWildcardsIfPossible() && !projection.isStarProjection()) {
                 if (parameterVariance == Variance.OUT_VARIANCE && TypeMappingUtil.isMostPreciseCovariantArgument(projection.getType())){
                     return Variance.INVARIANT;
@@ -712,9 +723,6 @@ public class JetTypeMapper {
                     return Variance.INVARIANT;
                 }
             }
-            return parameterVariance;
-        }
-        if (parameterVariance == projectionKind) {
             return parameterVariance;
         }
 
@@ -980,11 +988,16 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind,
-            List<ValueParameterDescriptor> valueParameters) {
+    public JvmMethodSignature mapSignature(
+            @NotNull FunctionDescriptor f,
+            @NotNull OwnerKind kind,
+            @NotNull List<ValueParameterDescriptor> valueParameters
+    ) {
         if (f instanceof FunctionImportedFromObject) {
             return mapSignature(((FunctionImportedFromObject) f).getCallableFromObject());
         }
+
+        checkOwnerCompatibility(f);
 
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
@@ -1038,6 +1051,33 @@ public class JetTypeMapper {
         return signature;
     }
 
+    private void checkOwnerCompatibility(@NotNull FunctionDescriptor descriptor) {
+        if (!(descriptor instanceof DeserializedCallableMemberDescriptor)) return;
+
+        KotlinJvmBinaryClass ownerClass = null;
+
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (container instanceof DeserializedClassDescriptor) {
+            SourceElement source = ((DeserializedClassDescriptor) container).getSource();
+            if (source instanceof KotlinJvmBinarySourceElement) {
+                ownerClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
+            }
+        }
+        else if (container instanceof LazyJavaPackageFragment) {
+            SourceElement source = ((LazyJavaPackageFragment) container).getSource();
+            if (source instanceof KotlinJvmBinaryPackageSourceElement) {
+                ownerClass = ((KotlinJvmBinaryPackageSourceElement) source).getRepresentativeBinaryClass();
+            }
+        }
+
+        if (ownerClass != null) {
+            JvmBytecodeBinaryVersion version = ownerClass.getClassHeader().getBytecodeVersion();
+            if (!version.isCompatible()) {
+                incompatibleClassTracker.record(ownerClass);
+            }
+        }
+    }
+
     private boolean writeCustomParameter(
             @NotNull FunctionDescriptor f,
             @NotNull ValueParameterDescriptor parameter,
@@ -1065,9 +1105,7 @@ public class JetTypeMapper {
         }
         int maskArgumentsCount = (argumentsCount + Integer.SIZE - 1) / Integer.SIZE;
         String additionalArgs = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
-        if (isConstructor(method)) {
-            additionalArgs += DEFAULT_CONSTRUCTOR_MARKER.getDescriptor();
-        }
+        additionalArgs += (isConstructor(method) ? DEFAULT_CONSTRUCTOR_MARKER : OBJECT_TYPE).getDescriptor();
         String result = descriptor.replace(")", additionalArgs + ")");
         if (dispatchReceiverDescriptor != null && !isConstructor(method)) {
             return result.replace("(", "(" + dispatchReceiverDescriptor);

@@ -26,7 +26,7 @@ import com.intellij.util.PathUtil
 import org.w3c.dom.Document
 import javax.xml.parsers.DocumentBuilderFactory
 
-public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
+class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.module
         if (!hasAndroidJpsPlugin() || !isAndroidModuleWithoutGradle(module)) return emptyList()

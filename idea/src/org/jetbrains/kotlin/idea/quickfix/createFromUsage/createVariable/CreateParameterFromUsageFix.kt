@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallablePlacement
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-public open class CreateParameterFromUsageFix<E : KtElement>(
+open class CreateParameterFromUsageFix<E : KtElement>(
         val functionDescriptor: FunctionDescriptor,
         val parameterInfo: KotlinParameterInfo,
         val defaultValueContext: E
@@ -60,7 +60,7 @@ public open class CreateParameterFromUsageFix<E : KtElement>(
     }
 
     companion object {
-        public fun <E : KtElement> createFixForPrimaryConstructorPropertyParameter(
+        fun <E : KtElement> createFixForPrimaryConstructorPropertyParameter(
                 element: E,
                 info: PropertyInfo
         ) : CreateParameterFromUsageFix<E>? {
@@ -93,7 +93,7 @@ public open class CreateParameterFromUsageFix<E : KtElement>(
             val paramInfo = KotlinParameterInfo(
                     callableDescriptor = constructorDescriptor,
                     name = info.name,
-                    type = paramType,
+                    originalTypeInfo = KotlinTypeInfo(false, paramType),
                     valOrVar = if (info.writable) KotlinValVar.Var else KotlinValVar.Val
             )
 

@@ -21,13 +21,13 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.compiled.ClsStubBuilder
+import org.jetbrains.kotlin.asJava.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
-import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -58,7 +58,7 @@ class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
 
 private val decompilerRendererForJS = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
-public fun buildDecompiledTextFromJsMetadata(
+fun buildDecompiledTextFromJsMetadata(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = KotlinJavaScriptDeserializerForDecompiler(classFile)
 ): DecompiledText {

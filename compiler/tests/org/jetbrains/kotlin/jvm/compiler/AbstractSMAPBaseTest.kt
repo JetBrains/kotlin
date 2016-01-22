@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import java.io.File
 
-public interface AbstractSMAPBaseTest {
+interface AbstractSMAPBaseTest {
 
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.mapNotNull { outputFile ->
@@ -43,7 +43,7 @@ public interface AbstractSMAPBaseTest {
     }
 
     private fun extractSmapFromSource(file: KtFile): SMAPAndFile? {
-        val fileContent = file.getText()
+        val fileContent = file.text
         val smapPrefix = "//SMAP"
         if (InTextDirectivesUtils.isDirectiveDefined(fileContent, smapPrefix)) {
             InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, smapPrefix)
@@ -51,7 +51,7 @@ public interface AbstractSMAPBaseTest {
             smapData = smapData.replace("//", "").trim()
 
             return SMAPAndFile(if (smapData.startsWith("SMAP ABSENT")) null else smapData,
-                               SMAPAndFile.getPath(file.getVirtualFile().getCanonicalPath()!!))
+                               SMAPAndFile.getPath(file.virtualFile.canonicalPath!!))
         }
         return null;
     }
@@ -65,7 +65,7 @@ public interface AbstractSMAPBaseTest {
         val compiledData = extractSMAPFromClasses(outputFiles).groupBy {
             it.sourceFile
         }.map {
-            val smap = it.getValue().mapNotNull { it.smap?.replaceHash() }.joinToString("\n")
+            val smap = it.value.mapNotNull { it.smap?.replaceHash() }.joinToString("\n")
             SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key)
         }.toMapBy { it.sourceFile }
 
@@ -91,11 +91,11 @@ public interface AbstractSMAPBaseTest {
         companion object {
             fun SMAPAndFile(smap: String?, sourceFile: File) = SMAPAndFile(smap, getPath(sourceFile))
 
-            public fun getPath(file: File): String {
-                return getPath(file.getCanonicalPath())
+            fun getPath(file: File): String {
+                return getPath(file.canonicalPath)
             }
 
-            public fun getPath(canonicalPath: String): String {
+            fun getPath(canonicalPath: String): String {
                 //There are some problems with disk name on windows cause LightVirtualFile return it without disk name
                 return FileUtil.toSystemIndependentName(canonicalPath).substringAfter(":")
             }

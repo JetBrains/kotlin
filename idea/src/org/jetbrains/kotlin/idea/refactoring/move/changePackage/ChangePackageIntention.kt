@@ -24,30 +24,32 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
-public class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageDirective>(javaClass(), "Change package") {
+class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageDirective>(KtPackageDirective::class.java, "Change package") {
     companion object {
         private val PACKAGE_NAME_VAR = "PACKAGE_NAME"
     }
 
-    override fun isApplicableTo(element: KtPackageDirective) = element.getPackageNameExpression() != null
+    override fun isApplicableTo(element: KtPackageDirective) = element.packageNameExpression != null
 
-    override fun applyTo(element: KtPackageDirective, editor: Editor) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor?) {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
             throw UnsupportedOperationException("Do not call applyTo() in the test mode")
         }
 
-        val file = element.getContainingKtFile()
-        val project = file.getProject()
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
 
-        val nameExpression = element.getPackageNameExpression()!!
-        val currentName = element.getQualifiedName()
+        val file = element.getContainingKtFile()
+        val project = file.project
+
+        val nameExpression = element.packageNameExpression!!
+        val currentName = element.qualifiedName
 
         val builder = TemplateBuilderImpl(file)
         builder.replaceElement(
@@ -64,7 +66,7 @@ public class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtP
         var enteredName: String? = null
         var affectedRange: TextRange? = null
 
-        editor.getCaretModel().moveToOffset(0)
+        editor.caretModel.moveToOffset(0)
         TemplateManager.getInstance(project).startTemplate(
                 editor,
                 builder.buildInlineTemplate(),

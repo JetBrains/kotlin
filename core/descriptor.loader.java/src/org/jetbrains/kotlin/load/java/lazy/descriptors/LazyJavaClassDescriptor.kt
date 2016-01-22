@@ -57,18 +57,18 @@ class LazyJavaClassDescriptor(
     }
 
     private val kind = when {
-        jClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
-        jClass.isInterface() -> ClassKind.INTERFACE
-        jClass.isEnum() -> ClassKind.ENUM_CLASS
+        jClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
+        jClass.isInterface -> ClassKind.INTERFACE
+        jClass.isEnum -> ClassKind.ENUM_CLASS
         else -> ClassKind.CLASS
     }
 
-    private val modality = if (jClass.isAnnotationType())
+    private val modality = if (jClass.isAnnotationType)
                                Modality.FINAL
-                           else Modality.convertFromFlags(jClass.isAbstract() || jClass.isInterface(), !jClass.isFinal())
+                           else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
 
-    private val visibility = jClass.getVisibility()
-    private val isInner = jClass.getOuterClass() != null && !jClass.isStatic()
+    private val visibility = jClass.visibility
+    private val isInner = jClass.outerClass != null && !jClass.isStatic
 
     override fun getKind() = kind
     override fun getModality() = modality
@@ -138,7 +138,7 @@ class LazyJavaClassDescriptor(
 
         private val supertypes = c.storageManager.createLazyValue<Collection<KotlinType>> {
             val javaTypes = jClass.getSupertypes()
-            val result = ArrayList<KotlinType>(javaTypes.size())
+            val result = ArrayList<KotlinType>(javaTypes.size)
             val incomplete = ArrayList<JavaType>(0)
 
             val purelyImplementedSupertype: KotlinType? = getPurelyImplementedSupertype()
@@ -175,11 +175,11 @@ class LazyJavaClassDescriptor(
                                           ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqName)
                                           ?: return null
 
-            if (purelyImplementedFqName.isRoot || purelyImplementedFqName.parent() != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) return null
+            if (purelyImplementedFqName.isRoot || !purelyImplementedFqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null
 
-            val classDescriptor = c.module.builtIns.getBuiltInClassByNameNullable(purelyImplementedFqName.shortName()) ?: return null
+            val classDescriptor = c.module.builtIns.getBuiltInClassByFqNameNullable(purelyImplementedFqName) ?: return null
 
-            if (classDescriptor.getTypeConstructor().getParameters().size() != getParameters().size()) return null
+            if (classDescriptor.getTypeConstructor().getParameters().size != getParameters().size) return null
 
             val parametersAsTypeProjections = getParameters().map {
                 parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.getDefaultType())
@@ -196,7 +196,7 @@ class LazyJavaClassDescriptor(
                     getAnnotations().
                     findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION) ?: return null
 
-            val fqNameString = (annotation.getAllValueArguments().values().singleOrNull() as? StringValue)?.value ?: return null
+            val fqNameString = (annotation.getAllValueArguments().values.singleOrNull() as? StringValue)?.value ?: return null
             if (!isValidJavaFqName(fqNameString)) return null
 
             return FqName(fqNameString)
@@ -206,7 +206,7 @@ class LazyJavaClassDescriptor(
 
         override fun getAnnotations() = Annotations.EMPTY
 
-        override fun isFinal(): Boolean = isFinal
+        override fun isFinal(): Boolean = isFinalClass
 
         override fun isDenotable() = true
 

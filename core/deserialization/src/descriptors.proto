@@ -192,8 +192,6 @@ message Class {
   repeated Function function = 9;
   repeated Property property = 10;
 
-  repeated int32 enum_entry_name = 12 [packed = true, (name_id_in_table) = true];
-
   repeated EnumEntry enum_entry = 13;
 
   optional TypeTable type_table = 30;
@@ -224,7 +222,7 @@ message Constructor {
     Visibility
     isSecondary
   */
-  optional int32 flags = 1 [default = 6];
+  optional int32 flags = 1 [default = 6 /* public constructor, no annotations */];
 
   repeated ValueParameter value_parameter = 2;
 
@@ -243,7 +241,8 @@ message Function {
     isTailrec
     isExternal
   */
-  optional int32 flags = 1 [default = 6];
+  optional int32 flags = 9 [default = 6 /* public final function, no annotations */];
+  optional int32 old_flags = 1 [default = 6];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -275,7 +274,8 @@ message Property {
     lateinit
     hasConstant
   */
-  optional int32 flags = 1 [default = 262 /* public (6) final property with getter (256) */];
+  optional int32 flags = 11 [default = 518 /* public (6) final property with getter (512) */];
+  optional int32 old_flags = 1 [default = 2054];
 
   required int32 name = 2 [(name_id_in_table) = true];
 
@@ -323,7 +323,7 @@ message ValueParameter {
 }
 
 message EnumEntry {
-  optional int32 name = 1;
+  optional int32 name = 1 [(name_id_in_table) = true];
 
   extensions 100 to 199;
 }

@@ -29,25 +29,25 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
+class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
     override fun getFamilyName(): String = "Update obsolete label syntax"
-    override fun getText(): String = "Replace with label ${element.getCalleeExpression()?.getText() ?: ""}@"
+    override fun getText(): String = "Replace with label ${element.calleeExpression?.text ?: ""}@"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) = replaceWithLabel(element)
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val annotationEntry = diagnostic.getPsiElement().getNonStrictParentOfType<KtAnnotationEntry>() ?: return null
+            val annotationEntry = diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>() ?: return null
 
             if (!looksLikeObsoleteLabel(annotationEntry)) return null
 
             return ReplaceObsoleteLabelSyntaxFix(annotationEntry)
         }
 
-        public fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory factory@ {
+        fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory factory@ {
             diagnostic ->
 
-            if (!(diagnostic.getPsiElement().getNonStrictParentOfType<KtAnnotationEntry>()?.looksLikeObsoleteLabelWithReferencesInCode()
+            if (!(diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>()?.looksLikeObsoleteLabelWithReferencesInCode()
                 ?: false)) return@factory null
 
             WholeProjectForEachElementOfTypeFix.createForMultiTaskOnElement<KtAnnotatedExpression, KtAnnotationEntry>(
@@ -58,41 +58,41 @@ public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQ
         }
 
         private fun collectTasks(expression: KtAnnotatedExpression) =
-                expression.getAnnotationEntries().filter { it.looksLikeObsoleteLabelWithReferencesInCode() }
+                expression.annotationEntries.filter { it.looksLikeObsoleteLabelWithReferencesInCode() }
 
         private fun KtAnnotationEntry.looksLikeObsoleteLabelWithReferencesInCode(): Boolean {
             if (!looksLikeObsoleteLabel(this)) return false
 
-            val baseExpression = (getParent() as? KtAnnotatedExpression)?.getBaseExpression() ?: return false
+            val baseExpression = (parent as? KtAnnotatedExpression)?.baseExpression ?: return false
 
-            val nameExpression = getCalleeExpression()?.getConstructorReferenceExpression() ?: return false
+            val nameExpression = calleeExpression?.constructorReferenceExpression ?: return false
             val labelName = nameExpression.getReferencedName()
 
             return baseExpression.anyDescendantOfType<KtExpressionWithLabel> {
                 (it is KtBreakExpression || it is KtContinueExpression || it is KtReturnExpression) &&
                 it.getLabelName() == labelName &&
                 it.getTargetLabel()?.analyze()?.get(BindingContext.LABEL_TARGET, it.getTargetLabel()) == null
-            } && analyze().getDiagnostics().forElement(nameExpression).any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
+            } && analyze().diagnostics.forElement(nameExpression).any { it.factory == Errors.UNRESOLVED_REFERENCE }
         }
 
-        public fun looksLikeObsoleteLabel(entry: KtAnnotationEntry): Boolean =
-                entry.getAtSymbol() != null &&
-                entry.getParent() is KtAnnotatedExpression &&
-                (entry.getParent() as KtAnnotatedExpression).getAnnotationEntries().size() == 1 &&
-                entry.getValueArgumentList() == null &&
-                entry.getCalleeExpression()?.getConstructorReferenceExpression()?.getIdentifier() != null
+        fun looksLikeObsoleteLabel(entry: KtAnnotationEntry): Boolean =
+                entry.atSymbol != null &&
+                entry.parent is KtAnnotatedExpression &&
+                (entry.parent as KtAnnotatedExpression).annotationEntries.size == 1 &&
+                entry.valueArgumentList == null &&
+                entry.calleeExpression?.constructorReferenceExpression?.getIdentifier() != null
 
         private fun replaceWithLabel(annotation: KtAnnotationEntry) {
-            val labelName = annotation.getCalleeExpression()?.getConstructorReferenceExpression()?.getReferencedName() ?: return
-            val annotatedExpression = annotation.getParent() as? KtAnnotatedExpression ?: return
-            val expression = annotatedExpression.getBaseExpression() ?: return
+            val labelName = annotation.calleeExpression?.constructorReferenceExpression?.getReferencedName() ?: return
+            val annotatedExpression = annotation.parent as? KtAnnotatedExpression ?: return
+            val expression = annotatedExpression.baseExpression ?: return
 
-            if (annotatedExpression.getAnnotationEntries().size() != 1) return
+            if (annotatedExpression.annotationEntries.size != 1) return
 
-            val baseExpressionStart = expression.getTextRange().getStartOffset()
+            val baseExpressionStart = expression.textRange.startOffset
 
-            val textRangeToRetain = TextRange(annotation.getTextRange().getEndOffset(), baseExpressionStart)
-            val textToRetain = textRangeToRetain.substring(annotation.getContainingFile().getText())
+            val textRangeToRetain = TextRange(annotation.textRange.endOffset, baseExpressionStart)
+            val textToRetain = textRangeToRetain.substring(annotation.containingFile.text)
 
             val labeledExpression = KtPsiFactory(annotation).createExpressionByPattern("$0@$1$2", labelName, textToRetain, expression)
 

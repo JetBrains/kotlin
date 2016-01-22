@@ -36,7 +36,7 @@ class JvmNameResolver(
     // Here we expand the 'range' field of the Record message for simplicity to a list of records
     private val records: List<Record> = ArrayList<Record>().apply {
         val records = types.recordList
-        this.ensureCapacity(records.size())
+        this.ensureCapacity(records.size)
         for (record in records) {
             repeat(record.range) {
                 this.add(record)
@@ -57,7 +57,7 @@ class JvmNameResolver(
 
         if (record.substringIndexCount >= 2) {
             val (begin, end) = record.substringIndexList
-            if (0 <= begin && begin <= end && end <= string.length()) {
+            if (0 <= begin && begin <= end && end <= string.length) {
                 string = string.substring(begin, end)
             }
         }
@@ -75,8 +75,8 @@ class JvmNameResolver(
                 string = string.replace('$', '.')
             }
             DESC_TO_CLASS_ID -> {
-                if (string.length() >= 2) {
-                    string = string.substring(1, string.length() - 1)
+                if (string.length >= 2) {
+                    string = string.substring(1, string.length - 1)
                 }
                 string = string.replace('$', '.')
             }
@@ -120,18 +120,18 @@ class JvmNameResolver(
                 "kotlin/Cloneable",
                 "kotlin/Annotation",
 
-                "kotlin/Iterable", "kotlin/MutableIterable",
-                "kotlin/Collection", "kotlin/MutableCollection",
-                "kotlin/List", "kotlin/MutableList",
-                "kotlin/Set", "kotlin/MutableSet",
-                "kotlin/Map", "kotlin/MutableMap",
-                "kotlin/Map.Entry", "kotlin/MutableMap.MutableEntry",
+                "kotlin/collections/Iterable", "kotlin/collections/MutableIterable",
+                "kotlin/collections/Collection", "kotlin/collections/MutableCollection",
+                "kotlin/collections/List", "kotlin/collections/MutableList",
+                "kotlin/collections/Set", "kotlin/collections/MutableSet",
+                "kotlin/collections/Map", "kotlin/collections/MutableMap",
+                "kotlin/collections/Map.Entry", "kotlin/collections/MutableMap.MutableEntry",
 
-                "kotlin/Iterator", "kotlin/MutableIterator",
-                "kotlin/ListIterator", "kotlin/MutableListIterator"
+                "kotlin/collections/Iterator", "kotlin/collections/MutableIterator",
+                "kotlin/collections/ListIterator", "kotlin/collections/MutableListIterator"
         )
 
-        private val PREDEFINED_STRINGS_MAP = PREDEFINED_STRINGS.withIndex().toMap({ it.value }, { it.index })
+        private val PREDEFINED_STRINGS_MAP = PREDEFINED_STRINGS.withIndex().toMapBy({ it.value }, { it.index })
 
         fun getPredefinedStringIndex(string: String): Int? = PREDEFINED_STRINGS_MAP[string]
     }

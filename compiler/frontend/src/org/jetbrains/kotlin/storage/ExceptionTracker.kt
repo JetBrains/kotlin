@@ -20,7 +20,7 @@ import com.intellij.openapi.util.ModificationTracker
 import java.util.concurrent.atomic.AtomicLong
 import org.jetbrains.kotlin.utils.rethrow
 
-public open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.ExceptionHandlingStrategy {
+open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.ExceptionHandlingStrategy {
     private val cancelledTracker: AtomicLong = AtomicLong()
 
     override fun handleException(throwable: Throwable): RuntimeException {
@@ -29,7 +29,7 @@ public open class ExceptionTracker : ModificationTracker, LockBasedStorageManage
     }
 
     private fun incCounter() {
-        cancelledTracker.getAndIncrement()
+        cancelledTracker.andIncrement
     }
 
     override fun getModificationCount(): Long {
@@ -37,6 +37,6 @@ public open class ExceptionTracker : ModificationTracker, LockBasedStorageManage
     }
 
     override fun toString(): String {
-        return javaClass.getName() + ": " + getModificationCount()
+        return javaClass.name + ": " + modificationCount
     }
 }

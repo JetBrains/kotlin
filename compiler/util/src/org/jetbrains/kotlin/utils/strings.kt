@@ -22,12 +22,12 @@ private val CARET_MARKER = "<~!!~>"
 private val BEGIN_MARKER = "<~BEGIN~>"
 private val END_MARKER = "<~END~>"
 
-public fun CharSequence.substringWithContext(beginIndex: Int, endIndex: Int, range: Int): String {
+fun CharSequence.substringWithContext(beginIndex: Int, endIndex: Int, range: Int): String {
     val start = Math.max(0, beginIndex - range)
-    val end = Math.min(this.length(), endIndex + range)
+    val end = Math.min(this.length, endIndex + range)
 
     val notFromBegin = start != 0
-    val notToEnd = end != this.length()
+    val notToEnd = end != this.length
 
     val updatedStart = beginIndex - start
     val updatedEnd = endIndex - start

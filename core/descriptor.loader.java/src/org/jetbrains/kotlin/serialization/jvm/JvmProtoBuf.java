@@ -9,14 +9,12 @@ public final class JvmProtoBuf {
       com.google.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.constructorSignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodSignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeParameterAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classModuleName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.packageModuleName);
   }
   public interface StringTableTypesOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
@@ -2538,26 +2536,6 @@ public final class JvmProtoBuf {
      * </pre>
      */
     int getDesc();
-
-    // optional bool is_static_in_outer = 3 [default = false];
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    boolean hasIsStaticInOuter();
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    boolean getIsStaticInOuter();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature}
@@ -2610,11 +2588,6 @@ public final class JvmProtoBuf {
             case 16: {
               bitField0_ |= 0x00000002;
               desc_ = input.readInt32();
-              break;
-            }
-            case 24: {
-              bitField0_ |= 0x00000004;
-              isStaticInOuter_ = input.readBool();
               break;
             }
           }
@@ -2684,36 +2657,9 @@ public final class JvmProtoBuf {
       return desc_;
     }
 
-    // optional bool is_static_in_outer = 3 [default = false];
-    public static final int IS_STATIC_IN_OUTER_FIELD_NUMBER = 3;
-    private boolean isStaticInOuter_;
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    public boolean hasIsStaticInOuter() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    public boolean getIsStaticInOuter() {
-      return isStaticInOuter_;
-    }
-
     private void initFields() {
       name_ = 0;
       desc_ = 0;
-      isStaticInOuter_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2733,9 +2679,6 @@ public final class JvmProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, desc_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBool(3, isStaticInOuter_);
-      }
     }
 
     private int memoizedSerializedSize = -1;
@@ -2751,10 +2694,6 @@ public final class JvmProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, desc_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(3, isStaticInOuter_);
       }
       memoizedSerializedSize = size;
       return size;
@@ -2851,8 +2790,6 @@ public final class JvmProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         desc_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        isStaticInOuter_ = false;
-        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -2884,10 +2821,6 @@ public final class JvmProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.desc_ = desc_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.isStaticInOuter_ = isStaticInOuter_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -2899,9 +2832,6 @@ public final class JvmProtoBuf {
         }
         if (other.hasDesc()) {
           setDesc(other.getDesc());
-        }
-        if (other.hasIsStaticInOuter()) {
-          setIsStaticInOuter(other.getIsStaticInOuter());
         }
         return this;
       }
@@ -3007,59 +2937,6 @@ public final class JvmProtoBuf {
       public Builder clearDesc() {
         bitField0_ = (bitField0_ & ~0x00000002);
         desc_ = 0;
-        
-        return this;
-      }
-
-      // optional bool is_static_in_outer = 3 [default = false];
-      private boolean isStaticInOuter_ ;
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public boolean hasIsStaticInOuter() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public boolean getIsStaticInOuter() {
-        return isStaticInOuter_;
-      }
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public Builder setIsStaticInOuter(boolean value) {
-        bitField0_ |= 0x00000004;
-        isStaticInOuter_ = value;
-        
-        return this;
-      }
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public Builder clearIsStaticInOuter() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        isStaticInOuter_ = false;
         
         return this;
       }
@@ -3865,21 +3742,6 @@ public final class JvmProtoBuf {
         null,
         100,
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int METHOD_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Function,
-      java.lang.Integer> methodImplClassName = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Function.getDefaultInstance(),
-        0,
-        null,
-        null,
-        101,
-        com.google.protobuf.WireFormat.FieldType.INT32);
   public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
@@ -3895,21 +3757,6 @@ public final class JvmProtoBuf {
         null,
         100,
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int PROPERTY_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.Property,
-      java.lang.Integer> propertyImplClassName = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.Property.getDefaultInstance(),
-        0,
-        null,
-        null,
-        101,
-        com.google.protobuf.WireFormat.FieldType.INT32);
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Type { ... }</code>
@@ -3955,36 +3802,36 @@ public final class JvmProtoBuf {
         100,
         com.google.protobuf.WireFormat.FieldType.MESSAGE,
         false);
-  public static final int INDEX_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter,
-      java.lang.Integer> index = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance(),
-        0,
-        null,
-        null,
-        100,
-        com.google.protobuf.WireFormat.FieldType.INT32);
-  public static final int CLASS_ANNOTATION_FIELD_NUMBER = 100;
+  public static final int CLASS_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.serialization.ProtoBuf.Class,
-      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> classAnnotation = com.google.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
+      java.lang.Integer> classModuleName = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
         org.jetbrains.kotlin.serialization.ProtoBuf.Class.getDefaultInstance(),
-        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
+        0,
         null,
-        100,
-        com.google.protobuf.WireFormat.FieldType.MESSAGE,
-        false);
+        null,
+        101,
+        com.google.protobuf.WireFormat.FieldType.INT32);
+  public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Package,
+      java.lang.Integer> packageModuleName = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance(),
+        0,
+        null,
+        null,
+        101,
+        com.google.protobuf.WireFormat.FieldType.INT32);
 
   static {
   }

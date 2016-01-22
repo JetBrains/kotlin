@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cfg.WhenMissingCase;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -165,7 +167,9 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, String> INAPPLICABLE_TARGET_ON_PROPERTY = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<PsiElement> INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_RECEIVER_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PARAM_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> REDUNDANT_ANNOTATION_TARGET = DiagnosticFactory1.create(WARNING);
@@ -357,7 +361,6 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PRIVATE_SETTER_FOR_OPEN_PROPERTY = DiagnosticFactory0.create(ERROR);
@@ -419,6 +422,8 @@ public interface Errors {
             ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
 
     DiagnosticFactory0<KtParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<KtParameter> MULTIPLE_VARARG_PARAMETERS = DiagnosticFactory0.create(ERROR, PARAMETER_VARARG_MODIFIER);
 
     // Named parameters
 
@@ -644,6 +649,7 @@ public interface Errors {
     // Nullability
 
     DiagnosticFactory1<PsiElement, KotlinType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> UNSAFE_IMPLICIT_INVOKE_CALL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory3<KtExpression, String, String, String> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<PsiElement> UNEXPECTED_SAFE_CALL = DiagnosticFactory0.create(ERROR);
@@ -679,7 +685,7 @@ public interface Errors {
     DiagnosticFactory0<KtTypeReference> IS_ENUM_ENTRY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> ENUM_ENTRY_AS_TYPE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory1<KtExpression, KotlinType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory2<KtExpression, KotlinType, KotlinType> IMPLICIT_CAST_TO_ANY = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory3<KtExpression, KotlinType, String, String> SMARTCAST_IMPOSSIBLE = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory0<KtExpression> ALWAYS_NULL = DiagnosticFactory0.create(WARNING);
@@ -704,13 +710,15 @@ public interface Errors {
 
     DiagnosticFactory0<KtWhenCondition> EXPECTED_CONDITION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtWhenEntry> ELSE_MISPLACED_IN_WHEN = DiagnosticFactory0.create(ERROR, ELSE_ENTRY);
-    DiagnosticFactory0<KtWhenExpression> NO_ELSE_IN_WHEN = DiagnosticFactory0.create(ERROR, WHEN_EXPRESSION);
-    DiagnosticFactory0<KtWhenExpression> NON_EXHAUSTIVE_WHEN = DiagnosticFactory0.create(WARNING, WHEN_EXPRESSION);
+    DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>> NO_ELSE_IN_WHEN = DiagnosticFactory1.create(ERROR, WHEN_EXPRESSION);
+    DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>> NON_EXHAUSTIVE_WHEN = DiagnosticFactory1.create(WARNING, WHEN_EXPRESSION);
     DiagnosticFactory0<PsiElement> COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT = DiagnosticFactory0.create(ERROR);
 
     // Type mismatch
 
     DiagnosticFactory2<KtExpression, KotlinType, KotlinType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory1<KtElement, TypeMismatchDueToTypeProjectionsData> TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<KtElement, CallableDescriptor, KotlinType> MEMBER_PROJECTED_OUT = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<KtExpression, KotlinType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, KotlinType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtBinaryExpression, KotlinType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
@@ -726,6 +734,8 @@ public interface Errors {
     DiagnosticFactory2<KtElement, KotlinType, KotlinType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory0<PsiElement> IMPLICIT_NOTHING_RETURN_TYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> IMPLICIT_NOTHING_PROPERTY_TYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> IMPLICIT_INTERSECTION_TYPE = DiagnosticFactory1.create(ERROR);
 
     // Context tracking
 
@@ -780,6 +790,9 @@ public interface Errors {
     ImmutableSet<? extends DiagnosticFactory<?>> MUST_BE_INITIALIZED_DIAGNOSTICS = ImmutableSet.of(
             MUST_BE_INITIALIZED, MUST_BE_INITIALIZED_OR_BE_ABSTRACT
     );
+    ImmutableSet<? extends DiagnosticFactory<?>> TYPE_MISMATCH_ERRORS = ImmutableSet.of(
+            TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH, NULL_FOR_NONNULL_TYPE, TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS,
+            MEMBER_PROJECTED_OUT);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

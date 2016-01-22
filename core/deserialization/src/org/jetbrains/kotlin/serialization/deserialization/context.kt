@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
 import org.jetbrains.kotlin.storage.StorageManager
 
 class DeserializationComponents(
@@ -46,9 +47,11 @@ class DeserializationComponents(
     fun createContext(
             descriptor: PackageFragmentDescriptor,
             nameResolver: NameResolver,
-            typeTable: TypeTable
+            typeTable: TypeTable,
+            packagePartSource: PackagePartSource?
     ): DeserializationContext =
-            DeserializationContext(this, nameResolver, descriptor, typeTable, parentTypeDeserializer = null, typeParameters = listOf())
+            DeserializationContext(this, nameResolver, descriptor, typeTable, packagePartSource,
+                                   parentTypeDeserializer = null, typeParameters = listOf())
 }
 
 
@@ -57,11 +60,12 @@ class DeserializationContext(
         val nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeTable: TypeTable,
+        val packagePartSource: PackagePartSource?,
         parentTypeDeserializer: TypeDeserializer?,
         typeParameters: List<ProtoBuf.TypeParameter>
 ) {
     val typeDeserializer = TypeDeserializer(this, parentTypeDeserializer, typeParameters,
-                                            "Deserializer for ${containingDeclaration.getName()}")
+                                            "Deserializer for ${containingDeclaration.name}")
 
     val memberDeserializer = MemberDeserializer(this)
 
@@ -73,8 +77,7 @@ class DeserializationContext(
             nameResolver: NameResolver = this.nameResolver,
             typeTable: TypeTable = this.typeTable
     ) = DeserializationContext(
-            components, nameResolver, descriptor, typeTable,
-            parentTypeDeserializer = this.typeDeserializer,
-            typeParameters = typeParameterProtos
+            components, nameResolver, descriptor, typeTable, this.packagePartSource,
+            parentTypeDeserializer = this.typeDeserializer, typeParameters = typeParameterProtos
     )
 }

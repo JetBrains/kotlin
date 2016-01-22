@@ -32,20 +32,20 @@ class KotlinCleanupInspectionTest(): KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     private fun doTest(result: String, vararg files: String) {
-        myFixture.enableInspections(javaClass<KotlinCleanupInspection>())
+        myFixture.enableInspections(KotlinCleanupInspection::class.java)
         myFixture.configureByFiles(*files)
 
-        val project = myFixture.getProject()
+        val project = myFixture.project
         val managerEx = InspectionManager.getInstance(project)
         val globalContext = managerEx.createNewGlobalContext(false) as GlobalInspectionContextBase
-        val analysisScope = AnalysisScope(myFixture.getFile())
-        val profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile()
+        val analysisScope = AnalysisScope(myFixture.file)
+        val profile = InspectionProjectProfileManager.getInstance(project).inspectionProfile
         globalContext.codeCleanup(project, analysisScope, profile, "Cleanup", null, true)
 
         myFixture.checkResultByFile(result)
     }
 
-    public fun testCleanup() {
+    fun testCleanup() {
         doTest("cleanup.kt.after", "cleanup.kt", "JavaAnn.java", "deprecatedSymbols.kt")
     }
 }

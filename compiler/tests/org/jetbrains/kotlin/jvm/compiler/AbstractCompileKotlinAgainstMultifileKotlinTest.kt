@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.codegen.filterClassFiles
 import java.io.File
 import java.util.Collections
 
-public abstract class AbstractCompileKotlinAgainstMultifileKotlinTest : AbstractCompileKotlinAgainstKotlinTest(), AbstractSMAPBaseTest {
+abstract class AbstractCompileKotlinAgainstMultifileKotlinTest : AbstractCompileKotlinAgainstKotlinTest(), AbstractSMAPBaseTest {
 
-    public fun doBoxTest(firstFileName: String) {
+    fun doBoxTest(firstFileName: String) {
         val inputFiles = listOf(firstFileName, firstFileName.substringBeforeLast("1.kt") + "2.kt")
         doBoxTest(inputFiles)
     }

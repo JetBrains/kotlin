@@ -31,7 +31,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class Concat : IntrinsicMethod() {
+class Concat : IntrinsicMethod() {
     fun generateImpl(
             codegen: ExpressionCodegen,
             v: InstructionAdapter,

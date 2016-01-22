@@ -11,8 +11,8 @@ fun box(): String {
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
 
-    assertEquals(getter, javaClass<K>().getMethod("getValue"))
-    assertEquals(setter, javaClass<K>().getMethod("setValue", javaClass<Long>()))
+    assertEquals(getter, K::class.java.getMethod("getValue"))
+    assertEquals(setter, K::class.java.getMethod("setValue", Long::class.java))
 
     val k = K(42L)
     assert(getter.invoke(k) == 42L) { "Fail k getter" }

@@ -22,22 +22,22 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
-public var JsName.staticRef: JsNode? by MetadataProperty(default = null)
+var JsName.staticRef: JsNode? by MetadataProperty(default = null)
 
 // TODO: move this to module 'js.inliner' and change dependency on 'frontend' to dependency on 'descriptors'
-public var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
+var JsInvocation.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
 
-public var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)
+var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = null)
 
-public var JsInvocation.psiElement: PsiElement? by MetadataProperty(default = null)
+var JsInvocation.psiElement: PsiElement? by MetadataProperty(default = null)
 
-public var JsFunction.isLocal: Boolean by MetadataProperty(default = false)
+var JsFunction.isLocal: Boolean by MetadataProperty(default = false)
 
-public var JsParameter.hasDefaultValue: Boolean by MetadataProperty(default = false)
+var JsParameter.hasDefaultValue: Boolean by MetadataProperty(default = false)
 
-public var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
+var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
 
-public enum class TypeCheck {
+enum class TypeCheck {
     TYPEOF,
     INSTANCEOF
 }

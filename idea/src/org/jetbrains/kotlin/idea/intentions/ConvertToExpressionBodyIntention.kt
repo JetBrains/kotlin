@@ -20,9 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
-        javaClass(), "Convert to expression body"
+class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
+        KtDeclarationWithBody::class.java, "Convert to expression body"
 ) {
     override fun isApplicableTo(element: KtDeclarationWithBody): Boolean {
         val value = calcValue(element) ?: return false
@@ -42,18 +42,20 @@ public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIn
 
     override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration
 
-    override fun applyTo(element: KtDeclarationWithBody, editor: Editor) {
+    override fun applyTo(element: KtDeclarationWithBody, editor: Editor?) {
         applyTo(element) {
             val typeRef = it.typeReference!!
             val colon = it.colon!!
-            editor.selectionModel.setSelection(colon.startOffset, typeRef.endOffset)
-            editor.caretModel.moveToOffset(typeRef.endOffset)
+            editor?.apply {
+                selectionModel.setSelection(colon.startOffset, typeRef.endOffset)
+                caretModel.moveToOffset(typeRef.endOffset)
+            }
         }
     }
 
-    public fun applyTo(declaration: KtDeclarationWithBody, canDeleteTypeRef: Boolean) {
+    fun applyTo(declaration: KtDeclarationWithBody, canDeleteTypeRef: Boolean) {
         val deleteTypeHandler: (KtCallableDeclaration) -> Unit = {
-            it.deleteChildRange(it.getColon()!!, it.getTypeReference()!!)
+            it.deleteChildRange(it.colon!!, it.typeReference!!)
         }
         applyTo(declaration, deleteTypeHandler.check { canDeleteTypeRef })
     }
@@ -68,7 +70,7 @@ public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIn
             }
         }
 
-        val body = declaration.getBodyExpression()!!
+        val body = declaration.bodyExpression!!
 
         val commentSaver = CommentSaver(body)
 
@@ -86,13 +88,13 @@ public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIn
 
     private fun calcValue(declaration: KtDeclarationWithBody): KtExpression? {
         if (declaration is KtFunctionLiteral) return null
-        val body = declaration.getBodyExpression()
+        val body = declaration.bodyExpression
         if (!declaration.hasBlockBody() || body !is KtBlockExpression) return null
 
-        val statement = body.getStatements().singleOrNull() ?: return null
+        val statement = body.statements.singleOrNull() ?: return null
         when(statement) {
             is KtReturnExpression -> {
-                return statement.getReturnedExpression()
+                return statement.returnedExpression
             }
 
             //TODO: IMO this is not good code, there should be a way to detect that JetExpression does not have value

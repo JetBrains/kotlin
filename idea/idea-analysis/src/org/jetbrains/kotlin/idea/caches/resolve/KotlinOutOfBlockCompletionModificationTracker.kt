@@ -26,15 +26,15 @@ import org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener
 // Synthetic file for completion can be modified without sending tree changed events and sequence of completions can lead to inconsistent
 // resolve session being cached for such a file otherwise.
 // This code is not tested. See KT-6216 for an example.
-public class KotlinOutOfBlockCompletionModificationTracker() : SimpleModificationTracker() {
+class KotlinOutOfBlockCompletionModificationTracker() : SimpleModificationTracker() {
     companion object {
-        public fun getInstance(project: Project): KotlinOutOfBlockCompletionModificationTracker
-                = ServiceManager.getService(project, javaClass<KotlinOutOfBlockCompletionModificationTracker>())!!
+        fun getInstance(project: Project): KotlinOutOfBlockCompletionModificationTracker
+                = ServiceManager.getService(project, KotlinOutOfBlockCompletionModificationTracker::class.java)!!
     }
 }
 
 
-public fun performCompletionWithOutOfBlockTracking(completionPosition: PsiElement, body: () -> Unit) {
+fun performCompletionWithOutOfBlockTracking(completionPosition: PsiElement, body: () -> Unit) {
     if (KotlinCodeBlockModificationListener.isInsideCodeBlock(completionPosition)) {
         body()
         return
@@ -43,6 +43,6 @@ public fun performCompletionWithOutOfBlockTracking(completionPosition: PsiElemen
         body()
     }
     finally {
-        KotlinOutOfBlockCompletionModificationTracker.getInstance(completionPosition.getProject()).incModificationCount()
+        KotlinOutOfBlockCompletionModificationTracker.getInstance(completionPosition.project).incModificationCount()
     }
 }

@@ -20,7 +20,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-public class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
+class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
     private val TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement/withLib"
 
     override fun setUp() {
@@ -30,11 +30,11 @@ public class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
 
     override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false)
 
-    public fun testFakeOverride() {
+    fun testFakeOverride() {
         doOverrideFileTest()
     }
 
-    public fun testGenericSubstituted() {
+    fun testGenericSubstituted() {
         doOverrideFileTest()
     }
 }

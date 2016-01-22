@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
-import kotlin.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -60,7 +60,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeAbiVersion;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -212,7 +212,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
-            generateConstInstance(asmType, asmType, FunctionsKt.<InstructionAdapter>doNothing());
+            generateConstInstance(asmType, asmType);
         }
 
         genClosureFields(closure, v, typeMapper);
@@ -222,16 +222,22 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected void generateKotlinAnnotation() {
         writeKotlinSyntheticClassAnnotation(v, state);
 
-        DescriptorSerializer serializer =
-                DescriptorSerializer.createForLambda(
-                        new JvmSerializerExtension(v.getSerializationBindings(), typeMapper, state.getUseTypeTableInSerializer())
-                );
+        final DescriptorSerializer serializer =
+                DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
 
-        ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
+        final ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.SYNTHETIC_CLASS, new Function1<AnnotationVisitor, Unit>() {
+            @Override
+            public Unit invoke(AnnotationVisitor av) {
+                writeAnnotationData(av, serializer, functionProto, false);
+                return Unit.INSTANCE;
+            }
+        });
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FUNCTION), true);
-        writeAnnotationData(av, serializer, functionProto);
-        writeModuleName(av, state);
+        writeAbiVersion(av);
+        writeAnnotationData(av, serializer, functionProto, true);
         av.visitEnd();
     }
 
@@ -259,13 +265,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                             v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
                         }
 
-                        if (functionReferenceTarget != null) {
-                            if (!"true".equalsIgnoreCase(System.getProperty("kotlin.jvm.optimize.callable.references"))) {
-                                v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
-                            }
-                        }
-
-                        return Unit.INSTANCE$;
+                        return Unit.INSTANCE;
                     }
                 }
         );

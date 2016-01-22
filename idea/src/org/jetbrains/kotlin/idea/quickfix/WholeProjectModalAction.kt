@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.psi.psiUtil.flatMapDescendantsOfTypeVisitor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
-public abstract class WholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
-    private val LOG = Logger.getInstance(javaClass<WholeProjectModalAction<*>>());
+abstract class WholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
+    private val LOG = Logger.getInstance(WholeProjectModalAction::class.java);
 
     override final fun startInWriteAction() = false
 
@@ -55,9 +55,9 @@ public abstract class WholeProjectModalAction<TData : Any>(val title: String) : 
                         val files = PluginJetFilesProvider.allFilesInProject(project)
 
                         for ((i, currentFile) in files.withIndex()) {
-                            indicator.setText("Checking file $i of ${files.size()}...")
-                            indicator.setText2(currentFile.getVirtualFile().getPath())
-                            indicator.setFraction((i + 1) / files.size().toDouble())
+                            indicator.text = "Checking file $i of ${files.size}..."
+                            indicator.text2 = currentFile.virtualFile.path
+                            indicator.fraction = (i + 1) / files.size.toDouble()
                             try {
                                 val data = collectDataForFile(project, currentFile)
                                 if (data != null) filesToData[currentFile] = data
@@ -76,11 +76,11 @@ public abstract class WholeProjectModalAction<TData : Any>(val title: String) : 
 
     private fun applyAll(project: Project, filesToData: Map<KtFile, TData>) {
         UIUtil.invokeLaterIfNeeded {
-            project.executeCommand(getText()) {
+            project.executeCommand(text) {
                 runWriteAction {
                     filesToData.forEach {
                         try {
-                            applyChangesForFile(project, it.getKey(), it.getValue())
+                            applyChangesForFile(project, it.key, it.value)
                         }
                         catch (e: Throwable) {
                             LOG.error(e)
@@ -98,7 +98,7 @@ public abstract class WholeProjectModalAction<TData : Any>(val title: String) : 
     protected abstract fun applyChangesForFile(project: Project, file: KtFile, data: TData)
 }
 
-public abstract class WholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
+abstract class WholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
 : WholeProjectModalAction<Collection<TTask>>(modalTitle) {
     override fun collectDataForFile(project: Project, file: KtFile): Collection<TTask>? {
         val accumulator = arrayListOf<TTask>()

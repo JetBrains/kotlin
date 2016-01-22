@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -87,8 +88,10 @@ private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFac
     else {
         if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
 
+        val cacheService = KotlinCacheService.getInstance(project)
+        val moduleInfo = this.getNullableModuleInfo() ?: return null
         @Suppress("DEPRECATION")
-        return KotlinCacheService.getInstance(project).getProjectService(JvmPlatform, this.getModuleInfo(), JavaDescriptorResolver::class.java)
+        return (cacheService as? KotlinCacheServiceImpl)?.getProjectService(JvmPlatform, moduleInfo, JavaDescriptorResolver::class.java)
     }
 }
 
@@ -97,7 +100,7 @@ private fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDe
 }
 
 private fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
-    return resolveClass(constructor.getContainingClass())?.getConstructors()?.findByJavaElement(constructor)
+    return resolveClass(constructor.containingClass)?.constructors?.findByJavaElement(constructor)
 }
 
 private fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
@@ -105,21 +108,21 @@ private fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescr
 }
 
 private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): MemberScope? {
-    val containingClass = resolveClass(member.getContainingClass())
-    return if (member.isStatic())
-        containingClass?.getStaticScope()
+    val containingClass = resolveClass(member.containingClass)
+    return if (member.isStatic)
+        containingClass?.staticScope
     else
-        containingClass?.getDefaultType()?.getMemberScope()
+        containingClass?.defaultType?.memberScope
 }
 
 private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElement(javaElement: JavaElement): T? {
     return firstOrNull { member ->
-        val memberJavaElement = (member.getOriginal().getSource() as? JavaSourceElement)?.javaElement
+        val memberJavaElement = (member.original.source as? JavaSourceElement)?.javaElement
         when {
             memberJavaElement == javaElement ->
                 true
             memberJavaElement is JavaElementImpl<*> && javaElement is JavaElementImpl<*> ->
-                memberJavaElement.getPsi().isEquivalentTo(javaElement.getPsi())
+                memberJavaElement.psi.isEquivalentTo(javaElement.psi)
             else ->
                 false
         }

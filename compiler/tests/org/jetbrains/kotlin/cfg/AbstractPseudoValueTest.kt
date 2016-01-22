@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.util.*
 
-public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
+abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
         val expectedTypePredicateMap = HashMap<PseudoValue, TypePredicate>()
 
         fun getElementToValueMap(pseudocode: PseudocodeImpl): Map<KtElement, PseudoValue> {
             val elementToValues = LinkedHashMap<KtElement, PseudoValue>()
-            pseudocode.getCorrespondingElement().accept(object : KtTreeVisitorVoid() {
+            pseudocode.correspondingElement.accept(object : KtTreeVisitorVoid() {
                 override fun visitKtElement(element: KtElement) {
                     super.visitKtElement(element)
 
@@ -48,7 +48,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         }
 
         fun elementText(element: KtElement?): String =
-                element?.getText()?.replace("\\s+".toRegex(), " ") ?: ""
+                element?.text?.replace("\\s+".toRegex(), " ") ?: ""
 
         fun valueDecl(value: PseudoValue): String {
             val typePredicate = expectedTypePredicateMap.getOrPut(value) {
@@ -65,26 +65,26 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         }
 
         val elementToValues = getElementToValueMap(pseudocode)
-        val unboundValues = pseudocode.getInstructions()
+        val unboundValues = pseudocode.instructions
                 .mapNotNull { (it as? InstructionWithValue)?.outputValue }
                 .filter { it.element == null }
                 .sortedBy { it.debugName }
-        val allValues = elementToValues.values() + unboundValues
+        val allValues = elementToValues.values + unboundValues
         if (allValues.isEmpty()) return
 
         val valueDescriptions = LinkedHashMap<Pair<PseudoValue, KtElement?>, String>()
         for (value in unboundValues) {
             valueDescriptions[value to null] = valueDescription(null, value)
         }
-        for ((element, value) in elementToValues.entrySet()) {
+        for ((element, value) in elementToValues.entries) {
             valueDescriptions[value to element] = valueDescription(element, value)
         }
 
-        val elementColumnWidth = elementToValues.keySet().map { elementText(it).length() }.max() ?: 1
-        val valueColumnWidth = allValues.map { valueDecl(it).length() }.max()!!
-        val valueDescColumnWidth = valueDescriptions.values().map { it.length() }.max()!!
+        val elementColumnWidth = elementToValues.keys.map { elementText(it).length }.max() ?: 1
+        val valueColumnWidth = allValues.map { valueDecl(it).length }.max()!!
+        val valueDescColumnWidth = valueDescriptions.values.map { it.length }.max()!!
 
-        for ((ve, description) in valueDescriptions.entrySet()) {
+        for ((ve, description) in valueDescriptions.entries) {
             val (value, element) = ve
             out
                     .append("%1$-${elementColumnWidth}s".format(elementText(element)))

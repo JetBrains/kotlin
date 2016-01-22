@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.storage.StorageManager
 import com.intellij.openapi.vfs.VirtualFile
 import java.util.HashSet
 
-public abstract class DeclarationProviderFactoryService {
+abstract class DeclarationProviderFactoryService {
 
-    public abstract fun create(
+    abstract fun create(
             project: Project,
             storageManager: StorageManager,
             syntheticFiles: Collection<KtFile>,
@@ -35,14 +35,13 @@ public abstract class DeclarationProviderFactoryService {
     ): DeclarationProviderFactory
 
     companion object {
-        @JvmStatic
-        public fun createDeclarationProviderFactory(
+        @JvmStatic fun createDeclarationProviderFactory(
                 project: Project,
                 storageManager: StorageManager,
                 syntheticFiles: Collection<KtFile>,
                 filesScope: GlobalSearchScope
         ): DeclarationProviderFactory {
-            return ServiceManager.getService(project, javaClass<DeclarationProviderFactoryService>())!!
+            return ServiceManager.getService(project, DeclarationProviderFactoryService::class.java)!!
                     .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope))
         }
 
@@ -58,7 +57,7 @@ public abstract class DeclarationProviderFactoryService {
     private class SyntheticFilesFilteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope)
         : DelegatingGlobalSearchScope(baseScope) {
 
-        private val originals = syntheticFiles.mapNotNullTo(HashSet<VirtualFile>()) { it.getOriginalFile().getVirtualFile() }
+        private val originals = syntheticFiles.mapNotNullTo(HashSet<VirtualFile>()) { it.originalFile.virtualFile }
 
         override fun contains(file: VirtualFile) = super.contains(file) && file !in originals
     }

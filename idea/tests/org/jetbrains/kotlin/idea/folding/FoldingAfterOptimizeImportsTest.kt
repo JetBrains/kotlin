@@ -33,7 +33,7 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
         get() = myFixture!!
 
     private val fileText: String
-        get() = fixture.getFile()!!.getText()!!
+        get() = fixture.file!!.text!!
 
     fun testFoldingAfterOptimizeImports() {
         doTest()
@@ -48,11 +48,11 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
 
         doTestWithSettings(fileText) {
             fileText ->
-            CodeFoldingManager.getInstance(fixture.getProject())!!.buildInitialFoldings(getEditor())
+            CodeFoldingManager.getInstance(fixture.project)!!.buildInitialFoldings(editor)
             getFoldingRegion(0).checkRegion(false, findStringWithPrefixes("// REGION BEFORE: "))
 
-            CommandProcessor.getInstance()?.executeCommand(fixture.getProject(),
-                                                           KotlinImportOptimizer().processFile(fixture.getFile()),
+            CommandProcessor.getInstance()?.executeCommand(fixture.project,
+                                                           KotlinImportOptimizer().processFile(fixture.file),
                                                            "Optimize Imports", null,
                                                            UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION)
             getFoldingRegion(0).checkRegion(false, findStringWithPrefixes("// REGION AFTER: "))
@@ -62,21 +62,21 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
 
     private fun getFoldingRegion(number: Int): FoldRegion {
         fixture.doHighlighting()
-        val model = getEditor().getFoldingModel()
-        val foldingRegions = model.getAllFoldRegions()
-        assert(foldingRegions.size() >= number) { "There is no enough folding regions in file: in file - ${foldingRegions.size()} , expected = ${number}" }
+        val model = editor.foldingModel
+        val foldingRegions = model.allFoldRegions
+        assert(foldingRegions.size >= number) { "There is no enough folding regions in file: in file - ${foldingRegions.size} , expected = ${number}" }
         return foldingRegions[number]
     }
 
-    override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/folding/afterOptimizeImports/").getPath() + File.separator
+    override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/folding/afterOptimizeImports/").path + File.separator
 
     private fun findStringWithPrefixes(prefix: String) = InTextDirectivesUtils.findStringWithPrefixes(fileText, prefix)
                                                             ?: throw AssertionError("Couldn't find line with prefix $prefix")
 
-    private fun FoldRegion.getPosition() = "${getStartOffset()}:${getEndOffset()}"
+    private fun FoldRegion.getPosition() = "${startOffset}:${endOffset}"
 
     private fun FoldRegion.checkRegion(isExpanded: Boolean, position: String): Unit {
-        assert(isValid()) { "Region should be valid: $this" }
+        assert(isValid) { "Region should be valid: $this" }
         assert(isExpanded == isExpanded()) { "isExpanded should be $isExpanded. Actual = ${isExpanded()}" }
         assert(position == getPosition()) { "Region position is wrong: expected = $position, actual = ${getPosition()}" }
     }

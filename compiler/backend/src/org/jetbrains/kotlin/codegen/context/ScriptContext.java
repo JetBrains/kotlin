@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.FieldInfo;

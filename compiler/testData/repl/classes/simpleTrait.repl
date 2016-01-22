@@ -2,5 +2,5 @@
 >>> interface B : A {
 ...    fun foo() = 45
 ... }
->>> javaClass<A>().isAssignableFrom(javaClass<B>())
+>>> A::class.java.isAssignableFrom(B::class.java)
 true

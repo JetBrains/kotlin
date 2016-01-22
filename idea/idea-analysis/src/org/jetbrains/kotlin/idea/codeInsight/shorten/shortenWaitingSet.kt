@@ -38,10 +38,10 @@ private var Project.elementsToShorten: MutableSet<ShorteningRequest>?
  * When one refactoring invokes another this value must be set to false so that shortening wait-set is not cleared
  * and previously collected references are processed correctly. Afterwards it must be reset to original value
  */
-public var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
+var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
         by NotNullableUserDataProperty(Key.create("ENSURE_ELEMENTS_TO_SHORTEN_IS_EMPTY"), true)
 
-public fun Project.runWithElementsToShortenIsEmptyIgnored(action: () -> Unit) {
+fun Project.runWithElementsToShortenIsEmptyIgnored(action: () -> Unit) {
     val ensureElementsToShortenIsEmpty = ensureElementsToShortenIsEmptyBeforeRefactoring
 
     try {
@@ -62,14 +62,14 @@ private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest
     return elements
 }
 
-public fun KtElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
-    assert(ApplicationManager.getApplication()!!.isWriteAccessAllowed()) { "Write access needed" }
-    val project = getProject()
+fun KtElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
+    assert(ApplicationManager.getApplication()!!.isWriteAccessAllowed) { "Write access needed" }
+    val project = project
     val elementPointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
     project.getOrCreateElementsToShorten().add(ShorteningRequest(elementPointer, options))
 }
 
-public fun performDelayedShortening(project: Project) {
+fun performDelayedShortening(project: Project) {
     project.elementsToShorten?.let { requests ->
         project.elementsToShorten = null
         val elementToOptions = requests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
@@ -79,9 +79,9 @@ public fun performDelayedShortening(project: Project) {
     }
 }
 
-private val LOG = Logger.getInstance(javaClass<Project>().getCanonicalName())
+private val LOG = Logger.getInstance(Project::class.java.canonicalName)
 
-public fun prepareElementsToShorten(project: Project) {
+fun prepareElementsToShorten(project: Project) {
     val elementsToShorten = project.elementsToShorten
     if (project.ensureElementsToShortenIsEmptyBeforeRefactoring && elementsToShorten != null && !elementsToShorten.isEmpty()) {
         LOG.warn("Waiting set for reference shortening is not empty")

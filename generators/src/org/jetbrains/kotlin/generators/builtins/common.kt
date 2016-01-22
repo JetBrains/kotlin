@@ -29,7 +29,7 @@ enum class PrimitiveType {
     DOUBLE,
     BOOLEAN;
 
-    val capitalized: String get() = name().toLowerCase().capitalize()
+    val capitalized: String get() = name.toLowerCase().capitalize()
     companion object {
         val exceptBoolean = PrimitiveType.values().filterNot { it == BOOLEAN }
         val onlyNumeric = PrimitiveType.values().filterNot { it == BOOLEAN || it == CHAR }
@@ -37,30 +37,19 @@ enum class PrimitiveType {
 }
 
 enum class ProgressionKind {
-    BYTE,
     CHAR,
-    SHORT,
     INT,
-    LONG,
-    FLOAT,
-    DOUBLE;
+    LONG;
 
-    val capitalized: String get() = name().toLowerCase().capitalize()
+    val capitalized: String get() = name.toLowerCase().capitalize()
 }
 
 fun progressionIncrementType(kind: ProgressionKind) = when (kind) {
-    BYTE, CHAR, SHORT -> "Int"
+    CHAR -> "Int"
     else -> kind.capitalized
 }
 
-fun areEqualNumbers(kind: ProgressionKind, v: String) = when (kind) {
-    FLOAT, DOUBLE -> "java.lang.${kind.capitalized}.compare($v, other.$v) == 0"
-    else -> "$v == other.$v"
-}
+fun areEqualNumbers(v: String) = "$v == other.$v"
 
 fun hashLong(v: String) = "($v xor ($v ushr 32))"
-
-fun floatToIntBits(v: String) = "java.lang.Float.floatToIntBits($v)"
-
-fun doubleToLongBits(v: String) = "java.lang.Double.doubleToLongBits($v)"
 

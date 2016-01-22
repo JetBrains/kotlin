@@ -48,10 +48,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 import javax.swing.SwingUtilities
 
-public class CheckPartialBodyResolveAction : AnAction() {
+class CheckPartialBodyResolveAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val selectedFiles = selectedKotlinFiles(e).toList()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 {
@@ -64,10 +64,10 @@ public class CheckPartialBodyResolveAction : AnAction() {
 
     private fun checkResolve(files: Collection<KtFile>, project: Project) {
         //TODO: drop resolve caches if any
-        val progressIndicator = ProgressManager.getInstance().getProgressIndicator()
+        val progressIndicator = ProgressManager.getInstance().progressIndicator
         for ((i, file) in files.withIndex()) {
-            progressIndicator?.setText("Checking resolve $i of ${files.size()}...")
-            progressIndicator?.setText2(file.getVirtualFile().getPath())
+            progressIndicator?.text = "Checking resolve $i of ${files.size}..."
+            progressIndicator?.text2 = file.virtualFile.path
 
             val partialResolveDump = dumpResolve(file) { element, resolutionFacade ->
                 resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
@@ -77,15 +77,15 @@ public class CheckPartialBodyResolveAction : AnAction() {
             }
             if (partialResolveDump != goldDump) {
                 SwingUtilities.invokeLater {
-                    val title = "Difference Found in File ${file.getVirtualFile().getPath()}"
+                    val title = "Difference Found in File ${file.virtualFile.path}"
 
                     val request = SimpleDiffRequest(project, title)
                     request.setContents(SimpleContent(goldDump), SimpleContent(partialResolveDump))
                     request.setContentTitles("Expected", "Partial Body Resolve")
                     val diffBuilder = DialogBuilder(project)
-                    val diffPanel = DiffManager.getInstance().createDiffPanel(diffBuilder.getWindow(), project, diffBuilder, null) as DiffPanelImpl
-                    diffPanel.getOptions().setShowSourcePolicy(DiffPanelOptions.ShowSourcePolicy.DONT_SHOW)
-                    diffBuilder.setCenterPanel(diffPanel.getComponent())
+                    val diffPanel = DiffManager.getInstance().createDiffPanel(diffBuilder.window, project, diffBuilder, null) as DiffPanelImpl
+                    diffPanel.options.setShowSourcePolicy(DiffPanelOptions.ShowSourcePolicy.DONT_SHOW)
+                    diffBuilder.setCenterPanel(diffPanel.component)
                     diffBuilder.setDimensionServiceKey("org.jetbrains.kotlin.idea.actions.internal.CheckPartialBodyResolveAction.Diff")
                     diffPanel.setDiffRequest(request)
                     diffBuilder.addOkAction().setText("Close")
@@ -96,18 +96,18 @@ public class CheckPartialBodyResolveAction : AnAction() {
                 return
             }
 
-            progressIndicator?.setFraction((i + 1) / files.size().toDouble())
+            progressIndicator?.fraction = (i + 1) / files.size.toDouble()
         }
 
         SwingUtilities.invokeLater {
-            Messages.showInfoMessage(project, "Analyzed ${files.size()} file(s). No resolve difference found. ", "Success")
+            Messages.showInfoMessage(project, "Analyzed ${files.size} file(s). No resolve difference found. ", "Success")
         }
     }
 
     private fun dumpResolve(file: KtFile, resolver: (KtElement, ResolutionFacade) -> BindingContext): String {
         val builder = StringBuilder()
         val resolutionFacade = file.getResolutionFacade()
-        val document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile())!!
+        val document = FileDocumentManager.getInstance().getDocument(file.virtualFile)!!
         file.acceptChildren(object : KtVisitorVoid(){
             override fun visitKtElement(element: KtElement) {
                 ProgressManager.checkCanceled()
@@ -124,10 +124,10 @@ public class CheckPartialBodyResolveAction : AnAction() {
 
                 val bindingContext = resolver(expression, resolutionFacade)
 
-                val offset = expression.getTextOffset()
+                val offset = expression.textOffset
                 val line = document.getLineNumber(offset)
                 val column = offset - document.getLineStartOffset(line)
-                val exprName = if (expression is KtNameReferenceExpression) expression.getReferencedName() else expression.javaClass.getSimpleName()
+                val exprName = if (expression is KtNameReferenceExpression) expression.getReferencedName() else expression.javaClass.simpleName
                 builder.append("$exprName at (${line + 1}:${column + 1})")
 
                 if (expression is KtReferenceExpression) {
@@ -151,18 +151,18 @@ public class CheckPartialBodyResolveAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         if (!KotlinInternalMode.enabled) {
-            e.getPresentation().setVisible(false)
-            e.getPresentation().setEnabled(false)
+            e.presentation.isVisible = false
+            e.presentation.isEnabled = false
         }
         else {
-            e.getPresentation().setVisible(true)
-            e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
+            e.presentation.isVisible = true
+            e.presentation.isEnabled = selectedKotlinFiles(e).any()
         }
     }
 
     private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return sequenceOf()
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext) ?: return sequenceOf()
         return allKotlinFiles(virtualFiles, project)
     }
 
@@ -188,7 +188,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
 
     //TODO: currently copied from PartialBodyResolveFilter - not good
     private fun isValueNeeded(expression: KtExpression): Boolean {
-        val parent = expression.getParent()
+        val parent = expression.parent
         return when (parent) {
             is KtBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
 
@@ -198,7 +198,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
             }
 
             is KtDeclarationWithBody -> {
-                if (expression == parent.getBodyExpression())
+                if (expression == parent.bodyExpression)
                     !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
                 else
                     true
@@ -209,5 +209,5 @@ public class CheckPartialBodyResolveAction : AnAction() {
     }
 
     private fun KtBlockExpression.lastStatement(): KtExpression?
-            = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<KtExpression>()
+            = lastChild?.siblings(forward = false)?.firstIsInstanceOrNull<KtExpression>()
 }

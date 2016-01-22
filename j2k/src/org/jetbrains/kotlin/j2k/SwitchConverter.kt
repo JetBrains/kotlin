@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.j2k.ast.*
 import java.util.*
 
 class SwitchConverter(private val codeConverter: CodeConverter) {
-    public fun convert(statement: PsiSwitchStatement): WhenStatement
+    fun convert(statement: PsiSwitchStatement): WhenStatement
             = WhenStatement(codeConverter.convertExpression(statement.expression), switchBodyToWhenEntries(statement.body))
 
     private class Case(val label: PsiSwitchLabelStatement?, val statements: List<PsiStatement>)

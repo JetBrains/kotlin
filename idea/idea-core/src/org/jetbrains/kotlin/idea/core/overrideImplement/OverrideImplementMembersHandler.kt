@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
+abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
-    public fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<OverrideMemberChooserObject> {
+    fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<OverrideMemberChooserObject> {
         val descriptor = classOrObject.resolveToDescriptor() as? ClassDescriptor ?: return emptySet()
         return collectMembersToGenerate(descriptor, classOrObject.project)
     }
@@ -51,16 +51,18 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
 
     protected abstract fun getChooserTitle(): String
 
+    protected open fun isValidForClass(classOrObject: KtClassOrObject) = true
+
     override fun isValidFor(editor: Editor, file: PsiFile): Boolean {
         if (file !is KtFile) return false
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>()
-        return classOrObject != null
+        return classOrObject != null && isValidForClass(classOrObject)
     }
 
     protected abstract fun getNoMembersFoundHint(): String
 
-    public fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
+    fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>()!!
 
@@ -91,7 +93,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
     override fun startInWriteAction(): Boolean = false
 
     companion object {
-        public fun generateMembers(editor: Editor, classOrObject: KtClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
+        fun generateMembers(editor: Editor?, classOrObject: KtClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
             val project = classOrObject.project
             insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project) })
         }

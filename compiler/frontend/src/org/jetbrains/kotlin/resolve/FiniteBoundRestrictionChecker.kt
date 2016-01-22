@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.typeUtil.boundClosure
 import org.jetbrains.kotlin.types.typeUtil.constituentTypes
 import org.jetbrains.kotlin.utils.DFS
 
-public object FiniteBoundRestrictionChecker {
+object FiniteBoundRestrictionChecker {
     @JvmStatic
     fun check(
             declaration: KtClass,

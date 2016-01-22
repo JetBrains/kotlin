@@ -295,7 +295,8 @@ public class ReplInterpreter {
 
         DiagnosticMessageHolder errorHolder = createDiagnosticHolder();
 
-        AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder);
+        AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport = AnalyzerWithCompilerReport.Companion
+                .reportSyntaxErrors(psiFile, errorHolder);
 
         if (syntaxErrorReport.isHasErrors() && syntaxErrorReport.isAllErrorsAtEof()) {
             if (ideMode) {
@@ -427,7 +428,8 @@ public class ReplInterpreter {
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT));
         }
 
-        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), errorReporter, false);
+        boolean hasErrors = AnalyzerWithCompilerReport.Companion
+                .reportDiagnostics(trace.getBindingContext().getDiagnostics(), errorReporter, false);
         if (hasErrors) {
             return null;
         }

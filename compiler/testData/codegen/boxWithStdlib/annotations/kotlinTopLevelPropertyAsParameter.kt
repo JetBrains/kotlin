@@ -1,7 +1,7 @@
 @Ann(i, s, f, d, l, b, bool, c, str) class MyClass
 
 fun box(): String {
-    val ann = javaClass<MyClass>().getAnnotation(javaClass<Ann>())
+    val ann = MyClass::class.java.getAnnotation(Ann::class.java)
     if (ann == null) return "fail: cannot find Ann on MyClass}"
     if (ann.i != 2) return "fail: annotation parameter i should be 2, but was ${ann.i}"
     if (ann.s != 2.toShort()) return "fail: annotation parameter i should be 2, but was ${ann.i}"

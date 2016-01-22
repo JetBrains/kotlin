@@ -24,12 +24,12 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.ui.awt.RelativePoint
-import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import javax.swing.event.HyperlinkEvent
 
-public abstract class ExtractionEngineHelper(val operationName: String) {
+abstract class ExtractionEngineHelper(val operationName: String) {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
 
     fun doRefactor(config: ExtractionGeneratorConfiguration, onFinish: (ExtractionResult) -> Unit = {}) {
@@ -45,7 +45,7 @@ public abstract class ExtractionEngineHelper(val operationName: String) {
     )
 }
 
-public class ExtractionEngine(
+class ExtractionEngine(
         val helper: ExtractionEngineHelper
 ) {
     fun run(editor: Editor,
@@ -56,7 +56,7 @@ public class ExtractionEngine(
 
         val analysisResult = helper.adjustExtractionData(extractionData).performAnalysis()
 
-        if (ApplicationManager.getApplication()!!.isUnitTestMode() && analysisResult.status != AnalysisResult.Status.SUCCESS) {
+        if (ApplicationManager.getApplication()!!.isUnitTestMode && analysisResult.status != AnalysisResult.Status.SUCCESS) {
             throw BaseRefactoringProcessor.ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
         }
 
@@ -83,15 +83,15 @@ public class ExtractionEngine(
 
             AnalysisResult.Status.NON_CRITICAL_ERROR -> {
                 val anchorPoint = RelativePoint(
-                        editor.getContentComponent(),
-                        editor.visualPositionToXY(editor.getSelectionModel().getSelectionStartPosition()!!)
+                        editor.contentComponent,
+                        editor.visualPositionToXY(editor.selectionModel.selectionStartPosition!!)
                 )
                 JBPopupFactory.getInstance()!!
                         .createHtmlTextBalloonBuilder(
                                 "$message<br/><br/><a href=\"EXTRACT\">Proceed with extraction</a>",
                                 MessageType.WARNING,
                                 { event ->
-                                    if (event?.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                                    if (event?.eventType == HyperlinkEvent.EventType.ACTIVATED) {
                                         validateAndRefactor()
                                     }
                                 }

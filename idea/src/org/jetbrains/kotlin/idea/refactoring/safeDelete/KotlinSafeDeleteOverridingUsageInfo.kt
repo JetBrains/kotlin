@@ -21,12 +21,12 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteCustomUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
-public class KotlinSafeDeleteOverridingUsageInfo(
+class KotlinSafeDeleteOverridingUsageInfo(
         overridingElement: PsiElement, superElement: PsiElement
 ) : SafeDeleteUsageInfo(overridingElement, superElement), SafeDeleteCustomUsageInfo {
-    public val overridingElement: PsiElement get() = getElement()!!
+    val overridingElement: PsiElement get() = element!!
 
-    public override fun performRefactoring(): Unit {
-        KtPsiUtil.ascendIfPropertyAccessor(getElement())?.delete()
+    override fun performRefactoring(): Unit {
+        KtPsiUtil.ascendIfPropertyAccessor(element)?.delete()
     }
 }

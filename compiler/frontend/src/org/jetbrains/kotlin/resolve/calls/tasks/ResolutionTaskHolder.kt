@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
-public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
+class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         private val storageManager: StorageManager,
         private val basicCallResolutionContext: BasicCallResolutionContext,
         private val priorityProvider: ResolutionTaskHolder.PriorityProvider<ResolutionCandidate<D>>,
@@ -32,7 +32,7 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
     private val candidatesList = ArrayList<() -> Collection<ResolutionCandidate<D>>>()
     private var internalTasks: List<ResolutionTask<D, F>>? = null
 
-    public fun addCandidates(lazyCandidates: () -> Collection<ResolutionCandidate<D>>) {
+    fun addCandidates(lazyCandidates: () -> Collection<ResolutionCandidate<D>>) {
         assertNotFinished()
         candidatesList.add(storageManager.createLazyValue { lazyCandidates().toReadOnlyList() })
     }
@@ -41,7 +41,7 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         assert(internalTasks == null) { "Can't add candidates after the resulting tasks were computed." }
     }
 
-    public fun getTasks(): List<ResolutionTask<D, F>> {
+    fun getTasks(): List<ResolutionTask<D, F>> {
         if (internalTasks == null) {
             val tasks = ArrayList<ResolutionTask<D, F>>()
             for (priority in (0..priorityProvider.getMaxPriority()).reversed()) {
@@ -58,9 +58,9 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         return internalTasks!!
     }
 
-    public interface PriorityProvider<D> {
-        public fun getPriority(candidate: D): Int
+    interface PriorityProvider<D> {
+        fun getPriority(candidate: D): Int
 
-        public fun getMaxPriority(): Int
+        fun getMaxPriority(): Int
     }
 }

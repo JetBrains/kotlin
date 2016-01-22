@@ -1,6 +1,6 @@
 package test
 
-public fun </*0*/ P> listOfT(/*0*/ kotlin.List<P>): kotlin.List<P>
+public fun </*0*/ P> listOfT(/*0*/ kotlin.collections.List<P>): kotlin.collections.List<P>
 
 public/*package*/ open class ListOfT {
     public/*package*/ constructor ListOfT()

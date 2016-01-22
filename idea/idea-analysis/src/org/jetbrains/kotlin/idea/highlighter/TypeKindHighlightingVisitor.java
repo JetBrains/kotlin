@@ -36,7 +36,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
-        if (NameHighlighter.namesHighlightingEnabled) {
+        if (NameHighlighter.INSTANCE.getNamesHighlightingEnabled()) {
             DeclarationDescriptor referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
             if (referenceTarget instanceof ConstructorDescriptor) {
                 referenceTarget = referenceTarget.getContainingDeclaration();

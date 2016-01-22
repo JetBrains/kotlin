@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.junit.Assert
 
-public abstract class StubConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class StubConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected abstract fun getFileIds(): List<ClassId>
     protected abstract fun getVirtualFileFinder(): VirtualFileFinder
@@ -35,12 +35,12 @@ public abstract class StubConsistencyBaseTest : KotlinLightCodeInsightFixtureTes
 
     protected abstract fun getDecompiledText(packageFile: VirtualFile): String
 
-    public fun testConsistency() {
+    fun testConsistency() {
         getFileIds().forEach { doTest(it) }
     }
 
     private fun doTest(id: ClassId) {
-        val project = getProject()
+        val project = project
         val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(id)!!
         val decompiledText = getDecompiledText(packageFile)
         val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)

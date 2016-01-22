@@ -35,7 +35,7 @@ fun Project.initKapt(
         subpluginEnvironment: SubpluginEnvironment,
         taskFactory: (suffix: String) -> AbstractCompile
 ): AbstractCompile? {
-    val kaptExtension = extensions.getByType(javaClass<KaptExtension>())
+    val kaptExtension = extensions.getByType(KaptExtension::class.java)
     val kotlinAfterJavaTask: AbstractCompile?
 
     if (kaptExtension.generateStubs) {
@@ -43,7 +43,7 @@ fun Project.initKapt(
 
         kotlinTask.logger.kotlinDebug("kapt: Using class file stubs")
 
-        val stubsDir = File(getBuildDir(), "tmp/kapt/$variantName/classFileStubs")
+        val stubsDir = File(buildDir, "tmp/kapt/$variantName/classFileStubs")
         kotlinTask.extensions.extraProperties.set("kaptStubsDir", stubsDir)
 
         javaTask.doFirst {
@@ -193,7 +193,7 @@ public class AnnotationProcessingManager(
     }
 
     private fun appendAdditionalComplerArgs() {
-        val kaptExtension = project.extensions.getByType(javaClass<KaptExtension>())
+        val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
         val args = kaptExtension.getAdditionalArguments(project, androidVariant, getAndroidExtension())
         if (args.isEmpty()) return
 
@@ -217,7 +217,7 @@ public class AnnotationProcessingManager(
                     getProcessorStubClassName(processorFqName),
                     taskQualifier) as File
 
-            project.getLogger().kotlinDebug("kapt: Wrapper for $processorFqName generated: $wrapperFile")
+            project.logger.kotlinDebug("kapt: Wrapper for $processorFqName generated: $wrapperFile")
         }
 
         val annotationProcessorWrapperFqNames = processorFqNames
@@ -251,7 +251,7 @@ public class AnnotationProcessingManager(
         javaTask.addCompilerArgument("-s") { prevValue ->
             if (prevValue != null)
                 javaTask.logger.warn("Destination for generated sources was modified by kapt. Previous value = $prevValue")
-            outputDir.getAbsolutePath()
+            outputDir.absolutePath
         }
     }
 

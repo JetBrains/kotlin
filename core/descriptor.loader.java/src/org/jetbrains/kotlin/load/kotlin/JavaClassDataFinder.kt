@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-public class JavaClassDataFinder(
+class JavaClassDataFinder(
         private val kotlinClassFinder: KotlinClassFinder,
         private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {

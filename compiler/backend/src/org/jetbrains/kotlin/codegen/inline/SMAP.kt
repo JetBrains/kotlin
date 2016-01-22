@@ -24,7 +24,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
 
 //TODO join parameter
-public class SMAPBuilder(val source: String,
+class SMAPBuilder(val source: String,
                          val path: String,
                          val fileMappings: List<FileMapping>) {
 
@@ -62,7 +62,7 @@ public class SMAPBuilder(val source: String,
     }
 }
 
-public open class NestedSourceMapper(parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo) : DefaultSourceMapper(sourceInfo, parent) {
+open class NestedSourceMapper(parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo) : DefaultSourceMapper(sourceInfo, parent) {
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
         val index = Collections.binarySearch(ranges, RangeMapping(lineNumber, lineNumber, 1)) {
@@ -81,7 +81,7 @@ public open class NestedSourceMapper(parent: SourceMapper, val ranges: List<Rang
     }
 }
 
-public open class InlineLambdaSourceMapper(parent: SourceMapper, smap: SMAPAndMethodNode) : NestedSourceMapper(parent, smap.ranges, smap.classSMAP.sourceInfo) {
+open class InlineLambdaSourceMapper(parent: SourceMapper, smap: SMAPAndMethodNode) : NestedSourceMapper(parent, smap.ranges, smap.classSMAP.sourceInfo) {
 
     override fun visitSource(name: String, path: String) {
         super.visitSource(name, path)
@@ -162,7 +162,7 @@ interface SourceMapper {
     }
 }
 
-public object IdenticalSourceMapper : SourceMapper {
+object IdenticalSourceMapper : SourceMapper {
     override val resultMappings: List<FileMapping>
         get() = emptyList()
 
@@ -178,7 +178,7 @@ public object IdenticalSourceMapper : SourceMapper {
     }
 }
 
-public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: SourceMapper?): SourceMapper {
+open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: SourceMapper?): SourceMapper {
 
     protected var maxUsedValue: Int = sourceInfo.linesInFile
 
@@ -202,7 +202,7 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
     private fun createKey(name: String, path: String) = "$name#$path"
 
     override val resultMappings: List<FileMapping>
-        get() = fileMappings.values().map { it.toFileMapping() }
+        get() = fileMappings.values.map { it.toFileMapping() }
 
     override fun visitSource(name: String, path: String) {
         lastVisited = fileMappings.getOrPut(createKey(name, path), { RawFileMapping(name, path) })
@@ -273,7 +273,7 @@ class RawFileMapping(val name: String, val path: String) {
     }
 
     fun initRange(start: Int, end: Int) {
-        assert(lineMappings.isEmpty()) { "initRange should only be called for empty mapping" }
+        assert(lineMappings.isEmpty) { "initRange should only be called for empty mapping" }
         for (index in start..end) {
             lineMappings.put(index, index)
         }
@@ -319,7 +319,7 @@ class RawFileMapping(val name: String, val path: String) {
     }
 }
 
-open public class FileMapping(val name: String, val path: String) {
+open class FileMapping(val name: String, val path: String) {
     val lineMappings = arrayListOf<RangeMapping>()
 
     var id = -1;
@@ -329,7 +329,7 @@ open public class FileMapping(val name: String, val path: String) {
         lineMapping.parent = this
     }
 
-    public object SKIP : FileMapping("no-source-info", "no-source-info") {
+    object SKIP : FileMapping("no-source-info", "no-source-info") {
         init {
             addRangeMapping(RangeMapping.SKIP)
         }
@@ -337,7 +337,7 @@ open public class FileMapping(val name: String, val path: String) {
 }
 
 //TODO comparable
-data public class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
+data class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
 
     var parent: FileMapping? = null;
 
@@ -366,6 +366,6 @@ data public class RangeMapping(val source: Int, val dest: Int, var range: Int = 
     }
 
     companion object {
-        public val SKIP = RangeMapping(-1, -1, 1)
+        val SKIP = RangeMapping(-1, -1, 1)
     }
 }

@@ -17,20 +17,20 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 
-public object BranchedUnfoldingUtils {
-    public fun unfoldAssignmentToIf(assignment: KtBinaryExpression, editor: Editor) {
-        val op = assignment.getOperationReference().getText()
-        val left = assignment.getLeft()!!
-        val ifExpression = assignment.getRight() as KtIfExpression
+object BranchedUnfoldingUtils {
+    fun unfoldAssignmentToIf(assignment: KtBinaryExpression, editor: Editor?) {
+        val op = assignment.operationReference.text
+        val left = assignment.left!!
+        val ifExpression = assignment.right as KtIfExpression
 
         val newIfExpression = ifExpression.copied()
 
-        val thenExpr = newIfExpression.getThen()!!.lastBlockStatementOrThis()
-        val elseExpr = newIfExpression.getElse()!!.lastBlockStatementOrThis()
+        val thenExpr = newIfExpression.then!!.lastBlockStatementOrThis()
+        val elseExpr = newIfExpression.`else`!!.lastBlockStatementOrThis()
 
         val psiFactory = KtPsiFactory(assignment)
         thenExpr.replace(psiFactory.createExpressionByPattern("$0 $1 $2", left, op, thenExpr))
@@ -38,23 +38,23 @@ public object BranchedUnfoldingUtils {
 
         val resultIf = assignment.replace(newIfExpression)
 
-        editor.getCaretModel().moveToOffset(resultIf.getTextOffset())
+        editor?.caretModel?.moveToOffset(resultIf.textOffset)
     }
 
-    public fun unfoldAssignmentToWhen(assignment: KtBinaryExpression, editor: Editor) {
-        val op = assignment.getOperationReference().getText()
-        val left = assignment.getLeft()!!
-        val whenExpression = assignment.getRight() as KtWhenExpression
+    fun unfoldAssignmentToWhen(assignment: KtBinaryExpression, editor: Editor?) {
+        val op = assignment.operationReference.text
+        val left = assignment.left!!
+        val whenExpression = assignment.right as KtWhenExpression
 
         val newWhenExpression = whenExpression.copied()
 
-        for (entry in newWhenExpression.getEntries()) {
-            val expr = entry.getExpression()!!.lastBlockStatementOrThis()
+        for (entry in newWhenExpression.entries) {
+            val expr = entry.expression!!.lastBlockStatementOrThis()
             expr.replace(KtPsiFactory(assignment).createExpressionByPattern("$0 $1 $2", left, op, expr))
         }
 
         val resultWhen = assignment.replace(newWhenExpression)
 
-        editor.getCaretModel().moveToOffset(resultWhen.getTextOffset())
+        editor?.caretModel?.moveToOffset(resultWhen.textOffset)
     }
 }

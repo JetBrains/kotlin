@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.*
 
-public object JvmPlatform : TargetPlatform("JVM") {
+object JvmPlatform : TargetPlatform("JVM") {
     override val defaultModuleParameters = object : ModuleParameters {
         override val platformToKotlinClassMap: PlatformToKotlinClassMap
             get() = JavaToKotlinClassMap.INSTANCE
@@ -61,6 +61,7 @@ private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().
     }
 
     val builtIns = JvmPlatform.builtIns
-    addAllClassifiersFromScope(builtIns.builtInsPackageScope)
-    addAllClassifiersFromScope(builtIns.annotationPackageScope)
+    for (builtinPackageFragment in builtIns.builtinsPackageFragments) {
+        addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
+    }
 }

@@ -1,115 +1,115 @@
 package
 
-public /*synthesized*/ fun J(/*0*/ function: () -> kotlin.(Mutable)List<kotlin.String!>!): J
+public /*synthesized*/ fun J(/*0*/ function: () -> kotlin.collections.(Mutable)List<kotlin.String!>!): J
 
 public interface ILNS {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): kotlin.List<kotlin.String?>
+    public abstract fun foo(): kotlin.collections.List<kotlin.String?>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface ILS {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): kotlin.List<kotlin.String>
+    public abstract fun foo(): kotlin.collections.List<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface IMLNS {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): kotlin.MutableList<kotlin.String?>
+    public abstract fun foo(): kotlin.collections.MutableList<kotlin.String?>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface IMLS {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): kotlin.MutableList<kotlin.String>
+    public abstract fun foo(): kotlin.collections.MutableList<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface J {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): kotlin.(Mutable)List<kotlin.String!>!
+    public abstract fun foo(): kotlin.collections.(Mutable)List<kotlin.String!>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test1 : ILNS, J {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.List<kotlin.String?>
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.collections.List<kotlin.String?>
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test10 : IMLNS, ILS, J {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.(Mutable)List<kotlin.String!>!
+    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.collections.(Mutable)List<kotlin.String!>!
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test11 : IMLNS, ILS {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String?>
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.collections.MutableList<kotlin.String?>
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test2 : J, ILNS {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.List<kotlin.String?>
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.collections.List<kotlin.String?>
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test3 : IMLS, J {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String>
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.collections.MutableList<kotlin.String>
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test4 : J, IMLS {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String>
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.collections.MutableList<kotlin.String>
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test5 : ILNS, IMLS, J {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String>
+    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.collections.MutableList<kotlin.String>
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test6 : ILNS, J, IMLS {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String>
+    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.collections.MutableList<kotlin.String>
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test7 : J, ILNS, IMLS {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String>
+    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.collections.MutableList<kotlin.String>
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test8 : J, IMLNS, ILS {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.(Mutable)List<kotlin.String!>!
+    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.collections.(Mutable)List<kotlin.String!>!
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface Test9 : IMLNS, J, ILS {
     public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.(Mutable)List<kotlin.String!>!
+    public abstract override /*3*/ /*fake_override*/ fun foo(): kotlin.collections.(Mutable)List<kotlin.String!>!
     public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }

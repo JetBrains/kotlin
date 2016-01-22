@@ -101,6 +101,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("delegateNoOperator.test")
+        public void testDelegateNoOperator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/delegateNoOperator.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("divOperator.before.Main.kt")
         public void testDivOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/divOperator.before.Main.kt");
@@ -1133,6 +1139,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Imports extends AbstractQuickFixMultiFileTest {
+            @TestMetadata("addImportForOperator.before.Main.kt")
+            public void testAddImportForOperator() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImportForOperator.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+
             @TestMetadata("addImportFromSamePackage.before.Main.kt")
             public void testAddImportFromSamePackage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports/addImportFromSamePackage.before.Main.kt");
@@ -1230,102 +1242,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             @TestMetadata("removeImportsOverloads.before.Main.kt")
             public void testRemoveImportsOverloads() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/conflictingExtension/removeImportsOverloads.before.Main.kt");
-                doTestWithExtraFile(fileName);
-            }
-        }
-
-        @TestMetadata("idea/testData/quickfix/migration/deprecatedObjectInstanceField")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class DeprecatedObjectInstanceField extends AbstractQuickFixMultiFileTest {
-            public void testAllFilesPresentInDeprecatedObjectInstanceField() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/deprecatedObjectInstanceField"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
-            }
-
-            @TestMetadata("basic.before.Main.java")
-            public void testBasic() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedObjectInstanceField/basic.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("staticImport.before.Main.java")
-            public void testStaticImport() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedObjectInstanceField/staticImport.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-        }
-
-        @TestMetadata("idea/testData/quickfix/migration/deprecatedStaticField")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class DeprecatedStaticField extends AbstractQuickFixMultiFileTest {
-            public void testAllFilesPresentInDeprecatedStaticField() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/deprecatedStaticField"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
-            }
-
-            @TestMetadata("cleanUp.before.Main.java")
-            public void testCleanUp() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/cleanUp.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("companionObjectOfClass_const.before.Main.java")
-            public void testCompanionObjectOfClass_const() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfClass_const.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("companionObjectOfClass_getterReference.before.Main.java")
-            public void testCompanionObjectOfClass_getterReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfClass_getterReference.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("companionObjectOfClass_jvmField.before.Main.java")
-            public void testCompanionObjectOfClass_jvmField() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfClass_jvmField.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("companionObjectOfInterface_const.before.Main.java")
-            public void testCompanionObjectOfInterface_const() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfInterface_const.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("companionObjectOfInterface_getterReference.before.Main.java")
-            public void testCompanionObjectOfInterface_getterReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfInterface_getterReference.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("companionObjectOfInterface_jvmField_unavailable.before.Main.java")
-            public void testCompanionObjectOfInterface_jvmField_unavailable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/companionObjectOfInterface_jvmField_unavailable.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("object_const.before.Main.java")
-            public void testObject_const() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_const.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("object_const_unavailable.before.Main.java")
-            public void testObject_const_unavailable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_const_unavailable.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("object_getterReference.before.Main.java")
-            public void testObject_getterReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_getterReference.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("object_jvmField.before.Main.java")
-            public void testObject_jvmField() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/deprecatedStaticField/object_jvmField.before.Main.java");
                 doTestWithExtraFile(fileName);
             }
         }
@@ -1560,6 +1476,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
 
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/typeImports")
@@ -1583,6 +1500,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     public static class TypeMismatch extends AbstractQuickFixMultiFileTest {
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+        }
+
+        @TestMetadata("paramTypeInOverrides.before.Main.kt")
+        public void testParamTypeInOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/paramTypeInOverrides.before.Main.kt");
+            doTestWithExtraFile(fileName);
         }
 
         @TestMetadata("idea/testData/quickfix/typeMismatch/genericVarianceViolation")

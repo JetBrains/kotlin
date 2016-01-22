@@ -27,12 +27,14 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.ifEmpty
 
-public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
+fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
     val project = element.project
     val pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(element)
 
@@ -45,22 +47,22 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
     // Inspired by GenerateMembersUtils.positionCaret()
 
     if (element is KtDeclarationWithBody && element.hasBody()) {
-        val expression = element.getBodyExpression()
+        val expression = element.bodyExpression
         if (expression is KtBlockExpression) {
-            val lBrace = expression.getLBrace()
-            val rBrace = expression.getRBrace()
+            val lBrace = expression.lBrace
+            val rBrace = expression.rBrace
 
             if (lBrace != null && rBrace != null) {
                 val firstInBlock = lBrace.siblings(forward = true, withItself = false).first { it !is PsiWhiteSpace }
                 val lastInBlock = rBrace.siblings(forward = false, withItself = false).first { it !is PsiWhiteSpace }
 
-                val start = firstInBlock.getTextRange()!!.getStartOffset()
-                val end = lastInBlock.getTextRange()!!.getEndOffset()
+                val start = firstInBlock.textRange!!.startOffset
+                val end = lastInBlock.textRange!!.endOffset
 
                 editor.moveCaret(Math.min(start, end))
 
                 if (start < end) {
-                    editor.getSelectionModel().setSelection(start, end)
+                    editor.selectionModel.setSelection(start, end)
                 }
 
                 return true
@@ -69,24 +71,24 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
     }
 
     if (element is KtWithExpressionInitializer && element.hasInitializer()) {
-        val expression = element.getInitializer()
+        val expression = element.initializer
         if (expression == null) throw AssertionError()
 
-        val initializerRange = expression.getTextRange()
+        val initializerRange = expression.textRange
 
-        val offset = initializerRange?.getStartOffset() ?: element.getTextOffset()
+        val offset = initializerRange?.startOffset ?: element.getTextOffset()
 
         editor.moveCaret(offset)
 
         if (initializerRange != null) {
-            editor.getSelectionModel().setSelection(initializerRange.getStartOffset(), initializerRange.getEndOffset())
+            editor.selectionModel.setSelection(initializerRange.startOffset, initializerRange.endOffset)
         }
 
         return true
     }
 
     if (element is KtProperty) {
-        for (accessor in element.getAccessors()) {
+        for (accessor in element.accessors) {
             if (moveCaretIntoGeneratedElementDocumentUnblocked(editor, accessor)) {
                 return true
             }
@@ -96,9 +98,15 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
     return false
 }
 
-public fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.RELATIVE) {
-    getCaretModel().moveToOffset(offset)
-    getScrollingModel().scrollToCaret(scrollType)
+fun Editor.unblockDocument() {
+    project?.let {
+        PsiDocumentManager.getInstance(it).doPostponedOperationsAndUnblockDocument(document)
+    }
+}
+
+fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.RELATIVE) {
+    caretModel.moveToOffset(offset)
+    scrollingModel.scrollToCaret(scrollType)
 }
 
 private fun findInsertAfterAnchor(editor: Editor?, body: KtClassBody): PsiElement? {
@@ -143,7 +151,7 @@ private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElemen
     return whiteSpace
 }
 
-public fun <T : KtDeclaration> insertMembersAfter(
+fun <T : KtDeclaration> insertMembersAfter(
         editor: Editor?,
         classOrObject: KtClassOrObject,
         members: Collection<T>,
@@ -151,13 +159,42 @@ public fun <T : KtDeclaration> insertMembersAfter(
 ): List<T> {
     members.ifEmpty { return emptyList() }
 
-    return runWriteAction<List<T>> {
-        val body = classOrObject.getOrCreateBody()
+    return runWriteAction {
+        val insertedMembers = SmartList<T>()
 
-        var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
-        val insertedMembers = members.mapTo(SmartList<T>()) {
+        val (parameters, otherMembers) = members.partition { it is KtParameter }
+
+        parameters.mapNotNullTo(insertedMembers) {
+            if (classOrObject !is KtClass) return@mapNotNullTo null
+
             @Suppress("UNCHECKED_CAST")
-            (body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this }
+            (classOrObject.createPrimaryConstructorParameterListIfAbsent().addParameter(it as KtParameter) as T)
+        }
+
+        if (otherMembers.isNotEmpty()) {
+            val body = classOrObject.getOrCreateBody()
+
+            var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
+            otherMembers.mapNotNullTo(insertedMembers) {
+                if (classOrObject is KtClass && classOrObject.isEnum()) {
+                    val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
+                    val bound = (enumEntries.lastOrNull() ?: classOrObject.allChildren.firstOrNull { it.node.elementType == KtTokens.SEMICOLON })
+                    if (it !is KtEnumEntry) {
+                        if (bound != null && afterAnchor.startOffset <= bound.startOffset) {
+                            afterAnchor = bound
+                        }
+                    }
+                    else if (bound == null && body.declarations.isNotEmpty()) {
+                        afterAnchor = body.lBrace!!
+                    }
+                    else if (bound != null && afterAnchor.startOffset >= bound.startOffset) {
+                        afterAnchor = bound.prevSibling!!
+                    }
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                (body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this }
+            }
         }
 
         ShortenReferences.DEFAULT.process(insertedMembers)
@@ -170,6 +207,6 @@ public fun <T : KtDeclaration> insertMembersAfter(
     }
 }
 
-public fun <T : KtDeclaration> insertMember(editor: Editor, classOrObject: KtClassOrObject, declaration: T): T {
+fun <T : KtDeclaration> insertMember(editor: Editor, classOrObject: KtClassOrObject, declaration: T): T {
     return insertMembersAfter(editor, classOrObject, listOf(declaration)).single()
 }

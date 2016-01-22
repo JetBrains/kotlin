@@ -21,33 +21,33 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Array
 
-public val Class<*>.safeClassLoader: ClassLoader
+val Class<*>.safeClassLoader: ClassLoader
     get() = classLoader ?: ClassLoader.getSystemClassLoader()
 
-public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
-        javaClass<Enum<*>>().isAssignableFrom(this)
+fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
+        Enum::class.java.isAssignableFrom(this)
 
 /**
  * NOTE: does not perform a Java -> Kotlin mapping. If this is not expected, consider using KClassImpl#classId instead
  */
-public val Class<*>.classId: ClassId
+val Class<*>.classId: ClassId
     get() = when {
-        isPrimitive() -> throw IllegalArgumentException("Can't compute ClassId for primitive type: $this")
-        isArray() -> throw IllegalArgumentException("Can't compute ClassId for array type: $this")
-        getEnclosingMethod() != null || getEnclosingConstructor() != null || getSimpleName().isEmpty() -> {
-            val fqName = FqName(getName())
+        isPrimitive -> throw IllegalArgumentException("Can't compute ClassId for primitive type: $this")
+        isArray -> throw IllegalArgumentException("Can't compute ClassId for array type: $this")
+        enclosingMethod != null || enclosingConstructor != null || simpleName.isEmpty() -> {
+            val fqName = FqName(name)
             ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), /* local = */ true)
         }
-        else -> getDeclaringClass()?.classId?.createNestedClassId(Name.identifier(getSimpleName())) ?: ClassId.topLevel(FqName(getName()))
+        else -> declaringClass?.classId?.createNestedClassId(Name.identifier(simpleName)) ?: ClassId.topLevel(FqName(name))
     }
 
-public val Class<*>.desc: String
+val Class<*>.desc: String
     get() {
         if (this == Void.TYPE) return "V"
         // This is a clever exploitation of a format returned by Class.getName(): for arrays, it's almost an internal name,
         // but with '.' instead of '/'
-        return createArrayType().getName().substring(1).replace('.', '/')
+        return createArrayType().name.substring(1).replace('.', '/')
     }
 
-public fun Class<*>.createArrayType(): Class<*> =
+fun Class<*>.createArrayType(): Class<*> =
         Array.newInstance(this, 0).javaClass

@@ -22,30 +22,30 @@ import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.util.ArrayList
 
-public interface ValueResolver {
+interface ValueResolver {
     fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor?
 }
 
-public interface ValueResolveContext {
+interface ValueResolveContext {
     fun resolve(registration: Type): ValueDescriptor?
 }
 
-public class ComponentResolveContext(val container: StorageComponentContainer, val requestingDescriptor: ValueDescriptor) : ValueResolveContext {
+class ComponentResolveContext(val container: StorageComponentContainer, val requestingDescriptor: ValueDescriptor) : ValueResolveContext {
     override fun resolve(registration: Type): ValueDescriptor? = container.resolve(registration, this)
 
     override fun toString(): String = "for $requestingDescriptor in $container"
 }
 
-public class ConstructorBinding(val constructor: Constructor<*>, val argumentDescriptors: List<ValueDescriptor>)
+class ConstructorBinding(val constructor: Constructor<*>, val argumentDescriptors: List<ValueDescriptor>)
 
-public class MethodBinding(val method: Method, val argumentDescriptors: List<ValueDescriptor>) {
+class MethodBinding(val method: Method, val argumentDescriptors: List<ValueDescriptor>) {
     fun invoke(instance: Any) {
         val arguments = computeArguments(argumentDescriptors).toTypedArray()
         method.invoke(instance, *arguments)
     }
 }
 
-public fun computeArguments(argumentDescriptors: List<ValueDescriptor>): List<Any> = argumentDescriptors.map { it.getValue() }
+fun computeArguments(argumentDescriptors: List<ValueDescriptor>): List<Any> = argumentDescriptors.map { it.getValue() }
 
 fun Class<*>.bindToConstructor(context: ValueResolveContext): ConstructorBinding {
     val constructorInfo = getInfo().constructorInfo!!
@@ -54,11 +54,11 @@ fun Class<*>.bindToConstructor(context: ValueResolveContext): ConstructorBinding
 }
 
 fun Method.bindToMethod(context: ValueResolveContext): MethodBinding {
-    return MethodBinding(this, bindArguments(getGenericParameterTypes().toList(), context))
+    return MethodBinding(this, bindArguments(genericParameterTypes.toList(), context))
 }
 
 private fun Member.bindArguments(parameters: List<Type>, context: ValueResolveContext): List<ValueDescriptor> {
-    val bound = ArrayList<ValueDescriptor>(parameters.size())
+    val bound = ArrayList<ValueDescriptor>(parameters.size)
     var unsatisfied: MutableList<Type>? = null
 
     for (parameter in parameters) {

@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/conflictingRuntimeVersions.kt
+-classpath
+$TESTDATA_DIR$/kotlin-runtime-4584-stub/kotlin-runtime.jar
+-d
+$TEMP_DIR$

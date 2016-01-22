@@ -40,8 +40,8 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.refactoring.j2kText
-import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.j2kText
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.name.Name
@@ -133,8 +133,8 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun getEvaluatorBuilder() = KotlinEvaluationBuilder
 
     companion object {
-        public val LABEL_VARIABLE_VALUE_KEY: Key<Value> = Key.create<Value>("_label_variable_value_key_")
-        public val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
+        val LABEL_VARIABLE_VALUE_KEY: Key<Value> = Key.create<Value>("_label_variable_value_key_")
+        val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
         @TestOnly val DEBUG_FRAME_FOR_TESTS: Key<StackFrameProxyImpl> = Key.create("DEBUG_FRAME_FOR_TESTS")
 
         fun getContextElement(elementAt: PsiElement?): KtElement? {

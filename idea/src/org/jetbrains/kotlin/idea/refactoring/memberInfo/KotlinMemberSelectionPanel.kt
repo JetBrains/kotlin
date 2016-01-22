@@ -22,7 +22,7 @@ import com.intellij.ui.SeparatorFactory
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
 
-public class KotlinMemberSelectionPanel(title: String,
+class KotlinMemberSelectionPanel(title: String,
                                         memberInfo: List<KotlinMemberInfo>,
                                         abstractColumnHeader: String?
 ) : AbstractMemberSelectionPanel<KtNamedDeclaration, KotlinMemberInfo>() {

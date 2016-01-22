@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -41,16 +42,16 @@ internal class HeuristicSignatures(
         private val project: Project,
         private val typeResolver: TypeResolver
 ) {
-    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): KotlinType? {
-        val parameterIndex = function.getValueParameters().indexOf(parameter)
+    fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): KotlinType? {
+        val parameterIndex = function.valueParameters.indexOf(parameter)
         assert(parameterIndex >= 0)
         return correctedParameterType(function, parameterIndex)
     }
 
     private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int): KotlinType? {
-        val ownerType = function.getDispatchReceiverParameter()?.getType() ?: return null
+        val ownerType = function.dispatchReceiverParameter?.type ?: return null
 
-        val superFunctions = function.getOverriddenDescriptors()
+        val superFunctions = function.overriddenDescriptors
         if (superFunctions.isNotEmpty()) {
             for (superFunction in superFunctions) {
                 val correctedType = correctedParameterType(superFunction, parameterIndex) ?: continue
@@ -60,12 +61,12 @@ internal class HeuristicSignatures(
             return null
         }
         else {
-            val ownerClass = ownerType.getConstructor().getDeclarationDescriptor() ?: return null
+            val ownerClass = ownerType.constructor.declarationDescriptor ?: return null
             val classFqName = DescriptorUtils.getFqName(ownerClass)
-            if (!classFqName.isSafe()) return null
-            val parameterTypes = signatures[classFqName.toSafe() to function.getName()] ?: return null
+            if (!classFqName.isSafe) return null
+            val parameterTypes = signatures[classFqName.toSafe() to function.name] ?: return null
             val typeStr = parameterTypes[parameterIndex]
-            val typeParameters = ownerClass.getTypeConstructor().getParameters()
+            val typeParameters = ownerClass.typeConstructor.parameters
 
             val type = typeFromText(typeStr, typeParameters)
 
@@ -81,7 +82,7 @@ internal class HeuristicSignatures(
             typeParameters.forEach { addClassifierDescriptor(it) }
         }
         val type = typeResolver.resolveType(scope, typeRef, BindingTraceContext(), false)
-        assert(!type.isError()) { "No type resolved from '$text'" }
+        assert(!type.isError) { "No type resolved from '$text'" }
         return type
     }
 
@@ -89,24 +90,24 @@ internal class HeuristicSignatures(
         private val signatures = HashMap<Pair<FqName, Name>, List<String>>()
 
         init {
-            registerSignature("kotlin.Collection", "contains", "E")
-            registerSignature("kotlin.Collection", "containsAll", "kotlin.Collection<E>")
-            registerSignature("kotlin.MutableCollection", "remove", "E")
-            registerSignature("kotlin.MutableCollection", "removeAll", "kotlin.Collection<E>")
-            registerSignature("kotlin.MutableCollection", "retainAll", "kotlin.Collection<E>")
-            registerSignature("kotlin.List", "indexOf", "E")
-            registerSignature("kotlin.List", "lastIndexOf", "E")
-            registerSignature("kotlin.Map", "get", "K")
-            registerSignature("kotlin.Map", "containsKey", "K")
-            registerSignature("kotlin.Map", "containsValue", "V")
-            registerSignature("kotlin.MutableMap", "remove", "K")
+            registerSignature(BUILTIN_NAMES.collection, "contains", "E")
+            registerSignature(BUILTIN_NAMES.collection, "containsAll", BUILTIN_NAMES.collection.asString() + "<E>")
+            registerSignature(BUILTIN_NAMES.mutableCollection, "remove", "E")
+            registerSignature(BUILTIN_NAMES.mutableCollection, "removeAll", BUILTIN_NAMES.collection.asString() + "<E>")
+            registerSignature(BUILTIN_NAMES.mutableCollection, "retainAll", BUILTIN_NAMES.collection.asString() + "<E>")
+            registerSignature(BUILTIN_NAMES.list, "indexOf", "E")
+            registerSignature(BUILTIN_NAMES.list, "lastIndexOf", "E")
+            registerSignature(BUILTIN_NAMES.map, "get", "K")
+            registerSignature(BUILTIN_NAMES.map, "containsKey", "K")
+            registerSignature(BUILTIN_NAMES.map, "containsValue", "V")
+            registerSignature(BUILTIN_NAMES.mutableMap, "remove", "K")
         }
 
         private fun registerSignature(
-                classFqName: String,
+                classFqName: FqName,
                 name: String,
                 vararg parameterTypes: String) {
-            signatures[FqName(classFqName) to Name.identifier(name)] = parameterTypes.toList()
+            signatures[classFqName to Name.identifier(name)] = parameterTypes.toList()
         }
     }
 }

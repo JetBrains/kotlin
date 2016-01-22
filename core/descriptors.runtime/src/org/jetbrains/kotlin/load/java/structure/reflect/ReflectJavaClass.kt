@@ -24,39 +24,39 @@ import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
 import java.util.Arrays
 
-public class ReflectJavaClass(
+class ReflectJavaClass(
         private val klass: Class<*>
 ) : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaClass {
     override val element: Class<*> get() = klass
 
-    override val modifiers: Int get() = klass.getModifiers()
+    override val modifiers: Int get() = klass.modifiers
 
-    override fun getInnerClasses() = klass.getDeclaredClasses()
+    override fun getInnerClasses() = klass.declaredClasses
             .asSequence()
             .filterNot {
                 // getDeclaredClasses() returns anonymous classes sometimes, for example enums with specialized entries (which are in fact
                 // anonymous classes) or in case of a special anonymous class created for the synthetic accessor to a private nested class
                 // constructor accessed from the outer class
-                it.getSimpleName().isEmpty()
+                it.simpleName.isEmpty()
             }
             .map(::ReflectJavaClass)
             .toList()
 
     override fun getFqName() = klass.classId.asSingleFqName()
 
-    override fun getOuterClass() = klass.getDeclaringClass()?.let(::ReflectJavaClass)
+    override fun getOuterClass() = klass.declaringClass?.let(::ReflectJavaClass)
 
     override fun getSupertypes(): Collection<JavaClassifierType> {
-        if (klass == javaClass<Any>()) return emptyList()
-        return listOf(klass.genericSuperclass ?: javaClass<Any>(), *klass.genericInterfaces).map(::ReflectJavaClassifierType)
+        if (klass == Any::class.java) return emptyList()
+        return listOf(klass.genericSuperclass ?: Any::class.java, *klass.genericInterfaces).map(::ReflectJavaClassifierType)
     }
 
-    override fun getMethods() = klass.getDeclaredMethods()
+    override fun getMethods() = klass.declaredMethods
             .asSequence()
             .filter { method ->
                 when {
-                    method.isSynthetic() -> false
-                    isEnum() -> !isEnumValuesOrValueOf(method)
+                    method.isSynthetic -> false
+                    isEnum -> !isEnumValuesOrValueOf(method)
                     else -> true
                 }
             }
@@ -64,22 +64,22 @@ public class ReflectJavaClass(
             .toList()
 
     private fun isEnumValuesOrValueOf(method: Method): Boolean {
-        return when (method.getName()) {
-            "values" -> method.getParameterTypes().isEmpty()
-            "valueOf" -> Arrays.equals(method.getParameterTypes(), arrayOf(javaClass<String>()))
+        return when (method.name) {
+            "values" -> method.parameterTypes.isEmpty()
+            "valueOf" -> Arrays.equals(method.parameterTypes, arrayOf(String::class.java))
             else -> false
         }
     }
 
-    override fun getFields() = klass.getDeclaredFields()
+    override fun getFields() = klass.declaredFields
             .asSequence()
-            .filter { field -> !field.isSynthetic() }
+            .filter { field -> !field.isSynthetic }
             .map(::ReflectJavaField)
             .toList()
 
-    override fun getConstructors() = klass.getDeclaredConstructors()
+    override fun getConstructors() = klass.declaredConstructors
             .asSequence()
-            .filter { constructor -> !constructor.isSynthetic() }
+            .filter { constructor -> !constructor.isSynthetic }
             .map(::ReflectJavaConstructor)
             .toList()
 
@@ -90,17 +90,17 @@ public class ReflectJavaClass(
 
     override fun createImmediateType(substitutor: JavaTypeSubstitutor): JavaType = throw UnsupportedOperationException()
 
-    override fun getName(): Name = Name.identifier(klass.getSimpleName())
+    override fun getName(): Name = Name.identifier(klass.simpleName)
 
-    override fun getTypeParameters() = klass.getTypeParameters().map { ReflectJavaTypeParameter(it) }
+    override fun getTypeParameters() = klass.typeParameters.map { ReflectJavaTypeParameter(it) }
 
-    override fun isInterface() = klass.isInterface()
-    override fun isAnnotationType() = klass.isAnnotation()
-    override fun isEnum() = klass.isEnum()
+    override fun isInterface() = klass.isInterface
+    override fun isAnnotationType() = klass.isAnnotation
+    override fun isEnum() = klass.isEnum
 
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 
     override fun hashCode() = klass.hashCode()
 
-    override fun toString() = javaClass.getName() + ": " + klass
+    override fun toString() = javaClass.name + ": " + klass
 }

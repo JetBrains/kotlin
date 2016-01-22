@@ -40,14 +40,14 @@ import java.util.*
  * If the class represents kotlin.reflect.KFunction1, it has two supertypes: kotlin.Function1 and kotlin.reflect.KFunction.
  * This allows to use both 'invoke' and reflection API on function references obtained by '::'.
  */
-public class FunctionClassDescriptor(
+class FunctionClassDescriptor(
         private val storageManager: StorageManager,
         private val containingDeclaration: PackageFragmentDescriptor,
         val functionKind: Kind,
         val arity: Int
 ) : AbstractClassDescriptor(storageManager, functionKind.numberedClassName(arity)) {
 
-    public enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
+    enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
         Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
         KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction");
 
@@ -73,7 +73,7 @@ public class FunctionClassDescriptor(
 
         fun typeParameter(variance: Variance, name: String) {
             result.add(TypeParameterDescriptorImpl.createWithDefaultBound(
-                    this@FunctionClassDescriptor, Annotations.EMPTY, false, variance, Name.identifier(name), result.size()
+                    this@FunctionClassDescriptor, Annotations.EMPTY, false, variance, Name.identifier(name), result.size
             ))
         }
 
@@ -117,11 +117,11 @@ public class FunctionClassDescriptor(
                 val descriptor = packageFragment.getMemberScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
                                  ?: error("Class $name not found in $packageFragment")
 
-                val typeConstructor = descriptor.getTypeConstructor()
+                val typeConstructor = descriptor.typeConstructor
 
                 // Substitute all type parameters of the super class with our last type parameters
-                val arguments = getParameters().takeLast(typeConstructor.getParameters().size()).map {
-                    TypeProjectionImpl(it.getDefaultType())
+                val arguments = getParameters().takeLast(typeConstructor.parameters.size).map {
+                    TypeProjectionImpl(it.defaultType)
                 }
 
                 result.add(KotlinTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments))
@@ -132,7 +132,7 @@ public class FunctionClassDescriptor(
 
             // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
             if (functionKind == Kind.KFunction) {
-                val module = containingDeclaration.getContainingDeclaration()
+                val module = containingDeclaration.containingDeclaration
                 val kotlinPackageFragment = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME).fragments.single()
 
                 add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
@@ -150,8 +150,8 @@ public class FunctionClassDescriptor(
         override fun isFinal() = false
         override fun getAnnotations() = Annotations.EMPTY
 
-        override fun toString() = getDeclarationDescriptor().toString()
+        override fun toString() = declarationDescriptor.toString()
     }
 
-    override fun toString() = getName().asString()
+    override fun toString() = name.asString()
 }

@@ -24,10 +24,10 @@ public open class KotlinTasksProvider(val tasksLoader: ClassLoader) {
 
 
     public fun createKotlinJVMTask(project: Project, name: String): AbstractCompile {
-        return project.getTasks().create(name, kotlinJVMCompileTaskClass)
+        return project.tasks.create(name, kotlinJVMCompileTaskClass)
     }
 
     public fun createKotlinJSTask(project: Project, name: String): AbstractCompile {
-        return project.getTasks().create(name, kotlinJSCompileTaskClass)
+        return project.tasks.create(name, kotlinJSCompileTaskClass)
     }
 }

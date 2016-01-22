@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTargetStub> {
+class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTargetStub> {
 
     constructor(node: ASTNode) : super(node)
 
@@ -34,7 +34,7 @@ public class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSi
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitAnnotationUseSiteTarget(this, data)
 
-    public fun getAnnotationUseSiteTarget(): AnnotationUseSiteTarget {
+    fun getAnnotationUseSiteTarget(): AnnotationUseSiteTarget {
         val targetString = stub?.getUseSiteTarget()
         if (targetString != null) {
             try {
@@ -54,6 +54,7 @@ public class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSi
             KtTokens.RECEIVER_KEYWORD -> AnnotationUseSiteTarget.RECEIVER
             KtTokens.PARAM_KEYWORD -> AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
             KtTokens.SETPARAM_KEYWORD -> AnnotationUseSiteTarget.SETTER_PARAMETER
+            KtTokens.DELEGATE_KEYWORD -> AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
             else -> throw IllegalStateException("Unknown annotation target " + node.getText())
         }
     }

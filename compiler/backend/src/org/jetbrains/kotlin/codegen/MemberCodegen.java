@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -46,7 +44,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -305,7 +302,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         if (outermost instanceof ClassContext) {
             return typeMapper.mapType(((ClassContext) outermost).getContextDescriptor());
         }
-        else if (outermost instanceof DelegatingFacadeContext || outermost instanceof DelegatingToPartContext) {
+        else if (outermost instanceof MultifileClassFacadeContext || outermost instanceof DelegatingToPartContext) {
             Type implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(outermost);
             if (implementationOwnerType != null) {
                 return implementationOwnerType;
@@ -498,37 +495,23 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
             iv.dup();
             iv.iconst(i);
 
-            StackValue value;
-            // TODO: remove this option and always generate PropertyReferenceNImpl creation
-            if ("true".equalsIgnoreCase(System.getProperty("kotlin.jvm.optimize.delegated.properties"))) {
-                int receiverCount = (property.getDispatchReceiverParameter() != null ? 1 : 0) +
-                                    (property.getExtensionReceiverParameter() != null ? 1 : 0);
-                Type implType = property.isVar() ? MUTABLE_PROPERTY_REFERENCE_IMPL[receiverCount] : PROPERTY_REFERENCE_IMPL[receiverCount];
-                iv.anew(implType);
-                iv.dup();
-                // TODO: generate the container once and save to a local field instead
-                ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
-                iv.aconst(property.getName().asString());
-                iv.aconst(PropertyReferenceCodegen.getPropertyReferenceSignature(property, state));
-                iv.invokespecial(
-                        implType.getInternalName(), "<init>",
-                        Type.getMethodDescriptor(Type.VOID_TYPE, K_DECLARATION_CONTAINER_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE), false
-                );
-                value = StackValue.onStack(implType);
-                Method wrapper = PropertyReferenceCodegen.getWrapperMethodForPropertyReference(property, receiverCount);
-                iv.invokestatic(REFLECTION, wrapper.getName(), wrapper.getDescriptor(), false);
-            }
-            else {
-                ReceiverParameterDescriptor dispatchReceiver = property.getDispatchReceiverParameter();
+            int receiverCount = (property.getDispatchReceiverParameter() != null ? 1 : 0) +
+                                (property.getExtensionReceiverParameter() != null ? 1 : 0);
+            Type implType = property.isVar() ? MUTABLE_PROPERTY_REFERENCE_IMPL[receiverCount] : PROPERTY_REFERENCE_IMPL[receiverCount];
+            iv.anew(implType);
+            iv.dup();
+            // TODO: generate the container once and save to a local field instead (KT-10495)
+            ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
+            iv.aconst(property.getName().asString());
+            iv.aconst(PropertyReferenceCodegen.getPropertyReferenceSignature(property, state));
+            iv.invokespecial(
+                    implType.getInternalName(), "<init>",
+                    Type.getMethodDescriptor(Type.VOID_TYPE, K_DECLARATION_CONTAINER_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE), false
+            );
+            Method wrapper = PropertyReferenceCodegen.getWrapperMethodForPropertyReference(property, receiverCount);
+            iv.invokestatic(REFLECTION, wrapper.getName(), wrapper.getDescriptor(), false);
 
-                //noinspection ConstantConditions
-                value = createOrGetClInitCodegen().generatePropertyReference(
-                        delegatedProperties.get(i).getDelegate(), property, property,
-                        dispatchReceiver != null ? new TransientReceiver(dispatchReceiver.getType()) : null
-                );
-            }
-
-            value.put(K_PROPERTY_TYPE, iv);
+            StackValue.onStack(implType).put(K_PROPERTY_TYPE, iv);
 
             iv.astore(K_PROPERTY_TYPE);
         }
@@ -567,20 +550,17 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         return sourceMapper;
     }
 
-    protected void generateConstInstance(
-            @NotNull Type thisAsmType,
-            @NotNull Type fieldAsmType,
-            @NotNull Function1<InstructionAdapter, Unit> initialization
-    ) {
-        v.newField(JvmDeclarationOriginKt.OtherOrigin(element), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, fieldAsmType.getDescriptor(),
-                   null, null);
+    protected void generateConstInstance(@NotNull Type thisAsmType, @NotNull Type fieldAsmType) {
+        v.newField(
+                JvmDeclarationOriginKt.OtherOrigin(element), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD,
+                fieldAsmType.getDescriptor(), null, null
+        );
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             InstructionAdapter iv = createOrGetClInitCodegen().v;
             iv.anew(thisAsmType);
             iv.dup();
             iv.invokespecial(thisAsmType.getInternalName(), "<init>", "()V", false);
-            initialization.invoke(iv);
             iv.putstatic(thisAsmType.getInternalName(), JvmAbi.INSTANCE_FIELD, fieldAsmType.getDescriptor());
         }
     }
@@ -621,7 +601,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     boolean syntheticBackingField = accessor instanceof AccessorForPropertyBackingFieldFromLocal;
-                    boolean forceField = (AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
+                    boolean forceField = (JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                           !isCompanionObject(accessor.getContainingDeclaration())) ||
                                          syntheticBackingField ||
                                          original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
@@ -672,7 +652,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         }
     }
 
-    private StackValue generateMethodCallTo(
+    protected StackValue generateMethodCallTo(
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable FunctionDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv

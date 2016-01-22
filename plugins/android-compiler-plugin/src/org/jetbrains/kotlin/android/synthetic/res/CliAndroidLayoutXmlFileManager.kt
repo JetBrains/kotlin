@@ -25,7 +25,7 @@ import java.io.ByteArrayInputStream
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
-public class CliAndroidLayoutXmlFileManager(
+class CliAndroidLayoutXmlFileManager(
         project: Project,
         private val applicationPackage: String,
         private val variants: List<AndroidVariant>

@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.js.inline.util.IdentitySet
 class ReferenceNameCollector : JsVisitorWithContextImpl() {
     private val referenceSet = IdentitySet<JsName>()
 
-    public val references: List<JsName>
+    val references: List<JsName>
         get() = referenceSet.toList()
 
     override fun endVisit(x: JsNameRef, ctx: JsContext<*>) {
-        val name = x.getName()
+        val name = x.name
         if (name != null) {
             referenceSet.add(name)
         }

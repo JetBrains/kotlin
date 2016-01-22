@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
-import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
+import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -30,10 +30,9 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetS
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
-import kotlin.test.fail
 
-public class ExtractKotlinFunctionHandler(
-        public val allContainersEnabled: Boolean = false,
+class ExtractKotlinFunctionHandler(
+        val allContainersEnabled: Boolean = false,
         private val helper: ExtractionEngineHelper = ExtractKotlinFunctionHandler.InteractiveExtractionHelper) : RefactoringActionHandler {
 
     object InteractiveExtractionHelper : ExtractionEngineHelper(EXTRACT_FUNCTION) {
@@ -44,7 +43,7 @@ public class ExtractKotlinFunctionHandler(
                 onFinish: (ExtractionResult) -> Unit
         ) {
             KotlinExtractFunctionDialog(descriptorWithConflicts.descriptor.extractionData.project, descriptorWithConflicts) {
-                doRefactor(it.getCurrentConfiguration(), onFinish)
+                doRefactor(it.currentConfiguration, onFinish)
             }.show()
         }
     }
@@ -55,10 +54,10 @@ public class ExtractKotlinFunctionHandler(
             elements: List<PsiElement>,
             targetSibling: PsiElement
     ) {
-        val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.getStatements() ?: elements
+        val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.statements ?: elements
         val extractionData = ExtractionData(file, adjustedElements.toRange(false), targetSibling)
         ExtractionEngine(helper).run(editor, extractionData) {
-            processDuplicates(it.duplicateReplacers, file.getProject(), editor)
+            processDuplicates(it.duplicateReplacers, file.project, editor)
         }
     }
 
@@ -67,7 +66,7 @@ public class ExtractKotlinFunctionHandler(
                 EXTRACT_FUNCTION,
                 editor,
                 file,
-                { elements, parent -> parent.getExtractionContainers(elements.size() == 1, allContainersEnabled) },
+                { elements, parent -> parent.getExtractionContainers(elements.size == 1, allContainersEnabled) },
                 continuation
         )
     }
@@ -78,7 +77,7 @@ public class ExtractKotlinFunctionHandler(
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
-        fail("Extract Function can only be invoked from editor")
+        throw AssertionError("Extract Function can only be invoked from editor")
     }
 }
 

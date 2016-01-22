@@ -20,8 +20,6 @@ fun foo() {
     oldFun1(oldFun2(10))
 
     oldFun2()
-
-    1.identityEquals(2)
 }
 
 fun unnecessarySafeCall(x: String) {
@@ -80,3 +78,28 @@ val x = C() willBeInfix 1
 fun infixTest() {
     arrayListOf(1, 2, 3) map { it }
 }
+
+fun async(f: () -> Unit) {}
+infix fun Any.async(f: () -> Unit) {}
+object async {
+    operator fun times(f: () -> Unit) = f()
+}
+
+fun test(foo: Any) {
+    async {  }
+    async /**/ {  }
+    foo async {  }
+
+    async() { }
+
+    async({ })
+    foo async ({ })
+
+    foo async fun () {}
+    foo async (fun () {})
+
+    async (fun () {})
+
+    async* {}
+}
+

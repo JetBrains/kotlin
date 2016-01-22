@@ -9,8 +9,8 @@ import kotlinx.android.synthetic.main.layout.view.*
 class R {
     class id {
         companion object {
-            val container = 0
-            val login = 1
+            const val container = 0
+            const val login = 1
         }
     }
 }

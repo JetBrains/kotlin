@@ -20,7 +20,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.diagnostic.AttachmentFactory
 
-public fun attachmentByPsiFileAsArray(file: PsiFile?): Array<Attachment> {
+fun attachmentByPsiFileAsArray(file: PsiFile?): Array<Attachment> {
     val attachment = attachmentByPsiFile(file)
     if (attachment == null) {
         return arrayOf()
@@ -28,27 +28,29 @@ public fun attachmentByPsiFileAsArray(file: PsiFile?): Array<Attachment> {
     return arrayOf(attachment)
 }
 
-public fun attachmentByPsiFile(file: PsiFile?): Attachment? {
+fun attachmentByPsiFile(file: PsiFile?): Attachment? {
     if (file == null) return null
 
-    val virtualFile = file.getVirtualFile()
+    val virtualFile = file.virtualFile
     if (virtualFile != null) return AttachmentFactory.createAttachment(virtualFile)
 
-    val text = try { file.getText() } catch(e: Exception) { null }
-    val name = try { file.getName() } catch(e: Exception) { null }
+    val text = try { file.text
+    } catch(e: Exception) { null }
+    val name = try { file.name
+    } catch(e: Exception) { null }
 
     if (text != null && name != null) return Attachment(name, text)
 
     return null
 }
 
-public fun mergeAttachments(vararg attachments: Attachment?): Attachment {
+fun mergeAttachments(vararg attachments: Attachment?): Attachment {
     val builder = StringBuilder()
     attachments.forEach {
         if (it != null) {
-            builder.append("\n----- START ${it.getPath()} -----\n")
-            builder.append(it.getDisplayText())
-            builder.append("\n----- END   ${it.getPath()} -----\n")
+            builder.append("\n----- START ${it.path} -----\n")
+            builder.append(it.displayText)
+            builder.append("\n----- END   ${it.path} -----\n")
         }
     }
 

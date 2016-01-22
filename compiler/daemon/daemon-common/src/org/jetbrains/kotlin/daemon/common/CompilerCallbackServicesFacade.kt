@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.daemon.common
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
+import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
@@ -51,7 +52,7 @@ interface CompilerCallbackServicesFacade : Remote {
     fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String?
 
     @Throws(RemoteException::class)
-    fun incrementalCache_getPackagePartData(target: TargetId, fqName: String): JvmPackagePartProto?
+    fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto?
 
     @Throws(RemoteException::class)
     fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
@@ -81,7 +82,13 @@ interface CompilerCallbackServicesFacade : Remote {
 
     // ----------------------------------------------------
     // CompilationCanceledStatus
-    @Throws(RemoteException::class)
+    @Throws(RemoteException::class, RmiFriendlyCompilationCancelledException::class)
     fun compilationCanceledStatus_checkCanceled(): Unit
 }
 
+
+class RmiFriendlyCompilationCancelledException: Exception(), Serializable {
+    companion object {
+        private val serialVersionUID: Long = 8228357578L // just a random number, but should never be changed to avoid deserialization problems
+    }
+}

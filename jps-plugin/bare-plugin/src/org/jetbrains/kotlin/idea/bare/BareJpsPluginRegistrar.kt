@@ -22,17 +22,17 @@ import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.PluginId
 
-public class BareJpsPluginRegistrar : ApplicationComponent {
+class BareJpsPluginRegistrar : ApplicationComponent {
     override fun initComponent() {
         val mainKotlinPlugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"))
 
-        if (mainKotlinPlugin != null && mainKotlinPlugin.isEnabled()) {
+        if (mainKotlinPlugin != null && mainKotlinPlugin.isEnabled) {
             // do nothing
         }
         else {
             val compileServerPlugin = CompileServerPlugin()
-            compileServerPlugin.setClasspath("jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-reflect.jar;kotlin-bare-plugin.jar")
-            compileServerPlugin.setPluginDescriptor(PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin.bare")))
+            compileServerPlugin.classpath = "jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-reflect.jar;kotlin-bare-plugin.jar"
+            compileServerPlugin.pluginDescriptor = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin.bare"))
 
             Extensions.getRootArea()
                     .getExtensionPoint(CompileServerPlugin.EP_NAME)
@@ -44,6 +44,6 @@ public class BareJpsPluginRegistrar : ApplicationComponent {
     }
 
     override fun getComponentName(): String {
-        return javaClass.getName()
+        return javaClass.name
     }
 }

@@ -18,18 +18,18 @@ package org.jetbrains.kotlin.resolve.jvm.jvmSignature
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
-public interface KotlinToJvmSignatureMapper {
-    public fun mapToJvmMethodSignature(function: FunctionDescriptor): JvmMethodSignature
+interface KotlinToJvmSignatureMapper {
+    fun mapToJvmMethodSignature(function: FunctionDescriptor): JvmMethodSignature
 }
 
 fun erasedSignaturesEqualIgnoringReturnTypes(subFunction: JvmMethodSignature, superFunction: JvmMethodSignature): Boolean {
-    val subParams = subFunction.getValueParameters()
-    val superParams = superFunction.getValueParameters()
+    val subParams = subFunction.valueParameters
+    val superParams = superFunction.valueParameters
 
-    if (subParams.size() != superParams.size()) return false
+    if (subParams.size != superParams.size) return false
 
     return subParams.zip(superParams).all {
         p -> val (subParam, superParam) = p
-        subParam.getAsmType() == superParam.getAsmType()
+        subParam.asmType == superParam.asmType
     }
 }

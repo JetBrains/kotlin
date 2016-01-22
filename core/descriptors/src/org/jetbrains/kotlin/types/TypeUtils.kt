@@ -17,21 +17,20 @@
 package org.jetbrains.kotlin.types.typeUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public enum class TypeNullability {
+enum class TypeNullability {
     NOT_NULL,
     NULLABLE,
     FLEXIBLE
 }
 
-public fun KotlinType.nullability(): TypeNullability {
+fun KotlinType.nullability(): TypeNullability {
     return when {
         isNullabilityFlexible() -> TypeNullability.FLEXIBLE
         TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
@@ -43,6 +42,7 @@ val KotlinType.builtIns: KotlinBuiltIns
     get() = constructor.builtIns
 
 fun KotlinType.makeNullable() = TypeUtils.makeNullable(this)
+fun KotlinType.makeNullableIfNeeded(nullable: Boolean) = TypeUtils.makeNullableIfNeeded(this, nullable)
 fun KotlinType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 
 fun KotlinType.immediateSupertypes(): Collection<KotlinType> = TypeUtils.getImmediateSupertypes(this)
@@ -52,6 +52,7 @@ fun KotlinType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
 fun KotlinType.isNullableNothing(): Boolean = KotlinBuiltIns.isNullableNothing(this)
 fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+fun KotlinType.isNullableAny(): Boolean = KotlinBuiltIns.isNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 fun KotlinType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 
@@ -62,48 +63,15 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
     return typeArg != null && KotlinBuiltIns.isNothingOrNullableNothing(typeArg)
 }
 
-private fun KotlinType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
-    val declarationDescriptor = getConstructor().getDeclarationDescriptor()
-    if (declarationDescriptor is TypeParameterDescriptor) return listOf(declarationDescriptor)
 
-    val flexibility = getCapability(javaClass<Flexibility>())
-    if (flexibility != null) {
-        return flexibility.lowerBound.getContainedTypeParameters() + flexibility.upperBound.getContainedTypeParameters()
-    }
-    return getArguments().filter { !it.isStarProjection() }.map { it.getType() }.flatMap { it.getContainedTypeParameters() }
-}
+fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
-fun DeclarationDescriptor.getCapturedTypeParameters(): Collection<TypeParameterDescriptor> {
-    val result = LinkedHashSet<TypeParameterDescriptor>()
-    val containingDeclaration = this.getContainingDeclaration()
-
-    if (containingDeclaration is ClassDescriptor) {
-        result.addAll(containingDeclaration.getDefaultType().getContainedTypeParameters())
-    }
-    else if (containingDeclaration is CallableDescriptor) {
-        result.addAll(containingDeclaration.getTypeParameters())
-    }
-    if (containingDeclaration != null) {
-        result.addAll(containingDeclaration.getCapturedTypeParameters())
-    }
-    return result
-}
-
-public fun KotlinType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
-    // todo type arguments (instead of type parameters) of the type of outer class must be considered; KT-6325
-    val capturedTypeParameters = getConstructor().getDeclarationDescriptor()?.getCapturedTypeParameters() ?: emptyList()
-    val typeParameters = getContainedTypeParameters() + capturedTypeParameters
-    return typeParameters.map { it.getTypeConstructor() }.toReadOnlyList()
-}
-
-public fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
-
-public fun KotlinType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
+fun KotlinType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
 
 fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypeProjection {
-    return if (isStarProjection())
+    return if (isStarProjection)
         this
-    else TypeProjectionImpl(getProjectionKind(), doSubstitute(getType()))
+    else TypeProjectionImpl(projectionKind, doSubstitute(type))
 }
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
@@ -115,7 +83,7 @@ fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     }
 }
 
-public fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
+fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
     if (type1 === type2) return true
     if (type1 == null || type2 == null) return false
     return equalTypes(type1, type2)
@@ -123,11 +91,11 @@ public fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: Kotlin
 
 fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)
 
-public fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
+fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
 
-public fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
+fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
 
-public fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
+fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
         TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
 
 fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): Collection<KotlinType> {
@@ -170,9 +138,7 @@ private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<K
 
 fun KotlinType.getImmediateSuperclassNotAny(): KotlinType? {
     val superclasses = constructor.supertypes.filter {
-        val descriptor = it.constructor.declarationDescriptor
-        (DescriptorUtils.isClass(descriptor) || DescriptorUtils.isEnumClass(descriptor)) &&
-        !KotlinBuiltIns.isAnyOrNullableAny(it)
+        DescriptorUtils.isClassOrEnumClass(it.constructor.declarationDescriptor) && !KotlinBuiltIns.isAnyOrNullableAny(it)
     }
     return superclasses.singleOrNull()?.let {
         TypeUtils.createSubstitutedSupertype(this, it, TypeSubstitutor.create(this))

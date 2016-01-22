@@ -34,18 +34,17 @@ interface ModuleVisibilityManager {
     fun addModule(module: Module)
     fun addFriendPath(path: String)
 
-    public object SERVICE {
-        @JvmStatic
-        public fun getInstance(project: Project): ModuleVisibilityManager =
+    object SERVICE {
+        @JvmStatic fun getInstance(project: Project): ModuleVisibilityManager =
                 ServiceManager.getService(project, ModuleVisibilityManager::class.java)
     }
 }
 
-public val DeclarationDescriptor.isFromIncrementalPackageFragment: Boolean
+val DeclarationDescriptor.isFromIncrementalPackageFragment: Boolean
     get() =
         DescriptorUtils.getParentOfType(this, PackageFragmentDescriptor::class.java, false) is IncrementalPackageFragmentProvider.IncrementalPackageFragment
 
-public fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outDirectory: File?): Boolean {
+fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outDirectory: File?): Boolean {
     val packageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java, false)
 
     if (packageFragment is IncrementalPackageFragmentProvider.IncrementalPackageFragment) return true

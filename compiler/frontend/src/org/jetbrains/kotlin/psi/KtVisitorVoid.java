@@ -61,10 +61,6 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitDestructuringDeclarationEntry(multiDeclarationEntry, null);
     }
 
-    public void visitTypedef(@NotNull KtTypedef typedef) {
-        super.visitTypedef(typedef, null);
-    }
-
     public void visitKtFile(@NotNull KtFile file) {
         super.visitKtFile(file, null);
     }
@@ -491,12 +487,6 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitDestructuringDeclarationEntry(@NotNull KtDestructuringDeclarationEntry multiDeclarationEntry, Void data) {
         visitDestructuringDeclarationEntry(multiDeclarationEntry);
-        return null;
-    }
-
-    @Override
-    public final Void visitTypedef(@NotNull KtTypedef typedef, Void data) {
-        visitTypedef(typedef);
         return null;
     }
 

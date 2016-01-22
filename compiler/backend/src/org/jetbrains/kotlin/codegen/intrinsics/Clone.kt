@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-public class Clone : IntrinsicMethod() {
+class Clone : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod, isSuperCall: Boolean): Callable =
             createUnaryIntrinsicCallable(method, OBJECT_TYPE) {
                 val opcode = if (isSuperCall) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL

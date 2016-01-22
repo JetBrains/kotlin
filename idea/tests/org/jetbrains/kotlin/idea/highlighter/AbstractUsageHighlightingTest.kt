@@ -24,7 +24,7 @@ import com.intellij.testFramework.ExpectedHighlightingData
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 
-public abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         // Not standard <caret> to leave it in text after configureByFile and remove manually after collecting highlighting information
         val CARET_TAG = "~"
@@ -32,33 +32,33 @@ public abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtu
 
     protected fun doTest(filePath: String) {
         myFixture.configureByFile(filePath)
-        val document = myFixture.getEditor().getDocument()
-        val data = ExpectedHighlightingData(document, false, false, true, false, myFixture.getFile())
+        val document = myFixture.editor.document
+        val data = ExpectedHighlightingData(document, false, false, true, false, myFixture.file)
         data.init()
 
-        val caret = document.getText().indexOf(CARET_TAG)
+        val caret = document.text.indexOf(CARET_TAG)
         assert(caret != -1) { "Caret marker '$CARET_TAG' expected" }
 
-        WriteCommandAction.runWriteCommandAction(myFixture.getProject()) {
-            document.deleteString(caret, caret + CARET_TAG.length())
+        WriteCommandAction.runWriteCommandAction(myFixture.project) {
+            document.deleteString(caret, caret + CARET_TAG.length)
         }
 
-        getEditor().getCaretModel().moveToOffset(caret)
+        editor.caretModel.moveToOffset(caret)
 
         myFixture.testAction(HighlightUsagesAction())
-        val highlighters = myFixture.getEditor().getMarkupModel().getAllHighlighters()
+        val highlighters = myFixture.editor.markupModel.allHighlighters
 
         val infos = highlighters.map { highlighter ->
-            var startOffset = highlighter.getStartOffset()
-            var endOffset = highlighter.getEndOffset()
+            var startOffset = highlighter.startOffset
+            var endOffset = highlighter.endOffset
 
-            if (startOffset > caret) startOffset += CARET_TAG.length()
-            if (endOffset > caret) endOffset += CARET_TAG.length()
+            if (startOffset > caret) startOffset += CARET_TAG.length
+            if (endOffset > caret) endOffset += CARET_TAG.length
 
             HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(startOffset, endOffset).create()
         }
 
-        data.checkResult(infos, StringBuilder(document.getText()).insert(caret, CARET_TAG).toString())
+        data.checkResult(infos, StringBuilder(document.text).insert(caret, CARET_TAG).toString())
     }
 
 

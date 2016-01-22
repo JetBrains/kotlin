@@ -1,17 +1,17 @@
 package
 
-public fun main(/*0*/ a: A, /*1*/ ml: kotlin.MutableList<kotlin.String>, /*2*/ l: kotlin.List<kotlin.String>, /*3*/ ms: kotlin.MutableSet<kotlin.String>, /*4*/ s: kotlin.Set<kotlin.String>, /*5*/ mm: kotlin.MutableMap<kotlin.Any, kotlin.String>, /*6*/ m: kotlin.Map<kotlin.Any, kotlin.String>, /*7*/ mme: kotlin.MutableMap.MutableEntry<kotlin.Any, kotlin.String>, /*8*/ me: kotlin.Map.Entry<kotlin.Any, kotlin.String>, /*9*/ mll: kotlin.MutableList<kotlin.MutableList<kotlin.String>>, /*10*/ ll: kotlin.List<kotlin.List<kotlin.String>>): kotlin.Unit
+public fun main(/*0*/ a: A, /*1*/ ml: kotlin.collections.MutableList<kotlin.String>, /*2*/ l: kotlin.collections.List<kotlin.String>, /*3*/ ms: kotlin.collections.MutableSet<kotlin.String>, /*4*/ s: kotlin.collections.Set<kotlin.String>, /*5*/ mm: kotlin.collections.MutableMap<kotlin.Any, kotlin.String>, /*6*/ m: kotlin.collections.Map<kotlin.Any, kotlin.String>, /*7*/ mme: kotlin.collections.MutableMap.MutableEntry<kotlin.Any, kotlin.String>, /*8*/ me: kotlin.collections.Map.Entry<kotlin.Any, kotlin.String>, /*9*/ mll: kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.String>>, /*10*/ ll: kotlin.collections.List<kotlin.collections.List<kotlin.String>>): kotlin.Unit
 
 public open class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Iterable<kotlin.Any!>!): kotlin.Unit
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Iterator<kotlin.Any!>!): kotlin.Unit
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)List<kotlin.(Mutable)List<kotlin.Any!>!>!): kotlin.Unit
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)List<kotlin.Any!>!): kotlin.Unit
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Map.(Mutable)Entry<kotlin.Any!, kotlin.Any!>!): kotlin.Unit
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Map<kotlin.Any!, kotlin.Any!>!): kotlin.Unit
-    public/*package*/ open fun foo(/*0*/ x: kotlin.(Mutable)Set<kotlin.Any!>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Iterable<kotlin.Any!>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Iterator<kotlin.Any!>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)List<kotlin.Any!>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.Any!>!>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.Any!, kotlin.Any!>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Map<kotlin.Any!, kotlin.Any!>!): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Set<kotlin.Any!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

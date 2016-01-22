@@ -2,6 +2,6 @@ package test
 
 class KotlinClass {
     companion object {
-        val FOO: Int = 10
+        const val FOO: Int = 10
     }
 }

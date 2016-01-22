@@ -21,23 +21,21 @@ import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
 
-public class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
+class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
 
     override fun accepts(file: VirtualFile) = isKotlinJvmCompiledFile(file)
@@ -68,41 +66,44 @@ private val decompilerRendererForClassFiles = DescriptorRenderer.withOptions {
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
 
-public val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
-public val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
+val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
+val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
         "$INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT\n" +
         "//\n" +
         "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
         "// File ABI version is $FILE_ABI_VERSION_MARKER"
 
-public fun buildDecompiledTextForClassFile(
+fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
-    val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classId = kotlinClass!!.getClassId()
-    val classHeader = kotlinClass.getClassHeader()
-    val packageFqName = classId.getPackageFqName()
+    val (classHeader, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+                                 ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
 
-    return when {
-        !classHeader.isCompatibleAbiVersion -> {
-            DecompiledText(
-                    INCOMPATIBLE_ABI_VERSION_COMMENT
-                            .replace(CURRENT_ABI_VERSION_MARKER, JvmAbi.VERSION.toString())
-                            .replace(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
-                    mapOf())
-        }
-        classHeader.isCompatibleFileFacadeKind() ->
-            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())), decompilerRendererForClassFiles)
-        classHeader.isCompatibleClassKind() ->
-            buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), decompilerRendererForClassFiles)
-        classHeader.isCompatibleMultifileClassKind() -> {
-            val partClasses = findMultifileClassParts(classFile, kotlinClass)
-            val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
-            buildDecompiledText(packageFqName, partMembers, decompilerRendererForClassFiles)
+    if (!classHeader.metadataVersion.isCompatible()) {
+        return DecompiledText(
+                INCOMPATIBLE_ABI_VERSION_COMMENT
+                        .replace(CURRENT_ABI_VERSION_MARKER, JvmMetadataVersion.INSTANCE.toString())
+                        .replace(FILE_ABI_VERSION_MARKER, classHeader.metadataVersion.toString()),
+                mapOf()
+        )
+    }
+
+    return when (classHeader.kind) {
+        KotlinClassHeader.Kind.FILE_FACADE ->
+            buildDecompiledText(classId.packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())),
+                                decompilerRendererForClassFiles)
+        KotlinClassHeader.Kind.CLASS ->
+            buildDecompiledText(classId.packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)),
+                                decompilerRendererForClassFiles)
+        KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
+            val partClasses = findMultifileClassParts(classFile, classId, classHeader)
+            val partMembers = partClasses.flatMap { partClass ->
+                resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName())
+            }
+            buildDecompiledText(classId.packageFqName, partMembers, decompilerRendererForClassFiles)
         }
         else ->
-            throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")
+            throw UnsupportedOperationException("Unknown header kind: $classHeader, class $classId")
     }
 }

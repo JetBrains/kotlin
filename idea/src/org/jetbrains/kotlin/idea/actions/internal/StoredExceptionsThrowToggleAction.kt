@@ -21,7 +21,7 @@ import com.intellij.openapi.actionSystem.ToggleAction
 import org.jetbrains.kotlin.utils.WrappedValues
 
 
-public class StoredExceptionsThrowToggleAction : ToggleAction("Internal: toggle throwing cached PCE", "Rethrow stored PCE as a new runtime exception", null) {
+class StoredExceptionsThrowToggleAction : ToggleAction("Internal: toggle throwing cached PCE", "Rethrow stored PCE as a new runtime exception", null) {
     override fun isSelected(e: AnActionEvent?): Boolean {
         return WrappedValues.throwWrappedProcessCanceledException
     }
@@ -33,6 +33,6 @@ public class StoredExceptionsThrowToggleAction : ToggleAction("Internal: toggle 
     override fun update(e: AnActionEvent) {
         super.update(e)
 
-        e.getPresentation().setEnabled(KotlinInternalMode.enabled)
+        e.presentation.isEnabled = KotlinInternalMode.enabled
     }
 }

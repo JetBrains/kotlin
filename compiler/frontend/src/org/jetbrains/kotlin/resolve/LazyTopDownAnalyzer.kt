@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import java.util.*
 
-public class LazyTopDownAnalyzer(
+class LazyTopDownAnalyzer(
         private val trace: BindingTrace,
         private val declarationResolver: DeclarationResolver,
         private val overrideResolver: OverrideResolver,
@@ -47,7 +47,7 @@ public class LazyTopDownAnalyzer(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val identifierChecker: IdentifierChecker
 ) {
-    public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
+    fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
 
         val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
 
@@ -66,11 +66,11 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitDeclaration(dcl: KtDeclaration) {
-                    throw IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.getText())
+                    throw IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.text)
                 }
 
                 override fun visitScript(script: KtScript) {
-                    c.getScripts().put(
+                    c.scripts.put(
                             script,
                             lazyDeclarationResolver.getScriptDescriptor(script, KotlinLookupLocation(script)) as LazyScriptDescriptor
                     )
@@ -101,7 +101,7 @@ public class LazyTopDownAnalyzer(
                     val location = if (classOrObject.isTopLevel()) KotlinLookupLocation(classOrObject) else NoLookupLocation.WHEN_RESOLVE_DECLARATION
                     val descriptor = lazyDeclarationResolver.getClassDescriptor(classOrObject, location) as ClassDescriptorWithResolutionScopes
 
-                    c.getDeclaredClasses().put(classOrObject, descriptor)
+                    c.declaredClasses.put(classOrObject, descriptor)
                     registerDeclarations(classOrObject.getDeclarations())
                     registerTopLevelFqName(topLevelFqNames, classOrObject, descriptor)
 
@@ -121,7 +121,7 @@ public class LazyTopDownAnalyzer(
                             if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
                                 trace.report(CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
                             }
-                            else if (classDescriptor.getKind() == ClassKind.INTERFACE) {
+                            else if (classDescriptor.kind == ClassKind.INTERFACE) {
                                 trace.report(CONSTRUCTOR_IN_INTERFACE.on(jetDeclaration))
                             }
                         }
@@ -136,13 +136,13 @@ public class LazyTopDownAnalyzer(
                 private fun registerPrimaryConstructorParameters(klass: KtClass) {
                     for (jetParameter in klass.getPrimaryConstructorParameters()) {
                         if (jetParameter.hasValOrVar()) {
-                            c.getPrimaryConstructorParameterProperties().put(jetParameter, lazyDeclarationResolver.resolveToDescriptor(jetParameter) as PropertyDescriptor)
+                            c.primaryConstructorParameterProperties.put(jetParameter, lazyDeclarationResolver.resolveToDescriptor(jetParameter) as PropertyDescriptor)
                         }
                     }
                 }
 
                 override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
-                    c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver.resolveToDescriptor(constructor) as ConstructorDescriptor)
+                    c.secondaryConstructors.put(constructor, lazyDeclarationResolver.resolveToDescriptor(constructor) as ConstructorDescriptor)
                 }
 
                 override fun visitEnumEntry(enumEntry: KtEnumEntry) {
@@ -155,11 +155,7 @@ public class LazyTopDownAnalyzer(
 
                 override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
                     val containerDescriptor = lazyDeclarationResolver.resolveToDescriptor(initializer.containingDeclaration) as ClassDescriptorWithResolutionScopes
-                    c.getAnonymousInitializers().put(initializer, containerDescriptor)
-                }
-
-                override fun visitTypedef(typedef: KtTypedef) {
-                    trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"))
+                    c.anonymousInitializers.put(initializer, containerDescriptor)
                 }
 
                 override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
@@ -199,7 +195,7 @@ public class LazyTopDownAnalyzer(
     }
 
     private fun resolveAllHeadersInClasses(c: TopDownAnalysisContext) {
-        for (classDescriptor in c.getAllClasses()) {
+        for (classDescriptor in c.allClasses) {
             (classDescriptor as LazyClassDescriptor).resolveMemberHeaders()
         }
     }
@@ -208,8 +204,8 @@ public class LazyTopDownAnalyzer(
         for (property in properties) {
             val descriptor = lazyDeclarationResolver.resolveToDescriptor(property) as PropertyDescriptor
 
-            c.getProperties().put(property, descriptor)
-            ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
+            c.properties.put(property, descriptor)
+            ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
             registerTopLevelFqName(topLevelFqNames, property, descriptor)
         }
     }
@@ -217,17 +213,17 @@ public class LazyTopDownAnalyzer(
     private fun createFunctionDescriptors(c: TopDownAnalysisContext, functions: List<KtNamedFunction>) {
         for (function in functions) {
             val simpleFunctionDescriptor = lazyDeclarationResolver.resolveToDescriptor(function) as SimpleFunctionDescriptor
-            c.getFunctions().put(function, simpleFunctionDescriptor)
-            ForceResolveUtil.forceResolveAllContents(simpleFunctionDescriptor.getAnnotations())
-            for (parameterDescriptor in simpleFunctionDescriptor.getValueParameters()) {
-                ForceResolveUtil.forceResolveAllContents(parameterDescriptor.getAnnotations())
+            c.functions.put(function, simpleFunctionDescriptor)
+            ForceResolveUtil.forceResolveAllContents(simpleFunctionDescriptor.annotations)
+            for (parameterDescriptor in simpleFunctionDescriptor.valueParameters) {
+                ForceResolveUtil.forceResolveAllContents(parameterDescriptor.annotations)
             }
         }
     }
 
     private fun registerTopLevelFqName(topLevelFqNames: Multimap<FqName, KtElement>, declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor) {
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            val fqName = declaration.getFqName()
+            val fqName = declaration.fqName
             if (fqName != null) {
                 topLevelFqNames.put(fqName, declaration)
             }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class LoadUnitValueInstruction(
+class LoadUnitValueInstruction(
         expression: KtExpression,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(expression, lexicalScope) {

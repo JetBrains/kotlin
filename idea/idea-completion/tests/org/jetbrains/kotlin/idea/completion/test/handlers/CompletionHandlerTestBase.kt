@@ -28,9 +28,8 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import kotlin.test.fail
 
-public abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCase() {
+abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCase() {
     protected val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 
@@ -56,8 +55,8 @@ public abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtur
     }
 
     private fun getExistentLookupElement(lookupString: String?, itemText: String?, tailText: String?): LookupElement? {
-        val lookup = LookupManager.getInstance(getProject())?.getActiveLookup() as LookupImpl? ?: return null
-        val items = lookup.getItems()
+        val lookup = LookupManager.getInstance(project)?.activeLookup as LookupImpl? ?: return null
+        val items = lookup.items
 
         if (lookupString == "*") {
             assert(itemText == null)
@@ -68,13 +67,13 @@ public abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtur
         var foundElement : LookupElement? = null
         val presentation = LookupElementPresentation()
         for (lookupElement in items) {
-            val lookupOk = if (lookupString != null) lookupElement.getLookupString() == lookupString else true
+            val lookupOk = if (lookupString != null) lookupElement.lookupString == lookupString else true
 
             if (lookupOk) {
                 lookupElement.renderElement(presentation)
 
                 val textOk = if (itemText != null) {
-                    val itemItemText = presentation.getItemText()
+                    val itemItemText = presentation.itemText
                     itemItemText != null && itemItemText == itemText
                 }
                 else {
@@ -83,7 +82,7 @@ public abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtur
 
                 if (textOk) {
                     val tailOk = if (tailText != null) {
-                        val itemTailText = presentation.getTailText()
+                        val itemTailText = presentation.tailText
                         itemTailText != null && itemTailText == tailText
                     }
                     else {
@@ -112,17 +111,17 @@ public abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtur
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     protected fun selectItem(item: LookupElement?, completionChar: Char) {
-        val lookup = (fixture.getLookup() as LookupImpl)
-        if (lookup.getCurrentItem() != item) { // do not touch selection if not changed - important for char filter tests
-            lookup.setCurrentItem(item)
+        val lookup = (fixture.lookup as LookupImpl)
+        if (lookup.currentItem != item) { // do not touch selection if not changed - important for char filter tests
+            lookup.currentItem = item
         }
-        lookup.setFocusDegree(LookupImpl.FocusDegree.FOCUSED);
+        lookup.focusDegree = LookupImpl.FocusDegree.FOCUSED;
         if (LookupEvent.isSpecialCompletionChar(completionChar)) {
-            (object : WriteCommandAction.Simple<Any>(getProject()) {
-                protected override fun run(result: Result<Any>) {
+            (object : WriteCommandAction.Simple<Any>(project) {
+                override fun run(result: Result<Any>) {
                     run()
                 }
-                protected override fun run() {
+                override fun run() {
                     lookup.finishLookup(completionChar)
                 }
             }).execute().throwException()

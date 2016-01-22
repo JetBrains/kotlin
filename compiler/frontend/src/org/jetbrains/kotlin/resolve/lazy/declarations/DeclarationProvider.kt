@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
-public interface DeclarationProvider {
-    public fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration>
+interface DeclarationProvider {
+    fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration>
 
-    public fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction>
+    fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction>
 
-    public fun getPropertyDeclarations(name: Name): Collection<KtProperty>
+    fun getPropertyDeclarations(name: Name): Collection<KtProperty>
 
-    public fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
+    fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
 }

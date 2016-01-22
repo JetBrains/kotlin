@@ -21,15 +21,15 @@ package org.jetbrains.kotlin.util.capitalizeDecapitalize
  * "FOOBar" -> "fooBar"
  * "FOO" -> "foo"
  */
-public fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
+fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
     fun isUpperCaseCharAt(index: Int): Boolean {
-        val c = charAt(index)
+        val c = this[index]
         return if (asciiOnly) c in 'A'..'Z' else c.isUpperCase()
     }
 
     if (isEmpty() || !isUpperCaseCharAt(0)) return this
 
-    if (length() == 1 || !isUpperCaseCharAt(1)) {
+    if (length == 1 || !isUpperCaseCharAt(1)) {
         return if (asciiOnly) decapitalizeAsciiOnly() else decapitalize()
     }
 
@@ -45,11 +45,11 @@ public fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
  * "FooBar" -> "FOOBar"
  * "foo" -> "FOO"
  */
-public fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
+fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
     fun toUpperCase(string: String) = if (asciiOnly) string.toUpperCaseAsciiOnly() else string.toUpperCase()
 
     fun isLowerCaseCharAt(index: Int): Boolean {
-        val c = charAt(index)
+        val c = this[index]
         return if (asciiOnly) c in 'a'..'z' else c.isLowerCase()
     }
 
@@ -58,34 +58,34 @@ public fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
     return toUpperCase(substring(0, secondWordStart)) + substring(secondWordStart)
 }
 
-public fun String.capitalizeAsciiOnly(): String {
+fun String.capitalizeAsciiOnly(): String {
     if (isEmpty()) return this
-    val c = charAt(0)
+    val c = this[0]
     return if (c in 'a'..'z')
         c.toUpperCase() + substring(1)
     else
         this
 }
 
-public fun String.decapitalizeAsciiOnly(): String {
+fun String.decapitalizeAsciiOnly(): String {
     if (isEmpty()) return this
-    val c = charAt(0)
+    val c = this[0]
     return if (c in 'A'..'Z')
         c.toLowerCase() + substring(1)
     else
         this
 }
 
-public fun String.toLowerCaseAsciiOnly(): String {
-    val builder = StringBuilder(length())
+fun String.toLowerCaseAsciiOnly(): String {
+    val builder = StringBuilder(length)
     for (c in this) {
         builder.append(if (c in 'A'..'Z') c.toLowerCase() else c)
     }
     return builder.toString()
 }
 
-public fun String.toUpperCaseAsciiOnly(): String {
-    val builder = StringBuilder(length())
+fun String.toUpperCaseAsciiOnly(): String {
+    val builder = StringBuilder(length)
     for (c in this) {
         builder.append(if (c in 'a'..'z') c.toUpperCase() else c)
     }

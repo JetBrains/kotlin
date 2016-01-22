@@ -5,17 +5,17 @@ class X
 fun box(): String {
     val a = X()
     val b = X()
-    if (!a.identityEquals(a)) return "a !== a"
-    if (a.identityEquals(b)) return "X() === X()"
+    if (a !== a) return "a !== a"
+    if (a === b) return "X() === X()"
     val c = a
-    if (!c.identityEquals(a)) return "c = a; c !== a"
+    if (c !== a) return "c = a; c !== a"
 
-    if (X().identityEquals(a)) return "X() identityEquals a"
+    if (X() === a) return "X() === a"
 
-    val t = !(X().identityEquals(a))
-    if (!t) return "t = !(X() identityEquals a); t == false"
+    val t = !(X() === a)
+    if (!t) return "t = !(X() === a); t == false"
 
-    val f = !!(X().identityEquals(a))
-    if (f) return "f = !!(X() identityEquals null); f == true"
+    val f = !!(X() === a)
+    if (f) return "f = !!(X() === null); f == true"
     return "OK";
 }

@@ -78,7 +78,7 @@ object CallTranslator {
 }
 
 private fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
-    return this.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER
+    return this.explicitReceiverKind != NO_EXPLICIT_RECEIVER
 }
 
 private fun translateCall(context: TranslationContext,
@@ -100,8 +100,8 @@ private fun translateCall(context: TranslationContext,
         }
     }
 
-    val call = resolvedCall.getCall()
-    if (call.getCallType() == CallType.INVOKE && !isInvokeCallOnVariable(call)) {
+    val call = resolvedCall.call
+    if (call.callType == CallType.INVOKE && !isInvokeCallOnVariable(call)) {
         val explicitReceiversForInvoke = computeExplicitReceiversForInvoke(context, resolvedCall, explicitReceivers)
         return translateFunctionCall(context, resolvedCall, explicitReceiversForInvoke)
     }
@@ -121,26 +121,26 @@ fun computeExplicitReceiversForInvoke(
         resolvedCall: ResolvedCall<out FunctionDescriptor>,
         explicitReceivers: ExplicitReceivers
 ): ExplicitReceivers {
-    val callElement = resolvedCall.getCall().getCallElement()
+    val callElement = resolvedCall.call.callElement
     assert(explicitReceivers.extensionReceiver == null) { "'Invoke' call must have one receiver: $callElement" }
 
     fun translateReceiverAsExpression(receiver: ReceiverValue?): JsExpression? =
             (receiver as? ExpressionReceiver)?.let { Translation.translateAsExpression(it.expression, context) }
 
-    val dispatchReceiver = resolvedCall.getDispatchReceiver()
-    val extensionReceiver = resolvedCall.getExtensionReceiver()
+    val dispatchReceiver = resolvedCall.dispatchReceiver
+    val extensionReceiver = resolvedCall.extensionReceiver
 
-    if (dispatchReceiver != null && extensionReceiver != null && resolvedCall.getExplicitReceiverKind() == ExplicitReceiverKind.BOTH_RECEIVERS) {
+    if (dispatchReceiver != null && extensionReceiver != null && resolvedCall.explicitReceiverKind == ExplicitReceiverKind.BOTH_RECEIVERS) {
         assert(explicitReceivers.extensionOrDispatchReceiver != null) {
-            "No explicit receiver for 'invoke' resolved call with both receivers: $callElement, text: ${callElement.getText()}" +
+            "No explicit receiver for 'invoke' resolved call with both receivers: $callElement, text: ${callElement.text}" +
             "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver"
         }
     }
     else {
         assert(explicitReceivers.extensionOrDispatchReceiver == null) {
-               "Non trivial explicit receiver ${explicitReceivers.extensionOrDispatchReceiver}\n" +
-               "for 'invoke' resolved call: $callElement, text: ${callElement.getText()}\n" +
-               "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver"
+            "Non trivial explicit receiver ${explicitReceivers.extensionOrDispatchReceiver}\n" +
+            "for 'invoke' resolved call: $callElement, text: ${callElement.text}\n" +
+            "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver"
         }
     }
 

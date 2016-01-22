@@ -43,20 +43,20 @@ import org.jetbrains.kotlin.psi.KtWhileExpressionBase
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-public fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
-    val conditionExpression = expression.getCondition() ?:
-                              throw IllegalArgumentException("condition expression should not be null: ${expression.getText()}")
+fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
+    val conditionExpression = expression.condition ?:
+                              throw IllegalArgumentException("condition expression should not be null: ${expression.text}")
     val conditionBlock = JsBlock()
     var jsCondition = Translation.translateAsExpression(conditionExpression, context, conditionBlock)
     val isEmptyLoopCondition = isEmptyExpression(jsCondition)
-    val body = expression.getBody()
+    val body = expression.body
     var bodyStatement =
         if (body != null)
             Translation.translateAsStatementAndMergeInBlockIfNeeded(body, context)
         else
             JsEmpty
 
-    if (!conditionBlock.isEmpty()) {
+    if (!conditionBlock.isEmpty) {
         val breakIfConditionIsFalseStatement = JsIf(not(jsCondition), JsBreak())
         val bodyBlock = convertToBlock(bodyStatement)
         jsCondition = JsLiteral.TRUE
@@ -66,20 +66,20 @@ public fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, cont
             val secondRun = context.declareTemporary(JsLiteral.FALSE)
             context.addStatementToCurrentBlock(secondRun.assignmentExpression().makeStmt())
             if (!isEmptyLoopCondition) {
-                conditionBlock.getStatements().add(breakIfConditionIsFalseStatement)
+                conditionBlock.statements.add(breakIfConditionIsFalseStatement)
             }
             val ifStatement = JsIf(secondRun.reference(), conditionBlock, assignment(secondRun.reference(), JsLiteral.TRUE).makeStmt())
-            bodyBlock.getStatements().add(0, ifStatement)
+            bodyBlock.statements.add(0, ifStatement)
         }
         else {
             // translate to: while (true) { <expr> if(!tmpExprVar) break; <body> }
             if (isEmptyLoopCondition) {
-                bodyBlock.getStatements().clear()
+                bodyBlock.statements.clear()
                 context.addStatementsToCurrentBlockFrom(conditionBlock)
             }
             else {
-                conditionBlock.getStatements().add(breakIfConditionIsFalseStatement)
-                bodyBlock.getStatements().addAll(0, conditionBlock.getStatements())
+                conditionBlock.statements.add(breakIfConditionIsFalseStatement)
+                bodyBlock.statements.addAll(0, conditionBlock.statements)
             }
         }
 
@@ -90,46 +90,46 @@ public fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, cont
     }
 
     val result = if (doWhile) JsDoWhile() else JsWhile()
-    result.setCondition(jsCondition)
-    result.setBody(bodyStatement)
+    result.condition = jsCondition
+    result.body = bodyStatement
     return result.source(expression)!!
 }
 
-public fun translateForExpression(expression: KtForExpression, context: TranslationContext): JsStatement {
+fun translateForExpression(expression: KtForExpression, context: TranslationContext): JsStatement {
     val loopRange = getLoopRange(expression)
     val rangeType = getTypeForExpression(context.bindingContext(), loopRange)
 
     fun isForOverRange(): Boolean {
         //TODO: better check
         //TODO: long range?
-        return getClassDescriptorForType(rangeType).getName().asString() == "IntRange"
+        return getClassDescriptorForType(rangeType).name.asString() == "IntRange"
     }
 
     fun isForOverRangeLiteral(): Boolean =
-            loopRange is KtBinaryExpression && loopRange.getOperationToken() == KtTokens.RANGE && isForOverRange()
+            loopRange is KtBinaryExpression && loopRange.operationToken == KtTokens.RANGE && isForOverRange()
 
    fun isForOverArray(): Boolean {
         //TODO: better check
         //TODO: IMPORTANT!
-        return getClassDescriptorForType(rangeType).getName().asString() == "Array" ||
-               getClassDescriptorForType(rangeType).getName().asString() == "IntArray"
+        return getClassDescriptorForType(rangeType).name.asString() == "Array" ||
+               getClassDescriptorForType(rangeType).name.asString() == "IntArray"
     }
 
-    val destructuringParameter: KtDestructuringDeclaration? = expression.getDestructuringParameter();
+    val destructuringParameter: KtDestructuringDeclaration? = expression.destructuringParameter;
 
     fun declareParameter(): JsName {
         val loopParameter = getLoopParameter(expression)
         if (loopParameter != null) {
             return context.getNameForElement(loopParameter)
         }
-        assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.getText()}" }
+        assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.text}" }
         return context.scope().declareTemporary()
     }
 
     val parameterName: JsName = declareParameter()
 
     fun translateBody(itemValue: JsExpression?): JsStatement? {
-        val realBody = expression.getBody()?.let { Translation.translateAsStatementAndMergeInBlockIfNeeded(it, context) }
+        val realBody = expression.body?.let { Translation.translateAsStatementAndMergeInBlockIfNeeded(it, context) }
         if (itemValue == null && destructuringParameter == null) {
             return realBody
         }
@@ -143,14 +143,14 @@ public fun translateForExpression(expression: KtForExpression, context: Translat
             if (realBody == null) return JsBlock(currentVarInit)
 
             val block = convertToBlock(realBody)
-            block.getStatements().add(0, currentVarInit)
+            block.statements.add(0, currentVarInit)
             return block
         }
     }
 
     // TODO: implement reverse semantics
     fun translateForOverLiteralRange(): JsStatement {
-        if (loopRange !is KtBinaryExpression) throw IllegalStateException("expected JetBinaryExpression, but ${loopRange.getText()}")
+        if (loopRange !is KtBinaryExpression) throw IllegalStateException("expected JetBinaryExpression, but ${loopRange.text}")
 
         val startBlock = JsBlock()
         val leftExpression = TranslationUtils.translateLeftExpression(context, loopRange, startBlock)
@@ -183,9 +183,9 @@ public fun translateForExpression(expression: KtForExpression, context: Translat
 
         fun getProperty(funName: String): JsExpression = JsNameRef(funName, rangeExpression.reference())
 
-        val start = context.declareTemporary(getProperty("start"))
-        val end = context.declareTemporary(getProperty("end"))
-        val increment = context.declareTemporary(getProperty("increment"))
+        val start = context.declareTemporary(getProperty("first"))
+        val end = context.declareTemporary(getProperty("last"))
+        val increment = context.declareTemporary(getProperty("step"))
 
         val body = translateBody(null)
         val initExpression = newVar(parameterName, start.reference())

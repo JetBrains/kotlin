@@ -21,9 +21,13 @@ var JsTests = (function () {
 
     var assert = function (isTrue, message) {
         if (!isTrue) {
-            reporter.reportError(message);
-            throw failedTest;
+            fail(message);
         }
+    };
+
+    var fail = function (message) {
+        reporter.reportError(message);
+        throw failedTest;
     };
 
     var init = function () {
@@ -49,6 +53,7 @@ var JsTests = (function () {
     };
     return {
         test: test,
-        assert: assert
+        assert: assert,
+        fail: fail
     }
 })();

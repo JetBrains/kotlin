@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import java.util.*
 
-public class IntegerValueTypeConstructor(
+class IntegerValueTypeConstructor(
         private val value: Long,
         private val builtIns: KotlinBuiltIns
 ) : TypeConstructor {
@@ -33,10 +33,10 @@ public class IntegerValueTypeConstructor(
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Int' should be returned
-        checkBoundsAndAddSuperType(value, Integer.MIN_VALUE.toLong(), Integer.MAX_VALUE.toLong(), builtIns.getIntType())
-        checkBoundsAndAddSuperType(value, java.lang.Byte.MIN_VALUE.toLong(), java.lang.Byte.MAX_VALUE.toLong(), builtIns.getByteType())
-        checkBoundsAndAddSuperType(value, java.lang.Short.MIN_VALUE.toLong(), java.lang.Short.MAX_VALUE.toLong(), builtIns.getShortType())
-        supertypes.add(builtIns.getLongType())
+        checkBoundsAndAddSuperType(value, Integer.MIN_VALUE.toLong(), Integer.MAX_VALUE.toLong(), builtIns.intType)
+        checkBoundsAndAddSuperType(value, java.lang.Byte.MIN_VALUE.toLong(), java.lang.Byte.MAX_VALUE.toLong(), builtIns.byteType)
+        checkBoundsAndAddSuperType(value, java.lang.Short.MIN_VALUE.toLong(), java.lang.Short.MAX_VALUE.toLong(), builtIns.shortType)
+        supertypes.add(builtIns.longType)
     }
 
     private fun checkBoundsAndAddSuperType(value: Long, minValue: Long, maxValue: Long, kotlinType: KotlinType) {
@@ -57,7 +57,7 @@ public class IntegerValueTypeConstructor(
 
     override fun getAnnotations() = Annotations.EMPTY
 
-    public fun getValue(): Long = value
+    fun getValue(): Long = value
 
     override fun getBuiltIns(): KotlinBuiltIns {
         return builtIns

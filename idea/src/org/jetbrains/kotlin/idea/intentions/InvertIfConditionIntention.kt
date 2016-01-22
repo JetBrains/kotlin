@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.quickfix.unblockDocument
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(javaClass(), "Invert 'if' condition") {
+class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression::class.java, "Invert 'if' condition") {
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
-        if (!element.getIfKeyword().getTextRange().containsOffset(caretOffset)) return false
-        return element.getCondition() != null && element.getThen() != null
+        if (!element.ifKeyword.textRange.containsOffset(caretOffset)) return false
+        return element.condition != null && element.then != null
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
-        val newCondition = element.getCondition()!!.negate()
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
+        val newCondition = element.condition!!.negate()
 
         val newIf = handleSpecialCases(element, newCondition)
                     ?: handleStandardCase(element, newCondition)
@@ -47,22 +47,24 @@ public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>
             simplifyIntention.applyTo(newIfCondition)
         }
 
-        PsiDocumentManager.getInstance(newIf.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
-        editor.moveCaret(newIf.getTextOffset())
+        editor?.apply {
+            unblockDocument()
+            moveCaret(newIf.textOffset)
+        }
     }
 
     private fun handleStandardCase(ifExpression: KtIfExpression, newCondition: KtExpression): KtIfExpression {
         val psiFactory = KtPsiFactory(ifExpression)
 
-        val thenBranch = ifExpression.getThen()!!
-        val elseBranch = ifExpression.getElse() ?: psiFactory.createEmptyBody()
+        val thenBranch = ifExpression.then!!
+        val elseBranch = ifExpression.`else` ?: psiFactory.createEmptyBody()
 
         val newThen = if (elseBranch is KtIfExpression)
             psiFactory.createSingleStatementBlock(elseBranch)
         else
             elseBranch
 
-        val newElse = if (thenBranch is KtBlockExpression && thenBranch.getStatements().isEmpty())
+        val newElse = if (thenBranch is KtBlockExpression && thenBranch.statements.isEmpty())
             null
         else
             thenBranch
@@ -71,17 +73,17 @@ public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>
     }
 
     private fun handleSpecialCases(ifExpression: KtIfExpression, newCondition: KtExpression): KtIfExpression? {
-        val elseBranch = ifExpression.getElse()
+        val elseBranch = ifExpression.`else`
         if (elseBranch != null) return null
 
         val factory = KtPsiFactory(ifExpression)
 
-        val thenBranch = ifExpression.getThen()!!
+        val thenBranch = ifExpression.then!!
         val lastThenStatement = thenBranch.lastBlockStatementOrThis()
         if (lastThenStatement.isExitStatement()) {
-            val block = ifExpression.getParent() as? KtBlockExpression
+            val block = ifExpression.parent as? KtBlockExpression
             if (block != null) {
-                val rBrace = block.getRBrace()
+                val rBrace = block.rBrace
                 val afterIfInBlock = ifExpression.siblings(withItself = false)
                         .takeWhile { it != rBrace }
                         .toList()
@@ -95,12 +97,12 @@ public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>
                         val first = afterIfInBlock.first()
                         val last = afterIfInBlock.last()
                         // build new then branch text from statements after if (we will add exit statement if necessary later)
-                        var newIfBodyText = ifExpression.getContainingFile().getText().substring(first.startOffset, last.endOffset).trim()
+                        var newIfBodyText = ifExpression.containingFile.text.substring(first.startOffset, last.endOffset).trim()
 
                         // remove statements after if as they are moving under if
                         block.deleteChildRange(first, last)
 
-                        if (lastThenStatement is KtReturnExpression && lastThenStatement.getReturnedExpression() == null) {
+                        if (lastThenStatement is KtReturnExpression && lastThenStatement.returnedExpression == null) {
                             lastThenStatement.delete()
                         }
                         val updatedIf = copyThenBranchAfter(ifExpression)
@@ -110,7 +112,7 @@ public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>
                             // don't insert the exit statement, if the new if statement placement has the same exit statement executed after it
                             val exitAfterNewIf = exitStatementExecutedAfter(updatedIf)
                             if (exitAfterNewIf == null || !exitAfterNewIf.matches(exitStatementAfterIf)) {
-                                newIfBodyText += "\n" + exitStatementAfterIf.getText()
+                                newIfBodyText += "\n" + exitStatementAfterIf.text
                             }
                         }
 
@@ -132,15 +134,15 @@ public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>
 
     private fun copyThenBranchAfter(ifExpression: KtIfExpression): KtIfExpression {
         val factory = KtPsiFactory(ifExpression)
-        val thenBranch = ifExpression.getThen() ?: return ifExpression
+        val thenBranch = ifExpression.then ?: return ifExpression
 
-        val parent = ifExpression.getParent()
+        val parent = ifExpression.parent
         if (parent !is KtBlockExpression) {
             assert(parent is KtContainerNode)
             val block = factory.createEmptyBody()
-            block.addAfter(ifExpression, block.getLBrace())
+            block.addAfter(ifExpression, block.lBrace)
             val newBlock = ifExpression.replaced(block)
-            val newIf = newBlock.getStatements().single() as KtIfExpression
+            val newIf = newBlock.statements.single() as KtIfExpression
             return copyThenBranchAfter(newIf)
         }
 
@@ -159,9 +161,9 @@ public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>
     }
 
     private fun exitStatementExecutedAfter(expression: KtExpression): KtExpression? {
-        val parent = expression.getParent()
+        val parent = expression.parent
         if (parent is KtBlockExpression) {
-            val lastStatement = parent.getStatements().last()
+            val lastStatement = parent.statements.last()
             if (expression == lastStatement) {
                 return exitStatementExecutedAfter(parent)
             }
@@ -175,25 +177,25 @@ public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>
 
         when (parent) {
             is KtNamedFunction -> {
-                if (parent.getBodyExpression() == expression) {
+                if (parent.bodyExpression == expression) {
                     if (!parent.hasBlockBody()) return null
-                    val returnType = (parent.resolveToDescriptor() as FunctionDescriptor).getReturnType()
+                    val returnType = (parent.resolveToDescriptor() as FunctionDescriptor).returnType
                     if (returnType == null || !returnType.isUnit()) return null
                     return KtPsiFactory(expression).createExpression("return")
                 }
             }
 
             is KtContainerNode -> {
-                val pparent = parent.getParent()
+                val pparent = parent.parent
                 when (pparent) {
                     is KtLoopExpression -> {
-                        if (expression == pparent.getBody()) {
+                        if (expression == pparent.body) {
                             return KtPsiFactory(expression).createExpression("continue")
                         }
                     }
 
                     is KtIfExpression -> {
-                        if (expression == pparent.getThen() || expression == pparent.getElse()) {
+                        if (expression == pparent.then || expression == pparent.`else`) {
                             return exitStatementExecutedAfter(pparent)
                         }
                     }

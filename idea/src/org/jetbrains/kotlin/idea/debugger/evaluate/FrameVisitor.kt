@@ -42,7 +42,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
         val OBJECT_TYPE = Type.getType(Any::class.java)
     }
 
-    public fun findValue(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {
+    fun findValue(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {
         if (frame == null) return null
 
         try {

@@ -28,12 +28,15 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.ArraysKt;
+import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtProperty;
+import org.jetbrains.kotlin.psi.KtPropertyAccessor;
 
 import java.util.List;
 
@@ -119,8 +122,8 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
         return ContainerUtil.map(getDelegate().getFields(), new Function<PsiField, PsiField>() {
             @Override
             public PsiField fun(PsiField field) {
-                KtDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
-                return KtLightFieldImpl.Factory.create(declaration, field, KtWrappingLightClass.this);
+                LightMemberOrigin origin = ClsWrapperStubPsiFactory.getMemberOrigin(field);
+                return KtLightFieldImpl.Factory.create(origin != null ? origin.getOriginalElement() : null, field, KtWrappingLightClass.this);
             }
         });
     }
@@ -131,12 +134,14 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
         return ArraysKt.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
             @Override
             public PsiMethod invoke(PsiMethod method) {
-                KtDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(method);
-                if (declaration instanceof KtPropertyAccessor) {
-                    declaration = PsiTreeUtil.getParentOfType(declaration, KtProperty.class);
+                LightMemberOrigin origin = ClsWrapperStubPsiFactory.getMemberOrigin(method);
+                KtDeclaration originalElement = origin != null ? origin.getOriginalElement() : null;
+                if (originalElement instanceof KtPropertyAccessor) {
+                    //noinspection ConstantConditions
+                    origin = origin.copy(PsiTreeUtil.getParentOfType(originalElement, KtProperty.class), origin.getOriginKind());
                 }
 
-                return KtLightMethodImpl.Factory.create(method, declaration, KtWrappingLightClass.this);
+                return KtLightMethodImpl.Factory.create(method, origin, KtWrappingLightClass.this);
             }
         });
     }

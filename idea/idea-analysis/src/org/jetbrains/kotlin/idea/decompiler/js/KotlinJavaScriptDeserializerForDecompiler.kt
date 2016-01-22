@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
 import java.io.ByteArrayInputStream
 
-public class KotlinJavaScriptDeserializerForDecompiler(
+class KotlinJavaScriptDeserializerForDecompiler(
         classFile: VirtualFile
 ) : DeserializerForDecompilerBase(classFile.parent!!, JsMetaFileUtils.getPackageFqName(classFile)) {
 

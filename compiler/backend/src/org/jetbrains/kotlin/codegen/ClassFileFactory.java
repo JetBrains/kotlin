@@ -22,14 +22,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.DataOutputStream;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
@@ -123,7 +123,7 @@ public class ClassFileFactory implements OutputFileCollection {
                     try {
                         ByteArrayOutputStream moduleMapping = new ByteArrayOutputStream(4096);
                         DataOutputStream dataOutStream = new DataOutputStream(moduleMapping);
-                        int[] version = JvmAbi.VERSION.toArray();
+                        int[] version = JvmMetadataVersion.INSTANCE.toArray();
                         dataOutStream.writeInt(version.length);
                         for (int number : version) {
                             dataOutStream.writeInt(number);

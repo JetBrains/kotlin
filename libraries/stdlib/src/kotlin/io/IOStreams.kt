@@ -6,9 +6,6 @@ import java.io.*
 import java.nio.charset.Charset
 import java.util.NoSuchElementException
 
-@Deprecated("It's not recommended to iterate through input stream of bytes unless it's buffered. Use buffered() extension on stream to make it buffered.", ReplaceWith("this.buffered().iterator()"))
-public operator fun InputStream.iterator(): ByteIterator = buffered().iterator()
-
 /** Returns an [Iterator] of bytes read from this input stream. */
 public operator fun BufferedInputStream.iterator(): ByteIterator =
         object : ByteIterator() {
@@ -44,7 +41,7 @@ public operator fun BufferedInputStream.iterator(): ByteIterator =
 
 
 /** Creates a new byte input stream for the string. */
-public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): InputStream = ByteArrayInputStream(toByteArray(charset))
+public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): ByteArrayInputStream = ByteArrayInputStream(toByteArray(charset))
 
 /**
  * Creates an input stream for reading data from this byte array.
@@ -62,7 +59,7 @@ public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStrea
  * Creates a buffered input stream wrapping this stream.
  * @param bufferSize the buffer size to use.
  */
-public fun InputStream.buffered(bufferSize: Int = defaultBufferSize): BufferedInputStream
+public fun InputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedInputStream
         = if (this is BufferedInputStream) this else BufferedInputStream(this, bufferSize)
 
 /** Creates a reader on this input stream using UTF-8 or the specified [charset]. */
@@ -72,16 +69,18 @@ public fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamRea
 public fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8): BufferedReader = reader(charset).buffered()
 
 /** Creates a reader on this input stream using the specified [charset]. */
+@Deprecated("Use InputStream.reader(Charset) instead.", ReplaceWith("this.reader(charset(charset))"), level = DeprecationLevel.ERROR)
 public fun InputStream.reader(charset: String): InputStreamReader = InputStreamReader(this, charset)
 
 /** Creates a buffered reader on this input stream using the specified [charset]. */
-public fun InputStream.bufferedReader(charset: String): BufferedReader = reader(charset).buffered()
+@Deprecated("Use InputStream.bufferedReader(Charset) instead.", ReplaceWith("this.bufferedReader(charset(charset))"), level = DeprecationLevel.ERROR)
+public fun InputStream.bufferedReader(charset: String): BufferedReader = reader(charset(charset)).buffered()
 
 /**
  * Creates a buffered output stream wrapping this stream.
  * @param bufferSize the buffer size to use.
  */
-public fun OutputStream.buffered(bufferSize: Int = defaultBufferSize): BufferedOutputStream
+public fun OutputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedOutputStream
         = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
 /** Creates a writer on this output stream using UTF-8 or the specified [charset]. */
@@ -91,17 +90,19 @@ public fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamW
 public fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
 
 /** Creates a writer on this output stream using the specified [charset]. */
+@Deprecated("Use OutputStream.writer(Charset) instead.", ReplaceWith("this.writer(charset(charset))"), level = DeprecationLevel.ERROR)
 public fun OutputStream.writer(charset: String): OutputStreamWriter = OutputStreamWriter(this, charset)
 
 /** Creates a buffered writer on this output stream using the specified [charset]. */
-public fun OutputStream.bufferedWriter(charset: String): BufferedWriter = writer(charset).buffered()
+@Deprecated("Use OutputStream.bufferedWriter(Charset) instead.", ReplaceWith("this.bufferedWriter(charset(charset))"), level = DeprecationLevel.ERROR)
+public fun OutputStream.bufferedWriter(charset: String): BufferedWriter = writer(charset(charset)).buffered()
 
 /**
  * Copies this stream to the given output stream, returning the number of bytes copied
  *
  * **Note** It is the caller's responsibility to close both of these resources.
  */
-public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = defaultBufferSize): Long {
+public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     var bytesCopied: Long = 0
     val buffer = ByteArray(bufferSize)
     var bytes = read(buffer)
@@ -118,7 +119,7 @@ public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = defaultBuffer
  *
  * **Note**: It is the caller's responsibility to close this stream.
  */
-public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteArray {
+public fun InputStream.readBytes(estimatedSize: Int = DEFAULT_BUFFER_SIZE): ByteArray {
     val buffer = ByteArrayOutputStream(estimatedSize)
     copyTo(buffer)
     return buffer.toByteArray()

@@ -28,7 +28,7 @@ private val FILTERS = listOf(
         ClassFilter("kotlin.KotlinNullPointerException")
 )
 
-public class KotlinDebuggerInternalClassesFilterProvider : DebuggerClassFilterProvider {
+class KotlinDebuggerInternalClassesFilterProvider : DebuggerClassFilterProvider {
     override fun getFilters(): List<ClassFilter>? {
         return if (KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES) FILTERS else listOf()
     }

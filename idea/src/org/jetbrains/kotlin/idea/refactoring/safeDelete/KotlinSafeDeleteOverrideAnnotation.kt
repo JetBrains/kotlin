@@ -20,10 +20,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteCustomUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo
 
-public class KotlinSafeDeleteOverrideAnnotation(
+class KotlinSafeDeleteOverrideAnnotation(
         element: PsiElement, referencedElement: PsiElement
 ) : SafeDeleteUsageInfo(element, referencedElement), SafeDeleteCustomUsageInfo {
-    public override fun performRefactoring() {
-        getElement()?.removeOverrideModifier()
+    override fun performRefactoring() {
+        element?.removeOverrideModifier()
     }
 }

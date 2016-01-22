@@ -46,6 +46,7 @@ import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -54,9 +55,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
@@ -355,22 +356,22 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 parameters: ParametersDescriptor
         ): ClassFileFactory {
             return runReadAction {
-                val jetFile = createFileForDebugger(codeFragment, extractedFunction)
+                val fileForDebugger = createFileForDebugger(codeFragment, extractedFunction)
                 if (LOG.isDebugEnabled) {
-                    LOG.debug("File for eval4j:\n${runReadAction { jetFile.text }}")
+                    LOG.debug("File for eval4j:\n${runReadAction { fileForDebugger.text }}")
                 }
 
-                val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true, codeFragment.getContextContainingFile())
+                val (bindingContext, moduleDescriptor, files) = fileForDebugger.checkForErrors(true, codeFragment.getContextContainingFile())
 
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
-                    override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == jetFile
+                    override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == fileForDebugger
                     override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = true
-                    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.getContainingKtFile() == jetFile
+                    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.getContainingKtFile() == fileForDebugger
                     override fun shouldGenerateScript(script: KtScript) = false
                 }
 
                 val state = GenerationState(
-                        jetFile.project,
+                        fileForDebugger.project,
                         if (!DEBUG_MODE) ClassBuilderFactories.BINARIES else ClassBuilderFactories.TEST,
                         moduleDescriptor,
                         bindingContext,
@@ -487,8 +488,8 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
             importsFromContextFile + codeFragment.importsToString().split(KtCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
     )
 
-    val packageFromContextFile = containingContextFile?.packageName?.let {
-        if (it.isNotBlank()) "package $it" else ""
+    val packageFromContextFile = containingContextFile?.packageFqName?.let {
+        if (!it.isRoot) "package ${it.quoteSegmentsIfNeeded()}" else ""
     } ?: ""
     fileText = fileText.replace("!PACKAGE!", packageFromContextFile)
 

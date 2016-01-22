@@ -41,7 +41,7 @@ class TestLocal() : Closeable {
                 underMutexFun()
                 throw MyException("exception")
             } catch (e: MyException) {
-                status += e.getMessage()!!
+                status += e.message!!
                 return status
             }
         }
@@ -67,7 +67,7 @@ class TestLocal() : Closeable {
                 underMutexFun()
                 throw MyException("exception")
             } catch (e: MyException) {
-                status += e.getMessage()
+                status += e.message
                 return status
             } finally {
                 status += "finally"
@@ -82,7 +82,7 @@ class TestLocal() : Closeable {
                 underMutexFun()
                 throw MyException("exception")
             } catch (e: MyException) {
-                status += e.getMessage()
+                status += e.message
                 return Holder("fail")
             } finally {
                 status += "finally"

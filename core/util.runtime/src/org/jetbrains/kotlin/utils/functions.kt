@@ -18,15 +18,14 @@ package org.jetbrains.kotlin.utils
 
 private val IDENTITY: (Any?) -> Any? = { it }
 
-@Suppress("UNCHECKED_CAST")
-public fun <T> identity(): (T) -> T = IDENTITY as (T) -> T
+@Suppress("UNCHECKED_CAST") fun <T> identity(): (T) -> T = IDENTITY as (T) -> T
 
 
 private val ALWAYS_TRUE: (Any?) -> Boolean = { true }
 
-public fun <T> alwaysTrue(): (T) -> Boolean = ALWAYS_TRUE
+fun <T> alwaysTrue(): (T) -> Boolean = ALWAYS_TRUE
 
 
-public val DO_NOTHING: (Any?) -> Unit = { }
+val DO_NOTHING: (Any?) -> Unit = { }
 
-public fun <T> doNothing(): (T) -> Unit = DO_NOTHING
+fun <T> doNothing(): (T) -> Unit = DO_NOTHING

@@ -21,27 +21,28 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.Deprecation
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue
-import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.getDeprecatedAnnotation
-import org.jetbrains.kotlin.resolve.getDeprecatedAnnotationLevel
+import org.jetbrains.kotlin.resolve.getDeprecation
 
-public class DeprecatedSymbolValidator : SymbolUsageValidator {
+class DeprecatedSymbolValidator : SymbolUsageValidator {
 
     override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
-        val deprecated = targetDescriptor.getDeprecatedAnnotation()
-        if (deprecated != null) {
-            val (annotation, target) = deprecated
-            trace.report(createDeprecationDiagnostic(element, target, annotation))
+        val deprecation = targetDescriptor.getDeprecation()
+
+        // avoid duplicating diagnostic when deprecation for property effectively deprecates setter
+        if (targetDescriptor is PropertySetterDescriptor && targetDescriptor.correspondingProperty.getDeprecation() == deprecation) return
+
+        if (deprecation != null) {
+            trace.report(createDeprecationDiagnostic(element, deprecation))
         }
         else if (targetDescriptor is PropertyDescriptor) {
             propertyGetterWorkaround(resolvedCall, targetDescriptor, trace, element)
@@ -50,30 +51,28 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
 
     override fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
         // Do not check types in annotation entries to prevent cycles in resolve, rely on call message
-        val annotationEntry = KtStubbedPsiUtil.getPsiOrStubParent(element, javaClass<KtAnnotationEntry>(), true)
+        val annotationEntry = KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotationEntry::class.java, true)
         if (annotationEntry != null && annotationEntry.getCalleeExpression()!!.getConstructorReferenceExpression() == element)
             return
 
         // Do not check types in calls to super constructor in extends list, rely on call message
-        val superExpression = KtStubbedPsiUtil.getPsiOrStubParent(element, javaClass<KtSuperTypeCallEntry>(), true)
+        val superExpression = KtStubbedPsiUtil.getPsiOrStubParent(element, KtSuperTypeCallEntry::class.java, true)
         if (superExpression != null && superExpression.getCalleeExpression().getConstructorReferenceExpression() == element)
             return
 
-        val deprecated = targetDescriptor.getDeprecatedAnnotation()
-        if (deprecated != null) {
-            val (annotation, target) = deprecated
-            trace.report(createDeprecationDiagnostic(element, target, annotation))
+        val deprecation = targetDescriptor.getDeprecation()
+        if (deprecation != null) {
+            trace.report(createDeprecationDiagnostic(element, deprecation))
         }
     }
 
-    private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {
-        val message = deprecated.argumentValue("message") as? String ?: ""
-
-        if (deprecated.getDeprecatedAnnotationLevel() == DeprecationLevelValue.ERROR) {
-            return Errors.DEPRECATION_ERROR.on(element, descriptor.original, message)
+    private fun createDeprecationDiagnostic(element: PsiElement, deprecation: Deprecation): Diagnostic {
+        val targetOriginal = deprecation.target.original
+        if (deprecation.deprecationLevel == DeprecationLevelValue.ERROR) {
+            return Errors.DEPRECATION_ERROR.on(element, targetOriginal, deprecation.message)
         }
 
-        return Errors.DEPRECATION.on(element, descriptor.original, message)
+        return Errors.DEPRECATION.on(element, targetOriginal, deprecation.message)
     }
 
     private val PROPERTY_SET_OPERATIONS = TokenSet.create(KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ,
@@ -86,20 +85,20 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             expression: PsiElement
     ) {
         // property getters do not come as callable yet, so we analyse surroundings to check for deprecation annotation on getter
-        val binaryExpression = PsiTreeUtil.getParentOfType<KtBinaryExpression>(expression, javaClass<KtBinaryExpression>())
+        val binaryExpression = PsiTreeUtil.getParentOfType<KtBinaryExpression>(expression, KtBinaryExpression::class.java)
         if (binaryExpression != null) {
-            val left = binaryExpression.getLeft()
+            val left = binaryExpression.left
             if (left == expression) {
-                val operation = binaryExpression.getOperationToken()
+                val operation = binaryExpression.operationToken
                 if (operation != null && operation in PROPERTY_SET_OPERATIONS)
                     return
             }
 
-            val jetReferenceExpressions = PsiTreeUtil.getChildrenOfType<KtReferenceExpression>(left, javaClass<KtReferenceExpression>())
+            val jetReferenceExpressions = PsiTreeUtil.getChildrenOfType<KtReferenceExpression>(left, KtReferenceExpression::class.java)
             if (jetReferenceExpressions != null) {
                 for (expr in jetReferenceExpressions) {
                     if (expr == expression) {
-                        val operation = binaryExpression.getOperationToken()
+                        val operation = binaryExpression.operationToken
                         if (operation != null && operation in PROPERTY_SET_OPERATIONS)
                             return // skip binary set operations
                     }
@@ -107,19 +106,19 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             }
         }
 
-        val unaryExpression = PsiTreeUtil.getParentOfType(expression, javaClass<KtUnaryExpression>())
+        val unaryExpression = PsiTreeUtil.getParentOfType(expression, KtUnaryExpression::class.java)
         if (unaryExpression != null) {
-            val operation = unaryExpression.getOperationReference().getReferencedNameElementType()
+            val operation = unaryExpression.operationReference.getReferencedNameElementType()
             if (operation != null && operation in PROPERTY_SET_OPERATIONS)
                 return // skip unary set operations
 
         }
 
-        val callableExpression = PsiTreeUtil.getParentOfType(expression, javaClass<KtCallableReferenceExpression>())
+        val callableExpression = PsiTreeUtil.getParentOfType(expression, KtCallableReferenceExpression::class.java)
         if (callableExpression != null && callableExpression.getCallableReference() == expression) {
             return // skip Type::property
         }
 
-        propertyDescriptor.getGetter()?.let { validateCall(resolvedCall, it, trace, expression) }
+        propertyDescriptor.getter?.let { validateCall(resolvedCall, it, trace, expression) }
     }
 }

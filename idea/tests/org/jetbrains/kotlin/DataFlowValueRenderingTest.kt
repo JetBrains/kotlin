@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
     }
@@ -43,12 +43,12 @@ public abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsight
         val fixture = myFixture
         fixture.configureByFile(fileName)
 
-        val jetFile = fixture.getFile() as KtFile
-        val element = jetFile.findElementAt(fixture.getCaretOffset())!!
+        val jetFile = fixture.file as KtFile
+        val element = jetFile.findElementAt(fixture.caretOffset)!!
         val expression = element.getStrictParentOfType<KtExpression>()!!
         val info = expression.analyze().getDataFlowInfo(expression)
 
-        val allValues = (info.getCompleteTypeInfo().keySet() + info.getCompleteNullabilityInfo().keySet()).toSet()
+        val allValues = (info.completeTypeInfo.keySet() + info.completeNullabilityInfo.keys).toSet()
         val actual = allValues.mapNotNull { renderDataFlowValue(it) }.sorted().joinToString("\n")
 
         KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)

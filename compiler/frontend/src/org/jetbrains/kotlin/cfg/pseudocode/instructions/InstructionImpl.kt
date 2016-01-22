@@ -21,7 +21,7 @@ import java.util.LinkedHashSet
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 
-public abstract class InstructionImpl(override val lexicalScope: LexicalScope): Instruction {
+abstract class InstructionImpl(override val lexicalScope: LexicalScope): Instruction {
     private var _owner: Pseudocode? = null
 
     override var owner: Pseudocode
@@ -49,7 +49,7 @@ public abstract class InstructionImpl(override val lexicalScope: LexicalScope): 
         return instruction
     }
 
-    public var markedAsDead: Boolean = false
+    var markedAsDead: Boolean = false
 
     override val dead: Boolean get() = allCopies?.all { it.markedAsDead } ?: markedAsDead
 

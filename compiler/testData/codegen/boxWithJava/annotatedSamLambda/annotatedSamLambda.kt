@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 annotation class Ann(val x: String)
 
 fun testMethod(method: Method, name: String) {
-    assertEquals("OK", method.getAnnotation(javaClass<Ann>()).x, "On method of test named `$name`")
+    assertEquals("OK", method.getAnnotation(Ann::class.java).x, "On method of test named `$name`")
 
     for ((index, annotations) in method.getParameterAnnotations().withIndex()) {
         val ann = annotations.filterIsInstance<Ann>().single()

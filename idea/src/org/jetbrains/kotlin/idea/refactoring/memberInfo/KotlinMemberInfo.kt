@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 
-public class KotlinMemberInfo(member: KtNamedDeclaration, val isSuperClass: Boolean = false) : MemberInfoBase<KtNamedDeclaration>(member) {
+class KotlinMemberInfo(member: KtNamedDeclaration, val isSuperClass: Boolean = false) : MemberInfoBase<KtNamedDeclaration>(member) {
     companion object {
         private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
             modifiers = DescriptorRendererModifier.INNER.singletonOrEmptySet()
@@ -66,16 +66,14 @@ public class KotlinMemberInfo(member: KtNamedDeclaration, val isSuperClass: Bool
     }
 }
 
-public fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
+fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
     val declaration = member
     val psiMember: PsiMember? = when (declaration) {
         is KtNamedFunction, is KtProperty -> declaration.getRepresentativeLightMethod()
         is KtClassOrObject -> declaration.toLightClass()
         else -> null
     }
-    if (psiMember == null) return null
-
-    val info = MemberInfo(psiMember, isSuperClass, null)
+    val info = MemberInfo(psiMember ?: return null, isSuperClass, null)
     info.isToAbstract = isToAbstract
     return info
 }

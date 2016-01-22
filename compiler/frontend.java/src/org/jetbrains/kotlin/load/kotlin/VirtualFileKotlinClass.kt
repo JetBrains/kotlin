@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.utils.rethrow
 import java.io.FileNotFoundException
 import java.io.IOException
 
-public class VirtualFileKotlinClass private constructor(
-        public val file: VirtualFile,
+class VirtualFileKotlinClass private constructor(
+        val file: VirtualFile,
         className: ClassId,
         classHeader: KotlinClassHeader,
         innerClasses: FileBasedKotlinClass.InnerClassesInfo
 ) : FileBasedKotlinClass(className, classHeader, innerClasses) {
 
-    override fun getLocation() = file.getPath()
+    override fun getLocation() = file.path
 
     override fun getFileContents(): ByteArray {
         try {
@@ -47,16 +47,16 @@ public class VirtualFileKotlinClass private constructor(
 
     override fun equals(other: Any?) = other is VirtualFileKotlinClass && other.file == file
     override fun hashCode() = file.hashCode()
-    override fun toString() = "${javaClass.getSimpleName()}: $file"
+    override fun toString() = "${javaClass.simpleName}: $file"
 
     companion object Factory {
-        private val LOG = Logger.getInstance(javaClass<VirtualFileKotlinClass>())
+        private val LOG = Logger.getInstance(VirtualFileKotlinClass::class.java)
         private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
         @Deprecated("Use KotlinBinaryClassCache")
         fun create(file: VirtualFile, fileContent: ByteArray?): VirtualFileKotlinClass? {
             return perfCounter.time {
-                assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
+                assert(file.fileType == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
                     val byteContent = fileContent ?: file.contentsToByteArray(false)
@@ -78,6 +78,6 @@ public class VirtualFileKotlinClass private constructor(
         }
 
         private fun renderFileReadingErrorMessage(file: VirtualFile): String =
-                "Could not read file: ${file.getPath()}; size in bytes: ${file.getLength()}; file type: ${file.getFileType().getName()}"
+                "Could not read file: ${file.path}; size in bytes: ${file.length}; file type: ${file.fileType.name}"
     }
 }

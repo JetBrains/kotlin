@@ -39,17 +39,17 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public object AndroidConfigurationKeys {
-    public val VARIANT: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("Android build variant")
-    public val PACKAGE: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("application package fq name")
+object AndroidConfigurationKeys {
+    val VARIANT: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("Android build variant")
+    val PACKAGE: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("application package fq name")
 }
 
-public class AndroidCommandLineProcessor : CommandLineProcessor {
+class AndroidCommandLineProcessor : CommandLineProcessor {
     companion object {
-        public val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
+        val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
 
-        public val VARIANT_OPTION: CliOption = CliOption("variant", "<name;path>", "Android build variant", allowMultipleOccurrences = true)
-        public val PACKAGE_OPTION: CliOption = CliOption("package", "<fq name>", "Application package")
+        val VARIANT_OPTION: CliOption = CliOption("variant", "<name;path>", "Android build variant", allowMultipleOccurrences = true)
+        val PACKAGE_OPTION: CliOption = CliOption("package", "<fq name>", "Application package")
     }
 
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
@@ -69,9 +69,9 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-public class AndroidComponentRegistrar : ComponentRegistrar {
+class AndroidComponentRegistrar : ComponentRegistrar {
 
-    public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE)
         val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.map { parseVariant(it) }?.filterNotNull() ?: emptyList()
 
@@ -94,7 +94,7 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
     }
 }
 
-public class AndroidExtensionPropertiesComponentContainerContributor : StorageComponentContainerContributor {
+class AndroidExtensionPropertiesComponentContainerContributor : StorageComponentContainerContributor {
     override fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform) {
         if (platform is JvmPlatform) {
             container.useInstance(AndroidExtensionPropertiesCallChecker())

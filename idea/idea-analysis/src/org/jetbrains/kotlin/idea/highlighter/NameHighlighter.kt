@@ -23,20 +23,20 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 
 object NameHighlighter {
-    public var namesHighlightingEnabled = true
+    var namesHighlightingEnabled = true
         @TestOnly set
 
     @JvmStatic
     fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
         if (namesHighlightingEnabled) {
-            holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey)
+            holder.createInfoAnnotation(psiElement, null).textAttributes = attributesKey
         }
     }
 
     @JvmStatic
     fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
         if (namesHighlightingEnabled) {
-            holder.createInfoAnnotation(textRange, null).setTextAttributes(attributesKey)
+            holder.createInfoAnnotation(textRange, null).textAttributes = attributesKey
         }
     }
 }

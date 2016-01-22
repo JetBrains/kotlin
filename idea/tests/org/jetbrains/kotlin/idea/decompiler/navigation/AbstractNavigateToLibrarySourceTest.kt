@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.LinkedHashMap
 
-public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase() {
+abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTestCase() {
 
     protected fun doTest(path: String): Unit = doTestEx(path)
 
@@ -40,7 +40,7 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
 
     protected fun doTestEx(path: String, additionalConfig: (() -> Unit)? = null) {
         configureByFile(path)
-        getModule().configureAs(getProjectDescriptor())
+        module.configureAs(getProjectDescriptor())
 
         if (additionalConfig != null) {
             additionalConfig()
@@ -60,37 +60,37 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
 
     private fun checkAnnotatedLibraryCode(forceResolve: Boolean) {
         SourceNavigationHelper.setForceResolve(forceResolve)
-        val actualCode = NavigationTestUtils.getNavigateElementsText(getProject(), collectInterestingNavigationElements())
+        val actualCode = NavigationTestUtils.getNavigateElementsText(project, collectInterestingNavigationElements())
         val expectedCode = getExpectedAnnotatedLibraryCode()
         UsefulTestCase.assertSameLines(expectedCode, actualCode)
     }
 
     private fun collectInterestingReferences(): Collection<KtReference> {
-        val psiFile = getFile()
+        val psiFile = file
         val referenceContainersToReferences = LinkedHashMap<PsiElement, KtReference>()
-        for (offset in 0..psiFile.getTextLength() - 1) {
+        for (offset in 0..psiFile.textLength - 1) {
             val ref = psiFile.findReferenceAt(offset)
             val refs = when (ref) {
                 is KtReference -> listOf(ref)
-                is PsiMultiReference -> ref.getReferences().filterIsInstance<KtReference>()
+                is PsiMultiReference -> ref.references.filterIsInstance<KtReference>()
                 else -> emptyList<KtReference>()
             }
 
             refs.forEach { referenceContainersToReferences.addReference(it) }
         }
-        return referenceContainersToReferences.values()
+        return referenceContainersToReferences.values
     }
 
     private fun MutableMap<PsiElement, KtReference>.addReference(ref: KtReference) {
-        if (containsKey(ref.getElement())) return
+        if (containsKey(ref.element)) return
         val target = ref.resolve() ?: return
 
-        val targetNavPsiFile = target.getNavigationElement().getContainingFile() ?: return
+        val targetNavPsiFile = target.navigationElement.containingFile ?: return
 
-        val targetNavFile = targetNavPsiFile.getVirtualFile() ?: return
+        val targetNavFile = targetNavPsiFile.virtualFile ?: return
 
-        if (ProjectFileIndex.SERVICE.getInstance(getProject()).isInLibrarySource(targetNavFile)) {
-            put(ref.getElement(), ref)
+        if (ProjectFileIndex.SERVICE.getInstance(project).isInLibrarySource(targetNavFile)) {
+            put(ref.element, ref)
         }
     }
 
@@ -98,11 +98,11 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
             collectInterestingReferences().map {
                 val target = it.resolve()
                 TestCase.assertNotNull(target)
-                target!!.getNavigationElement()
+                target!!.navigationElement
             }
 
     private fun getExpectedAnnotatedLibraryCode(): String {
-        val document = getDocument(getFile())
+        val document = getDocument(file)
         TestCase.assertNotNull(document)
         return KotlinTestUtils.getLastCommentedLines(document)
     }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class ArraySet : IntrinsicMethod() {
+class ArraySet : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable {
         val type = correctElementType(method.dispatchReceiverType)
         return object : IntrinsicCallable(

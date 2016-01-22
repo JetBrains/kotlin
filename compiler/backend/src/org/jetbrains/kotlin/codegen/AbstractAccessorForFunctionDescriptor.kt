@@ -24,18 +24,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-open public class AbstractAccessorForFunctionDescriptor(
+open class AbstractAccessorForFunctionDescriptor(
         containingDeclaration: DeclarationDescriptor,
         name: Name
 ) : SimpleFunctionDescriptorImpl(containingDeclaration, null, Annotations.EMPTY,
                                  name, CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE) {
 
-    protected fun copyTypeParameters(descriptor: FunctionDescriptor): List<TypeParameterDescriptor> = descriptor.getTypeParameters().map {
+    protected fun copyTypeParameters(descriptor: FunctionDescriptor): List<TypeParameterDescriptor> = descriptor.typeParameters.map {
         val copy = TypeParameterDescriptorImpl.createForFurtherModification(
-                this, it.getAnnotations(), it.isReified(),
-                it.getVariance(), it.getName(),
-                it.getIndex(), SourceElement.NO_SOURCE)
-        for (upperBound in it.getUpperBounds()) {
+                this, it.annotations, it.isReified,
+                it.variance, it.name,
+                it.index, SourceElement.NO_SOURCE)
+        for (upperBound in it.upperBounds) {
             copy.addUpperBound(upperBound)
         }
         copy.setInitialized()
@@ -43,5 +43,5 @@ open public class AbstractAccessorForFunctionDescriptor(
     }
 
     protected fun copyValueParameters(descriptor: FunctionDescriptor): List<ValueParameterDescriptor> =
-            descriptor.getValueParameters().map { it.copy(this, it.getName()) }
+            descriptor.valueParameters.map { it.copy(this, it.name) }
 }

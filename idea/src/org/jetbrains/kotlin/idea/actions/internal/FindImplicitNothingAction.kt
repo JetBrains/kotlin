@@ -44,12 +44,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 import javax.swing.SwingUtilities
 
-public class FindImplicitNothingAction : AnAction() {
+class FindImplicitNothingAction : AnAction() {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction")
 
     override fun actionPerformed(e: AnActionEvent) {
         val selectedFiles = selectedKotlinFiles(e).toList()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 Runnable { find(selectedFiles, project) },
@@ -59,11 +59,11 @@ public class FindImplicitNothingAction : AnAction() {
     }
 
     private fun find(files: Collection<KtFile>, project: Project) {
-        val progressIndicator = ProgressManager.getInstance().getProgressIndicator()
+        val progressIndicator = ProgressManager.getInstance().progressIndicator
         val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
-            progressIndicator?.setText("Scanning files: $i of ${files.size()} file. ${found.size()} occurences found")
-            progressIndicator?.setText2(file.getVirtualFile().getPath())
+            progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurences found"
+            progressIndicator?.text2 = file.virtualFile.path
 
             val resolutionFacade = file.getResolutionFacade()
             file.acceptChildren(object : KtVisitorVoid() {
@@ -91,18 +91,18 @@ public class FindImplicitNothingAction : AnAction() {
                 }
             })
 
-            progressIndicator?.setFraction((i + 1) / files.size().toDouble())
+            progressIndicator?.fraction = (i + 1) / files.size.toDouble()
         }
 
         SwingUtilities.invokeLater {
             if (found.isNotEmpty()) {
                 val usages = found.map { UsageInfo2UsageAdapter(UsageInfo(it)) }.toTypedArray()
                 val presentation = UsageViewPresentation()
-                presentation.setTabName("Implicit Nothing's")
+                presentation.tabName = "Implicit Nothing's"
                 UsageViewManager.getInstance(project).showUsages(arrayOf<UsageTarget>(), usages, presentation)
             }
             else {
-                Messages.showInfoMessage(project, "Not found in ${files.size()} file(s)", "Not Found")
+                Messages.showInfoMessage(project, "Not found in ${files.size} file(s)", "Not Found")
             }
         }
     }
@@ -112,10 +112,10 @@ public class FindImplicitNothingAction : AnAction() {
         when (callee) {
             is KtSimpleNameExpression -> {
                 val target = bindingContext[BindingContext.REFERENCE_TARGET, callee] ?: return false
-                val callableDescriptor = (target as? CallableDescriptor ?: return false).getOriginal()
+                val callableDescriptor = (target as? CallableDescriptor ?: return false).original
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor) as? KtCallableDeclaration
-                if (declaration != null && declaration.getTypeReference() == null) return false // implicit type
-                val type = callableDescriptor.getReturnType() ?: return false
+                if (declaration != null && declaration.typeReference == null) return false // implicit type
+                val type = callableDescriptor.returnType ?: return false
                 return type.isNothingOrNothingFunctionType()
             }
 
@@ -137,18 +137,18 @@ public class FindImplicitNothingAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         if (!KotlinInternalMode.enabled) {
-            e.getPresentation().setVisible(false)
-            e.getPresentation().setEnabled(false)
+            e.presentation.isVisible = false
+            e.presentation.isEnabled = false
         }
         else {
-            e.getPresentation().setVisible(true)
-            e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
+            e.presentation.isVisible = true
+            e.presentation.isEnabled = selectedKotlinFiles(e).any()
         }
     }
 
     private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext()) ?: return sequenceOf()
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext) ?: return sequenceOf()
         return allKotlinFiles(virtualFiles, project)
     }
 

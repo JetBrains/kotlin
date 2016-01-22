@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
-public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
+object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
         val diagElement = diagnostic.psiElement
 
         val callElement = PsiTreeUtil.getParentOfType(
                 diagElement,
-                javaClass<KtAnnotationEntry>(),
-                javaClass<KtSuperTypeCallEntry>()
+                KtAnnotationEntry::class.java,
+                KtSuperTypeCallEntry::class.java
         ) as? KtCallElement ?: return null
 
         val callee = callElement.calleeExpression as? KtConstructorCalleeExpression ?: return null
@@ -66,7 +66,7 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClas
 
         val anyType = module.builtIns.nullableAnyType
         val valueArguments = element.valueArguments
-        val defaultParamName = if (valueArguments.size() == 1) "value" else null
+        val defaultParamName = if (valueArguments.size == 1) "value" else null
         val parameterInfos = valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),

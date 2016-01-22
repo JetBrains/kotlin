@@ -244,48 +244,6 @@ JetFile: ShortAnnotations.kt
     PsiWhiteSpace(' ')
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('0')
-  PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('foo')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('bar')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(INTEGER_LITERAL)('1')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RPAR)(')')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('buzz')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LT)('<')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('T')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(GT)('>')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(INTEGER_LITERAL)('1')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RPAR)(')')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('zoo')
-  PsiWhiteSpace(' ')
-  TYPEDEF
-    PsiElement(typealias)('typealias')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('T')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    TYPE_REFERENCE
-      USER_TYPE
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('Int')
   PsiWhiteSpace('\n\n\n')
   CLASS
     PsiElement(class)('class')
@@ -540,48 +498,6 @@ JetFile: ShortAnnotations.kt
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('0')
-      PsiWhiteSpace('\n  ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(IDENTIFIER)('foo')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(IDENTIFIER)('bar')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(LPAR)('(')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(INTEGER_LITERAL)('1')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(IDENTIFIER)('buzz')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(LT)('<')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(IDENTIFIER)('T')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(GT)('>')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(LPAR)('(')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(INTEGER_LITERAL)('1')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(IDENTIFIER)('zoo')
-      PsiWhiteSpace(' ')
-      TYPEDEF
-        PsiElement(typealias)('typealias')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('T')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('Int')
       PsiWhiteSpace('\n\n  ')
       PsiErrorElement:Expecting member declaration
         PsiElement(IDENTIFIER)('foo')

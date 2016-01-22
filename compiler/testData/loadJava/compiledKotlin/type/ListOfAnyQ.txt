@@ -1,3 +1,3 @@
 package test
 
-public fun listOfAnyQ(): kotlin.List<kotlin.Any?>
+public fun listOfAnyQ(): kotlin.collections.List<kotlin.Any?>

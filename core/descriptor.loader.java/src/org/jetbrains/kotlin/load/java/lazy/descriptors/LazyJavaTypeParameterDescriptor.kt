@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class LazyJavaTypeParameterDescriptor(
         private val c: LazyJavaResolverContext,
-        public val javaTypeParameter: JavaTypeParameter,
+        val javaTypeParameter: JavaTypeParameter,
         index: Int,
         containingDeclaration: DeclarationDescriptor
 ) : AbstractLazyTypeParameterDescriptor(

@@ -37,12 +37,12 @@ fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
         this is KtClassOrObject -> getSuperTypeList()
         this is KtPrimaryConstructor -> getContainingClassOrObject().getSuperTypeList()
         this is KtSecondaryConstructor -> getDelegationCall()
-        this is KtNamedFunction -> getBodyExpression()
+        this is KtNamedFunction -> bodyExpression
         else -> null
     }
 }
 
-public fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
+fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
     val elementToSearch = (this as? KtClass)?.getPrimaryConstructor() ?: this
     return allUsages
             .asSequence()
@@ -51,17 +51,17 @@ public fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
                 usage is KotlinCallerUsage
                 || usage is DeferredJavaMethodKotlinCallerUsage
                 || usage is CallerUsageInfo
-                || (usage is OverriderUsageInfo && !usage.isOriginalOverrider())
+                || (usage is OverriderUsageInfo && !usage.isOriginalOverrider)
             }
-            .any { it.getElement() == elementToSearch }
+            .any { it.element == elementToSearch }
 }
 
-public fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
+fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
     val container = parentsWithSelf.firstOrNull {
         it is KtNamedFunction || it is KtConstructor<*> || it is KtClassOrObject
     } as? KtNamedDeclaration ?: return false
     val body = container.getDeclarationBody() ?: return false
-    return body.getTextRange().contains(getTextRange()) && container.isCaller(allUsages)
+    return body.textRange.contains(textRange) && container.isCaller(allUsages)
 }
 
 fun getCallableSubstitutor(

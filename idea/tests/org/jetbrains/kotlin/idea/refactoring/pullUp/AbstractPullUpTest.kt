@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
-public abstract class AbstractPullUpTest : AbstractMemberPullPushTest() {
+abstract class AbstractPullUpTest : AbstractMemberPullPushTest() {
     private fun getTargetClassName(file: PsiFile) = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// TARGET_CLASS: ")
 
     protected fun doKotlinTest(path: String) {
@@ -47,7 +47,7 @@ public abstract class AbstractPullUpTest : AbstractMemberPullPushTest() {
                     return superClasses.first()
                 }
             }
-            KotlinPullUpHandler().invoke(getProject(), getEditor(), file) {
+            KotlinPullUpHandler().invoke(project, editor, file) {
                 if (it == KotlinPullUpHandler.PULL_UP_TEST_HELPER_KEY) helper else null
             }
         }
@@ -56,8 +56,8 @@ public abstract class AbstractPullUpTest : AbstractMemberPullPushTest() {
     // Based on com.intellij.refactoring.PullUpTest.doTest()
     protected fun doJavaTest(path: String) {
         doTest(path) { file ->
-            val elementAt = getFile().findElementAt(getEditor().caretModel.offset)
-            val sourceClass = PsiTreeUtil.getParentOfType(elementAt, javaClass<PsiClass>())!!
+            val elementAt = getFile().findElementAt(editor.caretModel.offset)
+            val sourceClass = PsiTreeUtil.getParentOfType(elementAt, PsiClass::class.java)!!
 
             val targetClassName = getTargetClassName(file)
             val superClasses = RefactoringHierarchyUtil.createBasesList(sourceClass, false, true)

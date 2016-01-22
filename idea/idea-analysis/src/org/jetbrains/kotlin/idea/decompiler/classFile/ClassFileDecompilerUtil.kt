@@ -17,46 +17,51 @@
 package org.jetbrains.kotlin.idea.decompiler.classFile
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
-import org.jetbrains.kotlin.idea.caches.JarUserDataManager
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.idea.caches.FileAttributeService
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+data class IsKotlinBinary(val isKotlinBinary: Boolean, val timestamp: Long)
+
+val KOTLIN_COMPILED_FILE_ATTRIBUTE: String = "kotlin-compiled-file".apply {
+    ServiceManager.getService(FileAttributeService::class.java).register(this, 1)
+}
+
+val KEY = Key.create<IsKotlinBinary>(KOTLIN_COMPILED_FILE_ATTRIBUTE)
+
 /**
  * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
  */
-public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
-    if (file.getExtension() != JavaClassFileType.INSTANCE!!.getDefaultExtension()) {
+fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
+    if (file.extension != JavaClassFileType.INSTANCE!!.defaultExtension) {
         return false
     }
 
-    if (HasCompiledKotlinInJar.isInNoKotlinJar(file)) {
-        return false
-    }
-
-    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.classHeader
-    return header != null
+    return IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file) != null
 }
 
 /**
  * Checks if this file is a compiled Kotlin class file ABI-compatible with the current plugin
  */
-public fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
+fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
     if (!isKotlinJvmCompiledFile(file)) return false
 
-    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.getClassHeader()
-    return header != null && header.isCompatibleAbiVersion
+    val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file)
+    return kotlinClass != null && kotlinClass.classHeader.metadataVersion.isCompatible()
 }
 
 /**
  * Checks if this file is a compiled "internal" Kotlin class, i.e. a Kotlin class (not necessarily ABI-compatible with the current plugin)
  * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
  */
-public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
+fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
     if (!isKotlinJvmCompiledFile(file)) {
         return false
     }
@@ -64,24 +69,18 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
     if (ClassFileViewProvider.isInnerClass(file)) {
         return true
     }
-    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.classHeader ?: return false
+
+    val (header, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file) ?: return false
+    if (classId.isLocal) return true
 
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||
-           header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ||
-           header.isLocalClass || header.syntheticClassKind == "PACKAGE_PART"
+           header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 }
 
-public object HasCompiledKotlinInJar : JarUserDataManager.JarBooleanPropertyCounter(HasCompiledKotlinInJar::class.simpleName!!) {
-    override fun hasProperty(file: VirtualFile) = isKotlinJvmCompiledFile(file)
-
-    fun isInNoKotlinJar(file: VirtualFile): Boolean =
-            JarUserDataManager.hasFileWithProperty(HasCompiledKotlinInJar, file) == false
-}
-
-public fun findMultifileClassParts(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinJvmBinaryClass> {
-    val packageFqName = multifileClass.classId.packageFqName
+fun findMultifileClassParts(file: VirtualFile, classId: ClassId, header: KotlinClassHeader): List<KotlinJvmBinaryClass> {
+    val packageFqName = classId.packageFqName
     val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
-    val partNames = multifileClass.classHeader.filePartClassNames ?: return emptyList()
+    val partNames = header.data ?: return emptyList()
     return partNames.mapNotNull {
         partsFinder.findKotlinClass(ClassId(packageFqName, Name.identifier(it.substringAfterLast('/'))))
     }

@@ -24,48 +24,51 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinReferenceContributor() : PsiReferenceContributor() {
-    public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+class KotlinReferenceContributor() : PsiReferenceContributor() {
+    override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         with(registrar) {
-            registerProvider(javaClass<KtSimpleNameExpression>()) {
+            registerProvider(KtSimpleNameExpression::class.java) {
                 KtSimpleNameReference(it)
             }
 
-            registerMultiProvider(javaClass<KtNameReferenceExpression>()) {
+            registerMultiProvider(KtNameReferenceExpression::class.java) {
                 if (it.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
 
                 when (it.readWriteAccess(useResolveForReadWrite = false)) {
-                    ReferenceAccess.READ -> arrayOf(SyntheticPropertyAccessorReference.Getter(it))
-                    ReferenceAccess.WRITE -> arrayOf(SyntheticPropertyAccessorReference.Setter(it))
-                    ReferenceAccess.READ_WRITE -> arrayOf(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
+                    ReferenceAccess.READ ->
+                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Getter(it))
+                    ReferenceAccess.WRITE ->
+                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Setter(it))
+                    ReferenceAccess.READ_WRITE ->
+                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
                 }
             }
 
-            registerProvider(javaClass<KtConstructorDelegationReferenceExpression>()) {
+            registerProvider(KtConstructorDelegationReferenceExpression::class.java) {
                 KtConstructorDelegationReference(it)
             }
 
-            registerProvider(javaClass<KtCallExpression>()) {
+            registerProvider(KtCallExpression::class.java) {
                 KtInvokeFunctionReference(it)
             }
 
-            registerProvider(javaClass<KtArrayAccessExpression>()) {
+            registerProvider(KtArrayAccessExpression::class.java) {
                 KtArrayAccessReference(it)
             }
 
-            registerProvider(javaClass<KtForExpression>()) {
+            registerProvider(KtForExpression::class.java) {
                 KtForLoopInReference(it)
             }
 
-            registerProvider(javaClass<KtPropertyDelegate>()) {
+            registerProvider(KtPropertyDelegate::class.java) {
                 KtPropertyDelegationMethodsReference(it)
             }
 
-            registerProvider(javaClass<KtDestructuringDeclaration>()) {
+            registerProvider(KtDestructuringDeclaration::class.java) {
                 KtDestructuringDeclarationReference(it)
             }
 
-            registerProvider(javaClass<KDocName>()) {
+            registerProvider(KDocName::class.java) {
                 KDocReference(it)
             }
         }

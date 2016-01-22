@@ -24,21 +24,25 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.chooseApplicableComponentFunctions
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.suggestNamesForComponent
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-public class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(javaClass(), "Iterate over collection"), HighPriorityAction {
+class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Iterate over collection"), HighPriorityAction {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
-        if (element.getParent() !is KtBlockExpression) return false
-        val range = element.getTextRange()
-        if (caretOffset != range.getStartOffset() && caretOffset != range.getEndOffset()) return false
+        if (element.parent !is KtBlockExpression) return false
+        val range = element.textRange
+        if (caretOffset != range.startOffset && caretOffset != range.endOffset) return false
         val data = data(element) ?: return false
-        setText("Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(data.collectionType)}'")
+        text = "Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(data.collectionType)}'"
         return true
     }
 
@@ -54,26 +58,47 @@ public class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(j
         return Data(type, elementType)
     }
 
-    override fun applyTo(element: KtExpression, editor: Editor) {
-        //TODO: multi-declaration (when?)
+    override fun startInWriteAction() = false
 
+    override fun applyTo(element: KtExpression, editor: Editor?) {
+        if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val elementType = data(element)!!.elementType
         val nameValidator = NewDeclarationNameValidator(element, element.siblings(), NewDeclarationNameValidator.Target.VARIABLES)
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-        val names = KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e")
 
-        var forExpression = KtPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names.first(), element) as KtForExpression
-        forExpression = element.replaced(forExpression)
+        val project = element.project
+        val psiFactory = KtPsiFactory(project)
 
-        PsiDocumentManager.getInstance(forExpression.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+        val receiverExpression = psiFactory.createExpressionByPattern("$0.iterator().next()", element)
+        chooseApplicableComponentFunctions(element, editor, elementType, receiverExpression) { componentFunctions ->
+            project.executeWriteCommand(text) {
+                val names = if (componentFunctions.isNotEmpty()) {
+                    val collectingValidator = CollectingNameValidator(filter = nameValidator)
+                    componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
+                }
+                else {
+                    KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e").singletonList()
+                }
 
-        val bodyPlaceholder = (forExpression.getBody() as KtBlockExpression).getStatements().single()
+                val paramPattern = (names.singleOrNull()?.first()
+                                    ?: psiFactory.createDestructuringParameter(names.indices.joinToString(prefix = "(", postfix = ")") { "p$it" }))
+                var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
+                forExpression = element.replaced(forExpression)
 
-        val templateBuilder = TemplateBuilderImpl(forExpression)
-        templateBuilder.replaceElement(forExpression.getLoopParameter()!!, ChooseStringExpression(names))
-        templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
-        templateBuilder.setEndVariableAfter(bodyPlaceholder)
+                PsiDocumentManager.getInstance(forExpression.project).doPostponedOperationsAndUnblockDocument(editor.document)
 
-        templateBuilder.run(editor, false)
+                val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
+                val parameters = forExpression.loopParameter?.singletonList() ?: forExpression.destructuringParameter!!.entries
+
+                val templateBuilder = TemplateBuilderImpl(forExpression)
+                for ((parameter, parameterNames) in (parameters zip names)) {
+                    templateBuilder.replaceElement(parameter, ChooseStringExpression(parameterNames))
+                }
+                templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
+                templateBuilder.setEndVariableAfter(bodyPlaceholder)
+
+                templateBuilder.run(editor, true)
+            }
+        }
     }
 }

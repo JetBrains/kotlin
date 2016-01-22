@@ -1,0 +1,5 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+public fun test0(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+public fun test1(/*0*/ flag: kotlin.Boolean): kotlin.Unit

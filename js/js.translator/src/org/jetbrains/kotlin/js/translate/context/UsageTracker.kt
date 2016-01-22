@@ -37,12 +37,12 @@ class UsageTracker(
     val capturedDescriptorToJsName: Map<DeclarationDescriptor, JsName>
         get() = captured
 
-    public fun used(descriptor: DeclarationDescriptor) {
+    fun used(descriptor: DeclarationDescriptor) {
         if (isCaptured(descriptor)) return
 
         // local named function
-        if (descriptor is FunctionDescriptor && descriptor.getVisibility() == Visibilities.LOCAL) {
-            assert(!descriptor.getName().isSpecial()) { "Function with special name can not be captured, descriptor: $descriptor" }
+        if (descriptor is FunctionDescriptor && descriptor.visibility == Visibilities.LOCAL) {
+            assert(!descriptor.getName().isSpecial) { "Function with special name can not be captured, descriptor: $descriptor" }
             captureIfNeed(descriptor)
         }
         // local variable
@@ -53,7 +53,7 @@ class UsageTracker(
         else if (descriptor is ReceiverParameterDescriptor) {
             captureIfNeed(descriptor)
         }
-        else if (descriptor is TypeParameterDescriptor && descriptor.isReified()) {
+        else if (descriptor is TypeParameterDescriptor && descriptor.isReified) {
             captureIfNeed(descriptor)
         }
     }
@@ -77,29 +77,29 @@ class UsageTracker(
     }
 }
 
-public fun UsageTracker.getNameForCapturedDescriptor(descriptor: DeclarationDescriptor): JsName? = capturedDescriptorToJsName.get(descriptor)
+fun UsageTracker.getNameForCapturedDescriptor(descriptor: DeclarationDescriptor): JsName? = capturedDescriptorToJsName.get(descriptor)
 
-public fun UsageTracker.hasCapturedExceptContaining(): Boolean {
+fun UsageTracker.hasCapturedExceptContaining(): Boolean {
     val hasNotCaptured =
             capturedDescriptorToJsName.isEmpty() ||
-            (capturedDescriptorToJsName.size() == 1 && capturedDescriptorToJsName.containsKey(containingDescriptor))
+            (capturedDescriptorToJsName.size == 1 && capturedDescriptorToJsName.containsKey(containingDescriptor))
 
     return !hasNotCaptured
 }
 
-public fun UsageTracker.isCaptured(descriptor: DeclarationDescriptor): Boolean = capturedDescriptorToJsName.containsKey(descriptor)
+fun UsageTracker.isCaptured(descriptor: DeclarationDescriptor): Boolean = capturedDescriptorToJsName.containsKey(descriptor)
 
 // NOTE: don't use from other places to avoid name clashes! So, it is not in Namer.
 private fun ReceiverParameterDescriptor.getNameForCapturedReceiver(): String {
 
     fun DeclarationDescriptor.getNameForCapturedDescriptor(namePostfix: String = ""): String {
-        val name = this.getName()
-        val nameAsString = if (name.isSpecial()) "" else name.asString()
+        val name = this.name
+        val nameAsString = if (name.isSpecial) "" else name.asString()
 
         return CAPTURED_RECEIVER_NAME_PREFIX + nameAsString + namePostfix
     }
 
-    val containingDeclaration = this.getContainingDeclaration()
+    val containingDeclaration = this.containingDeclaration
 
     assert(containingDeclaration is MemberDescriptor) {
         "Unsupported descriptor type: ${containingDeclaration.javaClass}, " +
@@ -107,7 +107,7 @@ private fun ReceiverParameterDescriptor.getNameForCapturedReceiver(): String {
     }
 
     if (DescriptorUtils.isCompanionObject(containingDeclaration)) {
-        return containingDeclaration.getContainingDeclaration()!!.getNameForCapturedDescriptor(namePostfix = "$")
+        return containingDeclaration.containingDeclaration!!.getNameForCapturedDescriptor(namePostfix = "$")
     }
 
     return containingDeclaration.getNameForCapturedDescriptor()

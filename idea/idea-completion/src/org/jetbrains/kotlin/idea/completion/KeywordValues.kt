@@ -83,7 +83,7 @@ object KeywordValues {
             }
 
             val nullMatcher = { info: ExpectedInfo ->
-                if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable())
+                if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable)
                     ExpectedInfoMatch.match(TypeSubstitutor.EMPTY)
                 else
                     ExpectedInfoMatch.noMatch

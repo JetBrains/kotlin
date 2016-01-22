@@ -27,16 +27,16 @@ import org.jetbrains.kotlin.psi.KtFile
 import com.intellij.usages.impl.FileStructureGroupRuleProvider
 import com.intellij.openapi.project.Project
 
-public class KotlinDeclarationGroupRuleProvider : FileStructureGroupRuleProvider {
-    public class KotlinDeclarationGroupingRule : UsageGroupingRule {
+class KotlinDeclarationGroupRuleProvider : FileStructureGroupRuleProvider {
+    class KotlinDeclarationGroupingRule : UsageGroupingRule {
         override fun groupUsage(usage: Usage): UsageGroup? {
-            val element = (usage as? PsiElementUsage)?.getElement()
+            val element = (usage as? PsiElementUsage)?.element
             if (element == null) return null
 
-            val containingFile = element.getContainingFile()
+            val containingFile = element.containingFile
             if (containingFile !is KtFile) return null
 
-            return PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtNamedDeclaration>())?.let { container ->
+            return PsiTreeUtil.getTopmostParentOfType(element, KtNamedDeclaration::class.java)?.let { container ->
                 PsiNamedElementUsageGroupBase(container)
             }
         }

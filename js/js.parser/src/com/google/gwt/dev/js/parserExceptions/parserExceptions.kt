@@ -20,9 +20,9 @@ import com.google.gwt.dev.js.rhino.CodePosition
 /**
  * Can be used in Error reporter to exit parser
  */
-public class AbortParsingException : RuntimeException()
+class AbortParsingException : RuntimeException()
 
-public class JsParserException(
+class JsParserException(
         message: String,
         val position: CodePosition
 ) : RuntimeException("$message at $position")

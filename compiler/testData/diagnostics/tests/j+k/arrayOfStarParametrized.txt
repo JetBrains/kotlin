@@ -1,0 +1,12 @@
+package
+
+public fun foo1(/*0*/ x: A<*>): kotlin.Array<out A<out kotlin.Any!>!>!
+public fun foo2(/*0*/ x: A<*>): kotlin.Unit
+
+public open class A</*0*/ T : kotlin.Any!> {
+    public constructor A</*0*/ T : kotlin.Any!>()
+    public open fun baz(): kotlin.Array<(out) A<T!>!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

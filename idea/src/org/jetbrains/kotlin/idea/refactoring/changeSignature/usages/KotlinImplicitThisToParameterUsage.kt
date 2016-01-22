@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
-public abstract class KotlinImplicitReceiverUsage(callElement: KtElement): KotlinUsageInfo<KtElement>(callElement) {
+abstract class KotlinImplicitReceiverUsage(callElement: KtElement): KotlinUsageInfo<KtElement>(callElement) {
     protected abstract fun getNewReceiverText(): String
 
     protected open fun processReplacedElement(element: KtElement) {
@@ -34,15 +34,15 @@ public abstract class KotlinImplicitReceiverUsage(callElement: KtElement): Kotli
     }
 
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtElement, allUsages: Array<out UsageInfo>): Boolean {
-        val newQualifiedCall = KtPsiFactory(element.getProject()).createExpression(
-                "${getNewReceiverText()}.${element.getText()}"
+        val newQualifiedCall = KtPsiFactory(element.project).createExpression(
+                "${getNewReceiverText()}.${element.text}"
         ) as KtQualifiedExpression
         processReplacedElement(element.replace(newQualifiedCall) as KtElement)
         return false
     }
 }
 
-public class KotlinImplicitThisToParameterUsage(
+class KotlinImplicitThisToParameterUsage(
         callElement: KtElement,
         val parameterInfo: KotlinParameterInfo,
         val containingCallable: KotlinCallableDefinitionUsage<*>
@@ -54,13 +54,13 @@ public class KotlinImplicitThisToParameterUsage(
     }
 }
 
-public class KotlinImplicitThisUsage(
+class KotlinImplicitThisUsage(
         callElement: KtElement,
         val targetDescriptor: DeclarationDescriptor
 ): KotlinImplicitReceiverUsage(callElement) {
     override fun getNewReceiverText(): String {
-        val name = targetDescriptor.getName()
-        return if (name.isSpecial()) "this" else "this@${name.asString()}"
+        val name = targetDescriptor.name
+        return if (name.isSpecial) "this" else "this@${name.asString()}"
     }
 
     override fun processReplacedElement(element: KtElement) {

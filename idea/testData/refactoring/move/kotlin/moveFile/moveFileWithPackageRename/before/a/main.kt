@@ -36,3 +36,7 @@ var Test.TEST: String
         b.FOO = value
         c.FOO = value
     }
+
+enum class My(val x: Int) {
+    FIRST(4)
+}

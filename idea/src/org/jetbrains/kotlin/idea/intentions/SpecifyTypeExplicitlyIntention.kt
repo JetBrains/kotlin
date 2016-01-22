@@ -23,63 +23,82 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import java.util.*
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(javaClass(), "Specify type explicitly"), LowPriorityAction {
+class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
-        if (element.getContainingFile() is KtCodeFragment) return false
+        if (element.containingFile is KtCodeFragment) return false
         if (element is KtFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
         if (element is KtConstructor<*>) return false
-        if (element.getTypeReference() != null) return false
+        if (element.typeReference != null) return false
 
-        if (getTypeForDeclaration(element).isError()) return false
+        if (getTypeForDeclaration(element).isError) return false
 
-        val initializer = (element as? KtWithExpressionInitializer)?.getInitializer()
-        if (initializer != null && initializer.getTextRange().containsOffset(caretOffset)) return false
+        val initializer = (element as? KtWithExpressionInitializer)?.initializer
+        if (initializer != null && initializer.textRange.containsOffset(caretOffset)) return false
 
         if (element is KtNamedFunction && element.hasBlockBody()) return false
 
-        setText(if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly")
+        text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
 
         return true
     }
 
-    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         val type = getTypeForDeclaration(element)
         addTypeAnnotation(editor, element, type)
     }
 
     companion object {
-        public fun getTypeForDeclaration(declaration: KtCallableDeclaration): KotlinType {
+        fun getTypeForDeclaration(declaration: KtCallableDeclaration): KotlinType {
             val descriptor = declaration.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
-            val type = (descriptor as? CallableDescriptor)?.getReturnType()
+            val type = (descriptor as? CallableDescriptor)?.returnType
             return type ?: ErrorUtils.createErrorType("null type")
         }
 
-        public fun createTypeExpressionForTemplate(exprType: KotlinType): Expression {
-            val descriptor = exprType.getConstructor().getDeclarationDescriptor()
-            val isAnonymous = descriptor != null && DescriptorUtils.isAnonymousObject(descriptor)
+        fun createTypeExpressionForTemplate(exprType: KotlinType, contextElement: KtElement): Expression {
+            val resolutionFacade = contextElement.getResolutionFacade()
+            val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
+            val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
+            val types = (exprType.singletonList() + TypeUtils.getAllSupertypes(exprType))
+                    .filter { it.isResolvableInScope(scope, true) }
+                    .mapNotNull mapArgs@ {
+                        val resolvableArgs = it.arguments.filterTo(SmartSet.create()) { it.type.isResolvableInScope(scope, true) }
+                        if (resolvableArgs.containsAll(it.arguments)) return@mapArgs it
 
-            val allSupertypes = TypeUtils.getAllSupertypes(exprType)
-            val types = if (isAnonymous) ArrayList<KotlinType>() else arrayListOf(exprType)
-            types.addAll(allSupertypes)
+                        val newArguments = (it.arguments zip it.constructor.parameters).map {
+                            val (arg, param) = it
+                            when {
+                                arg in resolvableArgs -> arg
+                                arg.projectionKind == Variance.OUT_VARIANCE ||
+                                param.variance == Variance.OUT_VARIANCE -> TypeProjectionImpl(
+                                        arg.projectionKind,
+                                        arg.type.approximateWithResolvableType(scope, true)
+                                )
+                                else -> return@mapArgs null
+                            }
+                        }
 
+                        object: DelegatingType() {
+                            override fun getDelegate() = it
+                            override fun getArguments() = newArguments
+                        }
+                    }
             return object : ChooseValueExpression<KotlinType>(types, types.first()) {
                 override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
                 override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
             }
         }
 
-        public fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
+        fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
             if (editor != null) {
                 addTypeAnnotationWithTemplate(editor, declaration, exprType)
             }
@@ -88,11 +107,11 @@ public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableD
             }
         }
 
-        public fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration): TemplateEditingAdapter {
+        fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration): TemplateEditingAdapter {
             return object : TemplateEditingAdapter() {
                 override fun templateFinished(template: Template?, brokenOff: Boolean) {
-                    val typeRef = declaration.getTypeReference()
-                    if (typeRef != null && typeRef.isValid()) {
+                    val typeRef = declaration.typeReference
+                    if (typeRef != null && typeRef.isValid) {
                         ShortenReferences.DEFAULT.process(typeRef)
                     }
                 }
@@ -100,21 +119,21 @@ public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableD
         }
 
         private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: KtCallableDeclaration, exprType: KotlinType) {
-            assert(!exprType.isError()) { "Unexpected error type, should have been checked before: " + declaration.getElementTextWithContext() + ", type = " + exprType }
+            assert(!exprType.isError) { "Unexpected error type, should have been checked before: " + declaration.getElementTextWithContext() + ", type = " + exprType }
 
-            val project = declaration.getProject()
-            val expression = createTypeExpressionForTemplate(exprType)
+            val project = declaration.project
+            val expression = createTypeExpressionForTemplate(exprType, declaration)
 
             declaration.setType(KotlinBuiltIns.FQ_NAMES.any.asString())
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
 
-            val newTypeRef = declaration.getTypeReference()!!
+            val newTypeRef = declaration.typeReference!!
             val builder = TemplateBuilderImpl(newTypeRef)
             builder.replaceElement(newTypeRef, expression)
 
-            editor.getCaretModel().moveToOffset(newTypeRef.getNode().getStartOffset())
+            editor.caretModel.moveToOffset(newTypeRef.node.startOffset)
 
             TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), createTypeReferencePostprocessor(declaration))
         }

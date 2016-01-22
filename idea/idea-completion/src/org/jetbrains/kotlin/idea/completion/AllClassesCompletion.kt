@@ -20,12 +20,15 @@ import com.intellij.codeInsight.completion.AllClassesGetter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiLiteral
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -41,9 +44,11 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
 
         //TODO: this is a temporary solution until we have built-ins in indices
         // we need only nested classes because top-level built-ins are all added through default imports
-        collectClassesFromScope(resolutionFacade.moduleDescriptor.builtIns.builtInsPackageScope) {
-            if (it.containingDeclaration is ClassDescriptor) {
-                classDescriptorCollector(it)
+        for (builtinPackage in resolutionFacade.moduleDescriptor.builtIns.builtinsPackageFragments) {
+            collectClassesFromScope(builtinPackage.getMemberScope()) {
+                if (it.containingDeclaration is ClassDescriptor) {
+                    classDescriptorCollector(it)
+                }
             }
         }
 
@@ -74,9 +79,9 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                 if (psiClass.isSyntheticKotlinClass()) return@processJavaClasses // filter out synthetic classes produced by Kotlin compiler
 
                 val kind = when {
-                    psiClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
-                    psiClass.isInterface() -> ClassKind.INTERFACE
-                    psiClass.isEnum() -> ClassKind.ENUM_CLASS
+                    psiClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
+                    psiClass.isInterface -> ClassKind.INTERFACE
+                    psiClass.isEnum -> ClassKind.ENUM_CLASS
                     else -> ClassKind.CLASS
                 }
                 if (kindFilter(kind)) {
@@ -87,7 +92,14 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     }
 
     private fun PsiClass.isSyntheticKotlinClass(): Boolean {
-        if (!getName()!!.contains('$')) return false // optimization to not analyze annotations of all classes
-        return getModifierList()?.findAnnotation(javaClass<kotlin.jvm.internal.KotlinSyntheticClass>().getName()) != null
+        if ('$' !in name!!) return false // optimization to not analyze annotations of all classes
+        val metadata = modifierList?.findAnnotation(JvmAnnotationNames.METADATA.asString())
+        if (metadata != null &&
+               (metadata.findAttributeValue(JvmAnnotationNames.KIND_FIELD_NAME) as? PsiLiteral)?.value ==
+                       KotlinClassHeader.Kind.SYNTHETIC_CLASS.id) {
+            return true
+        }
+
+        return modifierList?.findAnnotation(JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS.asString()) != null
     }
 }

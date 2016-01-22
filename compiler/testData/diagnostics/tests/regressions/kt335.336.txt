@@ -1,4 +1,4 @@
 package
 
-public fun </*0*/ T> kotlin.List<T>.plus(/*0*/ other: kotlin.List<T>): kotlin.List<T>
-public fun </*0*/ T : kotlin.Comparable<T>> kotlin.MutableList<T>.sort(): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.List<T>.plus(/*0*/ other: kotlin.collections.List<T>): kotlin.collections.List<T>
+public fun </*0*/ T : kotlin.Comparable<T>> kotlin.collections.MutableList<T>.sort(): kotlin.Unit

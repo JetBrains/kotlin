@@ -24,22 +24,22 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryExpression>(javaClass(), "Replace with ordinary assignment"), LowPriorityAction {
+class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace with ordinary assignment"), LowPriorityAction {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
-        if (element.getOperationToken() !in KtTokens.AUGMENTED_ASSIGNMENTS) return false
-        if (element.getLeft() !is KtNameReferenceExpression) return false
-        if (element.getRight() == null) return false
-        return element.getOperationReference().getTextRange().containsOffset(caretOffset)
+        if (element.operationToken !in KtTokens.AUGMENTED_ASSIGNMENTS) return false
+        if (element.left !is KtNameReferenceExpression) return false
+        if (element.right == null) return false
+        return element.operationReference.textRange.containsOffset(caretOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
-        val left = element.getLeft()!!
-        val right = element.getRight()!!
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
+        val left = element.left!!
+        val right = element.right!!
         val factory = KtPsiFactory(element)
 
-        val assignOpText = element.getOperationReference().getText()
+        val assignOpText = element.operationReference.text
         assert(assignOpText.endsWith("="))
-        val operationText = assignOpText.substring(0, assignOpText.length() - 1)
+        val operationText = assignOpText.substring(0, assignOpText.length - 1)
 
         element.replace(factory.createExpressionByPattern("$0 = $0 $operationText $1", left, right))
     }

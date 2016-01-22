@@ -38,20 +38,20 @@ class WithExpressionPrefixInsertHandler(val prefix: String) : InsertHandler<Look
         psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
         psiDocumentManager.commitAllDocuments()
 
-        val offset = context.getStartOffset()
-        val token = context.getFile().findElementAt(offset)!!
+        val offset = context.startOffset
+        val token = context.file.findElementAt(offset)!!
         var expression = token.getStrictParentOfType<KtExpression>() ?: return
         if (expression is KtSimpleNameExpression) {
             var parent = expression.getParent()
-            if (parent is KtCallExpression && expression == parent.getCalleeExpression()) {
+            if (parent is KtCallExpression && expression == parent.calleeExpression) {
                 expression = parent
                 parent = parent.getParent()
             }
-            if (parent is KtDotQualifiedExpression && expression == parent.getSelectorExpression()) {
+            if (parent is KtDotQualifiedExpression && expression == parent.selectorExpression) {
                 expression = parent
             }
         }
 
-        context.getDocument().insertString(expression.getTextRange().getStartOffset(), prefix)
+        context.document.insertString(expression.textRange.startOffset, prefix)
     }
 }

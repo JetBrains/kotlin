@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.codeInsight.CommentUtilCore;
 import com.intellij.util.containers.ContainerUtil;
@@ -599,6 +600,37 @@ public class KtPsiUtil {
         return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace.class, PsiComment.class);
     }
 
+    @Nullable
+    public static PsiElement prevLeafIgnoringWhitespaceAndComments(@NotNull PsiElement element) {
+        PsiElement prev = PsiTreeUtil.prevLeaf(element, true);
+        while (prev != null && KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(prev.getNode().getElementType())) {
+            prev = PsiTreeUtil.prevLeaf(prev, true);
+        }
+        return prev;
+    }
+
+    /**
+     * Example:
+     *      code: async* {}
+     *      element = "{}"
+     *      word = "async"
+     *      suffixTokens = [+, -, *, /, %]
+     *
+     *      result = async
+     */
+    @Nullable
+    public static PsiElement getPreviousWord(@NotNull PsiElement element, @NotNull String word, @NotNull TokenSet suffixTokens) {
+        PsiElement prev = prevLeafIgnoringWhitespaceAndComments(element);
+        if (prev != null && suffixTokens.contains(prev.getNode().getElementType())) {
+            prev = PsiTreeUtil.prevLeaf(prev, false);
+        }
+        if (prev != null && prev.getNode().getElementType() == KtTokens.IDENTIFIER && word.equals(prev.getText())) {
+            return prev;
+        }
+
+        return null;
+    }
+
     public static final Predicate<KtElement> ANY_JET_ELEMENT = new Predicate<KtElement>() {
         @Override
         public boolean apply(@Nullable KtElement input) {
@@ -783,6 +815,9 @@ public class KtPsiUtil {
                 }
             }
             if (current instanceof KtBlockExpression || current instanceof KtParameter) {
+                return (KtElement) current;
+            }
+            if (current instanceof KtValueArgument) {
                 return (KtElement) current;
             }
 

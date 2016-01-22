@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
+abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
     protected constructor(declaration: T, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory)
     : KotlinFindUsagesHandler<T>(declaration, elementsToSearch, factory) {
 
@@ -65,7 +65,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
             val options = factory.findFunctionOptions
             val lightMethod = getElement().toLightMethods().firstOrNull()
             if (lightMethod != null) {
-                return KotlinFindFunctionUsagesDialog(lightMethod, getProject(), options, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
+                return KotlinFindFunctionUsagesDialog(lightMethod, project, options, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
             }
 
             return super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
@@ -90,7 +90,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
         override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions = factory.findPropertyOptions
 
         override fun getFindUsagesDialog(isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean): AbstractFindUsagesDialog {
-            return KotlinFindPropertyUsagesDialog(getElement(), getProject(), factory.findPropertyOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
+            return KotlinFindPropertyUsagesDialog(getElement(), project, factory.findPropertyOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
         }
 
         override fun applyQueryFilters(element: PsiElement, options: FindUsagesOptions, query: Query<PsiReference>): Query<PsiReference> {
@@ -147,7 +147,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
 
         if (kotlinOptions.searchOverrides) {
             for (method in HierarchySearchRequest(element, options.searchScope, true).searchOverriders()) {
-                if (!KotlinFindUsagesHandler.processUsage(uniqueProcessor, method.getNavigationElement())) break
+                if (!KotlinFindUsagesHandler.processUsage(uniqueProcessor, method.navigationElement)) break
             }
         }
 
@@ -180,7 +180,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
 
     companion object {
 
-        public fun getInstance(declaration: KtNamedDeclaration,
+        fun getInstance(declaration: KtNamedDeclaration,
                                elementsToSearch: Collection<PsiElement> = emptyList(),
                                factory: KotlinFindUsagesHandlerFactory): KotlinFindMemberUsagesHandler<out KtNamedDeclaration> {
             return if (declaration is KtFunction)

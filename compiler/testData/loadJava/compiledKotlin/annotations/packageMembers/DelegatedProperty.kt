@@ -1,3 +1,6 @@
+// SKIP_IN_RUNTIME_TEST because the anonymous object has no container and thus a non-local ClassId
+// TODO: unskip
+
 package test
 
 import kotlin.reflect.KProperty

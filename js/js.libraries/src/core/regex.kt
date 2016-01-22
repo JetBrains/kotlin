@@ -56,7 +56,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     public fun matches(input: CharSequence): Boolean {
         nativePattern.reset()
         val match = nativePattern.exec(input.toString())
-        return match != null && (match as RegExpMatch).index == 0 && nativePattern.lastIndex == input.length()
+        return match != null && (match as RegExpMatch).index == 0 && nativePattern.lastIndex == input.length
     }
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
@@ -80,7 +80,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
 
     /** Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
-    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ find(input, startIndex) }, { match -> match.next() })
+    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
 
     @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"))
     public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
@@ -114,13 +114,13 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
         if (match == null) return input.toString()
 
         var lastStart = 0
-        val length = input.length()
+        val length = input.length
         val sb = StringBuilder(length)
         do {
             val foundMatch = match!!
             sb.append(input, lastStart, foundMatch.range.start)
             sb.append(transform(foundMatch))
-            lastStart = foundMatch.range.end + 1
+            lastStart = foundMatch.range.endInclusive + 1
             match = foundMatch.next()
         } while (lastStart < length && match != null)
 
@@ -154,9 +154,9 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
 
         for (match in matches) {
             result.add(input.subSequence(lastStart, match.range.start).toString())
-            lastStart = match.range.end + 1
+            lastStart = match.range.endInclusive + 1
         }
-        result.add(input.subSequence(lastStart, input.length()).toString())
+        result.add(input.subSequence(lastStart, input.length).toString())
         return result
     }
 
@@ -198,8 +198,8 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
             get() = match[0]!!
 
         override val groups: MatchGroupCollection = object : MatchGroupCollection {
-            override val size: Int get() = match.size()
-            override fun isEmpty(): Boolean = size() == 0
+            override val size: Int get() = match.size
+            override fun isEmpty(): Boolean = size == 0
 
             override fun contains(o: MatchGroup?): Boolean = this.any { it == o }
             override fun containsAll(c: Collection<MatchGroup?>): Boolean = c.all({contains(it)})
@@ -209,6 +209,35 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
             override fun get(index: Int): MatchGroup? = match[index]?.let { MatchGroup(it) }
         }
 
-        override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.end + 1)
+
+        private var groupValues_: List<String>? = null
+
+        override val groupValues: List<String>
+            get() {
+                if (groupValues_ == null) {
+                    groupValues_ = object : java.util.AbstractList<String>() {
+                        override val size: Int get() = match.size
+                        override fun get(index: Int): String = match[index] ?: ""
+                    }
+                }
+                return groupValues_!!
+            }
+
+        override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.endInclusive + 1)
     }
+}
+
+// TODO: Move into MatchResult after KT-4124 is implemented
+public class Destructured internal constructor(public val match: MatchResult) {
+    public operator inline fun component1():  String = match.groupValues[1]
+    public operator inline fun component2():  String = match.groupValues[2]
+    public operator inline fun component3():  String = match.groupValues[3]
+    public operator inline fun component4():  String = match.groupValues[4]
+    public operator inline fun component5():  String = match.groupValues[5]
+    public operator inline fun component6():  String = match.groupValues[6]
+    public operator inline fun component7():  String = match.groupValues[7]
+    public operator inline fun component8():  String = match.groupValues[8]
+    public operator inline fun component9():  String = match.groupValues[9]
+    public operator inline fun component10(): String = match.groupValues[10]
+    public fun toList(): List<String> = match.groupValues.drop(1)
 }

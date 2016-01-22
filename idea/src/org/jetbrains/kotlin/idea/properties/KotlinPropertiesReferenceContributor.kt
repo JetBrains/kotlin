@@ -22,7 +22,7 @@ import com.intellij.psi.PsiReferenceRegistrar
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
-public class KotlinPropertiesReferenceContributor : PsiReferenceContributor() {
+class KotlinPropertiesReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
                 PlatformPatterns.psiElement(KtStringTemplateExpression::class.java),

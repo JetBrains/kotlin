@@ -28,14 +28,14 @@ import com.intellij.util.cls.ClsFormatException
 import com.intellij.util.containers.ContainerUtil
 import java.io.IOException
 
-public class ClsJavaStubByVirtualFileCache {
+class ClsJavaStubByVirtualFileCache {
     private class CachedJavaStub(val modificationStamp: Long, val javaFileStub: PsiJavaFileStubImpl)
 
     private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<VirtualFile, CachedJavaStub>(
             100, 0.75f, Runtime.getRuntime().availableProcessors(), ContainerUtil.canonicalStrategy<VirtualFile>()
     )
 
-    public fun get(classFile: VirtualFile): PsiJavaFileStubImpl? {
+    fun get(classFile: VirtualFile): PsiJavaFileStubImpl? {
         val cached = cache.get(classFile)
         val fileModificationStamp = classFile.modificationStamp
         if (cached != null && cached.modificationStamp == fileModificationStamp) {
@@ -66,7 +66,7 @@ public class ClsJavaStubByVirtualFileCache {
     companion object {
         private val LOG = Logger.getInstance(ClsJavaStubByVirtualFileCache::class.java)
 
-        public fun getInstance(project: Project): ClsJavaStubByVirtualFileCache {
+        fun getInstance(project: Project): ClsJavaStubByVirtualFileCache {
             return ServiceManager.getService(project, ClsJavaStubByVirtualFileCache::class.java)
         }
     }

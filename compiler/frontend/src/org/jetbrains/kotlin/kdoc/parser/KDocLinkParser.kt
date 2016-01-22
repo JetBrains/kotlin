@@ -29,36 +29,35 @@ import org.jetbrains.kotlin.lexer.KtTokens
  */
 class KDocLinkParser(): PsiParser {
     companion object {
-        @JvmStatic
-        public fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
-            val parentElement = chameleon.getTreeParent().getPsi()
-            val project = parentElement.getProject()
+        @JvmStatic fun parseMarkdownLink(root: IElementType, chameleon: ASTNode): ASTNode {
+            val parentElement = chameleon.treeParent.psi
+            val project = parentElement.project
             val builder = PsiBuilderFactory.getInstance().createBuilder(project,
                                                                         chameleon,
-                    KotlinLexer(),
-                                                                        root.getLanguage(),
-                                                                        chameleon.getText())
+                                                                        KotlinLexer(),
+                                                                        root.language,
+                                                                        chameleon.text)
             val parser = KDocLinkParser()
 
-            return parser.parse(root, builder).getFirstChildNode()
+            return parser.parse(root, builder).firstChildNode
         }
     }
 
     override fun parse(root: IElementType, builder: PsiBuilder): ASTNode {
         val rootMarker = builder.mark()
-        val hasLBracket = builder.getTokenType() == KtTokens.LBRACKET
+        val hasLBracket = builder.tokenType == KtTokens.LBRACKET
         if (hasLBracket) {
             builder.advanceLexer()
         }
         parseQualifiedName(builder)
         if (hasLBracket) {
-            if (!builder.eof() && builder.getTokenType() != KtTokens.RBRACKET) {
+            if (!builder.eof() && builder.tokenType != KtTokens.RBRACKET) {
                 builder.error("Closing bracket expected")
-                while (!builder.eof() && builder.getTokenType() != KtTokens.RBRACKET) {
+                while (!builder.eof() && builder.tokenType != KtTokens.RBRACKET) {
                     builder.advanceLexer()
                 }
             }
-            if (builder.getTokenType() == KtTokens.RBRACKET) {
+            if (builder.tokenType == KtTokens.RBRACKET) {
                 builder.advanceLexer()
             }
         }
@@ -71,21 +70,21 @@ class KDocLinkParser(): PsiParser {
             }
         }
         rootMarker.done(root)
-        return builder.getTreeBuilt()
+        return builder.treeBuilt
     }
 
     private fun parseQualifiedName(builder: PsiBuilder) {
         var marker = builder.mark()
         while (true) {
             // don't highlight a word in a link as an error if it happens to be a Kotlin keyword
-            if (!isName(builder.getTokenType())) {
+            if (!isName(builder.tokenType)) {
                 marker.drop()
                 builder.error("Identifier expected")
                 break
             }
             builder.advanceLexer()
             marker.done(KDocElementTypes.KDOC_NAME)
-            if (builder.getTokenType() != KtTokens.DOT) {
+            if (builder.tokenType != KtTokens.DOT) {
                 break
             }
             marker = marker.precede()

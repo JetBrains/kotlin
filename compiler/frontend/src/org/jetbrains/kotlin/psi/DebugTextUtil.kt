@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.psi.*
 // invoke this instead of getText() when you need debug text to identify some place in PSI without storing the element itself
 // this is need to avoid unnecessary file parses
 // this defaults to get text if the element is not stubbed
-public fun KtElement.getDebugText(): String {
-    if (this !is KtElementImplStub<*> || this.getStub() == null) {
-        return getText()
+fun KtElement.getDebugText(): String {
+    if (this !is KtElementImplStub<*> || this.stub == null) {
+        return text
     }
     if (this is KtPackageDirective) {
         val fqName = getFqName()
@@ -43,14 +43,14 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     private val LOG = Logger.getInstance(this.javaClass)
 
     override fun visitKtFile(file: KtFile, data: Unit?): String? {
-        return "STUB file: ${file.getName()}"
+        return "STUB file: ${file.name}"
     }
 
     override fun visitKtElement(element: KtElement, data: Unit?): String? {
         if (element is KtElementImplStub<*>) {
             LOG.error("getDebugText() is not defined for ${element.javaClass}")
         }
-        return element.getText()
+        return element.text
     }
 
     override fun visitImportDirective(importDirective: KtImportDirective, data: Unit?): String? {
@@ -168,7 +168,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
                     if (!first) {
                         append(" ")
                     }
-                    append(modifierKeywordToken.getValue())
+                    append(modifierKeywordToken.value)
                     first = false
                 }
             }
@@ -194,7 +194,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     }
 
     override fun visitPropertyAccessor(accessor: KtPropertyAccessor, data: Unit?): String? {
-        val containingProperty = KtStubbedPsiUtil.getContainingDeclaration(accessor, javaClass<KtProperty>())
+        val containingProperty = KtStubbedPsiUtil.getContainingDeclaration(accessor, KtProperty::class.java)
         val what = (if (accessor.isGetter()) "getter" else "setter")
         return what + " for " + (if (containingProperty != null) containingProperty.getDebugText() else "...")
     }
@@ -282,12 +282,12 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     }
 
     fun renderChildren(element: KtElementImplStub<*>, separator: String, prefix: String = "", postfix: String = ""): String? {
-        val childrenTexts = element.getStub()?.getChildrenStubs()?.mapNotNull { (it?.getPsi() as? KtElement)?.getDebugText() }
-        return childrenTexts?.joinToString(separator, prefix, postfix) ?: element.getText()
+        val childrenTexts = element.stub?.childrenStubs?.mapNotNull { (it?.psi as? KtElement)?.getDebugText() }
+        return childrenTexts?.joinToString(separator, prefix, postfix) ?: element.text
     }
 
     fun render(element: KtElementImplStub<*>, vararg relevantChildren: KtElement?): String? {
-        if (element.getStub() == null) return element.getText()
+        if (element.stub == null) return element.text
         return relevantChildren.filterNotNull().map { it.getDebugText() }.joinToString("", "", "")
     }
 }

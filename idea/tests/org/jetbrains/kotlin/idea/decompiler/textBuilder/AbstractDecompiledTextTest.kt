@@ -22,14 +22,15 @@ import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import kotlin.test.assertTrue
 
-public abstract class AbstractDecompiledTextTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory) {
-    protected override fun getFileToDecompile(): VirtualFile =
+abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPackage: Boolean)
+    : AbstractDecompiledTextBaseTest(baseDirectory, allowKotlinPackage = allowKotlinPackage) {
+    override fun getFileToDecompile(): VirtualFile =
         NavigateToDecompiledLibraryTest.getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
-    protected override fun checkPsiFile(psiFile: PsiFile) =
+    override fun checkPsiFile(psiFile: PsiFile) =
             assertTrue(psiFile is KtClsFile, "Expecting decompiled kotlin file, was: " + psiFile.javaClass)
 }
 
-public abstract class AbstractCommonDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledText")
+abstract class AbstractCommonDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledText", true)
 
-public abstract class AbstractJvmDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledTextJvm")
+abstract class AbstractJvmDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledTextJvm", false)

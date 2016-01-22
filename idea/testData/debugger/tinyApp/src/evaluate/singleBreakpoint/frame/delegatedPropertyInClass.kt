@@ -6,7 +6,7 @@ import kotlin.reflect.KProperty
 fun main(args: Array<String>) {
     val a = A()
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 class A {

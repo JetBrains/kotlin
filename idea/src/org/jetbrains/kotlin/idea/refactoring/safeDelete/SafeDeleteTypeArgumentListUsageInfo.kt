@@ -20,10 +20,10 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
 
-public class SafeDeleteTypeArgumentListUsageInfo(
+class SafeDeleteTypeArgumentListUsageInfo(
         typeProjection: KtTypeProjection, parameter: KtTypeParameter
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(typeProjection, parameter, true) {
-    public override fun deleteElement() {
-        getElement()?.deleteElementAndCleanParent()
+    override fun deleteElement() {
+        element?.deleteElementAndCleanParent()
     }
 }

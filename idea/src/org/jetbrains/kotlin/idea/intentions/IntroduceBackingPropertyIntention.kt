@@ -16,30 +16,23 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
-import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(javaClass(), "Introduce backing property") {
+class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Introduce backing property") {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         if (!canIntroduceBackingProperty(element)) return false
         return element.nameIdentifier?.textRange?.containsOffset(caretOffset) == true
     }
 
-    override fun applyTo(element: KtProperty, editor: Editor) {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         introduceBackingProperty(element)
     }
 
@@ -97,7 +90,7 @@ class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(ja
         }
 
         private fun KtProperty.addAccessor(newAccessor: KtPropertyAccessor) {
-            val semicolon = getNode().findChildByType(KtTokens.SEMICOLON)
+            val semicolon = node.findChildByType(KtTokens.SEMICOLON)
             addBefore(newAccessor, semicolon?.psi)
         }
 
@@ -136,24 +129,3 @@ class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(ja
         }
     }
 }
-
-class IntroduceBackingPropertyFix(prop: KtProperty): KotlinQuickFixAction<KtProperty>(prop) {
-    override fun getText(): String = "Introduce backing property"
-    override fun getFamilyName(): String  = getText()
-
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        IntroduceBackingPropertyIntention.introduceBackingProperty(element)
-    }
-
-    companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val resolveResult = diagnostic.psiElement.reference?.resolve()
-            if (resolveResult is KtProperty &&
-                IntroduceBackingPropertyIntention.canIntroduceBackingProperty(resolveResult)) {
-                return IntroduceBackingPropertyFix(resolveResult)
-            }
-            return null
-        }
-    }
-}
-

@@ -27,21 +27,21 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.*
 import kotlin.properties.Delegates
 
-public class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: Boolean = false/*TODO?*/) {
-    public constructor(originalElement: PsiElement, saveLineBreaks: Boolean = false/*TODO?*/) : this(PsiChildRange.singleElement(originalElement), saveLineBreaks)
+class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: Boolean = false/*TODO?*/) {
+    constructor(originalElement: PsiElement, saveLineBreaks: Boolean = false/*TODO?*/) : this(PsiChildRange.singleElement(originalElement), saveLineBreaks)
 
     private val SAVED_TREE_KEY = Key<TreeElement>("SAVED_TREE")
     private val psiFactory = KtPsiFactory(originalElements.first!!)
 
     private abstract class TreeElement {
-        public companion object {
-            public fun create(element: PsiElement): TreeElement? {
+        companion object {
+            fun create(element: PsiElement): TreeElement? {
                 val tokenType = element.tokenType
                 val treeElement = when {
                     element is PsiWhiteSpace -> if (element.textContains('\n')) LineBreakTreeElement() else null
                     element is PsiComment -> CommentTreeElement.create(element)
                     tokenType != null -> TokenTreeElement(tokenType)
-                    else -> if (element.getTextLength() > 0) StandardTreeElement() else null // don't save empty elements
+                    else -> if (element.textLength > 0) StandardTreeElement() else null // don't save empty elements
                 }
 //                treeElement?.debugText = element.getText()
                 return treeElement
@@ -129,11 +129,11 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
             val spaceBefore: String,
             val spaceAfter: String
     ) : TreeElement() {
-        public companion object {
+        companion object {
             fun create(comment: PsiComment): CommentTreeElement {
-                val spaceBefore = (comment.prevLeaf(skipEmptyElements = true) as? PsiWhiteSpace)?.getText() ?: ""
-                val spaceAfter = (comment.nextLeaf(skipEmptyElements = true) as? PsiWhiteSpace)?.getText() ?: ""
-                return CommentTreeElement(comment.getText(), spaceBefore, spaceAfter)
+                val spaceBefore = (comment.prevLeaf(skipEmptyElements = true) as? PsiWhiteSpace)?.text ?: ""
+                val spaceAfter = (comment.nextLeaf(skipEmptyElements = true) as? PsiWhiteSpace)?.text ?: ""
+                return CommentTreeElement(comment.text, spaceBefore, spaceAfter)
             }
         }
     }
@@ -184,7 +184,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         get() = getCopyableUserData(SAVED_TREE_KEY)
         set(value) = putCopyableUserData(SAVED_TREE_KEY, value)
 
-    public fun deleteCommentsInside(element: PsiElement) {
+    fun deleteCommentsInside(element: PsiElement) {
         element.accept(object : PsiRecursiveElementVisitor() {
             override fun visitComment(comment: PsiComment) {
                 val treeElement = comment.savedTreeElement
@@ -195,19 +195,19 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         })
     }
 
-    public fun elementCreatedByText(createdElement: PsiElement, original: PsiElement, rangeInOriginal: TextRange) {
-        assert(createdElement.getTextLength() == rangeInOriginal.getLength())
-        assert(createdElement.getText() == original.getText().substring(rangeInOriginal.getStartOffset(), rangeInOriginal.getEndOffset()))
+    fun elementCreatedByText(createdElement: PsiElement, original: PsiElement, rangeInOriginal: TextRange) {
+        assert(createdElement.textLength == rangeInOriginal.length)
+        assert(createdElement.text == original.text.substring(rangeInOriginal.startOffset, rangeInOriginal.endOffset))
 
         createdElement.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (element is PsiWhiteSpace) return
 
-                val token = original.findElementAt(element.getStartOffsetIn(createdElement) + rangeInOriginal.getStartOffset())
+                val token = original.findElementAt(element.getStartOffsetIn(createdElement) + rangeInOriginal.startOffset)
                 if (token != null) {
-                    val elementLength = element.getTextLength()
+                    val elementLength = element.textLength
                     for (originalElement in token.parentsWithSelf) {
-                        val length = originalElement.getTextLength()
+                        val length = originalElement.textLength
                         if (length < elementLength) continue
                         if (length == elementLength) {
                             element.savedTreeElement = originalElement.savedTreeElement
@@ -230,11 +230,11 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         putNewElementIntoMap(newPsiElement, treeElement)
     }
 
-    public fun restore(resultElement: PsiElement, forceAdjustIndent: Boolean = false) {
+    fun restore(resultElement: PsiElement, forceAdjustIndent: Boolean = false) {
         restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent)
     }
 
-    public fun restore(resultElements: PsiChildRange, forceAdjustIndent: Boolean = false) {
+    fun restore(resultElements: PsiChildRange, forceAdjustIndent: Boolean = false) {
         assert(!resultElements.isEmpty)
 
         if (commentsToRestore.isNotEmpty() || lineBreaksToRestore.isNotEmpty()) {
@@ -296,7 +296,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
             val restored: PsiComment
             if (anchor != null) {
                 val anchorElement = findFinalAnchorElement(anchor, comment)
-                val parent = anchorElement.getParent()
+                val parent = anchorElement.parent
                 if (anchor.before) {
                     restored = parent.addAfter(comment, anchorElement) as PsiComment
                     if (commentTreeElement.spaceBefore.isNotEmpty()) {
@@ -311,7 +311,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
                 }
             }
             else {
-                restored = putAbandonedCommentsAfter.getParent().addAfter(comment, putAbandonedCommentsAfter) as PsiComment
+                restored = putAbandonedCommentsAfter.parent.addAfter(comment, putAbandonedCommentsAfter) as PsiComment
                 putAbandonedCommentsAfter = restored
             }
 
@@ -365,15 +365,15 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
 
     private fun PsiElement.restoreLineBreakAfter() {
         val addAfter = shiftNewLineAnchor(this).anchorToAddCommentOrSpace(before = false)
-        var whitespace = addAfter.getNextSibling() as? PsiWhiteSpace
+        var whitespace = addAfter.nextSibling as? PsiWhiteSpace
         //TODO: restore blank lines
-        if (whitespace != null && whitespace.getText().contains('\n')) return // line break is already there
+        if (whitespace != null && whitespace.text.contains('\n')) return // line break is already there
 
         if (whitespace == null) {
-            addAfter.getParent().addAfter(psiFactory.createNewLine(), addAfter)
+            addAfter.parent.addAfter(psiFactory.createNewLine(), addAfter)
         }
         else {
-            whitespace.replace(psiFactory.createWhiteSpace("\n" + whitespace.getText()))
+            whitespace.replace(psiFactory.createWhiteSpace("\n" + whitespace.text))
         }
 
         needAdjustIndentAfterRestore = true
@@ -399,7 +399,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
 
     private fun PsiElement.anchorToAddCommentOrSpace(before: Boolean): PsiElement {
         return parentsWithSelf
-                .dropWhile { it.getParent() !is PsiFile && (if (before) it.getPrevSibling() else it.getNextSibling()) == null }
+                .dropWhile { it.parent !is PsiFile && (if (before) it.prevSibling else it.nextSibling) == null }
                 .first()
     }
 
@@ -447,11 +447,11 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         return if (next?.tokenType == KtTokens.COMMA) next!! else putAfter
     }
 
-    private val nonSpaceAndNonEmptyFilter = { element: PsiElement -> element !is PsiWhiteSpace && element.getTextLength() > 0 }
+    private val nonSpaceAndNonEmptyFilter = { element: PsiElement -> element !is PsiWhiteSpace && element.textLength > 0 }
 
     companion object {
         //TODO: making it private causes error on runtime (KT-7874?)
         val PsiElement.tokenType: KtToken?
-            get() = getNode().getElementType() as? KtToken
+            get() = node.elementType as? KtToken
     }
 }

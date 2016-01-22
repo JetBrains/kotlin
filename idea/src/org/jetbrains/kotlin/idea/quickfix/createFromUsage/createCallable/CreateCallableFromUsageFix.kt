@@ -25,8 +25,8 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -35,29 +35,29 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.HashSet
 
-public class CreateCallableFromUsageFix<E : KtElement>(
+class CreateCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
         callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, false)
 
-public class CreateExtensionCallableFromUsageFix<E : KtElement>(
+class CreateExtensionCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
         callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, true), LowPriorityAction
 
-public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
+abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         originalExpression: E,
         val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
 ) : CreateFromUsageFixBase<E>(originalExpression) {
     init {
         assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalExpression.getElementTextWithContext()}" }
-        if (callableInfos.size() > 1) {
+        if (callableInfos.size > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
-            if (receiverSet.size() > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
+            if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
 
             val possibleContainerSet = callableInfos.mapTo(HashSet<List<KtElement>>()) { it.possibleContainers }
-            if (possibleContainerSet.size() > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
+            if (possibleContainerSet.size > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
         }
     }
 
@@ -88,7 +88,7 @@ public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
             if (it.name.isNotEmpty()) "$kind '${it.name}'" else kind
         }
 
-        return StringBuilder {
+        return StringBuilder().apply {
             append("Create ")
 
             val receiverInfo = callableInfos.first().receiverTypeInfo

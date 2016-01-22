@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public open class IntrinsicCallable(
+open class IntrinsicCallable(
         override val returnType: Type,
         override val valueParameterTypes: List<Type>,
         override val dispatchReceiverType: Type?,
@@ -45,7 +45,7 @@ public open class IntrinsicCallable(
         invokeIntrinsic(v)
     }
 
-    public open fun invokeIntrinsic(v: InstructionAdapter) {
+    open fun invokeIntrinsic(v: InstructionAdapter) {
         invoke(v)
     }
 
@@ -60,7 +60,7 @@ public open class IntrinsicCallable(
     override val owner: Type
         get() = throw UnsupportedOperationException()
 
-    public fun calcReceiverType(): Type =
+    fun calcReceiverType(): Type =
             extensionReceiverType ?: dispatchReceiverType!!
 }
 
@@ -80,7 +80,7 @@ fun createBinaryIntrinsicCallable(
     }
 }
 
-public fun createUnaryIntrinsicCallable(
+fun createUnaryIntrinsicCallable(
         callable: CallableMethod,
         newReturnType: Type? = null,
         needPrimitiveCheck: Boolean = false,
@@ -103,7 +103,7 @@ public fun createUnaryIntrinsicCallable(
     return intrinsic
 }
 
-public fun createIntrinsicCallable(
+fun createIntrinsicCallable(
         callable: CallableMethod,
         invoke: IntrinsicCallable.(v: InstructionAdapter) -> Unit
 ): IntrinsicCallable {

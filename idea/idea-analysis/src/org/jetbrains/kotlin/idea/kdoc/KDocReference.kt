@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-public class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
+class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val declaration = element.getContainingDoc().getOwner() ?: return arrayListOf()
         val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return arrayListOf()
@@ -64,7 +64,7 @@ public class KDocReference(element: KDocName): KtMultiReference<KDocName>(elemen
     override fun getCanonicalText(): String = element.getNameText()
 }
 
-public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
+fun resolveKDocLink(resolutionFacade: ResolutionFacade,
                            fromDescriptor: DeclarationDescriptor,
                            fromSubjectOfTag: KDocTag?,
                            qualifiedName: List<String>): Collection<DeclarationDescriptor> {
@@ -98,7 +98,7 @@ private fun resolveInLocalScope(fromDescriptor: DeclarationDescriptor,
     }
 }
 
-public fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
+fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
     // TODO resolve parameters of functions passed as parameters
     when (fromDescriptor) {
         is CallableDescriptor ->
@@ -151,7 +151,7 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
                                scopeChain)
 }
 
-public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
+fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
             LexicalScope.empty(getPackageInnerScope(descriptor).memberScopeAsImportingScope(), descriptor)

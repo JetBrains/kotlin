@@ -35,17 +35,17 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
-public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFactoryBase() {
+class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFactoryBase() {
     companion object {
         private val RETURN_AND_THROW = TokenSet.create(KtTokens.RETURN_KEYWORD, KtTokens.THROW_KEYWORD)
     }
 
     override fun createHighlightUsagesHandler(editor: Editor, file: PsiFile, target: PsiElement): HighlightUsagesHandlerBase<*>? {
-        if (target is LeafPsiElement && (target.getElementType() in RETURN_AND_THROW)) {
+        if (target is LeafPsiElement && (target.elementType in RETURN_AND_THROW)) {
             val returnOrThrow = PsiTreeUtil.getParentOfType<KtExpression>(
                     target,
-                    javaClass<KtReturnExpression>(),
-                    javaClass<KtThrowExpression>()
+                    KtReturnExpression::class.java,
+                    KtThrowExpression::class.java
             ) ?: return null
 
             return MyHandler(editor, file, returnOrThrow)

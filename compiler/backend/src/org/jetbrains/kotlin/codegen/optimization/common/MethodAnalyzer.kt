@@ -25,15 +25,15 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 import java.util.*
 
-public open class MethodAnalyzer<V : Value>(
-        public val owner: String,
-        public val method: MethodNode,
+open class MethodAnalyzer<V : Value>(
+        val owner: String,
+        val method: MethodNode,
         protected val interpreter: Interpreter<V>
 ) {
-    public val instructions: InsnList = method.instructions
-    public val nInsns: Int = instructions.size()
+    val instructions: InsnList = method.instructions
+    val nInsns: Int = instructions.size()
 
-    public val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
+    val frames: Array<Frame<V>?> = arrayOfNulls(nInsns)
 
     private val handlers: Array<MutableList<TryCatchBlockNode>?> = arrayOfNulls(nInsns)
     private val queued: BooleanArray = BooleanArray(nInsns)
@@ -45,7 +45,7 @@ public open class MethodAnalyzer<V : Value>(
     protected open fun newFrame(nLocals: Int, nStack: Int): Frame<V> = Frame(nLocals, nStack)
 
     protected open fun newFrame(src: Frame<out V>): Frame<V> {
-        val frame = newFrame(src.getLocals(), src.getMaxStackSize())
+        val frame = newFrame(src.locals, src.maxStackSize)
         frame.init(src)
         return frame
     }
@@ -57,7 +57,7 @@ public open class MethodAnalyzer<V : Value>(
     protected open fun visitControlFlowExceptionEdge(insn: Int, tcb: TryCatchBlockNode): Boolean =
             visitControlFlowExceptionEdge(insn, instructions.indexOf(tcb.handler))
 
-    public fun analyze(): Array<Frame<V>?> {
+    fun analyze(): Array<Frame<V>?> {
         if (nInsns == 0) return frames
 
         checkAssertions()
@@ -75,8 +75,8 @@ public open class MethodAnalyzer<V : Value>(
 
             val insnNode = method.instructions[insn]
             try {
-                val insnOpcode = insnNode.getOpcode()
-                val insnType = insnNode.getType()
+                val insnOpcode = insnNode.opcode
+                val insnType = insnNode.type
 
                 if (insnType == AbstractInsnNode.LABEL || insnType == AbstractInsnNode.LINE || insnType == AbstractInsnNode.FRAME) {
                     visitNopInsn(f, insn)
@@ -110,10 +110,10 @@ public open class MethodAnalyzer<V : Value>(
 
             }
             catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction " + insn + ": " + e.getMessage(), e)
+                throw AnalyzerException(e.node, "Error at instruction " + insn + ": " + e.message, e)
             }
             catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction " + insn + ": " + e.getMessage(), e)
+                throw AnalyzerException(insnNode, "Error at instruction " + insn + ": " + e.message, e)
             }
 
         }
@@ -121,11 +121,11 @@ public open class MethodAnalyzer<V : Value>(
         return frames
     }
 
-    public fun getFrame(insn: AbstractInsnNode): Frame<V>? =
+    fun getFrame(insn: AbstractInsnNode): Frame<V>? =
             frames[instructions.indexOf(insn)]
 
     private fun checkAssertions() {
-        if (instructions.toArray().any { it.getOpcode() == Opcodes.JSR || it.getOpcode() == Opcodes.RET })
+        if (instructions.toArray().any { it.opcode == Opcodes.JSR || it.opcode == Opcodes.RET })
             throw AssertionError("Subroutines are deprecated since Java 6")
     }
 
@@ -179,7 +179,7 @@ public open class MethodAnalyzer<V : Value>(
         }
         for (arg in args) {
             current.setLocal(local++, interpreter.newValue(arg))
-            if (arg.getSize() == 2) {
+            if (arg.size == 2) {
                 current.setLocal(local++, interpreter.newValue(null))
             }
         }

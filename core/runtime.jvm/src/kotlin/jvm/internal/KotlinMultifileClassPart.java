@@ -24,9 +24,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface KotlinMultifileClassPart {
-    @Deprecated
-    int abiVersion() default 32;
-
     int[] version() default {};
 
     String multifileClassName();

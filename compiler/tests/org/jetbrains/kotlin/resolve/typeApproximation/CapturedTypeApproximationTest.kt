@@ -16,45 +16,44 @@
 
 package org.jetbrains.kotlin.resolve.typeApproximation
 
-import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.ConfigurationKind
-import java.io.File
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinLiteFixture
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfNecessary
-import java.util.ArrayList
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import java.io.File
+import java.util.*
 
-public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
+class CapturedTypeApproximationTest() : KotlinLiteFixture() {
 
     override fun getTestDataPath() = "compiler/testData/capturedTypeApproximation/"
 
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 
-    public fun doTest(filePath: String, vararg substitutions: String) {
-        assert(substitutions.size() in 1..2) { "Captured type approximation test requires substitutions for (T) or (T, R)" }
-        val oneTypeVariable = substitutions.size() == 1
+    fun doTest(filePath: String, vararg substitutions: String) {
+        assert(substitutions.size in 1..2) { "Captured type approximation test requires substitutions for (T) or (T, R)" }
+        val oneTypeVariable = substitutions.size == 1
 
-        val declarationsText = KotlinTestUtils.doLoadFile(File(getTestDataPath() + "/declarations.kt"))
+        val declarationsText = KotlinTestUtils.doLoadFile(File(testDataPath + "/declarations.kt"))
 
         fun analyzeTestFile(testType: String) = run {
             val test = declarationsText.replace("#TestType#", testType)
-            val testFile = KtPsiFactory(getProject()).createFile(test)
+            val testFile = KtPsiFactory(project).createFile(test)
             val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(testFile).bindingContext
             val functions = bindingContext.getSliceContents(BindingContext.FUNCTION)
-            val functionFoo = functions.values().firstOrNull { it.getName().asString() == "foo" } ?:
+            val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" } ?:
                               throw AssertionError("Function 'foo' is not declared")
             Pair(bindingContext, functionFoo)
         }
@@ -85,22 +84,22 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
         fun createTestSubstitutor(testSubstitution: Map<TypeParameterDescriptor, TypeProjection>): TypeSubstitutor {
             val substitutionContext = testSubstitution.map {
                 val (typeParameter, typeProjection) = it
-                typeParameter.getTypeConstructor() to TypeProjectionImpl(createCapturedType(typeProjection))
+                typeParameter.typeConstructor to TypeProjectionImpl(createCapturedType(typeProjection))
             }.toMap()
             return TypeSubstitutor.create(substitutionContext)
         }
 
         val testTypes = if (oneTypeVariable) getTestTypesForOneTypeVariable() else getTestTypesForTwoTypeVariables()
-        val result = StringBuilder {
+        val result = buildString {
             for ((index, testTypeWithUnsubstitutedTypeVars) in testTypes.withIndex()) {
                 val testType = createTestType(testTypeWithUnsubstitutedTypeVars)
                 val (bindingContext, functionFoo) = analyzeTestFile(testType)
-                val typeParameters = functionFoo.getTypeParameters()
-                val type = functionFoo.getReturnType()
+                val typeParameters = functionFoo.typeParameters
+                val type = functionFoo.returnType
 
                 appendln(testType)
 
-                if (bindingContext.getDiagnostics().noSuppression().any { it.getSeverity() == Severity.ERROR }) {
+                if (bindingContext.diagnostics.noSuppression().any { it.severity == Severity.ERROR }) {
                     appendln("  compiler error\n")
                     continue
                 }
@@ -108,14 +107,16 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
                 val testSubstitutions = createTestSubstitutions(typeParameters)
                 for (testSubstitution in testSubstitutions) {
                     val typeSubstitutor = createTestSubstitutor(testSubstitution)
-                    val typeWithCapturedType = typeSubstitutor.substituteWithoutApproximation(TypeProjectionImpl(INVARIANT, type!!))!!.getType()
+                    val typeWithCapturedType = typeSubstitutor.substituteWithoutApproximation(TypeProjectionImpl(INVARIANT, type!!))!!.type
 
                     val (lower, upper) = approximateCapturedTypes(typeWithCapturedType)
-                    val substitution = approximateCapturedTypesIfNecessary(TypeProjectionImpl(INVARIANT, typeWithCapturedType))
+                    val substitution =
+                            approximateCapturedTypesIfNecessary(
+                                    TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false)
 
                     append("  ")
-                    for (typeParameter in testSubstitution.keySet()) {
-                        if (testSubstitution.size() > 1) append("${typeParameter.getName()} = ")
+                    for (typeParameter in testSubstitution.keys) {
+                        if (testSubstitution.size > 1) append("${typeParameter.name} = ")
                         append("${testSubstitution[typeParameter]}. ")
                     }
                     appendln("lower: $lower; upper: $upper; substitution: $substitution")
@@ -124,7 +125,7 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(getTestDataPath() + "/" + filePath), result.toString())
+        KotlinTestUtils.assertEqualsToFile(File(testDataPath + "/" + filePath), result)
     }
 
     private fun getTypePatternsForOneTypeVariable() = listOf("In<#T#>", "Out<#T#>", "Inv<#T#>", "Inv<in #T#>", "Inv<out #T#>")
@@ -141,7 +142,7 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
         fun addRandomVariants(vararg randomVariants: String) {
             variants.addAll(randomVariants.map { digits -> digits.map { digit -> digit - '0' } })
         }
-        assert(typePatterns.size() == 5) { "Generated random variants below depend on size 5" }
+        assert(typePatterns.size == 5) { "Generated random variants below depend on size 5" }
         //From 021 the following is generated: In<Inv<Out<T>>>, where In = typePatterns[0], Inv = typePatterns[2], Out = typePatterns[1]
         addRandomVariants("021", "111", "230", "421", "322", "120", "411", "102", "401", "012")
         addRandomVariants("4243", "3103", "3043", "2003", "4442", "4143", "1440", "0303", "1302", "1332")
@@ -169,31 +170,31 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
         return result
     }
 
-    public fun testSimpleT() {
+    fun testSimpleT() {
         doTest("simpleT.txt", "T");
     }
 
-    public fun testNullableT() {
+    fun testNullableT() {
         doTest("nullableT.txt", "T?")
     }
 
-    public fun testUseSiteInT() {
+    fun testUseSiteInT() {
         doTest("useSiteInT.txt", "in T");
     }
 
-    public fun testUseSiteInNullableT() {
+    fun testUseSiteInNullableT() {
         doTest("useSiteInNullableT.txt", "in T?");
     }
 
-    public fun testUseSiteOutT() {
+    fun testUseSiteOutT() {
         doTest("useSiteOutT.txt", "out T");
     }
 
-    public fun testUseSiteOutNullableT() {
+    fun testUseSiteOutNullableT() {
         doTest("useSiteOutNullableT.txt", "out T?");
     }
 
-    public fun testTwoVariables() {
+    fun testTwoVariables() {
         doTest("twoVariables.txt", "T", "R")
     }
 }

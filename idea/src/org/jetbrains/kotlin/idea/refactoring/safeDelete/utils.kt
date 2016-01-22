@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public fun PsiElement.canDeleteElement(): Boolean {
+fun PsiElement.canDeleteElement(): Boolean {
     if (this is KtObjectDeclaration && isObjectLiteral()) return false
 
     if (this is KtParameter) {
-        val parameterList = getParent() as? KtParameterList ?: return false
-        val declaration = parameterList.getParent() as? KtDeclaration ?: return false
+        val parameterList = parent as? KtParameterList ?: return false
+        val declaration = parameterList.parent as? KtDeclaration ?: return false
         return declaration !is KtPropertyAccessor
     }
 
@@ -43,11 +43,11 @@ public fun PsiElement.canDeleteElement(): Boolean {
 fun PsiElement.removeOverrideModifier() {
     when (this) {
         is KtNamedFunction, is KtProperty -> {
-            (this as KtModifierListOwner).getModifierList()?.getModifier(KtTokens.OVERRIDE_KEYWORD)?.delete()
+            (this as KtModifierListOwner).modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD)?.delete()
         }
         is PsiMethod -> {
-            getModifierList().getAnnotations().firstOrNull {
-                annotation -> annotation.getQualifiedName() == "java.lang.Override"
+            modifierList.annotations.firstOrNull {
+                annotation -> annotation.qualifiedName == "java.lang.Override"
             }?.delete()
         }
     }

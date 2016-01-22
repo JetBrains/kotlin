@@ -30,17 +30,17 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-public interface KtReference : PsiPolyVariantReference {
+interface KtReference : PsiPolyVariantReference {
     fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor>
 
     override fun getElement(): KtElement
 }
 
-public abstract class AbstractKtReference<T : KtElement>(element: T)
+abstract class AbstractKtReference<T : KtElement>(element: T)
 : PsiPolyVariantReferenceBase<T>(element), KtReference {
 
-    public val expression: T
-        get() = getElement()
+    val expression: T
+        get() = element
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
         return PsiElementResolveResult.createResults(resolveToPsiElements())
@@ -48,7 +48,7 @@ public abstract class AbstractKtReference<T : KtElement>(element: T)
 
     override fun resolve(): PsiElement? {
         val psiElements = resolveToPsiElements()
-        if (psiElements.size() == 1) {
+        if (psiElements.size == 1) {
             return psiElements.iterator().next()
         }
         return null
@@ -60,7 +60,7 @@ public abstract class AbstractKtReference<T : KtElement>(element: T)
 
     override fun getCanonicalText(): String = "<TBD>"
 
-    public open fun canRename(): Boolean = false
+    open fun canRename(): Boolean = false
     override fun handleElementRename(newElementName: String?): PsiElement? = throw IncorrectOperationException()
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
@@ -94,12 +94,12 @@ public abstract class AbstractKtReference<T : KtElement>(element: T)
 
     private fun resolveToPsiElements(targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
         if (targetDescriptor is PackageViewDescriptor) {
-            val psiFacade = JavaPsiFacade.getInstance(expression.getProject())
+            val psiFacade = JavaPsiFacade.getInstance(expression.project)
             val fqName = targetDescriptor.fqName.asString()
             return psiFacade.findPackage(fqName).singletonOrEmptyList()
         }
         else {
-            return DescriptorToSourceUtilsIde.getAllDeclarations(expression.getProject(), targetDescriptor)
+            return DescriptorToSourceUtilsIde.getAllDeclarations(expression.project, targetDescriptor)
         }
     }
 
@@ -117,11 +117,11 @@ public abstract class AbstractKtReference<T : KtElement>(element: T)
         return context[BindingContext.AMBIGUOUS_LABEL_TARGET, reference]
     }
 
-    override fun toString() = javaClass.getSimpleName() + ": " + expression.getText()
+    override fun toString() = javaClass.simpleName + ": " + expression.text
 }
 
-public abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression) {
+abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression) {
     override fun getTargetDescriptors(context: BindingContext) = expression.getReferenceTargets(context)
 }
 
-public abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression)
+abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression)

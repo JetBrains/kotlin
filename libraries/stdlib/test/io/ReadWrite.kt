@@ -15,12 +15,12 @@ fun sample(): Reader = StringReader("Hello\nWorld");
 class ReadWriteTest {
     @test fun testAppendText() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
-        file.writeText("Hello\n", "UTF8")
-        file.appendText("World\n", "UTF8")
+        file.writeText("Hello\n")
+        file.appendText("World\n")
         file.appendText("Again")
 
         assertEquals("Hello\nWorld\nAgain", file.readText())
-        assertEquals(listOf("Hello", "World", "Again"), file.readLines("UTF8"))
+        assertEquals(listOf("Hello", "World", "Again"), file.readLines(Charsets.UTF_8))
         file.deleteOnExit()
     }
 
@@ -41,7 +41,14 @@ class ReadWriteTest {
         sample().forEachLine {
             list.add(it)
         }
-        assertEquals(arrayListOf("Hello", "World"), list)
+        assertEquals(listOf("Hello", "World"), list)
+
+        assertEquals(listOf("Hello", "World"), sample().readLines())
+
+        sample().useLines {
+            assertEquals(listOf("Hello", "World"), it.toList())
+        }
+
 
         var reader = StringReader("")
         var c = 0
@@ -78,10 +85,17 @@ class ReadWriteTest {
             assertTrue(arr.contains('W'.toByte()))
         }
         val list = ArrayList<String>()
-        file.forEachLine("UTF8", {
+        file.forEachLine(Charsets.UTF_8, {
             list.add(it)
         })
         assertEquals(arrayListOf("Hello", "World"), list)
+
+        assertEquals(arrayListOf("Hello", "World"), file.readLines())
+
+        file.useLines {
+            assertEquals(arrayListOf("Hello", "World"), it.toList())
+        }
+
         val text = file.inputStream().reader().readText()
         assertTrue(text.contains("Hello"))
         assertTrue(text.contains("World"))
@@ -131,7 +145,7 @@ class ReadWriteTest {
         val url = URL("http://kotlinlang.org")
         val text = url.readText()
         assertFalse(text.isEmpty())
-        val text2 = url.readText("UTF8")
+        val text2 = url.readText(charset("UTF8"))
         assertFalse(text2.isEmpty())
     }
 }

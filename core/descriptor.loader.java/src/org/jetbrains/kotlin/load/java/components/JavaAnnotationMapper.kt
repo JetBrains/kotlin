@@ -36,7 +36,7 @@ import java.lang.annotation.Retention
 import java.lang.annotation.Target
 import java.util.EnumSet
 
-public object JavaAnnotationMapper {
+object JavaAnnotationMapper {
 
     private val JAVA_TARGET_FQ_NAME = FqName(Target::class.java.canonicalName)
     private val JAVA_RETENTION_FQ_NAME = FqName(Retention::class.java.canonicalName)
@@ -45,7 +45,7 @@ public object JavaAnnotationMapper {
     // Java8-specific thing
     private val JAVA_REPEATABLE_FQ_NAME = FqName("java.lang.annotation.Repeatable")
 
-    public fun mapOrResolveJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
+    fun mapOrResolveJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
             when (annotation.classId) {
                 ClassId.topLevel(JAVA_TARGET_FQ_NAME) -> JavaTargetAnnotationDescriptor(annotation, c)
                 ClassId.topLevel(JAVA_RETENTION_FQ_NAME) -> JavaRetentionAnnotationDescriptor(annotation, c)
@@ -55,7 +55,7 @@ public object JavaAnnotationMapper {
                 else -> c.resolveAnnotation(annotation)
             }
 
-    public fun findMappedJavaAnnotation(kotlinName: FqName,
+    fun findMappedJavaAnnotation(kotlinName: FqName,
                                         annotationOwner: JavaAnnotationOwner,
                                         c: LazyJavaResolverContext
     ): AnnotationDescriptor? {
@@ -79,7 +79,7 @@ public object JavaAnnotationMapper {
                   KotlinBuiltIns.FQ_NAMES.repeatable to JAVA_REPEATABLE_FQ_NAME,
                   KotlinBuiltIns.FQ_NAMES.mustBeDocumented to JAVA_DOCUMENTED_FQ_NAME)
 
-    public val javaToKotlinNameMap: Map<FqName, FqName> =
+    val javaToKotlinNameMap: Map<FqName, FqName> =
             mapOf(JAVA_TARGET_FQ_NAME     to KotlinBuiltIns.FQ_NAMES.target,
                   JAVA_RETENTION_FQ_NAME  to KotlinBuiltIns.FQ_NAMES.retention,
                   JAVA_DEPRECATED_FQ_NAME to KotlinBuiltIns.FQ_NAMES.deprecated,
@@ -154,7 +154,7 @@ class JavaRetentionAnnotationDescriptor(
     override fun getAllValueArguments() = valueArguments()
 }
 
-public object JavaAnnotationTargetMapper {
+object JavaAnnotationTargetMapper {
     private val targetNameLists = mapOf("PACKAGE"         to EnumSet.noneOf(KotlinTarget::class.java),
                                         "TYPE"            to EnumSet.of(KotlinTarget.CLASS, KotlinTarget.FILE),
                                         "ANNOTATION_TYPE" to EnumSet.of(KotlinTarget.ANNOTATION_CLASS),
@@ -169,9 +169,9 @@ public object JavaAnnotationTargetMapper {
                                         "TYPE_USE"        to EnumSet.of(KotlinTarget.TYPE)
     )
 
-    public fun mapJavaTargetArgumentByName(argumentName: String?): Set<KotlinTarget> = targetNameLists[argumentName] ?: emptySet()
+    fun mapJavaTargetArgumentByName(argumentName: String?): Set<KotlinTarget> = targetNameLists[argumentName] ?: emptySet()
 
-    public fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>, builtIns: KotlinBuiltIns): ConstantValue<*>? {
+    fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>, builtIns: KotlinBuiltIns): ConstantValue<*>? {
         // Map arguments: java.lang.annotation.Target -> kotlin.annotation.Target
         val kotlinTargets = arguments.filterIsInstance<JavaEnumValueAnnotationArgument>()
                 .flatMap { mapJavaTargetArgumentByName(it.resolve()?.name?.asString()) }
@@ -188,7 +188,7 @@ public object JavaAnnotationTargetMapper {
                                           "SOURCE"  to KotlinRetention.SOURCE
     )
 
-    public fun mapJavaRetentionArgument(element: JavaAnnotationArgument, builtIns: KotlinBuiltIns): ConstantValue<*>? {
+    fun mapJavaRetentionArgument(element: JavaAnnotationArgument, builtIns: KotlinBuiltIns): ConstantValue<*>? {
         // Map argument: java.lang.annotation.Retention -> kotlin.annotation.annotation
         return (element as? JavaEnumValueAnnotationArgument)?.let {
             retentionNameList[it.resolve()?.name?.asString()]?.let {

@@ -24,9 +24,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface KotlinFileFacade {
-    @Deprecated
-    int abiVersion() default 32;
-
     int[] version() default {};
 
     String moduleName() default "main";

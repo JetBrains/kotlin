@@ -1,7 +1,7 @@
 package skipClassloader
 
 fun main(args: Array<String>) {
-    val loader = javaClass<A>().getClassLoader()!!
+    val loader = A::class.java.getClassLoader()!!
     try {
         //Breakpoint!
         val aaa = loader.loadClass("skipClassloader.A")

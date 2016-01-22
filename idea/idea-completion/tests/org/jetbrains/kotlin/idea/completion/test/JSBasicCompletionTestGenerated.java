@@ -463,6 +463,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("KT10664.kt")
+        public void testKT10664() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/KT10664.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LocalMultideclarationValues.kt")
         public void testLocalMultideclarationValues() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/LocalMultideclarationValues.kt");
@@ -984,6 +990,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("InExtFunName.kt")
+            public void testInExtFunName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/InExtFunName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InGenericExtFunName.kt")
+            public void testInGenericExtFunName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/InGenericExtFunName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoAutoPopupAfterNumberLiteral.kt")
             public void testNoAutoPopupAfterNumberLiteral() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutoPopupAfterNumberLiteral.kt");
@@ -996,21 +1014,9 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
-            @TestMetadata("NoAutopopupInExtFunName.kt")
-            public void testNoAutopopupInExtFunName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInExtFunName.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("NoAutopopupInFunName.kt")
             public void testNoAutopopupInFunName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInFunName.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("NoAutopopupInGenericExtFunName.kt")
-            public void testNoAutopopupInGenericExtFunName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInGenericExtFunName.kt");
                 doTest(fileName);
             }
 
@@ -1428,6 +1434,75 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("WhenByEnum.kt")
             public void testWhenByEnum() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/WhenByEnum.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FromUnresolvedNames extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInFromUnresolvedNames() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromUnresolvedNames"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("FunctionInCompanionObject.kt")
+            public void testFunctionInCompanionObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/FunctionInCompanionObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("LocalVal.kt")
+            public void testLocalVal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/LocalVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MemberFunction.kt")
+            public void testMemberFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/MemberFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MemberProperty.kt")
+            public void testMemberProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/MemberProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotForExtensionFunction.kt")
+            public void testNotForExtensionFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/NotForExtensionFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Parameter.kt")
+            public void testParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/Parameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelClass.kt")
+            public void testTopLevelClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/TopLevelClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelFunction.kt")
+            public void testTopLevelFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/TopLevelFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelInterface.kt")
+            public void testTopLevelInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/TopLevelInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TopLevelObject.kt")
+            public void testTopLevelObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromUnresolvedNames/TopLevelObject.kt");
                 doTest(fileName);
             }
         }

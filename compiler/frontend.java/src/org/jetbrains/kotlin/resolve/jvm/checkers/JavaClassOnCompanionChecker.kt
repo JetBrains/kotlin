@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 
-public class JavaClassOnCompanionChecker : CallChecker {
+class JavaClassOnCompanionChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val descriptor = resolvedCall.resultingDescriptor
         if (descriptor !is PropertyDescriptor || descriptor.name.asString() != "javaClass") return

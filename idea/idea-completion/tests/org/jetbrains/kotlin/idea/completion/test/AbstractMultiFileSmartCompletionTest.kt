@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTestCase() {
+abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTestCase() {
     override fun setUp() {
         super.setUp()
         setType(CompletionType.SMART)
@@ -30,7 +30,7 @@ public abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTes
         configureByFile(getTestName(false) + ".kt", "")
         // several tests require disabling this check after adding InclusiveRange, need to investigate why
 //        AstAccessControl.testWithControlledAccessToAst(false, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
-            testCompletion(getFile().getText(), JvmPlatform, { completionType, invocationCount ->
+            testCompletion(file.text, JvmPlatform, { completionType, invocationCount ->
                 setType(completionType)
                 complete(invocationCount)
                 myItems

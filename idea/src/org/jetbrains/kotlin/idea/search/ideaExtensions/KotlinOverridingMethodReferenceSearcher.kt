@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.utils.ifEmpty
 
-public class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
+class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
     override fun processQuery(p: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
         super.processQuery(p, consumer)
 

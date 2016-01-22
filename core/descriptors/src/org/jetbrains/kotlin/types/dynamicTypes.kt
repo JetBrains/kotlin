@@ -31,7 +31,7 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
 
 interface Dynamicity : TypeCapability
 
-fun KotlinType.isDynamic(): Boolean = this.getCapability(javaClass<Dynamicity>()) != null
+fun KotlinType.isDynamic(): Boolean = this.getCapability(Dynamicity::class.java) != null
 
 fun createDynamicType(builtIns: KotlinBuiltIns) = object : DelegatingFlexibleType(
         builtIns.nothingType,
@@ -39,7 +39,7 @@ fun createDynamicType(builtIns: KotlinBuiltIns) = object : DelegatingFlexibleTyp
         DynamicTypeCapabilities
 ) {}
 
-public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
+object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override val id: String get() = "kotlin.DynamicType"
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T? {
@@ -50,10 +50,10 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     private class Impl(flexibility: Flexibility) : Dynamicity, Specificity, NullAwareness, FlexibleTypeDelegation {
         companion object {
             internal val capabilityClasses = hashSetOf(
-                    javaClass<Dynamicity>(),
-                    javaClass<Specificity>(),
-                    javaClass<NullAwareness>(),
-                    javaClass<FlexibleTypeDelegation>()
+                    Dynamicity::class.java,
+                    Specificity::class.java,
+                    NullAwareness::class.java,
+                    FlexibleTypeDelegation::class.java
             )
         }
 

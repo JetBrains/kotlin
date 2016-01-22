@@ -64,6 +64,7 @@ tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
 
 enum class ItemPriority {
     SUPER_METHOD_WITH_ARGUMENTS,
+    FROM_UNRESOLVED_NAME_SUGGESTION,
     DEFAULT,
     IMPLEMENT,
     OVERRIDE,
@@ -102,10 +103,10 @@ fun LookupElement.keepOldArgumentListOnTab(): LookupElement {
 }
 
 fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanceledException {
-    val indicator = CompletionService.getCompletionService().getCurrentCompletion() as CompletionProgressIndicator
+    val indicator = CompletionService.getCompletionService().currentCompletion as CompletionProgressIndicator
 
     // Force cancel to avoid deadlock in CompletionThreading.delegateWeighing()
-    if (!indicator.isCanceled()) {
+    if (!indicator.isCanceled) {
         indicator.cancel()
     }
 
@@ -113,12 +114,12 @@ fun rethrowWithCancelIndicator(exception: ProcessCanceledException): ProcessCanc
 }
 
 fun PrefixMatcher.asNameFilter() = { name: Name ->
-    if (name.isSpecial()) {
+    if (name.isSpecial) {
         false
     }
     else {
-        val identifier = name.getIdentifier()
-        if (getPrefix().startsWith("$")) { // we need properties from scope for backing field completion
+        val identifier = name.identifier
+        if (prefix.startsWith("$")) { // we need properties from scope for backing field completion
             prefixMatches("$" + identifier)
         }
         else {
@@ -128,10 +129,10 @@ fun PrefixMatcher.asNameFilter() = { name: Name ->
 }
 
 fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
-    val tails = getTailFragments()
+    val tails = tailFragments
     clearTail()
     appendTailText(text, grayed)
-    tails.forEach { appendTailText(it.text, it.isGrayed()) }
+    tails.forEach { appendTailText(it.text, it.isGrayed) }
 }
 
 enum class CallableWeight {
@@ -148,8 +149,8 @@ enum class CallableWeight {
 val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")
 
 fun InsertionContext.isAfterDot(): Boolean {
-    var offset = getStartOffset()
-    val chars = getDocument().getCharsSequence()
+    var offset = startOffset
+    val chars = document.charsSequence
     while (offset > 0) {
         offset--
         val c = chars[offset]
@@ -162,7 +163,7 @@ fun InsertionContext.isAfterDot(): Boolean {
 
 // do not complete this items by prefix like "is"
 fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
-    val prefix = prefixMatcher.getPrefix()
+    val prefix = prefixMatcher.prefix
     val s = "this@"
     return prefix.startsWith(s) || s.startsWith(prefix)
 }
@@ -200,7 +201,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
                 }
 
                 // check if the current function literal is inlined and stop processing outer declarations if it's not
-                val callee = call?.getCalleeExpression() as? KtReferenceExpression ?: break // not inlined
+                val callee = call?.calleeExpression as? KtReferenceExpression ?: break // not inlined
                 if (!InlineUtil.isInline(bindingContext[BindingContext.REFERENCE_TARGET, callee])) break // not inlined
             }
             else {
@@ -233,7 +234,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
 
 private fun KtDeclarationWithBody.returnType(bindingContext: BindingContext): KotlinType? {
     val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
-    return callable.getReturnType()
+    return callable.returnType
 }
 
 private fun Name?.labelNameToTail(): String = if (this != null) "@" + render() else ""
@@ -248,7 +249,7 @@ private fun createKeywordElementWithSpace(
     return if (addSpaceAfter) {
         object: LookupElementDecorator<LookupElement>(element) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.SPACE.handleInsert(context, getDelegate())
+                WithTailInsertHandler.SPACE.handleInsert(context, delegate)
             }
         }
     }
@@ -295,7 +296,7 @@ fun breakOrContinueExpressionItems(position: KtElement, breakOrContinue: String)
 }
 
 fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): LookupElement? {
-    if (type.isError()) return null
+    if (type.isError) return null
 
     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
         val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
@@ -303,7 +304,7 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
         return BaseTypeLookupElement(type, baseLookupElement)
     }
     else {
-        val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
+        val classifier = type.constructor.declarationDescriptor ?: return null
         val baseLookupElement = createLookupElement(classifier, qualifyNestedClasses = true, includeClassTypeArguments = false)
 
         val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
@@ -311,7 +312,7 @@ fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): Look
         val typeLookupElement = object : BaseTypeLookupElement(type, baseLookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
-                presentation.setItemText(itemText)
+                presentation.itemText = itemText
             }
         }
 
@@ -330,13 +331,13 @@ private open class BaseTypeLookupElement(type: KotlinType, baseLookupElement: Lo
     override fun hashCode() = fullText.hashCode()
 
     override fun renderElement(presentation: LookupElementPresentation) {
-        getDelegate().renderElement(presentation)
+        delegate.renderElement(presentation)
     }
 
     override fun handleInsert(context: InsertionContext) {
-        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), fullText)
-        context.setTailOffset(context.getStartOffset() + fullText.length)
-        shortenReferences(context, context.getStartOffset(), context.getTailOffset())
+        context.document.replaceString(context.startOffset, context.tailOffset, fullText)
+        context.tailOffset = context.startOffset + fullText.length
+        shortenReferences(context, context.startOffset, context.tailOffset)
     }
 }
 
@@ -361,7 +362,7 @@ fun LookupElement.decorateAsStaticMember(
     else
         container
 
-    val qualifierPresentation = classDescriptor.getName().asString()
+    val qualifierPresentation = classDescriptor.name.asString()
     val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
 
     return object: LookupElementDecorator<LookupElement>(this) {

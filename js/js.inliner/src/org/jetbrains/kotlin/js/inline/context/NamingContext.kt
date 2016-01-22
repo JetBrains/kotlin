@@ -32,7 +32,7 @@ class NamingContext(
     private val declarations = ArrayList<JsVars>()
     private var addedDeclarations = false
 
-    public fun applyRenameTo(target: JsNode): JsNode {
+    fun applyRenameTo(target: JsNode): JsNode {
         if (!addedDeclarations) {
             statementContext.addPrevious(declarations)
             addedDeclarations = true
@@ -41,17 +41,17 @@ class NamingContext(
         return replaceNames(target, renamings)
     }
 
-    public fun replaceName(name: JsName, replacement: JsExpression) {
+    fun replaceName(name: JsName, replacement: JsExpression) {
         assert(!renamings.containsKey(name)) { "$name has been renamed already" }
 
         renamings.put(name, replacement)
     }
 
-    public fun getFreshName(candidate: String): JsName = scope.declareFreshName(candidate)
+    fun getFreshName(candidate: String): JsName = scope.declareFreshName(candidate)
 
-    public fun getFreshName(candidate: JsName): JsName = getFreshName(candidate.getIdent())
+    fun getFreshName(candidate: JsName): JsName = getFreshName(candidate.ident)
 
-    public fun newVar(name: JsName, value: JsExpression? = null) {
+    fun newVar(name: JsName, value: JsExpression? = null) {
         val vars = JsAstUtils.newVar(name, value)
         declarations.add(vars)
     }

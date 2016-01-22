@@ -19,20 +19,20 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 
-public interface Instruction {
-    public var owner: Pseudocode
+interface Instruction {
+    var owner: Pseudocode
 
-    public val previousInstructions: Collection<Instruction>
-    public val nextInstructions: Collection<Instruction>
+    val previousInstructions: Collection<Instruction>
+    val nextInstructions: Collection<Instruction>
 
-    public val dead: Boolean
+    val dead: Boolean
 
-    public val lexicalScope: LexicalScope
+    val lexicalScope: LexicalScope
 
-    public val inputValues: List<PseudoValue>
+    val inputValues: List<PseudoValue>
 
-    public val copies: Collection<Instruction>
+    val copies: Collection<Instruction>
 
-    public fun accept(visitor: InstructionVisitor)
-    public fun <R> accept(visitor: InstructionVisitorWithResult<R>): R
+    fun accept(visitor: InstructionVisitor)
+    fun <R> accept(visitor: InstructionVisitorWithResult<R>): R
 }

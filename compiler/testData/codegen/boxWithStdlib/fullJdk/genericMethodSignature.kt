@@ -22,14 +22,14 @@ class Test<T, X, in Y>() {
 }
 
 fun box(): String {
-    val clz = javaClass<Test<*, *, *>>()
+    val clz = Test::class.java
 
     val params = listOf(
-            Params(1, javaClass<Any>(), "T", "T"),
-            Params(2, javaClass<Z<*>>(), "Z<T>", "Z<T>"),
-            Params(3, javaClass<Z<*>>(), "Z<java.lang.String>", "Z<java.lang.String>"),
-            Params(4, javaClass<Any>(), "Zout<? extends java.lang.String>", "X"),
-            Params(5, javaClass<Any>(), "Zin<? super TParam>", "Y")
+            Params(1, Any::class.java, "T", "T"),
+            Params(2, Z::class.java, "Z<T>", "Z<T>"),
+            Params(3, Z::class.java, "Z<java.lang.String>", "Z<java.lang.String>"),
+            Params(4, Any::class.java, "Zout<java.lang.String>", "X"),
+            Params(5, Any::class.java, "Zin<TParam>", "Y")
     )
 
 

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
 
-public class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) : KotlinQuickFixAction<KtSecondaryConstructor>(element) {
+class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) : KotlinQuickFixAction<KtSecondaryConstructor>(element) {
     override fun getText() = KotlinBundle.message("insert.delegation.call", keywordToUse)
     override fun getFamilyName() = "Insert explicit delegation call"
 
@@ -49,9 +49,9 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecond
         val descriptor = element.resolveToDescriptor()
 
         // if empty call is ok and it's resolved to another constructor, do not move caret
-        if (resolvedCall?.isReallySuccess() ?: false && resolvedCall!!.getCandidateDescriptor().getOriginal() != descriptor) return
+        if (resolvedCall?.isReallySuccess() ?: false && resolvedCall!!.candidateDescriptor.original != descriptor) return
 
-        val leftParOffset = newDelegationCall.getValueArgumentList()!!.getLeftParenthesis()!!.getTextOffset()
+        val leftParOffset = newDelegationCall.valueArgumentList!!.leftParenthesis!!.textOffset
 
         editor?.moveCaret(leftParOffset + 1)
     }
@@ -69,12 +69,12 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecond
             return InsertDelegationCallQuickfix(isThis = true, element = secondaryConstructor)
         }
 
-        private fun KtClassOrObject.getConstructorsCount() = (descriptor as ClassDescriptor).getConstructors().size()
+        private fun KtClassOrObject.getConstructorsCount() = (descriptor as ClassDescriptor).constructors.size
     }
 
     object InsertSuperDelegationCallFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<KtSecondaryConstructor>() ?: return null
+            val secondaryConstructor = diagnostic.psiElement.getNonStrictParentOfType<KtSecondaryConstructor>() ?: return null
             if (!secondaryConstructor.hasImplicitDelegationCall()) return null
             val klass = secondaryConstructor.getContainingClassOrObject() as? KtClass ?: return null
             if (klass.hasPrimaryConstructor()) return null

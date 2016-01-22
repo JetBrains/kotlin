@@ -34,17 +34,10 @@ fun extensionFunExpr() {
     assertEquals(null, g.parameters.single().name)
 }
 
-fun customFunction() {
-    val f = object : Function<String> {}
-    assertNull(f.reflect())
-}
-
 fun box(): String {
     lambda()
     funExpr()
     extensionFunExpr()
-
-    customFunction()
 
     return "OK"
 }

@@ -35,8 +35,6 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.PositionTracker;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -358,7 +356,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
         if (typeReference != null) {
             builder.replaceElement(typeReference,
                                    TYPE_REFERENCE_VARIABLE_NAME,
-                                   SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType),
+                                   SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType, myDeclaration),
                                    false);
         }
     }
@@ -391,8 +389,8 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
 
     @Override
     protected Collection<PsiReference> collectRefs(SearchScope referencesSearchScope) {
-        return CollectionsKt.map(
-                ArraysKt.filterIsInstance(getOccurrences(), KtSimpleNameExpression.class),
+        return kotlin.collections.CollectionsKt.map(
+                kotlin.collections.ArraysKt.filterIsInstance(getOccurrences(), KtSimpleNameExpression.class),
                 new Function1<KtSimpleNameExpression, PsiReference>() {
                     @Override
                     public PsiReference invoke(KtSimpleNameExpression expression) {

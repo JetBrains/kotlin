@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorResolver
+import org.jetbrains.kotlin.resolve.LocalVariableResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -32,38 +32,38 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-public class DestructuringDeclarationResolver(
+class DestructuringDeclarationResolver(
         private val fakeCallResolver: FakeCallResolver,
-        private val descriptorResolver: DescriptorResolver,
+        private val localVariableResolver: LocalVariableResolver,
         private val typeResolver: TypeResolver,
         private val symbolUsageValidator: SymbolUsageValidator
 ) {
-    public fun defineLocalVariablesFromMultiDeclaration(
+    fun defineLocalVariablesFromMultiDeclaration(
             writableScope: LexicalWritableScope,
             destructuringDeclaration: KtDestructuringDeclaration,
             receiver: ReceiverValue,
             reportErrorsOn: KtExpression,
             context: ExpressionTypingContext
     ) {
-        for ((componentIndex, entry) in destructuringDeclaration.getEntries().withIndex()) {
+        for ((componentIndex, entry) in destructuringDeclaration.entries.withIndex()) {
             val componentName = createComponentName(componentIndex + 1)
 
             val expectedType = getExpectedTypeForComponent(context, entry)
             val results = fakeCallResolver.resolveFakeCall(context.replaceExpectedType(expectedType), receiver, componentName, entry)
 
             var componentType: KotlinType? = null
-            if (results.isSuccess()) {
-                context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.getResultingCall())
+            if (results.isSuccess) {
+                context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.resultingCall)
 
-                val functionDescriptor = results.getResultingDescriptor()
+                val functionDescriptor = results.resultingDescriptor
                 symbolUsageValidator.validateCall(null, functionDescriptor, context.trace, entry)
 
-                componentType = functionDescriptor.getReturnType()
+                componentType = functionDescriptor.returnType
                 if (componentType != null && !TypeUtils.noExpectedType(expectedType) && !KotlinTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {
                     context.trace.report(Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(reportErrorsOn, componentName, componentType, expectedType))
                 }
             }
-            else if (results.isAmbiguity()) {
+            else if (results.isAmbiguity) {
                 context.trace.report(Errors.COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, componentName, results.getResultingCalls()))
             }
             else {
@@ -72,7 +72,7 @@ public class DestructuringDeclarationResolver(
             if (componentType == null) {
                 componentType = ErrorUtils.createErrorType("$componentName() return type")
             }
-            val variableDescriptor = descriptorResolver.resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace)
+            val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace)
 
             ExpressionTypingUtils.checkVariableShadowing(writableScope, context.trace, variableDescriptor)
 
@@ -81,7 +81,7 @@ public class DestructuringDeclarationResolver(
     }
 
     private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: KtDestructuringDeclarationEntry): KotlinType {
-        val entryTypeRef = entry.getTypeReference() ?: return TypeUtils.NO_EXPECTED_TYPE
+        val entryTypeRef = entry.typeReference ?: return TypeUtils.NO_EXPECTED_TYPE
         return typeResolver.resolveType(context.scope, entryTypeRef, context.trace, true)
     }
 }

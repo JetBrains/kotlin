@@ -1,0 +1,29 @@
+// WITH_RUNTIME
+// DISABLE-ERRORS
+interface T<X> {
+    fun <caret>foo(x: X): X
+}
+
+class U : T<String> {
+    override fun foo(x: String): String {
+        throw UnsupportedOperationException()
+    }
+
+}
+
+class V : T<Int> {
+    override fun foo(x: Int): Int {
+        throw UnsupportedOperationException()
+    }
+
+}
+
+class Z : T<Int> by V() {
+
+}
+
+class W : T<Boolean> {
+    override fun foo(x: Boolean): Boolean {
+        throw UnsupportedOperationException()
+    }
+}

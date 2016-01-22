@@ -42,13 +42,13 @@ fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange,
 
     // we start template later to not interfere with insertion of tail type
     val commandProcessor = CommandProcessor.getInstance()
-    val commandName = commandProcessor.getCurrentCommandName()!!
-    val commandGroupId = commandProcessor.getCurrentCommandGroupId()
+    val commandName = commandProcessor.currentCommandName!!
+    val commandGroupId = commandProcessor.currentCommandGroupId
 
-    val rangeMarker = context.getDocument().createRangeMarker(placeholderRange)
+    val rangeMarker = context.document.createRangeMarker(placeholderRange)
 
     context.setLaterRunnable {
-        context.getProject().executeWriteCommand(commandName, groupId = commandGroupId) {
+        context.project.executeWriteCommand(commandName, groupId = commandGroupId) {
             try {
                 if (rangeMarker.isValid()) {
                     context.getDocument().deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
@@ -72,9 +72,9 @@ fun lambdaPresentation(lambdaType: KotlinType?): String {
 }
 
 private fun needExplicitParameterTypes(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType): Boolean {
-    PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
-    val file = context.getFile() as KtFile
-    val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.getStartOffset(), placeholderRange.getEndOffset(), javaClass<KtExpression>())
+    PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+    val file = context.file as KtFile
+    val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.startOffset, placeholderRange.endOffset, KtExpression::class.java)
                      ?: return false
 
     val resolutionFacade = file.getResolutionFacade()
@@ -85,10 +85,10 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
             .mapNotNull { it.fuzzyType?.type }
             .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }
             .toSet()
-    if (functionTypes.size() <= 1) return false
+    if (functionTypes.size <= 1) return false
 
-    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size()
-    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() == lambdaParameterCount }.size() > 1
+    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size
+    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
 }
 
 private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolean, project: Project): Template {
@@ -97,7 +97,7 @@ private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolea
     val manager = TemplateManager.getInstance(project)
 
     val template = manager.createTemplate("", "")
-    template.setToShortenLongNames(true)
+    template.isToShortenLongNames = true
     //template.setToReformat(true) //TODO
     template.addTextSegment("{ ")
 
@@ -124,8 +124,8 @@ private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expr
     override fun calculateQuickResult(context: ExpressionContext?): Result? = null
 
     override fun calculateLookupItems(context: ExpressionContext?)
-            = Array<LookupElement>(nameSuggestions.size(), { LookupElementBuilder.create(nameSuggestions[it]) })
+            = Array<LookupElement>(nameSuggestions.size, { LookupElementBuilder.create(nameSuggestions[it]) })
 }
 
 fun functionParameterTypes(functionType: KotlinType): List<KotlinType>
-        = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(functionType).map { it.getType() }
+        = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(functionType).map { it.type }

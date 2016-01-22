@@ -18,26 +18,26 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.replaced
 
-public class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention())
+class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention())
 
-public class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with elvis expression") {
+class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with elvis expression") {
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
-        val condition = element.getCondition() as? KtBinaryExpression ?: return false
-        val thenClause = element.getThen() ?: return false
-        val elseClause = element.getElse() ?: return false
+        val condition = element.condition as? KtBinaryExpression ?: return false
+        val thenClause = element.then ?: return false
+        val elseClause = element.`else` ?: return false
 
         val expression = condition.expressionComparedToNull() ?: return false
         if (!expression.isStableVariable()) return false
 
-        return when (condition.getOperationToken()) {
+        return when (condition.operationToken) {
             KtTokens.EQEQ ->
                 thenClause.isNotNullExpression() && elseClause.evaluatesTo(expression) &&
                 !(thenClause is KtThrowExpression && thenClause.throwsNullPointerExceptionWithNoArguments())
@@ -53,30 +53,29 @@ public class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<Kt
 
     private fun KtExpression.isNotNullExpression(): Boolean {
         val innerExpression = this.unwrapBlockOrParenthesis()
-        return innerExpression !is KtBlockExpression && innerExpression.getNode().getElementType() != KtNodeTypes.NULL
+        return innerExpression !is KtBlockExpression && innerExpression.node.elementType != KtNodeTypes.NULL
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
-        val elvis = applyTo(element)
-        elvis.inlineLeftSideIfApplicableWithPrompt(editor)
-    }
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
+        val condition = element.condition as KtBinaryExpression
 
-    public fun applyTo(element: KtIfExpression): KtBinaryExpression {
-        val condition = element.getCondition() as KtBinaryExpression
-
-        val thenClause = element.getThen()!!
-        val elseClause = element.getElse()!!
+        val thenClause = element.then!!
+        val elseClause = element.`else`!!
         val thenExpression = thenClause.unwrapBlockOrParenthesis()
         val elseExpression = elseClause.unwrapBlockOrParenthesis()
 
         val (left, right) =
-                when(condition.getOperationToken()) {
+                when(condition.operationToken) {
                     KtTokens.EQEQ -> Pair(elseExpression, thenExpression)
                     KtTokens.EXCLEQ -> Pair(thenExpression, elseExpression)
                     else -> throw IllegalArgumentException()
                 }
 
         val newExpr = element.replaced(KtPsiFactory(element).createExpressionByPattern("$0 ?: $1", left, right))
-        return KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
+        val elvis = KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
+
+        if (editor != null) {
+            elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+        }
     }
 }

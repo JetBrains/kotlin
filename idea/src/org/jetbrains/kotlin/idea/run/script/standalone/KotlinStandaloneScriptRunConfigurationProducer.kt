@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class KotlinStandaloneScriptRunConfigurationProducer :
+class KotlinStandaloneScriptRunConfigurationProducer :
         RunConfigurationProducer<KotlinStandaloneScriptRunConfiguration>(KotlinStandaloneScriptRunConfigurationType.instance) {
     override fun setupConfigurationFromContext(
             configuration: KotlinStandaloneScriptRunConfiguration,

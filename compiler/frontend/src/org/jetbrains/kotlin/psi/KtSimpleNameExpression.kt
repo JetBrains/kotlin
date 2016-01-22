@@ -23,17 +23,17 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 
-public interface KtSimpleNameExpression : KtReferenceExpression {
+interface KtSimpleNameExpression : KtReferenceExpression {
 
-    public fun getReferencedName(): String
+    fun getReferencedName(): String
 
-    public fun getReferencedNameAsName(): Name
+    fun getReferencedNameAsName(): Name
 
-    public fun getReferencedNameElement(): PsiElement
+    fun getReferencedNameElement(): PsiElement
 
-    public fun getIdentifier(): PsiElement?
+    fun getIdentifier(): PsiElement?
 
-    public fun getReferencedNameElementType(): IElementType
+    fun getReferencedNameElementType(): IElementType
 }
 
 abstract class KtSimpleNameExpressionImpl(node: ASTNode) : KtExpressionImpl(node), KtSimpleNameExpression {
@@ -52,7 +52,7 @@ abstract class KtSimpleNameExpressionImpl(node: ASTNode) : KtExpressionImpl(node
     //NOTE: an unfortunate way to share an implementation between stubbed and not stubbed tree
     companion object {
         fun getReferencedNameElementTypeImpl(expression: KtSimpleNameExpression): IElementType {
-            return expression.getReferencedNameElement().getNode()!!.getElementType()
+            return expression.getReferencedNameElement().node!!.elementType
         }
 
         fun getReferencedNameAsNameImpl(expresssion: KtSimpleNameExpression): Name {
@@ -61,7 +61,7 @@ abstract class KtSimpleNameExpressionImpl(node: ASTNode) : KtExpressionImpl(node
         }
 
         fun getReferencedNameImpl(expression: KtSimpleNameExpression): String {
-            val text = expression.getReferencedNameElement().getNode()!!.getText()
+            val text = expression.getReferencedNameElement().node!!.text
             return KtPsiUtil.unquoteIdentifierOrFieldReference(text)
         }
     }

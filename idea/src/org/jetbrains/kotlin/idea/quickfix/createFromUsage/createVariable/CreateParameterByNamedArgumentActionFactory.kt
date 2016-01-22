@@ -16,23 +16,23 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinTypeInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
-public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<KtValueArgument>() {
+object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<KtValueArgument>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtValueArgument? {
-        val argument = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtValueArgument>()) ?: return null
+        val argument = QuickFixUtil.getParentElementOfType(diagnostic, KtValueArgument::class.java) ?: return null
         return if (argument.isNamed()) argument else null
     }
 
@@ -50,7 +50,7 @@ public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUs
 
         val anyType = functionDescriptor.builtIns.anyType
         val paramType = argumentExpression?.guessTypes(context, result.moduleDescriptor)?.let {
-            when (it.size()) {
+            when (it.size) {
                 0 -> anyType
                 1 -> it.first()
                 else -> return null
@@ -61,7 +61,7 @@ public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUs
         val parameterInfo = KotlinParameterInfo(
                 callableDescriptor = functionDescriptor,
                 name = name,
-                type = paramType,
+                originalTypeInfo = KotlinTypeInfo(false, paramType),
                 defaultValueForCall = argumentExpression
         )
 

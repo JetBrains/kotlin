@@ -312,6 +312,10 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS);
     }
 
+    public static boolean isClassOrEnumClass(@Nullable DeclarationDescriptor descriptor) {
+        return isClass(descriptor) || isEnumClass(descriptor);
+    }
+
     private static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == classKind;
     }
@@ -503,7 +507,7 @@ public class DescriptorUtils {
 
     @Nullable
     public static String getJvmName(@NotNull Annotated annotated) {
-        AnnotationDescriptor jvmNameAnnotation = getJvmNameAnnotation(annotated.getAnnotations());
+        AnnotationDescriptor jvmNameAnnotation = getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
         if (jvmNameAnnotation == null) return null;
 
         Map<ValueParameterDescriptor, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
@@ -516,24 +520,24 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotations annotations) {
-        AnnotationWithTarget jvmName = Annotations.Companion.findAnyAnnotation(annotations, JVM_NAME);
-        return jvmName == null ? null : jvmName.getAnnotation();
+    public static AnnotationDescriptor getAnnotationByFqName(@NotNull Annotations annotations, @NotNull FqName name) {
+        AnnotationWithTarget annotationWithTarget = Annotations.Companion.findAnyAnnotation(annotations, name);
+        return annotationWithTarget == null ? null : annotationWithTarget.getAnnotation();
     }
 
     @Nullable
     public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated annotated) {
-        return getJvmNameAnnotation(annotated.getAnnotations());
+        return getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
     }
 
     @Nullable
     public static AnnotationDescriptor getVolatileAnnotation(@NotNull Annotated annotated) {
-        return annotated.getAnnotations().findAnnotation(VOLATILE);
+        return getAnnotationByFqName(annotated.getAnnotations(), VOLATILE);
     }
 
     @Nullable
     public static AnnotationDescriptor getSynchronizedAnnotation(@NotNull Annotated annotated) {
-        return annotated.getAnnotations().findAnnotation(SYNCHRONIZED);
+        return getAnnotationByFqName(annotated.getAnnotations(), SYNCHRONIZED);
     }
 
     @NotNull

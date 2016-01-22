@@ -2,6 +2,6 @@ package
 
 package b {
     public fun bar123(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ R> foo(/*0*/ map: kotlin.Map<T, R>): R
-    public fun </*0*/ F, /*1*/ G> getMap(): kotlin.Map<F, G>
+    public fun </*0*/ T, /*1*/ R> foo(/*0*/ map: kotlin.collections.Map<T, R>): R
+    public fun </*0*/ F, /*1*/ G> getMap(): kotlin.collections.Map<F, G>
 }

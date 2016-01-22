@@ -21,20 +21,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
-public interface CodeAnalyzerInitializer {
-    public fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer)
-    public fun createTrace(): BindingTrace
+interface CodeAnalyzerInitializer {
+    fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer)
+    fun createTrace(): BindingTrace
     
     companion object {
-        public fun getInstance(project: Project): CodeAnalyzerInitializer =
-                ServiceManager.getService<CodeAnalyzerInitializer>(project, javaClass<CodeAnalyzerInitializer>())!!
+        fun getInstance(project: Project): CodeAnalyzerInitializer =
+                ServiceManager.getService<CodeAnalyzerInitializer>(project, CodeAnalyzerInitializer::class.java)!!
     }
 }
 
-public class DummyCodeAnalyzerInitializer: CodeAnalyzerInitializer {
-    public override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer) {
+class DummyCodeAnalyzerInitializer: CodeAnalyzerInitializer {
+    override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer) {
         // Do nothing
     }
 
-    public override fun createTrace(): BindingTrace = BindingTraceContext()
+    override fun createTrace(): BindingTrace = BindingTraceContext()
 }

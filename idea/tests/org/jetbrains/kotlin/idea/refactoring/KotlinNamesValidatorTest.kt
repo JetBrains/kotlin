@@ -21,7 +21,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.refactoring.KotlinNamesValidator
 import org.junit.Assert
 
-public class KotlinNamesValidatorTest : LightCodeInsightFixtureTestCase() {
+class KotlinNamesValidatorTest : LightCodeInsightFixtureTestCase() {
     val validator: NamesValidator = KotlinNamesValidator()
 
     private fun isKeyword(string: String) = validator.isKeyword(string, null)
@@ -32,7 +32,7 @@ public class KotlinNamesValidatorTest : LightCodeInsightFixtureTestCase() {
         myFixture.configureByFiles()
     }
 
-    public fun testKeywords() {
+    fun testKeywords() {
         Assert.assertTrue(isKeyword("val"));
         Assert.assertTrue(isKeyword("class"));
         Assert.assertTrue(isKeyword("fun"));
@@ -43,7 +43,7 @@ public class KotlinNamesValidatorTest : LightCodeInsightFixtureTestCase() {
         Assert.assertFalse(isKeyword("-"));
     }
 
-    public fun testIdentifiers() {
+    fun testIdentifiers() {
         Assert.assertTrue(isIdentifier("abc"));
         Assert.assertTrue(isIdentifier("q_q"));
         Assert.assertTrue(isIdentifier("constructor"));

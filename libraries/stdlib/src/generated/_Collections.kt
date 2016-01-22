@@ -8,6 +8,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.comparisons.*
 import java.util.*
 
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
@@ -59,26 +60,6 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(ele
     if (this is Collection)
         return contains(element)
     return indexOf(element) >= 0
-}
-
-/**
- * Returns `true` if [element] is found in the collection.
- */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as T)"))
-@kotlin.jvm.JvmName("containsAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-public operator fun <T> Iterable<T>.contains(element: T): Boolean {
-    return contains(element as T)
-}
-
-/**
- * Returns `true` if [element] is found in the collection.
- * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
- */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Iterable<*>.containsRaw(element: Any?): Boolean {
-    return contains(element as Any?)
 }
 
 /**
@@ -279,28 +260,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int 
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element.
- */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
-@kotlin.jvm.JvmName("indexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-@Suppress("NOTHING_TO_INLINE")
-public fun <T> Iterable<T>.indexOf(element: T): Int {
-    return indexOf(element as T)
-}
-
-/**
- * Returns first index of [element], or -1 if the collection does not contain element.
- */
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
-@kotlin.jvm.JvmName("indexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-@Suppress("NOTHING_TO_INLINE")
-public fun <T> List<T>.indexOf(element: T): Int {
-    return indexOf(element as T)
-}
-
-/**
  * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
@@ -349,26 +308,6 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
         }
     }
     return -1
-}
-
-/**
- * Returns first index of [element], or -1 if the collection does not contain element.
- * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
- */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Iterable<*>.indexOfRaw(element: Any?): Int {
-    return indexOf(element as Any?)
-}
-
-/**
- * Returns first index of [element], or -1 if the list does not contain element.
- * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
- */
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun <T> List<T>.indexOfRaw(element: Any?): Int {
-    return (this as List<Any?>).indexOf(element)
 }
 
 /**
@@ -456,48 +395,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: 
  */
 public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int {
     return lastIndexOf(element)
-}
-
-/**
- * Returns last index of [element], or -1 if the collection does not contain element.
- */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
-@kotlin.jvm.JvmName("lastIndexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-@Suppress("NOTHING_TO_INLINE")
-public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element as T)
-}
-
-/**
- * Returns last index of [element], or -1 if the collection does not contain element.
- */
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
-@kotlin.jvm.JvmName("lastIndexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-@Suppress("NOTHING_TO_INLINE")
-public fun <T> List<T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element as T)
-}
-
-/**
- * Returns last index of [element], or -1 if the collection does not contain element.
- * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
- */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Iterable<*>.lastIndexOfRaw(element: Any?): Int {
-    return lastIndexOf(element as Any?)
-}
-
-/**
- * Returns last index of [element], or -1 if the list does not contain element.
- * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
- */
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
-@Suppress("NOTHING_TO_INLINE")
-public inline fun <T> List<T>.lastIndexOfRaw(element: Any?): Int {
-    return (this as List<Any?>).lastIndexOf(element)
 }
 
 /**
@@ -1050,23 +947,10 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 }
 
 /**
- * Returns a [LinkedList] containing all elements.
- */
-@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
-public fun <T> Iterable<T>.toLinkedList(): LinkedList<T> {
-    return toCollection(LinkedList())
-}
-
-/**
  * Returns a [List] containing all elements.
  */
 public fun <T> Iterable<T>.toList(): List<T> {
     return this.toArrayList()
-}
-
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
-public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
-    return toMapBy(selector)
 }
 
 /**
@@ -1391,6 +1275,7 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
 /**
  * Performs the given [action] on each element.
  */
+@kotlin.internal.HidesMembers
 public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
     for (element in this) action(element)
 }
@@ -1793,22 +1678,12 @@ public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequ
     return buffer
 }
 
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
 public fun <T> Iterable<T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 

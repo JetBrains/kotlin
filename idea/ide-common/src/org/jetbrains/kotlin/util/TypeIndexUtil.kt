@@ -25,15 +25,15 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
 
-public fun KtUserType.aliasImportMap(): Multimap<String, String> {
+fun KtUserType.aliasImportMap(): Multimap<String, String> {
     // we need to access containing file via stub because getPsi() may return null when indexing and getContainingFile() will crash
-    val file = getStub()?.getContainingFileStub()?.getPsi() ?: return HashMultimap.create()
+    val file = stub?.getContainingFileStub()?.psi ?: return HashMultimap.create()
     return (file as KtFile).aliasImportMap()
 }
 
 private fun KtFile.aliasImportMap(): Multimap<String, String> {
     val cached = getUserData(ALIAS_IMPORT_DATA_KEY)
-    val modificationStamp = getModificationStamp()
+    val modificationStamp = modificationStamp
     if (cached != null && modificationStamp == cached.fileModificationStamp) {
         return cached.map
     }
@@ -45,10 +45,10 @@ private fun KtFile.aliasImportMap(): Multimap<String, String> {
 
 private fun KtFile.buildAliasImportMap(): Multimap<String, String> {
     val map = HashMultimap.create<String, String>()
-    val importList = getImportList() ?: return map
-    for (import in importList.getImports()) {
-        val aliasName = import.getAliasName() ?: continue
-        val name = import.getImportPath()?.fqnPart()?.shortName()?.asString() ?: continue
+    val importList = importList ?: return map
+    for (import in importList.imports) {
+        val aliasName = import.aliasName ?: continue
+        val name = import.importPath?.fqnPart()?.shortName()?.asString() ?: continue
         map.put(aliasName, name)
     }
     return map
@@ -58,14 +58,14 @@ private class CachedAliasImportData(val map: Multimap<String, String>, val fileM
 
 private val ALIAS_IMPORT_DATA_KEY = Key<CachedAliasImportData>("ALIAS_IMPORT_MAP_KEY")
 
-public fun KtTypeReference?.isProbablyNothing(): Boolean {
+fun KtTypeReference?.isProbablyNothing(): Boolean {
     val userType = this?.typeElement as? KtUserType ?: return false
     return userType.isProbablyNothing()
 }
 
-public fun KtUserType?.isProbablyNothing(): Boolean {
+fun KtUserType?.isProbablyNothing(): Boolean {
     if (this == null) return false
-    val referencedName = getReferencedName()
+    val referencedName = referencedName
     return referencedName == "Nothing" || aliasImportMap()[referencedName].contains("Nothing")
 }
 
@@ -73,5 +73,5 @@ private fun StubElement<*>.getContainingFileStub(): PsiFileStub<*> {
     return if (this is PsiFileStub)
         this
     else
-        getParentStub().getContainingFileStub()
+        parentStub.getContainingFileStub()
 }

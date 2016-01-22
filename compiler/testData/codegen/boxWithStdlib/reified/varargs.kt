@@ -1,6 +1,6 @@
 import kotlin.test.assertEquals
 
-fun <T> foo(vararg a: T) = a.size()
+fun <T> foo(vararg a: T) = a.size
 
 inline fun <reified T> bar(block: () -> T): Array<T> {
     assertEquals(2, foo(block(), block()))
@@ -20,7 +20,7 @@ fun box(): String {
     assertEquals("234", b.map { it.toString() }.joinToString(""))
 
     val c: Array<String> = empty()
-    assertEquals(0, c.size())
+    assertEquals(0, c.size)
 
     return "OK"
 }

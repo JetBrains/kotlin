@@ -26,32 +26,32 @@ import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
 import org.jetbrains.kotlin.js.inline.util.collectors.PropertyCollector
 import org.jetbrains.kotlin.js.translate.expression.*
 
-public fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
+fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
      collectReferencesInside(scope).filter { it.staticRef is JsFunction }
 
-public fun collectReferencesInside(scope: JsNode): List<JsName> {
+fun collectReferencesInside(scope: JsNode): List<JsName> {
     return with(ReferenceNameCollector()) {
         accept(scope)
         references
     }
 }
 
-public fun collectLocalNames(function: JsFunction): List<JsName> {
-    val functionScope = function.getScope()
+fun collectLocalNames(function: JsFunction): List<JsName> {
+    val functionScope = function.scope
 
     return with(NameCollector(functionScope)) {
-        accept(function.getBody())
-        names.values().toList()
+        accept(function.body)
+        names.values.toList()
     }
 }
 
-public fun collectJsProperties(scope: JsNode): IdentityHashMap<JsName, JsExpression> {
+fun collectJsProperties(scope: JsNode): IdentityHashMap<JsName, JsExpression> {
     val collector = PropertyCollector()
     collector.accept(scope)
     return collector.properties
 }
 
-public fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunction> {
+fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunction> {
     val namedFunctions = IdentityHashMap<JsName, JsFunction>()
 
     for ((name, value) in collectJsProperties(scope)) {
@@ -68,7 +68,7 @@ public fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunct
     return namedFunctions
 }
 
-public fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {
+fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {
     return with(InstanceCollector(klass, visitNestedDeclarations = false)) {
         accept(scope)
         collected

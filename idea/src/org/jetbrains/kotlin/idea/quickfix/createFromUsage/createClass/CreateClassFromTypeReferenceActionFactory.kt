@@ -16,23 +16,21 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
-import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
-import java.util.Collections
+import java.util.*
 
-public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<KtUserType>() {
+object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<KtUserType>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtUserType? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtUserType>())
+        return QuickFixUtil.getParentElementOfType(diagnostic, KtUserType::class.java)
     }
 
     override fun getPossibleClassKinds(element: KtUserType, diagnostic: Diagnostic): List<ClassKind> {

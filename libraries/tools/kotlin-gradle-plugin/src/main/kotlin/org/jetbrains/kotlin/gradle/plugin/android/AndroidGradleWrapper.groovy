@@ -7,6 +7,7 @@ import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.VariantManager
+import com.android.build.gradle.internal.variant.BaseVariantData
 import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.util.PatternFilterable
@@ -63,6 +64,10 @@ class AndroidGradleWrapper {
     return androidSourceSet.getJava().getSrcDirs()
   }
 
+  static def setNoJdk(Object kotlinOptionsExtension) {
+    kotlinOptionsExtension.noJdk = true
+  }
+
   @NotNull
   static def List<String> getProductFlavorsNames(ApkVariant variant) {
       return variant.getProductFlavors().iterator().collect { it.getName() }
@@ -97,5 +102,38 @@ class AndroidGradleWrapper {
 
   static def VariantManager getVariantDataManager(BasePlugin plugin) {
     return plugin.getVariantManager()
+  }
+
+  static def List<File> getGeneratedSourceDirs(BaseVariantData variantData) {
+    def getJavaSourcesMethod = variantData.getMetaClass().getMetaMethod("getJavaSources")
+    if (getJavaSourcesMethod.returnType.metaClass == Object[].metaClass) {
+      return variantData.getJavaSources().findAll { it instanceof File }
+    }
+    else {
+      def result = new ArrayList<File>()
+
+      if (variantData.scope.getGenerateRClassTask() != null) {
+        result.add(variantData.scope.getRClassSourceOutputDir());
+      }
+
+      if (variantData.scope.getGenerateBuildConfigTask() != null) {
+        result.add(variantData.scope.getBuildConfigSourceOutputDir());
+      }
+
+      if (variantData.scope.getAidlCompileTask() != null) {
+        result.add(variantData.scope.getAidlSourceOutputDir());
+      }
+
+      if (variantData.scope.getGlobalScope().getExtension().getDataBinding().isEnabled()) {
+        result.add(variantData.scope.getClassOutputForDataBinding());
+      }
+
+      if (!variantData.variantConfiguration.getRenderscriptNdkModeEnabled()
+              && variantData.scope.getRenderscriptCompileTask() != null) {
+        result.add(variantData.scope.getRenderscriptSourceOutputDir());
+      }
+
+      return result
+    }
   }
 }

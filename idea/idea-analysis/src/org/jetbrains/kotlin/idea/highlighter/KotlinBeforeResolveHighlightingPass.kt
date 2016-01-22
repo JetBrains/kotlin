@@ -36,7 +36,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
 import org.jetbrains.kotlin.psi.KtFile
 
-public class KotlinBeforeResolveHighlightingPass(
+class KotlinBeforeResolveHighlightingPass(
         private val file: KtFile,
         document: Document
 ) : TextEditorHighlightingPass(file.project, document), DumbAware {
@@ -68,7 +68,7 @@ public class KotlinBeforeResolveHighlightingPass(
         annotationHolder = null
     }
 
-    public class Factory(project: Project, registrar: TextEditorHighlightingPassRegistrar) : AbstractProjectComponent(project), TextEditorHighlightingPassFactory {
+    class Factory(project: Project, registrar: TextEditorHighlightingPassRegistrar) : AbstractProjectComponent(project), TextEditorHighlightingPassFactory {
         init {
             registrar.registerTextEditorHighlightingPass(this, TextEditorHighlightingPassRegistrar.Anchor.BEFORE, Pass.UPDATE_FOLDING, false, false)
         }

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
+class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
 
     override fun interceptClassBuilderFactory(
             interceptedFactory: ClassBuilderFactory,
@@ -98,7 +98,7 @@ public class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInte
                     super.visitCode()
 
                     if (name != AndroidExpressionCodegenExtension.ON_DESTROY_METHOD_NAME || currentClass == null) return
-                    if (Type.getArgumentTypes(desc).size() != 0) return
+                    if (Type.getArgumentTypes(desc).size != 0) return
                     if (Type.getReturnType(desc) != Type.VOID_TYPE) return
 
                     val classType = currentClassName?.let { Type.getObjectType(it) } ?: return

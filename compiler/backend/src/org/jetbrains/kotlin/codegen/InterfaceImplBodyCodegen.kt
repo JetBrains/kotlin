@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_INTERFACE_DEFAULT_IMPLS
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -39,7 +37,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.util.*
 
-public class InterfaceImplBodyCodegen(
+class InterfaceImplBodyCodegen(
         aClass: KtClassOrObject,
         context: ClassContext,
         v: ClassBuilder,
@@ -51,11 +49,11 @@ public class InterfaceImplBodyCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(
-                myClass, V1_6, ACC_PUBLIC or ACC_FINAL,
+                myClass, V1_6, ACC_PUBLIC or ACC_FINAL or ACC_SUPER,
                 typeMapper.mapDefaultImpls(descriptor).internalName,
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
-        v.visitSource(myClass.getContainingFile().getName(), null)
+        v.visitSource(myClass.containingFile.name, null)
     }
 
     override fun classForInnerClassRecord(): ClassDescriptor? {
@@ -70,12 +68,12 @@ public class InterfaceImplBodyCodegen(
     }
 
     override fun generateSyntheticParts() {
-        for (memberDescriptor in descriptor.getDefaultType().getMemberScope().getContributedDescriptors()) {
+        for (memberDescriptor in descriptor.defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
-            if (memberDescriptor.getKind().isReal()) continue
-            if (memberDescriptor.getVisibility() == Visibilities.INVISIBLE_FAKE) continue
-            if (memberDescriptor.getModality() == Modality.ABSTRACT) continue
+            if (memberDescriptor.kind.isReal) continue
+            if (memberDescriptor.visibility == Visibilities.INVISIBLE_FAKE) continue
+            if (memberDescriptor.modality == Modality.ABSTRACT) continue
 
             val implementation = findImplementationFromInterface(memberDescriptor) ?: continue
 
@@ -83,7 +81,7 @@ public class InterfaceImplBodyCodegen(
             if (implementation is JavaMethodDescriptor) continue
 
             // We create a copy of the function with kind = DECLARATION so that FunctionCodegen will generate its body
-            val copy = memberDescriptor.copy(memberDescriptor.getContainingDeclaration(), Modality.OPEN, memberDescriptor.getVisibility(),
+            val copy = memberDescriptor.copy(memberDescriptor.containingDeclaration, Modality.OPEN, memberDescriptor.visibility,
                                              CallableMemberDescriptor.Kind.DECLARATION, true)
 
             if (memberDescriptor is FunctionDescriptor) {
@@ -91,13 +89,13 @@ public class InterfaceImplBodyCodegen(
             }
             else if (memberDescriptor is PropertyDescriptor) {
                 implementation as PropertyDescriptor
-                val getter = (copy as PropertyDescriptor).getGetter()
-                val implGetter = implementation.getGetter()
+                val getter = (copy as PropertyDescriptor).getter
+                val implGetter = implementation.getter
                 if (getter != null && implGetter != null) {
                     generateDelegationToSuperTraitImpl(getter, implGetter)
                 }
-                val setter = copy.getSetter()
-                val implSetter = implementation.getSetter()
+                val setter = copy.setter
+                val implSetter = implementation.setter
                 if (setter != null && implSetter != null) {
                     generateDelegationToSuperTraitImpl(setter, implSetter)
                 }
@@ -121,10 +119,10 @@ public class InterfaceImplBodyCodegen(
                         val iv = codegen.v
 
                         val method = typeMapper.mapToCallableMethod(delegateTo, true)
-                        val myParameters = signature.getValueParameters()
+                        val myParameters = signature.valueParameters
                         val calleeParameters = method.getValueParameters()
 
-                        if (myParameters.size() != calleeParameters.size()) {
+                        if (myParameters.size != calleeParameters.size) {
                             throw AssertionError(
                                     "Method from super interface has a different signature.\n" +
                                     "This method:\n%s\n%s\n%s\nSuper method:\n%s\n%s\n%s".format(
@@ -136,14 +134,14 @@ public class InterfaceImplBodyCodegen(
                         var k = 0
                         val it = calleeParameters.iterator()
                         for (parameter in myParameters) {
-                            val type = parameter.getAsmType()
-                            StackValue.local(k, type).put(it.next().getAsmType(), iv)
-                            k += type.getSize()
+                            val type = parameter.asmType
+                            StackValue.local(k, type).put(it.next().asmType, iv)
+                            k += type.size
                         }
 
                         method.genInvokeInstruction(iv)
-                        StackValue.coerce(method.returnType, signature.getReturnType(), iv)
-                        iv.areturn(signature.getReturnType())
+                        StackValue.coerce(method.returnType, signature.returnType, iv)
+                        iv.areturn(signature.returnType)
                     }
                 })
     }
@@ -151,10 +149,9 @@ public class InterfaceImplBodyCodegen(
     override fun generateKotlinAnnotation() {
         (v as InterfaceImplClassBuilder).stopCounting()
 
-        val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS), true)
-        av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray())
-        av.visitEnd()
         AsmUtil.writeKotlinSyntheticClassAnnotation(v, state)
+
+        writeSyntheticClassMetadata(v);
     }
 
     override fun done() {

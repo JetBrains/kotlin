@@ -1,7 +1,7 @@
 package
 
 package f {
-    public fun </*0*/ T> f(/*0*/ a: kotlin.Any, /*1*/ t: T, /*2*/ l: kotlin.MutableList<T>): kotlin.Unit
-    public fun </*0*/ T> f(/*0*/ i: kotlin.Int, /*1*/ t: T, /*2*/ c: kotlin.MutableCollection<T>): kotlin.Unit
-    public fun test(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.Unit
+    public fun </*0*/ T> f(/*0*/ a: kotlin.Any, /*1*/ t: T, /*2*/ l: kotlin.collections.MutableList<T>): kotlin.Unit
+    public fun </*0*/ T> f(/*0*/ i: kotlin.Int, /*1*/ t: T, /*2*/ c: kotlin.collections.MutableCollection<T>): kotlin.Unit
+    public fun test(/*0*/ l: kotlin.collections.List<kotlin.Int>): kotlin.Unit
 }

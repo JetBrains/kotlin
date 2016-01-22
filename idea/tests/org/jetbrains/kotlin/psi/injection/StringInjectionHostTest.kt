@@ -24,8 +24,8 @@ import java.util.HashMap
 import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.test.ConfigurationKind
 
-public class StringInjectionHostTest: KotlinLiteFixture() {
-    public fun testRegular() {
+class StringInjectionHostTest: KotlinLiteFixture() {
+    fun testRegular() {
         with (quoted("")) {
             checkInjection("", mapOf(0 to 1))
             assertOneLine()
@@ -42,12 +42,12 @@ public class StringInjectionHostTest: KotlinLiteFixture() {
         }
     }
 
-    public fun testUnclosedSimpleLiteral() {
-        assertFalse(stringExpression("\"").isValidHost());
-        assertFalse(stringExpression("\"a").isValidHost());
+    fun testUnclosedSimpleLiteral() {
+        assertFalse(stringExpression("\"").isValidHost);
+        assertFalse(stringExpression("\"a").isValidHost);
     }
 
-    public fun testEscapeSequences() {
+    fun testEscapeSequences() {
         with (quoted("\\t")) {
             checkInjection("\t", mapOf(0 to 1, 1 to 3))
             assertNoInjection(TextRange(1, 2))
@@ -66,7 +66,7 @@ public class StringInjectionHostTest: KotlinLiteFixture() {
         }
     }
 
-    public fun testTripleQuotes() {
+    fun testTripleQuotes() {
         with (tripleQuoted("")) {
             checkInjection("", mapOf(0 to 3))
             assertMultiLine()
@@ -83,7 +83,7 @@ public class StringInjectionHostTest: KotlinLiteFixture() {
         }
     }
 
-    public fun testEscapeSequenceInTripleQuotes() {
+    fun testEscapeSequenceInTripleQuotes() {
         with (tripleQuoted("\\t")) {
             checkInjection("\\t", mapOf(0 to 3, 1 to 4, 2 to 5))
             checkInjection("\\", mapOf(0 to 3, 1 to 4), rangeInHost = TextRange(3, 4))
@@ -92,7 +92,7 @@ public class StringInjectionHostTest: KotlinLiteFixture() {
         }
     }
 
-    public fun testMultiLine() {
+    fun testMultiLine() {
         with (tripleQuoted("a\nb")) {
             checkInjection("a\nb", mapOf(0 to 3, 1 to 4, 2 to 5, 3 to 6))
             assertMultiLine()
@@ -108,38 +108,38 @@ public class StringInjectionHostTest: KotlinLiteFixture() {
     }
 
     private fun stringExpression(s: String): KtStringTemplateExpression {
-        return KtPsiFactory(getProject()).createExpression(s) as KtStringTemplateExpression
+        return KtPsiFactory(project).createExpression(s) as KtStringTemplateExpression
     }
 
     private fun KtStringTemplateExpression.assertNoInjection(range: TextRange): KtStringTemplateExpression {
-        assertTrue(isValidHost())
+        assertTrue(isValidHost)
         assertFalse(createLiteralTextEscaper().decode(range, StringBuilder()))
         return this
     }
 
     private fun KtStringTemplateExpression.assertOneLine() {
-        assertTrue(createLiteralTextEscaper().isOneLine())
+        assertTrue(createLiteralTextEscaper().isOneLine)
     }
 
     private fun KtStringTemplateExpression.assertMultiLine() {
-        assertFalse(createLiteralTextEscaper().isOneLine())
+        assertFalse(createLiteralTextEscaper().isOneLine)
     }
 
     //todo[nik] make private when KT-6382 is fixed
     fun KtStringTemplateExpression.checkInjection(decoded: String, targetToSourceOffsets: Map<Int,Int>, rangeInHost: TextRange? = null) {
-        assertTrue(isValidHost())
+        assertTrue(isValidHost)
         for (prefix in listOf("", "prefix")) {
             val escaper = createLiteralTextEscaper()
             val chars = StringBuilder(prefix)
-            val range = rangeInHost ?: escaper.getRelevantTextRange()
+            val range = rangeInHost ?: escaper.relevantTextRange
             assertTrue(escaper.decode(range, chars))
-            assertEquals(decoded, chars.substring(prefix.length()))
+            assertEquals(decoded, chars.substring(prefix.length))
             val extendedOffsets = HashMap(targetToSourceOffsets)
-            val beforeStart = targetToSourceOffsets.keySet().min()!! - 1
+            val beforeStart = targetToSourceOffsets.keys.min()!! - 1
             if (beforeStart >= 0) {
                 extendedOffsets[beforeStart] = -1
             }
-            extendedOffsets[targetToSourceOffsets.keySet().max()!! + 1] = -1
+            extendedOffsets[targetToSourceOffsets.keys.max()!! + 1] = -1
             for ((target, source) in extendedOffsets) {
                 assertEquals("Wrong source offset for $target", source, escaper.getOffsetInHost(target, range))
             }

@@ -25,10 +25,7 @@ import com.intellij.util.Function
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.LightClassConstructionContext
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -62,7 +59,7 @@ import kotlin.properties.Delegates
 
  * To mitigate this, CliLightClassGenerationSupport hold a trace that is shared between the analyzer and JetLightClasses
  */
-public class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSupport(), CodeAnalyzerInitializer {
+class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSupport(), CodeAnalyzerInitializer {
     private val psiManager = PsiManager.getInstance(project)
     private var bindingContext: BindingContext by Delegates.notNull()
     private var module: ModuleDescriptor by Delegates.notNull()
@@ -140,7 +137,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         })
     }
 
-    override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {
+    override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
         return KtLightClassForExplicitDeclaration.create(classOrObject)
     }
 
@@ -172,7 +169,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         return NoScopeRecordCliBindingTrace()
     }
 
-    public class NoScopeRecordCliBindingTrace : CliBindingTrace() {
+    class NoScopeRecordCliBindingTrace : CliBindingTrace() {
         override fun <K, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
             if (slice === BindingContext.LEXICAL_SCOPE) {
                 // In the compiler there's no need to keep scopes
@@ -186,14 +183,14 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         }
     }
 
-    public open class CliBindingTrace @TestOnly constructor() : BindingTraceContext() {
+    open class CliBindingTrace @TestOnly constructor() : BindingTraceContext() {
         private var kotlinCodeAnalyzer: KotlinCodeAnalyzer? = null
 
         override fun toString(): String {
             return CliBindingTrace::class.java.name
         }
 
-        public fun setKotlinCodeAnalyzer(kotlinCodeAnalyzer: KotlinCodeAnalyzer) {
+        fun setKotlinCodeAnalyzer(kotlinCodeAnalyzer: KotlinCodeAnalyzer) {
             this.kotlinCodeAnalyzer = kotlinCodeAnalyzer
         }
 

@@ -25,20 +25,20 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 
-public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
+class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
 
-public class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
+class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(KtBlockStringTemplateEntry::class.java, "Remove curly braces") {
     override fun isApplicableTo(element: KtBlockStringTemplateEntry): Boolean {
-        if (element.getExpression() !is KtNameReferenceExpression) return false
+        if (element.expression !is KtNameReferenceExpression) return false
         return canPlaceAfterSimpleNameEntry(element.nextSibling)
     }
 
-    override fun applyTo(element: KtBlockStringTemplateEntry, editor: Editor) {
+    override fun applyTo(element: KtBlockStringTemplateEntry, editor: Editor?) {
         applyTo(element)
     }
 
-    public fun applyTo(element: KtBlockStringTemplateEntry): KtStringTemplateEntryWithExpression {
-        val name = (element.getExpression() as KtNameReferenceExpression).getReferencedName()
+    fun applyTo(element: KtBlockStringTemplateEntry): KtStringTemplateEntryWithExpression {
+        val name = (element.expression as KtNameReferenceExpression).getReferencedName()
         val newEntry = KtPsiFactory(element).createSimpleNameStringTemplateEntry(name)
         return element.replaced(newEntry)
     }

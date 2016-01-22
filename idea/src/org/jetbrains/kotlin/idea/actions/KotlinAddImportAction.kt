@@ -112,7 +112,7 @@ class KotlinAddImportAction internal constructor(
         if (variants.isEmpty()) return false
 
         val hintText = ShowAutoImportPass.getMessage(variants.size > 1, variants.first().hint)
-        HintManager.getInstance().showQuestionHint(editor, hintText, element.getTextOffset(), element.getTextRange()!!.getEndOffset(), this)
+        HintManager.getInstance().showQuestionHint(editor, hintText, element.textOffset, element.textRange!!.endOffset, this)
 
         return true
     }

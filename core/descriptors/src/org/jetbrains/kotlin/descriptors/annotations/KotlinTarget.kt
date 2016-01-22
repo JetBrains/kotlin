@@ -23,7 +23,7 @@ import java.util.*
 
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
-public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
+enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
     CLASS("class"),                            // includes CLASS_ONLY, OBJECT, COMPANION_OBJECT, OBJECT_LITERAL, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
@@ -57,12 +57,14 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     MEMBER_FUNCTION("member function", false),
     TOP_LEVEL_FUNCTION("top level function", false),
 
-    MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER, with and without field
-    MEMBER_PROPERTY_WITH_FIELD("member property with backing field", false),
-    MEMBER_PROPERTY_WITHOUT_FIELD("member property without backing field", false),
-    TOP_LEVEL_PROPERTY("top level property", false), // with and without field
-    TOP_LEVEL_PROPERTY_WITH_FIELD("top level property with backing field", false),
-    TOP_LEVEL_PROPERTY_WITHOUT_FIELD("top level property without backing field", false),
+    MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER, with and without field/delegate
+    MEMBER_PROPERTY_WITH_BACKING_FIELD("member property with backing field", false),
+    MEMBER_PROPERTY_WITH_DELEGATE("member property with delegate", false),
+    MEMBER_PROPERTY_WITHOUT_FIELD_OR_DELEGATE("member property without backing field or delegate", false),
+    TOP_LEVEL_PROPERTY("top level property", false), // with and without field/delegate
+    TOP_LEVEL_PROPERTY_WITH_BACKING_FIELD("top level property with backing field", false),
+    TOP_LEVEL_PROPERTY_WITH_DELEGATE("top level property with delegate", false),
+    TOP_LEVEL_PROPERTY_WITHOUT_FIELD_OR_DELEGATE("top level property without backing field or delegate", false),
 
     INITIALIZER("initializer", false),
     DESTRUCTURING_DECLARATION("destructuring declaration", false),
@@ -77,17 +79,17 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
 
         init {
             for (target in KotlinTarget.values()) {
-                map[target.name()] = target
+                map[target.name] = target
             }
         }
 
-        public fun valueOrNull(name: String): KotlinTarget? = map[name]
+        fun valueOrNull(name: String): KotlinTarget? = map[name]
 
-        public val DEFAULT_TARGET_SET: Set<KotlinTarget> = values().filter { it.isDefault }.toSet()
+        val DEFAULT_TARGET_SET: Set<KotlinTarget> = values().filter { it.isDefault }.toSet()
 
-        public val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
+        val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
 
-        public fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
+        fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
             ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS)
             ClassKind.CLASS ->
                 if (descriptor.isInner) {
@@ -117,7 +119,7 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }
 
-        public val USE_SITE_MAPPING: Map<AnnotationUseSiteTarget, KotlinTarget> = mapOf(
+        val USE_SITE_MAPPING: Map<AnnotationUseSiteTarget, KotlinTarget> = mapOf(
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER to VALUE_PARAMETER,
                 AnnotationUseSiteTarget.FIELD to FIELD,
                 AnnotationUseSiteTarget.PROPERTY to PROPERTY,
@@ -125,7 +127,8 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
                 AnnotationUseSiteTarget.PROPERTY_GETTER to PROPERTY_GETTER,
                 AnnotationUseSiteTarget.PROPERTY_SETTER to PROPERTY_SETTER,
                 AnnotationUseSiteTarget.RECEIVER to VALUE_PARAMETER,
-                AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER)
+                AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER,
+                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD to FIELD)
 
     }
 }

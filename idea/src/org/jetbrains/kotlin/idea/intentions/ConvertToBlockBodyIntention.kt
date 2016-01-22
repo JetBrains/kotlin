@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
-public class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
-        javaClass(), "Convert to block body"
+class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
+        KtDeclarationWithBody::class.java, "Convert to block body"
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtDeclarationWithBody, caretOffset: Int): Boolean {
         if (element is KtFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
@@ -35,7 +35,7 @@ public class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationW
         when (element) {
             is KtNamedFunction -> {
                 val returnType = element.returnType() ?: return false
-                if (!element.hasDeclaredReturnType() && returnType.isError()) return false// do not convert when type is implicit and unknown
+                if (!element.hasDeclaredReturnType() && returnType.isError) return false// do not convert when type is implicit and unknown
                 return true
             }
 
@@ -47,13 +47,13 @@ public class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationW
 
     override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration
 
-    override fun applyTo(element: KtDeclarationWithBody, editor: Editor) {
+    override fun applyTo(element: KtDeclarationWithBody, editor: Editor?) {
         convert(element)
     }
 
     companion object {
-        public fun convert(declaration: KtDeclarationWithBody): KtDeclarationWithBody {
-            val body = declaration.getBodyExpression()!!
+        fun convert(declaration: KtDeclarationWithBody): KtDeclarationWithBody {
+            val body = declaration.bodyExpression!!
 
             fun generateBody(returnsValue: Boolean): KtExpression {
                 val bodyType = body.analyze().getType(body)
@@ -74,19 +74,19 @@ public class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationW
                     generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
                 }
 
-                is KtPropertyAccessor -> generateBody(declaration.isGetter())
+                is KtPropertyAccessor -> generateBody(declaration.isGetter)
 
                 else -> throw RuntimeException("Unknown declaration type: $declaration")
             }
 
-            declaration.getEqualsToken()!!.delete()
+            declaration.equalsToken!!.delete()
             body.replace(newBody)
             return declaration
         }
 
         private fun KtNamedFunction.returnType(): KotlinType? {
             val descriptor = analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] ?: return null
-            return (descriptor as FunctionDescriptor).getReturnType()
+            return (descriptor as FunctionDescriptor).returnType
         }
     }
 }

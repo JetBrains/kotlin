@@ -31,11 +31,11 @@ import java.util.regex.Pattern
 // You may need to provide custom path to protoc executable, just modify this constant:
 val PROTOC_EXE = "protoc"
 
-public class ProtoPath(public val file: String) {
-    public val outPath: String = File(file).getParent()
-    public val packageName: String = findFirst(Pattern.compile("package (.+);"))
-    public val className: String = findFirst(Pattern.compile("option java_outer_classname = \"(.+)\";"))
-    public val debugClassName: String = "Debug$className"
+class ProtoPath(val file: String) {
+    val outPath: String = File(file).parent
+    val packageName: String = findFirst(Pattern.compile("package (.+);"))
+    val className: String = findFirst(Pattern.compile("option java_outer_classname = \"(.+)\";"))
+    val debugClassName: String = "Debug$className"
 
     private fun findFirst(pattern: Pattern): String {
         for (line in File(file).readLines()) {
@@ -46,7 +46,7 @@ public class ProtoPath(public val file: String) {
     }
 }
 
-public val PROTO_PATHS: List<ProtoPath> = listOf(
+val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/deserialization/src/descriptors.proto"),
         ProtoPath("core/deserialization/src/builtins.proto"),
         ProtoPath("js/js.serializer/src/js.proto"),
@@ -105,7 +105,7 @@ fun modifyAndExecProtoc(protoPath: ProtoPath) {
     debugProtoFile.writeText(modifyForDebug(protoPath))
     debugProtoFile.deleteOnExit()
 
-    execProtoc(debugProtoFile.getPath(), "compiler/tests")
+    execProtoc(debugProtoFile.path, "compiler/tests")
 }
 
 fun modifyForDebug(protoPath: ProtoPath): String {

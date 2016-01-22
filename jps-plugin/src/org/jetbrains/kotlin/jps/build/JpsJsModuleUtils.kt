@@ -37,10 +37,10 @@ object JpsJsModuleUtils {
     }
 
     fun getLibraryFiles(target: ModuleBuildTarget, result: MutableList<String>) {
-        val libraries = JpsUtils.getAllDependencies(target).getLibraries()
+        val libraries = JpsUtils.getAllDependencies(target).libraries
         for (library in libraries) {
             for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
-                val path = JpsPathUtil.urlToPath(root.getUrl())
+                val path = JpsPathUtil.urlToPath(root.url)
                 // ignore files, added only for IDE support (stubs and indexes)
                 if (!path.startsWith(KotlinJavascriptMetadataUtils.VFS_PROTOCOL + "://")) {
                     result.add(path)
@@ -52,12 +52,12 @@ object JpsJsModuleUtils {
     fun getDependencyModulesAndSources(target: ModuleBuildTarget, result: MutableList<String>) {
         JpsUtils.getAllDependencies(target).processModules(object : Consumer<JpsModule> {
             override fun consume(module: JpsModule) {
-                if (module == target.getModule() || module.getModuleType() != JpsJavaModuleType.INSTANCE) return
+                if (module == target.module || module.moduleType != JpsJavaModuleType.INSTANCE) return
 
                 val moduleBuildTarget = ModuleBuildTarget(module, JavaModuleBuildTargetType.PRODUCTION)
                 val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
-                val metaInfoFile = getOutputMetaFile(outputDir, module.getName())
-                result.add(metaInfoFile.getAbsolutePath())
+                val metaInfoFile = getOutputMetaFile(outputDir, module.name)
+                result.add(metaInfoFile.absolutePath)
             }
         })
     }

@@ -3,7 +3,7 @@ package
 package i {
     public fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): java.util.ArrayList<T>
     public fun assertEquals(/*0*/ expected: kotlin.Any?, /*1*/ actual: kotlin.Any?, /*2*/ message: kotlin.String = ...): kotlin.Unit
-    public fun </*0*/ T, /*1*/ K> someFunction(/*0*/ list: kotlin.List<T>, /*1*/ transform: (T) -> K): kotlin.List<K>
+    public fun </*0*/ T, /*1*/ K> someFunction(/*0*/ list: kotlin.collections.List<T>, /*1*/ transform: (T) -> K): kotlin.collections.List<K>
     public fun testSomeFunction(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ C : kotlin.MutableCollection<in T>> kotlin.Array<T>.toCollection(/*0*/ result: C): C
+    public fun </*0*/ T, /*1*/ C : kotlin.collections.MutableCollection<in T>> kotlin.Array<T>.toCollection(/*0*/ result: C): C
 }

@@ -21,14 +21,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.contentRange
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFunction>(
         KtNamedFunction::class.java,
@@ -48,11 +47,7 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
         return element.funKeyword!!.textRange
     }
 
-    override fun applyTo(element: KtNamedFunction, editor: Editor) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtNamedFunction) {
+    override fun applyTo(element: KtNamedFunction, editor: Editor?) {
         val commentSaver = CommentSaver(element)
         val returnSaver = ReturnSaver(element)
 
@@ -96,7 +91,7 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
 
         val moveLambdaOutsideParenthesesIntention = MoveLambdaOutsideParenthesesIntention()
         if (moveLambdaOutsideParenthesesIntention.isApplicableTo(callExpression, replaced.textOffset)) {
-            moveLambdaOutsideParenthesesIntention.applyTo(callExpression)
+            moveLambdaOutsideParenthesesIntention.applyTo(callExpression, editor)
         }
     }
 }

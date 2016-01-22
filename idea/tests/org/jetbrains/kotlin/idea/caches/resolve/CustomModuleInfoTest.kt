@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.junit.Assert
 
-public class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
+class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun testModuleInfoForMembersOfLightClassForDecompiledFile() {
         //NOTE: any class with methods from stdlib will do
-        val collectionsKtClass = JavaPsiFacade.getInstance(project).findClass("kotlin.CollectionsKt", GlobalSearchScope.allScope(project))!!
+        val collectionsKtClass = JavaPsiFacade.getInstance(project).findClass("kotlin.collections.CollectionsKt", GlobalSearchScope.allScope(project))!!
         val classModuleInfo = collectionsKtClass.getModuleInfo()
         Assert.assertTrue(classModuleInfo is LibraryInfo)
         val methods = collectionsKtClass.methods

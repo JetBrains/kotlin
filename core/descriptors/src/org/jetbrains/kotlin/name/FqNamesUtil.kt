@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.name
 
-public fun FqName.isSubpackageOf(packageName: FqName): Boolean {
+fun FqName.isSubpackageOf(packageName: FqName): Boolean {
     return when {
         this == packageName -> true
-        packageName.isRoot() -> true
+        packageName.isRoot -> true
         else -> isSubpackageOf(this.asString(), packageName.asString())
     }
 }
 
 private fun isSubpackageOf(subpackageNameStr: String, packageNameStr: String): Boolean {
-    return subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr[packageNameStr.length()] == '.'
+    return subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr[packageNameStr.length] == '.'
 }
 
-public fun FqName.isOneSegmentFQN(): Boolean = !isRoot() && parent().isRoot()
+fun FqName.isOneSegmentFQN(): Boolean = !isRoot && parent().isRoot
 
 /**
  * Get the tail part of the FQ name by stripping a prefix. If FQ name does not begin with the given prefix, it will be returned as is.
@@ -39,15 +39,15 @@ public fun FqName.isOneSegmentFQN(): Boolean = !isRoot() && parent().isRoot()
  * "org.jetbrains.kotlin".tail("org.jetbrains.kotlin") = ""
  * "org.jetbrains.kotlin".tail("org.jetbrains.gogland") = "org.jetbrains.kotlin"
  */
-public fun FqName.tail(prefix: FqName): FqName {
+fun FqName.tail(prefix: FqName): FqName {
     return when {
-        !isSubpackageOf(prefix) || prefix.isRoot() -> this
+        !isSubpackageOf(prefix) || prefix.isRoot -> this
         this == prefix -> FqName.ROOT
-        else -> FqName(asString().substring(prefix.asString().length() + 1))
+        else -> FqName(asString().substring(prefix.asString().length + 1))
     }
 }
 
-public fun FqName.parentOrNull(): FqName? = if (this.isRoot) null else parent()
+fun FqName.parentOrNull(): FqName? = if (this.isRoot) null else parent()
 
 private enum class State {
     BEGINNING,
@@ -56,7 +56,7 @@ private enum class State {
 }
 
 // Check that it is javaName(\.javaName)* or an empty string
-public fun isValidJavaFqName(qualifiedName: String?): Boolean {
+fun isValidJavaFqName(qualifiedName: String?): Boolean {
     if (qualifiedName == null) return false
 
     var state = State.BEGINNING

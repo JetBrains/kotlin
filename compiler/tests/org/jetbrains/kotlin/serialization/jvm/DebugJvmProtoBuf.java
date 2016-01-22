@@ -9,14 +9,12 @@ public final class DebugJvmProtoBuf {
       com.google.protobuf.ExtensionRegistry registry) {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.constructorSignature);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.methodSignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.methodImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.propertySignature);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.propertyImplClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeParameterAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.index);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classModuleName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.packageModuleName);
   }
   public interface StringTableTypesOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
@@ -2905,26 +2903,6 @@ public final class DebugJvmProtoBuf {
      * </pre>
      */
     int getDesc();
-
-    // optional bool is_static_in_outer = 3 [default = false];
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    boolean hasIsStaticInOuter();
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    boolean getIsStaticInOuter();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.jvm.JvmFieldSignature}
@@ -2985,11 +2963,6 @@ public final class DebugJvmProtoBuf {
             case 16: {
               bitField0_ |= 0x00000002;
               desc_ = input.readInt32();
-              break;
-            }
-            case 24: {
-              bitField0_ |= 0x00000004;
-              isStaticInOuter_ = input.readBool();
               break;
             }
           }
@@ -3072,36 +3045,9 @@ public final class DebugJvmProtoBuf {
       return desc_;
     }
 
-    // optional bool is_static_in_outer = 3 [default = false];
-    public static final int IS_STATIC_IN_OUTER_FIELD_NUMBER = 3;
-    private boolean isStaticInOuter_;
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    public boolean hasIsStaticInOuter() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-     *
-     * <pre>
-     * True iff this field is a backing field for a companion object and is really present as a static
-     * field in the outer class, not as an instance field here
-     * </pre>
-     */
-    public boolean getIsStaticInOuter() {
-      return isStaticInOuter_;
-    }
-
     private void initFields() {
       name_ = 0;
       desc_ = 0;
-      isStaticInOuter_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3121,9 +3067,6 @@ public final class DebugJvmProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, desc_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBool(3, isStaticInOuter_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -3140,10 +3083,6 @@ public final class DebugJvmProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, desc_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(3, isStaticInOuter_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3265,8 +3204,6 @@ public final class DebugJvmProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         desc_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        isStaticInOuter_ = false;
-        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -3303,10 +3240,6 @@ public final class DebugJvmProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.desc_ = desc_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.isStaticInOuter_ = isStaticInOuter_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3328,9 +3261,6 @@ public final class DebugJvmProtoBuf {
         }
         if (other.hasDesc()) {
           setDesc(other.getDesc());
-        }
-        if (other.hasIsStaticInOuter()) {
-          setIsStaticInOuter(other.getIsStaticInOuter());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -3437,59 +3367,6 @@ public final class DebugJvmProtoBuf {
       public Builder clearDesc() {
         bitField0_ = (bitField0_ & ~0x00000002);
         desc_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // optional bool is_static_in_outer = 3 [default = false];
-      private boolean isStaticInOuter_ ;
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public boolean hasIsStaticInOuter() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public boolean getIsStaticInOuter() {
-        return isStaticInOuter_;
-      }
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public Builder setIsStaticInOuter(boolean value) {
-        bitField0_ |= 0x00000004;
-        isStaticInOuter_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional bool is_static_in_outer = 3 [default = false];</code>
-       *
-       * <pre>
-       * True iff this field is a backing field for a companion object and is really present as a static
-       * field in the outer class, not as an instance field here
-       * </pre>
-       */
-      public Builder clearIsStaticInOuter() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        isStaticInOuter_ = false;
         onChanged();
         return this;
       }
@@ -4670,17 +4547,6 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.class,
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmMethodSignature.getDefaultInstance());
-  public static final int METHOD_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Function { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Function,
-      java.lang.Integer> methodImplClassName = com.google.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.Integer.class,
-        null);
   public static final int PROPERTY_SIGNATURE_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
@@ -4692,17 +4558,6 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.class,
         org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.JvmPropertySignature.getDefaultInstance());
-  public static final int PROPERTY_IMPL_CLASS_NAME_FIELD_NUMBER = 101;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.Property { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.Property,
-      java.lang.Integer> propertyImplClassName = com.google.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.Integer.class,
-        null);
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Type { ... }</code>
@@ -4736,28 +4591,28 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
-  public static final int INDEX_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter,
-      java.lang.Integer> index = com.google.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.Integer.class,
-        null);
-  public static final int CLASS_ANNOTATION_FIELD_NUMBER = 100;
+  public static final int CLASS_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
    */
   public static final
     com.google.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.serialization.DebugProtoBuf.Class,
-      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> classAnnotation = com.google.protobuf.GeneratedMessage
+      java.lang.Integer> classModuleName = com.google.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
-        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
+        java.lang.Integer.class,
+        null);
+  public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Package,
+      java.lang.Integer> packageModuleName = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_StringTableTypes_descriptor;
   private static
@@ -4809,45 +4664,39 @@ public final class DebugJvmProtoBuf {
       "ration\022\010\n\004NONE\020\000\022\030\n\024INTERNAL_TO_CLASS_ID" +
       "\020\001\022\024\n\020DESC_TO_CLASS_ID\020\002\"<\n\022JvmMethodSig" +
       "nature\022\022\n\004name\030\001 \001(\005B\004\230\265\030\001\022\022\n\004desc\030\002 \001(\005" +
-      "B\004\230\265\030\001\"^\n\021JvmFieldSignature\022\022\n\004name\030\001 \001(" +
-      "\005B\004\230\265\030\001\022\022\n\004desc\030\002 \001(\005B\004\230\265\030\001\022!\n\022is_static" +
-      "_in_outer\030\003 \001(\010:\005false\"\316\002\n\024JvmPropertySi",
-      "gnature\022H\n\005field\030\001 \001(\01329.org.jetbrains.k" +
-      "otlin.serialization.jvm.JvmFieldSignatur" +
-      "e\022T\n\020synthetic_method\030\002 \001(\0132:.org.jetbra" +
-      "ins.kotlin.serialization.jvm.JvmMethodSi" +
-      "gnature\022J\n\006getter\030\003 \001(\0132:.org.jetbrains." +
-      "kotlin.serialization.jvm.JvmMethodSignat" +
-      "ure\022J\n\006setter\030\004 \001(\0132:.org.jetbrains.kotl" +
-      "in.serialization.jvm.JvmMethodSignature:" +
-      "\212\001\n\025constructor_signature\022/.org.jetbrain" +
-      "s.kotlin.serialization.Constructor\030d \001(\013",
-      "2:.org.jetbrains.kotlin.serialization.jv" +
-      "m.JvmMethodSignature:\202\001\n\020method_signatur" +
-      "e\022,.org.jetbrains.kotlin.serialization.F" +
-      "unction\030d \001(\0132:.org.jetbrains.kotlin.ser" +
-      "ialization.jvm.JvmMethodSignature:R\n\026met" +
-      "hod_impl_class_name\022,.org.jetbrains.kotl" +
-      "in.serialization.Function\030e \001(\005B\004\230\265\030\001:\206\001" +
-      "\n\022property_signature\022,.org.jetbrains.kot" +
-      "lin.serialization.Property\030d \001(\0132<.org.j" +
-      "etbrains.kotlin.serialization.jvm.JvmPro",
-      "pertySignature:T\n\030property_impl_class_na" +
-      "me\022,.org.jetbrains.kotlin.serialization." +
-      "Property\030e \001(\005B\004\230\265\030\001:q\n\017type_annotation\022" +
-      "(.org.jetbrains.kotlin.serialization.Typ" +
-      "e\030d \003(\0132..org.jetbrains.kotlin.serializa" +
-      "tion.Annotation:8\n\006is_raw\022(.org.jetbrain" +
-      "s.kotlin.serialization.Type\030e \001(\010:\204\001\n\031ty" +
-      "pe_parameter_annotation\0221.org.jetbrains." +
-      "kotlin.serialization.TypeParameter\030d \003(\013" +
-      "2..org.jetbrains.kotlin.serialization.An",
-      "notation:A\n\005index\0222.org.jetbrains.kotlin" +
-      ".serialization.ValueParameter\030d \001(\005:s\n\020c" +
-      "lass_annotation\022).org.jetbrains.kotlin.s" +
-      "erialization.Class\030d \003(\0132..org.jetbrains" +
-      ".kotlin.serialization.AnnotationB\022B\020Debu" +
-      "gJvmProtoBuf"
+      "B\004\230\265\030\001\";\n\021JvmFieldSignature\022\022\n\004name\030\001 \001(" +
+      "\005B\004\230\265\030\001\022\022\n\004desc\030\002 \001(\005B\004\230\265\030\001\"\316\002\n\024JvmPrope" +
+      "rtySignature\022H\n\005field\030\001 \001(\01329.org.jetbra",
+      "ins.kotlin.serialization.jvm.JvmFieldSig" +
+      "nature\022T\n\020synthetic_method\030\002 \001(\0132:.org.j" +
+      "etbrains.kotlin.serialization.jvm.JvmMet" +
+      "hodSignature\022J\n\006getter\030\003 \001(\0132:.org.jetbr" +
+      "ains.kotlin.serialization.jvm.JvmMethodS" +
+      "ignature\022J\n\006setter\030\004 \001(\0132:.org.jetbrains" +
+      ".kotlin.serialization.jvm.JvmMethodSigna" +
+      "ture:\212\001\n\025constructor_signature\022/.org.jet" +
+      "brains.kotlin.serialization.Constructor\030" +
+      "d \001(\0132:.org.jetbrains.kotlin.serializati",
+      "on.jvm.JvmMethodSignature:\202\001\n\020method_sig" +
+      "nature\022,.org.jetbrains.kotlin.serializat" +
+      "ion.Function\030d \001(\0132:.org.jetbrains.kotli" +
+      "n.serialization.jvm.JvmMethodSignature:\206" +
+      "\001\n\022property_signature\022,.org.jetbrains.ko" +
+      "tlin.serialization.Property\030d \001(\0132<.org." +
+      "jetbrains.kotlin.serialization.jvm.JvmPr" +
+      "opertySignature:q\n\017type_annotation\022(.org" +
+      ".jetbrains.kotlin.serialization.Type\030d \003" +
+      "(\0132..org.jetbrains.kotlin.serialization.",
+      "Annotation:8\n\006is_raw\022(.org.jetbrains.kot" +
+      "lin.serialization.Type\030e \001(\010:\204\001\n\031type_pa" +
+      "rameter_annotation\0221.org.jetbrains.kotli" +
+      "n.serialization.TypeParameter\030d \003(\0132..or" +
+      "g.jetbrains.kotlin.serialization.Annotat" +
+      "ion:J\n\021class_module_name\022).org.jetbrains" +
+      ".kotlin.serialization.Class\030e \001(\005B\004\230\265\030\001:" +
+      "N\n\023package_module_name\022+.org.jetbrains.k" +
+      "otlin.serialization.Package\030e \001(\005B\004\230\265\030\001B" +
+      "\022B\020DebugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4877,7 +4726,7 @@ public final class DebugJvmProtoBuf {
           internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_jvm_JvmFieldSignature_descriptor,
-              new java.lang.String[] { "Name", "Desc", "IsStaticInOuter", });
+              new java.lang.String[] { "Name", "Desc", });
           internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_descriptor =
             getDescriptor().getMessageTypes().get(3);
           internal_static_org_jetbrains_kotlin_serialization_jvm_JvmPropertySignature_fieldAccessorTable = new
@@ -4886,14 +4735,12 @@ public final class DebugJvmProtoBuf {
               new java.lang.String[] { "Field", "SyntheticMethod", "Getter", "Setter", });
           constructorSignature.internalInit(descriptor.getExtensions().get(0));
           methodSignature.internalInit(descriptor.getExtensions().get(1));
-          methodImplClassName.internalInit(descriptor.getExtensions().get(2));
-          propertySignature.internalInit(descriptor.getExtensions().get(3));
-          propertyImplClassName.internalInit(descriptor.getExtensions().get(4));
-          typeAnnotation.internalInit(descriptor.getExtensions().get(5));
-          isRaw.internalInit(descriptor.getExtensions().get(6));
-          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(7));
-          index.internalInit(descriptor.getExtensions().get(8));
-          classAnnotation.internalInit(descriptor.getExtensions().get(9));
+          propertySignature.internalInit(descriptor.getExtensions().get(2));
+          typeAnnotation.internalInit(descriptor.getExtensions().get(3));
+          isRaw.internalInit(descriptor.getExtensions().get(4));
+          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(5));
+          classModuleName.internalInit(descriptor.getExtensions().get(6));
+          packageModuleName.internalInit(descriptor.getExtensions().get(7));
           com.google.protobuf.ExtensionRegistry registry =
             com.google.protobuf.ExtensionRegistry.newInstance();
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);

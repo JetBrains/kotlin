@@ -22,21 +22,20 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
+class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(KtStringTemplateExpression::class.java, "Convert template to concatenated string"), LowPriorityAction {
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
-        if (element.getLastChild().getNode().getElementType() != KtTokens.CLOSING_QUOTE) return false // not available for unclosed literal
-        return element.getEntries().any { it is KtStringTemplateEntryWithExpression }
+        if (element.lastChild.node.elementType != KtTokens.CLOSING_QUOTE) return false // not available for unclosed literal
+        return element.entries.any { it is KtStringTemplateEntryWithExpression }
     }
 
-    override fun applyTo(element: KtStringTemplateExpression, editor: Editor) {
-        val tripleQuoted = isTripleQuoted(element.getText()!!)
+    override fun applyTo(element: KtStringTemplateExpression, editor: Editor?) {
+        val tripleQuoted = isTripleQuoted(element.text!!)
         val quote = if (tripleQuoted) "\"\"\"" else "\""
-        val entries = element.getEntries()
+        val entries = element.entries
 
         val text = entries
-                .filterNot { it is KtStringTemplateEntryWithExpression && it.getExpression() == null }
+                .filterNot { it is KtStringTemplateEntryWithExpression && it.expression == null }
                 .mapIndexed { index, entry ->
                     entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
                 }
@@ -51,15 +50,15 @@ public class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndepende
 
     private fun KtStringTemplateEntry.toSeparateString(quote: String, convertExplicitly: Boolean, isFinalEntry: Boolean): String {
         if (this !is KtStringTemplateEntryWithExpression) {
-            return getText().quote(quote)
+            return text.quote(quote)
         }
 
-        val expression = getExpression()!! // checked before
+        val expression = expression!! // checked before
 
         val text = if (needsParenthesis(expression, isFinalEntry))
-            "(" + expression.getText() + ")"
+            "(" + expression.text + ")"
         else
-            expression.getText()
+            expression.text
 
         return if (convertExplicitly && !expression.isStringExpression())
             text + ".toString()"
@@ -70,7 +69,7 @@ public class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndepende
     private fun needsParenthesis(expression: KtExpression, isFinalEntry: Boolean): Boolean {
         return when (expression) {
             is KtBinaryExpression -> true
-            is KtIfExpression -> expression.getElse() !is KtBlockExpression && !isFinalEntry
+            is KtIfExpression -> expression.`else` !is KtBlockExpression && !isFinalEntry
             else -> false
         }
     }

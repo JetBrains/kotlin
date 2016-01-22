@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaField
+import org.jetbrains.kotlin.load.java.structure.JavaMember
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.valuesToMap
-import java.util.HashSet
+import org.jetbrains.kotlin.name.Name
+import java.util.*
 
 interface MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
@@ -55,8 +57,8 @@ open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember
         memberFilter(m) && !DescriptorResolverUtils.isObjectMethodInInterface(m)
     }
 
-    private val methods = jClass.getMethods().asSequence().filter(methodFilter).groupBy { m -> m.getName() }
-    private val fields = jClass.getFields().asSequence().filter(memberFilter).valuesToMap { m -> m.getName() }
+    private val methods = jClass.methods.asSequence().filter(methodFilter).groupBy { m -> m.name }
+    private val fields = jClass.fields.asSequence().filter(memberFilter).toMapBy { m -> m.name }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
     override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> =
@@ -79,12 +81,12 @@ private fun <M : JavaMember> JavaClass.getAllMemberNames(filter: (M) -> Boolean,
 
         for (member in getMembers()) {
             if (filter(member)) {
-                result.add(member.getName())
+                result.add(member.name)
             }
         }
 
-        for (supertype in getSupertypes()) {
-            val classifier = supertype.getClassifier()
+        for (supertype in supertypes) {
+            val classifier = supertype.classifier
             if (classifier is JavaClass) {
                 result.addAll(classifier.getNonDeclaredMethodNames())
                 classifier.visit()

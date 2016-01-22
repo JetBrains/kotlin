@@ -66,7 +66,7 @@ class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) 
     private var lastReminiscence: Reminiscence? = null
 
     companion object {
-        fun getInstance(project: Project): LookupCancelWatcher = project.getComponent(javaClass<LookupCancelWatcher>())!!
+        fun getInstance(project: Project): LookupCancelWatcher = project.getComponent(LookupCancelWatcher::class.java)!!
 
         val AUTO_POPUP_AT = Key<Int>("LookupCancelWatcher.AUTO_POPUP_AT")
     }

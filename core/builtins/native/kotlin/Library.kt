@@ -17,13 +17,6 @@
 package kotlin
 
 /**
- * Returns true if the receiver and the [other] object are the same object instance, or if they
- * are both null.
- */
-@Deprecated("This function is deprecated, use === instead", ReplaceWith("this === other"))
-public fun Any?.identityEquals(other: Any?): Boolean // = this === other
-
-/**
  * Returns a string representation of the object. Can be called with a null receiver, in which case
  * it returns the string "null".
  */

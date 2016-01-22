@@ -25,17 +25,17 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.TypeVariable
 
-public class ReflectJavaTypeParameter(
-        public val typeVariable: TypeVariable<*>
+class ReflectJavaTypeParameter(
+        val typeVariable: TypeVariable<*>
 ) : ReflectJavaElement(), JavaTypeParameter {
     override fun getUpperBounds(): List<ReflectJavaClassifierType> {
-        val bounds = typeVariable.getBounds().map { bound -> ReflectJavaClassifierType(bound) }
-        if (bounds.singleOrNull()?.type == javaClass<Any>()) return emptyList()
+        val bounds = typeVariable.bounds.map { bound -> ReflectJavaClassifierType(bound) }
+        if (bounds.singleOrNull()?.type == Any::class.java) return emptyList()
         return bounds
     }
 
     override fun getOwner(): JavaTypeParameterListOwner? {
-        val owner = typeVariable.getGenericDeclaration()
+        val owner = typeVariable.genericDeclaration
         return when (owner) {
             is Class<*> -> ReflectJavaClass(owner)
             is Method -> ReflectJavaMethod(owner)
@@ -48,11 +48,11 @@ public class ReflectJavaTypeParameter(
 
     override fun getTypeProvider(): JavaTypeProvider = throw UnsupportedOperationException()
 
-    override fun getName() = Name.identifier(typeVariable.getName())
+    override fun getName() = Name.identifier(typeVariable.name)
 
     override fun equals(other: Any?) = other is ReflectJavaTypeParameter && typeVariable == other.typeVariable
 
     override fun hashCode() = typeVariable.hashCode()
 
-    override fun toString() = javaClass.getName() + ": " + typeVariable
+    override fun toString() = javaClass.name + ": " + typeVariable
 }

@@ -31,8 +31,7 @@ import java.util.*
 class ClassResolutionScopesSupport(
         private val classDescriptor: ClassDescriptor,
         storageManager: StorageManager,
-        private val getOuterScope: () -> LexicalScope,
-        private val primaryConstructorParameters: List<KtParameter>? = null
+        private val getOuterScope: () -> LexicalScope
 ) {
     private fun scopeWithGenerics(parent: LexicalScope): LexicalScopeImpl {
         return LexicalScopeImpl(parent, classDescriptor, false, null, LexicalScopeKind.CLASS_HEADER) {
@@ -40,11 +39,11 @@ class ClassResolutionScopesSupport(
         }
     }
 
-    public val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
+    val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
         scopeWithGenerics(getOuterScope())
     }
 
-    public val scopeForConstructorHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
+    val scopeForConstructorHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
         scopeWithGenerics(inheritanceScopeWithMe())
     }
 
@@ -58,16 +57,16 @@ class ClassResolutionScopesSupport(
         createInheritanceScope(parent = inheritanceScopeWithoutMe(), ownerDescriptor = classDescriptor, classDescriptor = classDescriptor)
     }
 
-    public val scopeForCompanionObjectHeaderResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
+    val scopeForCompanionObjectHeaderResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
         createInheritanceScope(inheritanceScopeWithoutMe(), classDescriptor, classDescriptor, withCompanionObject = false)
     }
 
-    public val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
+    val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
         val scopeWithGenerics = scopeWithGenerics(inheritanceScopeWithMe())
         LexicalScopeImpl(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter, LexicalScopeKind.CLASS_MEMBER_SCOPE)
     }
 
-    public val scopeForStaticMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
+    val scopeForStaticMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
         if (classDescriptor.kind.isSingleton) {
             scopeForMemberDeclarationResolution()
         }
@@ -76,25 +75,7 @@ class ClassResolutionScopesSupport(
         }
     }
 
-    public val scopeForInitializerResolution: () -> LexicalScope = storageManager.createLazyValue {
-        val primaryConstructor = classDescriptor.unsubstitutedPrimaryConstructor ?:
-                                 return@createLazyValue scopeForMemberDeclarationResolution()
-        assert(primaryConstructorParameters != null) {
-            "primary constructor parameters must be not null, because primary constructor exist: $primaryConstructor"
-        }
-        LexicalScopeImpl(scopeForMemberDeclarationResolution(), primaryConstructor, false, null,
-                         LexicalScopeKind.CLASS_INITIALIZER) {
-            primaryConstructorParameters!!.forEachIndexed {
-                index, parameter ->
-                if (!parameter.hasValOrVar()) {
-                    addVariableDescriptor(primaryConstructor.valueParameters[index])
-                }
-            }
-        }
-    }
-
-
-    public fun ClassDescriptor.getAllSuperclassesWithoutAny(): List<ClassDescriptor> {
+    fun ClassDescriptor.getAllSuperclassesWithoutAny(): List<ClassDescriptor> {
         val superClasses = SmartList<ClassDescriptor>()
         var parent: ClassDescriptor? = getSuperClassNotAny()
 
@@ -149,5 +130,29 @@ class ClassResolutionScopesSupport(
 
     companion object {
         private val createThrowingLexicalScope: (Boolean) -> LexicalScope =  { ThrowingLexicalScope() }
+    }
+}
+
+fun scopeForInitializerResolution(
+        classDescriptor: LazyClassDescriptor,
+        parentDescriptor: DeclarationDescriptor,
+        primaryConstructorParameters: List<KtParameter>
+): LexicalScope {
+    return LexicalScopeImpl(
+            classDescriptor.scopeForMemberDeclarationResolution,
+            parentDescriptor,
+            false,
+            null,
+            LexicalScopeKind.CLASS_INITIALIZER
+    ) {
+        if (primaryConstructorParameters.isNotEmpty()) {
+            val parameterDescriptors = classDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters
+            assert(parameterDescriptors.size == primaryConstructorParameters.size)
+            for ((parameter, descriptor) in primaryConstructorParameters.zip(parameterDescriptors)) {
+                if (!parameter.hasValOrVar()) {
+                    addVariableDescriptor(descriptor)
+                }
+            }
+        }
     }
 }

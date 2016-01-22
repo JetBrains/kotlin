@@ -19,7 +19,7 @@ package com.google.gwt.dev.js
 import com.google.gwt.dev.js.rhino.*
 import com.google.gwt.dev.js.parserExceptions.*
 
-public object ThrowExceptionOnErrorReporter : ErrorReporter {
+object ThrowExceptionOnErrorReporter : ErrorReporter {
     override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {}
 
     override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) =

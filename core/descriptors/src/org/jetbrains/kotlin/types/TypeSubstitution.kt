@@ -20,49 +20,48 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-public abstract class TypeSubstitution {
+abstract class TypeSubstitution {
     companion object {
-        @JvmStatic
-        public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
+        @JvmField val EMPTY: TypeSubstitution = object : TypeSubstitution() {
             override fun get(key: KotlinType) = null
             override fun isEmpty() = true
             override fun toString() = "Empty TypeSubstitution"
         }
     }
 
-    public abstract operator fun get(key: KotlinType): TypeProjection?
+    abstract operator fun get(key: KotlinType): TypeProjection?
 
-    public open fun isEmpty(): Boolean = false
+    open fun isEmpty(): Boolean = false
 
-    public open fun approximateCapturedTypes(): Boolean = false
+    open fun approximateCapturedTypes(): Boolean = false
+    open fun approximateContravariantCapturedTypes(): Boolean = false
 
-    public open fun filterAnnotations(annotations: Annotations) = annotations
+    open fun filterAnnotations(annotations: Annotations) = annotations
 
-    public fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
+    fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
 }
 
-public abstract class TypeConstructorSubstitution : TypeSubstitution() {
+abstract class TypeConstructorSubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) = get(key.constructor)
 
-    public abstract fun get(key: TypeConstructor): TypeProjection?
+    abstract fun get(key: TypeConstructor): TypeProjection?
 
     companion object {
-        @JvmStatic
-        public fun createByConstructorsMap(map: Map<TypeConstructor, TypeProjection>): TypeConstructorSubstitution =
+        @JvmStatic fun createByConstructorsMap(map: Map<TypeConstructor, TypeProjection>): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key]
                 override fun isEmpty() = map.isEmpty()
             }
 
-        @JvmStatic
-        public fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
+        @JvmStatic fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key.declarationDescriptor]
                 override fun isEmpty() = map.isEmpty()
             }
 
-        @JvmStatic
-        public fun create(typeConstructor: TypeConstructor, arguments: List<TypeProjection>): TypeSubstitution {
+        @JvmStatic fun create(kotlinType: KotlinType) = create(kotlinType.constructor, kotlinType.arguments)
+
+        @JvmStatic fun create(typeConstructor: TypeConstructor, arguments: List<TypeProjection>): TypeSubstitution {
             val parameters = typeConstructor.parameters
 
             if (parameters.lastOrNull()?.isCapturedFromOuterDeclaration ?: false) {
@@ -74,13 +73,14 @@ public abstract class TypeConstructorSubstitution : TypeSubstitution() {
     }
 }
 
-public class IndexedParametersSubstitution private constructor(
-    private val parameters: Array<TypeParameterDescriptor>,
-    private val arguments: Array<TypeProjection>
+class IndexedParametersSubstitution(
+    val parameters: Array<TypeParameterDescriptor>,
+    val arguments: Array<TypeProjection>,
+    private val approximateCapturedTypes: Boolean = false
 ) : TypeSubstitution() {
     init {
-        assert(parameters.size() <= arguments.size()) {
-            "Number of arguments should not be less then number of parameters, but: parameters=${parameters.size()}, args=${arguments.size()}"
+        assert(parameters.size <= arguments.size) {
+            "Number of arguments should not be less then number of parameters, but: parameters=${parameters.size}, args=${arguments.size}"
         }
     }
 
@@ -90,11 +90,13 @@ public class IndexedParametersSubstitution private constructor(
 
     override fun isEmpty(): Boolean = arguments.isEmpty()
 
+    override fun approximateContravariantCapturedTypes() = approximateCapturedTypes
+
     override fun get(key: KotlinType): TypeProjection? {
         val parameter = key.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null
         val index = parameter.index
 
-        if (index < parameters.size() && parameters[index].typeConstructor == parameter.typeConstructor) {
+        if (index < parameters.size && parameters[index].typeConstructor == parameter.typeConstructor) {
             return arguments[index]
         }
 
@@ -102,23 +104,54 @@ public class IndexedParametersSubstitution private constructor(
     }
 }
 
-public fun KotlinType.computeNewSubstitution(
+fun KotlinType.computeNewSubstitution(
         typeConstructor: TypeConstructor,
         newArguments: List<TypeProjection>
 ): TypeSubstitution {
-    val previousSubstitution = getSubstitution()
-    if (newArguments.isEmpty()) return previousSubstitution
-
     val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, newArguments)
 
     // If previous substitution was trivial just replace it with indexed one
-    if (previousSubstitution is IndexedParametersSubstitution || previousSubstitution.isEmpty()) {
-        return newSubstitution
-    }
-
-    val composedSubstitution = CompositeTypeSubstitution(newSubstitution, previousSubstitution)
+    val substitutionToComposeWith = getCapability<CustomSubstitutionCapability>()?.substitutionToComposeWith ?: return newSubstitution
+    val composedSubstitution = CompositeTypeSubstitution(newSubstitution, substitutionToComposeWith)
 
     return composedSubstitution
+}
+
+fun KotlinType.replace(
+        newArguments: List<TypeProjection>,
+        annotations: Annotations = this@replace.annotations
+): KotlinType {
+    if (newArguments.isEmpty() && annotations === this.annotations) return this
+
+    if (newArguments.isEmpty()) {
+        return KotlinTypeImpl.create(
+                annotations,
+                constructor,
+                isMarkedNullable,
+                arguments,
+                substitution,
+                memberScope,
+                capabilities
+        )
+    }
+
+    val newSubstitution = computeNewSubstitution(constructor, newArguments)
+
+    val declarationDescriptor = constructor.declarationDescriptor
+    val newScope =
+            if (declarationDescriptor is ClassDescriptor)
+                declarationDescriptor.getMemberScope(newSubstitution)
+            else ErrorUtils.createErrorScope("Unexpected declaration descriptor for type constructor: $constructor")
+
+    return KotlinTypeImpl.create(
+            annotations,
+            constructor,
+            isMarkedNullable,
+            newArguments,
+            newSubstitution,
+            newScope,
+            capabilities
+    )
 }
 
 private class CompositeTypeSubstitution(
@@ -132,18 +165,20 @@ private class CompositeTypeSubstitution(
     }
 
     override fun isEmpty() = first.isEmpty() && second.isEmpty()
-    //
+
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+    override fun approximateContravariantCapturedTypes() = first.approximateContravariantCapturedTypes() || second.approximateContravariantCapturedTypes()
 
     override fun filterAnnotations(annotations: Annotations): Annotations = second.filterAnnotations(first.filterAnnotations(annotations))
 }
 
-public open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
+open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
     override fun get(key: KotlinType) = substitution.get(key)
 
     override fun isEmpty() = substitution.isEmpty()
 
     override fun approximateCapturedTypes() = substitution.approximateCapturedTypes()
+    override fun approximateContravariantCapturedTypes() = substitution.approximateContravariantCapturedTypes()
 
     override fun filterAnnotations(annotations: Annotations) = substitution.filterAnnotations(annotations)
 }

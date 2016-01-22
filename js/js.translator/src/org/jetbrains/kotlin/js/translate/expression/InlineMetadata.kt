@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.*
 
 private val METADATA_PROPERTIES_COUNT = 2
 
-public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
+class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) {
     companion object {
         @JvmStatic
         fun compose(function: JsFunction, descriptor: CallableDescriptor): InlineMetadata {
-            val program = function.getScope().getProgram()
+            val program = function.scope.program
             val tag = program.getStringLiteral(Namer.getFunctionTag(descriptor))
             return InlineMetadata(tag, function)
         }
@@ -41,10 +41,10 @@ public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) 
                 }
 
         private fun decomposeCreateFunctionCall(call: JsInvocation): InlineMetadata? {
-            if (Namer.CREATE_INLINE_FUNCTION != call.getQualifier()) return null
+            if (Namer.CREATE_INLINE_FUNCTION != call.qualifier) return null
 
-            val arguments = call.getArguments()
-            if (arguments.size() != METADATA_PROPERTIES_COUNT) return null
+            val arguments = call.arguments
+            if (arguments.size != METADATA_PROPERTIES_COUNT) return null
 
             val tag = arguments[0] as? JsStringLiteral
             val function = arguments[1] as? JsFunction
@@ -54,7 +54,7 @@ public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) 
         }
     }
 
-    public val functionWithMetadata: JsExpression
+    val functionWithMetadata: JsExpression
         get() {
             val propertiesList = listOf(tag, function)
             return JsInvocation(Namer.CREATE_INLINE_FUNCTION, propertiesList)

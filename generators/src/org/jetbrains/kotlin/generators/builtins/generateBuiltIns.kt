@@ -29,7 +29,7 @@ import java.io.File
 import java.io.PrintWriter
 
 fun assertExists(file: File) {
-    if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
+    if (!file.exists()) error("Output dir does not exist: ${file.absolutePath}")
 }
 
 val BUILT_INS_NATIVE_DIR = File("core/builtins/native/")
@@ -81,7 +81,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
 fun main(args: Array<String>) {
     generateBuiltIns { file, generator ->
         println("generating $file")
-        file.getParentFile()?.mkdirs()
+        file.parentFile?.mkdirs()
         PrintWriter(file).use {
             generator(it).generate()
         }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
-public abstract class KotlinSingleIntentionActionFactory : KotlinIntentionActionsFactory() {
+abstract class KotlinSingleIntentionActionFactory : KotlinIntentionActionsFactory() {
     protected abstract fun createAction(diagnostic: Diagnostic): IntentionAction?
 
     final override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> = createAction(diagnostic).singletonOrEmptyList()

@@ -21,14 +21,14 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.ExtensionPointName
 import java.lang.ref.WeakReference
 
-public open class MappedExtensionProvider<T, R>
+open class MappedExtensionProvider<T, R>
 protected constructor(
         private val epName: ExtensionPointName<T>,
         private val map: (List<T>) -> R
 ) {
     private var cached = WeakReference<Pair<Application, R>>(null)
 
-    public fun get(): R {
+    fun get(): R {
         val cached = cached.get() ?: return update()
         val (app, extensions) = cached
         if (app == ApplicationManager.getApplication()) {
@@ -48,15 +48,13 @@ protected constructor(
     }
 
     companion object {
-        @JvmStatic
-        public fun <T, R> create(epName: ExtensionPointName<T>, map: (List<T>) -> R): MappedExtensionProvider<T, R>
+        @JvmStatic fun <T, R> create(epName: ExtensionPointName<T>, map: (List<T>) -> R): MappedExtensionProvider<T, R>
                 = MappedExtensionProvider(epName, map)
     }
 }
 
-public class ExtensionProvider<T>(epName: ExtensionPointName<T>) : MappedExtensionProvider<T, List<T>>(epName, { it }) {
+class ExtensionProvider<T>(epName: ExtensionPointName<T>) : MappedExtensionProvider<T, List<T>>(epName, { it }) {
     companion object {
-        @JvmStatic
-        public fun <T> create(epName: ExtensionPointName<T>): ExtensionProvider<T> = ExtensionProvider(epName)
+        @JvmStatic fun <T> create(epName: ExtensionPointName<T>): ExtensionProvider<T> = ExtensionProvider(epName)
     }
 }

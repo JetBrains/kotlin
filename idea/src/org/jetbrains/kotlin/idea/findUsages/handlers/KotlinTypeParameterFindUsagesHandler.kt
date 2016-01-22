@@ -27,23 +27,23 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinTypeParameterFindUsagesDialog
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-public class KotlinTypeParameterFindUsagesHandler(
+class KotlinTypeParameterFindUsagesHandler(
         element: KtNamedDeclaration,
         factory: KotlinFindUsagesHandlerFactory
 ) : KotlinFindUsagesHandler<KtNamedDeclaration>(element, factory) {
-    public override fun getFindUsagesDialog(
+    override fun getFindUsagesDialog(
             isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean
     ): AbstractFindUsagesDialog {
         return KotlinTypeParameterFindUsagesDialog<KtNamedDeclaration>(
-                getElement(), getProject(), getFindUsagesOptions(), toShowInNewTab, mustOpenInNewTab, isSingleFile, this
+                getElement(), project, findUsagesOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, this
         )
     }
 
-    protected override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+    override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         return ReferencesSearch.search(element, options.searchScope).all { KotlinFindUsagesHandler.processUsage(processor, it ) }
     }
 
-    public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
+    override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
         return factory.defaultOptions
     }
 }

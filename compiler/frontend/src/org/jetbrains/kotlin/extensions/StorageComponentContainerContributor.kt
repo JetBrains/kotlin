@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.extensions
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
-public interface StorageComponentContainerContributor {
+interface StorageComponentContainerContributor {
     companion object : ProjectExtensionDescriptor<StorageComponentContainerContributor>(
-            "org.jetbrains.kotlin.storageComponentContainerContributor", javaClass<StorageComponentContainerContributor>()
+            "org.jetbrains.kotlin.storageComponentContainerContributor", StorageComponentContainerContributor::class.java
     )
 
-    public fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform)
+    fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform)
 }

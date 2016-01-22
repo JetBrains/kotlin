@@ -24,29 +24,29 @@ import org.jetbrains.kotlin.idea.test.ModuleKind
 import org.jetbrains.kotlin.idea.test.closeAndDeleteProject
 import org.jetbrains.kotlin.idea.test.configureAs
 
-public class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
+class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
 
     private val FILE_TEXT = "fun foo() { <caret>println() }"
 
-    public fun testRefToPrintlnWithJVM() {
+    fun testRefToPrintlnWithJVM() {
         doTest("Console.kt", ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES)
     }
 
-    public fun testRefToPrintlnWithJVMAndJS() {
+    fun testRefToPrintlnWithJVMAndJS() {
         doTest("Console.kt", ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES, ModuleKind.KOTLIN_JAVASCRIPT)
     }
 
-    public fun testRefToPrintlnWithJS() {
+    fun testRefToPrintlnWithJS() {
         doTest("core.kt", ModuleKind.KOTLIN_JAVASCRIPT)
     }
 
-    public fun testRefToPrintlnWithJSAndJVM() {
+    fun testRefToPrintlnWithJSAndJVM() {
         doTest("core.kt", ModuleKind.KOTLIN_JAVASCRIPT, ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES)
     }
 
     private fun doTest(sourceFileName: String, mainModule: ModuleKind, additionalModule: ModuleKind? = null) {
         val navigationElement = configureAndResolve(FILE_TEXT, mainModule, additionalModule)
-        TestCase.assertEquals(sourceFileName, navigationElement.getContainingFile().getName())
+        TestCase.assertEquals(sourceFileName, navigationElement.containingFile.name)
     }
 
     override fun tearDown() {
@@ -63,14 +63,14 @@ public class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
             additionalModuleKind: ModuleKind? = null
     ): PsiElement {
         configureByText(KotlinFileType.INSTANCE, text)
-        getModule().configureAs(mainModuleKind)
+        module.configureAs(mainModuleKind)
 
         if (additionalModuleKind != null) {
             val additionalModule = this.createModule("additional-module")
             additionalModule.configureAs(additionalModuleKind)
         }
 
-        val ref = getFile().findReferenceAt(getEditor().getCaretModel().getOffset())
-        return ref!!.resolve()!!.getNavigationElement()
+        val ref = file.findReferenceAt(editor.caretModel.offset)
+        return ref!!.resolve()!!.navigationElement
     }
 }

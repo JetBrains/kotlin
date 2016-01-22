@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
-public abstract class IntrinsicPropertyGetter : IntrinsicMethod() {
-    public abstract fun generate(
+abstract class IntrinsicPropertyGetter : IntrinsicMethod() {
+    abstract fun generate(
             resolvedCall: ResolvedCall<*>?,
             codegen: ExpressionCodegen,
             returnType: Type,

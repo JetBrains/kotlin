@@ -160,7 +160,7 @@ class C(val a: Int = 1,
 
 fun box(): String {
     val test1 = A(4, e = 8, f = 15, w = 16, aa = 23, ff = 42).toString()
-    val test2 = javaClass<A>().newInstance().toString()
+    val test2 = A::class.java.newInstance().toString()
     val test3 = A(32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, q = 16, r = 15, s = 14, t = 13,
                   u = 12, v = 11, w = 10, x = 9, y = 8, z = 7, aa = 6, bb = 5, cc = 4, dd = 3, ee = 2, ff = 1).toString()
     if (test1 != "4 2 3 4 8 15 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 16 24 25 26 23 28 29 30 31 42") {
@@ -174,7 +174,7 @@ fun box(): String {
     }
 
     val test4 = B(54, 217, h = 236, l = 18, q = 3216, u = 8, aa = 22, ff = 33, jj = 44, mm = 55).toString()
-    val test5 = javaClass<B>().newInstance().toString()
+    val test5 = B::class.java.newInstance().toString()
     val test6 = B(40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, u = 20, v = 19,
                   w = 18, x = 17, y = 16, z = 15, aa = 14, bb = 13, cc = 12, dd = 11, ee = 10, ff = 9, gg = 8, hh = 7, ii = 6,
                   jj = 5, kk = 4, ll = 3, mm = 2, nn = 1).toString()
@@ -189,7 +189,7 @@ fun box(): String {
     }
 
     val test7 = C(5, f = 3, w = 1, aa = 71, nn = 2, qq = 15, ww = 97, aaa = 261258, iii = 3, nnn = 8, rrr = 7).toString()
-    val test8 = javaClass<C>().newInstance().toString()
+    val test8 = C::class.java.newInstance().toString()
     val test9 = C(70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41,
                   40, 39, 38, 37, 36, jj = 35, kk = 34, ll = 33, mm = 32, nn = 31, oo = 30, pp = 29, qq = 28, rr = 27, ss = 26, tt = 25,
                   uu = 24, vv = 23, ww = 22, xx = 21, yy = 20, zz = 19, aaa = 18, bbb = 17, ccc = 16, ddd = 15, eee = 14, fff = 13,

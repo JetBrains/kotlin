@@ -1,0 +1,6 @@
+package
+
+public var longWords: kotlin.Int
+public val smallWords: java.util.HashSet<kotlin.String>
+public fun test1(/*0*/ word: kotlin.String): kotlin.Any
+public fun test2(/*0*/ word: kotlin.String): kotlin.Any

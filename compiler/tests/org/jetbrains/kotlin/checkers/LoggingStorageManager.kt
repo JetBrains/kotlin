@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.reflect.Field
 import java.lang.reflect.GenericDeclaration
 
-public class LoggingStorageManager(
+class LoggingStorageManager(
         private val delegate: StorageManager,
         private val callHandler: (lambda: Any, call: LoggingStorageManager.CallData?) -> Unit) : ObservableStorageManager(delegate) {
 
-    public class CallData(
+    class CallData(
             val fieldOwner: Any?,
             val field: Field?,
             val lambdaCreatedIn: GenericDeclaration?,
@@ -56,26 +56,26 @@ public class LoggingStorageManager(
     private fun computeCallerData(lambda: Any, wrapper: Any, arguments: List<Any?>, result: Any?): CallData {
         val lambdaClass = lambda.javaClass
 
-        val outerClass: Class<out Any?>? = lambdaClass.getEnclosingClass()
+        val outerClass: Class<out Any?>? = lambdaClass.enclosingClass
 
         // fields named "this" or "this$0"
         val referenceToOuter = lambdaClass.getAllDeclaredFields().firstOrNull {
             field ->
-            field.getType() == outerClass && field.getName()!!.contains("this")
+            field.type == outerClass && field.name!!.contains("this")
         }
-        referenceToOuter?.setAccessible(true)
+        referenceToOuter?.isAccessible = true
 
         val outerInstance = referenceToOuter?.get(lambda)
 
         fun Class<*>.findFunctionField(): Field? {
             return this.getAllDeclaredFields().firstOrNull {
-                it.getType()?.getName()?.startsWith("kotlin.Function") ?: false
+                it.type?.name?.startsWith("kotlin.Function") ?: false
             }
         }
         val containingField = if (outerInstance == null) null
                               else outerClass?.getAllDeclaredFields()?.firstOrNull {
                                   field ->
-                                  field.setAccessible(true)
+                                  field.isAccessible = true
                                   val value = field.get(outerInstance)
                                   if (value == null) return@firstOrNull false
 
@@ -83,7 +83,7 @@ public class LoggingStorageManager(
                                   val functionField = valueClass.findFunctionField()
                                   if (functionField == null) return@firstOrNull false
 
-                                  functionField.setAccessible(true)
+            functionField.isAccessible = true
                                   val functionValue = functionField.get(value)
                                   functionValue == wrapper
                               }
@@ -91,7 +91,7 @@ public class LoggingStorageManager(
         if (containingField == null) {
             val wrappedLambdaField = lambdaClass.findFunctionField()
             if (wrappedLambdaField != null) {
-                wrappedLambdaField.setAccessible(true)
+                wrappedLambdaField.isAccessible = true
                 val wrappedLambda = wrappedLambdaField.get(lambda)
                 return CallData(outerInstance, null, enclosingEntity(wrappedLambda.javaClass), arguments, result)
             }
@@ -103,9 +103,9 @@ public class LoggingStorageManager(
     }
 
     private fun enclosingEntity(_class: Class<Any>): GenericDeclaration? {
-        val result = _class.getEnclosingConstructor()
-            ?: _class.getEnclosingMethod()
-            ?: _class.getEnclosingClass()
+        val result = _class.enclosingConstructor
+            ?: _class.enclosingMethod
+            ?: _class.enclosingClass
 
         return result as GenericDeclaration?
     }
@@ -115,9 +115,9 @@ public class LoggingStorageManager(
 
         var c = this
         while (true) {
-            result.addAll(c.getDeclaredFields().toList())
+            result.addAll(c.declaredFields.toList())
             @Suppress("UNCHECKED_CAST")
-            val superClass = (c as Class<Any>).getSuperclass() as Class<Any>?
+            val superClass = (c as Class<Any>).superclass as Class<Any>?
             if (superClass == null) break
             if (c == superClass) break
             c = superClass

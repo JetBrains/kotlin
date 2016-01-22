@@ -29,13 +29,13 @@ infix fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScop
 operator fun SearchScope.minus(otherScope: GlobalSearchScope): SearchScope = this and !otherScope
 operator fun GlobalSearchScope.not(): GlobalSearchScope = GlobalSearchScope.notScope(this)
 
-public fun Project.allScope(): GlobalSearchScope = GlobalSearchScope.allScope(this)
+fun Project.allScope(): GlobalSearchScope = GlobalSearchScope.allScope(this)
 
-public fun Project.projectScope(): GlobalSearchScope = GlobalSearchScope.projectScope(this)
+fun Project.projectScope(): GlobalSearchScope = GlobalSearchScope.projectScope(this)
 
-public fun PsiFile.fileScope(): GlobalSearchScope = GlobalSearchScope.fileScope(this)
+fun PsiFile.fileScope(): GlobalSearchScope = GlobalSearchScope.fileScope(this)
 
-public fun SearchScope.restrictToKotlinSources(): SearchScope {
+fun SearchScope.restrictToKotlinSources(): SearchScope {
     return when (this) {
         is GlobalSearchScope -> GlobalSearchScope.getScopeRestrictedByFileTypes(this, KotlinFileType.INSTANCE)
         is LocalSearchScope -> {

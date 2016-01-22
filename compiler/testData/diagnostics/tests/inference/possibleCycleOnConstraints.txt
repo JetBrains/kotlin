@@ -1,6 +1,6 @@
 package
 
 package a {
-    public fun </*0*/ T> g(/*0*/ f: () -> kotlin.List<T>): T
+    public fun </*0*/ T> g(/*0*/ f: () -> kotlin.collections.List<T>): T
     public fun test(): kotlin.Unit
 }

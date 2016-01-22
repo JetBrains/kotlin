@@ -29,29 +29,28 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<KtBinaryExpression>(ReplaceWithOperatorAssignmentIntention())
+class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<KtBinaryExpression>(ReplaceWithOperatorAssignmentIntention())
 
-public class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Replace with operator-assignment") {
-
+class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace with operator-assignment") {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
-        if (element.getOperationToken() != KtTokens.EQ) return false
-        val left = element.getLeft() as? KtNameReferenceExpression ?: return false
-        val right = element.getRight() as? KtBinaryExpression ?: return false
-        if (right.getLeft() == null || right.getRight() == null) return false
+        if (element.operationToken != KtTokens.EQ) return false
+        val left = element.left as? KtNameReferenceExpression ?: return false
+        val right = element.right as? KtBinaryExpression ?: return false
+        if (right.left == null || right.right == null) return false
 
         return checkExpressionRepeat(left, right)
     }
 
     private fun checkExpressionRepeat(variableExpression: KtNameReferenceExpression, expression: KtBinaryExpression): Boolean {
         val context = expression.analyze()
-        val descriptor = context[BindingContext.REFERENCE_TARGET, expression.getOperationReference()]?.getContainingDeclaration()
-        val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(descriptor.getDefaultType())
+        val descriptor = context[BindingContext.REFERENCE_TARGET, expression.operationReference]?.containingDeclaration
+        val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(descriptor.defaultType)
 
-        val operationToken = expression.getOperationToken()
-        setText("Replace with ${expression.getOperationReference().getText()}= expression")
+        val operationToken = expression.operationToken
+        text = "Replace with ${expression.operationReference.text}= expression"
 
-        val expressionLeft = expression.getLeft()
-        val expressionRight = expression.getRight()
+        val expressionLeft = expression.left
+        val expressionRight = expression.right
         return when {
             variableExpression.matches(expressionLeft) -> {
                 isArithmeticOperation(operationToken)
@@ -62,7 +61,7 @@ public class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndepen
             }
 
             expressionLeft is KtBinaryExpression -> {
-                val sameCommutativeOperation = expressionLeft.getOperationToken() == operationToken && isCommutative(operationToken)
+                val sameCommutativeOperation = expressionLeft.operationToken == operationToken && isCommutative(operationToken)
                 isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(variableExpression, expressionLeft)
             }
 
@@ -79,28 +78,28 @@ public class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndepen
                                                                        operationToken == KtTokens.DIV ||
                                                                        operationToken == KtTokens.PERC
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         val replacement = buildOperatorAssignmentText(
-                element.getLeft() as KtNameReferenceExpression,
-                element.getRight() as KtBinaryExpression,
+                element.left as KtNameReferenceExpression,
+                element.right as KtBinaryExpression,
                 ""
         )
         element.replace(KtPsiFactory(element).createExpression(replacement))
     }
 
     tailrec private fun buildOperatorAssignmentText(variableExpression: KtNameReferenceExpression, expression: KtBinaryExpression, tail: String): String {
-        val operationText = expression.getOperationReference().getText()
-        val variableName = variableExpression.getText()
+        val operationText = expression.operationReference.text
+        val variableName = variableExpression.text
 
         fun String.appendTail() = if (tail.isEmpty()) this else "$this $tail"
 
         return when {
-            variableExpression.matches(expression.getLeft()) -> "$variableName $operationText= ${expression.getRight()!!.getText()}".appendTail()
+            variableExpression.matches(expression.left) -> "$variableName $operationText= ${expression.right!!.text}".appendTail()
 
-            variableExpression.matches(expression.getRight()) -> "$variableName $operationText= ${expression.getLeft()!!.getText()}".appendTail()
+            variableExpression.matches(expression.right) -> "$variableName $operationText= ${expression.left!!.text}".appendTail()
 
-            expression.getLeft() is KtBinaryExpression ->
-                buildOperatorAssignmentText(variableExpression, expression.getLeft() as KtBinaryExpression, "$operationText ${expression.getRight()!!.getText()}".appendTail())
+            expression.left is KtBinaryExpression ->
+                buildOperatorAssignmentText(variableExpression, expression.left as KtBinaryExpression, "$operationText ${expression.right!!.text}".appendTail())
 
             else -> tail
         }

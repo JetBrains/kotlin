@@ -1,9 +1,9 @@
 interface X
 interface Y
 
-fun X.iterator(): Y
-fun Y.next(): Int
-fun Y.hasNext(): Boolean
+operator fun X.iterator(): Y
+operator fun Y.next(): Int
+operator fun Y.hasNext(): Boolean
 
 
 fun foo(x: X, y: Y) {

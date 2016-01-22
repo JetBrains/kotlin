@@ -15,6 +15,6 @@ class World() {
 
 fun box(): String {
     val w = World()
-    if (w.items.size() != 1) return "fail"
+    if (w.items.size != 1) return "fail"
     return "OK"
 }

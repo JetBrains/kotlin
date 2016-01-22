@@ -40,13 +40,13 @@ public final class FunctionIntrinsics {
     }
 
     private void registerFactories() {
-        register(LongOperationFIF.INSTANCE$);
+        register(LongOperationFIF.INSTANCE);
         register(PrimitiveUnaryOperationFIF.INSTANCE);
         register(PrimitiveBinaryOperationFIF.INSTANCE);
         register(StringOperationFIF.INSTANCE);
         register(ArrayFIF.INSTANCE);
         register(TopLevelFIF.INSTANCE);
-        register(NumberAndCharConversionFIF.INSTANCE$);
+        register(NumberAndCharConversionFIF.INSTANCE);
         register(ProgressionCompanionFIF.INSTANCE);
     }
 

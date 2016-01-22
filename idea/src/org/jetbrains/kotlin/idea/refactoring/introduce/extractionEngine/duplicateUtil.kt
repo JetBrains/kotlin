@@ -37,53 +37,53 @@ import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.getPhysicalTextRange
 
-public fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
+fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
     val textRange = getPhysicalTextRange()
     val highlighters = ArrayList<RangeHighlighter>()
-    val attributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
+    val attributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
     HighlightManager.getInstance(project).addRangeHighlight(
-            editor, textRange.getStartOffset(), textRange.getEndOffset(), attributes, true, highlighters
+            editor, textRange.startOffset, textRange.endOffset, attributes, true, highlighters
     )
     return highlighters.firstOrNull()
 }
 
-public fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? {
+fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? {
     return highlight(project, editor)?.let {
-        val startOffset = getPhysicalTextRange().getStartOffset()
+        val startOffset = getPhysicalTextRange().startOffset
         val foldedRegions =
                 CodeFoldingManager.getInstance(project)
                         .getFoldRegionsAtOffset(editor, startOffset)
-                        .filter { !it.isExpanded() }
+                        .filter { !it.isExpanded }
         if (!foldedRegions.isEmpty()) {
-            editor.getFoldingModel().runBatchFoldingOperation { foldedRegions.forEach { it.setExpanded(true) } }
+            editor.foldingModel.runBatchFoldingOperation { foldedRegions.forEach { it.isExpanded = true } }
         }
-        editor.getScrollingModel().scrollTo(editor.offsetToLogicalPosition(startOffset), ScrollType.MAKE_VISIBLE)
+        editor.scrollingModel.scrollTo(editor.offsetToLogicalPosition(startOffset), ScrollType.MAKE_VISIBLE)
 
         it
     }
 }
 
-public fun processDuplicates(
+fun processDuplicates(
         duplicateReplacers: Map<KotlinPsiRange, () -> Unit>,
         project: Project,
         editor: Editor
 ) {
-    val size = duplicateReplacers.size()
+    val size = duplicateReplacers.size
     if (size == 0) return
 
     if (size == 1) {
-        duplicateReplacers.keySet().first().preview(project, editor)
+        duplicateReplacers.keys.first().preview(project, editor)
     }
 
-    val answer = if (ApplicationManager.getApplication()!!.isUnitTestMode())
+    val answer = if (ApplicationManager.getApplication()!!.isUnitTestMode)
         Messages.YES
     else
         Messages.showYesNoDialog(
                 project,
                 KotlinRefactoringBundle.message(
                         "0.has.detected.1.code.fragments.in.this.file.that.can.be.replaced.with.a.call.to.extracted.declaration",
-                        ApplicationNamesInfo.getInstance().getProductName(),
-                        duplicateReplacers.size()
+                        ApplicationNamesInfo.getInstance().productName,
+                        duplicateReplacers.size
                 ),
                 "Process Duplicates",
                 Messages.getQuestionIcon()
@@ -93,16 +93,16 @@ public fun processDuplicates(
     var showAll = false
 
     duplicateReplacersLoop@
-    for ((i, entry) in duplicateReplacers.entrySet().withIndex()) {
+    for ((i, entry) in duplicateReplacers.entries.withIndex()) {
         val (pattern, replacer) = entry
         if (!pattern.isValid()) continue
 
         val highlighter = pattern.preview(project, editor)
-        if (!ApplicationManager.getApplication()!!.isUnitTestMode()) {
+        if (!ApplicationManager.getApplication()!!.isUnitTestMode) {
             if (size > 1 && !showAll) {
                 val promptDialog = ReplacePromptDialog(false, RefactoringBundle.message("process.duplicates.title", i + 1, size), project)
                 promptDialog.show()
-                when(promptDialog.getExitCode()) {
+                when(promptDialog.exitCode) {
                     FindManager.PromptResult.ALL -> showAll = true
                     FindManager.PromptResult.SKIP -> continue@duplicateReplacersLoop
                     FindManager.PromptResult.CANCEL -> return
@@ -115,8 +115,8 @@ public fun processDuplicates(
     }
 }
 
-public fun processDuplicatesSilently(duplicateReplacers: Map<KotlinPsiRange, () -> Unit>, project: Project) {
+fun processDuplicatesSilently(duplicateReplacers: Map<KotlinPsiRange, () -> Unit>, project: Project) {
     project.executeWriteCommand(MethodDuplicatesHandler.REFACTORING_NAME) {
-        duplicateReplacers.values().forEach { it() }
+        duplicateReplacers.values.forEach { it() }
     }
 }

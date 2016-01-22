@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.util
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
-    val literalParent = (this.getParent() as KtLambdaExpression).getParent()
+fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
+    val literalParent = (this.parent as KtLambdaExpression).parent
 
     fun KtValueArgument.callExpression(): KtCallExpression? {
-        val parent = getParent()
-        return (if (parent is KtValueArgumentList) parent else this).getParent() as? KtCallExpression
+        val parent = parent
+        return (if (parent is KtValueArgumentList) parent else this).parent as? KtCallExpression
     }
 
     when (literalParent) {
@@ -35,7 +35,7 @@ public fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> 
 
         is KtValueArgument -> {
             val callExpression = literalParent.callExpression()
-            val label = (callExpression?.getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedNameAsName()
+            val label = (callExpression?.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
             return Pair(label, callExpression)
         }
 

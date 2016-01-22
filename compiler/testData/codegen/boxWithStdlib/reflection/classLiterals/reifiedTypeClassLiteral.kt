@@ -19,10 +19,10 @@ fun box(): String {
     assertEquals("Error", simpleName<Error>())
     assertEquals("Klass, Other", twoReifiedParams<Klass, Other>())
 
-    assertEquals(javaClass<String>(), myJavaClass<String>())
-    assertEquals(javaClass<IntArray>(), myJavaClass<IntArray>())
-    assertEquals(javaClass<Klass>(), myJavaClass<Klass>())
-    assertEquals(javaClass<Error>(), myJavaClass<Error>())
+    assertEquals(String::class.java, myJavaClass<String>())
+    assertEquals(IntArray::class.java, myJavaClass<IntArray>())
+    assertEquals(Klass::class.java, myJavaClass<Klass>())
+    assertEquals(Error::class.java, myJavaClass<Error>())
 
     return "OK"
 }

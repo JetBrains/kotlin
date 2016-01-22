@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
-public object JsPlatform : TargetPlatform("JS") {
+object JsPlatform : TargetPlatform("JS") {
     override val defaultModuleParameters = object : ModuleParameters {
         override val defaultImports: List<ImportPath> = ImmutableList.of(
                 ImportPath("java.lang.*"),

@@ -18,32 +18,33 @@ package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.ClassId
 import org.junit.Assert
 
-public abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
-    private fun isFileWithHeader(predicate: (KotlinClassHeader) -> Boolean) : VirtualFile.() -> Boolean = {
-        val header = KotlinBinaryClassCache.getKotlinBinaryClass(this)?.getClassHeader()
-        header != null && predicate(header)
+abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
+    private fun isFileWithHeader(predicate: (KotlinClassHeader, ClassId) -> Boolean) : VirtualFile.() -> Boolean = {
+        val info = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(this)
+        info != null && predicate(info.classHeader, info.classId)
     }
 
     protected fun isSyntheticClass(): VirtualFile.() -> Boolean =
-            isFileWithHeader { it.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
+            isFileWithHeader { header, classId -> header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS }
 
     protected fun doTestNoPsiFilesAreBuiltForLocalClass(): Unit =
-            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { it.isLocalClass })
+            doTestNoPsiFilesAreBuiltFor("local", isFileWithHeader { header, classId -> classId.isLocal })
 
     protected fun doTestNoPsiFilesAreBuiltForSyntheticClasses(): Unit =
             doTestNoPsiFilesAreBuiltFor("synthetic", isSyntheticClass())
 
     protected fun doTestNoPsiFilesAreBuiltFor(fileKind: String, acceptFile: VirtualFile.() -> Boolean) {
-        val project = getProject()
+        val project = project
         doTest(fileKind, acceptFile) {
             val psiFile = PsiManager.getInstance(project).findFile(this)
-            Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.getPresentableName()}",
+            Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.presentableName}",
                               psiFile)
         }
     }
@@ -63,11 +64,11 @@ public abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsig
     }
 
     protected fun VirtualFile.checkRecursively(body: VirtualFile.() -> Unit) {
-        if (!isDirectory()) {
+        if (!isDirectory) {
             body()
         }
         else {
-            for (file in getChildren()!!) {
+            for (file in children!!) {
                 file.checkRecursively(body)
             }
         }

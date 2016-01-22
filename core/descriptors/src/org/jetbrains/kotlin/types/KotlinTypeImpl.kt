@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-public open class KotlinTypeImpl
+open class KotlinTypeImpl
 private constructor(
         private val annotations: Annotations,
         private val constructor: TypeConstructor,
@@ -31,23 +31,21 @@ private constructor(
 ) : AbstractKotlinType() {
 
     companion object {
-        @JvmStatic
-        public fun create(annotations: Annotations,
-                          constructor: TypeConstructor,
-                          nullable: Boolean,
-                          arguments: List<TypeProjection>,
-                          memberScope: MemberScope): KotlinTypeImpl
+        @JvmStatic fun create(annotations: Annotations,
+                              constructor: TypeConstructor,
+                              nullable: Boolean,
+                              arguments: List<TypeProjection>,
+                              memberScope: MemberScope): KotlinTypeImpl
 
                 = KotlinTypeImpl(annotations, constructor, nullable, arguments, null, memberScope)
 
-        @JvmStatic
-        public fun create(annotations: Annotations,
-                          constructor: TypeConstructor,
-                          nullable: Boolean,
-                          arguments: List<TypeProjection>,
-                          substitution: TypeSubstitution,
-                          memberScope: MemberScope,
-                          capabilities: TypeCapabilities
+        @JvmStatic fun create(annotations: Annotations,
+                              constructor: TypeConstructor,
+                              nullable: Boolean,
+                              arguments: List<TypeProjection>,
+                              substitution: TypeSubstitution,
+                              memberScope: MemberScope,
+                              capabilities: TypeCapabilities
         ): KotlinTypeImpl {
             if (capabilities !== TypeCapabilities.NONE) {
                 return WithCapabilities(annotations, constructor, nullable, arguments, substitution, memberScope, capabilities)
@@ -55,11 +53,10 @@ private constructor(
             return KotlinTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
         }
 
-        @JvmStatic
-        public fun create(annotations: Annotations,
-                          descriptor: ClassDescriptor,
-                          nullable: Boolean,
-                          arguments: List<TypeProjection>): KotlinTypeImpl
+        @JvmStatic fun create(annotations: Annotations,
+                              descriptor: ClassDescriptor,
+                              nullable: Boolean,
+                              arguments: List<TypeProjection>): KotlinTypeImpl
 
                 = KotlinTypeImpl(
                     annotations, descriptor.typeConstructor, nullable, arguments, null, descriptor.getMemberScope(arguments)

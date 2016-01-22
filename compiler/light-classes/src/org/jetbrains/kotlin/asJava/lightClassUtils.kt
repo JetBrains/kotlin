@@ -28,17 +28,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-public fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassUtil.getPsiClass(this) as KtLightClass?
+fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassGenerationSupport.getInstance(project).getLightClass(this)
 
-public fun KtFile.findFacadeClass(): KtLightClass? {
+fun KtFile.findFacadeClass(): KtLightClass? {
     return LightClassGenerationSupport.getInstance(project)
             .getFacadeClassesInPackage(packageFqName, this.useScope as? GlobalSearchScope ?: GlobalSearchScope.projectScope(project))
             .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
 }
 
-public fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
+fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
-            is KtClassOrObject -> LightClassUtil.getPsiClass(this).singletonOrEmptyList()
+            is KtClassOrObject -> toLightClass().singletonOrEmptyList()
             is KtNamedFunction,
             is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
@@ -53,18 +53,18 @@ public fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
             else -> listOf()
         }
 
-public fun PsiElement.toLightMethods(): List<PsiMethod> =
+fun PsiElement.toLightMethods(): List<PsiMethod> =
         when (this) {
             is KtFunction -> LightClassUtil.getLightClassMethods(this)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
-            is KtClass -> LightClassUtil.getPsiClass(this)?.getConstructors()?.first().singletonOrEmptyList()
+            is KtClass -> toLightClass()?.getConstructors()?.first().singletonOrEmptyList()
             is PsiMethod -> this.singletonList()
             else -> listOf()
         }
 
-public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
+fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
         when (this) {
             is KtFunction -> LightClassUtil.getLightClassMethod(this)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).getter
@@ -74,7 +74,7 @@ public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
             else -> null
         }
 
-public fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
+fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramList = getNonStrictParentOfType<KtParameterList>() ?: return emptyList()
 
     val paramIndex = paramList.getParameters().indexOf(this)
@@ -88,10 +88,10 @@ public fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
                 else -> null
             } ?: return emptyList()
 
-    return methods.map { it.getParameterList().getParameters()[lightParamIndex] }
+    return methods.map { it.parameterList.parameters[lightParamIndex] }
 }
 
-public fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
+fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val paramList = getNonStrictParentOfType<KtTypeParameterList>()
     if (paramList == null) return listOf()
 
@@ -99,14 +99,14 @@ public fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val jetDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
     val lightOwners = jetDeclaration.toLightElements()
 
-    return lightOwners.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).getTypeParameters()[paramIndex] }
+    return lightOwners.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).typeParameters[paramIndex] }
 }
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
-public val PsiElement.unwrapped: PsiElement?
+val PsiElement.unwrapped: PsiElement?
     get() = if (this is KtLightElement<*, *>) getOrigin() else this
 
-public val PsiElement.namedUnwrappedElement: PsiNamedElement?
+val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()
 
 

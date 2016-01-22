@@ -384,8 +384,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) {
+        body(CharSequences) {
             """
             for (index in 0..length - 1) {
                 val element = get(index)
@@ -480,9 +479,8 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Appends all characters not matching the given [predicate] to the given [destination]." }
-        body(CharSequences, Strings) {
+        body(CharSequences) {
             """
             for (element in this) if (!predicate(element)) destination.append(element)
             return destination
@@ -585,12 +583,12 @@ fun filtering(): List<GenericFunction> {
     }
 
     templates add f("sliceArray(indices: Collection<Int>)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns an array containing elements of this array at specified [indices]." }
         returns("SELF")
-        body(ArraysOfObjects) {
+        body(InvariantArraysOfObjects) {
             """
-            val result = arrayOfNulls(this, indices.size) as Array<T>
+            val result = arrayOfNulls(this, indices.size)
             var targetIndex = 0
             for (sourceIndex in indices) {
                 result[targetIndex++] = this[sourceIndex]
@@ -611,10 +609,10 @@ fun filtering(): List<GenericFunction> {
     }
 
     templates add f("sliceArray(indices: IntRange)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns a list containing elements at indices in the specified [indices] range." }
         returns("SELF")
-        body(ArraysOfObjects) {
+        body(InvariantArraysOfObjects) {
             """
             if (indices.isEmpty()) return copyOfRange(0, 0)
             return copyOfRange(indices.start, indices.endInclusive + 1)

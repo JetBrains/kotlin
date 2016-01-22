@@ -26,23 +26,23 @@ import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.util.*
 
-public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaMember {
-    public abstract val member: Member
+abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaMember {
+    abstract val member: Member
 
     override val element: AnnotatedElement get() = member as AnnotatedElement
 
-    override val modifiers: Int get() = member.getModifiers()
+    override val modifiers: Int get() = member.modifiers
 
-    override fun getName() = member.getName()?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
+    override fun getName() = member.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
 
-    override fun getContainingClass() = ReflectJavaClass(member.getDeclaringClass())
+    override fun getContainingClass() = ReflectJavaClass(member.declaringClass)
 
     protected fun getValueParameters(
             parameterTypes: Array<Type>,
             parameterAnnotations: Array<Array<Annotation>>,
             isVararg: Boolean
     ): List<JavaValueParameter> {
-        val result = ArrayList<JavaValueParameter>(parameterTypes.size())
+        val result = ArrayList<JavaValueParameter>(parameterTypes.size)
         val names = Java8ParameterNamesLoader.loadParameterNames(member)
         for (i in parameterTypes.indices) {
             val type = ReflectJavaType.create(parameterTypes[i])
@@ -57,7 +57,7 @@ public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnot
 
     override fun hashCode() = member.hashCode()
 
-    override fun toString() = javaClass.getName() + ": " + member
+    override fun toString() = javaClass.name + ": " + member
 }
 
 private object Java8ParameterNamesLoader {

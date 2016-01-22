@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId;
 import java.util.List;
 
 public interface ErrorReporter {
-    void reportIncompatibleAbiVersion(@NotNull ClassId classId, @NotNull String filePath, @NotNull BinaryVersion actualVersion);
+    void reportIncompatibleMetadataVersion(@NotNull ClassId classId, @NotNull String filePath, @NotNull BinaryVersion actualVersion);
 
     void reportIncompleteHierarchy(@NotNull ClassDescriptor descriptor, @NotNull List<String> unresolvedSuperClasses);
 
@@ -35,7 +35,7 @@ public interface ErrorReporter {
 
     ErrorReporter DO_NOTHING = new ErrorReporter() {
         @Override
-        public void reportIncompatibleAbiVersion(
+        public void reportIncompatibleMetadataVersion(
                 @NotNull ClassId classId, @NotNull String filePath, @NotNull BinaryVersion actualVersion
         ) {
         }

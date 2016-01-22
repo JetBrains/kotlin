@@ -37,23 +37,23 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
-public object OptionalParametersHelper {
-    public fun detectArgumentsToDropForDefaults(
+object OptionalParametersHelper {
+    fun detectArgumentsToDropForDefaults(
             resolvedCall: ResolvedCall<out CallableDescriptor>,
             project: Project,
             canDrop: (ValueArgument) -> Boolean = { true }
     ): Collection<ValueArgument> {
         if (!resolvedCall.isReallySuccess()) return emptyList()
-        val descriptor = resolvedCall.getResultingDescriptor()
+        val descriptor = resolvedCall.resultingDescriptor
 
-        val parameterToDefaultValue = descriptor.getValueParameters()
+        val parameterToDefaultValue = descriptor.valueParameters
                 .mapNotNull { parameter -> defaultParameterValue(parameter, project)?.let { parameter to it } }
                 .toMap()
         if (parameterToDefaultValue.isEmpty()) return emptyList()
 
         //TODO: drop functional literal out of parenthesis too
 
-        val arguments = resolvedCall.getCall().getValueArgumentsInParentheses()
+        val arguments = resolvedCall.call.getValueArgumentsInParentheses()
         val argumentsToDrop = ArrayList<ValueArgument>()
         for (argument in arguments.asReversed()) {
             if (!canDrop(argument) || !argument.matchesDefault(resolvedCall, parameterToDefaultValue)) {
@@ -70,7 +70,7 @@ public object OptionalParametersHelper {
         val defaultValue = parameterToDefaultValue[parameter] ?: return false
         val expression = defaultValue.substituteArguments(resolvedCall)
         val argumentExpression = getArgumentExpression()!!
-        return argumentExpression.getText() == expression.getText() //TODO
+        return argumentExpression.text == expression.text //TODO
     }
 
     private fun DefaultValue.substituteArguments(resolvedCall: ResolvedCall<out CallableDescriptor>): KtExpression {
@@ -79,9 +79,9 @@ public object OptionalParametersHelper {
         val key = Key<KtExpression>("SUBSTITUTION")
 
         for ((parameter, usages) in parameterUsages) {
-            val resolvedArgument = resolvedCall.getValueArguments()[parameter]!!
+            val resolvedArgument = resolvedCall.valueArguments[parameter]!!
             if (resolvedArgument is ExpressionValueArgument) {
-                val argument = resolvedArgument.getValueArgument()!!.getArgumentExpression()!!
+                val argument = resolvedArgument.valueArgument!!.getArgumentExpression()!!
                 usages.forEach { it.putCopyableUserData(key, argument) }
             }
             //TODO: vararg
@@ -109,31 +109,31 @@ public object OptionalParametersHelper {
         return expressionCopy
     }
 
-    public data class DefaultValue(
-            public val expression: KtExpression,
-            public val parameterUsages: Map<ValueParameterDescriptor, Collection<KtExpression>>
+    data class DefaultValue(
+            val expression: KtExpression,
+            val parameterUsages: Map<ValueParameterDescriptor, Collection<KtExpression>>
     )
 
-    public fun defaultParameterValueExpression(parameter: ValueParameterDescriptor, project: Project): KtExpression? {
+    fun defaultParameterValueExpression(parameter: ValueParameterDescriptor, project: Project): KtExpression? {
         if (!parameter.hasDefaultValue()) return null
 
         if (!parameter.declaresDefaultValue()) {
-            val overridden = parameter.getOverriddenDescriptors().firstOrNull { it.hasDefaultValue() } ?: return null
+            val overridden = parameter.overriddenDescriptors.firstOrNull { it.hasDefaultValue() } ?: return null
             return defaultParameterValueExpression(overridden, project)
         }
 
         //TODO: parameter in overriding method!
         //TODO: it's a temporary code while we don't have default values accessible from descriptors
-        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter)?.getNavigationElement() as? KtParameter
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter)?.navigationElement as? KtParameter
         return declaration?.defaultValue
     }
 
     //TODO: handle imports
     //TODO: handle implicit receivers
-    public fun defaultParameterValue(parameter: ValueParameterDescriptor, project: Project): DefaultValue? {
+    fun defaultParameterValue(parameter: ValueParameterDescriptor, project: Project): DefaultValue? {
         val expression = defaultParameterValueExpression(parameter, project) ?: return null
 
-        val allParameters = parameter.getContainingDeclaration().getValueParameters().toSet()
+        val allParameters = parameter.containingDeclaration.valueParameters.toSet()
 
         val parameterUsages = HashMap<ValueParameterDescriptor, MutableCollection<KtExpression>>()
 

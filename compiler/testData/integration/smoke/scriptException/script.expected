@@ -1,10 +1,10 @@
 
 ERR:
 java.lang.IllegalStateException: my error
-	at kotlin.PreconditionsKt__PreconditionsKt.error(Preconditions.kt:142)
+	at kotlin.PreconditionsKt__PreconditionsKt.error(Preconditions.kt:88)
 	at kotlin.PreconditionsKt.error(Unknown Source)
 	at Script.main(Unknown Source)
 	at Script.a(Unknown Source)
 	at Script.<init>(Unknown Source)
 
-Return code: 0
+Return code: 3

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 inline fun <reified T : PsiElement> Diagnostic.createIntentionForFirstParentOfType(
     factory: (T) -> KotlinQuickFixAction<T>?
-) = getPsiElement().getNonStrictParentOfType<T>()?.let(factory)
+) = psiElement.getNonStrictParentOfType<T>()?.let(factory)
 
 
 fun createIntentionFactory(
@@ -36,7 +36,7 @@ fun createIntentionFactory(
     override fun createAction(diagnostic: Diagnostic) = factory(diagnostic)
 }
 
-public fun KtPrimaryConstructor.addConstructorKeyword(): PsiElement? {
+fun KtPrimaryConstructor.addConstructorKeyword(): PsiElement? {
     val keyword = KtPsiFactory(this).createConstructorKeyword()
-    return addAfter(keyword, getModifierList() ?: return null)
+    return addAfter(keyword, modifierList ?: return null)
 }

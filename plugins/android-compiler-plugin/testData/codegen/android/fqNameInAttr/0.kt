@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.layout.*
 class R {
     class id {
         companion object {
-            val login = 5
+            const val login = 5
         }
     }
 }

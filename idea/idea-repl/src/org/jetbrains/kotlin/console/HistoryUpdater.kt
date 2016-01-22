@@ -25,7 +25,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 
-public class HistoryUpdater(private val runner: KotlinConsoleRunner) {
+class HistoryUpdater(private val runner: KotlinConsoleRunner) {
     private val consoleView: LanguageConsoleImpl by lazy { runner.consoleView as LanguageConsoleImpl }
 
     fun printNewCommandInHistory(trimmedCommandText: String): TextRange {

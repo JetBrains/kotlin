@@ -41,12 +41,7 @@ public fun thread(start: Boolean = true, isDaemon: Boolean = false, contextClass
     return thread
 }
 
-@Deprecated("Use thread function with the 'isDaemon' parameter")
-public fun thread(start: Boolean = true, contextClassLoader: ClassLoader? = null, name: String? = null, priority: Int = -1, daemon: Boolean, block: () -> Unit): Thread =
-    thread(start = start, isDaemon = daemon, contextClassLoader = contextClassLoader, name = name, priority = priority, block = block)
-
-
-    /**
+/**
  * Gets the value in the current thread's copy of this
  * thread-local variable or replaces the value with the result of calling
  * [default] function in case if that value was `null`.

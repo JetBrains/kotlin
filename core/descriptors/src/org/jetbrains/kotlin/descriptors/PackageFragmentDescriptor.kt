@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-public interface PackageFragmentDescriptor : ClassOrPackageFragmentDescriptor {
+interface PackageFragmentDescriptor : ClassOrPackageFragmentDescriptor {
 
     override fun getContainingDeclaration(): ModuleDescriptor
 
-    public val fqName: FqName
+    val fqName: FqName
 
-    public fun getMemberScope(): MemberScope
+    fun getMemberScope(): MemberScope
 }

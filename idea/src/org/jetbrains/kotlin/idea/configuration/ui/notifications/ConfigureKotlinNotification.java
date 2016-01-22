@@ -24,50 +24,48 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
-import org.jetbrains.kotlin.idea.configuration.ui.NonConfiguredKotlinProjectComponent;
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
+import java.util.List;
 
-import static kotlin.CollectionsKt.first;
+import static kotlin.collections.CollectionsKt.first;
 
 public class ConfigureKotlinNotification extends Notification {
     private static final String TITLE = "Configure Kotlin";
 
-    @NotNull private final String notificationText;
-
     public ConfigureKotlinNotification(
             @NotNull final Project project,
-            @NotNull String notificationText
+            @NotNull final List<Module> excludeModules
     ) {
-        super(NonConfiguredKotlinProjectComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, notificationText, NotificationType.WARNING, new NotificationListener() {
+        super(KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, getNotificationString(project, excludeModules),
+              NotificationType.WARNING, new NotificationListener() {
             @Override
             public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtils.getConfiguratorByName(event.getDescription());
+                    KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(event.getDescription());
                     if (configurator == null) {
                         throw new AssertionError("Missed action: " + event.getDescription());
                     }
                     notification.expire();
 
-                    configurator.configure(project);
+                    configurator.configure(project, excludeModules);
                 }
             }
         });
-
-        this.notificationText = notificationText;
     }
 
     @NotNull
-    public static String getNotificationString(Project project) {
-        Collection<Module> modules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project);
+    public static String getNotificationString(Project project, Collection<Module> excludeModules) {
+        Collection<Module> modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, excludeModules);
 
         final boolean isOnlyOneModule = modules.size() == 1;
 
         String modulesString = isOnlyOneModule ? String.format("'%s' module", first(modules).getName()) : "modules";
-        String links = StringUtil.join(ConfigureKotlinInProjectUtils.getAbleToRunConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
+        String links = StringUtil.join(ConfigureKotlinInProjectUtilsKt.getAbleToRunConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
             @Override
             public String fun(KotlinProjectConfigurator configurator) {
                 return getLink(configurator, isOnlyOneModule);
@@ -92,13 +90,13 @@ public class ConfigureKotlinNotification extends Notification {
 
         ConfigureKotlinNotification that = (ConfigureKotlinNotification) o;
 
-        if (!notificationText.equals(that.notificationText)) return false;
+        if (!getContent().equals(that.getContent())) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return notificationText.hashCode();
+        return getContent().hashCode();
     }
 }

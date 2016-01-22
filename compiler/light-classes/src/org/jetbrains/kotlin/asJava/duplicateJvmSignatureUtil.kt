@@ -30,29 +30,29 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 
-public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
+fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForFileFacade(file: KtFile): Diagnostics? {
         val project = file.project
         val cache = KtLightClassForFacade.FacadeStubCache.getInstance(project)
         val facadeFqName = NoResolveFileClassesProvider.getFileClassInfo(file).facadeClassFqName
-        return cache[facadeFqName, moduleScope].getValue()?.extraDiagnostics
+        return cache[facadeFqName, moduleScope].value?.extraDiagnostics
     }
 
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
-        return KtLightClassForExplicitDeclaration.getLightClassData(ktClassOrObject).extraDiagnostics
+        return (KtLightClassForExplicitDeclaration.getLightClassData(ktClassOrObject) as? OutermostKotlinClassLightClassData)?.extraDiagnostics ?: Diagnostics.EMPTY
     }
 
     fun doGetDiagnostics(): Diagnostics? {
         //TODO: enable this diagnostic when light classes for scripts are ready
         if ((element.containingFile as? KtFile)?.isScript ?: false) return null
 
-        var parent = element.getParent()
+        var parent = element.parent
         if (element is KtPropertyAccessor) {
-            parent = parent?.getParent()
+            parent = parent?.parent
         }
         if (element is KtParameter && element.hasValOrVar()) {
             // property declared in constructor
-            val parentClass = (parent?.getParent()?.getParent() as? KtClass)
+            val parentClass = (parent?.parent?.parent as? KtClass)
             if (parentClass != null) {
                 return getDiagnosticsForClass(parentClass)
             }
@@ -87,14 +87,14 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
     private fun alreadyReported(psiElement: PsiElement): Boolean {
         val higherPriority = setOf<DiagnosticFactory<*>>(
                 CONFLICTING_OVERLOADS, REDECLARATION, NOTHING_TO_OVERRIDE, MANY_IMPL_MEMBER_NOT_IMPLEMENTED)
-        return otherDiagnostics.forElement(psiElement).any { it.getFactory() in higherPriority }
+        return otherDiagnostics.forElement(psiElement).any { it.factory in higherPriority }
                 || psiElement is KtPropertyAccessor && alreadyReported(psiElement.getParent()!!)
     }
 
     override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
         val jvmDiagnosticFactories = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE, CONFLICTING_INHERITED_JVM_DECLARATIONS)
         fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).getA()
-        val (conflicting, other) = jvmDiagnostics.forElement(psiElement).partition { it.getFactory() in jvmDiagnosticFactories }
+        val (conflicting, other) = jvmDiagnostics.forElement(psiElement).partition { it.factory in jvmDiagnosticFactories }
         if (alreadyReported(psiElement)) {
             // CONFLICTING_OVERLOADS already reported, no need to duplicate it
             return other
@@ -104,8 +104,8 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
         conflicting.groupBy {
             it.data().signature.name
         }.forEach {
-            val diagnostics = it.getValue()
-            if (diagnostics.size() <= 1) {
+            val diagnostics = it.value
+            if (diagnostics.size <= 1) {
                 filtered.addAll(diagnostics)
             }
             else {
@@ -132,7 +132,7 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
 
     override fun all(): Collection<Diagnostic> {
         return jvmDiagnostics.all()
-            .map { it.getPsiElement() }
+            .map { it.psiElement }
             .toSet()
             .flatMap { forElement(it) }
     }

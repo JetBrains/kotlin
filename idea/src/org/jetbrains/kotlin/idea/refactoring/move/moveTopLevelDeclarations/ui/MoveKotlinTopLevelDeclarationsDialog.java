@@ -55,15 +55,15 @@ import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.text.UniqueNameGenerator;
 import com.intellij.util.ui.UIUtil;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
+import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
-import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
@@ -760,7 +760,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             MoveKotlinTopLevelDeclarationsOptions options = new MoveKotlinTopLevelDeclarationsOptions(
                     elementsToMove, target, isSearchInComments(), isSearchInNonJavaFiles(), true, deleteSourceFile, moveCallback
             );
-            invokeRefactoring(new MoveKotlinTopLevelDeclarationsProcessor(myProject, options, Mover.Default.INSTANCE$));
+            invokeRefactoring(new MoveKotlinTopLevelDeclarationsProcessor(myProject, options, Mover.Default.INSTANCE));
         }
         catch (IncorrectOperationException e) {
             CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.getMessage(), null, myProject);

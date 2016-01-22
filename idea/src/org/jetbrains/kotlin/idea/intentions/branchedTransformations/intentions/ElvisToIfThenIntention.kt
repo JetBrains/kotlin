@@ -27,24 +27,24 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
-public class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace elvis expression with 'if' expression"), LowPriorityAction {
+class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace elvis expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
-        return if (element.getOperationToken() == KtTokens.ELVIS && element.getLeft() != null && element.getRight() != null)
-            element.getOperationReference().getTextRange()
+        return if (element.operationToken == KtTokens.ELVIS && element.left != null && element.right != null)
+            element.operationReference.textRange
         else
             null
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
-        val left = KtPsiUtil.safeDeparenthesize(element.getLeft()!!)
-        val right = KtPsiUtil.safeDeparenthesize(element.getRight()!!)
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
+        val left = KtPsiUtil.safeDeparenthesize(element.left!!)
+        val right = KtPsiUtil.safeDeparenthesize(element.right!!)
 
         val leftIsStable = left.isStableVariable()
 
         val ifStatement = element.convertToIfNotNullExpression(left, left, right)
 
         if (!leftIsStable) {
-            ifStatement.introduceValueForCondition(ifStatement.getThen()!!, editor)
+            ifStatement.introduceValueForCondition(ifStatement.then!!, editor)
         }
     }
 

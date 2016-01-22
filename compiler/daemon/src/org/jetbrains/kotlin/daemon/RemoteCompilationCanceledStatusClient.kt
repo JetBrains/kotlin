@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCancelledException
+import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.util.concurrent.TimeUnit
 
 val CANCELED_STATUS_CHECK_THRESHOLD_NS = TimeUnit.MILLISECONDS.toNanos(100)
@@ -30,7 +32,12 @@ class RemoteCompilationCanceledStatusClient(val facade: CompilerCallbackServices
         val curNanos = System.nanoTime()
         if (curNanos - lastChecked > CANCELED_STATUS_CHECK_THRESHOLD_NS) {
             profiler.withMeasure(this) {
-                facade.compilationCanceledStatus_checkCanceled()
+                try {
+                    facade.compilationCanceledStatus_checkCanceled()
+                }
+                catch (e: RmiFriendlyCompilationCancelledException) {
+                    throw CompilationCanceledException()
+                }
             }
             lastChecked = curNanos
         }

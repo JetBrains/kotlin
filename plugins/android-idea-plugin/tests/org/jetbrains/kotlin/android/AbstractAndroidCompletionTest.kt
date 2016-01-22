@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.io.File
 
-public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
+abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
     private var codeCompletionOldValue: Boolean = false
     private var smartTypeCompletionOldValue: Boolean = false
 

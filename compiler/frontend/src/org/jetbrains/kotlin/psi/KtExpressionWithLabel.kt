@@ -20,16 +20,16 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
 
-open public class KtExpressionWithLabel(node: ASTNode) : KtExpressionImpl(node) {
+open class KtExpressionWithLabel(node: ASTNode) : KtExpressionImpl(node) {
 
-    public fun getTargetLabel(): KtSimpleNameExpression? =
+    fun getTargetLabel(): KtSimpleNameExpression? =
             labelQualifier?.findChildByType(KtNodeTypes.LABEL) as? KtSimpleNameExpression
 
-    public val labelQualifier: KtContainerNode?
+    val labelQualifier: KtContainerNode?
         get() = findChildByType(KtNodeTypes.LABEL_QUALIFIER)
 
-    public fun getLabelName(): String? = getTargetLabel()?.getReferencedName()
-    public fun getLabelNameAsName(): Name? = getTargetLabel()?.getReferencedNameAsName()
+    fun getLabelName(): String? = getTargetLabel()?.getReferencedName()
+    fun getLabelNameAsName(): Name? = getTargetLabel()?.getReferencedNameAsName()
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitExpressionWithLabel(this, data)
 }

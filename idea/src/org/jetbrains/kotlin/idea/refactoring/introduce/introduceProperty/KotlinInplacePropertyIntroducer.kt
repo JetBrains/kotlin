@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Extracti
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.generateDeclaration
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicatesSilently
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer.ControlWrapper
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -40,7 +39,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import javax.swing.*
 import javax.swing.event.PopupMenuEvent
 
-public class KotlinInplacePropertyIntroducer(
+class KotlinInplacePropertyIntroducer(
         property: KtProperty,
         editor: Editor,
         project: Project,
@@ -84,7 +83,7 @@ public class KotlinInplacePropertyIntroducer(
     private fun isInitializer(): Boolean = currentTarget == ExtractionTarget.PROPERTY_WITH_INITIALIZER
 
     override fun initPanelControls() {
-        if (availableTargets.size() > 1) {
+        if (availableTargets.size > 1) {
             addPanelControl(
                     ControlWrapper {
                         val propertyKindComboBox = with(JComboBox(availableTargets.map { it.targetName.capitalize() }.toTypedArray())) {
@@ -92,20 +91,20 @@ public class KotlinInplacePropertyIntroducer(
                                     object : PopupMenuListenerAdapter() {
                                         override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {
                                             ApplicationManager.getApplication().invokeLater {
-                                                currentTarget = availableTargets[getSelectedIndex()]
+                                                currentTarget = availableTargets[selectedIndex]
                                             }
                                         }
                                     }
                             )
 
-                            setSelectedIndex(availableTargets.indexOf(currentTarget))
+                            selectedIndex = availableTargets.indexOf(currentTarget)
 
                             this
                         }
 
                         val propertyKindLabel = JLabel("Introduce as: ")
                         propertyKindLabel.setDisplayedMnemonic('I')
-                        propertyKindLabel.setLabelFor(propertyKindComboBox)
+                        propertyKindLabel.labelFor = propertyKindComboBox
 
                         val panel = JPanel()
                         panel.add(propertyKindLabel)
@@ -119,32 +118,32 @@ public class KotlinInplacePropertyIntroducer(
         if (ExtractionTarget.PROPERTY_WITH_INITIALIZER in availableTargets) {
             val condition = { isInitializer() }
 
-            getCreateVarCheckBox()?.let {
+            createVarCheckBox?.let {
                 val initializer = object: Pass<JComponent>() {
                     override fun pass(t: JComponent) {
-                        (t as JCheckBox).setSelected(property.isVar())
+                        (t as JCheckBox).isSelected = property.isVar
                     }
                 }
                 addPanelControl(ControlWrapper(it, condition, initializer))
             }
-            getCreateExplicitTypeCheckBox()?.let {
+            createExplicitTypeCheckBox?.let {
                 val initializer = object: Pass<JComponent>() {
                     override fun pass(t: JComponent) {
-                        (t as JCheckBox).setSelected(property.getTypeReference() != null)
+                        (t as JCheckBox).isSelected = property.typeReference != null
                     }
                 }
                 addPanelControl(ControlWrapper(it, condition, initializer))
             }
         }
 
-        val occurrenceCount = extractionResult.duplicateReplacers.size() + 1
+        val occurrenceCount = extractionResult.duplicateReplacers.size + 1
         if (occurrenceCount > 1) {
             addPanelControl(
                     ControlWrapper {
                         val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
-                        replaceAllCheckBox.setSelected(replaceAll)
+                        replaceAllCheckBox.isSelected = replaceAll
                         replaceAllCheckBox.setMnemonic('R')
-                        replaceAllCheckBox.addActionListener { replaceAll = replaceAllCheckBox.isSelected() }
+                        replaceAllCheckBox.addActionListener { replaceAll = replaceAllCheckBox.isSelected }
                         replaceAllCheckBox
                     }
             )

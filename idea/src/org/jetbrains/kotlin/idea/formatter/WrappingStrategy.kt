@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.formatter
 import com.intellij.formatting.Wrap
 import com.intellij.psi.tree.IElementType
 
-public interface WrappingStrategy {
+interface WrappingStrategy {
     fun getWrap(childElementType: IElementType): Wrap?
 
     object NoWrapping: WrappingStrategy {

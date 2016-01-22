@@ -28,14 +28,6 @@ public fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSeque
 public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpty()) emptySequence() else elements.asSequence()
 
 /**
- * Creates a sequence that returns all values in the specified [progression].
- */
-@Deprecated("Use progression.asSequence() instead.", ReplaceWith("progression.asSequence()"))
-public fun <T : Any> sequenceOf(progression: Progression<T>): Sequence<T> = object : Sequence<T> {
-    override fun iterator(): Iterator<T> = progression.iterator()
-}
-
-/**
  * Returns an empty sequence.
  */
 public fun <T> emptySequence(): Sequence<T> = EmptySequence
@@ -492,26 +484,38 @@ private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
  *
  * @see constrainOnce
  */
-public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
+public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
     return GeneratorSequence(nextFunction, { nextFunction() }).constrainOnce()
 }
 
-/**
- * Returns a sequence which invokes the function to calculate the next value based on the previous one on each iteration
- * until the function returns `null`. The sequence starts with the specified [initialValue].
- *
- * The sequence can be iterated multiple times, each time starting with the [initialValue].
- */
-public fun <T : Any> sequence(initialValue: T?, nextFunction: (T) -> T?): Sequence<T> =
-    if (initialValue == null)
-        EmptySequence
-    else
-        GeneratorSequence({ initialValue }, nextFunction)
+@Deprecated("Use generateSequence instead.", ReplaceWith("generateSequence(nextFunction)"))
+public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> = generateSequence(nextFunction)
 
 /**
- * Returns a sequence which invokes the function [initialValueFunction] to get the first item and then
- * [nextFunction] to calculate the next value based on the previous one on each iteration
- * until the function returns `null`. The sequence starts with the value returned by [initialValueFunction].
+ * Returns a sequence which invokes the function to calculate the next value based on the previous one on each iteration
+ * until the function returns `null`. The sequence starts with the specified [seed].
+ *
+ * The sequence can be iterated multiple times, each time starting with the [seed].
  */
-public fun <T: Any> sequence(initialValueFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
-        GeneratorSequence(initialValueFunction, nextFunction)
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequence<T> =
+    if (seed == null)
+        EmptySequence
+    else
+        GeneratorSequence({ seed }, nextFunction)
+
+@Deprecated("Use generateSequence instead.", ReplaceWith("generateSequence(initialValue, nextFunction)"))
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <T : Any> sequence(initialValue: T?, nextFunction: (T) -> T?): Sequence<T> = generateSequence(initialValue, nextFunction)
+
+/**
+ * Returns a sequence which invokes the function [seedFunction] to get the first item and then
+ * [nextFunction] to calculate the next value based on the previous one on each iteration
+ * until the function returns `null`. The sequence starts with the value returned by [seedFunction].
+ */
+public fun <T: Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
+        GeneratorSequence(seedFunction, nextFunction)
+
+
+@Deprecated("Use generateSequence instead.", ReplaceWith("generateSequence(initialValueFunction, nextFunction)"))
+public fun <T: Any> sequence(initialValueFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> = generateSequence(initialValueFunction, nextFunction)

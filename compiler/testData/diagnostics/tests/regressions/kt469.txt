@@ -1,9 +1,9 @@
 package
 
 package kt469 {
-    public fun bar(/*0*/ list: kotlin.MutableList<kotlin.Int>): kotlin.Unit
+    public fun bar(/*0*/ list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
     public fun foo(): kotlin.Unit
-    public operator fun </*0*/ T> kotlin.MutableList<T>.plusAssign(/*0*/ t: T): kotlin.Unit
+    public operator fun </*0*/ T> kotlin.collections.MutableList<T>.plusAssign(/*0*/ t: T): kotlin.Unit
 
     public final class MyNumber {
         public constructor MyNumber(/*0*/ i: kotlin.Int)

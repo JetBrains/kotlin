@@ -20,12 +20,11 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 
-public interface JvmVirtualFileFinderFactory : VirtualFileFinderFactory {
+interface JvmVirtualFileFinderFactory : VirtualFileFinderFactory {
     override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder
 
-    public object SERVICE {
-        @JvmStatic
-        public fun getInstance(project: Project): JvmVirtualFileFinderFactory =
-            ServiceManager.getService(project, javaClass<JvmVirtualFileFinderFactory>())
+    object SERVICE {
+        @JvmStatic fun getInstance(project: Project): JvmVirtualFileFinderFactory =
+            ServiceManager.getService(project, JvmVirtualFileFinderFactory::class.java)
     }
 }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.config;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.SmartList;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -160,19 +160,19 @@ public abstract class Config {
                 ", but metadata.abiVersion = " + metadata.getAbiVersion();
 
         ModuleDescriptorImpl moduleDescriptor = TargetPlatformKt.createModule(
-                JsPlatform.INSTANCE$, Name.special("<" + metadata.getModuleName() + ">"), storageManager
+                JsPlatform.INSTANCE, Name.special("<" + metadata.getModuleName() + ">"), storageManager
         );
 
         PackageFragmentProvider provider =
                 KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, metadata.getBody(), storageManager);
 
-        moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE$);
+        moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE);
 
         return moduleDescriptor;
     }
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {
-        module.setDependencies(CollectionsKt.plus(modules, JsPlatform.INSTANCE$.getBuiltIns().getBuiltInsModule()));
+        module.setDependencies(CollectionsKt.plus(modules, JsPlatform.INSTANCE.getBuiltIns().getBuiltInsModule()));
     }
 
     @NotNull

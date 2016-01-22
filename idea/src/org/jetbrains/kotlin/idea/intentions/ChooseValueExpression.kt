@@ -16,22 +16,16 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.completion.InsertHandler
-import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.template.Expression
 import com.intellij.codeInsight.template.ExpressionContext
-import com.intellij.codeInsight.template.Result
 import com.intellij.codeInsight.template.TextResult
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
-import com.intellij.codeInsight.template.impl.TemplateState
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 
 //TODO: move it somewhere else and reuse
-public abstract class ChooseValueExpression<T : Any>(
+abstract class ChooseValueExpression<T : Any>(
         lookupItems: Collection<T>,
         protected val defaultItem: T,
         private val advertisementText: String? = null
@@ -41,21 +35,20 @@ public abstract class ChooseValueExpression<T : Any>(
     protected abstract fun getResult(element: T): String
 
     protected val lookupItems: Array<LookupElement> = lookupItems.map { suggestion ->
-        LookupElementBuilder.create(suggestion, getLookupString(suggestion)).withInsertHandler(object : InsertHandler<LookupElement> {
-            override fun handleInsert(context: InsertionContext, item: LookupElement) {
-                val topLevelEditor = InjectedLanguageUtil.getTopLevelEditor(context.getEditor())
-                val templateState = TemplateManagerImpl.getTemplateState(topLevelEditor)
-                if (templateState != null) {
-                    val range = templateState.getCurrentVariableRange()
-                    if (range != null) {
-                        topLevelEditor.getDocument().replaceString(range.getStartOffset(), range.getEndOffset(), getResult(item.getObject() as T))
-                    }
+        LookupElementBuilder.create(suggestion, getLookupString(suggestion)).withInsertHandler { context, item ->
+            val topLevelEditor = InjectedLanguageUtil.getTopLevelEditor(context.editor)
+            val templateState = TemplateManagerImpl.getTemplateState(topLevelEditor)
+            if (templateState != null) {
+                val range = templateState.currentVariableRange
+                if (range != null) {
+                    @Suppress("UNCHECKED_CAST")
+                    topLevelEditor.document.replaceString(range.startOffset, range.endOffset, getResult(item.`object` as T))
                 }
             }
-        })
+        }
     }.toTypedArray()
 
-    override fun calculateLookupItems(context: ExpressionContext) = if (lookupItems.size() > 1) lookupItems else null
+    override fun calculateLookupItems(context: ExpressionContext) = if (lookupItems.size > 1) lookupItems else null
 
     override fun calculateQuickResult(context: ExpressionContext) = calculateResult(context)
 
@@ -64,7 +57,7 @@ public abstract class ChooseValueExpression<T : Any>(
     override fun getAdvertisingText() = advertisementText
 }
 
-public class ChooseStringExpression(
+class ChooseStringExpression(
         suggestions: Collection<String>,
         default: String = suggestions.first(),
         advertisementText: String? = null

@@ -1,4 +1,4 @@
 package
 
-public fun </*0*/ T> test(/*0*/ foo: kotlin.List<T>): T
-public fun </*0*/ S, /*1*/ T : S> kotlin.Iterable<T>.reduce(/*0*/ operation: (S, T) -> S): S
+public fun </*0*/ T> test(/*0*/ foo: kotlin.collections.List<T>): T
+public fun </*0*/ S, /*1*/ T : S> kotlin.collections.Iterable<T>.reduce(/*0*/ operation: (S, T) -> S): S

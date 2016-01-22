@@ -36,11 +36,14 @@ import org.jetbrains.kotlin.psi.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
+
 public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
     @Override
     public boolean execute(@NotNull DefinitionsScopedSearch.SearchParameters queryParameters, @NotNull Processor<PsiElement> consumer) {
         PsiElement element = queryParameters.getElement();
         SearchScope scope = queryParameters.getScope();
+        consumer = skipDelegatedMethodsConsumer(consumer);
 
         if (element instanceof KtClass) {
             return processClassImplementations((KtClass) element, consumer);
@@ -64,11 +67,28 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         return true;
      }
 
-    private static boolean processClassImplementations(final KtClass klass, Processor<PsiElement> consumer) {
+    @NotNull
+    private static Processor<PsiElement> skipDelegatedMethodsConsumer(@NotNull final Processor<PsiElement> baseConsumer) {
+        return new Processor<PsiElement>() {
+            @Override
+            public boolean process(PsiElement element) {
+                if (isDelegated(element)) {
+                    return true;
+                }
+                return baseConsumer.process(element);
+            }
+        };
+    }
+
+    private static boolean isDelegated(@NotNull PsiElement element) {
+        return element instanceof KtLightMethod && ((KtLightMethod) element).isDelegated();
+    }
+
+    private static boolean processClassImplementations(@NotNull final KtClass klass, Processor<PsiElement> consumer) {
         PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
             @Override
             public PsiClass compute() {
-                return LightClassUtil.INSTANCE$.getPsiClass(klass);
+                return toLightClass(klass);
             }
         });
         if (psiClass != null) {
@@ -81,7 +101,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
             @Override
             public PsiMethod compute() {
-                return LightClassUtil.INSTANCE$.getLightClassMethod(function);
+                return LightClassUtil.INSTANCE.getLightClassMethod(function);
             }
         });
 
@@ -97,7 +117,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
                     public LightClassUtil.PropertyAccessorsPsiMethods compute() {
-                        return LightClassUtil.INSTANCE$.getLightClassPropertyMethods(parameter);
+                        return LightClassUtil.INSTANCE.getLightClassPropertyMethods(parameter);
                     }
                 });
 
@@ -109,7 +129,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
                     public LightClassUtil.PropertyAccessorsPsiMethods compute() {
-                        return LightClassUtil.INSTANCE$.getLightClassPropertyMethods(property);
+                        return LightClassUtil.INSTANCE.getLightClassPropertyMethods(property);
                     }
                 });
 
@@ -122,6 +142,8 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
             MethodImplementationsSearch.getOverridingMethods(method, implementations, scope);
 
             for (PsiMethod implementation : implementations) {
+                if (isDelegated(implementation)) continue;
+
                 PsiElement mirrorElement = implementation instanceof KtLightMethod
                                            ? ((KtLightMethod) implementation).getOrigin() : null;
                 if (mirrorElement instanceof KtProperty || mirrorElement instanceof KtParameter) {

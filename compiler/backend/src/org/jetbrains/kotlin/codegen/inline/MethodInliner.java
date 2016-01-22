@@ -55,6 +55,8 @@ public class MethodInliner {
 
     private final SourceMapper sourceMapper;
 
+    private final InlineCallSiteInfo inlineCallSiteInfo;
+
     private final JetTypeMapper typeMapper;
 
     private final List<InvokeCall> invokeCalls = new ArrayList<InvokeCall>();
@@ -82,7 +84,8 @@ public class MethodInliner {
             @NotNull FieldRemapper nodeRemapper,
             boolean isSameModule,
             @NotNull String errorPrefix,
-            @NotNull SourceMapper sourceMapper
+            @NotNull SourceMapper sourceMapper,
+            @NotNull InlineCallSiteInfo inlineCallSiteInfo
     ) {
         this.node = node;
         this.parameters = parameters;
@@ -91,6 +94,7 @@ public class MethodInliner {
         this.isSameModule = isSameModule;
         this.errorPrefix = errorPrefix;
         this.sourceMapper = sourceMapper;
+        this.inlineCallSiteInfo = inlineCallSiteInfo;
         this.typeMapper = inliningContext.state.getTypeMapper();
         this.result = InlineResult.create();
     }
@@ -145,7 +149,7 @@ public class MethodInliner {
         return result;
     }
 
-    private MethodNode doInline(MethodNode node) {
+    private MethodNode doInline(final MethodNode node) {
 
         final Deque<InvokeCall> currentInvokes = new LinkedList<InvokeCall>(invokeCalls);
 
@@ -154,8 +158,12 @@ public class MethodInliner {
         final Iterator<AnonymousObjectGeneration> iterator = anonymousObjectGenerations.iterator();
 
         final TypeRemapper remapper = TypeRemapper.createFrom(currentTypeMapping);
-        RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
-                                                                                   remapper);
+        RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(
+                resultNode.access,
+                resultNode.desc,
+                resultNode,
+                new AsmTypeRemapper(remapper, inliningContext.getRoot().typeParameterMappings == null, result)
+        );
 
         final int markerShift = InlineCodegenUtil.calcMarkerShift(parameters, node);
         InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.getArgsSizeOnStack(), sourceMapper) {
@@ -175,7 +183,8 @@ public class MethodInliner {
                                                                    .subInlineWithClassRegeneration(
                                                                            inliningContext.nameGenerator,
                                                                            currentTypeMapping,
-                                                                           anonymousObjectGen),
+                                                                           anonymousObjectGen,
+                                                                           inlineCallSiteInfo),
                                                            isSameModule, Type.getObjectType(newClassName)
                             );
 
@@ -239,7 +248,7 @@ public class MethodInliner {
                                                               inliningContext.subInlineLambda(info),
                                                               newCapturedRemapper, true /*cause all calls in same module as lambda*/,
                                                               "Lambda inlining " + info.getLambdaClassType().getInternalName(),
-                                                              mapper);
+                                                              mapper, inlineCallSiteInfo);
 
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
                     InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift);//TODO add skipped this and receiver
@@ -635,7 +644,7 @@ public class MethodInliner {
         }
     }
 
-    private void transformFinallyDeepIndex(@NotNull MethodNode node, int finallyDeepShift) {
+    private static void transformFinallyDeepIndex(@NotNull MethodNode node, int finallyDeepShift) {
         if (finallyDeepShift == 0) {
             return;
         }

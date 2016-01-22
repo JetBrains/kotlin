@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
-    if (args.size() != 3) {
+    if (args.size != 3) {
         println("Usage: <path to sources> <output path> <profile>")
         System.exit(1)
     }

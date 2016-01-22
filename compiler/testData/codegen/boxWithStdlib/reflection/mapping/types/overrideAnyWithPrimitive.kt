@@ -11,10 +11,10 @@ class A : I {
 }
 
 fun box(): String {
-    assertEquals(javaClass<Integer>(), A::foo.returnType.javaType)
+    assertEquals(Integer::class.java, A::foo.returnType.javaType)
     assertNotEquals(Integer.TYPE, A::foo.returnType.javaType)
 
-    assertNotEquals(javaClass<Integer>(), A::bar.returnType.javaType)
+    assertNotEquals(Integer::class.java, A::bar.returnType.javaType)
     assertEquals(Integer.TYPE, A::bar.returnType.javaType)
 
     assertEquals(java.lang.Long.TYPE, A::bar.parameters.last().type.javaType)

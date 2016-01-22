@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
-public object SamConversionResolverImpl : SamConversionResolver {
+object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(constructorOwner: DeclarationDescriptor, classifier: () -> ClassifierDescriptor?): SamConstructorDescriptor? {
         val classifierDescriptor = classifier()
         if (classifierDescriptor !is LazyJavaClassDescriptor || classifierDescriptor.functionTypeForSamInterface == null) return null
@@ -55,19 +55,19 @@ public object SamConversionResolverImpl : SamConversionResolver {
             classDescriptor: JavaClassDescriptor,
             resolveMethod: (JavaMethod) -> FunctionDescriptor
     ): KotlinType? {
-        val jClass = (classDescriptor.getSource() as? JavaSourceElement)?.javaElement as? JavaClass ?: return null
+        val jClass = (classDescriptor.source as? JavaSourceElement)?.javaElement as? JavaClass ?: return null
         val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass) ?: return null
-        val abstractMethod = if (jClass.getFqName() == samInterfaceMethod.getContainingClass().getFqName()) {
+        val abstractMethod = if (jClass.fqName == samInterfaceMethod.containingClass.fqName) {
             resolveMethod(samInterfaceMethod)
         }
         else {
-            findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(classDescriptor.getDefaultType()))
+            findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(classDescriptor.defaultType))
         }
         return SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod)
     }
 
     private fun findFunctionWithMostSpecificReturnType(supertypes: Set<KotlinType>): SimpleFunctionDescriptor {
-        val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size())
+        val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size)
         for (supertype in supertypes) {
             val abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype)
             if (!abstractMembers.isEmpty()) {
@@ -79,8 +79,8 @@ public object SamConversionResolverImpl : SamConversionResolver {
         }
         var currentMostSpecificType = candidates[0]
         for (candidate in candidates) {
-            val candidateReturnType = candidate.getReturnType()
-            val currentMostSpecificReturnType = currentMostSpecificType.getReturnType()
+            val candidateReturnType = candidate.returnType
+            val currentMostSpecificReturnType = currentMostSpecificType.returnType
             assert(candidateReturnType != null && currentMostSpecificReturnType != null) { "$candidate, $currentMostSpecificReturnType" }
             if (KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
                 currentMostSpecificType = candidate

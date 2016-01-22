@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
-public class PackageDirectoryMismatchInspection: IntentionBasedInspection<KtPackageDirective>(
+class PackageDirectoryMismatchInspection: IntentionBasedInspection<KtPackageDirective>(
         listOf(IntentionBasedInspection.IntentionData(MoveFileToPackageMatchingDirectoryIntention()), IntentionBasedInspection.IntentionData(ChangePackageToMatchDirectoryIntention())),
         "Package directive doesn't match file location",
-        javaClass()
+        KtPackageDirective::class.java
 )

@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-public class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtElement): KotlinQuickFixAction<KtLoopExpression>(loop) {
+class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtElement): KotlinQuickFixAction<KtLoopExpression>(loop) {
     override fun getText() = "Add label to loop"
-    override fun getFamilyName() = getText()
+    override fun getFamilyName() = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file)
@@ -37,12 +37,12 @@ public class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtEleme
         val usedLabels = collectUsedLabels(element)
         val labelName = getUniqueLabelName(usedLabels)
 
-        val jumpWithLabel = KtPsiFactory(project).createExpression(jumpExpression.getText() + "@" + labelName)
+        val jumpWithLabel = KtPsiFactory(project).createExpression(jumpExpression.text + "@" + labelName)
         jumpExpression.replace(jumpWithLabel)
 
         // TODO(yole) use createExpressionByPattern() once it's available
         val labeledLoopExpression = KtPsiFactory(project).createLabeledExpression(labelName)
-        labeledLoopExpression.getBaseExpression()!!.replace(element)
+        labeledLoopExpression.baseExpression!!.replace(element)
         element.replace(labeledLoopExpression)
 
         // TODO(yole) We should initiate in-place rename for the label here, but in-place rename for labels is not yet implemented
@@ -75,7 +75,7 @@ public class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtEleme
 
     companion object: KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val element = diagnostic.getPsiElement() as? KtElement
+            val element = diagnostic.psiElement as? KtElement
             assert(element is KtBreakExpression || element is KtContinueExpression)
             assert((element as? KtLabeledExpression)?.getLabelName() == null)
             val loop = element?.getStrictParentOfType<KtLoopExpression>() ?: return null

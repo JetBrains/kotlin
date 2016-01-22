@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 object BranchedFoldingUtils {
-    public fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
+    fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
         fun checkAssignment(expression: KtBinaryExpression): Boolean {
-            if (expression.getOperationToken() !in KtTokens.ALL_ASSIGNMENTS) return false
+            if (expression.operationToken !in KtTokens.ALL_ASSIGNMENTS) return false
 
-            val left = expression.getLeft() as? KtNameReferenceExpression ?: return false
-            if (expression.getRight() == null) return false
+            val left = expression.left as? KtNameReferenceExpression ?: return false
+            if (expression.right == null) return false
 
-            val parent = expression.getParent()
+            val parent = expression.parent
             if (parent is KtBlockExpression) {
-                return !KtPsiUtil.checkVariableDeclarationInBlock(parent, left.getText())
+                return !KtPsiUtil.checkVariableDeclarationInBlock(parent, left.text)
             }
 
             return true
@@ -39,11 +39,11 @@ object BranchedFoldingUtils {
         return (branch?.lastBlockStatementOrThis() as? KtBinaryExpression)?.check(::checkAssignment)
     }
 
-    public fun getFoldableBranchedReturn(branch: KtExpression?): KtReturnExpression? {
-        return (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.check { it.getReturnedExpression() != null }
+    fun getFoldableBranchedReturn(branch: KtExpression?): KtReturnExpression? {
+        return (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.check { it.returnedExpression != null }
     }
 
-    public fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean {
-        return a1.getLeft()?.getText() == a2.getLeft()?.getText() && a1.getOperationToken() == a2.getOperationToken()
+    fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean {
+        return a1.left?.text == a2.left?.text && a1.operationToken == a2.operationToken
     }
 }

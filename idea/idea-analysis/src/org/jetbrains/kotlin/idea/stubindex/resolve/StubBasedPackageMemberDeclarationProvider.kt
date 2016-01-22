@@ -31,7 +31,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 
-public class StubBasedPackageMemberDeclarationProvider(
+class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
         private val project: Project,
         private val searchScope: GlobalSearchScope
@@ -41,7 +41,7 @@ public class StubBasedPackageMemberDeclarationProvider(
         val result = ArrayList<KtDeclaration>()
 
         fun addFromIndex(index: StringStubIndexExtension<out KtNamedDeclaration>) {
-            index.get(fqName.asString(), project, searchScope).filterTo(result) { nameFilter(it.getNameAsSafeName()) }
+            index.get(fqName.asString(), project, searchScope).filterTo(result) { nameFilter(it.nameAsSafeName) }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {

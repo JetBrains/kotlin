@@ -25,7 +25,7 @@ import org.jetbrains.jps.model.impl.JpsSimpleElementImpl
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import java.io.File
 
-public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
+abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
 
     private val SDK_NAME = "Android API 21 Platform"
 
@@ -34,7 +34,7 @@ public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
         System.setProperty("kotlin.jps.tests", "true")
     }
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         addJdkAndAndroidSdk()
         loadProject(path + getTestName(true) + ".ipr")
         rebuildAll()
@@ -42,7 +42,7 @@ public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
         deleteDirectory(File(path + "/out"))
     }
 
-    public fun deleteDirectory(path: File): Boolean {
+    fun deleteDirectory(path: File): Boolean {
         if (path.exists() && path.isDirectory) {
             val files = path.listFiles()
             for (i in files.indices) {

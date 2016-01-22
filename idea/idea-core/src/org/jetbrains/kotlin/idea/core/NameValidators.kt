@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
-public class CollectingNameValidator @JvmOverloads constructor(
+class CollectingNameValidator @JvmOverloads constructor(
         existingNames: Collection<String> = Collections.emptySet(),
         private val filter: (String) -> Boolean = { true }
 ): (String) -> Boolean {
@@ -52,24 +52,24 @@ public class CollectingNameValidator @JvmOverloads constructor(
         return false
     }
 
-    public fun addName(name: String) {
+    fun addName(name: String) {
         existingNames.add(name)
     }
 }
 
-public class NewDeclarationNameValidator(
+class NewDeclarationNameValidator(
         private val visibleDeclarationsContext: KtElement?,
         private val checkDeclarationsIn: Sequence<PsiElement>,
         private val target: NewDeclarationNameValidator.Target
 ) : (String) -> Boolean {
 
-    public constructor(container: PsiElement, anchor: PsiElement?, target: NewDeclarationNameValidator.Target)
+    constructor(container: PsiElement, anchor: PsiElement?, target: NewDeclarationNameValidator.Target)
         : this(
             (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<KtElement>(),
             anchor?.siblings() ?: container.allChildren,
             target)
 
-    public enum class Target {
+    enum class Target {
         VARIABLES,
         FUNCTIONS_AND_CLASSES
     }
@@ -106,8 +106,8 @@ public class NewDeclarationNameValidator(
     }
 
     private fun KtNamedDeclaration.isConflicting(name: Name): Boolean {
-        if (getNameAsName() != name) return false
-        if (this is KtCallableDeclaration && getReceiverTypeReference() != null) return false
+        if (nameAsName != name) return false
+        if (this is KtCallableDeclaration && receiverTypeReference != null) return false
         return when(target) {
             Target.VARIABLES -> this is KtVariableDeclaration
             Target.FUNCTIONS_AND_CLASSES -> this is KtNamedFunction || this is KtClassOrObject

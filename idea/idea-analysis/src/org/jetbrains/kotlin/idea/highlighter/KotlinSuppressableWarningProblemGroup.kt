@@ -32,10 +32,10 @@ class KotlinSuppressableWarningProblemGroup(
 ) : SuppressableProblemGroup {
 
     init {
-        assert (diagnosticFactory.getSeverity() == Severity.WARNING)
+        assert (diagnosticFactory.severity == Severity.WARNING)
     }
 
-    override fun getProblemName() = diagnosticFactory.getName()
+    override fun getProblemName() = diagnosticFactory.name
 
     override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction> {
         if (element == null)
@@ -46,28 +46,40 @@ class KotlinSuppressableWarningProblemGroup(
 
 }
 
-fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: DiagnosticFactory<*>): List<SuppressIntentionAction> {
-    if (diagnosticFactory.getSeverity() != Severity.WARNING)
-        return Collections.emptyList()
+fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: DiagnosticFactory<*>): List<SuppressIntentionAction> =
+        createSuppressWarningActions(element, diagnosticFactory.severity, diagnosticFactory.name)
+
+
+fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppressionKey: String): List<SuppressIntentionAction> {
+    if (severity != Severity.WARNING) return Collections.emptyList()
 
     val actions = arrayListOf<SuppressIntentionAction>()
     var current: PsiElement? = element
     var suppressAtStatementAllowed = true
     while (current != null) {
-        if (current is KtDeclaration && current !is KtDestructuringDeclaration) {
-            val declaration = current
-            val kind = DeclarationKindDetector.detect(declaration)
-            if (kind != null) {
-                actions.add(KotlinSuppressIntentionAction(declaration, diagnosticFactory, kind))
+        when {
+            current is KtDeclaration && current !is KtDestructuringDeclaration -> {
+                val declaration = current
+                val kind = DeclarationKindDetector.detect(declaration)
+                if (kind != null) {
+                    actions.add(KotlinSuppressIntentionAction(declaration, suppressionKey, kind))
+                }
+                suppressAtStatementAllowed = false
             }
-            suppressAtStatementAllowed = false
-        }
-        else if (current is KtExpression && suppressAtStatementAllowed) {
-            // Add suppress action at first statement
-            if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
-                val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
-                actions.add(KotlinSuppressIntentionAction(current, diagnosticFactory,
-                                                          AnnotationHostKind(kind, "", true)))
+
+            current is KtExpression && suppressAtStatementAllowed -> {
+                // Add suppress action at first statement
+                if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
+                    val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
+                    actions.add(KotlinSuppressIntentionAction(current, suppressionKey,
+                                                              AnnotationHostKind(kind, "", true)))
+                    suppressAtStatementAllowed = false
+                }
+            }
+
+            current is KtFile -> {
+                actions.add(KotlinSuppressIntentionAction(current, suppressionKey,
+                                                          AnnotationHostKind("file", current.name, true)))
                 suppressAtStatementAllowed = false
             }
         }
@@ -87,10 +99,10 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
 
     override fun visitNamedFunction(d: KtNamedFunction, data: Unit?) = detect(d, "fun")
 
-    override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
+    override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.valOrVarKeyword.text!!)
 
-    override fun visitDestructuringDeclaration(d: KtDestructuringDeclaration, data: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
-                                                                                                    name = d.getEntries().map { it.getName()!! }.joinToString(", ", "(", ")"))
+    override fun visitDestructuringDeclaration(d: KtDestructuringDeclaration, data: Unit?) = detect(d, d.valOrVarKeyword?.text ?: "val",
+                                                                                                    name = d.entries.map { it.name!! }.joinToString(", ", "(", ")"))
 
     override fun visitTypeParameter(d: KtTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
 
@@ -99,11 +111,11 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
     override fun visitParameter(d: KtParameter, data: Unit?) = detect(d, "parameter", newLineNeeded = false)
 
     override fun visitObjectDeclaration(d: KtObjectDeclaration, data: Unit?): AnnotationHostKind? {
-        if (d.isCompanion()) return detect(d, "companion object", name = "${d.getName()} of ${d.getStrictParentOfType<KtClass>()?.getName()}")
-        if (d.getParent() is KtObjectLiteralExpression) return null
+        if (d.isCompanion()) return detect(d, "companion object", name = "${d.name} of ${d.getStrictParentOfType<KtClass>()?.name}")
+        if (d.parent is KtObjectLiteralExpression) return null
         return detect(d, "object")
     }
 
-    private fun detect(declaration: KtDeclaration, kind: String, name: String = declaration.getName() ?: "<anonymous>", newLineNeeded: Boolean = true)
+    private fun detect(declaration: KtDeclaration, kind: String, name: String = declaration.name ?: "<anonymous>", newLineNeeded: Boolean = true)
         = AnnotationHostKind(kind, name, newLineNeeded)
 }

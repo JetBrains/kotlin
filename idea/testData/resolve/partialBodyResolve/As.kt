@@ -4,14 +4,14 @@ fun foo(p: Any, p1: Any?) {
     z(f() as String)
 
     if (a) {
-        print((p as String).length())
+        print((p as String).length)
     }
     else {
         print((p as String).get(1))
     }
 
     if (y()) {
-        print(<caret>p.charAt(1))
+        print(<caret>p[1])
         p1 as String
     }
 

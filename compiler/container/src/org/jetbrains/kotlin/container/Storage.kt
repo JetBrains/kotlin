@@ -26,7 +26,7 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.LinkedHashSet
 
-public enum class ComponentStorageState {
+enum class ComponentStorageState {
     Initial,
     Initialized,
     Disposing,
@@ -35,7 +35,7 @@ public enum class ComponentStorageState {
 
 internal class InvalidCardinalityException(message: String, val descriptors: Collection<ComponentDescriptor>) : Exception(message)
 
-public class ComponentStorage(val myId: String) : ValueResolver {
+class ComponentStorage(val myId: String) : ValueResolver {
     var state = ComponentStorageState.Initial
     private val registry = ComponentRegistry()
     private val descriptors = LinkedHashSet<ComponentDescriptor>()
@@ -49,7 +49,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         if (entry.isNotEmpty()) {
             registerDependency(request, context)
 
-            if (entry.size() > 1)
+            if (entry.size > 1)
                 throw InvalidCardinalityException("Request $request cannot be satisfied because there is more than one type registered", entry)
             return entry.singleOrNull()
         }
@@ -65,10 +65,10 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         }
     }
 
-    public fun dump(printer: PrintStream): Unit = with (printer) {
+    fun dump(printer: PrintStream): Unit = with (printer) {
         val heading = "Container: $myId"
         println(heading)
-        println("=".repeat(heading.length()))
+        println("=".repeat(heading.length))
         println()
         getDescriptorsInDisposeOrder().forEach { descriptor ->
             println(descriptor)
@@ -88,7 +88,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
     }
 
 
-    public fun resolveMultiple(request: Type, context: ValueResolveContext): Iterable<ValueDescriptor> {
+    fun resolveMultiple(request: Type, context: ValueResolveContext): Iterable<ValueDescriptor> {
         registerDependency(request, context)
         return registry.tryGetEntry(request)
     }
@@ -106,7 +106,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
 
     }
 
-    public fun compose(context: ComponentResolveContext) {
+    fun compose(context: ComponentResolveContext) {
         if (state != ComponentStorageState.Initial)
             throw ContainerConsistencyException("Container $myId was already composed.")
 
@@ -154,13 +154,13 @@ public class ComponentStorage(val myId: String) : ValueResolver {
             if (entry.isEmpty()) {
                 val rawType: Class<*>? = when (type) {
                     is Class<*> -> type
-                    is ParameterizedType -> type.getRawType() as? Class<*>
+                    is ParameterizedType -> type.rawType as? Class<*>
                     else -> null
                 }
                 if (rawType == null)
                     continue
 
-                if (!Modifier.isAbstract(rawType.getModifiers()) && !rawType.isPrimitive()) {
+                if (!Modifier.isAbstract(rawType.modifiers) && !rawType.isPrimitive) {
                     val implicitDescriptor = ImplicitSingletonTypeComponentDescriptor(context.container, rawType)
                     adhocDescriptors.add(implicitDescriptor)
                     collectAdhocComponents(context, implicitDescriptor, visitedTypes, adhocDescriptors)
@@ -178,7 +178,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         }
     }
 
-    public fun dispose() {
+    fun dispose() {
         if (state != ComponentStorageState.Initialized) {
             if (state == ComponentStorageState.Initial)
                 return // it is valid to dispose container which was not initialized

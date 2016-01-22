@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.utils.intellij
 
 import com.intellij.openapi.util.Pair
 
-public fun <A> Pair<A, *>.component1(): A = getFirst()
+fun <A> Pair<A, *>.component1(): A = getFirst()
 
-public fun <B> Pair<*, B>.component2(): B = getSecond()
+fun <B> Pair<*, B>.component2(): B = getSecond()

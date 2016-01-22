@@ -12,10 +12,10 @@ fun simple() = Simple()
 fun genericIntString() = Generic<Int, String>()
 
 fun box(): String {
-    assertEquals(javaClass<Simple>(), Simple::class.defaultType.javaType)
+    assertEquals(Simple::class.java, Simple::class.defaultType.javaType)
     assertEquals(::simple.returnType, Simple::class.defaultType)
 
-    assertEquals(javaClass<Generic<*, *>>(), Generic::class.defaultType.javaType)
+    assertEquals(Generic::class.java, Generic::class.defaultType.javaType)
     assertEquals(Generic<*, *>::thiz.returnType, Generic::class.defaultType)
 
     // Generic<Int, String> != Generic<K, V>

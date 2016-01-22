@@ -25,29 +25,29 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(javaClass(), "Flatten 'when' expression") {
+class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, "Flatten 'when' expression") {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
-        val subject = element.getSubjectExpression()
+        val subject = element.subjectExpression
         if (subject != null && subject !is KtNameReferenceExpression) return false
 
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return false
 
-        val elseEntry = element.getEntries().singleOrNull { it.isElse() } ?: return false
+        val elseEntry = element.entries.singleOrNull { it.isElse } ?: return false
 
-        val innerWhen = elseEntry.getExpression() as? KtWhenExpression ?: return false
+        val innerWhen = elseEntry.expression as? KtWhenExpression ?: return false
 
-        if (!subject.matches(innerWhen.getSubjectExpression())) return false
+        if (!subject.matches(innerWhen.subjectExpression)) return false
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(innerWhen)) return false
 
-        return elseEntry.startOffset <= caretOffset && caretOffset <= innerWhen.getWhenKeyword().endOffset
+        return elseEntry.startOffset <= caretOffset && caretOffset <= innerWhen.whenKeyword.endOffset
     }
 
-    override fun applyTo(element: KtWhenExpression, editor: Editor) {
-        val subjectExpression = element.getSubjectExpression()
-        val nestedWhen = element.getElseExpression() as KtWhenExpression
+    override fun applyTo(element: KtWhenExpression, editor: Editor?) {
+        val subjectExpression = element.subjectExpression
+        val nestedWhen = element.elseExpression as KtWhenExpression
 
-        val outerEntries = element.getEntries()
-        val innerEntries = nestedWhen.getEntries()
+        val outerEntries = element.entries
+        val innerEntries = nestedWhen.entries
 
         val whenExpression = KtPsiFactory(element).buildExpression {
             appendFixedText("when")
@@ -57,12 +57,12 @@ public class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(jav
             appendFixedText("{\n")
 
             for (entry in outerEntries) {
-                if (entry.isElse()) continue
-                appendNonFormattedText(entry.getText())
+                if (entry.isElse) continue
+                appendNonFormattedText(entry.text)
                 appendFixedText("\n")
             }
             for (entry in innerEntries) {
-                appendNonFormattedText(entry.getText())
+                appendNonFormattedText(entry.text)
                 appendFixedText("\n")
             }
 
@@ -71,7 +71,7 @@ public class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(jav
 
         val newWhen = element.replaced(whenExpression)
 
-        val firstNewEntry = newWhen.getEntries()[outerEntries.size() - 1]
-        editor.moveCaret(firstNewEntry.getTextOffset())
+        val firstNewEntry = newWhen.entries[outerEntries.size - 1]
+        editor?.moveCaret(firstNewEntry.textOffset)
     }
 }

@@ -34,10 +34,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.dropDefaultValue
-import org.jetbrains.kotlin.idea.core.refactoring.createJavaField
-import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
-import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbsent
 import org.jetbrains.kotlin.idea.intentions.setType
+import org.jetbrains.kotlin.idea.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
@@ -216,7 +214,7 @@ class KotlinPullUpHelper(
     }
 
     private val targetConstructorToPropertyInitializerInfoMap = LinkedHashMap<KtElement, Map<KtProperty, InitializerInfo>>().let { result ->
-        for (targetConstructor in targetToSourceConstructors.keySet()) {
+        for (targetConstructor in targetToSourceConstructors.keys) {
             val propertyToInitializerInfo = LinkedHashMap<KtProperty, InitializerInfo>()
             for (property in propertiesToMoveInitializers) {
                 val propertyDescriptor = data.memberDescriptors[property] as? PropertyDescriptor ?: continue
@@ -224,14 +222,14 @@ class KotlinPullUpHelper(
             }
             val unmovableProperties = RefactoringUtil.transitiveClosure(
                     object : RefactoringUtil.Graph<KtProperty> {
-                        override fun getVertices() = propertyToInitializerInfo.keySet()
+                        override fun getVertices() = propertyToInitializerInfo.keys
 
                         override fun getTargets(source: KtProperty) = propertyToInitializerInfo[source]?.usedProperties
                     },
                     { !propertyToInitializerInfo.containsKey(it) }
             )
 
-            propertyToInitializerInfo.keySet().removeAll(unmovableProperties)
+            propertyToInitializerInfo.keys.removeAll(unmovableProperties)
             result[targetConstructor] = propertyToInitializerInfo
         }
         result
@@ -393,7 +391,7 @@ class KotlinPullUpHelper(
                 val newTypeParameterBounds = lightMethod.typeParameters.map {
                     it.superTypes.map { substitutor.substitute(it) as? PsiClassType ?: objectType }
                 }
-                val newMethod = createJavaMethod(member, data.targetClass)
+                val newMethod = org.jetbrains.kotlin.idea.refactoring.createJavaMethod(member, data.targetClass)
                 RefactoringUtil.makeMethodAbstract(data.targetClass, newMethod)
                 newMethod.returnTypeElement?.replace(elementFactory.createTypeElement(newReturnType))
                 newMethod.parameterList.parameters.forEachIndexed { i, parameter ->
@@ -565,17 +563,15 @@ class KotlinPullUpHelper(
             }
         }
 
-        for ((constructorElement, propertyToInitializerInfo) in targetConstructorToPropertyInitializerInfoMap.entrySet()) {
-            val properties = propertyToInitializerInfo.keySet().sortedWith(
-                    object : Comparator<KtProperty> {
-                        override fun compare(property1: KtProperty, property2: KtProperty): Int {
-                            val info1 = propertyToInitializerInfo[property1]!!
-                            val info2 = propertyToInitializerInfo[property2]!!
-                            return when {
-                                property2 in info1.usedProperties -> -1
-                                property1 in info2.usedProperties -> 1
-                                else -> 0
-                            }
+        for ((constructorElement, propertyToInitializerInfo) in targetConstructorToPropertyInitializerInfoMap.entries) {
+            val properties = propertyToInitializerInfo.keys.sortedWith(
+                    Comparator<KtProperty> { property1, property2 ->
+                        val info1 = propertyToInitializerInfo[property1]!!
+                        val info2 = propertyToInitializerInfo[property2]!!
+                        when {
+                            property2 in info1.usedProperties -> -1
+                            property1 in info2.usedProperties -> 1
+                            else -> 0
                         }
                     }
             )

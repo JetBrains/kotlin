@@ -54,7 +54,7 @@ public class AnnotationListParseTest {
         val annotationsFile = File(resourcesRootFile, "$testName/annotations.txt")
         val expectedFile = File(resourcesRootFile, "$testName/parsed.txt")
 
-        assertTrue(annotationsFile.getAbsolutePath() + " does not exist.", annotationsFile.exists())
+        assertTrue(annotationsFile.absolutePath + " does not exist.", annotationsFile.exists())
 
         val annotationProvider = FileKotlinAnnotationProvider(annotationsFile)
         val parsedAnnotations = annotationProvider.annotatedKotlinElements

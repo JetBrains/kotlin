@@ -1,7 +1,7 @@
 package
 
-public fun foo(/*0*/ collection: kotlin.Collection<J>): kotlin.Unit
-public fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
+public fun foo(/*0*/ collection: kotlin.collections.Collection<J>): kotlin.Unit
+public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
 
 public open class J {
     public constructor J()

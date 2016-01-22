@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
 import org.jetbrains.kotlin.psi.KtElement
 
-public interface KtElementInstruction : Instruction {
-    public val element: KtElement
+interface KtElementInstruction : Instruction {
+    val element: KtElement
 }

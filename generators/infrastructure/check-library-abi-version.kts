@@ -26,35 +26,47 @@ import org.jetbrains.org.objectweb.asm.*
  * Some additional information is printed to stderr
  */
 
-fun loadAbiVersionOfClass(bytes: ByteArray): IntArray? {
-    var result: IntArray? = null
+fun loadClassVersions(bytes: ByteArray): Pair<List<Int>, List<Int>>? {
+    var metadata: IntArray? = null
+    var bytecode: IntArray? = null
     ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
         override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-            if (desc == "Lkotlin/jvm/internal/KotlinClass;") {
-                return object : AnnotationVisitor(Opcodes.ASM5) {
-                    override fun visit(name: String, value: Any) {
-                        if (name == "version") {
-                            result = value as IntArray
-                        }
-                        else if (name == "abiVersion") {
-                            result = intArrayOf(0, value as Int, 0)
+            return when (desc) {
+                "Lkotlin/Metadata;" ->
+                    object : AnnotationVisitor(Opcodes.ASM5) {
+                        override fun visit(name: String, value: Any) {
+                            when (name) {
+                                "mv" -> metadata = value as IntArray
+                                "bv" -> bytecode = value as IntArray
+                            }
                         }
                     }
-                }
+                "Lkotlin/jvm/internal/KotlinClass;" ->
+                    object : AnnotationVisitor(Opcodes.ASM5) {
+                        override fun visit(name: String, value: Any) {
+                            if (name == "version") {
+                                metadata = value as IntArray
+                                bytecode = metadata
+                            }
+                        }
+                    }
+                else -> null
             }
-            return null
         }
     }, 0)
-    return result
+    return if (metadata != null && bytecode != null) Pair(metadata!!.toList(), bytecode!!.toList()) else null
 }
 
-fun loadVersion(library: File): IntArray {
+fun loadVersions(library: File): String {
     val jarFile = JarFile(library)
     try {
         for (entry in jarFile.entries()) {
             if (entry.getName().endsWith(".class")) {
                 val classBytes = jarFile.getInputStream(entry).readBytes()
-                loadAbiVersionOfClass(classBytes)?.let { return it }
+                loadClassVersions(classBytes)?.let {
+                    val (metadata, bytecode) = it
+                    return "metadata = ${metadata.joinToString(".")}, bytecode = ${bytecode.joinToString(".")}"
+                }
             }
         }
     }
@@ -74,13 +86,13 @@ fun main(args: Array<String>) {
     val library1 = File(args[0])
     val library2 = File(args[1])
 
-    val v1 = loadVersion(library1).joinToString(".")
-    val v2 = loadVersion(library2).joinToString(".")
+    val v1 = loadVersions(library1)
+    val v2 = loadVersions(library2)
 
     if (v1 != v2) {
         System.err.println("ABI versions differ:")
-        System.err.println("  $library1 has version $v1")
-        System.err.println("  $library2 has version $v2")
+        System.err.println("  $library1: $v1")
+        System.err.println("  $library2: $v2")
         System.exit(3)
     }
 }

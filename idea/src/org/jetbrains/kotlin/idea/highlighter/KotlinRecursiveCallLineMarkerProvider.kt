@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.HashSet
 
-public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
+class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement) = null
 
     override fun collectSlowLineMarkers(elements: MutableList<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
@@ -79,7 +79,7 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
         val resolveName = getCallNameFromPsi(element) ?: return false
         val enclosingFunction = getEnclosingFunction(element, false) ?: return false
 
-        if (enclosingFunction.getName() != resolveName.asString()) return false
+        if (enclosingFunction.name != resolveName.asString()) return false
 
         // Check that there were no not-inlined lambdas on the way to enclosing function
         if (enclosingFunction != getEnclosingFunction(element, true)) return false
@@ -90,7 +90,7 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
         val call = bindingContext[BindingContext.CALL, element] ?: return false
         val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return false
 
-        if (resolvedCall.getCandidateDescriptor().getOriginal() != enclosingFunctionDescriptor) return false
+        if (resolvedCall.candidateDescriptor.original != enclosingFunctionDescriptor) return false
 
         fun isDifferentReceiver(receiver: Receiver?): Boolean {
             if (receiver !is ReceiverValue) return false
@@ -99,25 +99,25 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
 
             return when (receiverOwner) {
                 is SimpleFunctionDescriptor -> receiverOwner != enclosingFunctionDescriptor
-                is ClassDescriptor -> receiverOwner != enclosingFunctionDescriptor.getContainingDeclaration()
+                is ClassDescriptor -> receiverOwner != enclosingFunctionDescriptor.containingDeclaration
                 else -> throw IllegalStateException("Unexpected receiver owner: $receiverOwner")
             }
         }
 
-        if (isDifferentReceiver(resolvedCall.getExtensionReceiver())) return false
-        if (isDifferentReceiver(resolvedCall.getDispatchReceiver())) return false
+        if (isDifferentReceiver(resolvedCall.extensionReceiver)) return false
+        if (isDifferentReceiver(resolvedCall.dispatchReceiver)) return false
         return true
     }
 
     private class RecursiveMethodCallMarkerInfo(callElement: KtElement)
             : LineMarkerInfo<KtElement>(
-                    callElement,
-                    callElement.getTextRange(),
-                    AllIcons.Gutter.RecursiveMethod,
-                    Pass.UPDATE_OVERRIDEN_MARKERS,
-                    { "Recursive call" },
-                    null,
-                    GutterIconRenderer.Alignment.RIGHT
+            callElement,
+            callElement.textRange,
+            AllIcons.Gutter.RecursiveMethod,
+            Pass.UPDATE_OVERRIDEN_MARKERS,
+            { "Recursive call" },
+            null,
+            GutterIconRenderer.Alignment.RIGHT
     ) {
 
         override fun createGutterRenderer(): GutterIconRenderer? {
@@ -130,7 +130,7 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
 }
 
 private fun PsiElement.getLineNumber(): Int {
-    return PsiDocumentManager.getInstance(getProject()).getDocument(getContainingFile())!!.getLineNumber(getTextOffset())
+    return PsiDocumentManager.getInstance(project).getDocument(containingFile)!!.getLineNumber(textOffset)
 }
 
 private fun getCallNameFromPsi(element: KtElement): Name? {
@@ -140,7 +140,7 @@ private fun getCallNameFromPsi(element: KtElement): Name? {
             when (elementParent) {
                 is KtCallExpression -> return Name.identifier(element.getText())
                 is KtOperationExpression -> {
-                    val operationReference = elementParent.getOperationReference()
+                    val operationReference = elementParent.operationReference
                     if (element == operationReference) {
                         val node = operationReference.getReferencedNameElementType()
                         return if (node is KtToken) {

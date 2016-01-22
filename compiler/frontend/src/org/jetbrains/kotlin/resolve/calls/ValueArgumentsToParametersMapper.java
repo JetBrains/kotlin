@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.resolve.calls;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -32,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,6 +86,7 @@ public class ValueArgumentsToParametersMapper {
         private final Call call;
         private final TracingStrategy tracing;
         private final MutableResolvedCall<D> candidateCall;
+        private final List<ValueParameterDescriptor> parameters;
 
         private final Map<Name,ValueParameterDescriptor> parameterByName;
         private Map<Name,ValueParameterDescriptor> parameterByNameInOverriddenMethods;
@@ -95,9 +100,10 @@ public class ValueArgumentsToParametersMapper {
             this.call = call;
             this.tracing = tracing;
             this.candidateCall = candidateCall;
+            this.parameters = candidateCall.getCandidateDescriptor().getValueParameters();
 
             this.parameterByName = Maps.newHashMap();
-            for (ValueParameterDescriptor valueParameter : candidateCall.getCandidateDescriptor().getValueParameters()) {
+            for (ValueParameterDescriptor valueParameter : parameters) {
                 parameterByName.put(valueParameter.getName(), valueParameter);
             }
         }
@@ -106,7 +112,7 @@ public class ValueArgumentsToParametersMapper {
         private ValueParameterDescriptor getParameterByNameInOverriddenMethods(Name name) {
             if (parameterByNameInOverriddenMethods == null) {
                 parameterByNameInOverriddenMethods = Maps.newHashMap();
-                for (ValueParameterDescriptor valueParameter : candidateCall.getCandidateDescriptor().getValueParameters()) {
+                for (ValueParameterDescriptor valueParameter : parameters) {
                     for (ValueParameterDescriptor parameterDescriptor : valueParameter.getOverriddenDescriptors()) {
                         parameterByNameInOverriddenMethods.put(parameterDescriptor.getName(), valueParameter);
                     }
@@ -118,13 +124,15 @@ public class ValueArgumentsToParametersMapper {
 
         // We saw only positioned arguments so far
         private final ProcessorState positionedOnly = new ProcessorState() {
-
             private int currentParameter = 0;
+
+            private int numberOfParametersForPositionedArguments() {
+                return call.getCallType() == Call.CallType.ARRAY_SET_METHOD ? parameters.size() - 1 : parameters.size();
+            }
 
             @Nullable
             public ValueParameterDescriptor nextValueParameter() {
-                List<ValueParameterDescriptor> parameters = candidateCall.getCandidateDescriptor().getValueParameters();
-                if (currentParameter >= parameters.size()) return null;
+                if (currentParameter >= numberOfParametersForPositionedArguments()) return null;
 
                 ValueParameterDescriptor head = parameters.get(currentParameter);
 
@@ -142,20 +150,27 @@ public class ValueArgumentsToParametersMapper {
             }
 
             @Override
-            public ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index) {
-                ValueParameterDescriptor valueParameterDescriptor = nextValueParameter();
+            public ProcessorState processPositionedArgument(@NotNull ValueArgument argument) {
+                processArgument(argument, nextValueParameter());
+                return positionedOnly;
+            }
 
-                if (valueParameterDescriptor != null) {
-                    usedParameters.add(valueParameterDescriptor);
-                    putVararg(valueParameterDescriptor, argument);
+            @Override
+            public ProcessorState processArraySetRHS(@NotNull ValueArgument argument) {
+                processArgument(argument, CollectionsKt.lastOrNull(parameters));
+                return positionedOnly;
+            }
+
+            private void processArgument(@NotNull ValueArgument argument, @Nullable ValueParameterDescriptor parameter) {
+                if (parameter != null) {
+                    usedParameters.add(parameter);
+                    putVararg(parameter, argument);
                 }
                 else {
                     report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidateCall.getCandidateDescriptor()));
                     unmappedArguments.add(argument);
                     setStatus(WEAK_ERROR);
                 }
-
-                return positionedOnly;
             }
         };
 
@@ -220,27 +235,34 @@ public class ValueArgumentsToParametersMapper {
             }
 
             @Override
-            public ProcessorState processPositionedArgument(
-                    @NotNull ValueArgument argument, int index
-            ) {
+            public ProcessorState processPositionedArgument(@NotNull ValueArgument argument) {
                 report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
                 setStatus(WEAK_ERROR);
                 unmappedArguments.add(argument);
 
                 return positionedThenNamed;
             }
+
+            @Override
+            public ProcessorState processArraySetRHS(@NotNull ValueArgument argument) {
+                throw new IllegalStateException("Array set RHS cannot appear after a named argument syntactically: " + argument);
+            }
         };
 
         public void process() {
             ProcessorState state = positionedOnly;
+            boolean isArraySetMethod = call.getCallType() == Call.CallType.ARRAY_SET_METHOD;
             List<? extends ValueArgument> argumentsInParentheses = CallUtilKt.getValueArgumentsInParentheses(call);
-            for (int i = 0; i < argumentsInParentheses.size(); i++) {
-                ValueArgument valueArgument = argumentsInParentheses.get(i);
+            for (Iterator<? extends ValueArgument> iterator = argumentsInParentheses.iterator(); iterator.hasNext(); ) {
+                ValueArgument valueArgument = iterator.next();
                 if (valueArgument.isNamed()) {
                     state = state.processNamedArgument(valueArgument);
                 }
+                else if (isArraySetMethod && !iterator.hasNext()) {
+                    state = state.processArraySetRHS(valueArgument);
+                }
                 else {
-                    state = state.processPositionedArgument(valueArgument, i);
+                    state = state.processPositionedArgument(valueArgument);
                 }
             }
 
@@ -253,46 +275,40 @@ public class ValueArgumentsToParametersMapper {
         }
 
         private void processFunctionLiteralArguments() {
-            D candidate = candidateCall.getCandidateDescriptor();
-            List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
-
             List<? extends LambdaArgument> functionLiteralArguments = call.getFunctionLiteralArguments();
-            if (!functionLiteralArguments.isEmpty()) {
-                LambdaArgument lambdaArgument = functionLiteralArguments.get(0);
-                KtExpression possiblyLabeledFunctionLiteral = lambdaArgument.getArgumentExpression();
+            if (functionLiteralArguments.isEmpty()) return;
 
-                if (valueParameters.isEmpty()) {
-                    report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
+            LambdaArgument lambdaArgument = functionLiteralArguments.get(0);
+            KtExpression possiblyLabeledFunctionLiteral = lambdaArgument.getArgumentExpression();
+
+            if (parameters.isEmpty()) {
+                report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidateCall.getCandidateDescriptor()));
+                setStatus(ERROR);
+            }
+            else {
+                ValueParameterDescriptor lastParameter = CollectionsKt.last(parameters);
+                if (lastParameter.getVarargElementType() != null) {
+                    report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
                     setStatus(ERROR);
                 }
-                else {
-                    ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                    if (valueParameterDescriptor.getVarargElementType() != null) {
-                        report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
-                        setStatus(ERROR);
-                    }
-                    else {
-                        if (!usedParameters.add(valueParameterDescriptor)) {
-                            report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
-                            setStatus(WEAK_ERROR);
-                        }
-                        else {
-                            putVararg(valueParameterDescriptor, lambdaArgument);
-                        }
-                    }
-                }
-
-                for (int i = 1; i < functionLiteralArguments.size(); i++) {
-                    KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
-                    report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
+                else if (!usedParameters.add(lastParameter)) {
+                    report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidateCall.getCandidateDescriptor()));
                     setStatus(WEAK_ERROR);
                 }
+                else {
+                    putVararg(lastParameter, lambdaArgument);
+                }
+            }
+
+            for (int i = 1; i < functionLiteralArguments.size(); i++) {
+                KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
+                report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
+                setStatus(WEAK_ERROR);
             }
         }
 
         private void reportUnmappedParameters() {
-            List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
-            for (ValueParameterDescriptor valueParameter : valueParameters) {
+            for (ValueParameterDescriptor valueParameter : parameters) {
                 if (!usedParameters.contains(valueParameter)) {
                     if (DescriptorUtilsKt.hasDefaultValue(valueParameter)) {
                         candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
@@ -308,10 +324,7 @@ public class ValueArgumentsToParametersMapper {
             }
         }
 
-        private void putVararg(
-                ValueParameterDescriptor valueParameterDescriptor,
-                ValueArgument valueArgument
-        ) {
+        private void putVararg(ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument) {
             if (valueParameterDescriptor.getVarargElementType() != null) {
                 VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
                 if (vararg == null) {
@@ -341,9 +354,11 @@ public class ValueArgumentsToParametersMapper {
 
         private interface ProcessorState {
             ProcessorState processNamedArgument(@NotNull ValueArgument argument);
-            ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index);
-        }
 
+            ProcessorState processPositionedArgument(@NotNull ValueArgument argument);
+
+            ProcessorState processArraySetRHS(@NotNull ValueArgument argument);
+        }
     }
 
     private ValueArgumentsToParametersMapper() {}

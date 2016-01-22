@@ -1,7 +1,7 @@
 package
 
 package a {
-    public val a: kotlin.MutableSet<kotlin.String>? = null
+    public val a: kotlin.collections.MutableSet<kotlin.String>? = null
 
     public final class R {
         public constructor R()

@@ -38,11 +38,11 @@ private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIER
     modifiers = DescriptorRendererModifier.ALL
 }
 
-public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
+fun descriptorToKey(descriptor: DeclarationDescriptor): String {
     return descriptorRendererForKeys.render(descriptor)
 }
 
-public data class DecompiledText(public val text: String, public val renderedDescriptorsToRange: Map<String, TextRange>)
+data class DecompiledText(val text: String, val renderedDescriptorsToRange: Map<String, TextRange>)
 
 fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     withDefinedIn = false
@@ -53,7 +53,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     alwaysRenderModifiers = true
 }
 
-public fun buildDecompiledText(
+fun buildDecompiledText(
         packageFqName: FqName,
         descriptors: List<DeclarationDescriptor>,
         descriptorRenderer: DescriptorRenderer
@@ -64,7 +64,7 @@ public fun buildDecompiledText(
     fun appendDecompiledTextAndPackageName() {
         builder.append("// IntelliJ API Decompiler stub source generated from a class file\n" + "// Implementation of methods is not available")
         builder.append("\n\n")
-        if (!packageFqName.isRoot()) {
+        if (!packageFqName.isRoot) {
             builder.append("package ").append(packageFqName).append("\n\n")
         }
     }
@@ -75,7 +75,7 @@ public fun buildDecompiledText(
 
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
         if (descriptor is MissingDependencyErrorClass) {
-            throw IllegalStateException("${descriptor.javaClass.getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
+            throw IllegalStateException("${descriptor.javaClass.simpleName} cannot be rendered. FqName: ${descriptor.fullFqName}")
         }
         val startOffset = builder.length
         if (isEnumEntry(descriptor)) {
@@ -93,13 +93,13 @@ public fun buildDecompiledText(
 
         if (descriptor is CallableDescriptor) {
             //NOTE: assuming that only return types can be flexible
-            if (descriptor.getReturnType()!!.isFlexible()) {
+            if (descriptor.returnType!!.isFlexible()) {
                 builder.append(" ").append(FLEXIBLE_TYPE_COMMENT)
             }
         }
 
         if (descriptor is FunctionDescriptor || descriptor is PropertyDescriptor) {
-            if ((descriptor as MemberDescriptor).getModality() != Modality.ABSTRACT) {
+            if ((descriptor as MemberDescriptor).modality != Modality.ABSTRACT) {
                 if (descriptor is FunctionDescriptor) {
                     builder.append(" { ").append(DECOMPILED_CODE_COMMENT).append(" }")
                 }
@@ -107,7 +107,7 @@ public fun buildDecompiledText(
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
-                endOffset = builder.length()
+                endOffset = builder.length
             }
         }
         else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
@@ -160,7 +160,7 @@ public fun buildDecompiledText(
             }
 
             builder.append(indent).append("}")
-            endOffset = builder.length()
+            endOffset = builder.length
         }
 
         builder.append("\n")

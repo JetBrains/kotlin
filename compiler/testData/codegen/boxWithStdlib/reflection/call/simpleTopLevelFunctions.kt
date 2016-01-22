@@ -1,4 +1,4 @@
-fun String.foo(): Int = length()
+fun String.foo(): Int = length
 
 var state = "Fail"
 

@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.refactoring
+package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.PsiReferenceList.Role
 
-public fun PsiElementFactory.createReferenceListWithRole(
+fun PsiElementFactory.createReferenceListWithRole(
         references: Array<PsiJavaCodeReferenceElement>,
         role: Role
 ): PsiReferenceList? {
-    val refsText = references.map { it.getCanonicalText() }
+    val refsText = references.map { it.canonicalText }
     val refListText = if (refsText.isNotEmpty()) refsText.joinToString() else return null
     return when (role) {
-        Role.THROWS_LIST -> createMethodFromText("void foo() throws $refListText {}", null).getThrowsList()
-        Role.EXTENDS_LIST -> createClassFromText("class Foo extends $refListText {}", null).getInnerClasses()[0].getExtendsList()
-        Role.IMPLEMENTS_LIST -> createClassFromText("class Foo implements $refListText {}", null).getInnerClasses()[0].getImplementsList()
-        Role.EXTENDS_BOUNDS_LIST -> createTypeParameterFromText("T extends $refListText", null).getExtendsList()
+        Role.THROWS_LIST -> createMethodFromText("void foo() throws $refListText {}", null).throwsList
+        Role.EXTENDS_LIST -> createClassFromText("class Foo extends $refListText {}", null).innerClasses[0].extendsList
+        Role.IMPLEMENTS_LIST -> createClassFromText("class Foo implements $refListText {}", null).innerClasses[0].implementsList
+        Role.EXTENDS_BOUNDS_LIST -> createTypeParameterFromText("T extends $refListText", null).extendsList
     }
 }

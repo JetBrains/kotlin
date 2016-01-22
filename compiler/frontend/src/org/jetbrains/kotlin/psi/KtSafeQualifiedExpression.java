@@ -34,24 +34,24 @@ public class KtSafeQualifiedExpression extends KtExpressionImpl implements KtQua
     @NotNull
     @Override
     public KtExpression getReceiverExpression() {
-        return KtQualifiedExpressionImpl.INSTANCE$.getReceiverExpression(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getReceiverExpression(this);
     }
 
     @Nullable
     @Override
     public KtExpression getSelectorExpression() {
-        return KtQualifiedExpressionImpl.INSTANCE$.getSelectorExpression(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getSelectorExpression(this);
     }
 
     @NotNull
     @Override
     public ASTNode getOperationTokenNode() {
-        return KtQualifiedExpressionImpl.INSTANCE$.getOperationTokenNode(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getOperationTokenNode(this);
     }
 
     @NotNull
     @Override
     public KtToken getOperationSign() {
-        return KtQualifiedExpressionImpl.INSTANCE$.getOperationSign(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getOperationSign(this);
     }
 }

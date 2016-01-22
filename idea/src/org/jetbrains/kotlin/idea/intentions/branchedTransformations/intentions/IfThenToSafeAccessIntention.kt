@@ -17,26 +17,26 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.replaced
 
-public class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention())
+class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention())
 
-public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with safe access expression") {
+class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with safe access expression") {
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
-        val condition = element.getCondition() as? KtBinaryExpression ?: return false
-        val thenClause = element.getThen()
-        val elseClause = element.getElse()
+        val condition = element.condition as? KtBinaryExpression ?: return false
+        val thenClause = element.then
+        val elseClause = element.`else`
 
         val receiverExpression = condition.expressionComparedToNull() ?: return false
         if (!receiverExpression.isStableVariable()) return false
 
-        return when (condition.getOperationToken()) {
+        return when (condition.operationToken) {
             KtTokens.EQEQ ->
                 thenClause?.isNullExpressionOrEmptyBlock() ?: true &&
                 elseClause != null && clauseContainsAppropriateDotQualifiedExpression(elseClause, receiverExpression)
@@ -50,26 +50,25 @@ public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntenti
         }
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
-        val safeAccessExpr = applyTo(element)
-        safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
-    }
-
-    public fun applyTo(element: KtIfExpression): KtSafeQualifiedExpression {
-        val condition = element.getCondition() as KtBinaryExpression
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
+        val condition = element.condition as KtBinaryExpression
         val receiverExpression = condition.expressionComparedToNull()!!
 
         val selectorExpression =
-                when(condition.getOperationToken()) {
-                    KtTokens.EQEQ -> findSelectorExpressionInClause(element.getElse()!!, receiverExpression)!!
+                when(condition.operationToken) {
+                    KtTokens.EQEQ -> findSelectorExpressionInClause(element.`else`!!, receiverExpression)!!
 
-                    KtTokens.EXCLEQ -> findSelectorExpressionInClause(element.getThen()!!, receiverExpression)!!
+                    KtTokens.EXCLEQ -> findSelectorExpressionInClause(element.then!!, receiverExpression)!!
 
                     else -> throw IllegalArgumentException()
                 }
 
         val newExpr = KtPsiFactory(element).createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression) as KtSafeQualifiedExpression
-        return element.replaced(newExpr)
+        val safeAccessExpr = element.replaced(newExpr)
+
+        if (editor != null) {
+            safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
+        }
     }
 
     private fun clauseContainsAppropriateDotQualifiedExpression(clause: KtExpression, receiverExpression: KtExpression)
@@ -78,8 +77,8 @@ public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntenti
     private fun findSelectorExpressionInClause(clause: KtExpression, receiverExpression: KtExpression): KtExpression? {
         val expression = clause.unwrapBlockOrParenthesis() as? KtDotQualifiedExpression ?: return null
 
-        if (expression.getReceiverExpression().getText() != receiverExpression.getText()) return null
+        if (expression.receiverExpression.text != receiverExpression.text) return null
 
-        return expression.getSelectorExpression()
+        return expression.selectorExpression
     }
 }

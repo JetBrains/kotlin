@@ -46,7 +46,6 @@ abstract class CallGenerator {
         override fun afterParameterPut(
                 type: Type,
                 stackValue: StackValue?,
-                valueParameterDescriptor: ValueParameterDescriptor,
                 parameterIndex: Int) {
 
         }
@@ -70,7 +69,7 @@ abstract class CallGenerator {
         }
 
         override fun putValueIfNeeded(
-                valueParameterDescriptor: ValueParameterDescriptor?, parameterType: Type, value: StackValue) {
+                parameterType: Type, value: StackValue) {
             value.put(value.type, codegen.v)
         }
 
@@ -113,7 +112,6 @@ abstract class CallGenerator {
     abstract fun afterParameterPut(
             type: Type,
             stackValue: StackValue?,
-            valueParameterDescriptor: ValueParameterDescriptor,
             parameterIndex: Int)
 
     abstract fun genValueAndPut(
@@ -123,7 +121,6 @@ abstract class CallGenerator {
             parameterIndex: Int)
 
     abstract fun putValueIfNeeded(
-            valueParameterDescriptor: ValueParameterDescriptor?,
             parameterType: Type,
             value: StackValue)
 

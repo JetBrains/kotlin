@@ -54,10 +54,14 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
+import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -97,7 +101,7 @@ public class PropertyCodegen {
     }
 
     public void generateInPackageFacade(@NotNull DeserializedPropertyDescriptor deserializedProperty) {
-        assert context instanceof DelegatingFacadeContext : "should be called only for generating facade: " + context;
+        assert context instanceof MultifileClassFacadeContext : "should be called only for generating facade: " + context;
         gen(null, deserializedProperty, null, null);
     }
 
@@ -109,11 +113,6 @@ public class PropertyCodegen {
     ) {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
-
-        String implClassName = CodegenContextUtil.getImplementationClassShortName(context);
-        if (implClassName != null) {
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, implClassName);
-        }
 
         if (CodegenContextUtil.isImplClassOwner(context)) {
             assert declaration != null : "Declaration is null for different context: " + context;
@@ -131,16 +130,18 @@ public class PropertyCodegen {
 
     private void genBackingFieldAndAnnotations(@NotNull KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter) {
         boolean hasBackingField = hasBackingField(declaration, descriptor);
+        boolean hasDelegate = declaration instanceof KtProperty && ((KtProperty) declaration).hasDelegate();
 
         AnnotationSplitter annotationSplitter =
                 AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
                                           descriptor.getAnnotations(),
-                                          AnnotationSplitter.getTargetSet(isParameter, descriptor.isVar(), hasBackingField));
+                                          AnnotationSplitter.getTargetSet(isParameter, descriptor.isVar(), hasBackingField, hasDelegate));
 
         Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
+        Annotations delegateAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD);
         Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
 
-        generateBackingField(declaration, descriptor, fieldAnnotations);
+        generateBackingField(declaration, descriptor, fieldAnnotations, delegateAnnotations);
         generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
     }
 
@@ -155,7 +156,7 @@ public class PropertyCodegen {
             @NotNull PropertyDescriptor descriptor,
             @Nullable KtPropertyAccessor accessor
     ) {
-        if (hasJvmFieldAnnotation(descriptor)) return false;
+        if (isConstOrHasJvmFieldAnnotation(descriptor)) return false;
 
         boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
 
@@ -229,17 +230,18 @@ public class PropertyCodegen {
     private boolean generateBackingField(
             @NotNull KtNamedDeclaration p,
             @NotNull PropertyDescriptor descriptor,
-            @NotNull Annotations annotations
+            @NotNull Annotations backingFieldAnnotations,
+            @NotNull Annotations delegateAnnotations
     ) {
         if (isJvmInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS) {
             return false;
         }
 
         if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
-            generatePropertyDelegateAccess((KtProperty) p, descriptor, annotations);
+            generatePropertyDelegateAccess((KtProperty) p, descriptor, delegateAnnotations);
         }
         else if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
-            generateBackingFieldAccess(p, descriptor, annotations);
+            generateBackingFieldAccess(p, descriptor, backingFieldAnnotations);
         }
         else {
             return false;
@@ -264,10 +266,6 @@ public class PropertyCodegen {
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
             mv.visitEnd();
-        }
-        else {
-            Type tImplType = typeMapper.mapDefaultImpls((ClassDescriptor) context.getContextDescriptor());
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(tImplType));
         }
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
@@ -307,46 +305,17 @@ public class PropertyCodegen {
 
         ClassBuilder builder = v;
 
-        boolean hasJvmFieldAnnotation = hasJvmFieldAnnotation(propertyDescriptor);
-
         FieldOwnerContext backingFieldContext = context;
-        boolean takeVisibilityFromDescriptor = propertyDescriptor.isLateInit() || propertyDescriptor.isConst();
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
-            if (takeVisibilityFromDescriptor) {
-                modifiers |= getVisibilityAccessFlag(propertyDescriptor);
-            }
-            else if (hasJvmFieldAnnotation && !isDelegate) {
-                modifiers |= getDefaultVisibilityFlag(propertyDescriptor.getVisibility());
-            }
-            else {
-                modifiers |= getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
-            }
-
-            if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
+            if (JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
                 ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
                 builder = codegen.v;
                 backingFieldContext = codegen.context;
-                v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
-            }
-
-            if (isObject(propertyDescriptor.getContainingDeclaration()) &&
-                !hasJvmFieldAnnotation &&
-                !propertyDescriptor.isConst() &&
-                (modifiers & ACC_PRIVATE) == 0) {
-                modifiers |= ACC_DEPRECATED;
             }
         }
-        else if (takeVisibilityFromDescriptor) {
-            modifiers |= getVisibilityAccessFlag(propertyDescriptor);
-        }
-        else if (!isDelegate && hasJvmFieldAnnotation) {
-            modifiers |= getDefaultVisibilityFlag(propertyDescriptor.getVisibility());
-        }
-        else {
-            modifiers |= ACC_PRIVATE;
-        }
+        modifiers |= getVisibilityForBackingField(propertyDescriptor, isDelegate);
 
         if (AsmUtil.isPropertyWithBackingFieldCopyInOuterClass(propertyDescriptor)) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
@@ -361,7 +330,8 @@ public class PropertyCodegen {
                                            typeMapper.mapFieldSignature(jetType, propertyDescriptor), defaultValue);
 
         Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
-        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(fieldAnnotated, type, AnnotationUseSiteTarget.FIELD);
+        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(
+                fieldAnnotated, type, isDelegate ? AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD : AnnotationUseSiteTarget.FIELD);
     }
 
     private void generatePropertyDelegateAccess(KtProperty p, PropertyDescriptor propertyDescriptor, Annotations annotations) {

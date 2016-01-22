@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), LazyType {
+abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), LazyType {
 
     private val typeConstructor = storageManager.createLazyValue { computeTypeConstructor() }
     override fun getConstructor(): TypeConstructor = typeConstructor()
@@ -42,9 +42,9 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
     override fun getMemberScope() = memberScope()
 
     protected open fun computeMemberScope(): MemberScope {
-        val descriptor = constructor.getDeclarationDescriptor()
+        val descriptor = constructor.declarationDescriptor
         return when (descriptor) {
-            is TypeParameterDescriptor -> descriptor.getDefaultType().getMemberScope()
+            is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
             is ClassDescriptor -> descriptor.getMemberScope(substitution)
             else -> throw IllegalStateException("Unsupported classifier: $descriptor")
         }
@@ -52,7 +52,7 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
 
     override fun isMarkedNullable() = false
 
-    override fun isError() = getConstructor().getDeclarationDescriptor()?.let { d -> ErrorUtils.isError(d) } ?: false
+    override fun isError() = constructor.declarationDescriptor?.let { d -> ErrorUtils.isError(d) } ?: false
 
     override fun getAnnotations() = Annotations.EMPTY
 
@@ -61,7 +61,7 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
             return "Type constructor is not computed"
         }
         if (!arguments.isComputed()) {
-            return "" + getConstructor() + "<arguments are not computed>"
+            return "" + constructor + "<arguments are not computed>"
         }
         return super<AbstractKotlinType>.toString()
     }

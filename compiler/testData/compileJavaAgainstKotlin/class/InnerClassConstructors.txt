@@ -11,7 +11,7 @@ public final class Outer {
     public constructor Outer()
 
     public final inner class InnerGeneric {
-        public constructor InnerGeneric(/*0*/ kotlin.List<kotlin.String>)
+        public constructor InnerGeneric(/*0*/ kotlin.collections.List<kotlin.String>)
     }
 
     public final inner class InnerPrimitive {

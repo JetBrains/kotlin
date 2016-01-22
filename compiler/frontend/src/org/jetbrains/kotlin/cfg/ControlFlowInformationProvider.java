@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -28,8 +29,6 @@ import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
-import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
@@ -54,6 +53,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -65,11 +65,12 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState.*;
+import static org.jetbrains.kotlin.cfg.VariableUseState.*;
 import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
@@ -125,9 +126,9 @@ public class ControlFlowInformationProvider {
 
         markUnusedExpressions();
 
-        markIfWithoutElse();
+        checkIfExpressions();
 
-        markWhenWithoutElse();
+        checkWhenExpressions();
     }
 
     public void checkFunction(@Nullable KotlinType expectedReturnType) {
@@ -303,7 +304,7 @@ public class ControlFlowInformationProvider {
         final boolean processClassOrObject = subroutine instanceof KtClassOrObject;
 
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
+        Map<Instruction, Edges<InitControlFlowInfo>> initializers =
                 pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariablesData.getLexicalScopeVariableInfo();
@@ -352,8 +353,7 @@ public class ControlFlowInformationProvider {
     public void recordInitializedVariables() {
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
-                pseudocodeVariablesData.getVariableInitializers();
+        Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         recordInitializedVariables(pseudocode, initializers);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             recordInitializedVariables(instruction.getBody(), initializers);
@@ -478,7 +478,7 @@ public class ControlFlowInformationProvider {
     }
 
     private boolean checkAssignmentBeforeDeclaration(@NotNull VariableInitContext ctxt, @NotNull KtExpression expression) {
-        if (!ctxt.enterInitState.isDeclared && !ctxt.exitInitState.isDeclared
+        if (!ctxt.enterInitState.isDeclared() && !ctxt.exitInitState.isDeclared()
             && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
             report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt);
             return true;
@@ -519,9 +519,9 @@ public class ControlFlowInformationProvider {
 
     private void recordInitializedVariables(
             @NotNull Pseudocode pseudocode,
-            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializersMap
+            @NotNull Map<Instruction, Edges<InitControlFlowInfo>> initializersMap
     ) {
-        Edges<Map<VariableDescriptor, VariableControlFlowState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
+        Edges<InitControlFlowInfo> initializers = initializersMap.get(pseudocode.getExitInstruction());
         if (initializers == null) return;
         Set<VariableDescriptor> declaredVariables = getPseudocodeVariablesData().getDeclaredVariables(pseudocode, false);
         for (VariableDescriptor variable : declaredVariables) {
@@ -538,8 +538,7 @@ public class ControlFlowInformationProvider {
 
     public void markUnusedVariables() {
         final PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusData =
-                pseudocodeVariablesData.getVariableUseStatusData();
+        Map<Instruction, Edges<UseControlFlowInfo>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>>() {
@@ -560,7 +559,7 @@ public class ControlFlowInformationProvider {
                                 || !ExpressionTypingUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) {
                             return;
                         }
-                        PseudocodeVariablesData.VariableUseState variableUseState = in.get(variableDescriptor);
+                        VariableUseState variableUseState = in.get(variableDescriptor);
                         if (instruction instanceof WriteValueInstruction) {
                             if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return;
                             KtElement element = ((WriteValueInstruction) instruction).getElement();
@@ -694,7 +693,7 @@ public class ControlFlowInformationProvider {
         );
     }
 
-    public void markIfWithoutElse() {
+    public void checkIfExpressions() {
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
@@ -705,10 +704,17 @@ public class ControlFlowInformationProvider {
                         for (KtElement element : instruction.getOwner().getValueElements(value)) {
                             if (!(element instanceof KtIfExpression)) continue;
                             KtIfExpression ifExpression = (KtIfExpression) element;
-                            if (ifExpression.getThen() != null && ifExpression.getElse() != null) continue;
 
                             if (BindingContextUtilsKt.isUsedAsExpression(ifExpression, trace.getBindingContext())) {
-                                trace.report(INVALID_IF_AS_EXPRESSION.on(ifExpression));
+                                KtExpression thenExpression = ifExpression.getThen();
+                                KtExpression elseExpression = ifExpression.getElse();
+
+                                if (thenExpression == null || elseExpression == null) {
+                                    trace.report(INVALID_IF_AS_EXPRESSION.on(ifExpression));
+                                }
+                                else {
+                                    checkImplicitCastOnConditionalExpression(ifExpression, ImmutableList.of(thenExpression, elseExpression));
+                                }
                             }
                         }
                     }
@@ -716,28 +722,101 @@ public class ControlFlowInformationProvider {
         );
     }
 
-    public void markWhenWithoutElse() {
+    private void checkImplicitCastOnConditionalExpression(
+            @NotNull KtExpression expression,
+            @NotNull Collection<KtExpression> branchExpressions
+    ) {
+        KotlinType expectedExpressionType = trace.get(EXPECTED_EXPRESSION_TYPE, expression);
+        if (expectedExpressionType != null && expectedExpressionType != DONT_CARE) return;
+
+        KotlinType expressionType = trace.getType(expression);
+        if (expressionType == null) {
+            return;
+        }
+        if (KotlinBuiltIns.isAnyOrNullableAny(expressionType)) {
+            for (KtExpression branchExpression : branchExpressions) {
+                if (branchExpression == null) continue;
+                KotlinType branchType = trace.getType(branchExpression);
+                if (branchType == null || KotlinBuiltIns.isAnyOrNullableAny(branchType)) {
+                    return;
+                }
+            }
+            for (KtExpression branchExpression : branchExpressions) {
+                if (branchExpression == null) continue;
+                KotlinType branchType = trace.getType(branchExpression);
+                if (branchType == null) continue;
+                if (KotlinBuiltIns.isNothing(branchType)) continue;
+                trace.report(IMPLICIT_CAST_TO_ANY.on(getResultingExpression(branchExpression), branchType, expressionType));
+            }
+        }
+    }
+
+    private static @NotNull KtExpression getResultingExpression(@NotNull KtExpression expression) {
+        KtExpression finger = expression;
+        while (true) {
+            KtExpression deparenthesized = KtPsiUtil.deparenthesize(finger);
+            deparenthesized = KtPsiUtil.getExpressionOrLastStatementInBlock(deparenthesized);
+            if (deparenthesized == null || deparenthesized == finger) break;
+            finger = deparenthesized;
+        }
+        return finger;
+    }
+
+    public void checkWhenExpressions() {
+        final Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
+                        if (instruction instanceof MagicInstruction) {
+                            MagicInstruction magicInstruction = (MagicInstruction) instruction;
+                            if (magicInstruction.getKind() == MagicKind.EXHAUSTIVE_WHEN_ELSE) {
+                                Instruction next = magicInstruction.getNext();
+                                if (next instanceof MergeInstruction) {
+                                    MergeInstruction mergeInstruction = (MergeInstruction) next;
+                                    if (initializers.containsKey(mergeInstruction) && initializers.containsKey(magicInstruction)) {
+                                        InitControlFlowInfo mergeInfo = initializers.get(mergeInstruction).getIncoming();
+                                        InitControlFlowInfo magicInfo = initializers.get(magicInstruction).getOutgoing();
+                                        if (mergeInstruction.getElement() instanceof KtWhenExpression &&
+                                            magicInfo.checkDefiniteInitializationInWhen(mergeInfo)) {
+                                            trace.record(IMPLICIT_EXHAUSTIVE_WHEN, (KtWhenExpression) mergeInstruction.getElement());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         PseudoValue value = instruction instanceof InstructionWithValue
                                             ? ((InstructionWithValue) instruction).getOutputValue()
                                             : null;
                         for (KtElement element : instruction.getOwner().getValueElements(value)) {
                             if (!(element instanceof KtWhenExpression)) continue;
                             KtWhenExpression whenExpression = (KtWhenExpression) element;
+
+                            if (BindingContextUtilsKt.isUsedAsExpression(whenExpression, trace.getBindingContext())) {
+                                List<KtExpression> branchExpressions = new ArrayList<KtExpression>(whenExpression.getEntries().size());
+                                for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
+                                    branchExpressions.add(whenEntry.getExpression());
+                                }
+                                checkImplicitCastOnConditionalExpression(whenExpression, branchExpressions);
+                            }
+
                             if (whenExpression.getElseExpression() != null) continue;
 
-                            if (WhenChecker.mustHaveElse(whenExpression, trace)) {
-                                trace.report(NO_ELSE_IN_WHEN.on(whenExpression));
+                            BindingContext context = trace.getBindingContext();
+                            List<WhenMissingCase> necessaryCases = WhenChecker.getNecessaryCases(whenExpression, context);
+                            if (!necessaryCases.isEmpty()) {
+                                trace.report(NO_ELSE_IN_WHEN.on(whenExpression, necessaryCases));
                             }
                             else if (whenExpression.getSubjectExpression() != null) {
                                 ClassDescriptor enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(
                                         trace.getType(whenExpression.getSubjectExpression()));
-                                if (enumClassDescriptor != null
-                                    && !WhenChecker.isWhenOnEnumExhaustive(whenExpression, trace, enumClassDescriptor)) {
-                                    trace.report(NON_EXHAUSTIVE_WHEN.on(whenExpression));
+                                if (enumClassDescriptor != null) {
+                                    List<WhenMissingCase> missingCases = WhenChecker.getEnumMissingCases(
+                                            whenExpression, context, enumClassDescriptor
+                                    );
+                                    if (!missingCases.isEmpty()) {
+                                        trace.report(NON_EXHAUSTIVE_WHEN.on(whenExpression, missingCases));
+                                    }
                                 }
                             }
                         }
@@ -986,7 +1065,7 @@ public class ControlFlowInformationProvider {
         @Override
         public Unit invoke(Instruction instruction, D enterData, D exitData) {
             execute(instruction, enterData, exitData);
-            return Unit.INSTANCE$;
+            return Unit.INSTANCE;
         }
 
         public abstract void execute(Instruction instruction, D enterData, D exitData);
@@ -996,7 +1075,7 @@ public class ControlFlowInformationProvider {
         @Override
         public Unit invoke(P p) {
             execute(p);
-            return Unit.INSTANCE$;
+            return Unit.INSTANCE;
         }
 
         public abstract void execute(P p);

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 
-public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
+abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
         val psiElement: T,
         var javaMethodChangeInfo: KotlinChangeInfo): UsageInfo(psiElement) {
     abstract val delegateUsage: KotlinUsageInfo<T>
@@ -30,7 +30,7 @@ public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
     fun processUsage(allUsages: Array<UsageInfo>): Boolean = delegateUsage.processUsage(javaMethodChangeInfo, psiElement, allUsages)
 }
 
-public class JavaMethodKotlinCallUsage(
+class JavaMethodKotlinCallUsage(
         callElement: KtCallElement,
         javaMethodChangeInfo: KotlinChangeInfo,
         propagationCall: Boolean

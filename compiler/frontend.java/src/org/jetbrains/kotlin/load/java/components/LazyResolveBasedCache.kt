@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class LazyResolveBasedCache(private val resolveSession: ResolveSession) : JavaResolverCache {
+class LazyResolveBasedCache(private val resolveSession: ResolveSession) : JavaResolverCache {
 
     private val trace: BindingTrace get() = resolveSession.trace
 
@@ -37,23 +37,23 @@ public class LazyResolveBasedCache(private val resolveSession: ResolveSession) :
     }
 
     override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, (method as JavaMethodImpl).getPsi(), descriptor)
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, (method as JavaMethodImpl).psi, descriptor)
     }
 
     override fun recordConstructor(element: JavaElement, descriptor: ConstructorDescriptor) {
-        trace.record(CONSTRUCTOR, (element as JavaElementImpl<*>).getPsi(), descriptor)
+        trace.record(CONSTRUCTOR, (element as JavaElementImpl<*>).psi, descriptor)
     }
 
     override fun recordField(field: JavaField, descriptor: PropertyDescriptor) {
-        trace.record(VARIABLE, (field as JavaFieldImpl).getPsi(), descriptor)
+        trace.record(VARIABLE, (field as JavaFieldImpl).psi, descriptor)
     }
 
     override fun recordClass(javaClass: JavaClass, descriptor: ClassDescriptor) {
-        trace.record(CLASS, (javaClass as JavaClassImpl).getPsi(), descriptor)
+        trace.record(CLASS, (javaClass as JavaClassImpl).psi, descriptor)
     }
 
     private fun findInPackageFragments(fullFqName: FqName): ClassDescriptor? {
-        var fqName = if (fullFqName.isRoot()) fullFqName else fullFqName.parent()
+        var fqName = if (fullFqName.isRoot) fullFqName else fullFqName.parent()
 
         while (true) {
             val packageDescriptor = resolveSession.getPackageFragment(fqName)
@@ -62,7 +62,7 @@ public class LazyResolveBasedCache(private val resolveSession: ResolveSession) :
             val result = ResolveSessionUtils.findClassByRelativePath(packageDescriptor.getMemberScope(), fullFqName.tail(fqName))
             if (result != null) return result
 
-            if (fqName.isRoot()) break
+            if (fqName.isRoot) break
             fqName = fqName.parent()
         }
 

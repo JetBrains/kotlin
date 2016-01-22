@@ -27,40 +27,40 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaExpression>(javaClass(), "Specify explicit lambda signature"), LowPriorityAction {
+class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Specify explicit lambda signature"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
-        val arrow = element.getFunctionLiteral().getArrow()
+        val arrow = element.functionLiteral.arrow
         if (arrow != null) {
             if (caretOffset > arrow.endOffset) return false
-            if (element.getValueParameters().all { it.getTypeReference() != null }) return false
+            if (element.valueParameters.all { it.typeReference != null }) return false
         }
         else {
-            if (!element.getLeftCurlyBrace().getTextRange().containsOffset(caretOffset)) return false
+            if (!element.leftCurlyBrace.textRange.containsOffset(caretOffset)) return false
         }
 
-        val functionDescriptor = element.analyze()[BindingContext.FUNCTION, element.getFunctionLiteral()] ?: return false
-        return functionDescriptor.getValueParameters().none { it.getType().isError() }
+        val functionDescriptor = element.analyze()[BindingContext.FUNCTION, element.functionLiteral] ?: return false
+        return functionDescriptor.valueParameters.none { it.type.isError }
     }
 
-    override fun applyTo(element: KtLambdaExpression, editor: Editor) {
+    override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val psiFactory = KtPsiFactory(element)
-        val functionLiteral = element.getFunctionLiteral()
+        val functionLiteral = element.functionLiteral
         val functionDescriptor = element.analyze()[BindingContext.FUNCTION, functionLiteral]!!
 
-        val parameterString = functionDescriptor.getValueParameters()
-                .map { "${it.getName()}: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(it.getType())}" }
+        val parameterString = functionDescriptor.valueParameters
+                .map { "${it.name}: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)}" }
                 .joinToString(", ")
 
         val newParameterList = psiFactory.createFunctionLiteralParameterList(parameterString)
-        val oldParameterList = functionLiteral.getValueParameterList()
+        val oldParameterList = functionLiteral.valueParameterList
         if (oldParameterList != null) {
             oldParameterList.replace(newParameterList)
         }
         else {
-            val openBraceElement = functionLiteral.getLBrace()
-            val nextSibling = openBraceElement.getNextSibling()
-            val addNewline = nextSibling is PsiWhiteSpace && nextSibling.getText()?.contains("\n") ?: false
+            val openBraceElement = functionLiteral.lBrace
+            val nextSibling = openBraceElement.nextSibling
+            val addNewline = nextSibling is PsiWhiteSpace && nextSibling.text?.contains("\n") ?: false
             val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
             functionLiteral.addRangeAfter(whitespace, arrow, openBraceElement)
             functionLiteral.addAfter(newParameterList, openBraceElement)
@@ -68,6 +68,6 @@ public class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<Kt
                 functionLiteral.addAfter(psiFactory.createNewLine(), openBraceElement)
             }
         }
-        ShortenReferences.DEFAULT.process(element.getValueParameters())
+        ShortenReferences.DEFAULT.process(element.valueParameters)
     }
 }

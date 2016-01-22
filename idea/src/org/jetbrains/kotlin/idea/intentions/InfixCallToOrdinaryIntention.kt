@@ -20,24 +20,24 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class InfixCallToOrdinaryIntention : SelfTargetingIntention<KtBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
+class InfixCallToOrdinaryIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace infix call with ordinary call") {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
-        if (element.getOperationToken() != KtTokens.IDENTIFIER || element.getLeft() == null || element.getRight() == null) return false
-        return element.getOperationReference().getTextRange().containsOffset(caretOffset)
+        if (element.operationToken != KtTokens.IDENTIFIER || element.left == null || element.right == null) return false
+        return element.operationReference.textRange.containsOffset(caretOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
         convert(element)
     }
 
     companion object {
-        public fun convert(element: KtBinaryExpression): KtExpression {
-            val argument = KtPsiUtil.safeDeparenthesize(element.getRight()!!)
+        fun convert(element: KtBinaryExpression): KtExpression {
+            val argument = KtPsiUtil.safeDeparenthesize(element.right!!)
             val pattern = "$0.$1" + when (argument) {
                 is KtLambdaExpression -> " $2:'{}'"
                 else -> "($2)"
             }
-            val replacement = KtPsiFactory(element).createExpressionByPattern(pattern, element.getLeft()!!, element.getOperationReference().getText(), argument)
+            val replacement = KtPsiFactory(element).createExpressionByPattern(pattern, element.left!!, element.operationReference.text, argument)
             return element.replace(replacement) as KtExpression
         }
     }

@@ -4,11 +4,12 @@ import org.junit.Test as test
 import org.junit.Test
 import kotlin.test.*
 import java.util.*
+import kotlin.comparisons.*
 
 fun fibonacci(): Sequence<Int> {
     // fibonacci terms
     // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, ...
-    return sequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first }
+    return generateSequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first }
 }
 
 public class SequenceTest {
@@ -214,7 +215,7 @@ public class SequenceTest {
     @test fun sequenceFromFunction() {
         var count = 3
 
-        val sequence = sequence {
+        val sequence = generateSequence {
             count--
             if (count >= 0) count else null
         }
@@ -228,7 +229,7 @@ public class SequenceTest {
     }
 
     @test fun sequenceFromFunctionWithInitialValue() {
-        val values = sequence(3) { n -> if (n > 0) n - 1 else null }
+        val values = generateSequence(3) { n -> if (n > 0) n - 1 else null }
         val expected = listOf(3, 2, 1, 0)
         assertEquals(expected, values.toList())
         assertEquals(expected, values.toList(), "Iterating sequence second time yields the same result")
@@ -236,7 +237,7 @@ public class SequenceTest {
 
     @Test fun sequenceFromFunctionWithLazyInitialValue() {
         var start = 3
-        val values = sequence({ start }, { n -> if (n > 0) n - 1 else null })
+        val values = generateSequence({ start }, { n -> if (n > 0) n - 1 else null })
         val expected = listOf(3, 2, 1, 0)
         assertEquals(expected, values.toList())
         assertEquals(expected, values.toList(), "Iterating sequence second time yields the same result")
@@ -245,7 +246,7 @@ public class SequenceTest {
         assertEquals(expected.drop(1), values.toList(), "Initial value function is called on each iterator request")
 
         // does not throw on construction
-        val errorValues = sequence<Int>({ (throw IllegalStateException()) }, { null })
+        val errorValues = generateSequence<Int>({ (throw IllegalStateException()) }, { null })
         // does not throw on iteration
         val iterator = errorValues.iterator()
         // throws on advancing

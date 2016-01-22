@@ -189,7 +189,7 @@ abstract class MapJsTest {
                    map.containsKey(KEYS[3]))
 
         assertFalse(map.containsKey("foo") ||
-                    map.containsKey(1))
+                    map.containsKey(1 as Any))
     }
 
     @test fun mapContainsValue() {
@@ -200,7 +200,7 @@ abstract class MapJsTest {
                    map.containsValue(VALUES[2]) &&
                    map.containsValue(VALUES[3]))
 
-        assertFalse(map.containsValue("four") ||
+        assertFalse(map.containsValue("four" as Any) ||
                     map.containsValue(5))
     }
 

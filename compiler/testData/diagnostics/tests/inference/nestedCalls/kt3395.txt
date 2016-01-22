@@ -2,9 +2,9 @@ package
 
 package b {
     public fun </*0*/ T> foo(/*0*/ t: T): T
-    public fun </*0*/ K, /*1*/ V> mapOf(/*0*/ vararg values: b.Pair<K, V> /*kotlin.Array<out b.Pair<K, V>>*/): kotlin.Map<K, V>
+    public fun </*0*/ K, /*1*/ V> mapOf(/*0*/ vararg values: b.Pair<K, V> /*kotlin.Array<out b.Pair<K, V>>*/): kotlin.collections.Map<K, V>
     public fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
-    public fun </*0*/ T> query(/*0*/ t: T, /*1*/ args: kotlin.Map<kotlin.String, kotlin.Any>): kotlin.List<T>
+    public fun </*0*/ T> query(/*0*/ t: T, /*1*/ args: kotlin.collections.Map<kotlin.String, kotlin.Any>): kotlin.collections.List<T>
     public fun test(/*0*/ pair: b.Pair<kotlin.String, kotlin.Int>): kotlin.Unit
     public fun test(/*0*/ t: kotlin.String): kotlin.Unit
     public infix fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): b.Pair<A, B>

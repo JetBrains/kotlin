@@ -39,7 +39,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
     }
 
     fun allocateVariablesForSaveStackMarker(saveStackMarker: AbstractInsnNode, savedStackValues: List<BasicValue>): SavedStackDescriptor {
-        val numRestoreStackMarkers = context.restoreStackMarkersForSaveMarker[saveStackMarker]!!.size()
+        val numRestoreStackMarkers = context.restoreStackMarkersForSaveMarker[saveStackMarker]!!.size
         return allocateNewHandle(numRestoreStackMarkers, saveStackMarker, savedStackValues)
     }
 
@@ -58,7 +58,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
     }
 
     private fun getFirstUnusedLocalVariableIndex(): Int =
-            allocatedHandles.values().fold(initialMaxLocals) {
+            allocatedHandles.values.fold(initialMaxLocals) {
                 index, handle -> Math.max(index, handle.savedStackDescriptor.firstUnusedLocalVarIndex)
             }
 
@@ -91,7 +91,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
 
     fun createReturnValueVariable(returnValue: BasicValue): Int {
         val returnValueIndex = getFirstUnusedLocalVariableIndex()
-        updateMaxLocals(returnValueIndex + returnValue.getSize())
+        updateMaxLocals(returnValueIndex + returnValue.size)
         return returnValueIndex
     }
 }

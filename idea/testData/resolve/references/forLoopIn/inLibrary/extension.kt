@@ -4,5 +4,5 @@ fun main() {
 
 // MULTIRESOLVE
 // REF: (for kotlin.CharSequence in kotlin.text).iterator()
-// REF: (in kotlin.CharIterator).next()
-// REF: (in kotlin.Iterator).hasNext()
+// REF: (in kotlin.collections.CharIterator).next()
+// REF: (in kotlin.collections.Iterator).hasNext()

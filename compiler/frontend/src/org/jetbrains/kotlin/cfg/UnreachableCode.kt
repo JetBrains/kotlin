@@ -45,7 +45,7 @@ class UnreachableCodeImpl(
             element.getLeavesOrReachableChildren().removeReachableElementsWithMeaninglessSiblings().mergeAdjacentTextRanges()
         }
         else {
-            listOf(element.getTextRange()!!)
+            listOf(element.textRange!!)
         }
     }
 
@@ -58,7 +58,7 @@ class UnreachableCodeImpl(
         acceptChildren(object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 val isReachable = element is KtElement && reachableElements.contains(element) && !element.hasChildrenInSet(unreachableElements)
-                if (isReachable || element.getChildren().size() == 0) {
+                if (isReachable || element.children.size == 0) {
                     children.add(element)
                 }
                 else {
@@ -71,13 +71,13 @@ class UnreachableCodeImpl(
 
     fun List<PsiElement>.removeReachableElementsWithMeaninglessSiblings(): List<PsiElement> {
         fun PsiElement.isMeaningless() = this is PsiWhiteSpace
-                || this.getNode()?.getElementType() == KtTokens.COMMA
+                || this.node?.elementType == KtTokens.COMMA
                 || this is PsiComment
 
         val childrenToRemove = HashSet<PsiElement>()
         fun collectSiblingsIfMeaningless(elementIndex: Int, direction: Int) {
             val index = elementIndex + direction
-            if (index !in 0..(size() - 1)) return
+            if (index !in 0..(size - 1)) return
 
             val element = this[index]
             if (element.isMeaningless()) {
@@ -101,11 +101,11 @@ class UnreachableCodeImpl(
         val lastRange = fold(null as TextRange?) {
             currentTextRange, element ->
 
-            val elementRange = element.getTextRange()!!
+            val elementRange = element.textRange!!
             if (currentTextRange == null) {
                 elementRange
             }
-            else if (currentTextRange.getEndOffset() == elementRange.getStartOffset()) {
+            else if (currentTextRange.endOffset == elementRange.startOffset) {
                 currentTextRange.union(elementRange)
             }
             else {

@@ -71,7 +71,7 @@ fun Element.canonicalCode(): String {
 }
 
 abstract class Element {
-    public var prototypes: List<PrototypeInfo>? = null
+    var prototypes: List<PrototypeInfo>? = null
         set(value) {
             // do not assign prototypes to singleton instances
             if (canBeSingleton) {
@@ -84,18 +84,18 @@ abstract class Element {
     protected open val canBeSingleton: Boolean
         get() = isEmpty
 
-    public var createdAt: String?
+    var createdAt: String?
             = if (saveCreationStacktraces)
                   Exception().stackTrace.joinToString("\n")
               else
                   null
 
     /** This method should not be used anywhere except for CodeBuilder! Use CodeBuilder.append instead. */
-    public abstract fun generateCode(builder: CodeBuilder)
+    abstract fun generateCode(builder: CodeBuilder)
 
-    public open fun postGenerateCode(builder: CodeBuilder) { }
+    open fun postGenerateCode(builder: CodeBuilder) { }
 
-    public open val isEmpty: Boolean get() = false
+    open val isEmpty: Boolean get() = false
 
     object Empty : Element() {
         override fun generateCode(builder: CodeBuilder) { }
@@ -110,7 +110,7 @@ abstract class Element {
 // this class should never be created directly - Converter.deferredElement() should be used!
 class DeferredElement<TResult : Element>(
         private val generator: (CodeConverter) -> TResult,
-        public val converterState: Converter.PersonalState
+        val converterState: Converter.PersonalState
 ) : Element() {
 
     private var result: TResult? = null
@@ -123,7 +123,7 @@ class DeferredElement<TResult : Element>(
     override val canBeSingleton: Boolean
         get() = false
 
-    public fun unfold(codeConverter: CodeConverter) {
+    fun unfold(codeConverter: CodeConverter) {
         assert(result == null)
         result = generator(codeConverter)
     }

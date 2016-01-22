@@ -16,43 +16,58 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.ErrorValue
 
-public fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
-    return getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
+private val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
+
+fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
+    return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
 }
 
-public fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
-    val jvmSyntheticName = FqName("kotlin.jvm.JvmSynthetic")
-    return annotations.findAnnotation(jvmSyntheticName) != null ||
-           Annotations.findUseSiteTargetedAnnotation(annotations, AnnotationUseSiteTarget.FIELD, jvmSyntheticName) != null
-}
+private val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
 
-public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
-        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
+fun DeclarationDescriptor.hasJvmSyntheticAnnotation() = findJvmSyntheticAnnotation() != null
 
-public fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
+fun DeclarationDescriptor.findJvmSyntheticAnnotation() =
+        DescriptorUtils.getAnnotationByFqName(annotations, JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
+
+fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
+        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClassOrEnumClass(it) }
+
+fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
         isPlatformStaticIn { DescriptorUtils.isCompanionObject(it) }
 
 private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
         when (this) {
             is PropertyAccessorDescriptor -> {
-                val propertyDescriptor = getCorrespondingProperty()
-                predicate(propertyDescriptor.getContainingDeclaration()) &&
+                val propertyDescriptor = correspondingProperty
+                predicate(propertyDescriptor.containingDeclaration) &&
                 (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
             }
-            else -> predicate(getContainingDeclaration()) && hasJvmStaticAnnotation()
+            else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
         }
 
-public fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
-    return getAllValueArguments().entrySet()
-            .singleOrNull { it.key.getName().asString() == parameterName }
-            ?.value?.value
+fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
+    val constant: ConstantValue<*>? = allValueArguments.entries
+            .singleOrNull { it.key.name.asString() == parameterName }
+            ?.value
+
+    if (constant == null || constant is ErrorValue)
+        return null
+
+    return constant.value
+}
+
+private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
+
+fun MemberDescriptor.isInlineOnly(): Boolean {
+    if (this !is FunctionDescriptor) return false
+    return typeParameters.any { it.isReified } || annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
 }

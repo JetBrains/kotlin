@@ -27,21 +27,21 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class KtDestructuringDeclarationReference(element: KtDestructuringDeclaration) : KtMultiReference<KtDestructuringDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        return expression.getEntries().mapNotNull { entry ->
-            context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.getCandidateDescriptor()
+        return expression.entries.mapNotNull { entry ->
+            context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.candidateDescriptor
         }
     }
 
     override fun getRangeInElement(): TextRange? {
-        val start = expression.getLPar()
-        val end = expression.getRPar()
+        val start = expression.lPar
+        val end = expression.rPar
         if (start == null || end == null) return TextRange.EMPTY_RANGE
-        return TextRange(start.getStartOffsetInParent(), end.getStartOffsetInParent())
+        return TextRange(start.startOffsetInParent, end.startOffsetInParent)
     }
 
     override fun canRename(): Boolean {
         val bindingContext = expression.analyze() //TODO: should it use full body resolve?
-        return resolveToDescriptors(bindingContext).all { it is CallableMemberDescriptor && it.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED}
+        return resolveToDescriptors(bindingContext).all { it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED}
     }
 
     override fun handleElementRename(newElementName: String?): PsiElement? {

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KotlinImportDirectiveStubImpl(
+class KotlinImportDirectiveStubImpl(
         parent: StubElement<PsiElement>,
         private val isAbsoluteInRootPackage: Boolean,
         private val isAllUnder: Boolean,

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-public abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJavaScope(c) {
+abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJavaScope(c) {
 
     override fun getDispatchReceiverParameter() = null
 

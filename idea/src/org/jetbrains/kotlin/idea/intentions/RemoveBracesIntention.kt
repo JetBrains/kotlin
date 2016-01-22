@@ -20,51 +20,50 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(javaClass(), "Remove braces") {
+class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(KtBlockExpression::class.java, "Remove braces") {
     override fun isApplicableTo(element: KtBlockExpression, caretOffset: Int): Boolean {
-        if (element.getStatements().size() != 1) return false
+        if (element.statements.size != 1) return false
 
-        val containerNode = element.getParent() as? KtContainerNode ?: return false
+        val containerNode = element.parent as? KtContainerNode ?: return false
 
-        val lBrace = element.getLBrace() ?: return false
-        val rBrace = element.getRBrace() ?: return false
-        if (!lBrace.getTextRange().containsOffset(caretOffset) && !rBrace.getTextRange().containsOffset(caretOffset)) return false
+        val lBrace = element.lBrace ?: return false
+        val rBrace = element.rBrace ?: return false
+        if (!lBrace.textRange.containsOffset(caretOffset) && !rBrace.textRange.containsOffset(caretOffset)) return false
 
         val description = containerNode.description() ?: return false
-        setText("Remove braces from '$description' statement")
+        text = "Remove braces from '$description' statement"
         return true
     }
 
-    override fun applyTo(element: KtBlockExpression, editor: Editor) {
-        val statement = element.getStatements().single()
+    override fun applyTo(element: KtBlockExpression, editor: Editor?) {
+        val statement = element.statements.single()
 
-        val containerNode = element.getParent() as KtContainerNode
-        val construct = containerNode.getParent() as KtExpression
+        val containerNode = element.parent as KtContainerNode
+        val construct = containerNode.parent as KtExpression
         handleComments(construct, element)
 
         val newElement = element.replace(statement.copy())
 
         if (construct is KtDoWhileExpression) {
-            newElement.getParent()!!.addAfter(KtPsiFactory(element).createNewLine(), newElement)
+            newElement.parent!!.addAfter(KtPsiFactory(element).createNewLine(), newElement)
         }
     }
 
     private fun handleComments(construct: KtExpression, block: KtBlockExpression) {
-        var sibling = block.getFirstChild()?.getNextSibling()
+        var sibling = block.firstChild?.nextSibling
 
         while (sibling != null) {
             if (sibling is PsiComment) {
                 //cleans up extra whitespace
                 val psiFactory = KtPsiFactory(construct)
-                if (construct.getPrevSibling() is PsiWhiteSpace) {
-                    construct.getPrevSibling()!!.replace(psiFactory.createNewLine())
+                if (construct.prevSibling is PsiWhiteSpace) {
+                    construct.prevSibling!!.replace(psiFactory.createNewLine())
                 }
-                val commentElement = construct.getParent()!!.addBefore(sibling, construct.getPrevSibling())
-                construct.getParent()!!.addBefore(psiFactory.createNewLine(), commentElement)
+                val commentElement = construct.parent!!.addBefore(sibling, construct.prevSibling)
+                construct.parent!!.addBefore(psiFactory.createNewLine(), commentElement)
             }
-            sibling = sibling.getNextSibling()
+            sibling = sibling.nextSibling
         }
     }
 }

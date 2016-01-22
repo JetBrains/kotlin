@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -85,10 +83,10 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
     override fun copy(parameter: Parameter) = RenameReplacement(parameter)
 
     override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
-        var expressionToReplace = (e.getParent() as? KtThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
+        var expressionToReplace = (e.parent as? KtThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
         val parameterName = KtPsiUtil.unquoteIdentifier(parameter.nameForRef)
         val replacingName =
-                if (e.getText().startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
+                if (e.text.startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
         val psiFactory = KtPsiFactory(e)
         val replacement = when {
             parameter == descriptor.receiverParameter -> psiFactory.createExpression("this")
@@ -137,13 +135,13 @@ class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacem
 
 class FqNameReplacement(val fqName: FqName): Replacement {
     override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
-        val thisExpr = e.getParent() as? KtThisExpression
+        val thisExpr = e.parent as? KtThisExpression
         if (thisExpr != null) {
             return thisExpr.replaced(KtPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
         }
 
         val newExpr = (e as? KtSimpleNameExpression)?.mainReference?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as KtElement
-        return if (newExpr is KtQualifiedExpression) newExpr.getSelectorExpression()!! else newExpr
+        return if (newExpr is KtQualifiedExpression) newExpr.selectorExpression!! else newExpr
     }
 }
 
@@ -201,11 +199,11 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
     protected fun extractArgumentExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
         val call: KtCallExpression? = when (boxedExpression) {
             is KtCallExpression -> boxedExpression
-            is KtQualifiedExpression -> boxedExpression.getSelectorExpression() as? KtCallExpression
+            is KtQualifiedExpression -> boxedExpression.selectorExpression as? KtCallExpression
             else -> null
         }
-        val arguments = call?.getValueArguments()
-        if (arguments == null || arguments.size() <= index) return null
+        val arguments = call?.valueArguments
+        if (arguments == null || arguments.size <= index) return null
 
         return arguments[index].getArgumentExpression()
     }
@@ -224,7 +222,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             val module: ModuleDescriptor
     ) : OutputValueBoxer(outputValues) {
         init {
-            assert(outputValues.size() <= 3) { "At most 3 output values are supported" }
+            assert(outputValues.size <= 3) { "At most 3 output values are supported" }
         }
 
         companion object {
@@ -233,7 +231,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
         override val returnType: KotlinType by lazy {
             fun getType(): KotlinType {
-                val boxingClass = when (outputValues.size()) {
+                val boxingClass = when (outputValues.size) {
                     1 -> return outputValues.first().valueType
                     2 -> module.resolveTopLevelClass(FqName("kotlin.Pair"), NoLookupLocation.FROM_IDE)!!
                     3 -> module.resolveTopLevelClass(FqName("kotlin.Triple"), NoLookupLocation.FROM_IDE)!!
@@ -245,7 +243,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             getType()
         }
 
-        override val boxingRequired: Boolean = outputValues.size() > 1
+        override val boxingRequired: Boolean = outputValues.size > 1
 
         override fun getBoxingExpressionPattern(arguments: List<KtExpression>): String? {
             return when (arguments.size) {
@@ -259,12 +257,12 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
         }
 
         override fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
-            if (outputValues.size() == 1) return boxedExpression
+            if (outputValues.size == 1) return boxedExpression
             return extractArgumentExpressionByIndex(boxedExpression, index)
         }
 
         override fun getUnboxingExpressions(boxedText: String): Map<OutputValue, String> {
-            return when (outputValues.size()) {
+            return when (outputValues.size) {
                 0 -> Collections.emptyMap()
                 1 -> Collections.singletonMap(outputValues.first(), boxedText)
                 else -> {
@@ -285,7 +283,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             )
         }
 
-        override val boxingRequired: Boolean = outputValues.size() > 0
+        override val boxingRequired: Boolean = outputValues.size > 0
 
         override fun getBoxingExpressionPattern(arguments: List<KtExpression>): String? {
             if (arguments.isEmpty()) return null
@@ -311,15 +309,15 @@ data class ControlFlow(
     val outputValueBoxer = boxerFactory(outputValues)
 
     val defaultOutputValue: ExpressionValue? = with(outputValues.filterIsInstance<ExpressionValue>()) {
-        if (size() > 1) throw IllegalArgumentException("Multiple expression values: ${outputValues.joinToString()}") else firstOrNull()
+        if (size > 1) throw IllegalArgumentException("Multiple expression values: ${outputValues.joinToString()}") else firstOrNull()
     }
 
     val jumpOutputValue: Jump? = with(outputValues.filterIsInstance<Jump>()) {
-        val jumpCount = size()
+        val jumpCount = size
         when {
             isEmpty() ->
                 null
-            outputValues.size() > jumpCount || jumpCount > 1 ->
+            outputValues.size > jumpCount || jumpCount > 1 ->
                 throw IllegalArgumentException("Jump values must be the only value if it's present: ${outputValues.joinToString()}")
             else ->
                 first()
@@ -336,7 +334,7 @@ val ControlFlow.possibleReturnTypes: List<KotlinType>
             returnType.isAnnotatedNotNull() || returnType.isAnnotatedNullable() ->
                 listOf(approximateFlexibleTypes(returnType))
             else ->
-                returnType.getCapability(javaClass<Flexibility>()).let { listOf(it!!.upperBound, it.lowerBound) }
+                returnType.getCapability(Flexibility::class.java).let { listOf(it!!.upperBound, it.lowerBound) }
         }
     }
 
@@ -457,7 +455,7 @@ enum class ExtractionTarget(val targetName: String) {
             if (!descriptor.parameters.isEmpty()) return false
             if (descriptor.returnType.isUnit()) return false
 
-            val parent = descriptor.extractionData.targetSibling.getParent()
+            val parent = descriptor.extractionData.targetSibling.parent
             return (parent is KtFile || parent is KtClassBody)
         }
     }
@@ -476,7 +474,7 @@ data class ExtractionGeneratorOptions(
         val delayInitialOccurrenceReplacement: Boolean = false
 ) {
     companion object {
-        val DEFAULT = ExtractionGeneratorOptions()
+        @JvmField val DEFAULT = ExtractionGeneratorOptions()
     }
 }
 

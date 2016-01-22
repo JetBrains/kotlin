@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public abstract class DeserializedMemberScope protected constructor(
+abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         functionList: Collection<ProtoBuf.Function>,
         propertyList: Collection<ProtoBuf.Property>
@@ -40,21 +40,17 @@ public abstract class DeserializedMemberScope protected constructor(
 
     private val functionProtos =
             c.storageManager.createLazyValue {
-                groupByKey(filteredFunctionProtos(functionList), { it.name }) { it.receiverType(c.typeTable) != null }
+                groupByKey(functionList, { it.name }) { it.receiverType(c.typeTable) != null }
             }
     private val propertyProtos =
             c.storageManager.createLazyValue {
-                groupByKey(filteredPropertyProtos(propertyList), { it.name }) { it.receiverType(c.typeTable) != null }
+                groupByKey(propertyList, { it.name }) { it.receiverType(c.typeTable) != null }
             }
 
     private val functions =
             c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties =
             c.storageManager.createMemoizedFunction<Name, Collection<PropertyDescriptor>> { computeProperties(it) }
-
-    protected open fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> = protos
-
-    protected open fun filteredPropertyProtos(protos: Collection<ProtoBuf.Property>): Collection<ProtoBuf.Property> = protos
 
     private fun <M : MessageLite> groupByKey(
             protos: Collection<M>, getNameIndex: (M) -> Int, isExtension: (M) -> Boolean
@@ -147,12 +143,12 @@ public abstract class DeserializedMemberScope protected constructor(
             location: LookupLocation
     ) {
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            val keys = propertyProtos().keySet().filter { nameFilter(it.name) }
+            val keys = propertyProtos().keys.filter { nameFilter(it.name) }
             addMembers(result, keys) { getContributedVariables(it, location) }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            val keys = functionProtos().keySet().filter { nameFilter(it.name) }
+            val keys = functionProtos().keys.filter { nameFilter(it.name) }
             addMembers(result, keys) { getContributedFunctions(it, location) }
         }
     }

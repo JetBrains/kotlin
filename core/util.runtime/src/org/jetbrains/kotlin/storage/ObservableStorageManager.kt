@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.storage
 
 import java.util.concurrent.ConcurrentMap
 
-public abstract class ObservableStorageManager(private val delegate: StorageManager) : StorageManager {
+abstract class ObservableStorageManager(private val delegate: StorageManager) : StorageManager {
     protected abstract val <T> (() -> T).observable: () -> T
     protected abstract val <K, V> ((K) -> V).observable: (K) -> V
 

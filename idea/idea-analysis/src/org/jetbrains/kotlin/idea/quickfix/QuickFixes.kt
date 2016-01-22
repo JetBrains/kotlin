@@ -24,7 +24,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 
-public class QuickFixes {
+class QuickFixes {
     private val factories: Multimap<DiagnosticFactory<*>, KotlinIntentionActionsFactory> = HashMultimap.create<DiagnosticFactory<*>, KotlinIntentionActionsFactory>()
     private val actions: Multimap<DiagnosticFactory<*>, IntentionAction> = HashMultimap.create<DiagnosticFactory<*>, IntentionAction>()
 
@@ -32,32 +32,32 @@ public class QuickFixes {
         Extensions.getExtensions(QuickFixContributor.EP_NAME).forEach { it.registerQuickFixes(this) }
     }
 
-    public fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: KotlinIntentionActionsFactory) {
+    fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: KotlinIntentionActionsFactory) {
         factories.putAll(diagnosticFactory, factory.toList())
     }
 
-    public fun register(diagnosticFactory: DiagnosticFactory<*>, vararg action: IntentionAction) {
+    fun register(diagnosticFactory: DiagnosticFactory<*>, vararg action: IntentionAction) {
         actions.putAll(diagnosticFactory, action.toList())
     }
 
-    public fun getActionFactories(diagnosticFactory: DiagnosticFactory<*>): Collection<KotlinIntentionActionsFactory> {
+    fun getActionFactories(diagnosticFactory: DiagnosticFactory<*>): Collection<KotlinIntentionActionsFactory> {
         return factories.get(diagnosticFactory)
     }
 
-    public fun getActions(diagnosticFactory: DiagnosticFactory<*>): Collection<IntentionAction> {
+    fun getActions(diagnosticFactory: DiagnosticFactory<*>): Collection<IntentionAction> {
         return actions.get(diagnosticFactory)
     }
 
-    public fun getDiagnostics(factory: KotlinIntentionActionsFactory): Collection<DiagnosticFactory<*>> {
+    fun getDiagnostics(factory: KotlinIntentionActionsFactory): Collection<DiagnosticFactory<*>> {
         return factories.keySet().filter { factory in factories.get(it) }
     }
 
     companion object {
-        public fun getInstance(): QuickFixes = ServiceManager.getService(javaClass<QuickFixes>())
+        fun getInstance(): QuickFixes = ServiceManager.getService(QuickFixes::class.java)
     }
 }
 
-public interface QuickFixContributor {
+interface QuickFixContributor {
     companion object {
         val EP_NAME: ExtensionPointName<QuickFixContributor> = ExtensionPointName.create("org.jetbrains.kotlin.quickFixContributor")
     }

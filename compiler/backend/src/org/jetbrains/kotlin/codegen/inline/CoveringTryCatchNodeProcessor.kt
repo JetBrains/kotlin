@@ -25,26 +25,26 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.Comparator
 import java.util.Collections
 
-public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
+abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
 
-    public val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo()
+    val tryBlocksMetaInfo: IntervalMetaInfo<TryCatchBlockNodeInfo> = IntervalMetaInfo()
 
-    public val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo()
+    val localVarsMetaInfo: IntervalMetaInfo<LocalVarNodeWrapper> = IntervalMetaInfo()
 
-    public var nextFreeLocalIndex: Int = parameterSize
+    var nextFreeLocalIndex: Int = parameterSize
         private set
 
-    public fun getStartNodes(label: LabelNode): List<TryCatchBlockNodeInfo> {
+    fun getStartNodes(label: LabelNode): List<TryCatchBlockNodeInfo> {
         return tryBlocksMetaInfo.intervalStarts.get(label)
     }
 
-    public fun getEndNodes(label: LabelNode): List<TryCatchBlockNodeInfo> {
+    fun getEndNodes(label: LabelNode): List<TryCatchBlockNodeInfo> {
         return tryBlocksMetaInfo.intervalEnds.get(label)
     }
 
-    public open fun processInstruction(curInstr: AbstractInsnNode, directOrder: Boolean) {
+    open fun processInstruction(curInstr: AbstractInsnNode, directOrder: Boolean) {
         if (curInstr is VarInsnNode || curInstr is IincInsnNode) {
-            val argSize = InlineCodegenUtil.getLoadStoreArgSize(curInstr.getOpcode())
+            val argSize = InlineCodegenUtil.getLoadStoreArgSize(curInstr.opcode)
             val varIndex = if (curInstr is VarInsnNode) curInstr.`var` else (curInstr as IincInsnNode).`var`
             nextFreeLocalIndex = Math.max(nextFreeLocalIndex, varIndex + argSize)
         }
@@ -55,9 +55,9 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
         }
     }
 
-    public abstract fun instructionIndex(inst: AbstractInsnNode): Int
+    abstract fun instructionIndex(inst: AbstractInsnNode): Int
 
-    public fun sortTryCatchBlocks(intervals: List<TryCatchBlockNodeInfo>): List<TryCatchBlockNodeInfo> {
+    fun sortTryCatchBlocks(intervals: List<TryCatchBlockNodeInfo>): List<TryCatchBlockNodeInfo> {
         val comp = Comparator { t1: TryCatchBlockNodeInfo, t2: TryCatchBlockNodeInfo ->
             var result = instructionIndex(t1.handler) - instructionIndex(t2.handler)
             if (result == 0) {
@@ -83,7 +83,7 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
     }
 
 
-    public fun substituteLocalVarTable(node: MethodNode) {
+    fun substituteLocalVarTable(node: MethodNode) {
         node.localVariables.clear()
         for (info in localVarsMetaInfo.getMeaningfulIntervals()) {
             node.localVariables.add(info.node)
@@ -165,16 +165,16 @@ private fun Interval.isMeaningless(): Boolean {
     val start = this.startLabel
     var end: AbstractInsnNode = this.endLabel
     while (end != start && !end.isMeaningful) {
-        end = end.getPrevious()
+        end = end.previous
     }
     return start == end
 }
 
-public fun <T : SplittableInterval<T>> IntervalMetaInfo<T>.getMeaningfulIntervals(): List<T> {
+fun <T : SplittableInterval<T>> IntervalMetaInfo<T>.getMeaningfulIntervals(): List<T> {
     return allIntervals.filterNot { it.isMeaningless() }
 }
 
-public class DefaultProcessor(val node: MethodNode, parameterSize: Int) : CoveringTryCatchNodeProcessor(parameterSize) {
+class DefaultProcessor(val node: MethodNode, parameterSize: Int) : CoveringTryCatchNodeProcessor(parameterSize) {
 
     init {
         node.tryCatchBlocks.forEach { addTryNode(it) }
@@ -194,7 +194,7 @@ public class DefaultProcessor(val node: MethodNode, parameterSize: Int) : Coveri
     }
 }
 
-public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, SplittableInterval<LocalVarNodeWrapper> {
+class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, SplittableInterval<LocalVarNodeWrapper> {
     override val startLabel: LabelNode
         get() = node.start
     override val endLabel: LabelNode

@@ -1,5 +1,5 @@
 package
 
 public fun bar(): kotlin.String?
-public fun foo(/*0*/ c: kotlin.Collection<kotlin.String>): () -> kotlin.List<kotlin.String>
+public fun foo(/*0*/ c: kotlin.collections.Collection<kotlin.String>): () -> kotlin.collections.List<kotlin.String>
 public fun zoo(/*0*/ s: kotlin.String): kotlin.Boolean

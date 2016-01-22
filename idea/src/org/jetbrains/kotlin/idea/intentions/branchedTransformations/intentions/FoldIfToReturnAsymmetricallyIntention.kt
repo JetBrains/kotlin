@@ -22,30 +22,30 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-public class FoldIfToReturnAsymmetricallyIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with return") {
+class FoldIfToReturnAsymmetricallyIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with return") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        if (BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()) == null || element.getElse() != null) {
+        if (BranchedFoldingUtils.getFoldableBranchedReturn(element.then) == null || element.`else` != null) {
             return null
         }
 
         val nextElement = KtPsiUtil.skipTrailingWhitespacesAndComments(element) as? KtReturnExpression
-        if (nextElement?.getReturnedExpression() == null) return null
-        return element.getIfKeyword().getTextRange()
+        if (nextElement?.returnedExpression == null) return null
+        return element.ifKeyword.textRange
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor) {
-        val condition = element.getCondition()!!
-        val thenBranch = element.getThen()!!
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
+        val condition = element.condition!!
+        val thenBranch = element.then!!
         val elseBranch = KtPsiUtil.skipTrailingWhitespacesAndComments(element) as KtReturnExpression
 
         val psiFactory = KtPsiFactory(element)
         var newIfExpression = psiFactory.createIf(condition, thenBranch, elseBranch)
 
-        val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.getThen()!!)!!
-        val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.getElse()!!)!!
+        val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.then!!)!!
+        val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.`else`!!)!!
 
-        thenReturn.replace(thenReturn.getReturnedExpression()!!)
-        elseReturn.replace(elseReturn.getReturnedExpression()!!)
+        thenReturn.replace(thenReturn.returnedExpression!!)
+        elseReturn.replace(elseReturn.returnedExpression!!)
 
         element.replace(psiFactory.createExpressionByPattern("return $0", newIfExpression))
         elseBranch.delete()

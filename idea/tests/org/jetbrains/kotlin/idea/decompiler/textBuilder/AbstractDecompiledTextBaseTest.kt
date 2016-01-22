@@ -30,9 +30,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractDecompiledTextBaseTest(
+abstract class AbstractDecompiledTextBaseTest(
         baseDirectory: String,
-        private val isJsLibrary: Boolean = false
+        private val isJsLibrary: Boolean = false,
+        private val allowKotlinPackage: Boolean = false
 ) : KotlinLightCodeInsightFixtureTestCase() {
     protected val TEST_DATA_PATH: String = PluginTestCaseBase.getTestDataPathBase() + baseDirectory
 
@@ -42,7 +43,7 @@ public abstract class AbstractDecompiledTextBaseTest(
 
     protected abstract fun checkPsiFile(psiFile: PsiFile)
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val fileToDecompile = getFileToDecompile()
         val psiFile = PsiManager.getInstance(project).findFile(fileToDecompile)!!
         checkPsiFile(psiFile)
@@ -54,7 +55,7 @@ public abstract class AbstractDecompiledTextBaseTest(
         if (isAllFilesPresentInTest()) {
             return KotlinLightProjectDescriptor.INSTANCE
         }
-        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, false, isJsLibrary)
+        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, false, isJsLibrary, allowKotlinPackage)
     }
 
     private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {

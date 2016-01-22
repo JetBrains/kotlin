@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIntention<KtSimpleNameExpression>(javaClass(), "Replace with a 'for' loop") {
+class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIntention<KtSimpleNameExpression>(KtSimpleNameExpression::class.java, "Replace with a 'for' loop") {
     private val FOR_EACH_NAME = "forEach"
     private val FOR_EACH_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$FOR_EACH_NAME" }.toSet()
 
@@ -33,13 +33,13 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
         if (element.getReferencedName() != FOR_EACH_NAME) return false
 
         val data = extractData(element) ?: return false
-        if (data.functionLiteral.getValueParameters().size() > 1) return false
-        if (data.functionLiteral.getBodyExpression() == null) return false
+        if (data.functionLiteral.valueParameters.size > 1) return false
+        if (data.functionLiteral.bodyExpression == null) return false
 
         return true
     }
 
-    override fun applyTo(element: KtSimpleNameExpression, editor: Editor) {
+    override fun applyTo(element: KtSimpleNameExpression, editor: Editor?) {
         val (expressionToReplace, receiver, functionLiteral) = extractData(element)!!
 
         val commentSaver = CommentSaver(expressionToReplace)
@@ -57,18 +57,18 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
     )
 
     private fun extractData(nameExpr: KtSimpleNameExpression): Data? {
-        val parent = nameExpr.getParent()
+        val parent = nameExpr.parent
         val expression = (when (parent) {
-            is KtCallExpression -> parent.getParent() as? KtDotQualifiedExpression
+            is KtCallExpression -> parent.parent as? KtDotQualifiedExpression
             is KtBinaryExpression -> parent
             else -> null
         } ?: return null) as KtExpression //TODO: submit bug
 
         val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return null
-        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() !in FOR_EACH_FQ_NAMES) return null
+        if (DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).toString() !in FOR_EACH_FQ_NAMES) return null
 
-        val receiver = resolvedCall.getCall().getExplicitReceiver() as? ExpressionReceiver ?: return null
-        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
+        val receiver = resolvedCall.call.explicitReceiver as? ExpressionReceiver ?: return null
+        val argument = resolvedCall.call.valueArguments.singleOrNull() ?: return null
         val functionLiteral = argument.getArgumentExpression() as? KtLambdaExpression ?: return null
         return Data(expression, receiver.expression, functionLiteral)
     }
@@ -76,8 +76,8 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
     private fun generateLoop(functionLiteral: KtLambdaExpression, receiver: KtExpression): KtExpression {
         val factory = KtPsiFactory(functionLiteral)
         val loopRange = KtPsiUtil.safeDeparenthesize(receiver)
-        val body = functionLiteral.getBodyExpression()!!
-        val parameter = functionLiteral.getValueParameters().singleOrNull()
+        val body = functionLiteral.bodyExpression!!
+        val parameter = functionLiteral.valueParameters.singleOrNull()
         return factory.createExpressionByPattern("for($0 in $1){ $2 }", parameter ?: "it", loopRange, body)
     }
 }

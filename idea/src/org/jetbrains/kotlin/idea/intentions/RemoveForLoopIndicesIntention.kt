@@ -31,23 +31,23 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
+class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
         listOf(IntentionBasedInspection.IntentionData(RemoveForLoopIndicesIntention())),
         "Index is not used in the loop body",
-        javaClass()
+        KtForExpression::class.java
 ) {
     override val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(javaClass(), "Remove indices in 'for' loop") {
+class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Remove indices in 'for' loop") {
     private val WITH_INDEX_NAME = "withIndex"
     private val WITH_INDEX_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         val loopRange = element.loopRange as? KtDotQualifiedExpression ?: return null
         val multiParameter = element.destructuringParameter ?: return null
-        if (multiParameter.entries.size() != 2) return null
+        if (multiParameter.entries.size != 2) return null
 
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
@@ -60,7 +60,7 @@ public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForEx
         return indexVar.nameIdentifier?.range
     }
 
-    override fun applyTo(element: KtForExpression, editor: Editor) {
+    override fun applyTo(element: KtForExpression, editor: Editor?) {
         val multiParameter = element.destructuringParameter!!
         val loopRange = element.loopRange as KtDotQualifiedExpression
 

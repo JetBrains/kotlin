@@ -42,16 +42,16 @@ fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.getModuleInfo { r
 }
 
 private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
-    if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement()
+    if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement(onFailure)
 
-    val containingJetFile = (this as? KtElement)?.getContainingFile() as? KtFile
+    val containingJetFile = (this as? KtElement)?.containingFile as? KtFile
     val context = containingJetFile?.analysisContext
     if (context != null) return context.getModuleInfo()
 
     val doNotAnalyze = containingJetFile?.doNotAnalyze
     if (doNotAnalyze != null) {
         return onFailure(
-                "Should not analyze element: ${getText()} in file ${containingJetFile?.getName() ?: " <no file>"}\n$doNotAnalyze"
+                "Should not analyze element: ${text} in file ${containingJetFile?.name ?: " <no file>"}\n$doNotAnalyze"
         )
     }
 
@@ -71,7 +71,7 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
     return getModuleInfoByVirtualFile(
             project,
             virtualFile,
-            isDecompiledFile = (containingFile as? KtFile)?.isCompiled() ?: false
+            isDecompiledFile = (containingFile as? KtFile)?.isCompiled ?: false
     )
 }
 
@@ -82,11 +82,11 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     if (module != null) {
         fun warnIfDecompiled() {
             if (isDecompiledFile) {
-                LOG.warn("Decompiled file for ${virtualFile.getCanonicalPath()} is in content of $module")
+                LOG.warn("Decompiled file for ${virtualFile.canonicalPath} is in content of $module")
             }
         }
 
-        val moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex()
+        val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
         if (moduleFileIndex.isInTestSourceContent(virtualFile)) {
             warnIfDecompiled()
             return module.testSourceInfo()
@@ -102,7 +102,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     entries@ for (orderEntry in orderEntries) {
         when (orderEntry) {
             is LibraryOrderEntry -> {
-                val library = orderEntry.getLibrary() ?: continue@entries
+                val library = orderEntry.library ?: continue@entries
                 if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !isDecompiledFile) {
                     return LibraryInfo(project, library)
                 }
@@ -111,7 +111,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
                 }
             }
             is JdkOrderEntry -> {
-                val sdk = orderEntry.getJdk() ?: continue@entries
+                val sdk = orderEntry.jdk ?: continue@entries
                 return SdkInfo(project, sdk)
             }
         }
@@ -119,7 +119,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     return NotUnderContentRootModuleInfo
 }
 
-private fun KtLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo {
+private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
     val decompiledClass = this.getParentOfType<KtLightClassForDecompiledDeclaration>(strict = false)
     if (decompiledClass != null) {
         return getModuleInfoByVirtualFile(
@@ -131,7 +131,7 @@ private fun KtLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo 
     val element = getOrigin() ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
         is KtLightClassForFacade -> this.files.first()
-        else -> throw IllegalStateException("Unknown light class without origin is referenced by IDE lazy resolve: $javaClass")
+        else -> return onFailure("Light element without origin is referenced by resolve:\n$this\n${this.getDelegate().text}")
     }
     return element.getModuleInfo()
 }

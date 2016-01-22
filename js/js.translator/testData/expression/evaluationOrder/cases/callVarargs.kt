@@ -8,7 +8,7 @@ fun <T> bar(s: String, value: T): T {
 }
 
 fun <T> baz(vararg args: T): String {
-    return "baz: ${args.size()}"
+    return "baz: ${args.size}"
 }
 
 fun <T> idVarArg(vararg a: T) = a

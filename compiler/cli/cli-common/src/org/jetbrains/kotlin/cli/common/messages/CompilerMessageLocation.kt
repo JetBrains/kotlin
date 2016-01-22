@@ -16,21 +16,19 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
-public data class CompilerMessageLocation private constructor(
-        public val path: String?,
-        public val line: Int,
-        public val column: Int,
-        public val lineContent: String?
+data class CompilerMessageLocation private constructor(
+        val path: String?,
+        val line: Int,
+        val column: Int,
+        val lineContent: String?
 ) {
     override fun toString(): String =
             path + (if (line != -1 || column != -1) " ($line:$column)" else "")
 
     companion object {
-        @JvmField
-        public val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1, null)
+        @JvmField val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1, null)
 
-        @JvmStatic
-        public fun create(
+        @JvmStatic fun create(
                 path: String?,
                 line: Int,
                 column: Int,

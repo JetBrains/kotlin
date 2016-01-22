@@ -35,25 +35,25 @@ import org.jetbrains.kotlin.j2k.content
 
 object IdeaDocCommentConverter : DocCommentConverter {
     override fun convertDocComment(docComment: PsiDocComment): String {
-        val html = StringBuilder {
-            appendJavadocElements(docComment.getDescriptionElements())
+        val html = buildString {
+            appendJavadocElements(docComment.descriptionElements)
 
             tagsLoop@
-            for (tag in docComment.getTags()) {
-                when (tag.getName()) {
+            for (tag in docComment.tags) {
+                when (tag.name) {
                     "deprecated" -> continue@tagsLoop
                     "see" -> append("@see ${convertJavadocLink(tag.content())}\n")
-                    else -> appendJavadocElements(tag.getChildren()).append("\n")
+                    else -> appendJavadocElements(tag.children).append("\n")
                 }
             }
-        }.toString()
+        }
 
         if (html.trim().isEmpty() && docComment.findTagByName("deprecated") != null) {
             // @deprecated was the only content of the doc comment; we can drop the comment
             return ""
         }
 
-        val htmlFile = PsiFileFactory.getInstance(docComment.getProject()).createFileFromText(
+        val htmlFile = PsiFileFactory.getInstance(docComment.project).createFileFromText(
                 "javadoc.html", HtmlFileType.INSTANCE, html)
         val htmlToMarkdownConverter = HtmlToMarkdownConverter()
         htmlFile.accept(htmlToMarkdownConverter)
@@ -66,35 +66,35 @@ object IdeaDocCommentConverter : DocCommentConverter {
                 append(convertInlineDocTag(it))
             }
             else {
-                append(it.getText())
+                append(it.text)
             }
         }
         return this
     }
 
-    private fun convertInlineDocTag(tag: PsiInlineDocTag) = when(tag.getName()) {
+    private fun convertInlineDocTag(tag: PsiInlineDocTag) = when(tag.name) {
         "code", "literal" -> {
-            val text = tag.getDataElements().joinToString("") { it.getText() }
+            val text = tag.dataElements.joinToString("") { it.text }
             val escaped = StringUtil.escapeXml(text.trimStart())
-            if (tag.getName() == "code") "<code>$escaped</code>" else escaped
+            if (tag.name == "code") "<code>$escaped</code>" else escaped
         }
 
         "link", "linkplain" -> {
             val valueElement = tag.linkElement()
-            val labelText = tag.getDataElements().firstOrNull { it is PsiDocToken }?.getText() ?: ""
-            val kdocLink = convertJavadocLink(valueElement?.getText())
+            val labelText = tag.dataElements.firstOrNull { it is PsiDocToken }?.text ?: ""
+            val kdocLink = convertJavadocLink(valueElement?.text)
             val linkText = if (labelText.isEmpty()) kdocLink else StringUtil.escapeXml(labelText)
             "<a docref=\"$kdocLink\">$linkText</a>"
         }
 
-        else -> tag.getText()
+        else -> tag.text
     }
 
     private fun convertJavadocLink(link: String?): String =
         if (link != null) link.substringBefore('(').replace('#', '.') else ""
 
     private fun PsiDocTag.linkElement(): PsiElement? =
-            getValueElement() ?: getDataElements().firstOrNull { it !is PsiWhiteSpace }
+            valueElement ?: dataElements.firstOrNull { it !is PsiWhiteSpace }
 
     private class HtmlToMarkdownConverter() : XmlRecursiveElementVisitor() {
         private enum class ListType { Ordered, Unordered; }
@@ -121,7 +121,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
 
             if (whitespaceIsPartOfText) {
                 appendPendingText()
-                markdownBuilder.append(space.getText())
+                markdownBuilder.append(space.text)
                 if (space.textContains('\n')) {
                     afterLineBreak = true
                 }
@@ -131,10 +131,10 @@ object IdeaDocCommentConverter : DocCommentConverter {
         override fun visitElement(element: PsiElement) {
             super.visitElement(element)
 
-            val tokenType = element.getNode().getElementType()
+            val tokenType = element.node.elementType
             if (tokenType == XmlTokenType.XML_DATA_CHARACTERS || tokenType == XmlTokenType.XML_CHAR_ENTITY_REF) {
                 appendPendingText()
-                markdownBuilder.append(element.getText())
+                markdownBuilder.append(element.text)
             }
         }
 
@@ -170,7 +170,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
             }
         }
 
-        private fun getMarkdownForTag(tag: XmlTag, atLineStart: Boolean): MarkdownSpan = when(tag.getName()) {
+        private fun getMarkdownForTag(tag: XmlTag, atLineStart: Boolean): MarkdownSpan = when(tag.name) {
             "b", "strong" -> MarkdownSpan.wrap("**")
 
             "p" -> if (atLineStart) MarkdownSpan.prefix("\n * ") else MarkdownSpan.prefix("\n *\n *")
@@ -184,7 +184,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
             "a" -> {
                 if (tag.getAttributeValue("docref") != null) {
                     val docRef = tag.getAttributeValue("docref")
-                    val innerText = tag.getValue().getText()
+                    val innerText = tag.value.text
                     if (docRef == innerText) MarkdownSpan("[", "]") else MarkdownSpan("[", "][$docRef]")
                 }
                 else {

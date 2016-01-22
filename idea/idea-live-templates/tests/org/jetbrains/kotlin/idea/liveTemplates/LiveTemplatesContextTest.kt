@@ -21,25 +21,25 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import java.io.File
 
-public class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
+class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String =
             File(TEST_DATA_BASE_PATH, "/context").path + File.separator
 
-    public fun testInDocComment() {
+    fun testInDocComment() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         assertInContexts(
                 KotlinTemplateContextType.Generic::class.java,
                 KotlinTemplateContextType.Comment::class.java)
     }
 
-    public fun testTopLevel() {
+    fun testTopLevel() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         assertInContexts(
                 KotlinTemplateContextType.Generic::class.java,
                 KotlinTemplateContextType.TopLevel::class.java)
     }
 
-    public fun testInExpression() {
+    fun testInExpression() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         assertInContexts(
                 KotlinTemplateContextType.Generic::class.java,
@@ -47,8 +47,8 @@ public class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() 
     }
 
     private fun assertInContexts(vararg expectedContexts: Class<out KotlinTemplateContextType>) {
-        val allContexts = TemplateContextType.EP_NAME.getExtensions().filter { it is KotlinTemplateContextType }
-        val enabledContexts = allContexts.filter { it.isInContext(myFixture.getFile(), myFixture.getCaretOffset()) }.map { it.javaClass }
+        val allContexts = TemplateContextType.EP_NAME.extensions.filter { it is KotlinTemplateContextType }
+        val enabledContexts = allContexts.filter { it.isInContext(myFixture.file, myFixture.caretOffset) }.map { it.javaClass }
         UsefulTestCase.assertSameElements(enabledContexts, *expectedContexts)
     }
 }

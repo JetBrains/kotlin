@@ -18,9 +18,11 @@
 package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
@@ -40,7 +42,7 @@ private fun KotlinType.canHaveSubtypesIgnoringNullability(): Boolean {
 
     when (descriptor) {
         is TypeParameterDescriptor -> return true
-        is ClassDescriptor -> if (!descriptor.isFinal) return true
+        is ClassDescriptor -> if (!descriptor.isFinalClass) return true
     }
 
     for ((parameter, argument) in constructor.parameters.zip(arguments)) {
@@ -56,7 +58,7 @@ private fun KotlinType.canHaveSubtypesIgnoringNullability(): Boolean {
     return false
 }
 
-public fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance): Variance {
+fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance): Variance {
     if (parameterVariance === Variance.INVARIANT) {
         return projectionKind
     }
@@ -76,14 +78,15 @@ val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
     get() {
         if (this !is CallableMemberDescriptor) return false
         return firstOverridden {
-            METHODS_WITH_DECLARATION_SITE_WILDCARDS.containsRaw(it.propertyIfAccessor.fqNameOrNull())
+            METHODS_WITH_DECLARATION_SITE_WILDCARDS.contains(it.propertyIfAccessor.fqNameOrNull())
         } != null
     }
 
+private fun FqName.child(name: String): FqName = child(Name.identifier(name))
 private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
-        FqName("kotlin.MutableCollection.addAll"),
-        FqName("kotlin.MutableList.addAll"),
-        FqName("kotlin.MutableMap.putAll")
+        BUILTIN_NAMES.mutableCollection.child("addAll"),
+        BUILTIN_NAMES.mutableList.child("addAll"),
+        BUILTIN_NAMES.mutableMap.child("putAll")
 )
 
 internal fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType): TypeMappingMode {

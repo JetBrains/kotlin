@@ -20,34 +20,34 @@ import org.jetbrains.kotlin.js.test.AbstractSingleFileTranslationWithDirectivesT
 import org.jetbrains.kotlin.js.test.MultipleModulesTranslationTest
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest
 
-public abstract class AbstractBlackBoxTest(d: String) : SingleFileTranslationTest(d) {
+abstract class AbstractBlackBoxTest(d: String) : SingleFileTranslationTest(d) {
     override fun doTest(filename: String) = checkBlackBoxIsOkByPath(filename)
 }
 
-public abstract class AbstractBridgeTest : AbstractBlackBoxTest("bridges/")
+abstract class AbstractBridgeTest : AbstractBlackBoxTest("bridges/")
 
-public abstract class AbstractCallableReferenceTest(main: String) : SingleFileTranslationTest("callableReference/" + main)
+abstract class AbstractCallableReferenceTest(main: String) : SingleFileTranslationTest("callableReference/" + main)
 
-public abstract class AbstractCompanionObjectTest : SingleFileTranslationTest("objectIntrinsics/")
+abstract class AbstractCompanionObjectTest : SingleFileTranslationTest("objectIntrinsics/")
 
-public abstract class AbstractDynamicTest : SingleFileTranslationTest("dynamic/")
+abstract class AbstractDynamicTest : SingleFileTranslationTest("dynamic/")
 
-public abstract class AbstractFunctionExpressionTest : AbstractBlackBoxTest("functionExpression/")
+abstract class AbstractFunctionExpressionTest : AbstractBlackBoxTest("functionExpression/")
 
-public abstract class AbstractInlineEvaluationOrderTest : AbstractSingleFileTranslationWithDirectivesTest("inlineEvaluationOrder/")
+abstract class AbstractInlineEvaluationOrderTest : AbstractSingleFileTranslationWithDirectivesTest("inlineEvaluationOrder/")
 
-public abstract class AbstractInlineJsStdlibTest : AbstractSingleFileTranslationWithDirectivesTest("inlineStdlib/")
+abstract class AbstractInlineJsStdlibTest : AbstractSingleFileTranslationWithDirectivesTest("inlineStdlib/")
 
-public abstract class AbstractInlineJsTest : AbstractSingleFileTranslationWithDirectivesTest("inline/")
+abstract class AbstractInlineJsTest : AbstractSingleFileTranslationWithDirectivesTest("inline/")
 
-public abstract class AbstractJsCodeTest : AbstractSingleFileTranslationWithDirectivesTest("jsCode/")
+abstract class AbstractJsCodeTest : AbstractSingleFileTranslationWithDirectivesTest("jsCode/")
 
-public abstract class AbstractLabelTest : AbstractSingleFileTranslationWithDirectivesTest("labels/")
+abstract class AbstractLabelTest : AbstractSingleFileTranslationWithDirectivesTest("labels/")
 
-public abstract class AbstractMultiModuleTest : MultipleModulesTranslationTest("multiModule/")
+abstract class AbstractMultiModuleTest : MultipleModulesTranslationTest("multiModule/")
 
-public abstract class AbstractInlineMultiModuleTest : MultipleModulesTranslationTest("inlineMultiModule/")
+abstract class AbstractInlineMultiModuleTest : MultipleModulesTranslationTest("inlineMultiModule/")
 
-public abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWords/")
+abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWords/")
 
-public abstract class AbstractSecondaryConstructorTest : AbstractBlackBoxTest("secondaryConstructors/")
+abstract class AbstractSecondaryConstructorTest : AbstractBlackBoxTest("secondaryConstructors/")

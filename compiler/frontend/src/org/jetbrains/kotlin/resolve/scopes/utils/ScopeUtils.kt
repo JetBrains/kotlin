@@ -26,20 +26,20 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 
-public val HierarchicalScope.parentsWithSelf: Sequence<HierarchicalScope>
+val HierarchicalScope.parentsWithSelf: Sequence<HierarchicalScope>
     get() = sequence(this) { it.parent }
 
-public val HierarchicalScope.parents: Sequence<HierarchicalScope>
+val HierarchicalScope.parents: Sequence<HierarchicalScope>
     get() = parentsWithSelf.drop(1)
 
 /**
  * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
  */
-public fun LexicalScope.getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = collectFromMeAndParent {
+fun LexicalScope.getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = collectFromMeAndParent {
     (it as? LexicalScope)?.implicitReceiver
 }
 
-public fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = collectAllFromMeAndParent {
+fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = collectAllFromMeAndParent {
     if (it is LexicalScope && it.isOwnerDescriptorAccessibleByLabel && it.ownerDescriptor.name == labelName) {
         listOf(it.ownerDescriptor)
     }
@@ -49,7 +49,7 @@ public fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<Decl
 }
 
 // Result is guaranteed to be filtered by kind and name.
-public fun HierarchicalScope.collectDescriptorsFiltered(
+fun HierarchicalScope.collectDescriptorsFiltered(
         kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
         nameFilter: (Name) -> Boolean = { true }
 ): Collection<DeclarationDescriptor> {
@@ -59,8 +59,7 @@ public fun HierarchicalScope.collectDescriptorsFiltered(
 }
 
 
-@Deprecated("Use getOwnProperties instead")
-public fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
+@Deprecated("Use getOwnProperties instead") fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
     return findFirstFromMeAndParent {
         when {
             it is LexicalScopeWrapper -> it.delegate.findLocalVariable(name)
@@ -72,63 +71,38 @@ public fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
     }
 }
 
-public fun HierarchicalScope.findClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
+fun HierarchicalScope.findClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
         = findFirstFromMeAndParent { it.getContributedClassifier(name, location) }
 
-public fun HierarchicalScope.findPackage(name: Name): PackageViewDescriptor?
+fun HierarchicalScope.findPackage(name: Name): PackageViewDescriptor?
         = findFirstFromImportingScopes { it.getContributedPackage(name) }
 
-public fun HierarchicalScope.collectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+fun HierarchicalScope.collectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
         = collectAllFromMeAndParent { it.getContributedVariables(name, location) }
 
-public fun HierarchicalScope.collectFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+fun HierarchicalScope.collectFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
         = collectAllFromMeAndParent { it.getContributedFunctions(name, location) }
 
-public fun HierarchicalScope.findVariable(name: Name, location: LookupLocation, predicate: (VariableDescriptor) -> Boolean = { true }): VariableDescriptor? {
+fun HierarchicalScope.findVariable(name: Name, location: LookupLocation, predicate: (VariableDescriptor) -> Boolean = { true }): VariableDescriptor? {
     processForMeAndParent {
         it.getContributedVariables(name, location).firstOrNull(predicate)?.let { return it }
     }
     return null
 }
 
-public fun HierarchicalScope.findFunction(name: Name, location: LookupLocation, predicate: (FunctionDescriptor) -> Boolean = { true }): FunctionDescriptor? {
+fun HierarchicalScope.findFunction(name: Name, location: LookupLocation, predicate: (FunctionDescriptor) -> Boolean = { true }): FunctionDescriptor? {
     processForMeAndParent {
         it.getContributedFunctions(name, location).firstOrNull(predicate)?.let { return it }
     }
     return null
 }
 
-public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
+fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
-public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes, name, location) }
-
-public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes) }
-
-public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes) }
-
-public fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
-
-@JvmOverloads
-public fun MemberScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
+@JvmOverloads fun MemberScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
 
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: MemberScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = emptyList<PropertyDescriptor>()
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = emptyList<FunctionDescriptor>()
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-            = emptyList<PropertyDescriptor>()
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-            = emptyList<FunctionDescriptor>()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = memberScope.getContributedDescriptors(kindFilter, nameFilter)

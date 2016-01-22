@@ -24,10 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.AnnotationChecker;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.context.CallPosition;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.DeferredType;
@@ -87,6 +86,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     protected final FunctionsTypingVisitor functions;
     protected final ControlStructureTypingVisitor controlStructures;
     protected final PatternMatchingTypingVisitor patterns;
+    protected final DeclarationsCheckerBuilder declarationsCheckerBuilder;
 
     private ExpressionTypingVisitorDispatcher(
             @NotNull ExpressionTypingComponents components,
@@ -98,6 +98,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
         this.controlStructures = new ControlStructureTypingVisitor(this);
         this.patterns = new PatternMatchingTypingVisitor(this);
         this.functions = new FunctionsTypingVisitor(this);
+        this.declarationsCheckerBuilder = components.declarationsCheckerBuilder;
     }
 
     @Override
@@ -230,7 +231,8 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
 
     @Override
     public KotlinTypeInfo visitLambdaExpression(@NotNull KtLambdaExpression expression, ExpressionTypingContext data) {
-        return functions.visitLambdaExpression(expression, data);
+        // Erasing call position to unknown is necessary to prevent wrong call positions when type checking lambda's body
+        return functions.visitLambdaExpression(expression, data.replaceCallPosition(CallPosition.Unknown.INSTANCE));
     }
 
     @Override
@@ -382,6 +384,16 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     @Override
     public KotlinTypeInfo visitDeclaration(@NotNull KtDeclaration dcl, ExpressionTypingContext data) {
         return basic.visitDeclaration(dcl, data);
+    }
+
+    @Override
+    public KotlinTypeInfo visitClass(@NotNull KtClass klass, ExpressionTypingContext data) {
+        return basic.visitClass(klass, data);
+    }
+
+    @Override
+    public KotlinTypeInfo visitProperty(@NotNull KtProperty property, ExpressionTypingContext data) {
+        return basic.visitProperty(property, data);
     }
 
     @Override

@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.cli;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.Charsets;
+import kotlin.*;
+import kotlin.text.*;
+import kotlin.Pair;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -29,10 +30,12 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
@@ -58,7 +61,7 @@ public class CliBaseTest {
         try {
             System.setErr(new PrintStream(bytes));
             ExitCode exitCode = CLICompiler.doMainNoExit(compiler, ArrayUtil.toStringArray(args));
-            return Pair.create(bytes.toString("utf-8"), exitCode);
+            return new Pair<String, ExitCode>(bytes.toString("utf-8"), exitCode);
         }
         catch (Exception e) {
             throw ExceptionUtilsKt.rethrow(e);
@@ -70,9 +73,20 @@ public class CliBaseTest {
 
     @NotNull
     public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @NotNull ExitCode exitCode, @NotNull String testDataDir) {
+        return getNormalizedCompilerOutput(pureOutput, exitCode, testDataDir, JvmMetadataVersion.INSTANCE);
+    }
+
+    @NotNull
+    public static String getNormalizedCompilerOutput(
+            @NotNull String pureOutput,
+            @NotNull ExitCode exitCode,
+            @NotNull String testDataDir,
+            @NotNull BinaryVersion version
+    ) {
         String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
-                .replace("expected ABI version is " + JvmAbi.VERSION, "expected ABI version is $ABI_VERSION$")
+                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
+                .replace("expected version is " + version, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
                 .replace(KotlinVersion.VERSION, "$VERSION$");
 
@@ -95,7 +109,7 @@ public class CliBaseTest {
         Pair<String, ExitCode> outputAndExitCode =
                 executeCompilerGrabOutput(compiler, readArgs(testDataDir + "/" + testName.getMethodName() + ".args", testDataDir,
                                                              tmpdir.getTmpDir().getPath()));
-        String actual = getNormalizedCompilerOutput(outputAndExitCode.first, outputAndExitCode.second, testDataDir);
+        String actual = getNormalizedCompilerOutput(outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), testDataDir);
 
         KotlinTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testName.getMethodName() + ".out"), actual);
     }

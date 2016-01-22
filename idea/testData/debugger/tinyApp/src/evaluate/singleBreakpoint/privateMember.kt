@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     val derivedAsBase: Base = Derived()
 
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 class MyClass {

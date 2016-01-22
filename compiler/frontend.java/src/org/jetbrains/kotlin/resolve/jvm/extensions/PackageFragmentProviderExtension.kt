@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.storage.StorageManager
 
-public interface PackageFragmentProviderExtension {
+interface PackageFragmentProviderExtension {
     companion object : ProjectExtensionDescriptor<PackageFragmentProviderExtension>(
             "org.jetbrains.kotlin.packageFragmentProviderExtension",
             PackageFragmentProviderExtension::class.java
     )
 
-    public fun getPackageFragmentProvider(
+    fun getPackageFragmentProvider(
             project: Project,
             module: ModuleDescriptor,
             storageManager: StorageManager,

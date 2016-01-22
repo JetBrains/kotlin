@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER") // kotlin.Metadata
+
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import kotlin.jvm.internal.KotlinFunction
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
 import kotlin.reflect.jvm.internal.KFunctionImpl
@@ -35,18 +36,17 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
  * returns a [KFunction] instance providing introspection capabilities for that lambda or function expression and its parameters.
  * Not all features are currently supported, in particular [KCallable.call] and [KCallable.callBy] will fail at the moment.
  */
-public fun <R> Function<R>.reflect(): KFunction<R>? {
-    val callable = javaClass.getAnnotation(KotlinFunction::class.java) ?: return null
-    val input = BitEncoding.decodeBytes(callable.data).inputStream()
+fun <R> Function<R>.reflect(): KFunction<R>? {
+    val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
+    val input = BitEncoding.decodeBytes(annotation.d1).inputStream()
     val nameResolver = JvmNameResolver(
-            JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY),
-            callable.strings
+            JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY), annotation.d2
     )
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
     val context = DeserializationContext(
             moduleData.deserialization, nameResolver, moduleData.module,
-            typeTable = TypeTable(proto.typeTable), parentTypeDeserializer = null, typeParameters = listOf()
+            typeTable = TypeTable(proto.typeTable), packagePartSource = null, parentTypeDeserializer = null, typeParameters = listOf()
     )
     val descriptor = MemberDeserializer(context).loadFunction(proto)
     @Suppress("UNCHECKED_CAST")

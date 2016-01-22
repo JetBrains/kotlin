@@ -20,16 +20,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
-import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.types.KotlinType
 
-public abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) : UsageInfo(element) {
+abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) : UsageInfo(element) {
     abstract fun resolve(javaMethodChangeInfo: KotlinChangeInfo): JavaMethodKotlinUsageWithDelegate<T>
 }
 
-public class DeferredJavaMethodOverrideOrSAMUsage(
+class DeferredJavaMethodOverrideOrSAMUsage(
         val function: KtFunction,
         val functionDescriptor: FunctionDescriptor,
         val samCallType: KotlinType?
@@ -41,22 +40,12 @@ public class DeferredJavaMethodOverrideOrSAMUsage(
     }
 }
 
-public class DeferredJavaMethodKotlinCallerUsage(
+class DeferredJavaMethodKotlinCallerUsage(
         val declaration: KtNamedDeclaration
 ) : JavaMethodDeferredKotlinUsage<KtNamedDeclaration>(declaration) {
     override fun resolve(javaMethodChangeInfo: KotlinChangeInfo): JavaMethodKotlinUsageWithDelegate<KtNamedDeclaration> {
         return object : JavaMethodKotlinUsageWithDelegate<KtNamedDeclaration>(declaration, javaMethodChangeInfo) {
             override val delegateUsage = KotlinCallerUsage(declaration)
-        }
-    }
-}
-
-public class JavaConstructorDeferredUsageInDelegationCall(
-        val delegationCall: KtConstructorDelegationCall
-) : JavaMethodDeferredKotlinUsage<KtConstructorDelegationCall>(delegationCall) {
-    override fun resolve(javaMethodChangeInfo: KotlinChangeInfo): JavaMethodKotlinUsageWithDelegate<KtConstructorDelegationCall> {
-        return object : JavaMethodKotlinUsageWithDelegate<KtConstructorDelegationCall>(delegationCall, javaMethodChangeInfo) {
-            override val delegateUsage = KotlinConstructorDelegationCallUsage(delegationCall, javaMethodChangeInfo)
         }
     }
 }

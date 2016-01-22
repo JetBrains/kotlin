@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 import org.jetbrains.kotlin.lexer.KtTokens.*
 
-public class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression {
-    public constructor(node: ASTNode) : super(node) {
+class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpressionStub>, KtSimpleNameExpression {
+    constructor(node: ASTNode) : super(node) {
     }
 
-    public constructor(stub: KotlinNameReferenceExpressionStub) : super(stub, KtStubElementTypes.REFERENCE_EXPRESSION) {
+    constructor(stub: KotlinNameReferenceExpressionStub) : super(stub, KtStubElementTypes.REFERENCE_EXPRESSION) {
     }
 
     override fun getReferencedName(): String {

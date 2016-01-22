@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
-public abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescriptorRendererTest() {
+abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescriptorRendererTest() {
     override fun getDescriptor(declaration: KtDeclaration, container: ComponentProvider): DeclarationDescriptor {
         if (declaration is KtAnonymousInitializer || KtPsiUtil.isLocal(declaration)) {
             return container.get<ResolveElementCache>()

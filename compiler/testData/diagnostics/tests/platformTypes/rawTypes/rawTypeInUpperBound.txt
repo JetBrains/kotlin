@@ -6,7 +6,7 @@ public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
     public/*package*/ open fun consume(/*0*/ x: T!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public/*package*/ open fun getChildrenStubs(): kotlin.(Mutable)List<kotlin.String!>!
+    public/*package*/ open fun getChildrenStubs(): kotlin.collections.(Mutable)List<kotlin.String!>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public/*package*/ open fun produce(): T!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

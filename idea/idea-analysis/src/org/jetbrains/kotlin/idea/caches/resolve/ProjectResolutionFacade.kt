@@ -67,7 +67,7 @@ internal class ProjectResolutionFacade(
     fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
         val slruCache = synchronized(analysisResults) {
-            analysisResults.getValue()!!
+            analysisResults.value!!
         }
         val results = elements.map {
             val perFileCache = synchronized(slruCache) {
@@ -98,7 +98,7 @@ internal class ResolutionFacadeImpl(
         get() = projectFacade.findModuleDescriptor(moduleInfo)
 
     override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
-        val resolveElementCache = getFrontendService(element, javaClass<ResolveElementCache>())
+        val resolveElementCache = getFrontendService(element, ResolveElementCache::class.java)
         return resolveElementCache.resolveToElement(element, bodyResolveMode)
     }
 

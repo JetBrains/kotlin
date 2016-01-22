@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 
 
-public class RenameOnSecondaryConstructorHandler : RenameHandler {
+class RenameOnSecondaryConstructorHandler : RenameHandler {
     override fun isAvailableOnDataContext(dataContext: DataContext?): Boolean {
         if (dataContext == null) return false
 
@@ -39,8 +39,8 @@ public class RenameOnSecondaryConstructorHandler : RenameHandler {
         val file = CommonDataKeys.PSI_FILE.getData(dataContext) ?: return false
 
         val element = PsiTreeUtil.findElementOfClassAtOffsetWithStopSet(
-                file, editor.getCaretModel().getOffset(), javaClass<KtSecondaryConstructor>(), false,
-                javaClass<KtBlockExpression>(), javaClass<KtValueArgumentList>(), javaClass<KtParameterList>()
+                file, editor.caretModel.offset, KtSecondaryConstructor::class.java, false,
+                KtBlockExpression::class.java, KtValueArgumentList::class.java, KtParameterList::class.java
         )
         return element != null;
     }

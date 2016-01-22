@@ -69,10 +69,10 @@ class ConstructorConverter(
         return toTargetConstructorMap
     }
 
-    public var baseClassParams: List<DeferredElement<Expression>>? = if (constructors.isEmpty()) emptyList() else null
+    var baseClassParams: List<DeferredElement<Expression>>? = if (constructors.isEmpty()) emptyList() else null
         private set
 
-    public fun convertConstructor(constructor: PsiMethod,
+    fun convertConstructor(constructor: PsiMethod,
                                   annotations: Annotations,
                                   modifiers: Modifiers,
                                   fieldsToDrop: MutableSet<PsiField>,

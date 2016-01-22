@@ -23,11 +23,11 @@ import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
-public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
+fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
 
-public fun PsiFile.getFqNameByDirectory(): FqName {
-    val qualifiedNameByDirectory = getParent()?.getPackage()?.getQualifiedName()
+fun PsiFile.getFqNameByDirectory(): FqName {
+    val qualifiedNameByDirectory = parent?.getPackage()?.qualifiedName
     return qualifiedNameByDirectory?.let { FqName(it) } ?: FqName.ROOT
 }
 
-public fun KtFile.packageMatchesDirectory(): Boolean = getPackageFqName() == getFqNameByDirectory()
+fun KtFile.packageMatchesDirectory(): Boolean = packageFqName == getFqNameByDirectory()

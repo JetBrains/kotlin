@@ -38,7 +38,7 @@ public class KotlinAndroidGradleModuleConfigurator extends KotlinWithGradleConfi
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 
     @NotNull

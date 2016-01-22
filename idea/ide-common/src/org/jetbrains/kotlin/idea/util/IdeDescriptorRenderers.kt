@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-public object IdeDescriptorRenderers {
-    public val APPROXIMATE_FLEXIBLE_TYPES: (KotlinType) -> KotlinType = { approximateFlexibleTypes(it, true) }
+object IdeDescriptorRenderers {
+    @JvmField val APPROXIMATE_FLEXIBLE_TYPES: (KotlinType) -> KotlinType = { approximateFlexibleTypes(it, true) }
 
-    public val APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS: (KotlinType) -> KotlinType = { approximateFlexibleTypes(it, false) }
+    @JvmField val APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS: (KotlinType) -> KotlinType = { approximateFlexibleTypes(it, false) }
 
     private fun unwrapAnonymousType(type: KotlinType): KotlinType {
         if (type.isDynamic()) return type
@@ -53,17 +53,17 @@ public object IdeDescriptorRenderers {
         modifiers = DescriptorRendererModifier.ALL
     }
 
-    public val SOURCE_CODE: DescriptorRenderer = BASE.withOptions {
+    @JvmField val SOURCE_CODE: DescriptorRenderer = BASE.withOptions {
         nameShortness = NameShortness.SOURCE_CODE_QUALIFIED
         typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES(unwrapAnonymousType(it)) }
     }
 
-    public val SOURCE_CODE_FOR_TYPE_ARGUMENTS: DescriptorRenderer = BASE.withOptions {
+    @JvmField val SOURCE_CODE_FOR_TYPE_ARGUMENTS: DescriptorRenderer = BASE.withOptions {
         nameShortness = NameShortness.SOURCE_CODE_QUALIFIED
         typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES_IN_ARGUMENTS(unwrapAnonymousType(it)) }
     }
 
-    public val SOURCE_CODE_SHORT_NAMES_IN_TYPES: DescriptorRenderer = BASE.withOptions {
+    @JvmField val SOURCE_CODE_SHORT_NAMES_IN_TYPES: DescriptorRenderer = BASE.withOptions {
         nameShortness = NameShortness.SHORT
         typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES(unwrapAnonymousType(it)) }
     }

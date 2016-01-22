@@ -6,6 +6,8 @@ interface Tr<T> {
 }
 
 fun test(t: Tr<*>) {
-    t.<!SETTER_PROJECTED_OUT!>v<!> = null!!
+    t.v = null!!
+    <!SETTER_PROJECTED_OUT!>t.v<!> = ""
+    <!SETTER_PROJECTED_OUT!>t.v<!> = null
     t.v checkType { _<Any?>() }
 }

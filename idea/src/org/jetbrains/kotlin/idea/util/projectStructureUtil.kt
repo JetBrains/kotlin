@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.idea.util.projectStructure
 
-import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderEnumerator
-import java.io.File
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.vfs.VfsUtil
+import java.io.File
 
-public fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
+fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 
-public fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library? {
+fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
+
+fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library? {
     var lib: Library? = null
     forEachLibrary { library ->
         if (predicate(library!!)) {
@@ -40,9 +44,9 @@ public fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library
     return lib
 }
 
-public fun Module.getModuleDir(): String = File(getModuleFilePath()).getParent()!!.replace(File.separatorChar, '/')
+fun Module.getModuleDir(): String = File(moduleFilePath).parent!!.replace(File.separatorChar, '/')
 
-public fun Library.ModifiableModel.replaceFileRoot(oldFile: File, newFile: File) {
+fun Library.ModifiableModel.replaceFileRoot(oldFile: File, newFile: File) {
     val oldRoot = VfsUtil.getUrlForLibraryRoot(oldFile)
     val newRoot = VfsUtil.getUrlForLibraryRoot(newFile)
 

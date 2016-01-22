@@ -20,10 +20,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 
-public class JvmIDEVirtualFileFinderFactory : JvmVirtualFileFinderFactory {
+class JvmIDEVirtualFileFinderFactory : JvmVirtualFileFinderFactory {
     override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder = JvmIDEVirtualFileFinder(scope)
 }
 
-public class JsIDEVirtualFileFinderFactory : JsVirtualFileFinderFactory {
+class JsIDEVirtualFileFinderFactory : JsVirtualFileFinderFactory {
     override fun create(scope: GlobalSearchScope): JsVirtualFileFinder = JsIDEVirtualFileFinder(scope)
 }

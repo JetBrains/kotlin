@@ -358,8 +358,8 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
     protected static void closeDeclarationWithCommentBinders(@NotNull PsiBuilder.Marker marker, @NotNull IElementType elementType, boolean precedingNonDocComments) {
         marker.done(elementType);
-        marker.setCustomEdgeTokenBinders(precedingNonDocComments ? PrecedingCommentsBinder.INSTANCE$ : PrecedingDocCommentsBinder.INSTANCE$,
-                                         TrailingCommentsBinder.INSTANCE$);
+        marker.setCustomEdgeTokenBinders(precedingNonDocComments ? PrecedingCommentsBinder.INSTANCE : PrecedingDocCommentsBinder.INSTANCE,
+                                         TrailingCommentsBinder.INSTANCE);
     }
 
     protected abstract KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder);

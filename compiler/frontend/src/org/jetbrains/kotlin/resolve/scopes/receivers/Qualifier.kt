@@ -30,18 +30,18 @@ import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public interface Qualifier: Receiver {
+interface Qualifier: Receiver {
 
-    public val expression: KtExpression
+    val expression: KtExpression
 
-    public val referenceExpression: KtSimpleNameExpression
+    val referenceExpression: KtSimpleNameExpression
 
-    public val name: Name
+    val name: Name
         get() = descriptor.name
 
-    public val descriptor: DeclarationDescriptor
+    val descriptor: DeclarationDescriptor
 
-    public val scope: MemberScope
+    val scope: MemberScope
 }
 
 abstract class QualifierReceiver(
@@ -56,7 +56,7 @@ abstract class QualifierReceiver(
 
 class PackageQualifier(
         referenceExpression: KtSimpleNameExpression,
-        public val packageView: PackageViewDescriptor
+        val packageView: PackageViewDescriptor
 ) : QualifierReceiver(referenceExpression) {
 
     override val descriptor: DeclarationDescriptor

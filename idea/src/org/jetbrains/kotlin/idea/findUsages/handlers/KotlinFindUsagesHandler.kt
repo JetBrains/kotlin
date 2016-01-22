@@ -32,22 +32,21 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinReferenceUsageInfo
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.util.*
 
-public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
+abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
                                                               private val elementsToSearch: Collection<PsiElement>,
-                                                              public val factory: KotlinFindUsagesHandlerFactory)
+                                                              val factory: KotlinFindUsagesHandlerFactory)
     : FindUsagesHandler(psiElement) {
 
-    @Suppress("UNCHECKED_CAST")
-    public fun getElement(): T {
-        return getPsiElement() as T
+    @Suppress("UNCHECKED_CAST") fun getElement(): T {
+        return psiElement as T
     }
 
-    public constructor(psiElement: T, factory: KotlinFindUsagesHandlerFactory) : this(psiElement, emptyList(), factory) {
+    constructor(psiElement: T, factory: KotlinFindUsagesHandlerFactory) : this(psiElement, emptyList(), factory) {
     }
 
     override fun getPrimaryElements(): Array<PsiElement> {
         return if (elementsToSearch.isEmpty())
-            arrayOf(getPsiElement())
+            arrayOf(psiElement)
         else
             elementsToSearch.toTypedArray()
     }
@@ -74,12 +73,12 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val results = Collections.synchronizedList(arrayListOf<PsiReference>())
-        val options = getFindUsagesOptions().clone()
+        val options = findUsagesOptions.clone()
         options.searchScope = searchScope
         val scopeContainingFile = (searchScope as? LocalSearchScope)?.scope?.get(0)?.containingFile
         searchReferences(target, object : Processor<UsageInfo> {
             override fun process(info: UsageInfo): Boolean {
-                val reference = info.getReference()
+                val reference = info.reference
                 if (reference != null) {
                     if (scopeContainingFile != null && reference.element.containingFile != scopeContainingFile) {
                         LOG.error("findReferencesToHighight() found a reference from a different file: $reference")

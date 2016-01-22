@@ -72,7 +72,7 @@ class Derived: Base() {
 fun subTypePlatform() {
     if (true) {
         val c: MutableList<String> = ArrayList<String>()
-        // EXPRESSION: c.size()
+        // EXPRESSION: c.size
         // RESULT: 0: I
         //Breakpoint!
         val b = 1
@@ -80,7 +80,7 @@ fun subTypePlatform() {
 
     if (true) {
         val c: List<String> = ArrayList<String>()
-        // EXPRESSION: c.size()
+        // EXPRESSION: c.size
         // RESULT: 0: I
         //Breakpoint!
         val b = 1
@@ -89,7 +89,7 @@ fun subTypePlatform() {
     if (true) {
         val c = ArrayList<String>()
         c.add("a")
-        // EXPRESSION: c.size()
+        // EXPRESSION: c.size
         // RESULT: 1: I
         //Breakpoint!
         val b = 1
@@ -99,7 +99,7 @@ fun subTypePlatform() {
         val c = ArrayList<Int>()
         c.add(1)
         c.add(2)
-        // EXPRESSION: c.size()
+        // EXPRESSION: c.size
         // RESULT: 2: I
         //Breakpoint!
         val b = 1
@@ -107,7 +107,7 @@ fun subTypePlatform() {
 
     if (true) {
         val c = HashSet<Int>()
-        // EXPRESSION: c.size()
+        // EXPRESSION: c.size
         // RESULT: 0: I
         //Breakpoint!
         val b = 1

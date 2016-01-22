@@ -23,29 +23,29 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-public class InlineCycleReporter(val diagnostics: DiagnosticSink) {
+class InlineCycleReporter(val diagnostics: DiagnosticSink) {
 
     val processingFunctions = linkedMapOf<PsiElement, CallableDescriptor>()
 
-    public fun enterIntoInlining(call: ResolvedCall<*>?): Boolean {
+    fun enterIntoInlining(call: ResolvedCall<*>?): Boolean {
         //null call for default method inlining
         if (call != null) {
-            val callElement = call.getCall().getCallElement()
+            val callElement = call.call.callElement
             if (processingFunctions.contains(callElement)) {
-                val cycle = processingFunctions.asSequence().dropWhile { it.getKey() != callElement }
+                val cycle = processingFunctions.asSequence().dropWhile { it.key != callElement }
                 cycle.forEach {
-                    diagnostics.report(Errors.INLINE_CALL_CYCLE.on(it.getKey(), it.getValue()))
+                    diagnostics.report(Errors.INLINE_CALL_CYCLE.on(it.key, it.value))
                 }
                 return false
             }
-            processingFunctions.put(callElement, call.getResultingDescriptor().getOriginal())
+            processingFunctions.put(callElement, call.resultingDescriptor.original)
         }
         return true
     }
 
-    public fun exitFromInliningOf(call: ResolvedCall<*>?) {
+    fun exitFromInliningOf(call: ResolvedCall<*>?) {
         if (call != null) {
-            val callElement = call.getCall().getCallElement()
+            val callElement = call.call.callElement
             processingFunctions.remove(callElement)
         }
     }

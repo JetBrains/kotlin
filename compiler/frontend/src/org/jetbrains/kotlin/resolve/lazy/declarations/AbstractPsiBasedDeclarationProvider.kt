@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 
-public abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManager) : DeclarationProvider {
+abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManager) : DeclarationProvider {
 
     protected class Index {
         // This mutable state is only modified under inside the computable
@@ -37,7 +37,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
         val properties = ArrayListMultimap.create<Name, KtProperty>()
         val classesAndObjects = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
 
-        public fun putToIndex(declaration: KtDeclaration) {
+        fun putToIndex(declaration: KtDeclaration) {
             if (declaration is KtAnonymousInitializer || declaration is KtSecondaryConstructor) return
 
             allDeclarations.add(declaration)
@@ -54,7 +54,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
                 val scriptInfo = KtScriptInfo(declaration)
                 classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
             }
-            else if (declaration is KtParameter || declaration is KtTypedef || declaration is KtDestructuringDeclaration) {
+            else if (declaration is KtParameter || declaration is KtDestructuringDeclaration) {
                 // Do nothing, just put it into allDeclarations is enough
             }
             else {

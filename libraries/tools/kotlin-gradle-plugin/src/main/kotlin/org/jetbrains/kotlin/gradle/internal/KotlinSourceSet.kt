@@ -19,7 +19,7 @@ open class KotlinSourceSetImpl(displayName: String?, resolver: FileResolver?): K
     private val kotlin: DefaultSourceDirectorySet = DefaultSourceDirectorySet(displayName + " Kotlin source", resolver)
 
     init {
-        kotlin.getFilter()?.include("**/*.java", "**/*.kt")
+        kotlin.filter?.include("**/*.java", "**/*.kt")
     }
 
     override fun getKotlin(): SourceDirectorySet {

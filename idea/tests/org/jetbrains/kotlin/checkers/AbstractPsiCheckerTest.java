@@ -38,11 +38,11 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
             //noinspection unchecked
             myFixture.enableInspections(SpellCheckingInspection.class);
 
-            NameHighlighter.INSTANCE$.setNamesHighlightingEnabled(false);
+            NameHighlighter.INSTANCE.setNamesHighlightingEnabled(false);
             checkHighlighting(true, true, false);
         }
         finally {
-            NameHighlighter.INSTANCE$.setNamesHighlightingEnabled(true);
+            NameHighlighter.INSTANCE.setNamesHighlightingEnabled(true);
         }
     }
 

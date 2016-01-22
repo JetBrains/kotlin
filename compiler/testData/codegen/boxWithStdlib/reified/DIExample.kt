@@ -10,7 +10,7 @@ class Project {
         }
 }
 
-inline operator fun <reified T : Any> Project.getValue(t: Any?, p: KProperty<*>): T = getInstance(javaClass<T>())
+inline operator fun <reified T : Any> Project.getValue(t: Any?, p: KProperty<*>): T = getInstance(T::class.java)
 
 val project = Project()
 val x1: Int by project

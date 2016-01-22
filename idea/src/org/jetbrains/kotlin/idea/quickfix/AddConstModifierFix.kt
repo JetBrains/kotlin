@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.ConstModifierChecker
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-public class AddConstModifierFix(val property: KtProperty) : AddModifierFix(property, KtTokens.CONST_KEYWORD), CleanupFix {
+class AddConstModifierFix(val property: KtProperty) : AddModifierFix(property, KtTokens.CONST_KEYWORD), CleanupFix {
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         addConstModifier(property)
     }
@@ -54,8 +54,8 @@ public class AddConstModifierFix(val property: KtProperty) : AddModifierFix(prop
     }
 }
 
-public class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(javaClass(), "Add 'const' modifier") {
-    override fun applyTo(element: KtProperty, editor: Editor) {
+class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Add 'const' modifier") {
+    override fun applyTo(element: KtProperty, editor: Editor?) {
         AddConstModifierFix.addConstModifier(element)
     }
 
@@ -76,7 +76,7 @@ public class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(java
 }
 
 
-public object ConstFixFactory : KotlinSingleIntentionActionFactory() {
+object ConstFixFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val expr = diagnostic.psiElement as? KtReferenceExpression ?: return null
         val bindingContext = expr.analyze(BodyResolveMode.PARTIAL)

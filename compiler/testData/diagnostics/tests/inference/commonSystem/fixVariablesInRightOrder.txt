@@ -1,9 +1,9 @@
 package
 
 public fun </*0*/ T> bar(/*0*/ t: T, /*1*/ ext: GenericClass<T>.() -> kotlin.Unit): kotlin.Unit
-public fun </*0*/ K, /*1*/ V> mapOf(/*0*/ keyValuePair: Pair<K, V>): kotlin.Map<K, V>
+public fun </*0*/ K, /*1*/ V> mapOf(/*0*/ keyValuePair: Pair<K, V>): kotlin.collections.Map<K, V>
 public fun test(): kotlin.Unit
-public fun </*0*/ K, /*1*/ V> GenericClass<kotlin.Map<K, V>>.foo(): kotlin.Unit
+public fun </*0*/ K, /*1*/ V> GenericClass<kotlin.collections.Map<K, V>>.foo(): kotlin.Unit
 public infix fun </*0*/ A, /*1*/ B> A.to(/*0*/ that: B): Pair<A, B>
 
 public final class GenericClass</*0*/ out T> {

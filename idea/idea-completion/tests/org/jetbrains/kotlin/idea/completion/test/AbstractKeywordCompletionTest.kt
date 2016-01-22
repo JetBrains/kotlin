@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCase() {
+abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCase() {
     override fun getPlatform() = JvmPlatform
 
     override fun defaultCompletionType() = CompletionType.BASIC

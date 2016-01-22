@@ -3,7 +3,7 @@ package ceLambda
 fun main(args: Array<String>) {
     val a = 1
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 fun foo(p: () -> Int) = p()

@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.completion.BasicLookupElementFactory
@@ -30,10 +31,11 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
 object ClassLiteralItems {
-    public fun addToCollection(
+    fun addToCollection(
             collection: MutableCollection<LookupElement>,
             expectedInfos: Collection<ExpectedInfo>,
             lookupElementFactory: BasicLookupElementFactory,
@@ -60,22 +62,30 @@ object ClassLiteralItems {
 
         for ((pair, matchedExpectedInfos) in typeAndSuffixToExpectedInfos) {
             val (type, suffix) = pair
-            var lookupElement = lookupElementFactory.createLookupElementForType(type) ?: continue
-            val text = lookupElement.lookupString + suffix
-            lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
-                override fun getLookupString() = text
-                override fun getAllLookupStrings() = setOf(lookupString)
+            val typeToUse = if (KotlinBuiltIns.isArray(type)) {
+                type.makeNotNullable()
+            }
+            else {
+                val classifier = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: continue
+                classifier.defaultType
+            }
 
+            var lookupElement = lookupElementFactory.createLookupElementForType(typeToUse) ?: continue
+
+            lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun renderElement(presentation: LookupElementPresentation) {
                     super.renderElement(presentation)
-                    presentation.itemText = text
+                    presentation.itemText += suffix
                 }
 
                 override fun handleInsert(context: InsertionContext) {
                     super.handleInsert(context)
+
+                    PsiDocumentManager.getInstance(context.project).doPostponedOperationsAndUnblockDocument(context.document)
+
                     val offset = context.tailOffset
                     context.document.insertString(offset, suffix)
-                    context.editor.moveCaret(offset + suffix.length())
+                    context.editor.moveCaret(offset + suffix.length)
                 }
             }
             lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.CLASS_LITERAL)

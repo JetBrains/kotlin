@@ -11,31 +11,31 @@ import java.nio.charset.Charset
 /**
  * Returns a new [FileReader] for reading the content of this file.
  */
-public fun File.reader(): FileReader = FileReader(this)
+public fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = inputStream().reader(charset)
 
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
  * @param bufferSize necessary size of the buffer.
  */
-public fun File.bufferedReader(bufferSize: Int = defaultBufferSize): BufferedReader = reader().buffered(bufferSize)
+public fun File.bufferedReader(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader = reader(charset).buffered(bufferSize)
 
 /**
  * Returns a new [FileWriter] for writing the content of this file.
  */
-public fun File.writer(): FileWriter = FileWriter(this)
+public fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = outputStream().writer(charset)
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
  * @param bufferSize necessary size of the buffer.
  */
-public fun File.bufferedWriter(bufferSize: Int = defaultBufferSize): BufferedWriter = writer().buffered(bufferSize)
+public fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter = writer(charset).buffered(bufferSize)
 
 /**
  * Returns a new [PrintWriter] for writing the content of this file.
  */
-public fun File.printWriter(): PrintWriter = PrintWriter(bufferedWriter())
+public fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWriter = PrintWriter(bufferedWriter(charset))
 
 /**
  * Gets the entire content of this file as a byte array.
@@ -69,7 +69,8 @@ public fun File.appendBytes(array: ByteArray): Unit = FileOutputStream(this, tru
  * @param charset character set to use.
  * @return the entire content of this file as a String.
  */
-public fun File.readText(charset: String): String = readBytes().toString(charset)
+@Deprecated("Use File.readText(Charset) instead.", ReplaceWith("this.readText(charset(charset))"), level = DeprecationLevel.ERROR)
+public fun File.readText(charset: String): String = readBytes().toString(charset(charset))
 
 /**
  * Gets the entire content of this file as a String using UTF-8 or specified [charset].
@@ -88,7 +89,8 @@ public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes(
  * @param text text to write into file.
  * @param charset character set to use.
  */
-public fun File.writeText(text: String, charset: String): Unit = writeBytes(text.toByteArray(charset))
+@Deprecated("Use File.writeText(String, Charset) instead.", ReplaceWith("this.writeText(text, charset(charset))"), level = DeprecationLevel.ERROR)
+public fun File.writeText(text: String, charset: String): Unit = writeBytes(text.toByteArray(charset(charset)))
 
 /**
  * Sets the content of this file as [text] encoded using UTF-8 or specified [charset].
@@ -113,29 +115,30 @@ public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Uni
  * @param text text to append to file.
  * @param charset character set to use.
  */
-public fun File.appendText(text: String, charset: String): Unit = appendBytes(text.toByteArray(charset))
+@Deprecated("Use File.appendText(String, Charset) instead.", ReplaceWith("this.appendText(text, charset(charset))"), level = DeprecationLevel.ERROR)
+public fun File.appendText(text: String, charset: String): Unit = appendBytes(text.toByteArray(charset(charset)))
 
 /**
- * Reads file by byte blocks and calls [operation] for each block read.
+ * Reads file by byte blocks and calls [action] for each block read.
  * Block has default size which is implementation-dependent.
- * This functions passes the byte array and amount of bytes in the array to the [operation] function.
+ * This functions passes the byte array and amount of bytes in the array to the [action] function.
  *
  * You can use this function for huge files.
  *
- * @param operation function to process file blocks.
+ * @param action function to process file blocks.
  */
-public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit): Unit = forEachBlock(operation, defaultBlockSize)
+public fun File.forEachBlock(action: (ByteArray, Int) -> Unit): Unit = forEachBlock(action, defaultBlockSize)
 
 /**
- * Reads file by byte blocks and calls [operation] for each block read.
- * This functions passes the byte array and amount of bytes in the array to the [operation] function.
+ * Reads file by byte blocks and calls [action] for each block read.
+ * This functions passes the byte array and amount of bytes in the array to the [action] function.
  *
  * You can use this function for huge files.
  *
- * @param operation function to process file blocks.
+ * @param action function to process file blocks.
  * @param blockSize size of a block, replaced by 512 if it's less, 4096 by default.
  */
-public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int): Unit {
+public fun File.forEachBlock(action: (ByteArray, Int) -> Unit, blockSize: Int): Unit {
     val arr = ByteArray(if (blockSize < minimumBlockSize) minimumBlockSize else blockSize)
     val fis = FileInputStream(this)
 
@@ -145,7 +148,7 @@ public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int
             if (size <= 0) {
                 break
             } else {
-                operation(arr, size)
+                action(arr, size)
             }
         } while (true)
     } finally {
@@ -154,17 +157,17 @@ public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int
 }
 
 /**
- * Reads this file line by line using the specified [charset] and calls [operation] for each line.
+ * Reads this file line by line using the specified [charset] and calls [action] for each line.
  * Default charset is UTF-8.
  *
  * You may use this function on huge files.
  *
  * @param charset character set to use.
- * @param operation function to process file lines.
+ * @param action function to process file lines.
  */
-public fun File.forEachLine(charset: Charset = Charsets.UTF_8, operation: (line: String) -> Unit): Unit {
+public fun File.forEachLine(charset: Charset = Charsets.UTF_8, action: (line: String) -> Unit): Unit {
     // Note: close is called at forEachLine
-    BufferedReader(InputStreamReader(FileInputStream(this), charset)).forEachLine(operation)
+    BufferedReader(InputStreamReader(FileInputStream(this), charset)).forEachLine(action)
 }
 
 /**
@@ -175,6 +178,7 @@ public fun File.forEachLine(charset: Charset = Charsets.UTF_8, operation: (line:
  * @param charset character set to use.
  * @param operation function to process file lines.
  */
+@Deprecated("Use File.forEachLine(Charset, operation) instead.", ReplaceWith("this.forEachLine(charset(charset), operation)"), level = DeprecationLevel.ERROR)
 public fun File.forEachLine(charset: String, operation: (line: String) -> Unit): Unit = forEachLine(Charset.forName(charset), operation)
 
 /**
@@ -185,28 +189,29 @@ public fun File.forEachLine(charset: String, operation: (line: String) -> Unit):
  * @param charset character set to use.
  * @return list of file lines.
  */
+@Deprecated("Use File.readLines(Charset) instead.", ReplaceWith("this.readLines(charset(charset))"), level = DeprecationLevel.ERROR)
 public fun File.readLines(charset: String): List<String> = readLines(Charset.forName(charset))
 
 /**
  * Constructs a new FileInputStream of this file and returns it as a result.
  */
-public fun File.inputStream(): InputStream {
+public fun File.inputStream(): FileInputStream {
     return FileInputStream(this)
 }
 
 /**
  * Constructs a new FileOutputStream of this file and returns it as a result.
  */
-public fun File.outputStream(): OutputStream {
+public fun File.outputStream(): FileOutputStream {
     return FileOutputStream(this)
 }
 
 /**
- * Reads the file content as a list of lines. By default uses UTF-8 charset.
+ * Reads the file content as a list of lines.
  *
  * Do not use this function for huge files.
  *
- * @param charset character set to use.
+ * @param charset character set to use. By default uses UTF-8 charset.
  * @return list of file lines.
  */
 public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
@@ -215,3 +220,12 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
     return result
 }
 
+/**
+ * Calls the [block] callback giving it a sequence of all the lines in this file and closes the reader once
+ * the processing is complete.
+
+ * @param charset character set to use. By default uses UTF-8 charset.
+ * @return the value returned by [block].
+ */
+public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T =
+        bufferedReader(charset).use { block(it.lineSequence()) }

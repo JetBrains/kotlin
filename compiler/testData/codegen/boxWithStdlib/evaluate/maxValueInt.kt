@@ -14,7 +14,7 @@ annotation class Ann(
 ) class MyClass
 
 fun box(): String {
-    val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!
+    val annotation = MyClass::class.java.getAnnotation(Ann::class.java)!!
     if (annotation.p1 != -2147483648) return "fail 1, expected = ${-2147483648}, actual = ${annotation.p1}"
     if (annotation.p2 != 2) return "fail 2, expected = ${2}, actual = ${annotation.p2}"
     if (annotation.p4 != 2.toLong()) return "fail 4, expected = ${2}, actual = ${annotation.p4}"

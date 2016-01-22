@@ -40,31 +40,31 @@ internal class FixStackAnalyzer(
     val savedStacks = hashMapOf<AbstractInsnNode, List<BasicValue>>()
     var maxExtraStackSize = 0; private set
 
-    protected override fun visitControlFlowEdge(insn: Int, successor: Int): Boolean {
+    override fun visitControlFlowEdge(insn: Int, successor: Int): Boolean {
         val insnNode = instructions[insn]
         return !(insnNode is JumpInsnNode && context.breakContinueGotoNodes.contains(insnNode))
     }
 
-    protected override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> =
+    override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> =
             FixStackFrame(nLocals, nStack)
 
     private fun indexOf(node: AbstractInsnNode) = method.instructions.indexOf(node)
 
-    public inner class FixStackFrame(nLocals: Int, nStack: Int) : Frame<BasicValue>(nLocals, nStack) {
+    inner class FixStackFrame(nLocals: Int, nStack: Int) : Frame<BasicValue>(nLocals, nStack) {
         val extraStack = Stack<BasicValue>()
 
-        public override fun init(src: Frame<out BasicValue>): Frame<BasicValue> {
+        override fun init(src: Frame<out BasicValue>): Frame<BasicValue> {
             extraStack.clear()
             extraStack.addAll((src as FixStackFrame).extraStack)
             return super.init(src)
         }
 
-        public override fun clearStack() {
+        override fun clearStack() {
             extraStack.clear()
             super.clearStack()
         }
 
-        public override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {
+        override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<BasicValue>) {
             when {
                 PseudoInsn.SAVE_STACK_BEFORE_TRY.isa(insn) ->
                     executeSaveStackBeforeTry(insn)
@@ -83,28 +83,28 @@ internal class FixStackAnalyzer(
             super.execute(insn, interpreter)
         }
 
-        public fun getStackContent(): List<BasicValue> {
+        fun getStackContent(): List<BasicValue> {
             val savedStack = arrayListOf<BasicValue>()
             IntRange(0, super.getStackSize() - 1).mapTo(savedStack) { super.getStack(it) }
             savedStack.addAll(extraStack)
             return savedStack
         }
 
-        public override fun push(value: BasicValue) {
-            if (super.getStackSize() < getMaxStackSize()) {
+        override fun push(value: BasicValue) {
+            if (super.getStackSize() < maxStackSize) {
                 super.push(value)
             }
             else {
                 extraStack.add(value)
-                maxExtraStackSize = Math.max(maxExtraStackSize, extraStack.size())
+                maxExtraStackSize = Math.max(maxExtraStackSize, extraStack.size)
             }
         }
 
-        public fun pushAll(values: Collection<BasicValue>) {
+        fun pushAll(values: Collection<BasicValue>) {
             values.forEach { push(it) }
         }
 
-        public override fun pop(): BasicValue {
+        override fun pop(): BasicValue {
             if (extraStack.isNotEmpty()) {
                 return extraStack.pop()
             }
@@ -113,12 +113,12 @@ internal class FixStackAnalyzer(
             }
         }
 
-        public override fun getStack(i: Int): BasicValue {
+        override fun getStack(i: Int): BasicValue {
             if (i < super.getMaxStackSize()) {
                 return super.getStack(i)
             }
             else {
-                return extraStack[i - getMaxStackSize()]
+                return extraStack[i - maxStackSize]
             }
         }
     }
@@ -135,7 +135,7 @@ internal class FixStackAnalyzer(
 
     private fun FixStackFrame.executeAfterInlineCallMarker(insn: AbstractInsnNode) {
         val beforeInlineMarker = context.openingInlineMethodMarker[insn]
-        if (getStackSize() > 0) {
+        if (stackSize > 0) {
             val returnValue = pop()
             clearStack()
             val savedValues = savedStacks[beforeInlineMarker]

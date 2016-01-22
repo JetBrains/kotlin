@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public class KotlinWhenSubjectCaretFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinWhenSubjectCaretFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is KtWhenExpression) return
 
-        val lParen = element.getLeftParenthesis()
-        val rParen = element.getRightParenthesis()
-        val subject = element.getSubjectExpression()
+        val lParen = element.leftParenthesis
+        val rParen = element.rightParenthesis
+        val subject = element.subjectExpression
 
         if (subject == null && lParen != null && rParen != null) {
             processor.registerUnresolvedError(lParen.range.end)

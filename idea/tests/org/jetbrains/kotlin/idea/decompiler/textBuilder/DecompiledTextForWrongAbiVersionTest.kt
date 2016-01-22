@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
-public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
+class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return KotlinJdkAndLibraryProjectDescriptor(File(KotlinTestUtils.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
@@ -47,9 +47,9 @@ public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClas
     }
 
     private fun checkFileWithWrongAbiVersion(file: VirtualFile) {
-        val psiFile = PsiManager.getInstance(getProject()!!).findFile(file)
+        val psiFile = PsiManager.getInstance(project!!).findFile(file)
         Assert.assertTrue(psiFile is KtClsFile)
-        val decompiledText = psiFile!!.getText()!!
+        val decompiledText = psiFile!!.text!!
         Assert.assertTrue(decompiledText.contains(INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT))
     }
 }

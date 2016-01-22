@@ -23,7 +23,6 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -40,18 +39,18 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
 
-public abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase() {
+abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase() {
     override fun setUp() {
         super.setUp()
 
         val testName = getTestName(false)
-        if (testName.startsWith("AllFilesPresentIn")) return
+        if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
-        val filePath = "${KotlinTestUtils.getTestsRoot(this)}/${getTestName(false)}.kt"
+        val filePath = "${KotlinTestUtils.getTestsRoot(this.javaClass)}/${getTestName(false)}.kt"
 
         Assert.assertTrue("File doesn't exist $filePath", File(filePath).exists())
 
-        val libraryJar = MockLibraryUtil.compileLibraryToJar(filePath, libName(), false, false)
+        val libraryJar = MockLibraryUtil.compileLibraryToJar(filePath, libName(), false, false, false)
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)
     }
@@ -81,14 +80,13 @@ private fun testLightClass(project: Project, testDataPath: String, normalize: (S
                         .replace("java.lang.String s)", "java.lang.String p)")
                         .replace("java.lang.String s1", "java.lang.String p1")
                         .replace("java.lang.String s2", "java.lang.String p2")
-                        .removeLinesStartingWith("@kotlin.jvm.internal.KotlinClass")
-                        .removeLinesStartingWith("@kotlin.jvm.internal.KotlinFileFacade")
+                        .removeLinesStartingWith("@kotlin.jvm.internal.")
+                        .removeLinesStartingWith("@kotlin.Metadata")
                         .run(normalize)
             }
     )
 }
 
-private fun String.removeLinesStartingWith(prefix: String) : String {
+private fun String.removeLinesStartingWith(prefix: String): String {
     return lines().filterNot { it.trimStart().startsWith(prefix) }.joinToString(separator = "\n")
 }
-

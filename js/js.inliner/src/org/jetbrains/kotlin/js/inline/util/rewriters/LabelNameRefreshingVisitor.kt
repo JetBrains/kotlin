@@ -27,10 +27,10 @@ class LabelNameRefreshingVisitor(val context: NamingContext, val functionScope: 
     override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = false
 
     override fun visit(x: JsLabel, ctx: JsContext<*>): Boolean {
-        val labelName = x.getName()
-        val freshName = functionScope.enterLabel(labelName.getIdent())
+        val labelName = x.name
+        val freshName = functionScope.enterLabel(labelName.ident)
 
-        if (freshName.getIdent() != labelName.getIdent()) {
+        if (freshName.ident != labelName.ident) {
             context.replaceName(labelName, freshName.makeRef())
         }
 

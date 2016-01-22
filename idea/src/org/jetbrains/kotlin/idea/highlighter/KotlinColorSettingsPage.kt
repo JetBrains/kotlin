@@ -31,7 +31,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.HashMap
 
-public class KotlinColorSettingsPage : ColorSettingsPage {
+class KotlinColorSettingsPage : ColorSettingsPage {
     override fun getIcon() = KotlinIcons.SMALL_LOGO
     override fun getHighlighter(): SyntaxHighlighter = KotlinHighlighter()
 
@@ -63,12 +63,16 @@ public class KotlinColorSettingsPage : ColorSettingsPage {
     }
 }
 
-fun Int?.bar() {
+fun Int?.bar(): Int {
     if (this != null) {
         println(<SMART_CAST_RECEIVER>toString</SMART_CAST_RECEIVER>())
     }
     else {
         println(<SMART_CONSTANT>this</SMART_CONSTANT>.toString())
+    }
+    <IMPLICIT_EXHAUSTIVE_WHEN>when</IMPLICIT_EXHAUSTIVE_WHEN> (this != null) {
+        true -> return 1
+        false -> return 0
     }
 }
 
@@ -89,10 +93,10 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
 
     override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey> {
         val map = HashMap<String, TextAttributesKey>()
-        for (field in javaClass<KotlinHighlightingColors>().getFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
+        for (field in KotlinHighlightingColors::class.java.fields) {
+            if (Modifier.isStatic(field.modifiers)) {
                 try {
-                    map.put(field.getName(), field.get(null) as TextAttributesKey)
+                    map.put(field.name, field.get(null) as TextAttributesKey)
                 }
                 catch (e: IllegalAccessException) {
                     assert(false)
@@ -157,6 +161,7 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast") to KotlinHighlightingColors.SMART_CAST_VALUE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.constant") to KotlinHighlightingColors.SMART_CONSTANT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast.receiver") to KotlinHighlightingColors.SMART_CAST_RECEIVER,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.implicit.exhaustive.when") to KotlinHighlightingColors.IMPLICIT_EXHAUSTIVE_WHEN,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.label") to KotlinHighlightingColors.LABEL)
     }
 

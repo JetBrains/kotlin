@@ -44,7 +44,7 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
-import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -52,7 +52,7 @@ import java.io.File
 import javax.swing.JComponent
 import javax.swing.event.DocumentEvent
 
-public class KotlinAwareMoveFilesOrDirectoriesDialog(
+class KotlinAwareMoveFilesOrDirectoriesDialog(
         private val project: Project,
         private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
 ) : DialogWrapper(project, true) {
@@ -75,7 +75,7 @@ public class KotlinAwareMoveFilesOrDirectoriesDialog(
         init()
     }
 
-    public val updatePackageDirective: Boolean
+    val updatePackageDirective: Boolean
         get() = updatePackageDirectiveCb.isSelected
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)

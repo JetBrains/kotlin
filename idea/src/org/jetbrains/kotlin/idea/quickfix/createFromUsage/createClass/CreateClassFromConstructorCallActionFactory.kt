@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
@@ -28,9 +27,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import java.util.Collections
+import java.util.*
 
-public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<KtCallExpression>() {
+object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<KtCallExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
         val diagElement = diagnostic.psiElement
         if (diagElement.getNonStrictParentOfType<KtTypeReference>() != null) return null
@@ -81,7 +80,7 @@ public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageF
         val inner = isInnerClassExpected(call)
 
         val valueArguments = callExpr.valueArguments
-        val defaultParamName = if (inAnnotationEntry && valueArguments.size() == 1) "value" else null
+        val defaultParamName = if (inAnnotationEntry && valueArguments.size == 1) "value" else null
         val anyType = moduleDescriptor.builtIns.nullableAnyType
         val parameterInfos = valueArguments.map {
             ParameterInfo(

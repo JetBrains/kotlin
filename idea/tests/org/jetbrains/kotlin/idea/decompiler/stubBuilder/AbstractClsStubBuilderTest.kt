@@ -34,7 +34,7 @@ import org.junit.Assert
 import java.io.File
 import java.util.*
 
-public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
     fun doTest(sourcePath: String) {
         val classFile = getClassFileToDecompile(sourcePath)
         val txtFilePath = File("$sourcePath/${lastSegment(sourcePath)}.txt")
@@ -44,7 +44,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
     protected fun testClsStubsForFile(classFile: VirtualFile, txtFile: File?) {
         val stubTreeFromCls = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(classFile))!!
         myFixture.configureFromExistingVirtualFile(classFile)
-        val psiFile = myFixture.getFile()
+        val psiFile = myFixture.file
         val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(psiFile)
         val expectedText = stubTreeFromDecompiledText.serializeToString()
         Assert.assertEquals(expectedText, stubTreeFromCls.serializeToString())
@@ -55,7 +55,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
 
     private fun getClassFileToDecompile(sourcePath: String): VirtualFile {
         val outDir = KotlinTestUtils.tmpDir("libForStubTest-" + sourcePath)
-        MockLibraryUtil.compileKotlin(sourcePath, outDir)
+        MockLibraryUtil.compileKotlin(sourcePath, outDir, true)
         val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outDir)!!
         return root.findClassFileByName(lastSegment(sourcePath))
     }
@@ -73,8 +73,8 @@ fun VirtualFile.findClassFileByName(className: String): VirtualFile {
     val files = LinkedHashSet<VirtualFile>()
     VfsUtilCore.iterateChildrenRecursively(
             this,
-            { virtualFile -> virtualFile.isDirectory() || virtualFile.getName().equals("$className.class") },
-            { virtualFile -> if (!virtualFile.isDirectory()) files.addIfNotNull(virtualFile); true })
+            { virtualFile -> virtualFile.isDirectory || virtualFile.name.equals("$className.class") },
+            { virtualFile -> if (!virtualFile.isDirectory) files.addIfNotNull(virtualFile); true })
 
     return files.single()
 }

@@ -25,10 +25,10 @@ class CopiedJavaCode(val fileText: String, val startOffsets: IntArray, val endOf
     override fun getFlavor() = DATA_FLAVOR
     override fun getOffsetCount() = 0
 
-    public override fun getOffsets(offsets: IntArray?, index: Int) = index
-    public override fun setOffsets(offsets: IntArray?, index: Int) = index
+    override fun getOffsets(offsets: IntArray?, index: Int) = index
+    override fun setOffsets(offsets: IntArray?, index: Int) = index
 
     companion object {
-        val DATA_FLAVOR: DataFlavor = DataFlavor(javaClass<ConvertJavaCopyPastePostProcessor>(), "class: ConvertJavaCopyPastePostProcessor")
+        val DATA_FLAVOR: DataFlavor = DataFlavor(ConvertJavaCopyPastePostProcessor::class.java, "class: ConvertJavaCopyPastePostProcessor")
     }
 }

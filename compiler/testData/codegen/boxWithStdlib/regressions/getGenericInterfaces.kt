@@ -11,14 +11,14 @@ class ClassWithGenericSuperInterface: java.util.Comparator<String> {
 fun check(klass: Class<*>) {
     val interfaces = klass.getInterfaces().toList()
     val genericInterfaces = klass.getGenericInterfaces().toList()
-    if (interfaces.size() != genericInterfaces.size()) {
+    if (interfaces.size != genericInterfaces.size) {
         throw AssertionError("interfaces=$interfaces, genericInterfaces=$genericInterfaces")
     }
 }
 
 fun box(): String {
-    check(javaClass<SimpleClass>())
-    check(javaClass<ClassWithNonGenericSuperInterface>())
-    check(javaClass<ClassWithGenericSuperInterface>())
+    check(SimpleClass::class.java)
+    check(ClassWithNonGenericSuperInterface::class.java)
+    check(ClassWithGenericSuperInterface::class.java)
     return "OK"
 }

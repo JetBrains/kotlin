@@ -22,14 +22,14 @@ import java.util.*
  * Concatenates the contents of this collection with the given collection, avoiding allocations if possible.
  * Can modify `this` if it is a mutable collection.
  */
-public fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
+fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
     if (collection.isEmpty()) {
         return this
     }
     if (this == null) {
         return collection
     }
-    if (this is LinkedHashSet<*>) {
+    if (this is LinkedHashSet) {
         addAll(collection)
         return this
     }
@@ -39,7 +39,7 @@ public fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? 
     return result
 }
 
-public fun <T> concatInOrder(c1: Collection<T>?, c2: Collection<T>?): Collection<T> {
+fun <T> concatInOrder(c1: Collection<T>?, c2: Collection<T>?): Collection<T> {
     val result = if (c1 == null || c1.isEmpty())
         c2
     else if (c2 == null || c2.isEmpty())
@@ -53,7 +53,7 @@ public fun <T> concatInOrder(c1: Collection<T>?, c2: Collection<T>?): Collection
     return result ?: emptySet()
 }
 
-public inline fun <Scope, T> getFromAllScopes(scopes: List<Scope>, callback: (Scope) -> Collection<T>): Collection<T> {
+inline fun <Scope, T> getFromAllScopes(scopes: List<Scope>, callback: (Scope) -> Collection<T>): Collection<T> {
     if (scopes.isEmpty()) return emptySet()
     var result: Collection<T>? = null
     for (scope in scopes) {
@@ -62,7 +62,7 @@ public inline fun <Scope, T> getFromAllScopes(scopes: List<Scope>, callback: (Sc
     return result ?: emptySet()
 }
 
-public inline fun <Scope, T : Any> getFirstMatch(scopes: List<Scope>, callback: (Scope) -> T?): T? {
+inline fun <Scope, T : Any> getFirstMatch(scopes: List<Scope>, callback: (Scope) -> T?): T? {
     // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
     for (scope in scopes) {
         val result = callback(scope)

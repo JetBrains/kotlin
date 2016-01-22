@@ -23,49 +23,49 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-public interface TypePredicate: (KotlinType) -> Boolean {
+interface TypePredicate: (KotlinType) -> Boolean {
     override fun invoke(typeToCheck: KotlinType): Boolean
 }
 
-public data class SingleType(val targetType: KotlinType): TypePredicate {
+data class SingleType(val targetType: KotlinType): TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.equalTypes(typeToCheck, targetType)
     override fun toString(): String = targetType.render()
 }
 
-public data class AllSubtypes(val upperBound: KotlinType): TypePredicate {
+data class AllSubtypes(val upperBound: KotlinType): TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(typeToCheck, upperBound)
 
     override fun toString(): String = "{<: ${upperBound.render()}}"
 }
 
-public data class ForAllTypes(val typeSets: List<TypePredicate>): TypePredicate {
+data class ForAllTypes(val typeSets: List<TypePredicate>): TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = typeSets.all { it(typeToCheck) }
 
     override fun toString(): String = "AND{${typeSets.joinToString(", ")}}"
 }
 
-public data class ForSomeType(val typeSets: List<TypePredicate>): TypePredicate {
+data class ForSomeType(val typeSets: List<TypePredicate>): TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = typeSets.any { it(typeToCheck) }
 
     override fun toString(): String = "OR{${typeSets.joinToString(", ")}}"
 }
 
-public object AllTypes : TypePredicate {
+object AllTypes : TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = true
 
     override fun toString(): String = "*"
 }
 
 // todo: simplify computed type predicate when possible
-public fun and(predicates: Collection<TypePredicate>): TypePredicate =
-        when (predicates.size()) {
+fun and(predicates: Collection<TypePredicate>): TypePredicate =
+        when (predicates.size) {
             0 -> AllTypes
             1 -> predicates.first()
             else -> ForAllTypes(predicates.toList())
         }
 
-public fun or(predicates: Collection<TypePredicate>): TypePredicate? =
-        when (predicates.size()) {
+fun or(predicates: Collection<TypePredicate>): TypePredicate? =
+        when (predicates.size) {
             0 -> null
             1 -> predicates.first()
             else -> ForSomeType(predicates.toList())
@@ -73,7 +73,7 @@ public fun or(predicates: Collection<TypePredicate>): TypePredicate? =
 
 fun KotlinType.getSubtypesPredicate(): TypePredicate {
     return when {
-        KotlinBuiltIns.isAnyOrNullableAny(this) && isMarkedNullable() -> AllTypes
+        KotlinBuiltIns.isAnyOrNullableAny(this) && isMarkedNullable -> AllTypes
         TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, this) -> AllSubtypes(this)
         else -> SingleType(this)
     }
@@ -82,5 +82,5 @@ fun KotlinType.getSubtypesPredicate(): TypePredicate {
 
 private fun KotlinType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 
-public fun <T> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
+fun <T> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
         keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key -> map.plus(key, this) }

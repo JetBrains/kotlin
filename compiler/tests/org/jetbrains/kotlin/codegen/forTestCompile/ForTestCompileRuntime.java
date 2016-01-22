@@ -37,6 +37,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File kotlinTestJarForTests() {
+        return assertExists(new File("dist/kotlinc/lib/kotlin-test.jar"));
+    }
+
+    @NotNull
     public static File reflectJarForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-reflect.jar"));
     }
@@ -53,7 +58,7 @@ public class ForTestCompileRuntime {
     public static synchronized ClassLoader runtimeAndReflectJarClassLoader() {
         ClassLoader loader = reflectJarClassLoader.get();
         if (loader == null) {
-            loader = createClassLoader(runtimeJarForTests(), reflectJarForTests());
+            loader = createClassLoader(runtimeJarForTests(), reflectJarForTests(), kotlinTestJarForTests());
             reflectJarClassLoader = new SoftReference<ClassLoader>(loader);
         }
         return loader;

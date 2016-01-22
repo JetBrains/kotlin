@@ -669,7 +669,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else if (at(DO_KEYWORD)) {
             parseDoWhile();
         }
-        else if (atSet(CLASS_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
+        else if (atSet(CLASS_KEYWORD, INTERFACE_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
                        VAR_KEYWORD, TYPE_ALIAS_KEYWORD)) {
             parseLocalDeclaration();
         }
@@ -1256,9 +1256,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             declType = myJetParsing.parseProperty(true);
         }
+        /*
         else if (keywordToken == TYPE_ALIAS_KEYWORD) {
             declType = myJetParsing.parseTypeAlias();
         }
+        */
         else if (keywordToken == OBJECT_KEYWORD) {
             // Object expression may appear at the statement position: should parse it
             // as expression instead of object declaration

@@ -54,6 +54,9 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
 
     public final boolean collectAllCandidates;
 
+    @NotNull
+    public final CallPosition callPosition;
+
     protected ResolutionContext(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
@@ -64,7 +67,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            @NotNull CallPosition callPosition
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -76,6 +80,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.statementFilter = statementFilter;
         this.isAnnotationContext = isAnnotationContext;
         this.collectAllCandidates = collectAllCandidates;
+        this.callPosition = callPosition;
     }
 
     protected abstract Context create(
@@ -86,7 +91,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates
+            boolean collectAllCandidates,
+            @NotNull CallPosition callPosition
     );
 
     @NotNull
@@ -99,14 +105,14 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, callPosition);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
         return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, callPosition);
     }
 
     @NotNull
@@ -114,28 +120,28 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
         return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, callPosition);
     }
 
     @NotNull
     public Context replaceScope(@NotNull LexicalScope newScope) {
         if (newScope == scope) return self();
         return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, callPosition);
     }
 
     @NotNull
     public Context replaceContextDependency(@NotNull ContextDependency newContextDependency) {
         if (newContextDependency == contextDependency) return self();
         return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, callPosition);
     }
 
     @NotNull
     public Context replaceResolutionResultsCache(@NotNull ResolutionResultsCache newResolutionResultsCache) {
         if (newResolutionResultsCache == resolutionResultsCache) return self();
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, callPosition);
     }
 
     @NotNull
@@ -146,12 +152,18 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public Context replaceCollectAllCandidates(boolean newCollectAllCandidates) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      newCollectAllCandidates);
+                      newCollectAllCandidates, callPosition);
     }
 
     @NotNull
     public Context replaceStatementFilter(@NotNull StatementFilter statementFilter) {
         return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
-                      collectAllCandidates);
+                      collectAllCandidates, callPosition);
+    }
+
+    @NotNull
+    public Context replaceCallPosition(@NotNull CallPosition callPosition) {
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
+                      collectAllCandidates, callPosition);
     }
 }

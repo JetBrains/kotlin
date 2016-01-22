@@ -30,7 +30,7 @@ import java.util.Collections
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 
-public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
+abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
     private fun createAndroidAPIEnvironment(path: String) {
         return createEnvironmentForConfiguration(KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
@@ -41,16 +41,16 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
-        val layoutPaths = File(path).listFiles { it.name.startsWith("layout") && it.isDirectory }!!.map { "$path${it.name}/" }
+        val layoutPaths = File(path).listFiles { it -> it.name.startsWith("layout") && it.isDirectory }!!.map { "$path${it.name}/" }
         myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths)
     }
 
-    public fun doCompileAgainstAndroidSdkTest(path: String) {
+    fun doCompileAgainstAndroidSdkTest(path: String) {
         createAndroidAPIEnvironment(path)
         doMultiFileTest(path)
     }
 
-    public fun doFakeInvocationTest(path: String) {
+    fun doFakeInvocationTest(path: String) {
         if (needsInvocationTest(path)) {
             createFakeAndroidEnvironment(path)
             doMultiFileTest(path, getFakeFiles(path))
@@ -73,7 +73,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         val files = ArrayList<String>(2)
         FileUtil.processFilesRecursively(File(path), object : Processor<File> {
             override fun process(file: File?): Boolean {
-                when (file!!.getName()) {
+                when (file!!.name) {
                     "1.kt" -> {
                         if (additionalFiles == null) files.add(relativePath(file))
                     }

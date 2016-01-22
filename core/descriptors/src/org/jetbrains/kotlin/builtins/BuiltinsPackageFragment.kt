@@ -18,21 +18,47 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
+import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
+import java.io.DataInputStream
 import java.io.InputStream
 
-public class BuiltinsPackageFragment(
+class BuiltinsPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
         loadResource: (path: String) -> InputStream?
 ) : DeserializedPackageFragment(fqName, storageManager, module, BuiltInsSerializedResourcePaths, loadResource) {
+    private val builtinsMessage = run {
+        val stream = loadResourceSure(BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName))
+        val dataInput = DataInputStream(stream)
+        val version = BuiltInsBinaryVersion(*(1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
 
-    protected override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
-        return packageProto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
+        if (!version.isCompatible()) {
+            // TODO: report a proper diagnostic
+            throw UnsupportedOperationException(
+                    "Kotlin built-in definition format version is not supported: " +
+                    "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
+                    "Please update Kotlin"
+            )
+        }
+
+        BuiltInsProtoBuf.BuiltIns.parseFrom(stream, BuiltInsSerializedResourcePaths.extensionRegistry)
     }
+
+    override val nameResolver = NameResolverImpl(builtinsMessage.strings, builtinsMessage.qualifiedNames)
+
+    override val classIdToProto =
+            builtinsMessage.classList.toMapBy { klass ->
+                nameResolver.getClassId(klass.fqName)
+            }
+
+    override fun computeMemberScope() =
+            DeserializedPackageMemberScope(
+                    this, builtinsMessage.`package`, nameResolver, packagePartSource = null, components = components,
+                    classNames = { classIdToProto.keys.filter { classId -> !classId.isNestedClass }.map { it.shortClassName } }
+            )
 }

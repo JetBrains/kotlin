@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() +  "/resolve/referenceInJava/dependencies.kt"
 
-public abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
-    protected override fun doTest(path: String) {
+abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
+    override fun doTest(path: String) {
         assert(path.endsWith(".java")) { path }
         myFixture.configureByFile(FILE_WITH_KOTLIN_CODE)
         myFixture.configureByFile(path)

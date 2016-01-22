@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
+class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
     override val bounds = ArrayList<Bound>()
 
     private var resultValues: Collection<KotlinType>? = null
@@ -34,11 +34,11 @@ public class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBound
     var isFixed: Boolean = false
         private set
 
-    public fun setFixed() {
+    fun setFixed() {
         isFixed = true
     }
 
-    public fun addBound(bound: Bound) {
+    fun addBound(bound: Bound) {
         resultValues = null
         assert(bound.typeVariable == typeVariable) {
             "$bound is added for incorrect type variable ${bound.typeVariable.name}. Expected: ${typeVariable.name}"
@@ -61,7 +61,7 @@ public class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBound
         return result
     }
 
-    public fun filter(condition: (ConstraintPosition) -> Boolean): TypeBoundsImpl {
+    fun filter(condition: (ConstraintPosition) -> Boolean): TypeBoundsImpl {
         val result = TypeBoundsImpl(typeVariable)
         result.bounds.addAll(bounds.filter { condition(it.position) })
         return result

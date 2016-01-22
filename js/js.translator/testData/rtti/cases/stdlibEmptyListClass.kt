@@ -12,7 +12,7 @@ fun box(): String {
     assertTrue((stdlib_emptyListClass() as Any) !is ArrayList<*>, "stdlib_emptyListClass() !is ArrayList<*>")
 
     assertTrue(stdlib_emptyListClass().isEmpty(), "stdlib_emptyListClass().isEmpty()")
-    assertTrue(stdlib_emptyListClass().size() == 0, "stdlib_emptyListClass().size() == 0")
+    assertTrue(stdlib_emptyListClass().size == 0, "stdlib_emptyListClass().size == 0")
 
     return "OK"
 }

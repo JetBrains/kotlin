@@ -210,7 +210,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
                     options.setModifiers(Collections.<DescriptorRendererModifier>emptySet());
                     options.setValueParametersHandler(VALUE_PARAMETERS_HANDLER);
                     options.setTextFormat(RenderingFormat.HTML);
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             });
 

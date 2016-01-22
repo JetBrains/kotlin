@@ -33,34 +33,33 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 
 @Suppress("UNCHECKED_CAST")
-public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
+inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
     val result = replace(newElement)
     return if (result is T)
         result
     else
-        (result as KtParenthesizedExpression).getExpression() as T
+        (result as KtParenthesizedExpression).expression as T
 }
 
-@Suppress("UNCHECKED_CAST")
-public fun <T: PsiElement> T.copied(): T = copy() as T
+@Suppress("UNCHECKED_CAST") fun <T: PsiElement> T.copied(): T = copy() as T
 
-public fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
+fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
 }
 
-public fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
+fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
         bindingContext: BindingContext
 ): KtCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getLambdaArgumentName(bindingContext))
 
-public fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
+fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
         functionLiteralArgumentName: Name?
 ): KtCallExpression {
-    val oldCallExpression = getParent() as KtCallExpression
+    val oldCallExpression = parent as KtCallExpression
     val newCallExpression = oldCallExpression.copy() as KtCallExpression
 
-    val psiFactory = KtPsiFactory(getProject())
+    val psiFactory = KtPsiFactory(project)
     val argument = if (newCallExpression.getValueArgumentsInParentheses().any { it.isNamed() }) {
         psiFactory.createArgument(replacement, functionLiteralArgumentName)
     }
@@ -68,13 +67,13 @@ public fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         psiFactory.createArgument(replacement)
     }
 
-    val functionLiteralArgument = newCallExpression.getLambdaArguments().firstOrNull()!!
-    val valueArgumentList = newCallExpression.getValueArgumentList() ?: psiFactory.createCallArguments("()")
+    val functionLiteralArgument = newCallExpression.lambdaArguments.firstOrNull()!!
+    val valueArgumentList = newCallExpression.valueArgumentList ?: psiFactory.createCallArguments("()")
 
     valueArgumentList.addArgument(argument)
 
-    (functionLiteralArgument.getPrevSibling() as? PsiWhiteSpace)?.delete()
-    if (newCallExpression.getValueArgumentList() != null) {
+    (functionLiteralArgument.prevSibling as? PsiWhiteSpace)?.delete()
+    if (newCallExpression.valueArgumentList != null) {
         functionLiteralArgument.delete()
     }
     else {
@@ -83,17 +82,17 @@ public fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     return oldCallExpression.replace(newCallExpression) as KtCallExpression
 }
 
-public fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
-    assert(getLambdaArguments().isEmpty())
-    val argumentList = getValueArgumentList()!!
-    val argument = argumentList.getArguments().last()
+fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
+    assert(lambdaArguments.isEmpty())
+    val argumentList = valueArgumentList!!
+    val argument = argumentList.arguments.last()
     val expression = argument.getArgumentExpression()!!
     assert(expression.unpackFunctionLiteral() != null)
 
     val dummyCall = KtPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as KtCallExpression
-    val functionLiteralArgument = dummyCall.getLambdaArguments().single()
+    val functionLiteralArgument = dummyCall.lambdaArguments.single()
     this.add(functionLiteralArgument)
-    if (argumentList.getArguments().size() > 1) {
+    if (argumentList.arguments.size > 1) {
         argumentList.removeArgument(argument)
     }
     else {
@@ -101,15 +100,15 @@ public fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     }
 }
 
-public fun KtBlockExpression.appendElement(element: KtElement, addNewLine: Boolean = false): KtElement {
-    val rBrace = getRBrace()
+fun KtBlockExpression.appendElement(element: KtElement, addNewLine: Boolean = false): KtElement {
+    val rBrace = rBrace
     val newLine = KtPsiFactory(this).createNewLine()
     val anchor = if (rBrace == null) {
-        val lastChild = getLastChild()
+        val lastChild = lastChild
         if (lastChild !is PsiWhiteSpace) addAfter(newLine, lastChild)!! else lastChild
     }
     else {
-        rBrace.getPrevSibling()!!
+        rBrace.prevSibling!!
     }
     val addedElement = addAfter(element, anchor)!! as KtElement
     if (addNewLine) {
@@ -119,8 +118,8 @@ public fun KtBlockExpression.appendElement(element: KtElement, addNewLine: Boole
 }
 
 //TODO: git rid of this method
-public fun PsiElement.deleteElementAndCleanParent() {
-    val parent = getParent()
+fun PsiElement.deleteElementAndCleanParent() {
+    val parent = parent
 
     deleteElementWithDelimiters(this)
     deleteChildlessElement(parent, this.javaClass)
@@ -140,32 +139,43 @@ private fun deleteElementWithDelimiters(element: PsiElement) {
     val from: PsiElement
     val to: PsiElement
     if (paramBefore != null) {
-        from = paramBefore.getNextSibling()
+        from = paramBefore.nextSibling
         to = element
     }
     else {
         val paramAfter = PsiTreeUtil.getNextSiblingOfType<PsiElement>(element, element.javaClass)
 
         from = element
-        to = if (paramAfter != null) paramAfter.getPrevSibling() else element
+        to = if (paramAfter != null) paramAfter.prevSibling else element
     }
 
-    val parent = element.getParent()
+    val parent = element.parent
 
     parent.deleteChildRange(from, to)
 }
 
-public fun PsiElement.deleteSingle() {
-    CodeEditUtil.removeChild(getParent()?.getNode() ?: return, getNode() ?: return)
+fun PsiElement.deleteSingle() {
+    CodeEditUtil.removeChild(parent?.node ?: return, node ?: return)
 }
 
-public fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
+fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
     getCompanionObjects().firstOrNull()?.let { return it }
     return addDeclaration(KtPsiFactory(this).createCompanionObject()) as KtObjectDeclaration
 }
 
 //TODO: code style option whether to insert redundant 'public' keyword or not
-public fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToken) {
+fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToken) {
+    val defaultVisibilityKeyword = implicitVisibility()
+
+    if (visibilityModifier == defaultVisibilityKeyword) {
+        this.visibilityModifierType()?.let { removeModifier(it) }
+        return
+    }
+
+    addModifier(visibilityModifier)
+}
+
+fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
     val defaultVisibilityKeyword = if (hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
         (resolveToDescriptor() as? CallableMemberDescriptor)
                 ?.overriddenDescriptors
@@ -175,13 +185,7 @@ public fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToke
     else {
         KtTokens.DEFAULT_VISIBILITY_KEYWORD
     }
-
-    if (visibilityModifier == defaultVisibilityKeyword) {
-        this.visibilityModifierType()?.let { removeModifier(it) }
-        return
-    }
-
-    addModifier(visibilityModifier)
+    return defaultVisibilityKeyword
 }
 
 fun KtSecondaryConstructor.getOrCreateBody(): KtBlockExpression {
@@ -197,4 +201,10 @@ fun KtParameter.dropDefaultValue() {
     val from = equalsToken ?: return
     val to = defaultValue ?: from
     deleteChildRange(from, to)
+}
+
+fun dropEnclosingParenthesesIfPossible(expression: KtExpression): KtExpression {
+    val parent = expression.parent as? KtParenthesizedExpression ?: return expression
+    if (!KtPsiUtil.areParenthesesUseless(parent)) return expression
+    return parent.replaced(expression)
 }

@@ -24,12 +24,15 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 
 import java.util.Set;
 
@@ -42,15 +45,17 @@ public class CompileTimeConstantChecker {
     private final KotlinBuiltIns builtIns;
     private final BindingTrace trace;
     private final boolean checkOnlyErrorsThatDependOnExpectedType;
+    private final ResolutionContext<?> context;
 
     public CompileTimeConstantChecker(
-            @NotNull BindingTrace trace,
+            @NotNull ResolutionContext<?> context,
             @NotNull KotlinBuiltIns builtIns,
             boolean checkOnlyErrorsThatDependOnExpectedType
     ) {
         this.checkOnlyErrorsThatDependOnExpectedType = checkOnlyErrorsThatDependOnExpectedType;
         this.builtIns = builtIns;
-        this.trace = trace;
+        this.trace = context.trace;
+        this.context = context;
     }
 
     // return true if there is an error
@@ -95,7 +100,7 @@ public class CompileTimeConstantChecker {
         if (!noExpectedTypeOrError(expectedType)) {
             KotlinType valueType = value.getType();
             if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
-                return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "integer", expectedType));
+                return reportConstantExpectedTypeMismatch(expression, "integer", expectedType, null);
             }
         }
         return false;
@@ -112,7 +117,7 @@ public class CompileTimeConstantChecker {
         if (!noExpectedTypeOrError(expectedType)) {
             KotlinType valueType = value.getType();
             if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
-                return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "floating-point", expectedType));
+                return reportConstantExpectedTypeMismatch(expression, "floating-point", expectedType, null);
             }
         }
         return false;
@@ -124,7 +129,7 @@ public class CompileTimeConstantChecker {
     ) {
         if (!noExpectedTypeOrError(expectedType)
             && !KotlinTypeChecker.DEFAULT.isSubtypeOf(builtIns.getBooleanType(), expectedType)) {
-            return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "boolean", expectedType));
+            return reportConstantExpectedTypeMismatch(expression, "boolean", expectedType, builtIns.getBooleanType());
         }
         return false;
     }
@@ -132,7 +137,7 @@ public class CompileTimeConstantChecker {
     private boolean checkCharValue(ConstantValue<?> constant, KotlinType expectedType, KtConstantExpression expression) {
         if (!noExpectedTypeOrError(expectedType)
             && !KotlinTypeChecker.DEFAULT.isSubtypeOf(builtIns.getCharType(), expectedType)) {
-            return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "character", expectedType));
+            return reportConstantExpectedTypeMismatch(expression, "character", expectedType, builtIns.getCharType());
         }
 
         if (constant != null) {
@@ -148,6 +153,9 @@ public class CompileTimeConstantChecker {
 
     private boolean checkNullValue(@NotNull KotlinType expectedType, @NotNull KtConstantExpression expression) {
         if (!noExpectedTypeOrError(expectedType) && !TypeUtils.acceptsNullable(expectedType)) {
+            if (DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(context, expression, expectedType, builtIns.getNullableNothingType())) {
+                return true;
+            }
             return reportError(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
         }
         return false;
@@ -269,8 +277,20 @@ public class CompileTimeConstantChecker {
         return null;
     }
 
-    public static boolean noExpectedTypeOrError(KotlinType expectedType) {
+    private static boolean noExpectedTypeOrError(KotlinType expectedType) {
         return TypeUtils.noExpectedType(expectedType) || expectedType.isError();
+    }
+
+    private boolean reportConstantExpectedTypeMismatch(
+            @NotNull KtConstantExpression expression,
+            @NotNull String typeName,
+            @NotNull KotlinType expectedType,
+            @Nullable KotlinType expressionType
+    ) {
+        if (DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(context, expression, expectedType, expressionType)) return true;
+
+        trace.report(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, typeName, expectedType));
+        return true;
     }
 
     private boolean reportError(@NotNull Diagnostic diagnostic) {

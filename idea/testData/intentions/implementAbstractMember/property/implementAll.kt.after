@@ -1,0 +1,26 @@
+// WITH_RUNTIME
+// DISABLE-ERRORS
+interface T<X> {
+    val <caret>foo: X
+}
+
+class U : T<String> {
+    override val foo: String
+        get() = throw UnsupportedOperationException()
+
+}
+
+class V : T<Int> {
+    override val foo: Int
+        get() = throw UnsupportedOperationException()
+
+}
+
+class Z : T<Int> by V() {
+
+}
+
+class W : T<Boolean> {
+    override val foo: Boolean
+        get() = throw UnsupportedOperationException()
+}

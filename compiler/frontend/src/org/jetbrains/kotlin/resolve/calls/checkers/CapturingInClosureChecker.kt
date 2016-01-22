@@ -32,18 +32,18 @@ import org.jetbrains.kotlin.types.expressions.CaptureKind
 class CapturingInClosureChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val variableResolvedCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.variableCall else resolvedCall
-        val variableDescriptor = variableResolvedCall.getResultingDescriptor() as? VariableDescriptor
+        val variableDescriptor = variableResolvedCall.resultingDescriptor as? VariableDescriptor
         if (variableDescriptor != null) {
             checkCapturingInClosure(variableDescriptor, context.trace, context.scope)
         }
     }
 
     private fun checkCapturingInClosure(variable: VariableDescriptor, trace: BindingTrace, scope: LexicalScope) {
-        val variableParent = variable.getContainingDeclaration()
+        val variableParent = variable.containingDeclaration
         val scopeContainer = scope.ownerDescriptor
         if (isCapturedVariable(variableParent, scopeContainer)) {
             if (trace.get(CAPTURED_IN_CLOSURE, variable) != CaptureKind.NOT_INLINE) {
-                val inline = isCapturedInInline(trace.getBindingContext(), scopeContainer, variableParent)
+                val inline = isCapturedInInline(trace.bindingContext, scopeContainer, variableParent)
                 trace.record(CAPTURED_IN_CLOSURE, variable, if (inline) CaptureKind.INLINE_ONLY else CaptureKind.NOT_INLINE)
             }
         }
@@ -53,10 +53,10 @@ class CapturingInClosureChecker : CallChecker {
         if (variableParent !is FunctionDescriptor || scopeContainer == variableParent) return false
 
         if (variableParent is ConstructorDescriptor) {
-            val classDescriptor = variableParent.getContainingDeclaration()
+            val classDescriptor = variableParent.containingDeclaration
 
             if (scopeContainer == classDescriptor) return false
-            if (scopeContainer is PropertyDescriptor && scopeContainer.getContainingDeclaration() == classDescriptor) return false
+            if (scopeContainer is PropertyDescriptor && scopeContainer.containingDeclaration == classDescriptor) return false
         }
         return true
     }
@@ -68,7 +68,7 @@ class CapturingInClosureChecker : CallChecker {
         if (!InlineUtil.canBeInlineArgument(scopeDeclaration)) return false
 
         if (InlineUtil.isInlinedArgument(scopeDeclaration as KtFunction, context, false)) {
-            val scopeContainerParent = scopeContainer.getContainingDeclaration()
+            val scopeContainerParent = scopeContainer.containingDeclaration
             assert(scopeContainerParent != null) { "parent is null for " + scopeContainer }
             return !isCapturedVariable(variableParent, scopeContainerParent!!) || isCapturedInInline(context, scopeContainerParent, variableParent)
         }

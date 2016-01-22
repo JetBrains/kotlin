@@ -41,9 +41,9 @@ object SenselessComparisonChecker {
                 else return
 
         val type = getType(expr)
-        if (type == null || type.isError()) return
+        if (type == null || type.isError) return
 
-        val operationSign = expression.getOperationReference()
+        val operationSign = expression.operationReference
         val value = DataFlowValueFactory.createDataFlowValue(expr, type, context)
 
         val equality = operationSign.getReferencedNameElementType() == KtTokens.EQEQ || operationSign.getReferencedNameElementType() == KtTokens.EQEQEQ

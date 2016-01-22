@@ -30,81 +30,81 @@ import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
-public interface GlobalContext {
-    public val storageManager: StorageManager
-    public val exceptionTracker: ExceptionTracker
+interface GlobalContext {
+    val storageManager: StorageManager
+    val exceptionTracker: ExceptionTracker
 }
 
-public interface ProjectContext : GlobalContext {
-    public val project: Project
+interface ProjectContext : GlobalContext {
+    val project: Project
 }
 
-public interface ModuleContext : ProjectContext {
-    public val module: ModuleDescriptor
+interface ModuleContext : ProjectContext {
+    val module: ModuleDescriptor
 
-    public val platformToKotlinClassMap: PlatformToKotlinClassMap
+    val platformToKotlinClassMap: PlatformToKotlinClassMap
         get() = module.platformToKotlinClassMap
 
-    public val builtIns: KotlinBuiltIns
+    val builtIns: KotlinBuiltIns
         get() = module.builtIns
 }
 
-public interface MutableModuleContext: ModuleContext {
+interface MutableModuleContext: ModuleContext {
     override val module: ModuleDescriptorImpl
 
-    public fun setDependencies(vararg dependencies: ModuleDescriptorImpl) {
+    fun setDependencies(vararg dependencies: ModuleDescriptorImpl) {
         module.setDependencies(*dependencies)
     }
 
-    public fun setDependencies(dependencies: List<ModuleDescriptorImpl>) {
+    fun setDependencies(dependencies: List<ModuleDescriptorImpl>) {
         module.setDependencies(dependencies)
     }
 
-    public fun initializeModuleContents(packageFragmentProvider: PackageFragmentProvider) {
+    fun initializeModuleContents(packageFragmentProvider: PackageFragmentProvider) {
         module.initialize(packageFragmentProvider)
     }
 }
 
-public open class SimpleGlobalContext(
+open class SimpleGlobalContext(
         override val storageManager: StorageManager,
         override val exceptionTracker: ExceptionTracker
 ) : GlobalContext
 
-public open class GlobalContextImpl(
+open class GlobalContextImpl(
         storageManager: LockBasedStorageManager,
         exceptionTracker: ExceptionTracker
 ) : SimpleGlobalContext(storageManager, exceptionTracker) {
     override val storageManager: LockBasedStorageManager = super.storageManager as LockBasedStorageManager
 }
 
-public class ProjectContextImpl(
+class ProjectContextImpl(
         override val project: Project,
         private val globalContext: GlobalContext
 ) : ProjectContext, GlobalContext by globalContext
 
-public class ModuleContextImpl(
+class ModuleContextImpl(
         override val module: ModuleDescriptor,
         projectContext: ProjectContext
 ) : ModuleContext, ProjectContext by projectContext
 
-public class MutableModuleContextImpl(
+class MutableModuleContextImpl(
         override val module: ModuleDescriptorImpl,
         projectContext: ProjectContext
 ) : MutableModuleContext, ProjectContext by projectContext
 
-public fun GlobalContext(): GlobalContextImpl {
+fun GlobalContext(): GlobalContextImpl {
     val tracker = ExceptionTracker()
     return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
 }
 
-public fun ProjectContext(project: Project): ProjectContext = ProjectContextImpl(project, GlobalContext())
-public fun ModuleContext(module: ModuleDescriptor, project: Project): ModuleContext =
+fun ProjectContext(project: Project): ProjectContext = ProjectContextImpl(project, GlobalContext())
+fun ModuleContext(module: ModuleDescriptor, project: Project): ModuleContext =
         ModuleContextImpl(module, ProjectContext(project))
 
-public fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
-public fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleContextImpl(module, this)
+fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
+fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleContextImpl(module, this)
 
-public fun ContextForNewModule(
+fun ContextForNewModule(
         project: Project,
         moduleName: Name,
         parameters: ModuleParameters,
@@ -115,7 +115,7 @@ public fun ContextForNewModule(
     return MutableModuleContextImpl(module, projectContext)
 }
 
-public fun ContextForNewModule(
+fun ContextForNewModule(
         project: Project,
         moduleName: Name,
         targetPlatform: TargetPlatform
@@ -127,13 +127,12 @@ public fun ContextForNewModule(
 
 
 @Deprecated("Used temporarily while we are in transition from to lazy resolve")
-public open class TypeLazinessToken {
+open class TypeLazinessToken {
     @Deprecated("Used temporarily while we are in transition from to lazy resolve")
-    public open fun isLazy(): Boolean = false
+    open fun isLazy(): Boolean = false
 }
 
-@Deprecated("Used temporarily while we are in transition from to lazy resolve")
-public class LazyResolveToken : TypeLazinessToken() {
+@Deprecated("Used temporarily while we are in transition from to lazy resolve") class LazyResolveToken : TypeLazinessToken() {
     @Deprecated("Used temporarily while we are in transition from to lazy resolve")
     override fun isLazy() = true
 }

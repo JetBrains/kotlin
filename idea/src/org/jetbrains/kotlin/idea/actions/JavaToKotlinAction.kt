@@ -32,7 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
+import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -44,14 +44,14 @@ import java.io.File
 import java.io.IOException
 import java.util.ArrayList
 
-public class JavaToKotlinAction : AnAction() {
+class JavaToKotlinAction : AnAction() {
     companion object {
         private fun uniqueKotlinFileName(javaFile: VirtualFile): String {
-            val ioFile = File(javaFile.getPath().replace('/', File.separatorChar))
+            val ioFile = File(javaFile.path.replace('/', File.separatorChar))
 
             var i = 0
             while (true) {
-                val fileName = javaFile.getNameWithoutExtension() + (if (i > 0) i else "") + ".kt"
+                val fileName = javaFile.nameWithoutExtension + (if (i > 0) i else "") + ".kt"
                 if (!ioFile.resolveSibling(fileName).exists()) return fileName
                 i++
             }
@@ -60,7 +60,7 @@ public class JavaToKotlinAction : AnAction() {
         private fun saveResults(javaFiles: List<PsiJavaFile>, convertedTexts: List<String>): List<VirtualFile> {
             val result = ArrayList<VirtualFile>()
             for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
-                val virtualFile = psiFile.getVirtualFile()
+                val virtualFile = psiFile.virtualFile
                 val fileName = uniqueKotlinFileName(virtualFile)
                 try {
                     virtualFile.rename(this, fileName)
@@ -68,7 +68,7 @@ public class JavaToKotlinAction : AnAction() {
                     result.add(virtualFile)
                 }
                 catch (e: IOException) {
-                    MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
+                    MessagesEx.error(psiFile.project, e.message).showLater()
                 }
             }
             return result
@@ -80,7 +80,7 @@ public class JavaToKotlinAction : AnAction() {
             var converterResult: JavaToKotlinConverter.FilesResult? = null
             fun convert() {
                 val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
-                converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().getProgressIndicator())
+                converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().progressIndicator)
             }
 
             val title = "Convert Java to Kotlin"
@@ -101,7 +101,7 @@ public class JavaToKotlinAction : AnAction() {
                     ProgressManager.getInstance().runProcessWithProgressSynchronously(
                             {
                                 runReadAction {
-                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().getProgressIndicator())
+                                    externalCodeUpdate = converterResult!!.externalCodeProcessing!!.prepareWriteOperation(ProgressManager.getInstance().progressIndicator)
                                 }
                             },
                             title,
@@ -128,18 +128,18 @@ public class JavaToKotlinAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val javaFiles = selectedJavaFiles(e).toList()
-        val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
         convertFiles(javaFiles, project)
     }
 
     override fun update(e: AnActionEvent) {
         val enabled = selectedJavaFiles(e).any()
-        e.getPresentation().setEnabled(enabled)
+        e.presentation.isEnabled = enabled
     }
 
     private fun selectedJavaFiles(e: AnActionEvent): Sequence<PsiJavaFile> {
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return sequenceOf()
-        val project = e.getProject() ?: return sequenceOf()
+        val project = e.project ?: return sequenceOf()
         return allJavaFiles(virtualFiles, project)
     }
 

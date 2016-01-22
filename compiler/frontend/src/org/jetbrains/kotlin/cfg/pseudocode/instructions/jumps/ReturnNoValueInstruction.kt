@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class ReturnNoValueInstruction(
+class ReturnNoValueInstruction(
         element: KtElement,
         lexicalScope: LexicalScope,
         targetLabel: Label

@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.load.java.structure
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
-public interface JavaPropertyInitializerEvaluator {
-    public fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>?
+interface JavaPropertyInitializerEvaluator {
+    fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>?
 
-    public fun isNotNullCompileTimeConstant(field: JavaField): Boolean
+    fun isNotNullCompileTimeConstant(field: JavaField): Boolean
 
-    public object DoNothing : JavaPropertyInitializerEvaluator {
+    object DoNothing : JavaPropertyInitializerEvaluator {
         override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor) = null
 
         override fun isNotNullCompileTimeConstant(field: JavaField) = false

@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-public class DisjointKeysUnionTypeSubstitution private constructor(
+class DisjointKeysUnionTypeSubstitution private constructor(
     private val first: TypeSubstitution,
     private val second: TypeSubstitution
 ) : TypeSubstitution() {
     companion object {
-        @JvmStatic
-        public fun create(first: TypeSubstitution, second: TypeSubstitution): TypeSubstitution {
+        @JvmStatic fun create(first: TypeSubstitution, second: TypeSubstitution): TypeSubstitution {
             if (first.isEmpty()) return second
             if (second.isEmpty()) return first
 
@@ -37,6 +36,7 @@ public class DisjointKeysUnionTypeSubstitution private constructor(
     override fun isEmpty() = false
 
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+    override fun approximateContravariantCapturedTypes() = first.approximateContravariantCapturedTypes() || second.approximateContravariantCapturedTypes()
 
     override fun filterAnnotations(annotations: Annotations) = second.filterAnnotations(first.filterAnnotations(annotations))
 }

@@ -5,8 +5,8 @@ public fun add(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int): kotlin.Int
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun f(): (kotlin.Int, kotlin.Int) -> kotlin.Int
-    public abstract fun </*0*/ T> foo(/*0*/ f: (kotlin.List<T>) -> kotlin.List<T>, /*1*/ x: kotlin.List<T>): kotlin.Unit
+    public abstract fun </*0*/ T> foo(/*0*/ f: (kotlin.collections.List<T>) -> kotlin.collections.List<T>, /*1*/ x: kotlin.collections.List<T>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun </*0*/ T> shuffle(/*0*/ x: kotlin.List<T>): kotlin.List<T>
+    public abstract fun </*0*/ T> shuffle(/*0*/ x: kotlin.collections.List<T>): kotlin.collections.List<T>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

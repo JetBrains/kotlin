@@ -21,15 +21,15 @@ import java.io.File
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    if (args.size() < 2) {
+    if (args.size < 2) {
         println(
 """Kotlin built-ins serializer
 
 Usage: ... <destination dir> (<source dir>)+
 
 Analyzes Kotlin sources found in the given source directories and serializes
-found top-level declarations to <destination dir> (files such as
-*.kotlin_string_table, *.kotlin_package, *.kotlin_class)"""
+found top-level declarations to <destination dir> (files such as *.kotlin_builtins,
+as well as old files *.kotlin_string_table, *.kotlin_package, *.kotlin_class)"""
         )
         return
     }

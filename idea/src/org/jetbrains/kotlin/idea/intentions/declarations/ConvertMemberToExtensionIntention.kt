@@ -20,40 +20,40 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.setReceiverType
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.quickfix.unblockDocument
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(javaClass(), "Convert member to extension"), LowPriorityAction {
+class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
-        val classBody = element.getParent() as? KtClassBody ?: return null
-        if (classBody.getParent() !is KtClass) return null
-        if (element.getReceiverTypeReference() != null) return null
+        val classBody = element.parent as? KtClassBody ?: return null
+        if (classBody.parent !is KtClass) return null
+        if (element.receiverTypeReference != null) return null
         if (element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
         when (element) {
             is KtProperty -> if (element.hasInitializer()) return null
             is KtSecondaryConstructor -> return null
         }
-        return (element.getNameIdentifier() ?: return null).getTextRange()
+        return (element.nameIdentifier ?: return null).textRange
     }
 
     //TODO: local class
 
-    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         val descriptor = element.resolveToDescriptor()
-        val containingClass = descriptor.getContainingDeclaration() as ClassDescriptor
+        val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
         val file = element.getContainingKtFile()
         val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
 
         val typeParameterList = newTypeParameterList(element)
 
-        val project = element.getProject()
+        val project = element.project
         val psiFactory = KtPsiFactory(element)
 
         val extension = file.addAfter(element, outermostParent) as KtCallableDeclaration
@@ -61,27 +61,27 @@ public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtC
         file.addAfter(psiFactory.createNewLine(), outermostParent)
         element.delete()
 
-        extension.setReceiverType(containingClass.getDefaultType())
+        extension.setReceiverType(containingClass.defaultType)
 
         if (typeParameterList != null) {
-            if (extension.getTypeParameterList() != null) {
-                extension.getTypeParameterList()!!.replace(typeParameterList)
+            if (extension.typeParameterList != null) {
+                extension.typeParameterList!!.replace(typeParameterList)
             }
             else {
-                extension.addBefore(typeParameterList, extension.getReceiverTypeReference())
-                extension.addBefore(psiFactory.createWhiteSpace(), extension.getReceiverTypeReference())
+                extension.addBefore(typeParameterList, extension.receiverTypeReference)
+                extension.addBefore(psiFactory.createWhiteSpace(), extension.receiverTypeReference)
             }
         }
 
-        extension.getModifierList()?.getModifier(KtTokens.PROTECTED_KEYWORD)?.delete()
-        extension.getModifierList()?.getModifier(KtTokens.ABSTRACT_KEYWORD)?.delete()
+        extension.modifierList?.getModifier(KtTokens.PROTECTED_KEYWORD)?.delete()
+        extension.modifierList?.getModifier(KtTokens.ABSTRACT_KEYWORD)?.delete()
 
         var bodyToSelect: KtExpression? = null
 
         fun selectBody(declaration: KtDeclarationWithBody) {
             if (bodyToSelect == null) {
-                val body = declaration.getBodyExpression()
-                bodyToSelect = if (body is KtBlockExpression) body.getStatements().single() else body
+                val body = declaration.bodyExpression
+                bodyToSelect = if (body is KtBlockExpression) body.statements.single() else body
             }
         }
 
@@ -96,12 +96,12 @@ public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtC
 
             is KtProperty -> {
                 val templateProperty = psiFactory.createDeclaration<KtProperty>("var v: Any\nget()=$THROW_UNSUPPORTED_OPERATION_EXCEPTION\nset(value){$THROW_UNSUPPORTED_OPERATION_EXCEPTION}")
-                val templateGetter = templateProperty.getGetter()!!
-                val templateSetter = templateProperty.getSetter()!!
+                val templateGetter = templateProperty.getter!!
+                val templateSetter = templateProperty.setter!!
 
-                var getter = extension.getGetter()
+                var getter = extension.getter
                 if (getter == null) {
-                    getter = extension.addAfter(templateGetter, extension.getTypeReference()) as KtPropertyAccessor
+                    getter = extension.addAfter(templateGetter, extension.typeReference) as KtPropertyAccessor
                     extension.addBefore(psiFactory.createNewLine(), getter)
                     selectBody(getter)
                 }
@@ -110,8 +110,8 @@ public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtC
                     selectBody(getter)
                 }
 
-                if (extension.isVar()) {
-                    var setter = extension.getSetter()
+                if (extension.isVar) {
+                    var setter = extension.setter
                     if (setter == null) {
                         setter = extension.addAfter(templateSetter, getter) as KtPropertyAccessor
                         extension.addBefore(psiFactory.createNewLine(), setter)
@@ -125,15 +125,17 @@ public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtC
             }
         }
 
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+        editor?.apply {
+            unblockDocument()
 
-        if (bodyToSelect != null) {
-            val range = bodyToSelect!!.getTextRange()
-            editor.moveCaret(range.getStartOffset(), ScrollType.CENTER)
-            editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
-        }
-        else {
-            editor.moveCaret(extension.getTextOffset(), ScrollType.CENTER)
+            if (bodyToSelect != null) {
+                val range = bodyToSelect!!.textRange
+                moveCaret(range.startOffset, ScrollType.CENTER)
+                selectionModel.setSelection(range.startOffset, range.endOffset)
+            }
+            else {
+                moveCaret(extension.textOffset, ScrollType.CENTER)
+            }
         }
     }
 
@@ -141,11 +143,11 @@ public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtC
     private val THROW_UNSUPPORTED_OPERATION_EXCEPTION = "throw UnsupportedOperationException()"
 
     private fun newTypeParameterList(member: KtCallableDeclaration): KtTypeParameterList? {
-        val classElement = member.getParent().getParent() as KtClass
-        val classParams = classElement.getTypeParameters()
+        val classElement = member.parent.parent as KtClass
+        val classParams = classElement.typeParameters
         if (classParams.isEmpty()) return null
-        val allTypeParameters = classParams + member.getTypeParameters()
-        val text = allTypeParameters.map { it.getText() }.joinToString(",", "<", ">")
-        return KtPsiFactory(member).createDeclaration<KtFunction>("fun $text foo()").getTypeParameterList()
+        val allTypeParameters = classParams + member.typeParameters
+        val text = allTypeParameters.map { it.text }.joinToString(",", "<", ">")
+        return KtPsiFactory(member).createDeclaration<KtFunction>("fun $text foo()").typeParameterList
     }
 }

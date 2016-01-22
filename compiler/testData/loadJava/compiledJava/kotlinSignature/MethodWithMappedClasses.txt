@@ -2,5 +2,5 @@ package test
 
 public open class MethodWithMappedClasses {
     public constructor MethodWithMappedClasses()
-    public open fun </*0*/ T : kotlin.Any!> copy(/*0*/ p0: (kotlin.MutableList<in T!>..kotlin.List<*>?), /*1*/ p1: kotlin.(Mutable)List<T!>!): kotlin.Unit
+    public open fun </*0*/ T : kotlin.Any!> copy(/*0*/ p0: (kotlin.collections.MutableList<in T!>..kotlin.collections.List<*>?), /*1*/ p1: kotlin.collections.(Mutable)List<T!>!): kotlin.Unit
 }

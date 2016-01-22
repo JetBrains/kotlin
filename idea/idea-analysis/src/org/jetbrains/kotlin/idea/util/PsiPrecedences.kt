@@ -24,37 +24,37 @@ import org.jetbrains.kotlin.parsing.KotlinExpressionParsing.Precedence.PREFIX
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public object PsiPrecedences {
+object PsiPrecedences {
 
-    private val LOG = Logger.getInstance(javaClass<PsiPrecedences>())
+    private val LOG = Logger.getInstance(PsiPrecedences::class.java)
 
     private val precedence: Map<IElementType, Int>
     init {
         val builder = HashMap<IElementType, Int>()
         for ((i, record) in KotlinExpressionParsing.Precedence.values().withIndex()) {
-            for (elementType in record.getOperations().getTypes()) {
+            for (elementType in record.operations.types) {
                 builder[elementType] = i
             }
         }
         precedence = builder
     }
 
-    public val PRECEDENCE_OF_ATOMIC_EXPRESSION: Int = -1
-    public val PRECEDENCE_OF_PREFIX_EXPRESSION: Int = PREFIX.ordinal()
-    public val PRECEDENCE_OF_POSTFIX_EXPRESSION: Int = POSTFIX.ordinal()
+    val PRECEDENCE_OF_ATOMIC_EXPRESSION: Int = -1
+    val PRECEDENCE_OF_PREFIX_EXPRESSION: Int = PREFIX.ordinal
+    val PRECEDENCE_OF_POSTFIX_EXPRESSION: Int = POSTFIX.ordinal
 
-    public fun getPrecedence(expression: KtExpression): Int {
+    fun getPrecedence(expression: KtExpression): Int {
         return when (expression) {
             is KtAnnotatedExpression,
             is KtLabeledExpression,
             is KtPrefixExpression -> PRECEDENCE_OF_PREFIX_EXPRESSION
             is KtPostfixExpression -> PRECEDENCE_OF_POSTFIX_EXPRESSION
             is KtOperationExpression -> {
-                val operation = expression.getOperationReference().getReferencedNameElementType()
+                val operation = expression.operationReference.getReferencedNameElementType()
                 val precedenceNumber = precedence[operation]
                 if (precedenceNumber == null) {
                     LOG.error("No precedence for operation: " + operation)
-                    precedence.size()
+                    precedence.size
                 }
                 else precedenceNumber
             }
@@ -62,7 +62,7 @@ public object PsiPrecedences {
         }
     }
 
-    public fun isTighter(subject: Int, tighterThan: Int): Boolean {
+    fun isTighter(subject: Int, tighterThan: Int): Boolean {
         return subject < tighterThan
     }
 }

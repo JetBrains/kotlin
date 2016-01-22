@@ -36,7 +36,7 @@ fun errorNotification(project: Project?, message: String) {
 
 fun logError(cl: Class<*>, message: String) = with(Logger.getInstance(cl)) { error(message) }
 
-public class RunKotlinConsoleAction : AnAction() {
+class RunKotlinConsoleAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return errorNotification(null, "Project not found")
 
@@ -44,7 +44,7 @@ public class RunKotlinConsoleAction : AnAction() {
     }
 }
 
-public class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAction() {
+class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return errorNotification(null, "Cannot find project")
         val ktConsole = KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile(consoleFile) ?: return
@@ -53,7 +53,7 @@ public class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAc
     }
 }
 
-public class BuildAndRestartConsoleAction(
+class BuildAndRestartConsoleAction(
         private val runner: KotlinConsoleRunner
 ) : AnAction("Build and restart", "Build module '${runner.module.name}' and restart", AllIcons.Actions.Restart) {
 

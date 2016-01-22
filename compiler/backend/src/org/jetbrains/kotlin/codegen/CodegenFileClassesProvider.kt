@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider
 import org.jetbrains.kotlin.psi.KtFile
 
-public class CodegenFileClassesProvider : JvmFileClassesProvider {
-    override public fun getFileClassInfo(file: KtFile): JvmFileClassInfo =
+class CodegenFileClassesProvider : JvmFileClassesProvider {
+    override fun getFileClassInfo(file: KtFile): JvmFileClassInfo =
             JvmFileClassUtil.getFileClassInfoNoResolve(file)
 }

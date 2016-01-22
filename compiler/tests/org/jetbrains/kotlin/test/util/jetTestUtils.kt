@@ -16,27 +16,27 @@
 
 package org.jetbrains.kotlin.test.util
 
-import com.intellij.codeInspection.SmartHashMap
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.SmartFMap
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import java.io.File
-import java.util.*
 
-public fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
+fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         this.split('\n').map { it.trimEnd() }.joinToString(separator = "\n").let {
             result -> if (result.endsWith("\n")) result else result + "\n"
         }
 
-public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String) {
-    configureWithExtraFile(path, *extraNameParts)
+fun CodeInsightTestFixture.configureWithExtraFileAbs(path: String, vararg extraNameParts: String) {
+    configureWithExtraFile(path, *extraNameParts, relativePaths = false)
 }
 
-public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data"), relativePaths: Boolean = false) {
-    fun String.toFile(): File = if (relativePaths) File(getTestDataPath(), this) else File(this)
+fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data"), relativePaths: Boolean = false) {
+    fun String.toFile(): File = if (relativePaths) File(testDataPath, this) else File(this)
 
     val noExtensionPath = FileUtil.getNameWithoutExtension(path)
     val extensions = arrayOf("kt", "java")
@@ -47,27 +47,27 @@ public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg ex
     configureByFiles(*(listOf(path) + extraPaths).toTypedArray())
 }
 
-public fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
-        findElementsByCommentPrefix(commentText).keySet().singleOrNull()
+fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
+        findElementsByCommentPrefix(commentText).keys.singleOrNull()
 
-public fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
+fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
     var result = SmartFMap.emptyMap<PsiElement, String>()
     accept(
             object : KtTreeVisitorVoid() {
                 override fun visitComment(comment: PsiComment) {
-                    val commentText = comment.getText()
+                    val commentText = comment.text
                     if (commentText.startsWith(prefix)) {
-                        val parent = comment.getParent()
+                        val parent = comment.parent
                         val elementToAdd = when (parent) {
                             is KtDeclaration -> parent
                             is PsiMember -> parent
                             else -> PsiTreeUtil.skipSiblingsForward(
                                     comment,
-                                    javaClass<PsiWhiteSpace>(), javaClass<PsiComment>(), javaClass<KtPackageDirective>()
+                                    PsiWhiteSpace::class.java, PsiComment::class.java, KtPackageDirective::class.java
                             )
                         } as? PsiElement ?: return
 
-                        result = result.plus(elementToAdd, commentText.substring(prefix.length()).trim())
+                        result = result.plus(elementToAdd, commentText.substring(prefix.length).trim())
                     }
                 }
             }

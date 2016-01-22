@@ -1,13 +1,13 @@
 package
 
-public final class MyIterable</*0*/ T> : kotlin.Iterable<T> {
+public final class MyIterable</*0*/ T> : kotlin.collections.Iterable<T> {
     public constructor MyIterable</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ fun iterator(): kotlin.Iterator<T>
+    public open override /*1*/ fun iterator(): kotlin.collections.Iterator<T>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class MyIterator /*captured type parameters: /*0*/ T*/ : kotlin.Iterator<T> {
+    public final inner class MyIterator /*captured type parameters: /*0*/ T*/ : kotlin.collections.Iterator<T> {
         public constructor MyIterator()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ fun hasNext(): kotlin.Boolean

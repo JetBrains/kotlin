@@ -118,7 +118,7 @@ fun box(): String {
     asSucceeds("mentry as MutableMap.MutableEntry") { mentry as MutableMap.MutableEntry<*, *> }
 
     hashMap[""] = ""
-    val hashMapEntry = hashMap.entrySet().first()
+    val hashMapEntry = hashMap.entries.first()
 
     asSucceeds("hashMapEntry as MutableMap.MutableEntry") { hashMapEntry as MutableMap.MutableEntry<*, *> }
 

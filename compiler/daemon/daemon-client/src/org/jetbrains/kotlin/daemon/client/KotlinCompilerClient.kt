@@ -341,9 +341,9 @@ object KotlinCompilerClient {
 }
 
 
-data class DaemonReportMessage(public val category: DaemonReportCategory, public val message: String)
+data class DaemonReportMessage(val category: DaemonReportCategory, val message: String)
 
-class DaemonReportingTargets(public val out: PrintStream? = null, public val messages: MutableCollection<DaemonReportMessage>? = null)
+class DaemonReportingTargets(val out: PrintStream? = null, val messages: MutableCollection<DaemonReportMessage>? = null)
 
 
 internal fun isProcessAlive(process: Process) =

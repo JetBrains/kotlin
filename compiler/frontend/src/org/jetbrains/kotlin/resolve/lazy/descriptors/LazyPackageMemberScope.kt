@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
-public class LazyPackageMemberScope(
+class LazyPackageMemberScope(
         private val resolveSession: ResolveSession,
         declarationProvider: PackageMemberDeclarationProvider,
         thisPackage: PackageFragmentDescriptor)
@@ -35,7 +35,7 @@ public class LazyPackageMemberScope(
     }
 
     override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration)
-            = resolveSession.getFileScopeProvider().getFileResolutionScope(declaration.getContainingKtFile())
+            = resolveSession.fileScopeProvider.getFileResolutionScope(declaration.getContainingKtFile())
 
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>) {
         // No extra functions
@@ -46,5 +46,5 @@ public class LazyPackageMemberScope(
     }
 
     // Do not add details here, they may compromise the laziness during debugging
-    override fun toString() = "lazy scope for package " + thisDescriptor.getName()
+    override fun toString() = "lazy scope for package " + thisDescriptor.name
 }

@@ -30,9 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
-
 public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
 
     @Override
@@ -42,9 +39,9 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @NotNull BindingContext bindingContext
     ) {
         PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode.getRootPseudocode(), bindingContext);
-        final Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> variableInitializers =
+        final Map<Instruction, Edges<InitControlFlowInfo>> variableInitializers =
                 pseudocodeVariablesData.getVariableInitializers();
-        final Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> useStatusData =
+        final Map<Instruction, Edges<UseControlFlowInfo>> useStatusData =
                 pseudocodeVariablesData.getVariableUseStatusData();
         final String initPrefix = "    INIT:";
         final String usePrefix  = "    USE:";
@@ -54,16 +51,16 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @Override
             public String invoke(Instruction instruction, Instruction next, Instruction prev) {
                 StringBuilder result = new StringBuilder();
-                Edges<Map<VariableDescriptor, VariableControlFlowState>> initializersEdges = variableInitializers.get(instruction);
-                Edges<Map<VariableDescriptor, VariableControlFlowState>> previousInitializersEdges = variableInitializers.get(prev);
+                Edges<InitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
+                Edges<InitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
                 String initializersData = "";
                 if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
                     initializersData = dumpEdgesData(initPrefix, initializersEdges);
                 }
                 result.append(String.format("%1$-" + initializersColumnWidth + "s", initializersData));
 
-                Edges<Map<VariableDescriptor, VariableUseState>> useStatusEdges = useStatusData.get(instruction);
-                Edges<Map<VariableDescriptor, VariableUseState>> nextUseStatusEdges = useStatusData.get(next);
+                Edges<UseControlFlowInfo> useStatusEdges = useStatusData.get(instruction);
+                Edges<UseControlFlowInfo> nextUseStatusEdges = useStatusData.get(next);
                 if (useStatusEdges != null && !useStatusEdges.equals(nextUseStatusEdges)) {
                     result.append(dumpEdgesData(usePrefix, useStatusEdges));
                 }
@@ -75,11 +72,11 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     private static int countDataColumnWidth(
             @NotNull String prefix,
             @NotNull List<Instruction> instructions,
-            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> data
+            @NotNull Map<Instruction, Edges<InitControlFlowInfo>> data
     ) {
         int maxWidth = 0;
         for (Instruction instruction : instructions) {
-            Edges<Map<VariableDescriptor, VariableControlFlowState>> edges = data.get(instruction);
+            Edges<InitControlFlowInfo> edges = data.get(instruction);
             if (edges == null) continue;
             int length = dumpEdgesData(prefix, edges).length();
             if (maxWidth < length) {
@@ -90,18 +87,18 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     }
 
     @NotNull
-    private static <D> String dumpEdgesData(String prefix, @NotNull Edges<Map<VariableDescriptor, D>> edges) {
+    private static <S, I extends ControlFlowInfo<S>> String dumpEdgesData(String prefix, @NotNull Edges<I> edges) {
         return prefix +
                " in: " + renderVariableMap(edges.getIncoming()) +
                " out: " + renderVariableMap(edges.getOutgoing());
     }
 
-    private static <D> String renderVariableMap(Map<VariableDescriptor, D> map) {
+    private static <S> String renderVariableMap(Map<VariableDescriptor, S> map) {
         List<String> result = Lists.newArrayList();
-        for (Map.Entry<VariableDescriptor, D> entry : map.entrySet()) {
+        for (Map.Entry<VariableDescriptor, S> entry : map.entrySet()) {
             VariableDescriptor variable = entry.getKey();
-            D data = entry.getValue();
-            result.add(variable.getName() + "=" + data);
+            S state = entry.getValue();
+            result.add(variable.getName() + "=" + state);
         }
         Collections.sort(result);
         return "{" + StringUtil.join(result, ", ") + "}";

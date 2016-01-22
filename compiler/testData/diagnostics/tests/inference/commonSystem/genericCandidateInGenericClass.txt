@@ -1,6 +1,6 @@
 package
 
-public fun </*0*/ E> GenericClass<kotlin.List<E>>.bar(): kotlin.Unit
+public fun </*0*/ E> GenericClass<kotlin.collections.List<E>>.bar(): kotlin.Unit
 
 public final class GenericClass</*0*/ out T> {
     public constructor GenericClass</*0*/ out T>(/*0*/ value: T)

@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KtObjectDeclaration : KtClassOrObject {
-    public constructor(node: ASTNode) : super(node)
-    public constructor(stub: KotlinObjectStub) : super(stub, KtStubElementTypes.OBJECT_DECLARATION)
+class KtObjectDeclaration : KtClassOrObject {
+    constructor(node: ASTNode) : super(node)
+    constructor(stub: KotlinObjectStub) : super(stub, KtStubElementTypes.OBJECT_DECLARATION)
 
     private val _stub: KotlinObjectStub?
         get() = stub as? KotlinObjectStub
@@ -55,7 +55,7 @@ public class KtObjectDeclaration : KtClassOrObject {
         }
     }
 
-    public fun isCompanion(): Boolean = _stub?.isCompanion() ?: hasModifier(KtTokens.COMPANION_KEYWORD)
+    fun isCompanion(): Boolean = _stub?.isCompanion() ?: hasModifier(KtTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
                                         ?: getObjectKeyword().textRange.startOffset
@@ -64,7 +64,7 @@ public class KtObjectDeclaration : KtClassOrObject {
         return visitor.visitObjectDeclaration(this, data)
     }
 
-    public fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral() ?: (parent is KtObjectLiteralExpression)
+    fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral() ?: (parent is KtObjectLiteralExpression)
 
-    public fun getObjectKeyword(): PsiElement = findChildByType(KtTokens.OBJECT_KEYWORD)!!
+    fun getObjectKeyword(): PsiElement = findChildByType(KtTokens.OBJECT_KEYWORD)!!
 }

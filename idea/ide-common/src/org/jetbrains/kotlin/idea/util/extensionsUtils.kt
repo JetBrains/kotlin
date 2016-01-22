@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
-public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
+fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receivers: Collection<ReceiverValue>,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo,
@@ -42,7 +42,7 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<TCallable> {
     val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
-    if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
+    if (typeParameters.isEmpty()) { // optimization for non-generic callables
         return sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
     }
     else {
@@ -50,16 +50,16 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
     }
 }
 
-public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallableWithImplicitReceiver(
+fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallableWithImplicitReceiver(
         scope: LexicalScope,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo
 ): Collection<TCallable> {
-    val receiverValues = scope.getImplicitReceiversWithInstance().map { it.getValue() }
+    val receiverValues = scope.getImplicitReceiversWithInstance().map { it.value }
     return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.ownerDescriptor)
 }
 
-public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
+fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receiver: ReceiverValue,
         callType: CallType<*>,
         bindingContext: BindingContext,
@@ -70,7 +70,7 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
     return substituteExtensionIfCallable(types, callType)
 }
 
-public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
+fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receiverTypes: Collection<KotlinType>,
         callType: CallType<*>
 ): Collection<TCallable> {
@@ -91,7 +91,7 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
                 }
                 substitutor
             }
-    if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
+    if (typeParameters.isEmpty()) { // optimization for non-generic callables
         return if (substitutors.any()) listOf(this) else listOf()
     }
     else {
@@ -99,10 +99,10 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
     }
 }
 
-public fun ReceiverValue?.getThisReceiverOwner(bindingContext: BindingContext): DeclarationDescriptor? {
+fun ReceiverValue?.getThisReceiverOwner(bindingContext: BindingContext): DeclarationDescriptor? {
     return when (this) {
         is ExpressionReceiver -> {
-            val thisRef = (KtPsiUtil.deparenthesize(this.expression) as? KtThisExpression)?.getInstanceReference() ?: return null
+            val thisRef = (KtPsiUtil.deparenthesize(this.expression) as? KtThisExpression)?.instanceReference ?: return null
             bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
         }
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import java.io.EOFException
 
-public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
+class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
 
     val roots by lazy {
         env.configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).

@@ -35,8 +35,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
+import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinFileType;
@@ -180,7 +180,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                     boolean actionShouldBeAvailable = pair.getSecond();
 
                     if (psiFile instanceof KtFile) {
-                        DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) psiFile);
+                        DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) psiFile);
                     }
 
                     doAction(text, actionShouldBeAvailable, getTestName(false));
@@ -270,7 +270,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                         boolean actionShouldBeAvailable = pair.getSecond();
 
                         if (psiFile instanceof KtFile) {
-                            DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) psiFile);
+                            DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) psiFile);
                         }
 
                         doAction(text, actionShouldBeAvailable, beforeFileName);
@@ -341,7 +341,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                      "Infos:" + infos);
             }
             else {
-                DirectiveBasedActionUtils.INSTANCE$.checkAvailableActionsAreExpected(getFile(), availableActions);
+                DirectiveBasedActionUtils.INSTANCE.checkAvailableActionsAreExpected(getFile(), availableActions);
             }
         }
         else {

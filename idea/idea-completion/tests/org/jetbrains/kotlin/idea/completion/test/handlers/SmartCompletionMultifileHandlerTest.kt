@@ -23,33 +23,33 @@ import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import java.io.File
 import kotlin.test.assertTrue
 
-public class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
-    public fun testImportExtensionFunction() { doTest() }
+class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
+    fun testImportExtensionFunction() { doTest() }
 
-    public fun testImportExtensionProperty() { doTest() }
+    fun testImportExtensionProperty() { doTest() }
 
-    public fun testAnonymousObjectGenericJava() { doTest() }
+    fun testAnonymousObjectGenericJava() { doTest() }
 
     override fun setUp() {
         setType(CompletionType.SMART)
         super.setUp()
     }
 
-    public fun doTest() {
+    fun doTest() {
         val fileName = getTestName(false)
 
         val fileNames = listOf(fileName + "-1.kt", fileName + "-2.kt", fileName + ".java")
 
-        configureByFiles(null, *fileNames.filter { File(getTestDataPath() + it).exists() }.toTypedArray())
+        configureByFiles(null, *fileNames.filter { File(testDataPath + it).exists() }.toTypedArray())
 
         complete(1)
         if (myItems != null) {
-            assertTrue(myItems.size() == 1, "Multiple items in completion")
+            assertTrue(myItems.size == 1, "Multiple items in completion")
             selectItem(myItems[0])
         }
 
         checkResultByFile(fileName + ".kt.after")
     }
 
-    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers/multifile/smart/").getPath() + File.separator
+    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers/multifile/smart/").path + File.separator
 }

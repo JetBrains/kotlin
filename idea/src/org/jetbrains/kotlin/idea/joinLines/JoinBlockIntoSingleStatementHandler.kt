@@ -22,42 +22,42 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
+class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
         if (file !is KtFile) return -1
 
         if (start == 0) return -1
-        val c = document.getCharsSequence()[start]
+        val c = document.charsSequence[start]
         val index = if (c == '\n') start - 1 else start
 
         val brace = file.findElementAt(index)!!
-        if (brace.getNode()!!.getElementType() != KtTokens.LBRACE) return -1
+        if (brace.node!!.elementType != KtTokens.LBRACE) return -1
 
-        val block = brace.getParent() as? KtBlockExpression ?: return -1
-        val statement = block.getStatements().singleOrNull() ?: return -1
-        val parent = block.getParent()
+        val block = brace.parent as? KtBlockExpression ?: return -1
+        val statement = block.statements.singleOrNull() ?: return -1
+        val parent = block.parent
         if (parent !is KtContainerNode && parent !is KtWhenEntry) return -1
-        if (block.getNode().getChildren(KtTokens.COMMENTS).isNotEmpty()) return -1 // otherwise we will loose comments
+        if (block.node.getChildren(KtTokens.COMMENTS).isNotEmpty()) return -1 // otherwise we will loose comments
 
         // handle nested if's
-        val pparent = parent.getParent()
-        if (pparent is KtIfExpression && block == pparent.getThen() && statement is KtIfExpression && statement.getElse() == null) {
+        val pparent = parent.parent
+        if (pparent is KtIfExpression && block == pparent.then && statement is KtIfExpression && statement.`else` == null) {
             // if outer if has else-branch and inner does not have it, do not remove braces otherwise else-branch will belong to different if!
-            if (pparent.getElse() != null) return -1
+            if (pparent.`else` != null) return -1
 
-            val condition1 = pparent.getCondition()
-            val condition2 = statement.getCondition()
-            val body = statement.getThen()
+            val condition1 = pparent.condition
+            val condition2 = statement.condition
+            val body = statement.then
             if (condition1 != null && condition2 != null && body != null) {
                 val newCondition = KtPsiFactory(pparent).createExpressionByPattern("$0 && $1", condition1, condition2)
                 condition1.replace(newCondition)
                 val newBody = block.replace(body)
-                return newBody.getTextRange()!!.getStartOffset()
+                return newBody.textRange!!.startOffset
             }
         }
 
         val newStatement = block.replace(statement)
-        return newStatement.getTextRange()!!.getStartOffset()
+        return newStatement.textRange!!.startOffset
     }
 
     override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int)

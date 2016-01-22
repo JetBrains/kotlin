@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public class InfixValidator : SymbolUsageValidator {
+class InfixValidator : SymbolUsageValidator {
 
     override fun validateCall(
             resolvedCall: ResolvedCall<*>?,

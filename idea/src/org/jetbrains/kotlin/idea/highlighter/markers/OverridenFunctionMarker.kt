@@ -73,19 +73,19 @@ internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, 
     return overridden
 }
 
-public fun getOverriddenMethodTooltip(method: PsiMethod): String? {
+fun getOverriddenMethodTooltip(method: PsiMethod): String? {
     val processor = PsiElementProcessor.CollectElementsWithLimit<PsiMethod>(5)
     OverridingMethodsSearch.search(method, true).forEach(PsiElementProcessorAdapter(processor))
 
     val isAbstract = method.hasModifierProperty(PsiModifier.ABSTRACT)
 
-    if (processor.isOverflow()) {
+    if (processor.isOverflow) {
         return if (isAbstract) DaemonBundle.message("method.is.implemented.too.many") else DaemonBundle.message("method.is.overridden.too.many")
     }
 
-    val comparator = MethodCellRenderer(false).getComparator()
+    val comparator = MethodCellRenderer(false).comparator
 
-    val overridingJavaMethods = processor.getCollection().filter { !it.isMethodWithDeclarationInOtherClass() }.sortedWith(comparator)
+    val overridingJavaMethods = processor.collection.filter { !it.isMethodWithDeclarationInOtherClass() }.sortedWith(comparator)
     if (overridingJavaMethods.isEmpty()) return null
 
     val start = if (isAbstract) DaemonBundle.message("method.is.implemented.header") else DaemonBundle.message("method.is.overriden.header")
@@ -93,9 +93,9 @@ public fun getOverriddenMethodTooltip(method: PsiMethod): String? {
     return GutterIconTooltipHelper.composeText(overridingJavaMethods, start, "&nbsp;&nbsp;&nbsp;&nbsp;{1}")
 }
 
-public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
-    if (DumbService.isDumb(method.getProject())) {
-        DumbService.getInstance(method.getProject())?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
+fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
+    if (DumbService.isDumb(method.project)) {
+        DumbService.getInstance(method.project)?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
         return
     }
 
@@ -104,11 +104,11 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
             {
                 OverridingMethodsSearch.search(method, true).forEach(PsiElementProcessorAdapter(processor))
             },
-            "Searching for overriding declarations", true, method.getProject(), e?.getComponent() as JComponent?)) {
+            "Searching for overriding declarations", true, method.project, e?.component as JComponent?)) {
         return
     }
 
-    var overridingJavaMethods = processor.getCollection().filter { !it.isMethodWithDeclarationInOtherClass() }
+    var overridingJavaMethods = processor.collection.filter { !it.isMethodWithDeclarationInOtherClass() }
     if (overridingJavaMethods.isEmpty()) return
 
     val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.toTypedArray())
@@ -120,8 +120,8 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
     PsiElementListNavigator.openTargets(
             e,
             overridingJavaMethods.toTypedArray(),
-            methodsUpdater.getCaption(overridingJavaMethods.size()),
-            "Overriding declarations of " + method.getName(),
+            methodsUpdater.getCaption(overridingJavaMethods.size),
+            "Overriding declarations of " + method.name,
             renderer,
             methodsUpdater)
 }
@@ -129,19 +129,19 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
 private class OverridingMethodsUpdater(
         private val myMethod: PsiMethod,
         private val myRenderer: PsiElementListCellRenderer<out PsiElement>) :
-        ListBackgroundUpdaterTask(myMethod.getProject(), "Searching for overriding methods") {
+        ListBackgroundUpdaterTask(myMethod.project, "Searching for overriding methods") {
     override fun getCaption(size: Int): String {
         return if (myMethod.hasModifierProperty(PsiModifier.ABSTRACT))
-            DaemonBundle.message("navigation.title.implementation.method", myMethod.getName(), size)!!
+            DaemonBundle.message("navigation.title.implementation.method", myMethod.name, size)!!
         else
-            DaemonBundle.message("navigation.title.overrider.method", myMethod.getName(), size)!!
+            DaemonBundle.message("navigation.title.overrider.method", myMethod.name, size)!!
     }
 
     override fun run(indicator: ProgressIndicator) {
         super.run(indicator)
         OverridingMethodsSearch.search(myMethod, true).forEach(object : CommonProcessors.CollectProcessor<PsiMethod>() {
             override fun process(psiMethod: PsiMethod?): Boolean {
-                if (!updateComponent(psiMethod, myRenderer.getComparator())) {
+                if (!updateComponent(psiMethod, myRenderer.comparator)) {
                     indicator.cancel()
                 }
                 indicator.checkCanceled()

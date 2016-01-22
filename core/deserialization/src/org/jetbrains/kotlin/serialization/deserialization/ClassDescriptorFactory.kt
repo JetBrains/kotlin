@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 
-public interface ClassDescriptorFactory {
-    public fun createClass(classId: ClassId): ClassDescriptor?
+interface ClassDescriptorFactory {
+    fun createClass(classId: ClassId): ClassDescriptor?
 
-    public object EMPTY : ClassDescriptorFactory {
+    object EMPTY : ClassDescriptorFactory {
         override fun createClass(classId: ClassId): ClassDescriptor? = null
     }
 }

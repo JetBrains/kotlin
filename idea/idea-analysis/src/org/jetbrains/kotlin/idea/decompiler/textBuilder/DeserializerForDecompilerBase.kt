@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
-public abstract class DeserializerForDecompilerBase(
+abstract class DeserializerForDecompilerBase(
         val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName
 ) : ResolverForDecompiler {
@@ -81,7 +81,8 @@ public abstract class DeserializerForDecompilerBase(
         val content = file.contentsToByteArray(false)
         val packageProto = content.toPackageProto(paths.extensionRegistry)
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
+                createDummyPackageFragment(packageFqName), packageProto, nameResolver, packagePartSource = null,
+                components = deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()
     }

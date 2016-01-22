@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
@@ -29,29 +28,28 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
+class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is KtParameter && element.getParent().getParent() is KtNamedFunction
+        return element is KtParameter && element.parent.parent is KtNamedFunction
     }
 
     override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
-        val function = (element as KtParameter).getParent().getParent() as KtNamedFunction
-        val paramIndex = function.getValueParameters().indexOf(element)
+        val function = (element as KtParameter).parent.parent as KtNamedFunction
+        val paramIndex = function.valueParameters.indexOf(element)
         assert(paramIndex != -1, { "couldn't find parameter in parent ${element.getElementTextWithContext()}" })
 
         val functionDescriptor = function.resolveToDescriptor() as? FunctionDescriptor ?: return
-        val parameterDescriptor = functionDescriptor.getValueParameters()[paramIndex]
+        val parameterDescriptor = functionDescriptor.valueParameters[paramIndex]
 
-        val parameterNameChangedOnOverride = parameterDescriptor.getOverriddenDescriptors().any {
+        val parameterNameChangedOnOverride = parameterDescriptor.overriddenDescriptors.any {
             overriddenParameter -> OverrideResolver.shouldReportParameterNameOverrideWarning(parameterDescriptor, overriddenParameter)
         }
 
         val changeSignatureConfiguration = object : KotlinChangeSignatureConfiguration {
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                val paramInfoIndex = if (functionDescriptor.getExtensionReceiverParameter() != null) paramIndex + 1 else paramIndex
+                val paramInfoIndex = if (functionDescriptor.extensionReceiverParameter != null) paramIndex + 1 else paramIndex
                 return originalDescriptor.modify { it.renameParameter(paramInfoIndex, newName) }
             }
 
@@ -60,6 +58,6 @@ public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
             override fun forcePerformForSelectedFunctionOnly() = parameterNameChangedOnOverride
         }
 
-        runChangeSignature(element.getProject(), functionDescriptor, changeSignatureConfiguration, element, "Rename parameter")
+        runChangeSignature(element.project, functionDescriptor, changeSignatureConfiguration, element, "Rename parameter")
     }
 }

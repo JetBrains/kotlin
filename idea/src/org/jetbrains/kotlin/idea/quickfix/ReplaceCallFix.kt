@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 
-public abstract class ReplaceCallFix protected constructor(val psiElement: PsiElement) : IntentionAction {
+abstract class ReplaceCallFix protected constructor(val psiElement: PsiElement) : IntentionAction {
 
-    override fun getFamilyName(): String = getText()
+    override fun getFamilyName(): String = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (file is KtFile) {
@@ -40,10 +40,10 @@ public abstract class ReplaceCallFix protected constructor(val psiElement: PsiEl
     override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
         val callExpression = getCallExpression() ?: return
 
-        val selector = callExpression.getSelectorExpression()
+        val selector = callExpression.selectorExpression
         if (selector != null) {
             val newElement = KtPsiFactory(callExpression).createExpression(
-                    callExpression.getReceiverExpression().getText() + operation + selector.getText()) as KtQualifiedExpression
+                    callExpression.receiverExpression.text + operation + selector.text) as KtQualifiedExpression
 
             callExpression.replace(newElement)
         }
@@ -59,24 +59,24 @@ public abstract class ReplaceCallFix protected constructor(val psiElement: PsiEl
     abstract val classToReplace: Class<out KtQualifiedExpression>
 }
 
-public class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement) {
+class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement) {
     override fun getText(): String = "Replace with safe (?.) call"
     override val operation: String get() = "?."
-    override val classToReplace: Class<out KtQualifiedExpression> get() = javaClass<KtDotQualifiedExpression>()
+    override val classToReplace: Class<out KtQualifiedExpression> get() = KtDotQualifiedExpression::class.java
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
-                = ReplaceWithSafeCallFix(diagnostic.getPsiElement())
+                = ReplaceWithSafeCallFix(diagnostic.psiElement)
     }
 }
 
-public class ReplaceWithDotCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement), CleanupFix {
+class ReplaceWithDotCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement), CleanupFix {
     override fun getText(): String = KotlinBundle.message("replace.with.dot.call")
     override val operation: String get() = "."
-    override val classToReplace: Class<out KtQualifiedExpression> get() = javaClass<KtSafeQualifiedExpression>()
+    override val classToReplace: Class<out KtQualifiedExpression> get() = KtSafeQualifiedExpression::class.java
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
-                = ReplaceWithDotCallFix(diagnostic.getPsiElement())
+                = ReplaceWithDotCallFix(diagnostic.psiElement)
     }
 }

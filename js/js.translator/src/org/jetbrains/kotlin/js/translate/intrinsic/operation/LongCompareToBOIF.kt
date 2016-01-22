@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.identity as ID
 
-public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
+object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
 
     val FLOATING_POINT_COMPARE_TO_LONG_PATTERN = pattern("Double|Float.compareTo(Long)")
     val LONG_COMPARE_TO_FLOATING_POINT_PATTERN = pattern("Long.compareTo(Float|Double)")
@@ -72,9 +72,9 @@ public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
     private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID(), { longFromInt(charToInt(it)) })
     private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID(), ID() )
 
-    override public fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
+    override fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
 
-    override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
+    override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (JsDescriptorUtils.isBuiltin(descriptor)) {
             return when {
                 FLOATING_POINT_COMPARE_TO_LONG_PATTERN.apply(descriptor) -> FLOATING_POINT_COMPARE_TO_LONG

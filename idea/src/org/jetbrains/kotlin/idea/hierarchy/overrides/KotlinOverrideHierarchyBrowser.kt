@@ -52,7 +52,7 @@ class KotlinOverrideHierarchyBrowser(
         val builder = myBuilders.get(myCurrentViewType)
         if (builder == null) return null
 
-        return (builder.getTreeStructure() as KotlinOverrideTreeStructure).javaTreeStructures.get(0).getBaseMethod()
+        return (builder.treeStructure as KotlinOverrideTreeStructure).javaTreeStructures.get(0).baseMethod
     }
 
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {

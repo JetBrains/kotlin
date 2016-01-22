@@ -40,11 +40,11 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
+class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 
     override fun isApplicable(expression: KtExpression): Boolean {
-        if (!expression.isPhysical()) return false
-        val file = expression.getContainingFile()
+        if (!expression.isPhysical) return false
+        val file = expression.containingFile
         if (file !is KtCodeFragment) return false
 
         val type = expression.analyze(BodyResolveMode.PARTIAL).getType(expression) ?: return false
@@ -53,13 +53,13 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
     }
 
     override fun surroundExpression(project: Project, editor: Editor, expression: KtExpression): TextRange? {
-        val debuggerContext = DebuggerManagerEx.getInstanceEx(project).getContext()
-        val debuggerSession = debuggerContext.getDebuggerSession()
+        val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
+        val debuggerSession = debuggerContext.debuggerSession
         if (debuggerSession != null) {
-            val progressWindow = ProgressWindowWithNotification(true, expression.getProject())
+            val progressWindow = ProgressWindowWithNotification(true, expression.project)
             val worker = SurroundWithCastWorker(editor, expression, debuggerContext, progressWindow)
-            progressWindow.setTitle(DebuggerBundle.message("title.evaluating"))
-            debuggerContext.getDebugProcess()?.getManagerThread()?.startProgress(worker, progressWindow)
+            progressWindow.title = DebuggerBundle.message("title.evaluating")
+            debuggerContext.debugProcess?.managerThread?.startProgress(worker, progressWindow)
         }
         return null
     }
@@ -80,32 +80,32 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 
             hold()
 
-            val project = myEditor.getProject()
+            val project = myEditor.project
             DebuggerInvocationUtil.invokeLater(project, Runnable {
                     object : WriteCommandAction<Any>(project, CodeInsightBundle.message("command.name.surround.with.runtime.cast")) {
                         override fun run(result: Result<Any>) {
                             try {
-                                val factory = KtPsiFactory(myElement.getProject())
+                                val factory = KtPsiFactory(myElement.project)
 
-                                val fqName = DescriptorUtils.getFqName(type.getConstructor().getDeclarationDescriptor()!!)
+                                val fqName = DescriptorUtils.getFqName(type.constructor.declarationDescriptor!!)
                                 val parentCast = factory.createExpression("(expr as " + fqName.asString() + ")") as KtParenthesizedExpression
-                                val cast = parentCast.getExpression() as KtBinaryExpressionWithTypeRHS
-                                cast.getLeft().replace(myElement)
+                                val cast = parentCast.expression as KtBinaryExpressionWithTypeRHS
+                                cast.left.replace(myElement)
                                 val expr = myElement.replace(parentCast) as KtExpression
 
                                 ShortenReferences.DEFAULT.process(expr)
 
-                                val range = expr.getTextRange()
-                                myEditor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
-                                myEditor.getCaretModel().moveToOffset(range.getEndOffset())
-                                myEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE)
+                                val range = expr.textRange
+                                myEditor.selectionModel.setSelection(range.startOffset, range.endOffset)
+                                myEditor.caretModel.moveToOffset(range.endOffset)
+                                myEditor.scrollingModel.scrollToCaret(ScrollType.RELATIVE)
                             }
                             finally {
                                 release()
                             }
                         }
                     }.execute()
-            }, myProgressIndicator.getModalityState())
+            }, myProgressIndicator.modalityState)
         }
 
     }

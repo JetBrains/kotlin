@@ -5,8 +5,8 @@ class Impl: JavaInterface {
 }
 
 fun box(): String {
-    val fooMethods = javaClass<Impl>().getMethods().filter { it.getName() == "foo" }
-    if (fooMethods.size() != 1) return fooMethods.toString()
+    val fooMethods = Impl::class.java.getMethods().filter { it.getName() == "foo" }
+    if (fooMethods.size != 1) return fooMethods.toString()
 
     return "OK"
 }

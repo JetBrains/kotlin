@@ -124,15 +124,15 @@ fun makeField(s: String): Field {
     val lines: List<String> = s.split("\n")
 
     val w = Collections.max<String>(lines.toList(), comparator<String> { o1, o2 ->
-        val l1: Int = o1.length()
-        val l2 = o2.length()
+        val l1: Int = o1.length
+        val l2 = o2.length
         l1 - l2
     })!!
-    val data = Array(lines.size()) { Array(w.length()) { false } }
+    val data = Array(lines.size) { Array(w.length) { false } }
 
     // workaround
     for (i in data.indices) {
-        data[i] = Array(w.length()) { false }
+        data[i] = Array(w.length) { false }
         for (j in data[i].indices)
             data[i][j] = false
     }
@@ -144,5 +144,5 @@ fun makeField(s: String): Field {
         }
     }
 
-    return Field(w.length(), lines.size()) { i, j -> data[i][j] }
+    return Field(w.length, lines.size) { i, j -> data[i][j] }
 }

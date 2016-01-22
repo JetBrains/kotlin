@@ -39,7 +39,7 @@ class MutableArray<T>(length: Int, init : (Int) -> T) : ReadOnlyArray<T>, WriteO
     override fun set(index : Int, value : T) : Unit { array[index] = value }
 
     override val size : Int
-        get() = array.size()
+        get() = array.size
 }
 
 fun box() : String {

@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
 import java.lang.reflect.Method
 import java.util.ArrayList
 
-public open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
+open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
 
     override fun toString(): String {
-        val stubInterface = this.javaClass.getInterfaces().filter { it.getName().contains("Stub") }.single()
+        val stubInterface = this.javaClass.interfaces.filter { it.name.contains("Stub") }.single()
         val propertiesValues = renderPropertyValues(stubInterface)
         if (propertiesValues.isEmpty()) {
             return ""
@@ -45,8 +45,8 @@ public open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubEleme
 
     private fun collectProperties(stubInterface: Class<*>): Collection<Method> {
         val result = ArrayList<Method>()
-        result.addAll(stubInterface.getDeclaredMethods().filter { it.getParameterTypes()!!.isEmpty() })
-        for (baseInterface in stubInterface.getInterfaces()) {
+        result.addAll(stubInterface.declaredMethods.filter { it.parameterTypes!!.isEmpty() })
+        for (baseInterface in stubInterface.interfaces) {
             if (baseInterface in BASE_STUB_INTERFACES) {
                 result.addAll(collectProperties(baseInterface))
             }
@@ -67,7 +67,7 @@ public open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubEleme
     }
 
     private fun getPropertyName(method: Method): String {
-        val methodName = method.getName()!!
+        val methodName = method.name!!
         if (methodName.startsWith("get")) {
             return methodName.substring(3).decapitalize()
         }
@@ -75,8 +75,8 @@ public open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubEleme
     }
 
     companion object {
-        private val LOGGER: Logger = Logger.getInstance(javaClass<KotlinStubBaseImpl<KtElementImplStub<*>>>())
+        private val LOGGER: Logger = Logger.getInstance(KotlinStubBaseImpl::class.java)
 
-        private val BASE_STUB_INTERFACES = listOf(javaClass<KotlinStubWithFqName<*>>(), javaClass<KotlinClassOrObjectStub<*>>(), javaClass<NamedStub<*>>(), javaClass<KotlinCallableStubBase<*>>())
+        private val BASE_STUB_INTERFACES = listOf(KotlinStubWithFqName::class.java, KotlinClassOrObjectStub::class.java, NamedStub::class.java, KotlinCallableStubBase::class.java)
     }
 }

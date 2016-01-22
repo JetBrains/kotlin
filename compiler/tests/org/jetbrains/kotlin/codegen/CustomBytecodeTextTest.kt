@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.test.ConfigurationKind
 
-public class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
+class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
     fun testEnumMapping() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         myFiles = CodegenTestFiles.create("whenMappingOrder.kt", """

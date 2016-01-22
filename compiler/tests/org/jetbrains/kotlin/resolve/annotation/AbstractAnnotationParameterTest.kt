@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescriptorResolveTest() {
+abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescriptorResolveTest() {
     fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
         val packageView = getPackage(fileText)

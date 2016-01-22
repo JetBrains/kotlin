@@ -21,95 +21,95 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 
-public open class InstructionVisitor() {
-    public open fun visitAccessInstruction(instruction: AccessValueInstruction) {
+open class InstructionVisitor() {
+    open fun visitAccessInstruction(instruction: AccessValueInstruction) {
         visitInstructionWithNext(instruction)
     }
 
-    public open fun visitReadValue(instruction: ReadValueInstruction) {
+    open fun visitReadValue(instruction: ReadValueInstruction) {
         visitAccessInstruction(instruction)
     }
 
-    public open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction) {
+    open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction) {
         visitInstructionWithNext(instruction)
     }
 
-    public open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction) {
+    open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction) {
         visitInstructionWithNext(instruction)
     }
 
-    public open fun visitUnconditionalJump(instruction: UnconditionalJumpInstruction) {
+    open fun visitUnconditionalJump(instruction: UnconditionalJumpInstruction) {
         visitJump(instruction)
     }
 
-    public open fun visitConditionalJump(instruction: ConditionalJumpInstruction) {
+    open fun visitConditionalJump(instruction: ConditionalJumpInstruction) {
         visitJump(instruction)
     }
 
-    public open fun visitReturnValue(instruction: ReturnValueInstruction) {
+    open fun visitReturnValue(instruction: ReturnValueInstruction) {
         visitJump(instruction)
     }
 
-    public open fun visitReturnNoValue(instruction: ReturnNoValueInstruction) {
+    open fun visitReturnNoValue(instruction: ReturnNoValueInstruction) {
         visitJump(instruction)
     }
 
-    public open fun visitThrowExceptionInstruction(instruction: ThrowExceptionInstruction) {
+    open fun visitThrowExceptionInstruction(instruction: ThrowExceptionInstruction) {
         visitJump(instruction)
     }
 
-    public open fun visitNondeterministicJump(instruction: NondeterministicJumpInstruction) {
+    open fun visitNondeterministicJump(instruction: NondeterministicJumpInstruction) {
         visitInstruction(instruction)
     }
 
-    public open fun visitSubroutineExit(instruction: SubroutineExitInstruction) {
+    open fun visitSubroutineExit(instruction: SubroutineExitInstruction) {
         visitInstruction(instruction)
     }
 
-    public open fun visitSubroutineSink(instruction: SubroutineSinkInstruction) {
+    open fun visitSubroutineSink(instruction: SubroutineSinkInstruction) {
         visitInstruction(instruction)
     }
 
-    public open fun visitJump(instruction: AbstractJumpInstruction) {
+    open fun visitJump(instruction: AbstractJumpInstruction) {
         visitInstruction(instruction)
     }
 
-    public open fun visitInstructionWithNext(instruction: InstructionWithNext) {
+    open fun visitInstructionWithNext(instruction: InstructionWithNext) {
         visitInstruction(instruction)
     }
 
-    public open fun visitInstruction(instruction: Instruction) {
+    open fun visitInstruction(instruction: Instruction) {
     }
 
-    public open fun visitSubroutineEnter(instruction: SubroutineEnterInstruction) {
+    open fun visitSubroutineEnter(instruction: SubroutineEnterInstruction) {
         visitInstructionWithNext(instruction)
     }
 
-    public open fun visitWriteValue(instruction: WriteValueInstruction) {
+    open fun visitWriteValue(instruction: WriteValueInstruction) {
         visitAccessInstruction(instruction)
     }
 
-    public open fun visitLoadUnitValue(instruction: LoadUnitValueInstruction) {
+    open fun visitLoadUnitValue(instruction: LoadUnitValueInstruction) {
         visitInstructionWithNext(instruction)
     }
 
-    public open fun visitOperation(instruction: OperationInstruction) {
+    open fun visitOperation(instruction: OperationInstruction) {
         visitInstructionWithNext(instruction)
     }
 
-    public open fun visitCallInstruction(instruction: CallInstruction) {
+    open fun visitCallInstruction(instruction: CallInstruction) {
         visitOperation(instruction)
     }
 
-    public open fun visitMerge(instruction: MergeInstruction) {
+    open fun visitMerge(instruction: MergeInstruction) {
         visitOperation(instruction)
     }
 
-    public open fun visitMarkInstruction(instruction: MarkInstruction) {
+    open fun visitMarkInstruction(instruction: MarkInstruction) {
         visitInstructionWithNext(instruction)
     }
 
-    public open fun visitMagic(instruction: MagicInstruction) {
+    open fun visitMagic(instruction: MagicInstruction) {
         visitOperation(instruction)
     }
 }

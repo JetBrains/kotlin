@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.lang.StdLanguages
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
 import com.intellij.refactoring.memberPullUp.JavaPullUpHelper
 import com.intellij.refactoring.memberPullUp.PullUpData
@@ -26,14 +26,14 @@ import com.intellij.refactoring.memberPullUp.PullUpHelperFactory
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.core.refactoring.createJavaClass
+import org.jetbrains.kotlin.idea.refactoring.createJavaClass
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class KotlinPullUpHelperFactory : PullUpHelperFactory {
+class KotlinPullUpHelperFactory : PullUpHelperFactory {
     private fun PullUpData.toKotlinPullUpData(): KotlinPullUpData? {
         val sourceClass = sourceClass.unwrapped as? KtClassOrObject ?: return null
         val targetClass = targetClass.unwrapped as? PsiNamedElement ?: return null
@@ -47,7 +47,7 @@ public class KotlinPullUpHelperFactory : PullUpHelperFactory {
         if (!data.sourceClass.isInheritor(data.targetClass, true)) return EmptyPullUpHelper
         data.toKotlinPullUpData()?.let { return KotlinPullUpHelper(data, it) }
 
-        if (data.targetClass.language.`is`(KotlinLanguage.INSTANCE) && data.sourceClass.language.`is`(StdLanguages.JAVA)) {
+        if (data.targetClass.language == KotlinLanguage.INSTANCE && data.sourceClass.language == JavaLanguage.INSTANCE) {
             return JavaToKotlinPostconversionPullUpHelper(data)
         }
 
@@ -55,7 +55,7 @@ public class KotlinPullUpHelperFactory : PullUpHelperFactory {
     }
 }
 
-public class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
+class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
     private fun createJavaToKotlinPullUpHelper(data: PullUpData): JavaToKotlinPreconversionPullUpHelper? {
         if (!data.sourceClass.isInheritor(data.targetClass, true)) return null
         val dummyTargetClass = createDummyTargetClass(data) ?: return null
@@ -99,7 +99,7 @@ public class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
         createJavaToKotlinPullUpHelper(data)?.let { return it }
 
         return PullUpHelper.INSTANCE
-                       .allForLanguage(StdLanguages.JAVA)
+                       .allForLanguage(JavaLanguage.INSTANCE)
                        .firstOrNull { it !is JavaToKotlinPullUpHelperFactory }
                        ?.createPullUpHelper(data)
                ?: EmptyPullUpHelper

@@ -142,7 +142,7 @@ class ExpectedInfos(
         private val useHeuristicSignatures: Boolean = true,
         private val useOuterCallsExpectedTypeCount: Int = 0
 ) {
-    public fun calculate(expressionWithType: KtExpression): Collection<ExpectedInfo> {
+    fun calculate(expressionWithType: KtExpression): Collection<ExpectedInfo> {
         val expectedInfos = calculateForArgument(expressionWithType)
                             ?: calculateForFunctionLiteralArgument(expressionWithType)
                             ?: calculateForIndexingArgument(expressionWithType)
@@ -163,16 +163,16 @@ class ExpectedInfos(
     }
 
     private fun calculateForArgument(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val argument = expressionWithType.getParent() as? KtValueArgument ?: return null
-        val argumentList = argument.getParent() as? KtValueArgumentList ?: return null
-        val callElement = argumentList.getParent() as? KtCallElement ?: return null
+        val argument = expressionWithType.parent as? KtValueArgument ?: return null
+        val argumentList = argument.parent as? KtValueArgumentList ?: return null
+        val callElement = argumentList.parent as? KtCallElement ?: return null
         return calculateForArgument(callElement, argument)
     }
 
     private fun calculateForFunctionLiteralArgument(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val functionLiteralArgument = expressionWithType.getParent() as? KtLambdaArgument
-        val callExpression = functionLiteralArgument?.getParent() as? KtCallExpression ?: return null
-        val literalArgument = callExpression.getLambdaArguments().firstOrNull() ?: return null
+        val functionLiteralArgument = expressionWithType.parent as? KtLambdaArgument
+        val callExpression = functionLiteralArgument?.parent as? KtCallExpression ?: return null
+        val literalArgument = callExpression.lambdaArguments.firstOrNull() ?: return null
         if (literalArgument.getArgumentExpression() != expressionWithType) return null
         return calculateForArgument(callExpression, literalArgument)
     }
@@ -191,7 +191,7 @@ class ExpectedInfos(
         return calculateForArgument(call, argument)
     }
 
-    public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo> {
+    fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo> {
         val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument)
 
         fun makesSenseToUseOuterCallExpectedType(info: ExpectedInfo): Boolean {
@@ -218,14 +218,14 @@ class ExpectedInfos(
     }
 
     private fun calculateForArgument(call: Call, callExpectedType: KotlinType, argument: ValueArgument): Collection<ExpectedInfo> {
-        val argumentIndex = call.getValueArguments().indexOf(argument)
+        val argumentIndex = call.valueArguments.indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument(${argument.asElement().text})' among arguments of call: $call"
         }
 
         // leave only arguments before the current one
         val truncatedCall = object : DelegatingCall(call) {
-            val arguments = call.getValueArguments().subList(0, argumentIndex)
+            val arguments = call.valueArguments.subList(0, argumentIndex)
 
             override fun getValueArguments() = arguments
             override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
@@ -262,7 +262,7 @@ class ExpectedInfos(
         // check that all arguments before the current one matched
         if (checkPrevArgumentsMatched && !candidate.allArgumentsMatched()) return
 
-        var descriptor = candidate.getResultingDescriptor()
+        var descriptor = candidate.resultingDescriptor
         if (descriptor.valueParameters.isEmpty()) return
 
         var argumentToParameter = call.mapArgumentsToParameters(descriptor)
@@ -311,13 +311,13 @@ class ExpectedInfos(
             return
         }
 
-        val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
+        val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.name.asString()
 
         fun needCommaForParameter(parameter: ValueParameterDescriptor): Boolean {
             if (parameter.hasDefaultValue()) return false // parameter is optional
             if (parameter.varargElementType != null) return false // vararg arguments list can be empty
             // last parameter of functional type can be placed outside parenthesis:
-            if (!isArrayAccess && parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
+            if (!isArrayAccess && parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.type)) return false
             return true
         }
 
@@ -349,16 +349,16 @@ class ExpectedInfos(
             }
 
             val starOptions = if (!alreadyHasStar) ItemOptions.STAR_PREFIX else ItemOptions.DEFAULT
-            add(ExpectedInfo.createForArgument(parameter.getType(), expectedName, varargTail, argumentPositionData, starOptions))
+            add(ExpectedInfo.createForArgument(parameter.type, expectedName, varargTail, argumentPositionData, starOptions))
         }
         else {
             if (alreadyHasStar) return
 
             val parameterType = if (useHeuristicSignatures)
                 resolutionFacade.ideService<HeuristicSignatures>().
-                        correctedParameterType(descriptor, parameter) ?: parameter.getType()
+                        correctedParameterType(descriptor, parameter) ?: parameter.type
             else
-                parameter.getType()
+                parameter.type
 
             if (isFunctionLiteralArgument) {
                 if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
@@ -378,8 +378,8 @@ class ExpectedInfos(
             = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
 
     private fun namedArgumentTail(argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>, argumentName: Name, descriptor: FunctionDescriptor): Tail? {
-        val usedParameterNames = (argumentToParameter.values().map { it.getName() } + listOf(argumentName)).toSet()
-        val notUsedParameters = descriptor.getValueParameters().filter { it.getName() !in usedParameterNames }
+        val usedParameterNames = (argumentToParameter.values.map { it.name } + listOf(argumentName)).toSet()
+        val notUsedParameters = descriptor.valueParameters.filter { it.name !in usedParameterNames }
         return if (notUsedParameters.isEmpty())
             Tail.RPARENTH // named arguments no supported for []
         else if (notUsedParameters.all { it.hasDefaultValue() })
@@ -389,11 +389,11 @@ class ExpectedInfos(
     }
 
     private fun calculateForEqAndAssignment(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val binaryExpression = expressionWithType.getParent() as? KtBinaryExpression
+        val binaryExpression = expressionWithType.parent as? KtBinaryExpression
         if (binaryExpression != null) {
-            val operationToken = binaryExpression.getOperationToken()
+            val operationToken = binaryExpression.operationToken
             if (operationToken == KtTokens.EQ || operationToken in COMPARISON_TOKENS) {
-                val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
+                val otherOperand = if (expressionWithType == binaryExpression.right) binaryExpression.left else binaryExpression.right
                 if (otherOperand != null) {
                     var expectedType = bindingContext.getType(otherOperand) ?: return null
 
@@ -421,16 +421,16 @@ class ExpectedInfos(
     }
 
     private fun calculateForIf(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val ifExpression = (expressionWithType.getParent() as? KtContainerNode)?.getParent() as? KtIfExpression ?: return null
+        val ifExpression = (expressionWithType.parent as? KtContainerNode)?.parent as? KtIfExpression ?: return null
         return when (expressionWithType) {
-            ifExpression.getCondition() -> listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, Tail.RPARENTH, additionalData = IfConditionAdditionalData))
+            ifExpression.condition -> listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, Tail.RPARENTH, additionalData = IfConditionAdditionalData))
 
-            ifExpression.getThen() -> calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
+            ifExpression.then -> calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
 
-            ifExpression.getElse() -> {
+            ifExpression.`else` -> {
                 val ifExpectedInfo = calculate(ifExpression)
-                val thenType = ifExpression.getThen()?.let { bindingContext.getType(it) }
-                val filteredInfo = if (thenType != null && !thenType.isError())
+                val thenType = ifExpression.then?.let { bindingContext.getType(it) }
+                val filteredInfo = if (thenType != null && !thenType.isError)
                     ifExpectedInfo.filter { it.matchingSubstitutor(thenType) != null }
                 else
                     ifExpectedInfo
@@ -442,11 +442,11 @@ class ExpectedInfos(
     }
 
     private fun calculateForElvis(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val binaryExpression = expressionWithType.getParent() as? KtBinaryExpression
+        val binaryExpression = expressionWithType.parent as? KtBinaryExpression
         if (binaryExpression != null) {
-            val operationToken = binaryExpression.getOperationToken()
-            if (operationToken == KtTokens.ELVIS && expressionWithType == binaryExpression.getRight()) {
-                val leftExpression = binaryExpression.getLeft() ?: return null
+            val operationToken = binaryExpression.operationToken
+            if (operationToken == KtTokens.ELVIS && expressionWithType == binaryExpression.right) {
+                val leftExpression = binaryExpression.left ?: return null
                 val leftType = bindingContext.getType(leftExpression)
                 val leftTypeNotNullable = leftType?.makeNotNullable()
                 val expectedInfos = calculate(binaryExpression)
@@ -486,10 +486,10 @@ class ExpectedInfos(
     }
 
     private fun calculateForWhenEntryValue(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val condition = expressionWithType.getParent() as? KtWhenConditionWithExpression ?: return null
-        val entry = condition.getParent() as KtWhenEntry
-        val whenExpression = entry.getParent() as KtWhenExpression
-        val subject = whenExpression.getSubjectExpression()
+        val condition = expressionWithType.parent as? KtWhenConditionWithExpression ?: return null
+        val entry = condition.parent as KtWhenEntry
+        val whenExpression = entry.parent as KtWhenExpression
+        val subject = whenExpression.subjectExpression
         if (subject != null) {
             val subjectType = bindingContext.getType(subject) ?: return null
             return listOf(ExpectedInfo(subjectType, null, null, additionalData = WhenEntryAdditionalData(whenWithSubject = true)))
@@ -500,32 +500,32 @@ class ExpectedInfos(
     }
 
     private fun calculateForExclOperand(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val prefixExpression = expressionWithType.getParent() as? KtPrefixExpression ?: return null
-        if (prefixExpression.getOperationToken() != KtTokens.EXCL) return null
+        val prefixExpression = expressionWithType.parent as? KtPrefixExpression ?: return null
+        if (prefixExpression.operationToken != KtTokens.EXCL) return null
         return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, null))
     }
 
     private fun calculateForInitializer(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val property = expressionWithType.getParent() as? KtProperty ?: return null
-        if (expressionWithType != property.getInitializer()) return null
+        val property = expressionWithType.parent as? KtProperty ?: return null
+        if (expressionWithType != property.initializer) return null
         val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return null
         val expectedName = propertyDescriptor.name.asString()
         val expectedInfo = if (property.typeReference != null)
-            ExpectedInfo(propertyDescriptor.getType(), expectedName, null)
+            ExpectedInfo(propertyDescriptor.type, expectedName, null)
         else
             ExpectedInfo(ByTypeFilter.All, expectedName, null) // no explicit type - only expected name known
         return listOf(expectedInfo)
     }
 
     private fun calculateForExpressionBody(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val declaration = expressionWithType.getParent() as? KtDeclarationWithBody ?: return null
-        if (expressionWithType != declaration.getBodyExpression() || declaration.hasBlockBody()) return null
+        val declaration = expressionWithType.parent as? KtDeclarationWithBody ?: return null
+        if (expressionWithType != declaration.bodyExpression || declaration.hasBlockBody()) return null
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
         return functionReturnValueExpectedInfo(descriptor, expectType = declaration.hasDeclaredReturnType()).singletonOrEmptyList()
     }
 
     private fun calculateForReturn(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val returnExpression = expressionWithType.getParent() as? KtReturnExpression ?: return null
+        val returnExpression = expressionWithType.parent as? KtReturnExpression ?: return null
         val descriptor = returnExpression.getTargetFunctionDescriptor(bindingContext) ?: return null
         return functionReturnValueExpectedInfo(descriptor, expectType = true).singletonOrEmptyList()
     }
@@ -539,7 +539,7 @@ class ExpectedInfos(
 
             is PropertyGetterDescriptor -> {
                 if (descriptor !is PropertyGetterDescriptor) return null
-                val property = descriptor.getCorrespondingProperty()
+                val property = descriptor.correspondingProperty
                 val expectedType = if (expectType) property.type else null
                 ExpectedInfo.createForReturnValue(expectedType, property)
             }
@@ -595,9 +595,9 @@ class ExpectedInfos(
     private fun expectedNameFromExpression(expression: KtExpression?): String? {
         return when (expression) {
             is KtSimpleNameExpression -> expression.getReferencedName()
-            is KtQualifiedExpression -> expectedNameFromExpression(expression.getSelectorExpression())
-            is KtCallExpression -> expectedNameFromExpression(expression.getCalleeExpression())
-            is KtArrayAccessExpression -> expectedNameFromExpression(expression.getArrayExpression())?.unpluralize()
+            is KtQualifiedExpression -> expectedNameFromExpression(expression.selectorExpression)
+            is KtCallExpression -> expectedNameFromExpression(expression.calleeExpression)
+            is KtArrayAccessExpression -> expectedNameFromExpression(expression.arrayExpression)?.unpluralize()
             else -> null
         }
     }

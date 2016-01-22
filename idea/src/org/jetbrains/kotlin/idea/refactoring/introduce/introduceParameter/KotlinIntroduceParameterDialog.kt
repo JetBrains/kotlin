@@ -27,9 +27,9 @@ import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
-import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
-import org.jetbrains.kotlin.idea.core.refactoring.validateElement
+import org.jetbrains.kotlin.idea.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
+import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinParameterTablePanel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -45,7 +45,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-public class KotlinIntroduceParameterDialog private constructor(
+class KotlinIntroduceParameterDialog private constructor(
         project: Project,
         val editor: Editor,
         val descriptor: IntroduceParameterDescriptor,
@@ -86,25 +86,25 @@ public class KotlinIntroduceParameterDialog private constructor(
     private val typeField = NameSuggestionsField(typeNameSuggestions, project, KotlinFileType.INSTANCE)
     private var replaceAllCheckBox: JCheckBox? = null
     private var defaultValueCheckBox: JCheckBox? = null
-    private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, KtElement>(descriptor.parametersToRemove.size())
+    private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, KtElement>(descriptor.parametersToRemove.size)
     private var parameterTablePanel: KotlinParameterTablePanel? = null
     private val commandName = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
 
     init {
-        setTitle(commandName)
+        title = commandName
         init()
 
         nameField.addDataChangedListener { validateButtons() }
         typeField.addDataChangedListener { validateButtons() }
     }
 
-    override fun getPreferredFocusedComponent() = nameField.getFocusableComponent()
+    override fun getPreferredFocusedComponent() = nameField.focusableComponent
 
     private fun updateRemoveParamCheckBoxes() {
-        val enableParamRemove = (replaceAllCheckBox?.isSelected() ?: true) && (!defaultValueCheckBox!!.isSelected())
-        removeParamsCheckBoxes.keySet().forEach {
-            it.setEnabled(enableParamRemove)
-            it.setSelected(enableParamRemove)
+        val enableParamRemove = (replaceAllCheckBox?.isSelected ?: true) && (!defaultValueCheckBox!!.isSelected)
+        removeParamsCheckBoxes.keys.forEach {
+            it.isEnabled = enableParamRemove
+            it.isSelected = enableParamRemove
         }
     }
 
@@ -124,7 +124,7 @@ public class KotlinIntroduceParameterDialog private constructor(
         gbConstraints.gridy = 0
         val nameLabel = JLabel("Parameter name: ")
         nameLabel.setDisplayedMnemonic('n')
-        nameLabel.setLabelFor(nameField)
+        nameLabel.labelFor = nameField
         panel.add(nameLabel, gbConstraints)
 
         gbConstraints.insets = Insets(4, 4, 4, 8)
@@ -141,7 +141,7 @@ public class KotlinIntroduceParameterDialog private constructor(
         gbConstraints.fill = GridBagConstraints.NONE
         val typeLabel = JLabel(if (lambdaExtractionDescriptor != null) "Lambda return type" else "Parameter type: ")
         typeLabel.setDisplayedMnemonic('t')
-        typeLabel.setLabelFor(typeField)
+        typeLabel.labelFor = typeField
         panel.add(typeLabel, gbConstraints)
 
         gbConstraints.gridx++
@@ -171,7 +171,7 @@ public class KotlinIntroduceParameterDialog private constructor(
             gbConstraints.fill = GridBagConstraints.NONE
             val parametersLabel = JLabel("Lambda parameters: ")
             parametersLabel.setDisplayedMnemonic('p')
-            parametersLabel.setLabelFor(parameterTablePanel)
+            parametersLabel.labelFor = parameterTablePanel
             panel.add(parametersLabel, gbConstraints)
 
             gbConstraints.gridx++
@@ -190,19 +190,19 @@ public class KotlinIntroduceParameterDialog private constructor(
         gbConstraints.gridy++
 
         val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
-        defaultValueCheckBox.setSelected(descriptor.withDefaultValue)
+        defaultValueCheckBox.isSelected = descriptor.withDefaultValue
         defaultValueCheckBox.setMnemonic('d')
         defaultValueCheckBox.addActionListener { updateRemoveParamCheckBoxes() }
         panel.add(defaultValueCheckBox, gbConstraints)
 
         this.defaultValueCheckBox = defaultValueCheckBox
 
-        val occurrenceCount = descriptor.occurrencesToReplace.size()
+        val occurrenceCount = descriptor.occurrencesToReplace.size
 
         if (occurrenceCount > 1) {
             gbConstraints.gridy++
             val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
-            replaceAllCheckBox.setSelected(true)
+            replaceAllCheckBox.isSelected = true
             replaceAllCheckBox.setMnemonic('R')
             replaceAllCheckBox.addActionListener { updateRemoveParamCheckBoxes() }
             panel.add(replaceAllCheckBox, gbConstraints)
@@ -214,11 +214,11 @@ public class KotlinIntroduceParameterDialog private constructor(
         }
 
         for (parameter in descriptor.parametersToRemove) {
-            val removeWhat = if (parameter is KtParameter) "parameter '${parameter.getName()}'" else "receiver"
+            val removeWhat = if (parameter is KtParameter) "parameter '${parameter.name}'" else "receiver"
             val cb = NonFocusableCheckBox("Remove $removeWhat no longer used")
 
             removeParamsCheckBoxes[cb] = parameter
-            cb.setSelected(true)
+            cb.isSelected = true
             gbConstraints.gridy++
             panel.add(cb, gbConstraints)
         }
@@ -230,46 +230,46 @@ public class KotlinIntroduceParameterDialog private constructor(
 
     override fun canRun() {
         val psiFactory = KtPsiFactory(myProject)
-        psiFactory.createSimpleName(nameField.getEnteredName()).validateElement("Invalid parameter name")
-        psiFactory.createType(typeField.getEnteredName()).validateElement("Invalid parameter type")
+        psiFactory.createSimpleName(nameField.enteredName).validateElement("Invalid parameter name")
+        psiFactory.createType(typeField.enteredName).validateElement("Invalid parameter type")
     }
 
     override fun doAction() {
         performRefactoring()
     }
 
-    public fun performRefactoring() {
+    fun performRefactoring() {
         invokeRefactoring(
                 object : BaseRefactoringProcessor(myProject) {
                     override fun findUsages() = UsageInfo.EMPTY_ARRAY
 
                     override fun performRefactoring(usages: Array<out UsageInfo>) {
                         fun createLambdaForArgument(function: KtFunction): KtExpression {
-                            val statement = (function.getBodyExpression() as KtBlockExpression).getStatements().single()
+                            val statement = (function.bodyExpression as KtBlockExpression).statements.single()
                             val space = if (statement.isMultiLine()) "\n" else " "
-                            val parameters = function.getValueParameters()
+                            val parameters = function.valueParameters
                             val parametersText = if (parameters.isNotEmpty()) {
-                                " " + parameters.map { it.getName() }.joinToString() + " ->"
+                                " " + parameters.map { it.name }.joinToString() + " ->"
                             } else ""
-                            val text = "{$parametersText$space${statement.getText()}$space}"
+                            val text = "{$parametersText$space${statement.text}$space}"
 
                             return KtPsiFactory(myProject).createExpression(text)
                         }
 
-                        val chosenName = nameField.getEnteredName()
-                        var chosenType = typeField.getEnteredName()
+                        val chosenName = nameField.enteredName
+                        var chosenType = typeField.enteredName
                         var newArgumentValue = descriptor.newArgumentValue
                         var newReplacer = descriptor.occurrenceReplacer
 
-                        val startMarkAction = StartMarkAction.start(editor, myProject, commandName)
+                        val startMarkAction = StartMarkAction.start(editor, myProject, this@KotlinIntroduceParameterDialog.commandName)
 
                         lambdaExtractionDescriptor?.let { oldDescriptor ->
                             val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
                                     oldDescriptor,
                                     chosenName,
                                     "",
-                                    parameterTablePanel?.getReceiverInfo(),
-                                    parameterTablePanel?.getParameterInfos() ?: listOf(),
+                                    parameterTablePanel?.receiverInfo,
+                                    parameterTablePanel?.parameterInfos ?: listOf(),
                                     null
                             )
                             val options = ExtractionGeneratorOptions.DEFAULT.copy(
@@ -278,12 +278,12 @@ public class KotlinIntroduceParameterDialog private constructor(
                             )
                             with (ExtractionGeneratorConfiguration(newDescriptor, options).generateDeclaration()) {
                                 val function = declaration as KtFunction
-                                val receiverType = function.getReceiverTypeReference()?.getText()
+                                val receiverType = function.receiverTypeReference?.text
                                 val parameterTypes = function
-                                        .getValueParameters()
-                                        .map { it.getTypeReference()!!.getText() }
+                                        .valueParameters
+                                        .map { it.typeReference!!.text }
                                         .joinToString()
-                                val returnType = function.getTypeReference()?.getText() ?: "Unit"
+                                val returnType = function.typeReference?.text ?: "Unit"
 
                                 chosenType = (receiverType?.let { "$it." } ?: "") + "($parameterTypes) -> $returnType"
                                 newArgumentValue = createLambdaForArgument(function)
@@ -297,16 +297,16 @@ public class KotlinIntroduceParameterDialog private constructor(
                                 newParameterName = chosenName,
                                 newParameterTypeText = chosenType,
                                 argumentValue = newArgumentValue,
-                                withDefaultValue = defaultValueCheckBox!!.isSelected(),
+                                withDefaultValue = defaultValueCheckBox!!.isSelected,
                                 occurrencesToReplace = with(descriptor) {
-                                    if (replaceAllCheckBox?.isSelected() ?: true) {
+                                    if (replaceAllCheckBox?.isSelected ?: true) {
                                         occurrencesToReplace
                                     }
                                     else {
                                         Collections.singletonList(originalOccurrence)
                                     }
                                 },
-                                parametersToRemove = removeParamsCheckBoxes.filter { it.key.isEnabled() && it.key.isSelected() }.map { it.value },
+                                parametersToRemove = removeParamsCheckBoxes.filter { it.key.isEnabled && it.key.isSelected }.map { it.value },
                                 occurrenceReplacer = newReplacer
                         )
 
@@ -318,7 +318,7 @@ public class KotlinIntroduceParameterDialog private constructor(
 
                     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = BaseUsageViewDescriptor()
 
-                    override fun getCommandName(): String = commandName
+                    override fun getCommandName(): String = this@KotlinIntroduceParameterDialog.commandName
                 }
         )
     }

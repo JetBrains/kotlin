@@ -172,7 +172,7 @@ public class KotlinOverloadTest extends KotlinLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
-        LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(JvmPlatform.INSTANCE$.getBuiltIns());
+        LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(JvmPlatform.INSTANCE.getBuiltIns());
         return functionDescriptorResolver.resolveFunctionDescriptor(root, scope, function, KotlinTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }
 }

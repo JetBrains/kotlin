@@ -120,7 +120,7 @@ fun box(): String {
     val mentry = MME()
 
     hashMap[""] = ""
-    val hashMapEntry = hashMap.entrySet().first()
+    val hashMapEntry = hashMap.entries.first()
 
     reifiedSafeAsReturnsNull<MutableMap.MutableEntry<*, *>>(entry, "reifiedSafeAs<MutableMap.MutableEntry<*, *>>(entry)")
     reifiedSafeAsReturnsNonNull<MutableMap.MutableEntry<*, *>>(mentry, "reifiedSafeAs<MutableMap.MutableEntry<*, *>>(mentry)")

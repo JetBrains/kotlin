@@ -11,7 +11,7 @@ annotation class Ann(
 )
 
 fun box(): String {
-    val ann = javaClass<MyClass>().getAnnotation(javaClass<Ann>())
+    val ann = MyClass::class.java.getAnnotation(Ann::class.java)
     if (ann == null) return "fail: cannot find Ann on MyClass}"
     if (ann.b != 1.toByte()) return "fail: annotation parameter b should be 1, but was ${ann.b}"
     if (ann.s != 1.toShort()) return "fail: annotation parameter s should be 1, but was ${ann.s}"

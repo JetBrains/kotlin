@@ -20,9 +20,9 @@ import com.intellij.psi.PsiType
 import com.intellij.refactoring.changeSignature.ParameterInfoImpl
 import org.jetbrains.kotlin.psi.KtExpression
 
-public class KotlinAwareJavaParameterInfoImpl(
+class KotlinAwareJavaParameterInfoImpl(
         oldParameterIndex: Int,
         name: String,
         type: PsiType,
         val kotlinDefaultValue: KtExpression?
-): ParameterInfoImpl(oldParameterIndex, name, type, kotlinDefaultValue?.getText() ?: "")
+): ParameterInfoImpl(oldParameterIndex, name, type, kotlinDefaultValue?.text ?: "")

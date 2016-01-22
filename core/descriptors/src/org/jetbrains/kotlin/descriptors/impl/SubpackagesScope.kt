@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
+open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
 
     protected fun getPackage(name: Name): PackageViewDescriptor? {
-        if (name.isSpecial()) {
+        if (name.isSpecial) {
             return null
         }
         val packageViewDescriptor = moduleDescriptor.getPackage(fqName.child(name))
@@ -44,10 +44,10 @@ public open class SubpackagesScope(private val moduleDescriptor: ModuleDescripto
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.PACKAGES_MASK)) return listOf()
-        if (fqName.isRoot() && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
+        if (fqName.isRoot && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
 
         val subFqNames = moduleDescriptor.getSubPackagesOf(fqName, nameFilter)
-        val result = ArrayList<DeclarationDescriptor>(subFqNames.size())
+        val result = ArrayList<DeclarationDescriptor>(subFqNames.size)
         for (subFqName in subFqNames) {
             val shortName = subFqName.shortName()
             if (nameFilter(shortName)) {
@@ -58,7 +58,7 @@ public open class SubpackagesScope(private val moduleDescriptor: ModuleDescripto
     }
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), " {")
+        p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
         p.popIndent()

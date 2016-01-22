@@ -35,22 +35,22 @@ class WithTailInsertHandler(val tailText: String,
     }
 
     fun postHandleInsert(context: InsertionContext, item: LookupElement) {
-        val completionChar = context.getCompletionChar()
+        val completionChar = context.completionChar
         if (completionChar == tailText.singleOrNull() || (spaceAfter && completionChar == ' ')) {
             context.setAddCompletionChar(false)
         }
         //TODO: what if completion char is different?
 
-        val document = context.getDocument()
-        PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
+        val document = context.document
+        PsiDocumentManager.getInstance(context.project).doPostponedOperationsAndUnblockDocument(document)
 
-        var tailOffset = context.getTailOffset()
+        var tailOffset = context.tailOffset
         if (completionChar == Lookup.REPLACE_SELECT_CHAR && item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) != null) {
-            val offset = context.getOffsetMap().getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
+            val offset = context.offsetMap.getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
             if (offset != -1) tailOffset = offset
         }
 
-        val moveCaret = context.getEditor().getCaretModel().getOffset() == tailOffset
+        val moveCaret = context.editor.caretModel.offset == tailOffset
 
         //TODO: analyze parenthesis balance to decide whether to replace or not
         var insert = true
@@ -58,7 +58,7 @@ class WithTailInsertHandler(val tailText: String,
             var offset = document.charsSequence.skipSpacesAndLineBreaks(tailOffset)
             if (document.isTextAt(offset, tailText)) {
                 insert = false
-                offset += tailText.length()
+                offset += tailText.length
                 tailOffset = offset
 
                 if (spaceAfter && document.charsSequence.isCharAt(offset, ' ')) {
@@ -77,10 +77,10 @@ class WithTailInsertHandler(val tailText: String,
         document.insertString(tailOffset, textToInsert)
 
         if (moveCaret) {
-            context.getEditor().getCaretModel().moveToOffset(tailOffset + textToInsert.length())
+            context.editor.caretModel.moveToOffset(tailOffset + textToInsert.length)
 
             if (tailText == ",") {
-                AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(context.getEditor(), null)
+                AutoPopupController.getInstance(context.project)?.autoPopupParameterInfo(context.editor, null)
             }
         }
     }

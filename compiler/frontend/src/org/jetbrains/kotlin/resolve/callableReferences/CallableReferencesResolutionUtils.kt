@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.ThrowingList
 
-public fun resolveCallableReferenceReceiverType(
+fun resolveCallableReferenceReceiverType(
         callableReferenceExpression: KtCallableReferenceExpression,
         context: ResolutionContext<*>,
         typeResolver: TypeResolver
@@ -65,7 +65,7 @@ public fun resolveCallableReferenceReceiverType(
 private fun <D : CallableDescriptor> ResolveArgumentsMode.acceptResolution(results: OverloadResolutionResults<D>, trace: TemporaryTraceAndCache) {
     when (this) {
         ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS ->
-            if (results.isSingleResult()) trace.commit()
+            if (results.isSingleResult) trace.commit()
         ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS ->
             if (results.isSomething()) trace.commit()
     }
@@ -91,9 +91,9 @@ private fun resolvePossiblyAmbiguousCallableReference(
     return resolutionResults
 }
 
-private fun OverloadResolutionResults<*>.isSomething(): Boolean = !isNothing()
+private fun OverloadResolutionResults<*>.isSomething(): Boolean = !isNothing
 
-public fun resolvePossiblyAmbiguousCallableReference(
+fun resolvePossiblyAmbiguousCallableReference(
         callableReferenceExpression: KtCallableReferenceExpression,
         lhsType: KotlinType?,
         context: ResolutionContext<*>,
@@ -139,13 +139,13 @@ public fun resolvePossiblyAmbiguousCallableReference(
         return resolvePossiblyAmbiguousCallableReference(reference, null, context, resolutionMode, callResolver)
     }
 
-    val classifier = lhsType.getConstructor().getDeclarationDescriptor()
+    val classifier = lhsType.constructor.declarationDescriptor
     if (classifier !is ClassDescriptor) {
         context.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(callableReferenceExpression))
         return null
     }
 
-    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier, classifier.getStaticScope())
+    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier, classifier.staticScope)
     if (possibleStatic.isSomething()) return possibleStatic
 
     val possibleNested = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static nested classes scope",
@@ -159,7 +159,7 @@ public fun resolvePossiblyAmbiguousCallableReference(
     return null
 }
 
-public fun resolveCallableReferenceTarget(
+fun resolveCallableReferenceTarget(
         callableReferenceExpression: KtCallableReferenceExpression,
         lhsType: KotlinType?,
         context: ResolutionContext<*>,
@@ -172,7 +172,7 @@ public fun resolveCallableReferenceTarget(
         if (results.isSomething()) {
             resolvedToSomething[0] = true
             OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency)?.let { call ->
-                call.getResultingDescriptor()
+                call.resultingDescriptor
             }
         }
         else {
@@ -186,8 +186,8 @@ private fun createReflectionTypeForFunction(
         receiverType: KotlinType?,
         reflectionTypes: ReflectionTypes
 ): KotlinType? {
-    val returnType = descriptor.getReturnType() ?: return null
-    val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters())
+    val returnType = descriptor.returnType ?: return null
+    val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.valueParameters)
     return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
 }
 
@@ -196,7 +196,7 @@ private fun createReflectionTypeForProperty(
         receiverType: KotlinType?,
         reflectionTypes: ReflectionTypes
 ): KotlinType {
-    return reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.getType(), descriptor.isVar())
+    return reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, descriptor.isVar)
 }
 
 private fun bindFunctionReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
@@ -261,13 +261,13 @@ private fun createReflectionTypeForCallableDescriptor(
     }
 }
 
-public fun getReflectionTypeForCandidateDescriptor(
+fun getReflectionTypeForCandidateDescriptor(
         descriptor: CallableDescriptor,
         reflectionTypes: ReflectionTypes
 ): KotlinType? =
         createReflectionTypeForCallableDescriptor(descriptor, null, reflectionTypes, null, null)
 
-public fun createReflectionTypeForResolvedCallableReference(
+fun createReflectionTypeForResolvedCallableReference(
         reference: KtCallableReferenceExpression,
         lhsType: KotlinType?,
         descriptor: CallableDescriptor,
@@ -288,7 +288,7 @@ public fun createReflectionTypeForResolvedCallableReference(
     return type
 }
 
-public fun getResolvedCallableReferenceShapeType(
+fun getResolvedCallableReferenceShapeType(
         reference: KtCallableReferenceExpression,
         lhsType: KotlinType?,
         overloadResolutionResults: OverloadResolutionResults<CallableDescriptor>?,

@@ -24,13 +24,13 @@ import java.lang.reflect.WildcardType
 
 class ContainerConsistencyException(message: String) : Exception(message)
 
-public interface ComponentContainer {
+interface ComponentContainer {
     fun createResolveContext(requestingDescriptor: ValueDescriptor): ValueResolveContext
 }
 
-public interface ComponentProvider {
-    public fun resolve(request: Type): ValueDescriptor?
-    public fun <T> create(request: Class<T>): T
+interface ComponentProvider {
+    fun resolve(request: Type): ValueDescriptor?
+    fun <T> create(request: Class<T>): T
 }
 
 object DynamicComponentDescriptor : ValueDescriptor {
@@ -38,8 +38,8 @@ object DynamicComponentDescriptor : ValueDescriptor {
     override fun toString(): String = "Dynamic"
 }
 
-public class StorageComponentContainer(id: String) : ComponentContainer, ComponentProvider, Closeable {
-    public val unknownContext: ComponentResolveContext by lazy { ComponentResolveContext(this, DynamicComponentDescriptor) }
+class StorageComponentContainer(id: String) : ComponentContainer, ComponentProvider, Closeable {
+    val unknownContext: ComponentResolveContext by lazy { ComponentResolveContext(this, DynamicComponentDescriptor) }
     val componentStorage = ComponentStorage(id)
 
     override fun createResolveContext(requestingDescriptor: ValueDescriptor): ValueResolveContext {
@@ -59,7 +59,7 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Compone
 
     override fun close() = componentStorage.dispose()
 
-    public fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
+    fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
         return componentStorage.resolve(request, context) ?: resolveIterable(request, context)
     }
 
@@ -69,15 +69,15 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Compone
 
     private fun resolveIterable(request: Type, context: ValueResolveContext): ValueDescriptor? {
         if (request !is ParameterizedType) return null
-        val rawType = request.getRawType()
-        if (rawType != javaClass<Iterable<*>>()) return null
-        val typeArguments = request.getActualTypeArguments()
-        if (typeArguments.size() != 1) return null
+        val rawType = request.rawType
+        if (rawType != Iterable::class.java) return null
+        val typeArguments = request.actualTypeArguments
+        if (typeArguments.size != 1) return null
         val iterableTypeArgument = typeArguments[0]
         val iterableType = when (iterableTypeArgument) {
             is WildcardType -> {
-                val upperBounds = iterableTypeArgument.getUpperBounds()
-                if (upperBounds.size() != 1) return null
+                val upperBounds = iterableTypeArgument.upperBounds
+                if (upperBounds.size != 1) return null
                 upperBounds[0]
             }
             is Class<*> -> iterableTypeArgument
@@ -87,7 +87,7 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Compone
         return IterableDescriptor(componentStorage.resolveMultiple(iterableType, context))
     }
 
-    public fun resolveMultiple(request: Class<*>, context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
+    fun resolveMultiple(request: Class<*>, context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
         return componentStorage.resolveMultiple(request, context)
     }
 
@@ -103,18 +103,18 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Compone
     }
 }
 
-public fun StorageComponentContainer.registerSingleton(klass: Class<*>): StorageComponentContainer {
+fun StorageComponentContainer.registerSingleton(klass: Class<*>): StorageComponentContainer {
     return registerDescriptors(listOf(SingletonTypeComponentDescriptor(this, klass)))
 }
 
-public fun StorageComponentContainer.registerInstance(instance: Any): StorageComponentContainer {
+fun StorageComponentContainer.registerInstance(instance: Any): StorageComponentContainer {
     return registerDescriptors(listOf(InstanceComponentDescriptor(instance)))
 }
 
-public inline fun <reified T : Any> StorageComponentContainer.resolve(context: ValueResolveContext = unknownContext): ValueDescriptor? {
-    return resolve(javaClass<T>(), context)
+inline fun <reified T : Any> StorageComponentContainer.resolve(context: ValueResolveContext = unknownContext): ValueDescriptor? {
+    return resolve(T::class.java, context)
 }
 
-public inline fun <reified T : Any> StorageComponentContainer.resolveMultiple(context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
-    return resolveMultiple(javaClass<T>(), context)
+inline fun <reified T : Any> StorageComponentContainer.resolveMultiple(context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
+    return resolveMultiple(T::class.java, context)
 }

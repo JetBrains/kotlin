@@ -18,6 +18,7 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
@@ -25,37 +26,41 @@ import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecial
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
+private fun FqName.child(name: String): FqName = child(Name.identifier(name))
+private fun FqNameUnsafe.childSafe(name: String): FqName = child(Name.identifier(name)).toSafe()
+
 object BuiltinSpecialProperties {
-    private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
-            FqName("kotlin.Enum.name")                 to Name.identifier("name"),
-            FqName("kotlin.Enum.ordinal")              to Name.identifier("ordinal"),
-            FqName("kotlin.Collection.size")           to Name.identifier("size"),
-            FqName("kotlin.Map.size")                  to Name.identifier("size"),
-            FqName("kotlin.CharSequence.length")       to Name.identifier("length"),
-            FqName("kotlin.Map.keys")                  to Name.identifier("keySet"),
-            FqName("kotlin.Map.values")                to Name.identifier("values"),
-            FqName("kotlin.Map.entries")               to Name.identifier("entrySet")
+    private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf<FqName, Name>(
+            BUILTIN_NAMES._enum.childSafe("name") to Name.identifier("name"),
+            BUILTIN_NAMES._enum.childSafe("ordinal") to Name.identifier("ordinal"),
+            BUILTIN_NAMES.collection.child("size") to Name.identifier("size"),
+            BUILTIN_NAMES.map.child("size") to Name.identifier("size"),
+            BUILTIN_NAMES.charSequence.childSafe("length") to Name.identifier("length"),
+            BUILTIN_NAMES.map.child("keys") to Name.identifier("keySet"),
+            BUILTIN_NAMES.map.child("values") to Name.identifier("values"),
+            BUILTIN_NAMES.map.child("entries") to Name.identifier("entrySet")
     )
 
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
             PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.getInversedShortNamesMap()
 
-    private val FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keySet()
-    internal val SHORT_NAMES = FQ_NAMES.map { it.shortName() }.toSet()
+    private val SPECIAL_FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
+    internal val SPECIAL_SHORT_NAMES = SPECIAL_FQ_NAMES.map { it.shortName() }.toSet()
 
     fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
-        if (callableMemberDescriptor.name !in SHORT_NAMES) return false
+        if (callableMemberDescriptor.name !in SPECIAL_SHORT_NAMES) return false
 
         return callableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl()
     }
 
     private fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
-        if (fqNameOrNull() in FQ_NAMES) return true
+        if (fqNameOrNull() in SPECIAL_FQ_NAMES) return true
         if (!isFromBuiltins()) return false
 
         return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
@@ -74,26 +79,26 @@ object BuiltinSpecialProperties {
 
 object BuiltinMethodsWithSpecialGenericSignature {
     private val ERASED_COLLECTION_PARAMETER_FQ_NAMES = setOf(
-            FqName("kotlin.Collection.containsAll"),
-            FqName("kotlin.MutableCollection.removeAll"),
-            FqName("kotlin.MutableCollection.retainAll")
+            BUILTIN_NAMES.collection.child("containsAll"),
+            BUILTIN_NAMES.mutableCollection.child("removeAll"),
+            BUILTIN_NAMES.mutableCollection.child("retainAll")
     )
 
-    public enum class DefaultValue(val value: Any?) {
+    enum class DefaultValue(val value: Any?) {
         NULL(null), INDEX(-1), FALSE(false)
     }
 
     private val GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP = mapOf(
-            FqName("kotlin.Collection.contains")      to DefaultValue.FALSE,
-            FqName("kotlin.MutableCollection.remove") to DefaultValue.FALSE,
-            FqName("kotlin.Map.containsKey")          to DefaultValue.FALSE,
-            FqName("kotlin.Map.containsValue")        to DefaultValue.FALSE,
+            BUILTIN_NAMES.collection.child("contains")          to DefaultValue.FALSE,
+            BUILTIN_NAMES.mutableCollection.child("remove")     to DefaultValue.FALSE,
+            BUILTIN_NAMES.map.child("containsKey")              to DefaultValue.FALSE,
+            BUILTIN_NAMES.map.child("containsValue")            to DefaultValue.FALSE,
 
-            FqName("kotlin.Map.get")                  to DefaultValue.NULL,
-            FqName("kotlin.MutableMap.remove")        to DefaultValue.NULL,
+            BUILTIN_NAMES.map.child("get")                      to DefaultValue.NULL,
+            BUILTIN_NAMES.mutableMap.child("remove")            to DefaultValue.NULL,
 
-            FqName("kotlin.List.indexOf")             to DefaultValue.INDEX,
-            FqName("kotlin.List.lastIndexOf")         to DefaultValue.INDEX
+            BUILTIN_NAMES.list.child("indexOf")                 to DefaultValue.INDEX,
+            BUILTIN_NAMES.list.child("lastIndexOf")             to DefaultValue.INDEX
     )
 
     private val ERASED_VALUE_PARAMETERS_FQ_NAMES =
@@ -153,20 +158,20 @@ object BuiltinMethodsWithSpecialGenericSignature {
 }
 
 object BuiltinMethodsWithDifferentJvmName {
-    val REMOVE_AT_FQ_NAME = FqName("kotlin.MutableList.removeAt")
+    val REMOVE_AT_FQ_NAME = BUILTIN_NAMES.mutableList.child("removeAt")
 
     val FQ_NAMES_TO_JVM_MAP: Map<FqName, Name> = mapOf(
-            FqName("kotlin.Number.toByte")    to Name.identifier("byteValue"),
-            FqName("kotlin.Number.toShort")   to Name.identifier("shortValue"),
-            FqName("kotlin.Number.toInt")     to Name.identifier("intValue"),
-            FqName("kotlin.Number.toLong")    to Name.identifier("longValue"),
-            FqName("kotlin.Number.toFloat")   to Name.identifier("floatValue"),
-            FqName("kotlin.Number.toDouble")  to Name.identifier("doubleValue"),
-            REMOVE_AT_FQ_NAME                 to Name.identifier("remove"),
-            FqName("kotlin.CharSequence.get") to Name.identifier("charAt")
+            BUILTIN_NAMES.number.childSafe("toByte")    to Name.identifier("byteValue"),
+            BUILTIN_NAMES.number.childSafe("toShort")   to Name.identifier("shortValue"),
+            BUILTIN_NAMES.number.childSafe("toInt")     to Name.identifier("intValue"),
+            BUILTIN_NAMES.number.childSafe("toLong")    to Name.identifier("longValue"),
+            BUILTIN_NAMES.number.childSafe("toFloat")   to Name.identifier("floatValue"),
+            BUILTIN_NAMES.number.childSafe("toDouble")  to Name.identifier("doubleValue"),
+            REMOVE_AT_FQ_NAME                           to Name.identifier("remove"),
+            BUILTIN_NAMES.charSequence.childSafe("get") to Name.identifier("charAt")
     )
 
-    val ORIGINAL_SHORT_NAMES: List<Name> = FQ_NAMES_TO_JVM_MAP.keySet().map { it.shortName() }
+    val ORIGINAL_SHORT_NAMES: List<Name> = FQ_NAMES_TO_JVM_MAP.keys.map { it.shortName() }
 
     val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, List<Name>> = FQ_NAMES_TO_JVM_MAP.getInversedShortNamesMap()
 
@@ -194,7 +199,7 @@ object BuiltinMethodsWithDifferentJvmName {
 @Suppress("UNCHECKED_CAST")
 fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName(): T? {
     if (name !in BuiltinMethodsWithDifferentJvmName.ORIGINAL_SHORT_NAMES
-            && propertyIfAccessor.name !in BuiltinSpecialProperties.SHORT_NAMES) return null
+            && propertyIfAccessor.name !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES) return null
 
     return when (this) {
         is PropertyDescriptor, is PropertyAccessorDescriptor ->
@@ -258,7 +263,7 @@ private fun getOverriddenBuiltinThatAffectsJvmName(
     return null
 }
 
-public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
+fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
         specialCallableDescriptor: CallableDescriptor
 ): Boolean {
     val builtinContainerDefaultType = (specialCallableDescriptor.containingDeclaration as ClassDescriptor).defaultType
@@ -274,7 +279,7 @@ public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 
             if (doesOverrideBuiltinDeclaration) {
                 val containingPackageFragment = DescriptorUtils.getParentOfType(superClassDescriptor, PackageFragmentDescriptor::class.java)
-                if (containingPackageFragment === superClassDescriptor.builtIns.builtInsPackageFragment) return false
+                if (superClassDescriptor.builtIns.isBuiltInPackageFragment(containingPackageFragment)) return false
                 return true
             }
         }
@@ -286,16 +291,16 @@ public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 }
 
 // Util methods
-public val CallableMemberDescriptor.isFromJava: Boolean
+val CallableMemberDescriptor.isFromJava: Boolean
     get() = propertyIfAccessor is JavaCallableMemberDescriptor && propertyIfAccessor.containingDeclaration is JavaClassDescriptor
 
-public fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
+fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
     val fqName = propertyIfAccessor.fqNameOrNull() ?: return false
     return fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
             this.module == this.builtIns.builtInsModule
 }
 
-public fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
+fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
 
 private fun Map<FqName, Name>.getInversedShortNamesMap(): Map<Name, List<Name>> =
-        entrySet().groupBy { it.value }.mapValues { entry -> entry.value.map { it.key.shortName() } }
+        entries.groupBy { it.value }.mapValues { entry -> entry.value.map { it.key.shortName() } }

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.*
 
-public class LabelNormalizationMethodTransformer : MethodTransformer() {
-    public override fun transform(internalClassName: String, methodNode: MethodNode) {
+class LabelNormalizationMethodTransformer : MethodTransformer() {
+    override fun transform(internalClassName: String, methodNode: MethodNode) {
         TransformerForMethod(methodNode).transform()
     }
 
@@ -29,7 +29,7 @@ public class LabelNormalizationMethodTransformer : MethodTransformer() {
         val instructions = methodNode.instructions
         val newLabelNodes = hashMapOf<Label, LabelNode>()
 
-        public fun transform() {
+        fun transform() {
             if (rewriteLabelInstructions()) {
                 rewriteNonLabelInstructions()
                 rewriteTryCatchBlocks()

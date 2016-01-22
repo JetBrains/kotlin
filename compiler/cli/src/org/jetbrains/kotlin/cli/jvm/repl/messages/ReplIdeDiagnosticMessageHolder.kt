@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.w3c.dom.ls.DOMImplementationLS
 import javax.xml.parsers.DocumentBuilderFactory
 
-public class ReplIdeDiagnosticMessageHolder : DiagnosticMessageHolder {
+class ReplIdeDiagnosticMessageHolder : DiagnosticMessageHolder {
     private val diagnostics = arrayListOf<Pair<Diagnostic, String>>()
 
     override fun report(diagnostic: Diagnostic, file: PsiFile, render: String) {

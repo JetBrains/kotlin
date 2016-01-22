@@ -54,7 +54,7 @@ public class KtDotQualifiedExpression extends KtExpressionImplStub<KotlinPlaceHo
                 return childExpressionsByStub[0];
             }
         }
-        return KtQualifiedExpressionImpl.INSTANCE$.getReceiverExpression(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getReceiverExpression(this);
     }
 
     @Nullable
@@ -67,7 +67,7 @@ public class KtDotQualifiedExpression extends KtExpressionImplStub<KotlinPlaceHo
                 return childExpressionsByStub[1];
             }
         }
-        return KtQualifiedExpressionImpl.INSTANCE$.getSelectorExpression(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getSelectorExpression(this);
     }
 
 
@@ -93,12 +93,12 @@ public class KtDotQualifiedExpression extends KtExpressionImplStub<KotlinPlaceHo
     @NotNull
     @Override
     public ASTNode getOperationTokenNode() {
-        return KtQualifiedExpressionImpl.INSTANCE$.getOperationTokenNode(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getOperationTokenNode(this);
     }
 
     @NotNull
     @Override
     public KtToken getOperationSign() {
-        return KtQualifiedExpressionImpl.INSTANCE$.getOperationSign(this);
+        return KtQualifiedExpressionImpl.INSTANCE.getOperationSign(this);
     }
 }

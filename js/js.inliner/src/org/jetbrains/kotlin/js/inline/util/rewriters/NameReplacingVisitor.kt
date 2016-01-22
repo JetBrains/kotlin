@@ -16,36 +16,29 @@
 
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
-import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
-import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsContext
-import com.google.dart.compiler.backend.js.ast.JsVars
-import com.google.dart.compiler.backend.js.ast.HasName
-import com.google.dart.compiler.backend.js.ast.JsLabel
+import com.google.dart.compiler.backend.js.ast.*
 
 class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : JsVisitorWithContextImpl() {
 
-    override fun endVisit(x: JsNameRef, ctx: JsContext<*>) {
-        val replacement = replaceMap[x.getName()]
+    override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
+        val replacement = replaceMap[x.name]
         if (replacement == null) return
 
         ctx.replaceMe(replacement)
     }
 
-    override fun endVisit(x: JsVars.JsVar, ctx: JsContext<*>) {
-        val replacement = replaceMap[x.getName()]
+    override fun endVisit(x: JsVars.JsVar, ctx: JsContext<JsNode>) {
+        val replacement = replaceMap[x.name]
         if (replacement is HasName) {
-            val replacementVar = JsVars.JsVar(replacement.getName(), x.getInitExpression())
+            val replacementVar = JsVars.JsVar(replacement.name, x.initExpression)
             ctx.replaceMe(replacementVar)
         }
     }
 
-    override fun endVisit(x: JsLabel, ctx: JsContext<*>) {
-        val replacement = replaceMap[x.getName()]
+    override fun endVisit(x: JsLabel, ctx: JsContext<JsNode>) {
+        val replacement = replaceMap[x.name]
         if (replacement is HasName) {
-            val replacementLabel = JsLabel(replacement.getName(), x.getStatement())
+            val replacementLabel = JsLabel(replacement.name, x.statement)
             ctx.replaceMe(replacementLabel)
         }
     }

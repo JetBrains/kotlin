@@ -14,7 +14,15 @@ fun main(args: Array<String>) {
         fun f() {
         }
 
+        @Suppress("unused")
+        fun fNoWarn() {}
+
         val p = 5
+    }
+
+    @Suppress("unused")
+    fun localObject3() = object {
+        fun fNoWarn() {}
     }
 
     localObject2().f()

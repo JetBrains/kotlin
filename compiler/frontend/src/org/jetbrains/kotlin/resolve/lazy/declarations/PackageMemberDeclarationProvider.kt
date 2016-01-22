@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public interface PackageMemberDeclarationProvider : DeclarationProvider {
-    public fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName>
+interface PackageMemberDeclarationProvider : DeclarationProvider {
+    fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName>
 
-    public fun getPackageFiles(): Collection<KtFile>
+    fun getPackageFiles(): Collection<KtFile>
 }

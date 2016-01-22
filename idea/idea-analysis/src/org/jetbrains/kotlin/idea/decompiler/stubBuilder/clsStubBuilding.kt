@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,8 +42,8 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
-    val fileStub = createFileStub(classId.getPackageFqName())
-    createClassStub(fileStub, classProto, classId, context)
+    val fileStub = createFileStub(classId.packageFqName)
+    createClassStub(fileStub, classProto, context.nameResolver, classId, context)
     return fileStub
 }
 
@@ -52,7 +54,7 @@ fun createPackageFacadeStub(
 ): KotlinFileStubImpl {
     val fileStub = KotlinFileStubForIde.forFile(packageFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    createCallableStubs(fileStub, c, ProtoContainer(null, packageFqName, c.nameResolver, c.typeTable),
+    createCallableStubs(fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, packagePartSource = null),
                         packageProto.functionList, packageProto.propertyList)
     return fileStub
 }
@@ -65,27 +67,30 @@ fun createFileFacadeStub(
     val packageFqName = facadeFqName.parent()
     val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
-    createCallableStubs(fileStub, c, ProtoContainer(null, packageFqName, c.nameResolver, c.typeTable),
-                        packageProto.functionList, packageProto.propertyList)
+    val container = ProtoContainer.Package(
+            packageFqName, c.nameResolver, c.typeTable, JvmPackagePartSource(ClassId.topLevel(facadeFqName))
+    )
+    createCallableStubs(fileStub, c, container, packageProto.functionList, packageProto.propertyList)
     return fileStub
 }
 
 fun createMultifileClassStub(
-        multifileClass: KotlinJvmBinaryClass,
+        header: KotlinClassHeader,
         partFiles: List<KotlinJvmBinaryClass>,
         facadeFqName: FqName,
         components: ClsStubBuilderComponents
 ): KotlinFileStubImpl {
     val packageFqName = facadeFqName.parent()
-    val partNames = multifileClass.classHeader.filePartClassNames?.asList()?.map { it.substringAfterLast('/') }
+    val partNames = header.data?.asList()?.map { it.substringAfterLast('/') }
     val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames, packageFqName.isRoot)
     setupFileStub(fileStub, packageFqName)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
-        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.annotationData!!, partHeader.strings!!)
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
         val partContext = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-        createCallableStubs(fileStub, partContext, ProtoContainer(null, packageFqName, partContext.nameResolver, partContext.typeTable),
-                            packageProto.functionList, packageProto.propertyList)
+        val container = ProtoContainer.Package(packageFqName, partContext.nameResolver, partContext.typeTable,
+                                               JvmPackagePartSource(partFile.classId))
+        createCallableStubs(fileStub, partContext, container, packageProto.functionList, packageProto.propertyList)
     }
     return fileStub
 }
@@ -133,7 +138,7 @@ fun createStubForTypeName(
         onUserTypeLevel: (KotlinUserTypeStub, Int) -> Unit = { x, y -> }
 ): KotlinUserTypeStub {
     val fqName =
-            if (typeClassId.isLocal()) KotlinBuiltIns.FQ_NAMES.any
+            if (typeClassId.isLocal) KotlinBuiltIns.FQ_NAMES.any
             else typeClassId.asSingleFqName().toUnsafe()
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
@@ -284,7 +289,7 @@ fun createTargetedAnnotationStubs(
         val (annotationClassId, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
                 parent,
-                shortName = annotationClassId.getShortClassName().ref(),
+                shortName = annotationClassId.shortClassName.ref(),
                 hasValueArguments = false
         )
         if (target != null) {

@@ -22,7 +22,7 @@ import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
-public class CodeConformanceTest : TestCase() {
+class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)")
@@ -43,7 +43,7 @@ public class CodeConformanceTest : TestCase() {
         ).map { File(it) }
     }
 
-    public fun testParserCode() {
+    fun testParserCode() {
         val pattern = Pattern.compile("assert.*?\\b[^_]at.*?$", Pattern.MULTILINE)
 
         for (sourceFile in FileUtil.findFilesByMask(JAVA_FILE_PATTERN, File("compiler/frontend/src/org/jetbrains/kotlin/parsing"))) {
@@ -54,7 +54,7 @@ public class CodeConformanceTest : TestCase() {
         }
     }
 
-    public fun testNoBadSubstringsInProjectCode() {
+    fun testNoBadSubstringsInProjectCode() {
         class TestData(val message: String, val filter: (String) -> Boolean) {
             val result: MutableList<File> = ArrayList()
         }
@@ -109,15 +109,15 @@ public class CodeConformanceTest : TestCase() {
         }
 
         if (tests.flatMap { it.result }.isNotEmpty()) {
-            fail(StringBuilder {
+            fail(buildString {
                 for (test in tests) {
                     if (test.result.isNotEmpty()) {
-                        append(test.message.format(test.result.size(), test.result.joinToString("\n")))
+                        append(test.message.format(test.result.size, test.result.joinToString("\n")))
                         appendln()
                         appendln()
                     }
                 }
-            }.toString())
+            })
         }
     }
 }

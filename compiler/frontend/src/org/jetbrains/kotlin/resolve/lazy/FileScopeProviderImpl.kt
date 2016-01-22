@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportsFactory
@@ -25,23 +28,22 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.resolve.scopes.utils.withParent
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
-public open class FileScopeProviderImpl(
+open class FileScopeProviderImpl(
         private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
         private val storageManager: StorageManager,
         private val moduleDescriptor: ModuleDescriptor,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
-        private val ktImportsFactory: KtImportsFactory,
-        private val additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
+        private val ktImportsFactory: KtImportsFactory
 ) : FileScopeProvider {
 
     private val defaultImports by storageManager.createLazyValue {
@@ -57,22 +59,33 @@ public open class FileScopeProviderImpl(
     override fun getImportResolver(file: KtFile) = cache(file).importResolver
 
     private fun createScopeChainAndImportResolver(file: KtFile): FileData {
-        val debugName = "LazyFileScope for file " + file.getName()
+        val debugName = "LazyFileScope for file " + file.name
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve")
 
         val imports = file.importDirectives
 
-        val packageView = moduleDescriptor.getPackage(file.getPackageFqName())
-        val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.getPackageFqName())
-                .sure { "Could not find fragment ${file.getPackageFqName()} for file ${file.getName()}" }
+        val aliasImportNames = imports.mapNotNull { if (it.aliasName != null) it.importedFqName else null }
+
+        val packageView = moduleDescriptor.getPackage(file.packageFqName)
+        val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.packageFqName)
+                ?: error("Could not find fragment ${file.packageFqName} for file ${file.name}")
 
         fun createImportResolver(indexedImports: IndexedImports, trace: BindingTrace)
-                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, trace, packageFragment)
+                = LazyImportResolver(storageManager, qualifiedExpressionResolver, moduleDescriptor, indexedImports, aliasImportNames, trace, packageFragment)
 
-        val aliasImportResolver = createImportResolver(AliasImportsIndexed(imports), bindingTrace)
+        val explicitImportResolver = createImportResolver(ExplicitImportsIndexed(imports), bindingTrace)
         val allUnderImportResolver = createImportResolver(AllUnderImportsIndexed(imports), bindingTrace)
-        val defaultAliasImportResolver = createImportResolver(AliasImportsIndexed(defaultImports), tempTrace)
-        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImports), tempTrace)
+
+        val defaultImportsFiltered = if (aliasImportNames.isEmpty()) { // optimization
+            defaultImports
+        }
+        else {
+            defaultImports.filter { it.isAllUnder || it.importedFqName !in aliasImportNames }
+        }
+        val defaultExplicitImportResolver = createImportResolver(ExplicitImportsIndexed(defaultImportsFiltered), tempTrace)
+        val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImportsFiltered), tempTrace)
+
+        val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
 
         var scope: ImportingScope
 
@@ -82,10 +95,7 @@ public open class FileScopeProviderImpl(
         scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "All under imports in $debugName (invisible classes only)")
 
-        for (additionalScope in additionalScopes.flatMap { it.scopes }) {
-            assert(additionalScope.parent == null)
-            scope = additionalScope.withParent(scope)
-        }
+        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.INVISIBLE_CLASSES, scope)
 
         scope = LazyImportScope(scope, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "Default all under imports in $debugName (visible classes)")
@@ -93,14 +103,14 @@ public open class FileScopeProviderImpl(
         scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "All under imports in $debugName (visible classes)")
 
-        scope = LazyImportScope(scope, defaultAliasImportResolver, LazyImportScope.FilteringKind.ALL,
-                "Default alias imports in $debugName")
+        scope = LazyImportScope(scope, defaultExplicitImportResolver, LazyImportScope.FilteringKind.ALL,
+                "Default explicit imports in $debugName")
 
         scope = SubpackagesImportingScope(scope, moduleDescriptor, FqName.ROOT)
 
-        scope = packageView.memberScope.memberScopeAsImportingScope(scope) //TODO: problems with visibility too
+        scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.VISIBLE_CLASSES, scope)
 
-        scope = LazyImportScope(scope, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
+        scope = LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
 
         val lexicalScope = LexicalScope.empty(scope, packageFragment)
 
@@ -108,7 +118,7 @@ public open class FileScopeProviderImpl(
 
         val importResolver = object : ImportResolver {
             override fun forceResolveAllImports() {
-                aliasImportResolver.forceResolveAllImports()
+                explicitImportResolver.forceResolveAllImports()
                 allUnderImportResolver.forceResolveAllImports()
             }
 
@@ -117,11 +127,89 @@ public open class FileScopeProviderImpl(
                     allUnderImportResolver.forceResolveImport(importDirective)
                 }
                 else {
-                    aliasImportResolver.forceResolveImport(importDirective)
+                    explicitImportResolver.forceResolveImport(importDirective)
                 }
             }
         }
 
         return FileData(lexicalScope, importResolver)
+    }
+
+    private enum class FilteringKind {
+        VISIBLE_CLASSES, INVISIBLE_CLASSES
+    }
+
+    private fun currentPackageScope(
+            packageView: PackageViewDescriptor,
+            aliasImportNames: Collection<FqName>,
+            fromDescriptor: DummyContainerDescriptor,
+            filteringKind: FilteringKind,
+            parentScope: ImportingScope
+    ): ImportingScope {
+        val scope = packageView.memberScope
+        val packageName = packageView.fqName
+        val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
+
+        return object: ImportingScope {
+            override val parent: ImportingScope? = parentScope
+
+            override fun getContributedPackage(name: Name) = null
+
+            override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+                if (name in excludedNames) return null
+                val classifier = scope.getContributedClassifier(name, location) ?: return null
+                val visible = Visibilities.isVisibleWithIrrelevantReceiver(classifier as ClassDescriptor, fromDescriptor)
+                return classifier.check { filteringKind == if (visible) FilteringKind.VISIBLE_CLASSES else FilteringKind.INVISIBLE_CLASSES }
+            }
+
+            override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+                if (name in excludedNames) return emptyList()
+                return scope.getContributedVariables(name, location)
+            }
+
+            override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+                if (name in excludedNames) return emptyList()
+                return scope.getContributedFunctions(name, location)
+            }
+
+            override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+                // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+                return scope.getContributedDescriptors(kindFilter, { name -> name !in excludedNames && nameFilter(name) })
+            }
+
+            override fun toString() = "Scope for current package (${filteringKind.name})"
+
+            override fun printStructure(p: Printer) {
+                p.println(this.toString())
+            }
+        }
+    }
+
+    // we use this dummy implementation of DeclarationDescriptor to check accessibility of symbols from the current package
+    private class DummyContainerDescriptor(private val file: KtFile, private val packageFragment: PackageFragmentDescriptor) : DeclarationDescriptorNonRoot {
+        private val sourceElement = KotlinSourceElement(file)
+
+        override fun getContainingDeclaration() = packageFragment
+
+        override fun getSource() = sourceElement
+
+        override fun getOriginal() = this
+        override fun getAnnotations() = Annotations.EMPTY
+        override fun substitute(substitutor: TypeSubstitutor) = this
+
+        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+            throw UnsupportedOperationException()
+        }
+
+        override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+            throw UnsupportedOperationException()
+        }
+
+        override fun getName(): Name {
+            throw UnsupportedOperationException()
+        }
     }
 }

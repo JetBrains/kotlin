@@ -35,18 +35,18 @@ internal class ParametersBuilder private constructor(){
     private var nextCaptured = 0
 
     fun addThis(type: Type, skipped: Boolean): ParameterInfo {
-        val info = ParameterInfo(type, skipped, nextValueParameterIndex, -1, valueAndHiddenParams.size())
+        val info = ParameterInfo(type, skipped, nextValueParameterIndex, -1, valueAndHiddenParams.size)
         addParameter(info)
         return info
     }
 
     fun addNextParameter(type: Type, skipped: Boolean, remapValue: StackValue?): ParameterInfo {
-        return addParameter(ParameterInfo(type, skipped, nextValueParameterIndex, remapValue, valueAndHiddenParams.size()))
+        return addParameter(ParameterInfo(type, skipped, nextValueParameterIndex, remapValue, valueAndHiddenParams.size))
     }
 
     fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
         return addParameter(ParameterInfo(type, skipped, nextValueParameterIndex, remapValue,
-                                          if (parameterIndex == -1) valueAndHiddenParams.size() else { parameterIndex + valueParamStart }))
+                                          if (parameterIndex == -1) valueAndHiddenParams.size else { parameterIndex + valueParamStart }))
     }
 
     fun addCapturedParam(
@@ -102,7 +102,7 @@ internal class ParametersBuilder private constructor(){
     }
 
     fun markValueParametesStart(){
-        this.valueParamStart = valueAndHiddenParams.size()
+        this.valueParamStart = valueAndHiddenParams.size
     }
 
     fun listCaptured(): List<CapturedParamInfo> {

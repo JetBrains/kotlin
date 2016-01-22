@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -196,9 +196,9 @@ public class DataFlowAnalyzer {
 
         if (expression instanceof KtConstantExpression) {
             ConstantValue<?> constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
-            boolean error = new CompileTimeConstantChecker(c.trace, builtIns, true)
+            boolean error = new CompileTimeConstantChecker(c, builtIns, true)
                     .checkConstantExpressionType(constantValue, (KtConstantExpression) expression, c.expectedType);
-            if (hasError != null) hasError.set(error);
+            hasError.set(error);
             return expressionType;
         }
 
@@ -210,8 +210,10 @@ public class DataFlowAnalyzer {
         SmartCastResult castResult = checkPossibleCast(expressionType, expression, c);
         if (castResult != null) return castResult.getResultType();
 
-        c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
-        if (hasError != null) hasError.set(true);
+        if (!DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(c, expression, c.expectedType, expressionType)) {
+            c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
+        }
+        hasError.set(true);
         return expressionType;
     }
 
@@ -245,7 +247,7 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
-    public SmartCastResult checkPossibleCast(
+    public static SmartCastResult checkPossibleCast(
             @NotNull KotlinType expressionType,
             @NotNull KtExpression expression,
             @NotNull ResolutionContext c
@@ -271,31 +273,8 @@ public class DataFlowAnalyzer {
         return builtIns.getUnitType();
     }
 
-    @Nullable
-    public KotlinType checkImplicitCast(@Nullable KotlinType expressionType, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
-        boolean isIfExpression = expression instanceof KtIfExpression;
-        if (expressionType != null
-            && (context.expectedType == NO_EXPECTED_TYPE || isIfExpression)
-            && context.contextDependency == INDEPENDENT && !isStatement
-            && (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isAnyOrNullableAny(expressionType))
-            && !DynamicTypesKt.isDynamic(expressionType)) {
-            if (isIfExpression && KotlinBuiltIns.isUnit(expressionType) || isIfExpression && context.expectedType != NO_EXPECTED_TYPE) {
-                return expressionType;
-            }
-            else {
-                context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
-            }
-        }
-        return expressionType;
-    }
-
     @NotNull
-    public KotlinTypeInfo checkImplicitCast(@NotNull KotlinTypeInfo typeInfo, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
-        return typeInfo.replaceType(checkImplicitCast(typeInfo.getType(), expression, context, isStatement));
-    }
-
-    @NotNull
-    public KotlinTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
+    public static KotlinTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
         facade.checkStatementType(
                 expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
@@ -303,7 +282,7 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public Collection<KotlinType> getAllPossibleTypes(
+    public static Collection<KotlinType> getAllPossibleTypes(
             @NotNull KtExpression expression,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KotlinType type,

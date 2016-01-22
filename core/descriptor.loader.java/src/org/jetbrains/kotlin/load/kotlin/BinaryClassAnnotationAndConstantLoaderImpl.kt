@@ -34,12 +34,11 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.*
 
-public class BinaryClassAnnotationAndConstantLoaderImpl(
+class BinaryClassAnnotationAndConstantLoaderImpl(
         private val module: ModuleDescriptor,
         storageManager: StorageManager,
         kotlinClassFinder: KotlinClassFinder,
@@ -49,18 +48,6 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module)
     private val factory = ConstantValueFactory(module.builtIns)
-
-    override fun loadClassAnnotations(
-            classProto: ProtoBuf.Class,
-            nameResolver: NameResolver
-    ): List<AnnotationDescriptor> {
-        val binaryAnnotationDescriptors = super.loadClassAnnotations(classProto, nameResolver)
-        val serializedAnnotations = classProto.getExtension(JvmProtoBuf.classAnnotation).orEmpty()
-        val serializedAnnotationDescriptors = serializedAnnotations.map {
-            annotationDeserializer.deserializeAnnotation(it, nameResolver)
-        }
-        return binaryAnnotationDescriptors + serializedAnnotationDescriptors
-    }
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
             annotationDeserializer.deserializeAnnotation(proto, nameResolver)
@@ -85,10 +72,12 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
 
     override fun loadPropertyAnnotations(
             propertyAnnotations: List<AnnotationDescriptor>,
-            fieldAnnotations: List<AnnotationDescriptor>
+            fieldAnnotations: List<AnnotationDescriptor>,
+            fieldUseSiteTarget: AnnotationUseSiteTarget
     ): List<AnnotationWithTarget> {
         return propertyAnnotations.map { AnnotationWithTarget(it, null) } +
-               fieldAnnotations.map { AnnotationWithTarget(it, AnnotationUseSiteTarget.FIELD) }
+               fieldAnnotations.map { AnnotationWithTarget(it, fieldUseSiteTarget) }
+               fieldAnnotations.map { AnnotationWithTarget(it, fieldUseSiteTarget) }
     }
 
     override fun transformAnnotations(annotations: List<AnnotationDescriptor>): List<AnnotationWithTarget> {
@@ -131,7 +120,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
                             elements.trimToSize()
-                            arguments[parameter] = factory.createArrayValue(elements, parameter.getType())
+                            arguments[parameter] = factory.createArrayValue(elements, parameter.type)
                         }
                     }
                 }
@@ -151,8 +140,8 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             // NOTE: see analogous code in AnnotationDeserializer
             private fun enumEntryValue(enumClassId: ClassId, name: Name): ConstantValue<*> {
                 val enumClass = resolveClass(enumClassId)
-                if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-                    val classifier = enumClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
+                if (enumClass.kind == ClassKind.ENUM_CLASS) {
+                    val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
                     if (classifier is ClassDescriptor) {
                         return factory.createEnumValue(classifier)
                     }
@@ -161,7 +150,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitEnd() {
-                result.add(AnnotationDescriptorImpl(annotationClass.getDefaultType(), arguments, source))
+                result.add(AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source))
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {

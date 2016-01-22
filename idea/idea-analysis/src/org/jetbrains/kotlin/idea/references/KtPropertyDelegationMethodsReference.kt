@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMultiReference<KtPropertyDelegate>(element) {
+class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) : KtMultiReference<KtPropertyDelegate>(element) {
 
     override fun getRangeInElement(): TextRange {
-        val byKeywordNode = expression.getByKeywordNode()
-        val offset = byKeywordNode.getPsi()!!.getStartOffsetInParent()
-        return TextRange(offset, offset + byKeywordNode.getTextLength())
+        val byKeywordNode = expression.byKeywordNode
+        val offset = byKeywordNode.psi!!.startOffsetInParent
+        return TextRange(offset, offset + byKeywordNode.textLength)
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
@@ -42,9 +42,9 @@ public class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) :
         if (descriptor !is PropertyDescriptor) {
             return Collections.emptyList()
         }
-        return (descriptor.getAccessors().mapNotNull {
+        return (descriptor.accessors.mapNotNull {
             accessor ->
-            context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.getCandidateDescriptor()
-        } + listOfNotNull(context.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, descriptor)?.getCandidateDescriptor()))
+            context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.candidateDescriptor
+        } + listOfNotNull(context.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, descriptor)?.candidateDescriptor))
     }
 }

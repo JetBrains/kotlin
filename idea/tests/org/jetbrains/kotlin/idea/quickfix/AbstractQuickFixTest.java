@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.QuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.SuppressIntentionAction;
 import com.intellij.codeInspection.SuppressableProblemGroup;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
@@ -38,9 +39,11 @@ import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import kotlin.CollectionsKt;
-import kotlin.StringsKt;
+import kotlin.collections.CollectionsKt;
+import kotlin.text.StringsKt;
+import kotlin.io.FilesKt;
 import kotlin.jvm.functions.Function1;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
@@ -52,11 +55,12 @@ import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,6 +95,31 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
 
     private static QuickFixTestCase myWrapper;
+
+    @NotNull
+    @Override
+    protected LocalInspectionTool[] configureLocalInspectionTools() {
+        if (KotlinTestUtils.isAllFilesPresentTest(getTestName(false))) return super.configureLocalInspectionTools();
+
+        String testRoot = KotlinTestUtils.getTestsRoot(this.getClass());
+        String configFileText = FilesKt.readText(new File(testRoot, getTestName(true) + ".kt"), Charset.defaultCharset());
+        List<String> toolsStrings = InTextDirectivesUtils.findListWithPrefixes(configFileText, "TOOL:");
+
+        if (toolsStrings.isEmpty()) return super.configureLocalInspectionTools();
+
+        return ArrayUtil.toObjectArray(CollectionsKt.map(toolsStrings, new Function1<String, LocalInspectionTool>() {
+            @Override
+            public LocalInspectionTool invoke(String toolFqName) {
+                try {
+                    Class<?> aClass = Class.forName(toolFqName);
+                    return (LocalInspectionTool) aClass.newInstance();
+                }
+                catch (Exception e) {
+                    throw new IllegalArgumentException("Failed to create inspection for key '" + toolFqName + "'", e);
+                }
+            }
+        }), LocalInspectionTool.class);
+    }
 
     private void doKotlinQuickFixTest(final String testName, final QuickFixTestCase quickFixTestCase) {
         String relativePath = notNull(quickFixTestCase.getBasePath(), "") + "/" + StringsKt.decapitalize(testName);
@@ -280,7 +309,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     @Override
     protected String getBasePath() {
-        return getClass().getAnnotation(TestMetadata.class).value();
+        return KotlinTestUtils.getTestsRoot(getClass());
     }
 
     @NotNull

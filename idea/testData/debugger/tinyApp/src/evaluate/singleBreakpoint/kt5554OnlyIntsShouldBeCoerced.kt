@@ -2,7 +2,7 @@ package kt5554OnlyIntsShouldBeCoerced
 
 fun main(args: Array<String>) {
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: Class.forName("java.lang.Object").getGenericInterfaces()

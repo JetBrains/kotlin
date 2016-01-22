@@ -55,10 +55,10 @@ class VarianceChecker(private val trace: BindingTrace) {
     }
 
     private fun checkClasses(c: TopDownAnalysisContext) {
-        for (jetClassOrObject in c.getDeclaredClasses()!!.keySet()) {
+        for (jetClassOrObject in c.declaredClasses!!.keys) {
             if (jetClassOrObject is KtClass) {
                 for (specifier in jetClassOrObject.getSuperTypeListEntries()) {
-                    specifier.getTypeReference()?.checkTypePosition(trace.getBindingContext(), OUT_VARIANCE, trace)
+                    specifier.getTypeReference()?.checkTypePosition(trace.bindingContext, OUT_VARIANCE, trace)
                 }
                 jetClassOrObject.checkTypeParameters(trace.getBindingContext(), OUT_VARIANCE, trace)
             }
@@ -66,9 +66,9 @@ class VarianceChecker(private val trace: BindingTrace) {
     }
 
     private fun checkMembers(c: TopDownAnalysisContext) {
-        for ((declaration, descriptor) in c.getMembers()) {
-            if (!Visibilities.isPrivate(descriptor.getVisibility())) {
-                checkCallableDeclaration(trace.getBindingContext(), declaration, descriptor, trace)
+        for ((declaration, descriptor) in c.members) {
+            if (!Visibilities.isPrivate(descriptor.visibility)) {
+                checkCallableDeclaration(trace.bindingContext, declaration, descriptor, trace)
             }
         }
     }
@@ -82,35 +82,35 @@ class VarianceChecker(private val trace: BindingTrace) {
     companion object {
         @JvmStatic
         fun recordPrivateToThisIfNeeded(trace: BindingTrace, descriptor: CallableMemberDescriptor) {
-            if (isIrrelevant(descriptor) || descriptor.getVisibility() != Visibilities.PRIVATE) return
+            if (isIrrelevant(descriptor) || descriptor.visibility != Visibilities.PRIVATE) return
 
-            val psiElement = descriptor.getSource().getPsi()
+            val psiElement = descriptor.source.getPsi()
             if (psiElement !is KtCallableDeclaration) return
 
-            if (!checkCallableDeclaration(trace.getBindingContext(), psiElement, descriptor, DiagnosticSink.DO_NOTHING)) {
+            if (!checkCallableDeclaration(trace.bindingContext, psiElement, descriptor, DiagnosticSink.DO_NOTHING)) {
                 recordPrivateToThis(descriptor)
             }
         }
 
         private fun isIrrelevant(descriptor: CallableDescriptor): Boolean {
-            val containingClass = descriptor.getContainingDeclaration()
+            val containingClass = descriptor.containingDeclaration
             if (containingClass !is ClassDescriptor) return true
 
-            return containingClass.typeConstructor.parameters.all { it.getVariance() == INVARIANT }
+            return containingClass.typeConstructor.parameters.all { it.variance == INVARIANT }
         }
 
         private fun recordPrivateToThis(descriptor: CallableMemberDescriptor) {
             if (descriptor is FunctionDescriptorImpl) {
-                descriptor.setVisibility(Visibilities.PRIVATE_TO_THIS);
+                descriptor.visibility = Visibilities.PRIVATE_TO_THIS;
             }
             else if (descriptor is PropertyDescriptorImpl) {
-                descriptor.setVisibility(Visibilities.PRIVATE_TO_THIS);
-                for (accessor in descriptor.getAccessors()) {
-                    (accessor as PropertyAccessorDescriptorImpl).setVisibility(Visibilities.PRIVATE_TO_THIS)
+                descriptor.visibility = Visibilities.PRIVATE_TO_THIS;
+                for (accessor in descriptor.accessors) {
+                    (accessor as PropertyAccessorDescriptorImpl).visibility = Visibilities.PRIVATE_TO_THIS
                 }
             }
             else {
-                throw IllegalStateException("Unexpected descriptor type: ${descriptor.javaClass.getName()}")
+                throw IllegalStateException("Unexpected descriptor type: ${descriptor.javaClass.name}")
             }
         }
 
@@ -125,13 +125,13 @@ class VarianceChecker(private val trace: BindingTrace) {
 
             noError = noError and declaration.checkTypeParameters(trace, IN_VARIANCE, diagnosticSink)
 
-            noError = noError and declaration.getReceiverTypeReference()?.checkTypePosition(trace, IN_VARIANCE, diagnosticSink)
+            noError = noError and declaration.receiverTypeReference?.checkTypePosition(trace, IN_VARIANCE, diagnosticSink)
 
-            for (parameter in declaration.getValueParameters()) {
+            for (parameter in declaration.valueParameters) {
                 noError = noError and parameter.getTypeReference()?.checkTypePosition(trace, IN_VARIANCE, diagnosticSink)
             }
 
-            val returnTypePosition = if (descriptor is VariableDescriptor && descriptor.isVar()) INVARIANT else OUT_VARIANCE
+            val returnTypePosition = if (descriptor is VariableDescriptor && descriptor.isVar) INVARIANT else OUT_VARIANCE
             noError = noError and declaration.createTypeBindingForReturnType(trace)?.checkTypePosition(returnTypePosition, diagnosticSink)
 
             return noError
@@ -143,10 +143,10 @@ class VarianceChecker(private val trace: BindingTrace) {
                 diagnosticSink: DiagnosticSink
         ): Boolean {
             var noError = true
-            for (typeParameter in getTypeParameters()) {
+            for (typeParameter in typeParameters) {
                 noError = noError and typeParameter.getExtendsBound()?.checkTypePosition(trace, typePosition, diagnosticSink)
             }
-            for (typeConstraint in getTypeConstraints()) {
+            for (typeConstraint in typeConstraints) {
                 noError = noError and typeConstraint.getBoundTypeReference()?.checkTypePosition(trace, typePosition, diagnosticSink)
             }
             return noError
@@ -159,9 +159,9 @@ class VarianceChecker(private val trace: BindingTrace) {
                 = checkTypePosition(kotlinType, position, diagnosticSink)
 
         private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance, diagnosticSink: DiagnosticSink): Boolean {
-            val classifierDescriptor = kotlinType.getConstructor().getDeclarationDescriptor()
+            val classifierDescriptor = kotlinType.constructor.declarationDescriptor
             if (classifierDescriptor is TypeParameterDescriptor) {
-                val declarationVariance = classifierDescriptor.getVariance()
+                val declarationVariance = classifierDescriptor.variance
                 if (!declarationVariance.allowsPosition(position)
                         && !kotlinType.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.unsafeVariance)) {
                     diagnosticSink.report(

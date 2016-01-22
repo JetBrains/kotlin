@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import java.util.Stack
 
 class ScopeContext(scope: JsScope) {
-    private val rootScope = sequence(scope) { it.getParent() }.first { it is JsRootScope }
+    private val rootScope = sequence(scope) { it.parent }.first { it is JsRootScope }
     private val scopes = Stack<JsScope>();
 
     init {
@@ -30,7 +30,7 @@ class ScopeContext(scope: JsScope) {
 
     fun enterFunction(): JsFunction {
         val fn = JsFunction(currentScope, "<js function>")
-        enterScope(fn.getScope())
+        enterScope(fn.scope)
         return fn
     }
 
@@ -41,7 +41,7 @@ class ScopeContext(scope: JsScope) {
 
     fun enterCatch(ident: String): JsCatch {
         val jsCatch = JsCatch(currentScope, ident)
-        enterScope(jsCatch.getScope())
+        enterScope(jsCatch.scope)
         return jsCatch
     }
 

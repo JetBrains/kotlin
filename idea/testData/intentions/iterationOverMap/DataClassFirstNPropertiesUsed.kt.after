@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+
+fun main(args: Array<String>) {
+    val list = listOf(MyClass(1, 2, 3), MyClass(2, 3, 4))
+    for ((a, b) in list) {
+    }
+}
+
+data class MyClass(val a: Int, val b: Int, val c: Int)

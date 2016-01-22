@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 class KDocElementFactory(val project: Project) {
-    public fun createKDocFromText(text: String): KDoc {
+    fun createKDocFromText(text: String): KDoc {
         val fileText = text + " fun foo { }"
         val function = KtPsiFactory(project).createDeclaration<KtFunction>(fileText)
-        return PsiTreeUtil.findChildOfType(function, javaClass<KDoc>())!!
+        return PsiTreeUtil.findChildOfType(function, KDoc::class.java)!!
     }
 
-    public fun createNameFromText(text: String): KDocName {
+    fun createNameFromText(text: String): KDocName {
         val kdoc = createKDocFromText("/** @param $text foo*/")
         val section = kdoc.getDefaultSection()
         val tag = section.findTagByName("param")

@@ -5,14 +5,14 @@
     <property name="ideaVersion" value="143.1015.7"/>
 
     -->
-    <property name="kotlin.bootstrap.branch" value=""/>
-    <property name="kotlin.bootstrap.branch.locator" value=""/>
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
-    <property name="kotlin.bootstrap.locator.force" value="false"/>
+    <property name="kotlin.bootstrap.branch" value="rc"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:rc"/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
+    <property name="kotlin.bootstrap.locator.force" value="true"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS,tag:forKotlin"/>
 
-    <property name="bootstrap.build.no.tests" value="false"/>
+    <property name="bootstrap.build.no.tests" value="true"/>
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
     <!--
@@ -112,10 +112,11 @@
         <attribute name="version"/>
         <attribute name="folderName"/>
         <sequential>
-            <get src="http://archive.apache.org/dist/ant/binaries/apache-ant-@{version}-bin.tar.gz"
+            <!-- todo: temporary hack for unavailable archive.apache.org -->
+            <get src="https://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-bin.tar.gz"
                  dest="dependencies/download/apache-ant-@{version}-bin.tar.gz" usetimestamp="true"/>
 
-            <get src="http://archive.apache.org/dist/ant/source/apache-ant-@{version}-src.zip"
+            <get src="https://bintray.com/artifact/download/kotlin/AntForKotlin/apache-ant-@{version}-src.zip"
                  dest="dependencies/apache-ant-@{version}-src.zip" usetimestamp="true"/>
 
             <delete dir="dependencies/@{folderName}" failonerror="false"/>
@@ -399,12 +400,14 @@
                 <arg value="${basedir}/dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
             </exec>
 
-            <local name="markdown.need.recompile"/>
+            <local name="markdown.need.recompile" />
             <condition property="markdown.need.recompile">
                 <not>
                     <equals arg1="${markdown.abi.incompatible}" arg2="0"/>
                 </not>
             </condition>
+            <!-- remove after RC ABI version incremented -->
+            <property name="markdown.need.recompile" value="true" />
 
             <sequential if:set="markdown.need.recompile">
                 <echo message="Recompiling intellij-markdown manually"/>
@@ -612,8 +615,8 @@
                 Avoid depending on old runtime during build phase but attach original runtime when idea starts.
                 -->
                 <mkdir dir="@{idea.dir}/idea-kotlin-runtime"/>
-                <!--<move file="@{idea.dir}/lib/kotlin-runtime.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>-->
-                <!--<move file="@{idea.dir}/lib/kotlin-reflect.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>-->
+                <move file="@{idea.dir}/lib/kotlin-runtime.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>
+                <move file="@{idea.dir}/lib/kotlin-reflect.jar" todir="@{idea.dir}/idea-kotlin-runtime"/>
 
                 <delete dir="@{idea.dir}/plugins/Kotlin"/>
 
@@ -698,10 +701,7 @@
                 url="@{base.repository.url}/intellij-core/@{idea.maven.version}/intellij-core-@{idea.maven.version}.zip"
                 usetimestamp="true"/>
 
-            <!--<get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"-->
-                 <!--dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>-->
-            <!-- Temporary get jps test artifact built with a newer Kotlin -->
-            <get src="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea/jps-build-test/143.249.6/jps-build-test-143.249.6.jar"
+            <get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"
                  dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
 
             <download_and_unzip

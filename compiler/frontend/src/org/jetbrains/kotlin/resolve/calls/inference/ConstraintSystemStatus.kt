@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 
-public interface ConstraintSystemStatus {
+interface ConstraintSystemStatus {
     /**
      * Returns `true` if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).
      */
-    public fun isSuccessful(): Boolean
+    fun isSuccessful(): Boolean
 
     /**
      * Return `true` if constraint system has no contradiction (it can be not successful because of the lack of information for a type variable).
      */
-    public fun hasContradiction(): Boolean
+    fun hasContradiction(): Boolean
 
     /**
      * Returns `true` if type constraints for some type variable are contradicting.
@@ -37,7 +37,7 @@ public interface ConstraintSystemStatus {
      * - "R is a supertype of Int"
      * - "List<R> is a supertype of List<String>" which leads to "R is equal to String"
      */
-    public fun hasConflictingConstraints(): Boolean
+    fun hasConflictingConstraints(): Boolean
 
     /**
      * Returns `true` if contradiction of type constraints comes from declared bounds for type parameters.
@@ -47,7 +47,7 @@ public interface ConstraintSystemStatus {
      *
      * It's the special case of 'hasConflictingConstraints' case.
      */
-    public fun hasViolatedUpperBound(): Boolean
+    fun hasViolatedUpperBound(): Boolean
 
     /**
      * Returns `true` if there is no information for some registered type variable.
@@ -55,7 +55,7 @@ public interface ConstraintSystemStatus {
      * For example, for `fun <E> newList()` in invocation `val nl = newList()`
      * there is no information to infer type variable `E`.
      */
-    public fun hasUnknownParameters(): Boolean
+    fun hasUnknownParameters(): Boolean
 
     /**
      * Returns `true` if some constraint cannot be processed because of type constructor mismatch.
@@ -63,19 +63,19 @@ public interface ConstraintSystemStatus {
      * For example, for `fun <R> foo(t: List<R>) {}` in invocation `foo(hashSetOf("s"))`
      * there is type constructor mismatch: "HashSet<String> cannot be a subtype of List<R>".
      */
-    public fun hasParameterConstraintError(): Boolean
+    fun hasParameterConstraintError(): Boolean
 
     /**
      * Returns `true` if there is type constructor mismatch only in constraintPosition or
      * constraint system is successful without constraints from this position.
      */
-    public fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean
+    fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean
 
     /**
      * Returns `true` if there is an error in constraining types.
      * Is used not to generate type inference error if there was one in argument types.
      */
-    public fun hasErrorInConstrainingTypes(): Boolean
+    fun hasErrorInConstrainingTypes(): Boolean
 
     /**
      * Returns `true` if a user type contains the type projection that cannot be captured.
@@ -83,14 +83,14 @@ public interface ConstraintSystemStatus {
      * For example, for `fun <T> foo(t: Array<Array<T>>) {}`
      * in invocation `foo(array)` where `array` has type `Array<Array<out Int>>`.
      */
-    public fun hasCannotCaptureTypesError(): Boolean
+    fun hasCannotCaptureTypesError(): Boolean
 
     /**
      * Returns `true` if there's an error in constraint system incorporation.
      */
-    public fun hasTypeInferenceIncorporationError(): Boolean
+    fun hasTypeInferenceIncorporationError(): Boolean
 
-    public fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError(): Boolean
+    fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError(): Boolean
 
-    public val constraintErrors: List<ConstraintError>
+    val constraintErrors: List<ConstraintError>
 }

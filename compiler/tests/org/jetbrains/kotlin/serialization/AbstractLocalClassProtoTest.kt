@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import java.io.File
 import java.net.URLClassLoader
 
-public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
+abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     protected fun doTest(filename: String) {
         val source = File(filename)
         LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult(listOf(source), tmpdir, testRootDisposable, ConfigurationKind.ALL, false)
@@ -47,7 +47,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
 
         val classFile = tmpdir.walkTopDown().singleOrNull { it.path.endsWith("$classNameSuffix.class") }
                         ?: error("Local class with suffix `$classNameSuffix` is not found in: ${tmpdir.listFiles().toList()}")
-        val clazz = classLoader.loadClass(classFile.relativeTo(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.'))
+        val clazz = classLoader.loadClass(classFile.toRelativeString(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.'))
         assertHasAnnotationData(clazz)
 
         val environment = KotlinCoreEnvironment.createForTests(
@@ -81,8 +81,5 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         checkNotNull(clazz.getAnnotation(
                 clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_CLASS.asString()) as Class<Annotation>
         )) { "KotlinClass annotation is not found for class $clazz" }
-        checkNotNull(clazz.getAnnotation(
-                clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_LOCAL_CLASS.asString()) as Class<Annotation>
-        )) { "KotlinLocalClass annotation is not found for class $clazz" }
     }
 }

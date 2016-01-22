@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import com.intellij.psi.PsiElement
 
-public class KotlinTypeParameterStubImpl(
+class KotlinTypeParameterStubImpl(
         parent: StubElement<out PsiElement>?,
         private val name: StringRef?,
         private val isInVariance: Boolean,

@@ -25,7 +25,7 @@ import kotlin.annotation.AnnotationTarget.*
 @Target(FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class Volatile
+annotation class Volatile
 
 /**
  * Marks the JVM backing field of the annotated property as `transient`, meaning that it is not
@@ -34,7 +34,7 @@ public annotation class Volatile
 @Target(FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class Transient
+annotation class Transient
 
 /**
  * Marks the JVM method generated from the annotated function as `strictfp`, meaning that the precision
@@ -44,7 +44,7 @@ public annotation class Transient
 @Target(FUNCTION, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER, CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class Strictfp
+annotation class Strictfp
 
 /**
  * Marks the JVM method generated from the annotated function as `synchronized`, meaning that the method
@@ -54,4 +54,4 @@ public annotation class Strictfp
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class Synchronized
+annotation class Synchronized

@@ -33,29 +33,29 @@ import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for sorting
  */
-public abstract class DeclarationLookupObjectImpl(
-        public final override val descriptor: DeclarationDescriptor?,
-        public final override val psiElement: PsiElement?
+abstract class DeclarationLookupObjectImpl(
+        final override val descriptor: DeclarationDescriptor?,
+        final override val psiElement: PsiElement?
 ): DeclarationLookupObject {
     init {
         assert(descriptor != null || psiElement != null)
     }
 
     override val name: Name?
-        get() = descriptor?.getName() ?: (psiElement as? PsiNamedElement)?.getName()?.let { Name.identifier(it) }
+        get() = descriptor?.name ?: (psiElement as? PsiNamedElement)?.name?.let { Name.identifier(it) }
 
     override val importableFqName: FqName?
         get() {
             return if (descriptor != null)
                 descriptor.importableFqName
             else
-                (psiElement as? PsiClass)?.getQualifiedName()?.let { FqName(it) }
+                (psiElement as? PsiClass)?.qualifiedName?.let { FqName(it) }
         }
 
     override fun toString() = super<DeclarationLookupObject>.toString() + " " + (descriptor ?: psiElement)
 
     override fun hashCode(): Int {
-        return if (descriptor != null) descriptor.getOriginal().hashCode() else psiElement!!.hashCode()
+        return if (descriptor != null) descriptor.original.hashCode() else psiElement!!.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -65,5 +65,5 @@ public abstract class DeclarationLookupObjectImpl(
         return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor) && psiElement == lookupObject.psiElement
     }
 
-    override val isDeprecated = if (descriptor != null) KotlinBuiltIns.isDeprecated(descriptor) else (psiElement as? PsiDocCommentOwner)?.isDeprecated() ?: false
+    override val isDeprecated = if (descriptor != null) KotlinBuiltIns.isDeprecated(descriptor) else (psiElement as? PsiDocCommentOwner)?.isDeprecated ?: false
 }

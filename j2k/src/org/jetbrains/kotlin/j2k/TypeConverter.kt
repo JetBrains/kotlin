@@ -30,7 +30,7 @@ import java.util.*
 class TypeConverter(val converter: Converter) {
     private val typesBeingConverted = HashSet<PsiType>()
 
-    public fun convertType(
+    fun convertType(
             type: PsiType?,
             nullability: Nullability = Nullability.Default,
             mutability: Mutability = Mutability.Default,
@@ -53,10 +53,10 @@ class TypeConverter(val converter: Converter) {
         }
     }
 
-    public fun convertTypes(types: Array<PsiType>): List<Type>
+    fun convertTypes(types: Array<PsiType>): List<Type>
             = types.map { convertType(it) }
 
-    public fun convertVariableType(variable: PsiVariable): Type {
+    fun convertVariableType(variable: PsiVariable): Type {
         val result = if (variable.isMainMethodParameter()) {
             ArrayType(ClassType(ReferenceElement(Identifier("String").assignNoPrototype(), listOf()).assignNoPrototype(), Nullability.NotNull, converter.settings).assignNoPrototype(),
                       Nullability.NotNull,
@@ -68,19 +68,19 @@ class TypeConverter(val converter: Converter) {
         return result.assignPrototype(variable.typeElement)
     }
 
-    public fun convertMethodReturnType(method: PsiMethod): Type
+    fun convertMethodReturnType(method: PsiMethod): Type
             = convertType(method.returnType, methodNullability(method), methodMutability(method)).assignPrototype(method.returnTypeElement)
 
-    public fun variableNullability(variable: PsiVariable): Nullability
+    fun variableNullability(variable: PsiVariable): Nullability
             = nullabilityFlavor.forVariableType(variable)
 
-    public fun methodNullability(method: PsiMethod): Nullability
+    fun methodNullability(method: PsiMethod): Nullability
             = nullabilityFlavor.forMethodReturnType(method)
 
-    public fun variableMutability(variable: PsiVariable): Mutability
+    fun variableMutability(variable: PsiVariable): Mutability
             = mutabilityFlavor.forVariableType(variable)
 
-    public fun methodMutability(method: PsiMethod): Mutability
+    fun methodMutability(method: PsiMethod): Mutability
             = mutabilityFlavor.forMethodReturnType(method)
 
     private fun PsiVariable.isMainMethodParameter() = this is PsiParameter && (declarationScope as? PsiMethod)?.isMainMethod() ?: false
@@ -367,7 +367,7 @@ class TypeConverter(val converter: Converter) {
 
         override fun fromType(type: PsiType): Mutability {
             val target = (type as? PsiClassType)?.resolve() ?: return Mutability.NonMutable
-            if (!TypeVisitor.toKotlinMutableTypesMap.keys.containsRaw(target.qualifiedName)) return Mutability.NonMutable
+            if (target.qualifiedName !in TypeVisitor.toKotlinMutableTypesMap.keys) return Mutability.NonMutable
             return Mutability.Default
         }
 
@@ -393,7 +393,7 @@ class TypeConverter(val converter: Converter) {
         private fun isMutableFromUsage(usage: PsiExpression): Boolean {
             val parent = usage.parent
             if (parent is PsiReferenceExpression && usage == parent.qualifierExpression && parent.parent is PsiMethodCallExpression) {
-                return modificationMethodNames.containsRaw(parent.referenceName)
+                return modificationMethodNames.contains(parent.referenceName as Any?)
             }
             else if (parent is PsiExpressionList) {
                 val call = parent.parent as? PsiCall ?: return false

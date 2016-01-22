@@ -16,5 +16,5 @@ fun box(): Boolean {
     v2.add("bar")
     val v = v1 + v2
 
-    return (v.size() == 2 && v[0] == "foo" && v[1] == "bar")
+    return (v.size == 2 && v[0] == "foo" && v[1] == "bar")
 }

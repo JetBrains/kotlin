@@ -40,7 +40,7 @@ import java.io.File
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-public abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
+abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
         myFixture.checkHighlighting(true, false, false)
@@ -51,11 +51,11 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerT
 
         project.executeWriteCommand("Imports insertion") {
             val fileText = FileUtil.loadFile(File(filePath), true)
-            val file = myFixture.getFile() as KtFile
+            val file = myFixture.file as KtFile
             InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {
                 val descriptor = file.resolveImportReference(FqName(it)).singleOrNull()
                                  ?: error("Could not resolve descriptor to import: $it")
-                ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptor)
+                ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
             }
         }
 
@@ -63,13 +63,13 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerT
     }
 }
 
-public abstract class AbstractCodeFragmentCompletionTest : AbstractJvmBasicCompletionTest() {
+abstract class AbstractCodeFragmentCompletionTest : AbstractJvmBasicCompletionTest() {
     override fun setUpFixture(testPath: String) {
         myFixture.configureByCodeFragment(testPath)
     }
 }
 
-public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest(CompletionType.BASIC) {
+abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest(CompletionType.BASIC) {
     override fun setUpFixture(testPath: String) {
         myFixture.configureByCodeFragment(testPath)
     }
@@ -77,12 +77,12 @@ public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractComple
     override fun doTest(testPath: String) {
         super.doTest(testPath)
 
-        val fragment = myFixture.getFile() as KtCodeFragment
+        val fragment = myFixture.file as KtCodeFragment
         fragment.checkImports(testPath)
     }
 }
 
-public abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
+abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
         myFixture.doHighlighting()
@@ -120,27 +120,27 @@ private fun KtCodeFragment.checkImports(testPath: String) {
 private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String) {
     configureByFile(filePath)
 
-    val elementAt = getFile()?.findElementAt(getCaretOffset())
+    val elementAt = file?.findElementAt(caretOffset)
     val file = createCodeFragment(filePath, elementAt!!)
 
-    val typeStr = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "// ${ExpectedCompletionUtils.RUNTIME_TYPE} ")
+    val typeStr = InTextDirectivesUtils.findStringWithPrefixes(getFile().text, "// ${ExpectedCompletionUtils.RUNTIME_TYPE} ")
     if (typeStr != null) {
         file.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, {
-            val codeFragment = KtPsiFactory(getProject()).createBlockCodeFragment("val xxx: $typeStr" , PsiTreeUtil.getParentOfType(elementAt, javaClass<KtElement>()))
+            val codeFragment = KtPsiFactory(project).createBlockCodeFragment("val xxx: $typeStr", PsiTreeUtil.getParentOfType(elementAt, KtElement::class.java))
             val context = codeFragment.analyzeFully()
-            val typeReference: KtTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().getFirstChild(), javaClass())!!
+            val typeReference: KtTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().firstChild, KtTypeReference::class.java)!!
             context[BindingContext.TYPE, typeReference]
         })
     }
 
-    configureFromExistingVirtualFile(file.getVirtualFile()!!)
+    configureFromExistingVirtualFile(file.virtualFile!!)
 }
 
 private fun createCodeFragment(filePath: String, contextElement: PsiElement): KtCodeFragment {
     val fileForFragment = File(filePath + ".fragment")
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
-    val psiFactory = KtPsiFactory(contextElement.getProject())
-    if (fileForFragment.readLines().size() == 1) {
+    val psiFactory = KtPsiFactory(contextElement.project)
+    if (fileForFragment.readLines().size == 1) {
         return psiFactory.createExpressionCodeFragment(
                 codeFragmentText,
                 KotlinCodeFragmentFactory.getContextElement(contextElement)

@@ -6,7 +6,7 @@ public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 public fun println(/*0*/ message: kotlin.Int): kotlin.Unit
 public fun println(/*0*/ message: kotlin.Long): kotlin.Unit
 public inline fun </*0*/ T> run(/*0*/ body: () -> T): T
-public fun </*0*/ T> kotlin.Iterable<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
-public fun </*0*/ T> kotlin.Iterable<T>.foreach(/*0*/ operation: (kotlin.Int, T) -> kotlin.Unit): kotlin.Unit
-public infix fun </*0*/ T> kotlin.Iterator<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
-public infix fun </*0*/ T> kotlin.Iterator<T>.foreach(/*0*/ operation: (kotlin.Int, T) -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.Iterable<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.Iterable<T>.foreach(/*0*/ operation: (kotlin.Int, T) -> kotlin.Unit): kotlin.Unit
+public infix fun </*0*/ T> kotlin.collections.Iterator<T>.foreach(/*0*/ operation: (T) -> kotlin.Unit): kotlin.Unit
+public infix fun </*0*/ T> kotlin.collections.Iterator<T>.foreach(/*0*/ operation: (kotlin.Int, T) -> kotlin.Unit): kotlin.Unit

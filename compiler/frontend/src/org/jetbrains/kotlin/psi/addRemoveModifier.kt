@@ -70,7 +70,7 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
         fun placeAfter(child: PsiElement): Boolean {
             if (child is PsiWhiteSpace) return false
             if (child is KtAnnotation) return true // place modifiers after annotations
-            val elementType = child.getNode()!!.getElementType()
+            val elementType = child.node!!.elementType
             val order = MODIFIERS_ORDER.indexOf(elementType)
             return newModifierOrder > order
         }
@@ -81,7 +81,7 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
 
         if (anchor == lastChild) { // add line break if needed, otherwise visibility keyword may appear on previous line
             val whiteSpace = modifierList.getNextSibling() as? PsiWhiteSpace
-            if (whiteSpace != null && whiteSpace.getText().contains('\n')) {
+            if (whiteSpace != null && whiteSpace.text.contains('\n')) {
                 modifierList.addAfter(whiteSpace, anchor)
                 whiteSpace.delete()
             }
@@ -90,7 +90,7 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
 }
 
 fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
-    owner.getModifierList()?.let {
+    owner.modifierList?.let {
         it.getModifier(modifier)?.delete()
         if (it.firstChild == null) {
             it.delete()

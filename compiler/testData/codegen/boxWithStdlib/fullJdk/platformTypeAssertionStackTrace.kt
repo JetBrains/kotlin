@@ -8,7 +8,7 @@ fun box(): String {
         return "Fail: an exception should be thrown"
     } catch (e: IllegalStateException) {
         val st = (e as java.lang.Throwable).getStackTrace()
-        if (st.size() < 5) {
+        if (st.size < 5) {
             return "Fail: very small stack trace, should at least have current function and JUnit reflective calls: ${Arrays.toString(st)}"
         }
         val top = st[0]

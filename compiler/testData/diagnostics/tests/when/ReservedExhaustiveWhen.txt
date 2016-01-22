@@ -1,0 +1,6 @@
+package
+
+public val x: kotlin.Unit
+public val x1: kotlin.Unit
+public fun foo(): kotlin.Unit
+public infix fun kotlin.Any.sealed(/*0*/ a: kotlin.Any?): kotlin.Unit

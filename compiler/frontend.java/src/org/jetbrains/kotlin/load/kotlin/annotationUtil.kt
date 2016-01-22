@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 
 fun getJavaAnnotationCallValueArgumentsThatShouldBeNamed(resolvedCall: ResolvedCall<*>): Map<ValueParameterDescriptor, ResolvedValueArgument> =
-    resolvedCall.getValueArguments().filter {
+    resolvedCall.valueArguments.filter {
         p ->
-        p.key.getName() != JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME &&
+        p.key.name != JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME &&
         p.value is ExpressionValueArgument &&
-        !((p.value as ExpressionValueArgument).getValueArgument()?.isNamed() ?: true)
+        !((p.value as ExpressionValueArgument).valueArgument?.isNamed() ?: true)
     }
 

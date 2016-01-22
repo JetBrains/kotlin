@@ -84,13 +84,13 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
     }
 
     override fun getRangeInElement(): TextRange {
-        val element = getElement().getReferencedNameElement()
+        val element = element.getReferencedNameElement()
         val startOffset = getElement().startOffset
-        return element.getTextRange().shiftRight(-startOffset)
+        return element.textRange.shiftRight(-startOffset)
     }
 
     override fun canRename(): Boolean {
-        if (expression.getParentOfTypeAndBranch<KtWhenConditionInRange>(strict = true){ getOperationReference() } != null) return false
+        if (expression.getParentOfTypeAndBranch<KtWhenConditionInRange>(strict = true){ operationReference } != null) return false
 
         val elementType = expression.getReferencedNameElementType()
         if (elementType == KtTokens.PLUSPLUS || elementType == KtTokens.MINUSMINUS) return false
@@ -103,7 +103,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (newElementName == null) return expression;
 
         // Do not rename if the reference corresponds to synthesized component function
-        val expressionText = expression.getText()
+        val expressionText = expression.text
         if (expressionText != null && Name.isValidIdentifier(expressionText)) {
             if (isComponentLike(Name.identifier(expressionText)) && resolve() is KtParameter) {
                 return expression
@@ -111,16 +111,16 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         }
 
         val psiFactory = KtPsiFactory(expression)
-        val element = Extensions.getArea(expression.getProject()).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions
+        val element = Extensions.getArea(expression.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions
                         .asSequence()
                         .map { it.handleElementRename(this, psiFactory, newElementName) }
                         .firstOrNull { it != null } ?: psiFactory.createNameIdentifier(newElementName)
 
         val nameElement = expression.getReferencedNameElement()
 
-        val elementType = nameElement.getNode().getElementType()
+        val elementType = nameElement.node.elementType
         if (elementType is KtToken && OperatorConventions.getNameForOperationSymbol(elementType) != null) {
-            val opExpression = expression.getParent() as? KtOperationExpression
+            val opExpression = expression.parent as? KtOperationExpression
             if (opExpression != null) {
                 val (newExpression, newNameElement) = OperatorToFunctionIntention.convert(opExpression)
                 newNameElement.replace(element)
@@ -132,7 +132,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         return expression
     }
 
-    public enum class ShorteningMode {
+    enum class ShorteningMode {
         NO_SHORTENING,
         DELAYED_SHORTENING,
         FORCED_SHORTENING
@@ -159,7 +159,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
 
         val needToShorten =
-                PsiTreeUtil.getParentOfType(expression, javaClass<KtImportDirective>(), javaClass<KtPackageDirective>()) == null
+                PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
         if (needToShorten) {
             if (shorteningMode == ShorteningMode.FORCED_SHORTENING) {
                 ShortenReferences.DEFAULT.process(newQualifiedElement)
@@ -178,13 +178,13 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
      * Note that FqName may not be empty
      */
     private fun KtNameReferenceExpression.changeQualifiedName(fqName: FqName): KtElement {
-        assert(!fqName.isRoot()) { "Can't set empty FqName for element $this" }
+        assert(!fqName.isRoot) { "Can't set empty FqName for element $this" }
 
         val shortName = fqName.shortName().render()
         val psiFactory = KtPsiFactory(this)
-        val fqNameBase = (getParent() as? KtCallExpression)?.let { parent ->
+        val fqNameBase = (parent as? KtCallExpression)?.let { parent ->
             val callCopy = parent.copy() as KtCallExpression
-            callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()
+            callCopy.calleeExpression!!.replace(psiFactory.createSimpleName(shortName)).parent!!.text
         } ?: shortName
 
         val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().render()}.$fqNameBase" else fqNameBase
@@ -192,12 +192,12 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         val elementToReplace = getQualifiedElement()
         return when (elementToReplace) {
             is KtUserType -> {
-                val typeText = "$text${elementToReplace.getTypeArgumentList()?.getText() ?: ""}"
+                val typeText = "$text${elementToReplace.typeArgumentList?.text ?: ""}"
                 elementToReplace.replace(psiFactory.createType(typeText).typeElement!!)
             }
             else -> elementToReplace.replace(psiFactory.createExpression(text))
         } as KtElement
     }
 
-    override fun getCanonicalText(): String = expression.getText()
+    override fun getCanonicalText(): String = expression.text
 }

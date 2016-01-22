@@ -25,26 +25,26 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 
-public class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (!(element is KtForExpression || element is KtWhileExpression)) return
         val loopExpression = element as KtLoopExpression
 
-        val doc = editor.getDocument()
+        val doc = editor.document
 
-        val body = loopExpression.getBody()
+        val body = loopExpression.body
         if (body is KtBlockExpression) return
 
         if (!loopExpression.isValidLoopCondition()) return
 
         if (body != null && body.startLine(doc) == loopExpression.startLine(doc)) return
 
-        val rParen = loopExpression.getRightParenthesis()
+        val rParen = loopExpression.rightParenthesis
         if (rParen == null) return
 
         doc.insertString(rParen.range.end, "{}")
     }
 
-    fun KtLoopExpression.isValidLoopCondition() = getLeftParenthesis() != null && getRightParenthesis() != null
+    fun KtLoopExpression.isValidLoopCondition() = leftParenthesis != null && rightParenthesis != null
 }
 

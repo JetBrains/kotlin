@@ -20,10 +20,9 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 
-public interface JvmVirtualFileFinder : VirtualFileFinder, KotlinClassFinder {
-    public object SERVICE {
-        @JvmStatic
-        public fun getInstance(project: Project): JvmVirtualFileFinder =
-            ServiceManager.getService(project, javaClass<JvmVirtualFileFinderFactory>()).create(GlobalSearchScope.allScope(project))
+interface JvmVirtualFileFinder : VirtualFileFinder, KotlinClassFinder {
+    object SERVICE {
+        @JvmStatic fun getInstance(project: Project): JvmVirtualFileFinder =
+            ServiceManager.getService(project, JvmVirtualFileFinderFactory::class.java).create(GlobalSearchScope.allScope(project))
     }
 }

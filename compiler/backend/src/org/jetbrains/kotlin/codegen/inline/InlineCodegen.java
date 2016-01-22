@@ -23,16 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.*;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
-import org.jetbrains.kotlin.codegen.context.MethodContext;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
+import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.TargetId;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -85,6 +83,7 @@ public class InlineCodegen extends CallGenerator {
     private final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
 
     private final ReifiedTypeInliner reifiedTypeInliner;
+    @Nullable private final TypeParameterMappings typeParameterMappings;
 
     private LambdaInfo activeLambda;
 
@@ -95,7 +94,7 @@ public class InlineCodegen extends CallGenerator {
             @NotNull GenerationState state,
             @NotNull SimpleFunctionDescriptor functionDescriptor,
             @NotNull KtElement callElement,
-            @Nullable ReifiedTypeParameterMappings typeParameterMappings
+            @Nullable TypeParameterMappings typeParameterMappings
     ) {
         assert InlineUtil.isInline(functionDescriptor) : "InlineCodegen could inline only inline function: " + functionDescriptor;
 
@@ -104,6 +103,7 @@ public class InlineCodegen extends CallGenerator {
         this.codegen = codegen;
         this.callElement = callElement;
         this.functionDescriptor = functionDescriptor.getOriginal();
+        this.typeParameterMappings = typeParameterMappings;
 
         reifiedTypeInliner = new ReifiedTypeInliner(typeParameterMappings);
 
@@ -192,11 +192,15 @@ public class InlineCodegen extends CallGenerator {
             JetTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
-            VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable(containingClasses.getImplClassId(), state);
-            nodeAndSMAP = InlineCodegenUtil.getMethodNode(file.contentsToByteArray(),
-                                                          asmMethod.getName(),
-                                                          asmMethod.getDescriptor(),
-                                                          containingClasses.getFacadeClassId());
+            ClassId containerId = containingClasses.getImplClassId();
+            VirtualFile file = InlineCodegenUtil.findVirtualFile(state, containerId);
+            if (file == null) {
+                throw new IllegalStateException("Couldn't find declaration file for " + containerId);
+            }
+
+            nodeAndSMAP = InlineCodegenUtil.getMethodNode(
+                    file.contentsToByteArray(), asmMethod.getName(), asmMethod.getDescriptor(), containingClasses.getFacadeClassId()
+            );
 
             if (nodeAndSMAP == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
@@ -262,11 +266,12 @@ public class InlineCodegen extends CallGenerator {
                                                                .subGenerator(functionDescriptor.getName().asString()),
                                                        codegen.getContext(),
                                                        callElement,
-                                                       codegen.getParentCodegen().getClassName(), reifiedTypeInliner);
+                                                       getInlineCallSiteInfo(), reifiedTypeInliner,
+                                                       typeParameterMappings);
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
                                                   "Method inlining " + callElement.getText(),
-                                                  createNestedSourceMapper(nodeAndSmap)); //with captured
+                                                  createNestedSourceMapper(nodeAndSmap), info.getCallSiteInfo()); //with captured
 
         LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
 
@@ -296,6 +301,22 @@ public class InlineCodegen extends CallGenerator {
         addInlineMarker(codegen.v, false);
 
         return result;
+    }
+
+    private InlineCallSiteInfo getInlineCallSiteInfo() {
+        MethodContext context = codegen.getContext();
+        MemberCodegen<?> parentCodegen = codegen.getParentCodegen();
+        while (context instanceof InlineLambdaContext) {
+            CodegenContext closureContext = context.getParentContext();
+            assert closureContext instanceof ClosureContext : "Parent context of inline lambda should be closure context";
+            assert closureContext.getParentContext() instanceof MethodContext : "Closure context should appear in method context";
+            context = (MethodContext) closureContext.getParentContext();
+            assert parentCodegen instanceof FakeMemberCodegen : "Parent codegen of inlined lambda should be FakeMemberCodegen";
+            parentCodegen = ((FakeMemberCodegen) parentCodegen).delegate;
+        }
+
+        JvmMethodSignature signature = typeMapper.mapSignature(context.getFunctionDescriptor(), context.getContextKind());
+        return new InlineCallSiteInfo(parentCodegen.getClassName(), signature.getAsmMethod().getName(), signature.getAsmMethod().getDescriptor());
     }
 
     private void generateClosuresBodies() {
@@ -374,7 +395,7 @@ public class InlineCodegen extends CallGenerator {
 
     private static class FakeMemberCodegen extends MemberCodegen {
 
-        private final MemberCodegen delegate;
+        @NotNull final MemberCodegen delegate;
         @NotNull private final String className;
 
         public FakeMemberCodegen(@NotNull MemberCodegen wrapped, @NotNull KtElement declaration, @NotNull FieldOwnerContext codegenContext, @NotNull String className) {
@@ -416,7 +437,6 @@ public class InlineCodegen extends CallGenerator {
     public void afterParameterPut(
             @NotNull Type type,
             @Nullable StackValue stackValue,
-            @Nullable ValueParameterDescriptor valueParameterDescriptor,
             int parameterIndex
     ) {
         putArgumentOrCapturedToLocalVal(type, stackValue, -1, parameterIndex);
@@ -643,21 +663,19 @@ public class InlineCodegen extends CallGenerator {
         }
         else {
             StackValue value = codegen.gen(argumentExpression);
-            putValueIfNeeded(valueParameterDescriptor, parameterType, value, valueParameterDescriptor.getIndex());
+            putValueIfNeeded(parameterType, value, valueParameterDescriptor.getIndex());
         }
     }
 
     @Override
     public void putValueIfNeeded(
-            @Nullable ValueParameterDescriptor valueParameterDescriptor,
             @NotNull Type parameterType,
             @NotNull StackValue value
     ) {
-        putValueIfNeeded(valueParameterDescriptor, parameterType, value, -1);
+        putValueIfNeeded(parameterType, value, -1);
     }
 
     private void putValueIfNeeded(
-            @Nullable ValueParameterDescriptor valueParameterDescriptor,
             @NotNull Type parameterType,
             @NotNull StackValue value,
             int index
@@ -665,7 +683,7 @@ public class InlineCodegen extends CallGenerator {
         if (shouldPutValue(parameterType, value)) {
             value.put(parameterType, codegen.v);
         }
-        afterParameterPut(parameterType, value, valueParameterDescriptor, index);
+        afterParameterPut(parameterType, value, index);
     }
 
     @Override

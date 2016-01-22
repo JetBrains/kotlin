@@ -102,6 +102,7 @@ public class SwitchCodegenUtil {
     public static SwitchCodegen buildAppropriateSwitchCodegenIfPossible(
             @NotNull KtWhenExpression expression,
             boolean isStatement,
+            boolean isExhaustive,
             @NotNull ExpressionCodegen codegen
     ) {
         BindingContext bindingContext = codegen.getBindingContext();
@@ -114,15 +115,15 @@ public class SwitchCodegenUtil {
         WhenByEnumsMapping mapping = codegen.getBindingContext().get(CodegenBinding.MAPPING_FOR_WHEN_BY_ENUM, expression);
 
         if (mapping != null) {
-            return new EnumSwitchCodegen(expression, isStatement, codegen, mapping);
+            return new EnumSwitchCodegen(expression, isStatement, isExhaustive, codegen, mapping);
         }
 
         if (isIntegralConstantsSwitch(expression, subjectType, bindingContext)) {
-            return new IntegralConstantsSwitchCodegen(expression, isStatement, codegen);
+            return new IntegralConstantsSwitchCodegen(expression, isStatement, isExhaustive, codegen);
         }
 
         if (isStringConstantsSwitch(expression, subjectType, bindingContext)) {
-            return new StringSwitchCodegen(expression, isStatement, codegen);
+            return new StringSwitchCodegen(expression, isStatement, isExhaustive, codegen);
         }
 
         return null;

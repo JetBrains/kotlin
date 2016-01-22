@@ -22,8 +22,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartFMap;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
+import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -271,7 +271,7 @@ public class ControlFlowProcessor {
         @NotNull
         private AccessTarget getResolvedCallAccessTarget(KtElement element) {
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(element, trace.getBindingContext());
-            return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE$;
+            return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE;
         }
 
         @NotNull
@@ -279,7 +279,7 @@ public class ControlFlowProcessor {
             DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             return descriptor instanceof VariableDescriptor
                    ? new AccessTarget.Declaration((VariableDescriptor) descriptor)
-                   : AccessTarget.BlackBox.INSTANCE$;
+                   : AccessTarget.BlackBox.INSTANCE;
         }
 
         @Override
@@ -465,7 +465,7 @@ public class ControlFlowProcessor {
             }
 
             Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
-            AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE$;
+            AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE;
             if (left instanceof KtSimpleNameExpression || left instanceof KtQualifiedExpression) {
                 accessTarget = getResolvedCallAccessTarget(KtPsiUtilKt.getQualifiedElementSelector(left));
                 if (accessTarget instanceof AccessTarget.Call) {
@@ -476,7 +476,7 @@ public class ControlFlowProcessor {
                 accessTarget = getDeclarationAccessTarget(left);
             }
 
-            if (accessTarget == AccessTarget.BlackBox.INSTANCE$ && !(left instanceof KtProperty)) {
+            if (accessTarget == AccessTarget.BlackBox.INSTANCE && !(left instanceof KtProperty)) {
                 generateInstructions(left);
                 createSyntheticValue(left, MagicKind.VALUE_CONSUMER, left);
             }
@@ -802,8 +802,7 @@ public class ControlFlowProcessor {
                 generateInstructions(condition);
             }
             mark(expression);
-            boolean conditionIsTrueConstant = CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace, true);
-            if (!conditionIsTrueConstant) {
+            if (!CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace.getBindingContext(), true)) {
                 builder.jumpOnFalse(loopInfo.getExitPoint(), expression, builder.getBoundValue(condition));
             }
             else {
@@ -1297,7 +1296,7 @@ public class ControlFlowProcessor {
                     // For the last entry of exhaustive when,
                     // attempt to jump further should lead to error, not to "done"
                     if (!iterator.hasNext() && WhenChecker.isWhenExhaustive(expression, trace)) {
-                        builder.jumpToError(expression);
+                        builder.magic(expression, null, Collections.<PseudoValue>emptyList(), MagicKind.EXHAUSTIVE_WHEN_ELSE);
                     }
                 }
             }

@@ -86,7 +86,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
             }
         }
         catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
-            KotlinTestUtils.assertEqualsToFile(conflictFile, e.getMessage()!!)
+            KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)
         }
         finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)

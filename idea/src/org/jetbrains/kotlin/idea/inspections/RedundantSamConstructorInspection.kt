@@ -42,13 +42,14 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromImportingScopes
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.collectSyntheticExtensionFunctions
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
+class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             private fun createQuickFix(expression: KtCallExpression): LocalQuickFix {
@@ -78,7 +79,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
                 val samConstructorCalls = samConstructorCallsToBeConverted(expression)
                 if (samConstructorCalls.isEmpty()) return
-                if (samConstructorCalls.size() == 1) {
+                if (samConstructorCalls.size == 1) {
                     val single = samConstructorCalls.single()
                     val problemDescriptor = holder.manager.
                             createProblemDescriptor(single.calleeExpression!!,
@@ -105,7 +106,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     }
 
     companion  object {
-        public fun replaceSamConstructorCall(callExpression: KtCallExpression): KtExpression {
+        fun replaceSamConstructorCall(callExpression: KtCallExpression): KtExpression {
             val functionalArgument = callExpression.samConstructorValueArgument()?.getArgumentExpression()
                                      ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
             return callExpression.getQualifiedExpressionForSelectorOrThis().replace(functionalArgument) as KtExpression
@@ -149,7 +150,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             override fun getValueArguments() = newArguments
         }
 
-        public fun samConstructorCallsToBeConverted(functionCall: KtCallExpression): List<KtCallExpression> {
+        fun samConstructorCallsToBeConverted(functionCall: KtCallExpression): List<KtCallExpression> {
             return samConstructorArgumentsToBeConverted(functionCall).map { it.toCallExpression()!! }
         }
 
@@ -176,23 +177,21 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             // SAM adapters for static functions
             for (staticFunWithSameName in containingClass.staticScope.getContributedFunctions(functionResolvedCall.resultingDescriptor.name, NoLookupLocation.FROM_IDE)) {
                 if (staticFunWithSameName is SamAdapterDescriptor<*>) {
-                    if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArguments.size())) {
+                    if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArguments.size)) {
                         return samConstructorCallArguments.check { canBeReplaced(functionCall, it) } ?: emptyList()
                     }
                 }
             }
 
             // SAM adapters for member functions
-            val resolutionScope = functionCall.getResolutionScope(bindingContext, functionCall.getResolutionFacade())
-            val syntheticExtensions = resolutionScope.collectAllFromImportingScopes {
-                it.getContributedSyntheticExtensionFunctions(
+            val syntheticScopes = functionCall.getResolutionFacade().getFrontendService(SyntheticScopes::class.java)
+            val syntheticExtensions = syntheticScopes.collectSyntheticExtensionFunctions(
                         containingClass.defaultType.singletonList(),
                         functionResolvedCall.resultingDescriptor.name,
                         NoLookupLocation.FROM_IDE)
-            }
             for (syntheticExtension in syntheticExtensions) {
                 val samAdapter = syntheticExtension as? SamAdapterExtensionFunctionDescriptor ?: continue
-                if (isSamAdapterSuitableForCall(samAdapter, originalFunctionDescriptor, samConstructorCallArguments.size())) {
+                if (isSamAdapterSuitableForCall(samAdapter, originalFunctionDescriptor, samConstructorCallArguments.size)) {
                     return samConstructorCallArguments.check { canBeReplaced(functionCall, it) } ?: emptyList()
                 }
             }

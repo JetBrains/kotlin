@@ -46,21 +46,19 @@ import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class JsCallChecker(
+class JsCallChecker(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) : CallChecker {
 
     companion object {
         private val JS_PATTERN: DescriptorPredicate = PatternBuilder.pattern("kotlin.js.js(String)")
 
-        @JvmStatic
-        public fun <F : CallableDescriptor?> ResolvedCall<F>.isJsCall(): Boolean {
-            val descriptor = getResultingDescriptor()
+        @JvmStatic fun <F : CallableDescriptor?> ResolvedCall<F>.isJsCall(): Boolean {
+            val descriptor = resultingDescriptor
             return descriptor is SimpleFunctionDescriptor && JS_PATTERN.apply(descriptor)
         }
 
-        @JvmStatic
-        public fun extractStringValue(compileTimeConstant: CompileTimeConstant<*>?): String? {
+        @JvmStatic fun extractStringValue(compileTimeConstant: CompileTimeConstant<*>?): String? {
             return ((compileTimeConstant as? TypedCompileTimeConstant<*>)?.constantValue as? StringValue)?.value
         }
     }
@@ -68,10 +66,10 @@ public class JsCallChecker(
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         if (context.isAnnotationContext || !resolvedCall.isJsCall()) return
 
-        val expression = resolvedCall.getCall().getCallElement()
+        val expression = resolvedCall.call.callElement
         if (expression !is KtCallExpression) return
 
-        val arguments = expression.getValueArgumentList()?.getArguments()
+        val arguments = expression.valueArgumentList?.arguments
         val argument = arguments?.firstOrNull()?.getArgumentExpression() ?: return
 
         val trace = TemporaryBindingTrace.create(context.trace, "JsCallChecker")
@@ -92,7 +90,7 @@ public class JsCallChecker(
             val parserScope = JsFunctionScope(JsRootScope(JsProgram("<js checker>")), "<js fun>")
             val statements = parse(code, errorReporter, parserScope)
 
-            if (statements.size() == 0) {
+            if (statements.size == 0) {
                 context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))
             }
         } catch (e: AbortParsingException) {
@@ -127,7 +125,7 @@ class JsCodeErrorReporter(
                 JsCallData(reportRange, message)
             }
             else -> {
-                val reportRange = nodeToReport.getTextRange()
+                val reportRange = nodeToReport.textRange
                 val codeRange = TextRange(code.offsetOf(startPosition), code.offsetOf(endPosition))
                 JsCallDataWithCode(reportRange, message, code, codeRange)
             }
@@ -139,8 +137,8 @@ class JsCodeErrorReporter(
 
     private val CodePosition.absoluteOffset: Int
         get() {
-            val quotesLength = nodeToReport.getFirstChild().getTextLength()
-            return nodeToReport.getTextOffset() + quotesLength + code.offsetOf(this)
+            val quotesLength = nodeToReport.firstChild.textLength
+            return nodeToReport.textOffset + quotesLength + code.offsetOf(this)
         }
 }
 
@@ -153,8 +151,8 @@ private fun String.offsetOf(position: CodePosition): Int {
     var lineCount = 0
     var offsetInLine = 0
 
-    while (i < length()) {
-        val c = charAt(i)
+    while (i < length) {
+        val c = this[i]
 
         if (lineCount == position.line && offsetInLine == position.offset) {
             return i
@@ -170,11 +168,11 @@ private fun String.offsetOf(position: CodePosition): Int {
         }
     }
 
-    return length()
+    return length
 }
 
 private val KtExpression.isConstantStringLiteral: Boolean
-    get() = this is KtStringTemplateExpression && getEntries().all { it is KtLiteralStringTemplateEntry }
+    get() = this is KtStringTemplateExpression && entries.all { it is KtLiteralStringTemplateEntry }
 
 open class JsCallData(val reportRange: TextRange, val message: String)
 

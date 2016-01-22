@@ -295,6 +295,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SafeInvoke.kt")
+        public void testSafeInvoke() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/SafeInvoke.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Shadowing.kt")
         public void testShadowing() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/Shadowing.kt");
@@ -366,6 +372,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/WhenInEnumInExtensionProperty.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("WhenNonExhaustive.kt")
+        public void testWhenNonExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/WhenNonExhaustive.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/checker/regression")
@@ -382,6 +394,18 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("AnnotationOnNamedParameterOfFunctionType.kt")
+        public void testAnnotationOnNamedParameterOfFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/AnnotationOnNamedParameterOfFunctionType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AnnotationOnParameterOfFunctionType.kt")
+        public void testAnnotationOnParameterOfFunctionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/AnnotationOnParameterOfFunctionType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AssignmentsUnderOperators.kt")
         public void testAssignmentsUnderOperators() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/AssignmentsUnderOperators.kt");
@@ -391,6 +415,36 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("BadParseForClass.kt")
         public void testBadParseForClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/BadParseForClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAfterDot.kt")
+        public void testClassDeclarationAfterDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAfterDot.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAfterDot2.kt")
+        public void testClassDeclarationAfterDot2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAfterDot2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAsExpression.kt")
+        public void testClassDeclarationAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAsExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAsExpression2.kt")
+        public void testClassDeclarationAsExpression2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAsExpression2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAsExpression3.kt")
+        public void testClassDeclarationAsExpression3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAsExpression3.kt");
             doTest(fileName);
         }
 
@@ -415,6 +469,30 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("extensionMemberInClassObject.kt")
         public void testExtensionMemberInClassObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/extensionMemberInClassObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunDeclarationAfterDot.kt")
+        public void testFunDeclarationAfterDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunDeclarationAfterDot.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionLiteralInsideAnnotation.kt")
+        public void testFunctionLiteralInsideAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunctionLiteralInsideAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InterfaceDeclarationAsExpression.kt")
+        public void testInterfaceDeclarationAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/InterfaceDeclarationAsExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaStyleClassLiteralInAnnotationArguments.kt")
+        public void testJavaStyleClassLiteralInAnnotationArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/javaStyleClassLiteralInAnnotationArguments.kt");
             doTest(fileName);
         }
 
@@ -496,9 +574,21 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("objectLiteralInSupertypeList.kt")
+        public void testObjectLiteralInSupertypeList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/objectLiteralInSupertypeList.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OverrideResolution.kt")
         public void testOverrideResolution() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/OverrideResolution.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PropertyDeclarationAsExpression.kt")
+        public void testPropertyDeclarationAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/PropertyDeclarationAsExpression.kt");
             doTest(fileName);
         }
 
@@ -751,6 +841,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("Typos.kt")
         public void testTypos() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/Typos.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("WhenImplicitExhaustive.kt")
+        public void testWhenImplicitExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/WhenImplicitExhaustive.kt");
             doTestWithInfos(fileName);
         }
 

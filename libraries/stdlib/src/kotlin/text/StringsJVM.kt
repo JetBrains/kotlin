@@ -181,6 +181,7 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
  * @param length the number of bytes to be converted.
  * @param charsetName the name of the character set to use.
  */
+@Deprecated("Use String(bytes, offset, length, Charset) instead.", ReplaceWith("String(bytes, offset, length, charset(charsetName))"), level = DeprecationLevel.ERROR)
 public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: String): String = java.lang.String(bytes, offset, length, charsetName) as String
 
 /**
@@ -198,6 +199,7 @@ public fun String(bytes: ByteArray, offset: Int, length: Int, charset: Charset):
  * Converts the data from the specified array of bytes to characters using the specified character set
  * and returns the conversion result as a string.
  */
+@Deprecated("Use String(bytes, Charset) instead.", ReplaceWith("String(bytes, charset(charsetName))"), level = DeprecationLevel.ERROR)
 public fun String(bytes: ByteArray, charsetName: String): String = java.lang.String(bytes, charsetName) as String
 
 /**
@@ -275,7 +277,7 @@ public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
 /**
  * Returns a new string obtained by concatenating this string and the specified string.
  */
-// TODO: Deprecated in favor of operator plus, when it would be as efficient as concat
+@Deprecated("Use this + other, eventually it will be optimized as concat.", ReplaceWith("this + other"), level = DeprecationLevel.ERROR)
 public fun String.concat(other: String): String = (this as java.lang.String).concat(other)
 
 /**
@@ -287,17 +289,6 @@ public fun String.contentEquals(charSequence: CharSequence): Boolean = (this as 
  * Returns `true` if this string is equal to the contents of the specified StringBuffer.
  */
 public fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as java.lang.String).contentEquals(stringBuilder)
-
-/**
- * Copies the characters from a substring of this string into the specified character array.
- * @param srcBegin the start offset (inclusive) of the substring to copy.
- * @param srcEnd the end offset (exclusive) of the substring to copy.
- * @param dst the array to copy to.
- * @param dstBegin the position in the array to copy to.
- */
-@Deprecated("Use toCharArray() instead.", ReplaceWith("toCharArray(dst, dstBegin, srcBegin, srcEnd)"))
-public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
-
 
 /**
  * Returns a canonical representation for this string object.
@@ -393,23 +384,9 @@ public fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
 public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
 /**
- * Returns the list of all characters in this string.
- */
-@Deprecated("Use toList() instead.", ReplaceWith("toList()"))
-public fun String.toCharList(): List<Char> = toCharArray().toList()
-
-/**
- * Returns a subsequence of this char sequence.
- *
- * @param start the start index (inclusive).
- * @param end the end index (exclusive).
- */
-@Deprecated("Use subSequence(start, end) instead.", ReplaceWith("subSequence(start, end)"))
-public operator fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
-
-/**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
  */
+@Deprecated("Use String.toByteArray(Charset) instead.", ReplaceWith("this.toByteArray(charset(charset))"), level = DeprecationLevel.ERROR)
 public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 
 /**
@@ -435,7 +412,7 @@ public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
  * @sample test.text.StringTest.capitalize
  */
 public fun String.capitalize(): String {
-    return if (isNotEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
 /**
@@ -445,7 +422,7 @@ public fun String.capitalize(): String {
  * @sample test.text.StringTest.decapitalize
  */
 public fun String.decapitalize(): String {
-    return if (isNotEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
 /**
@@ -468,6 +445,7 @@ public fun CharSequence.repeat(n: Int): String {
  * Appends the contents of this char sequence, excluding the first characters that satisfy the given [predicate],
  * to the given Appendable.
  */
+@Deprecated("This function will be removed soon.", ReplaceWith("result.append(this.dropWhile(predicate))"))
 public inline fun <T : Appendable> CharSequence.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
     var start = true
     for (element in this) {
@@ -484,6 +462,7 @@ public inline fun <T : Appendable> CharSequence.dropWhileTo(result: T, predicate
 /**
  * Appends the first characters from this char sequence that satisfy the given [predicate] to the given Appendable.
  */
+@Deprecated("This function will be removed soon.", ReplaceWith("result.append(this.takeWhile(predicate))"))
 public inline fun <T : Appendable> CharSequence.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
     for (c in this) if (predicate(c)) result.append(c) else break
     return result

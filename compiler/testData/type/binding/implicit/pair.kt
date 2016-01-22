@@ -8,7 +8,7 @@ type: Pair<List<Int>, String>
     typeProjection: List<Int>
     psi: val foo = getT<Pair<List<Int>, String>>()
     type: List<Int>
-        typeParameter: <out E> defined in kotlin.List
+        typeParameter: <out E> defined in kotlin.collections.List
         typeProjection: Int
         psi: val foo = getT<Pair<List<Int>, String>>()
         type: Int

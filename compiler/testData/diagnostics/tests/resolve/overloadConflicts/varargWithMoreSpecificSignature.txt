@@ -1,0 +1,19 @@
+package
+
+public val test1: Foo1
+public fun foo(/*0*/ x: kotlin.Any): Foo2
+public fun foo(/*0*/ vararg ss: kotlin.String /*kotlin.Array<out kotlin.String>*/): Foo1
+
+public object Foo1 {
+    private constructor Foo1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Foo2 {
+    private constructor Foo2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

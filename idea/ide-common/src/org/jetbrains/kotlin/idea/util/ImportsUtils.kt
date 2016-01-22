@@ -28,36 +28,36 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
-public val DeclarationDescriptor.importableFqName: FqName?
+val DeclarationDescriptor.importableFqName: FqName?
     get() {
         if (!canBeReferencedViaImport()) return null
         return getImportableDescriptor().fqNameSafe
     }
 
-public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
+fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     if (this is PackageViewDescriptor ||
         DescriptorUtils.isTopLevelDeclaration(this) ||
         this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this)) {
         return !name.isSpecial
     }
 
-    val parentClass = getContainingDeclaration() as? ClassDescriptor ?: return false
+    val parentClass = containingDeclaration as? ClassDescriptor ?: return false
     if (!parentClass.canBeReferencedViaImport()) return false
 
     return when (this) {
-        is ConstructorDescriptor -> !parentClass.isInner() // inner class constructors can't be referenced via import
+        is ConstructorDescriptor -> !parentClass.isInner // inner class constructors can't be referenced via import
         is ClassDescriptor -> true
         else -> parentClass.kind == ClassKind.OBJECT
     }
 }
 
-public fun KotlinType.canBeReferencedViaImport(): Boolean {
-    val descriptor = getConstructor().getDeclarationDescriptor()
+fun KotlinType.canBeReferencedViaImport(): Boolean {
+    val descriptor = constructor.declarationDescriptor
     return descriptor != null && descriptor.canBeReferencedViaImport()
 }
 
 // for cases when class qualifier refers companion object treats it like reference to class itself
-public fun KtReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
+fun KtReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
     val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this]?.let { listOf(it) }
                   ?: getReferenceTargets(bindingContext)
     return targets.map { it.getImportableDescriptor() }.toSet()

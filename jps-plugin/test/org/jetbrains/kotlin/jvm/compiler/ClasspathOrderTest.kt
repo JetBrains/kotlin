@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
-import org.jetbrains.kotlin.jps.build.JvmSourceRoot
+import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -30,23 +30,24 @@ import java.io.File
  * To test this, we compile a Kotlin+Java module (in two modes: CLI and module-based) where a runtime Java class was replaced
  * with a "newer" version in sources, and check that this class resolves to the one from sources by calling a method absent in the runtime
  */
-public class ClasspathOrderTest : TestCaseWithTmpdir() {
+class ClasspathOrderTest : TestCaseWithTmpdir() {
     companion object {
-        val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").getAbsoluteFile()
+        val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").absoluteFile
     }
 
-    public fun testClasspathOrderForCLI() {
-        MockLibraryUtil.compileKotlin(sourceDir.getPath(), tmpdir)
+    fun testClasspathOrderForCLI() {
+        MockLibraryUtil.compileKotlin(sourceDir.path, tmpdir)
     }
 
-    public fun testClasspathOrderForModuleScriptBuild() {
+    fun testClasspathOrderForModuleScriptBuild() {
         val xmlContent = KotlinModuleXmlBuilder().addModule(
                 "name",
-                File(tmpdir, "output").getAbsolutePath(),
+                File(tmpdir, "output").absolutePath,
                 listOf(sourceDir),
                 listOf(JvmSourceRoot(sourceDir)),
-                listOf(PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()),
-                JavaModuleBuildTargetType.PRODUCTION,
+                listOf(PathUtil.getKotlinPathsForDistDirectory().runtimePath),
+                JavaModuleBuildTargetType.PRODUCTION.typeId,
+                JavaModuleBuildTargetType.PRODUCTION.isTests,
                 setOf(),
                 emptyList()
         ).asText().toString()
@@ -54,6 +55,6 @@ public class ClasspathOrderTest : TestCaseWithTmpdir() {
         val xml = File(tmpdir, "module.xml")
         xml.writeText(xmlContent)
 
-        MockLibraryUtil.compileKotlinModule(xml.getAbsolutePath())
+        MockLibraryUtil.compileKotlinModule(xml.absolutePath)
     }
 }

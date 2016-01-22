@@ -45,7 +45,7 @@ class LazyJavaTypeParameterResolver(
         private val containingDeclaration: DeclarationDescriptor,
         typeParameterOwner: JavaTypeParameterListOwner
 ) : TypeParameterResolver {
-    private val typeParameters: Map<JavaTypeParameter, Int> = typeParameterOwner.getTypeParameters().mapToIndex()
+    private val typeParameters: Map<JavaTypeParameter, Int> = typeParameterOwner.typeParameters.mapToIndex()
 
     private val resolve = c.storageManager.createMemoizedFunctionWithNullableValues {
         typeParameter: JavaTypeParameter ->
@@ -70,8 +70,8 @@ fun LazyJavaResolverContext.resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinar
 
     val header = kotlinClass.classHeader
     return when {
-        !header.isCompatibleAbiVersion -> {
-            components.errorReporter.reportIncompatibleAbiVersion(kotlinClass.classId, kotlinClass.location, header.version)
+        !header.metadataVersion.isCompatible() -> {
+            components.errorReporter.reportIncompatibleMetadataVersion(kotlinClass.classId, kotlinClass.location, header.metadataVersion)
             KotlinClassLookupResult.NotFound
         }
         header.kind == KotlinClassHeader.Kind.CLASS -> {

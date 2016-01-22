@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -60,19 +61,27 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         if (!singleFunction.hasBody()) return null
         if (singleFunction.valueParameters.any { it.name == null }) return null
 
+        val bodyExpression = singleFunction.bodyExpression!!
+
+        // this-reference
+        val thisReferences = bodyExpression.collectDescendantsOfType<KtThisExpression> { it !is KtClassOrObject }
+        for (thisReference in thisReferences) {
+            val context = thisReference.analyze(BodyResolveMode.PARTIAL)
+            val thisDescriptor = context[BindingContext.REFERENCE_TARGET, thisReference.instanceReference]
+            if (thisDescriptor == functionDescriptor.containingDeclaration) {
+                return null
+            }
+        }
+
         // Recursive call, skip labels
-        if (ReferencesSearch.search(singleFunction, LocalSearchScope(singleFunction.bodyExpression!!)).any { it.element !is KtLabelReferenceExpression }) {
+        if (ReferencesSearch.search(singleFunction, LocalSearchScope(bodyExpression)).any { it.element !is KtLabelReferenceExpression }) {
             return null
         }
 
         return TextRange(element.objectDeclaration.getObjectKeyword().startOffset, baseTypeRef.endOffset)
     }
 
-    override fun applyTo(element: KtObjectLiteralExpression, editor: Editor) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtObjectLiteralExpression) {
+    override fun applyTo(element: KtObjectLiteralExpression, editor: Editor?) {
         val commentSaver = CommentSaver(element)
 
         val (@Suppress("UNUSED_VARIABLE") baseTypeRef, baseType, singleFunction) = extractData(element)!!

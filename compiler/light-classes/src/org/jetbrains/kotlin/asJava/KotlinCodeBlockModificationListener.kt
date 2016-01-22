@@ -28,11 +28,12 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-public class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
+class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
     private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
@@ -106,12 +107,13 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             return false
         }
 
-        public fun isInsideCodeBlock(element: PsiElement?): Boolean {
+        fun isInsideCodeBlock(element: PsiElement?): Boolean {
             if (element is PsiFileSystemItem) return false
             if (element == null || element.parent == null) return true
 
             //TODO: other types
             val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
+            if (blockDeclaration.parents.any { it !is KtClassBody && it !is KtClassOrObject && it !is KtFile }) return false // should not be local declaration
 
             when (blockDeclaration) {
                 is KtNamedFunction -> {
@@ -137,13 +139,13 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             return false
         }
 
-        public fun isBlockDeclaration(declaration: KtDeclaration): Boolean {
+        fun isBlockDeclaration(declaration: KtDeclaration): Boolean {
             return BLOCK_DECLARATION_TYPES.any { it.isInstance(declaration) }
         }
 
         private val BLOCK_DECLARATION_TYPES = arrayOf<Class<out KtDeclaration>>(
-                javaClass<KtProperty>(),
-                javaClass<KtNamedFunction>()
+                KtProperty::class.java,
+                KtNamedFunction::class.java
         )
     }
 }

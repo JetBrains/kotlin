@@ -69,7 +69,7 @@ public enum class DeprecationLevel {
  */
 @Target(TYPE)
 @MustBeDocumented
-public annotation class Extension
+public annotation class ExtensionFunctionType
 
 /**
  * Suppresses the given compilation warnings in the annotated element.
@@ -79,17 +79,6 @@ public annotation class Extension
         CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
 @Retention(SOURCE)
 public annotation class Suppress(vararg val names: String)
-
-/**
- * Hides the annotated function, property or constructor from the overload resolution,
- * thus preventing its usages from newly compiled code, but keeps compiling it
- * to retain binary compatibility with the code compiled against it before.
- */
-@Target(FUNCTION, PROPERTY, CONSTRUCTOR)
-@Retention(BINARY)
-@MustBeDocumented
-@Deprecated("Use @Deprecated(\"...\", level = DeprecationLevel.HIDDEN) instead", replaceWith = ReplaceWith("@Deprecated(, level = DeprecationLevel.HIDDEN)"))
-public annotation class HiddenDeclaration
 
 /**
  * Suppresses errors about variance conflict

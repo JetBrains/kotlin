@@ -27,49 +27,46 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
-import java.util.Collections
 import java.util.HashMap
 
-public class PseudocodeVariableDataCollector(
+class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
         private val pseudocode: Pseudocode
 ) {
     val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
 
-    @Suppress("UNCHECKED_CAST")
-    public fun <D> collectData(
+    fun <I : ControlFlowInfo<*>> collectData(
             traversalOrder: TraversalOrder,
             mergeDataWithLocalDeclarations: Boolean,
-            instructionDataMergeStrategy: InstructionDataMergeStrategy<D>
-    ): MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>> {
-        val result = pseudocode.collectData(
+            initialInfo: I,
+            instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
+    ): Map<Instruction, Edges<I>> {
+        return pseudocode.collectData(
                 traversalOrder, mergeDataWithLocalDeclarations,
-                //see KT-4605
-                instructionDataMergeStrategy as
-                    (Instruction, Collection<Map<VariableDescriptor, D>>) -> Edges<Map<VariableDescriptor, D>>,
-                { from, to, data -> filterOutVariablesOutOfScope(from, to, data)},
-                Collections.emptyMap<VariableDescriptor, D>())
-        //see KT-4605
-        return result as MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>>
+                instructionDataMergeStrategy,
+                { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
+                initialInfo
+        )
     }
 
-    private fun <D> filterOutVariablesOutOfScope(
+    private fun <I : ControlFlowInfo<*>> filterOutVariablesOutOfScope(
             from: Instruction,
             to: Instruction,
-            data: Map<VariableDescriptor, D>
-    ): Map<VariableDescriptor, D> {
+            info: I
+    ): I {
         // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
         val toDepth = to.lexicalScope.depth
-        if (toDepth >= from.lexicalScope.depth) return data
+        if (toDepth >= from.lexicalScope.depth) return info
 
         // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
         // Thus they can be filtered out upon leaving the inner scope.
-        return data.filterKeys { variable ->
+        @Suppress("UNCHECKED_CAST")
+        return info.copy().retainAll { variable ->
             val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
             // '-1' for variables declared outside this pseudocode
             val depth = lexicalScope?.depth ?: -1
             depth <= toDepth
-        }
+        } as I
     }
 
     fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
@@ -83,7 +80,7 @@ public class PseudocodeVariableDataCollector(
                     descriptor.toString()
 
                     assert(descriptor is VariableDescriptor) {
-                        "Variable descriptor should correspond to the instruction for ${instruction.element.getText()}.\n" +
+                        "Variable descriptor should correspond to the instruction for ${instruction.element.text}.\n" +
                         "Descriptor: $descriptor"
                     }
                     lexicalScopeVariableInfo.registerVariableDeclaredInScope(
@@ -96,16 +93,12 @@ public class PseudocodeVariableDataCollector(
     }
 }
 
-//todo may be a type alias
-interface InstructionDataMergeStrategy<D> :
-  (Instruction, Collection<MutableMap<VariableDescriptor, D>>) -> Edges<MutableMap<VariableDescriptor, D>>
-
-public interface LexicalScopeVariableInfo {
+interface LexicalScopeVariableInfo {
     val declaredIn : Map<VariableDescriptor, LexicalScope>
     val scopeVariables : Map<LexicalScope, Collection<VariableDescriptor>>
 }
 
-public class LexicalScopeVariableInfoImpl : LexicalScopeVariableInfo {
+class LexicalScopeVariableInfoImpl : LexicalScopeVariableInfo {
     override val declaredIn = HashMap<VariableDescriptor, LexicalScope>()
     override val scopeVariables = HashMap<LexicalScope, MutableCollection<VariableDescriptor>>()
 

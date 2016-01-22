@@ -9,5 +9,5 @@
 Old
 >>> A().foo()
 New
->>> oldA.javaClass == javaClass<A>()
+>>> oldA.javaClass == A::class.java
 false

@@ -67,6 +67,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xmultifile-facades-open", description = "Compile multifile facade classes as open")
     public boolean multifileFacadesOpen;
 
+    @Argument(value = "Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
+    public boolean allowKotlinPackage;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 

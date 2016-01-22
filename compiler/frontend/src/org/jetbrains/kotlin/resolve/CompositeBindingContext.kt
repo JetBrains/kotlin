@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
 
-public class CompositeBindingContext private constructor(
+class CompositeBindingContext private constructor(
         private val delegates: List<BindingContext>
 ) : BindingContext {
     override fun getType(expression: KtExpression): KotlinType? {
@@ -34,9 +34,9 @@ public class CompositeBindingContext private constructor(
     }
 
     companion object {
-        public fun create(delegates: List<BindingContext>): BindingContext {
+        fun create(delegates: List<BindingContext>): BindingContext {
             if (delegates.isEmpty()) return BindingContext.EMPTY
-            if (delegates.size() == 1) return delegates.first()
+            if (delegates.size == 1) return delegates.first()
             return CompositeBindingContext(delegates)
         }
     }
@@ -57,7 +57,7 @@ public class CompositeBindingContext private constructor(
     }
 
     override fun getDiagnostics(): Diagnostics {
-        return CompositeDiagnostics(delegates.map { it.getDiagnostics() })
+        return CompositeDiagnostics(delegates.map { it.diagnostics })
     }
 
     override fun addOwnDataTo(trace: BindingTrace, commitDiagnostics: Boolean) {
@@ -73,7 +73,7 @@ public class CompositeBindingContext private constructor(
         }
 
         override val modificationTracker = object : ModificationTracker {
-            override fun getModificationCount() = delegates.fold(0L, { r, t -> r + t.modificationTracker.getModificationCount() })
+            override fun getModificationCount() = delegates.fold(0L, { r, t -> r + t.modificationTracker.modificationCount })
         }
 
         override fun all(): Collection<Diagnostic> {

@@ -19,19 +19,20 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 
 abstract class AbstractJavaAgainstKotlinBinariesCheckerTest : AbstractJavaAgainstKotlinCheckerTest() {
     override fun setUp() {
         super.setUp()
         val testName = getTestName(false)
-        if (testName.startsWith("AllFilesPresentIn")) {
+        if (KotlinTestUtils.isAllFilesPresentTest(testName)) {
             return
         }
         val libraryName = "libFor" + testName
         val libraryJar = MockLibraryUtil.compileLibraryToJar(
                 PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/javaAgainstKotlin/" + getTestName(false) + ".kt",
-                libraryName, false, false
+                libraryName, false, false, false
         )
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
         ModuleRootModificationUtil.addModuleLibrary(module, jarUrl)

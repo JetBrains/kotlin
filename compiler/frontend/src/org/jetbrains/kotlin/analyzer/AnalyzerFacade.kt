@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.createModule
 import java.util.*
 
-public class ResolverForModule(
-    public val packageFragmentProvider: PackageFragmentProvider,
-    public val componentProvider: ComponentProvider
+class ResolverForModule(
+    val packageFragmentProvider: PackageFragmentProvider,
+    val componentProvider: ComponentProvider
 )
 
 abstract class ResolverForProject<M : ModuleInfo> {
@@ -52,7 +52,7 @@ abstract class ResolverForProject<M : ModuleInfo> {
     override fun toString() = "$name"
 }
 
-public class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
+class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override val name: String
         get() = "Empty resolver"
 
@@ -62,7 +62,7 @@ public class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override val allModules: Collection<M> = listOf()
 }
 
-public class ResolverForProjectImpl<M : ModuleInfo>(
+class ResolverForProjectImpl<M : ModuleInfo>(
         private val debugName: String,
         val descriptorByModule: Map<M, ModuleDescriptorImpl>,
         val delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
@@ -102,29 +102,29 @@ public class ResolverForProjectImpl<M : ModuleInfo>(
     }
 }
 
-public data class ModuleContent(
-        public val syntheticFiles: Collection<KtFile>,
-        public val moduleContentScope: GlobalSearchScope
+data class ModuleContent(
+        val syntheticFiles: Collection<KtFile>,
+        val moduleContentScope: GlobalSearchScope
 )
 
-public interface PlatformAnalysisParameters
+interface PlatformAnalysisParameters
 
-public interface ModuleInfo {
-    public val isLibrary: Boolean
+interface ModuleInfo {
+    val isLibrary: Boolean
         get() = false
-    public val name: Name
-    public fun dependencies(): List<ModuleInfo>
-    public fun friends(): Collection<ModuleInfo> = listOf()
-    public fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
+    val name: Name
+    fun dependencies(): List<ModuleInfo>
+    fun friends(): Collection<ModuleInfo> = listOf()
+    fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = emptyMap()
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
-    public interface DependencyOnBuiltins {
-        public fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>)
+    interface DependencyOnBuiltins {
+        fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>)
     }
 
-    public enum class DependenciesOnBuiltins : DependencyOnBuiltins {
+    enum class DependenciesOnBuiltins : DependencyOnBuiltins {
 
         NONE {
             override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
@@ -144,8 +144,8 @@ public interface ModuleInfo {
     }
 }
 
-public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
-    public fun <M : ModuleInfo> setupResolverForProject(
+abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
+    fun <M : ModuleInfo> setupResolverForProject(
             debugName: String,
             projectContext: ProjectContext,
             modules: Collection<M>,
@@ -234,7 +234,7 @@ public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             packagePartProvider: PackagePartProvider
     ): ResolverForModule
 
-    public abstract val targetPlatform: TargetPlatform
+    abstract val targetPlatform: TargetPlatform
 }
 
 //NOTE: relies on delegate to be lazily computed and cached

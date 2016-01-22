@@ -101,12 +101,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
-    @TestMetadata("constValsGetterDeprecated.kt")
-    public void testConstValsGetterDeprecated() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constValsGetterDeprecated.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("falseSmartCast.kt")
     public void testFalseSmartCast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/falseSmartCast.kt");
@@ -302,6 +296,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("safeAsWithMutable.kt")
     public void testSafeAsWithMutable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/safeAsWithMutable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("superFlagInMultiFileFacade.kt")
+    public void testSuperFlagInMultiFileFacade() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/superFlagInMultiFileFacade.kt");
         doTest(fileName);
     }
 
@@ -712,6 +712,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("inlineReturnsNothing1.kt")
+        public void testInlineReturnsNothing1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/inlineReturnsNothing1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineReturnsNothing2.kt")
+        public void testInlineReturnsNothing2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/inlineReturnsNothing2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineReturnsNothing3.kt")
+        public void testInlineReturnsNothing3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/inlineReturnsNothing3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noSynAccessor.kt")
         public void testNoSynAccessor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/noSynAccessor.kt");
@@ -1045,9 +1063,27 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("exhaustiveWhenInitialization.kt")
+        public void testExhaustiveWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenInitialization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exhaustiveWhenReturn.kt")
+        public void testExhaustiveWhenReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("integralWhenWithNoInlinedConstants.kt")
         public void testIntegralWhenWithNoInlinedConstants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/integralWhenWithNoInlinedConstants.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedWhenInitialization.kt")
+        public void testSealedWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/when/sealedWhenInitialization.kt");
             doTest(fileName);
         }
     }

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetInspection
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
-import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
+import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -56,18 +56,20 @@ object J2KPostProcessingRegistrar {
         _processings.add(RemoveRedundantSamAdaptersProcessing())
         _processings.add(AccessorBodyToExpression())
 
-        registerIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker) { applyTo(it) }
-        registerIntentionBasedProcessing(AddOperatorModifierIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention()) { applyTo(it) }
-        registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
+        registerIntentionBasedProcessing(IfThenToElvisIntention())
+        registerIntentionBasedProcessing(IfNullToElvisIntention())
+        registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention())
+        registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker)
+        registerIntentionBasedProcessing(AddOperatorModifierIntention())
+        registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention())
+        registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention())
+        registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention())
+        registerIntentionBasedProcessing(SimplifyForIntention())
+        registerIntentionBasedProcessing(SimplifyAssertNotNullIntention())
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
-            val expression = RemoveRightPartOfBinaryExpressionFix(element, "").invoke()
+            val expression = RemoveUselessCastFix.invoke(element)
 
             val variable = expression.parent as? KtProperty
             if (variable != null && expression == variable.initializer && variable.isLocal) {
@@ -104,25 +106,23 @@ object J2KPostProcessingRegistrar {
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
-            intention: TIntention,
-            crossinline apply: TIntention.(TElement) -> Unit
+            intention: TIntention
     ) {
         //TODO: replace with optional argument when supported for inline functions
-        return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true }, apply)
+        return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true })
     }
 
     private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
-            noinline additionalChecker: (TElement) -> Boolean,
-            crossinline apply: TIntention.(TElement) -> Unit
+            noinline additionalChecker: (TElement) -> Boolean
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                if (!javaClass<TElement>().isInstance(element)) return null
+                if (!TElement::class.java.isInstance(element)) return null
                 val tElement = element as TElement
                 if (intention.applicabilityRange(tElement) == null) return null
                 if (!additionalChecker(tElement)) return null
-                return { intention.apply(element) }
+                return { intention.applyTo(element, null) }
             }
         })
     }
@@ -140,7 +140,7 @@ object J2KPostProcessingRegistrar {
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                if (!javaClass<TElement>().isInstance(element)) return null
+                if (!TElement::class.java.isInstance(element)) return null
                 val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory == diagnosticFactory } ?: return null
                 return fixFactory(element as TElement, diagnostic)
             }
@@ -170,7 +170,7 @@ object J2KPostProcessingRegistrar {
             if (element !is KtCallExpression) return null
             val literalArgument = element.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral() ?: return null
             if (!intention.isApplicableTo(element, literalArgument.textOffset)) return null
-            return { intention.applyTo(element) }
+            return { intention.applyTo(element, null) }
         }
     }
 
@@ -179,7 +179,7 @@ object J2KPostProcessingRegistrar {
 
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element is KtBinaryExpression && intention.isApplicableTo(element) && intention.shouldSuggestToConvert(element)) {
-                return { intention.applyTo(element) }
+                return { intention.applyTo(element, null) }
             }
             else {
                 return null

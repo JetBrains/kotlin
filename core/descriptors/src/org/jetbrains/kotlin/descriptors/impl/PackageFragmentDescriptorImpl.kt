@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-public abstract class PackageFragmentDescriptorImpl(
+abstract class PackageFragmentDescriptorImpl(
         module: ModuleDescriptor,
         override val fqName: FqName
 ) : DeclarationDescriptorNonRootImpl(module, Annotations.EMPTY, fqName.shortNameOrSpecial(), SourceElement.NO_SOURCE),

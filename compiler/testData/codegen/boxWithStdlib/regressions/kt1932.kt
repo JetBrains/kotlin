@@ -10,7 +10,7 @@ class Test() {
 
 fun box(): String {
     val test = Test()
-    for (method in javaClass<Test>().getMethods()!!) {
+    for (method in Test::class.java.getMethods()!!) {
         val anns = method?.getAnnotations() as Array<Annotation>
         if (!anns.isEmpty()) {
             for (ann in anns) {

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
-public class ArraySize : IntrinsicPropertyGetter() {
+class ArraySize : IntrinsicPropertyGetter() {
     override fun generate(
             resolvedCall: ResolvedCall<*>?, codegen: ExpressionCodegen, returnType: Type, receiver: StackValue
     ) = StackValue.operation(returnType) {

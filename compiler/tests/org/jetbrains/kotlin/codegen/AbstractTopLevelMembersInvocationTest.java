@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
@@ -60,7 +60,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
 
         File library = new File(root, LIBRARY);
         List<File> classPath = library.exists() ?
-                               Collections.singletonList(MockLibraryUtil.compileLibraryToJar(library.getPath(), LIBRARY, false)) :
+                               Collections.singletonList(MockLibraryUtil.compileLibraryToJar(library.getPath(), LIBRARY, false, false)) :
                                Collections.<File>emptyList();
 
         assert !sourceFiles.isEmpty() : getTestName(true) + " should contain at least one .kt file";

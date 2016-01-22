@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.org.objectweb.asm.Opcodes
 import sun.tools.java.RuntimeConstants
 
-public class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
+class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
     override fun isSynthetic(typeComponent: TypeComponent?): Boolean {
         if (typeComponent !is Method) return false
 
@@ -45,6 +45,9 @@ public class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvide
             return !typeComponent.declaringType().allLineLocations().any { it.lineNumber() != 1 }
         }
         catch(e: AbsentInformationException) {
+            return false
+        }
+        catch(e: UnsupportedOperationException) {
             return false
         }
     }

@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 class KDocCompletionContributor(): CompletionContributor() {
     init {
-        extend(CompletionType.BASIC, psiElement().inside(javaClass<KDocName>()),
-                KDocNameCompletionProvider)
+        extend(CompletionType.BASIC, psiElement().inside(KDocName::class.java),
+               KDocNameCompletionProvider)
 
         extend(CompletionType.BASIC,
                psiElement().afterLeaf(
@@ -69,7 +69,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
     override val expectedInfos: Collection<ExpectedInfo> get() = emptyList()
 
     override fun doComplete() {
-        val position = parameters.getPosition().getParentOfType<KDocName>(false) ?: return
+        val position = parameters.position.getParentOfType<KDocName>(false) ?: return
         val declaration = position.getContainingDoc().getOwner() ?: return
         val kdocLink = position.getStrictParentOfType<KDocLink>()!!
         val declarationDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]!!
@@ -98,7 +98,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
 
         fun isApplicable(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is CallableDescriptor) {
-                val extensionReceiver = descriptor.getExtensionReceiverParameter()
+                val extensionReceiver = descriptor.extensionReceiverParameter
                 if (extensionReceiver != null) {
                     val substituted = descriptor.substituteExtensionIfCallable(implicitReceivers, bindingContext, DataFlowInfo.EMPTY,
                                                                                CallType.DEFAULT, moduleDescriptor)
@@ -123,17 +123,17 @@ object KDocTagCompletionProvider: CompletionProvider<CompletionParameters>() {
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         // findIdentifierPrefix() requires identifier part characters to be a superset of identifier start characters
         val prefix = CompletionUtil.findIdentifierPrefix(
-                parameters.getPosition().getContainingFile(),
-                parameters.getOffset(),
+                parameters.position.containingFile,
+                parameters.offset,
                 StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
                 StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@'))
 
-        if (prefix.length() > 0 && !prefix.startsWith('@')) {
+        if (prefix.length > 0 && !prefix.startsWith('@')) {
             return
         }
         val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
-            resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name().toLowerCase()))
+            resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase()))
         }
     }
 }

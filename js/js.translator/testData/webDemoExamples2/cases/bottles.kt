@@ -72,4 +72,4 @@ fun bottlesOfBeer(count: Int): String =
 // From the std package
 // This is an extension property, i.e. a property that is defined for the
 // type Array<T>, but does not sit inside the class Array
-fun <T> Array<T>.isEmpty() = size() == 0
+fun <T> Array<T>.isEmpty() = size == 0

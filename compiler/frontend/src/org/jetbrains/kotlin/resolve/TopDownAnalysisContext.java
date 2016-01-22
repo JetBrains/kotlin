@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;

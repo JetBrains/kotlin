@@ -4,5 +4,5 @@ fun bar() {
     foo<String>(String::class.java)<caret>
 }
 
-// ELEMENT: "String::class.java"
+// ELEMENT: String
 

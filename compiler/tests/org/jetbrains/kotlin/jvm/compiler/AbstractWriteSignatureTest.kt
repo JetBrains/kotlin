@@ -38,7 +38,7 @@ import java.util.regex.Pattern
 import kotlin.text.Regex
 
 
-public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
+abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
     private var jetCoreEnvironment: KotlinCoreEnvironment? = null
 
     override fun setUp() {
@@ -55,7 +55,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         val ktFile = File(ktFileName)
         val text = FileUtil.loadFile(ktFile, true)
 
-        val psiFile = KotlinTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment!!.project)
+        val psiFile = KotlinTestUtils.createFile(ktFile.name, text, jetCoreEnvironment!!.project)
 
         val outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment!!)
 
@@ -91,7 +91,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         fun check() {
             Assert.assertTrue(classSuitesByClassName.isNotEmpty())
-            classSuitesByClassName.values().forEach { it.check() }
+            classSuitesByClassName.values.forEach { it.check() }
         }
 
     }
@@ -119,8 +119,8 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         private fun checkPackageParts(checker: Checker, classFile: File) {
             // Look for package parts in the same directory.
             // Package part file names for package SomePackage look like SomePackage$<hash>.class.
-            val classDir = classFile.getParentFile()
-            val classLastName = classFile.getName()
+            val classDir = classFile.parentFile
+            val classLastName = classFile.name
             val packageFacadePrefix = classLastName.replace(".class", "\$")
             classDir.listFiles { dir, lastName ->
                 lastName.startsWith(packageFacadePrefix) && lastName.endsWith(".class")
@@ -135,7 +135,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             methodExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
             fieldExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
             Assert.assertTrue(
-                    "Unchecked expectations (${uncheckedExpectations.size()} total):\n  " + uncheckedExpectations.joinToString("\n  "),
+                    "Unchecked expectations (${uncheckedExpectations.size} total):\n  " + uncheckedExpectations.joinToString("\n  "),
                     uncheckedExpectations.isEmpty())
         }
 
@@ -185,7 +185,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         val lines = Files.readLines(ktFile, Charset.forName("utf-8"))
         var lineNo = 0
-        while (lineNo < lines.size()) {
+        while (lineNo < lines.size) {
             val line = lines[lineNo]
             val expectationMatch = expectationRegex.matchExact(line)
 

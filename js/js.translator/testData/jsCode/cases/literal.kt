@@ -5,8 +5,8 @@ package foo
 }
 
 fun <T> assertArrayEquals(expected: Array<T>, actual: Array<T>) {
-    val expectedSize = expected.size()
-    val actualSize = actual.size()
+    val expectedSize = expected.size
+    val actualSize = actual.size
 
     if (expectedSize != actualSize) {
         throw Exception("expected size -- $expectedSize, actual size -- $actualSize")

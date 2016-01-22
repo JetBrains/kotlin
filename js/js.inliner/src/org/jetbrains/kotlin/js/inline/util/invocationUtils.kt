@@ -31,9 +31,9 @@ import com.google.dart.compiler.backend.js.ast.metadata.staticRef
  *
  * @returns `f` for `_.foo.f()` call
  */
-public fun getSimpleName(call: JsInvocation): JsName? {
-    val qualifier = call.getQualifier()
-    return (qualifier as? JsNameRef)?.getName()
+fun getSimpleName(call: JsInvocation): JsName? {
+    val qualifier = call.qualifier
+    return (qualifier as? JsNameRef)?.name
 }
 
 /**
@@ -41,20 +41,20 @@ public fun getSimpleName(call: JsInvocation): JsName? {
  *
  * @returns first name ident (iterating through qualifier chain)
  */
-public fun getSimpleIdent(call: JsInvocation): String? {
-    var qualifier: JsExpression? = call.getQualifier()
+fun getSimpleIdent(call: JsInvocation): String? {
+    var qualifier: JsExpression? = call.qualifier
 
     qualifiers@ while (qualifier != null) {
         when (qualifier) {
             is JsInvocation -> {
                 val callableQualifier = qualifier
-                qualifier = callableQualifier.getQualifier()
+                qualifier = callableQualifier.qualifier
 
                 if (isCallInvocation(callableQualifier)) {
-                    qualifier = (qualifier as? JsNameRef)?.getQualifier()
+                    qualifier = (qualifier as? JsNameRef)?.qualifier
                 }
             }
-            is HasName -> return qualifier.getName()?.getIdent()
+            is HasName -> return qualifier.name?.ident
             else -> break@qualifiers
         }
     }
@@ -67,7 +67,7 @@ public fun getSimpleIdent(call: JsInvocation): String? {
  *
  * Function creator is a function, that creates closure.
  */
-public fun isFunctionCreatorInvocation(invocation: JsInvocation): Boolean {
+fun isFunctionCreatorInvocation(invocation: JsInvocation): Boolean {
     val staticRef = getStaticRef(invocation)
     return when (staticRef) {
         is JsFunction -> isFunctionCreator(staticRef)
@@ -81,11 +81,11 @@ public fun isFunctionCreatorInvocation(invocation: JsInvocation): Boolean {
  * @return true  if invocation is something like `x.call(thisReplacement)`
  *         false otherwise
  */
-public fun isCallInvocation(invocation: JsInvocation): Boolean {
-    val qualifier = invocation.getQualifier() as? JsNameRef
-    val arguments = invocation.getArguments()
+fun isCallInvocation(invocation: JsInvocation): Boolean {
+    val qualifier = invocation.qualifier as? JsNameRef
+    val arguments = invocation.arguments
 
-    return qualifier?.getIdent() == Namer.CALL_FUNCTION && arguments.isNotEmpty()
+    return qualifier?.ident == Namer.CALL_FUNCTION && arguments.isNotEmpty()
 }
 
 /**
@@ -94,7 +94,7 @@ public fun isCallInvocation(invocation: JsInvocation): Boolean {
  * @return true,  if invocation is similar to `something.f()`
  *         false, if invocation is similar to `f()`
  */
-public fun hasCallerQualifier(invocation: JsInvocation): Boolean {
+fun hasCallerQualifier(invocation: JsInvocation): Boolean {
     return getCallerQualifierImpl(invocation) != null
 }
 
@@ -106,18 +106,18 @@ public fun hasCallerQualifier(invocation: JsInvocation): Boolean {
  *
  * @throws AssertionError, if invocation does not have caller qualifier.
  */
-public fun getCallerQualifier(invocation: JsInvocation): JsExpression {
+fun getCallerQualifier(invocation: JsInvocation): JsExpression {
     return getCallerQualifierImpl(invocation) ?:
             throw AssertionError("must check hasQualifier() before calling getQualifier")
 
 }
 
 private fun getCallerQualifierImpl(invocation: JsInvocation): JsExpression? {
-    return (invocation.getQualifier() as? JsNameRef)?.getQualifier()
+    return (invocation.qualifier as? JsNameRef)?.qualifier
 }
 
 private fun getStaticRef(invocation: JsInvocation): JsNode? {
-    val qualifier = invocation.getQualifier()
-    val qualifierName = (qualifier as? HasName)?.getName()
+    val qualifier = invocation.qualifier
+    val qualifierName = (qualifier as? HasName)?.name
     return qualifierName?.staticRef
 }

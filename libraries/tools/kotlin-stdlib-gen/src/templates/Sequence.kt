@@ -47,8 +47,7 @@ fun sequences(): List<GenericFunction> {
 
         // TODO: Drop special case
 
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) {
+        body(CharSequences) {
             """
             if (this is String && isEmpty()) return emptySequence()
             return object : Sequence<T> {

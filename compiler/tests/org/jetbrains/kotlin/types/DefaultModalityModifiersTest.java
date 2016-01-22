@@ -110,7 +110,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(),
                                                             Collections.singleton(aClass.getContainingKtFile())),
                     new BindingTraceContext(),
-                    TargetPlatform.Default.INSTANCE$
+                    TargetPlatform.Default.INSTANCE
             );
 
             return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass, NoLookupLocation.FROM_TEST);

@@ -55,14 +55,14 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     override fun getModule() = myModule!!
 
     fun testMainInTest() {
-        val createResult = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!)
+        val createResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, PluginTestCaseBase.mockJdk())
 
         val runConfiguration = createConfigurationFromMain("some.main")
         val javaParameters = getJavaRunParameters(runConfiguration)
 
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.srcOutputDir))
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.testOutputDir))
+        Assert.assertTrue(javaParameters.classPath.rootDirs.contains(createResult.srcOutputDir))
+        Assert.assertTrue(javaParameters.classPath.rootDirs.contains(createResult.testOutputDir))
 
         fun functionVisitor(function: KtNamedFunction) {
             val options = function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()?.map { it.text.trim().replace("//", "").trim() }?.filter { it.isNotBlank() }?.toList() ?: emptyList()
@@ -111,25 +111,25 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     }
 
     fun testDependencyModuleClasspath() {
-        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!).srcOutputDir
+        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getTestProject().baseDir!!).srcOutputDir
 
-        val moduleWithDependencyDir = runWriteAction { getTestProject().getBaseDir()!!.createChildDirectory(this, "moduleWithDependency") }
+        val moduleWithDependencyDir = runWriteAction { getTestProject().baseDir!!.createChildDirectory(this, "moduleWithDependency") }
 
         val moduleWithDependency = createModule("moduleWithDependency")
-        ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, getTestProjectJdk())
+        ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, testProjectJdk)
 
         val moduleWithDependencySrcDir = configureModule(
                 moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency).srcOutputDir
 
-        ModuleRootModificationUtil.addDependency(moduleWithDependency, getModule())
+        ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
 
         val jetRunConfiguration = createConfigurationFromMain("some.test.main")
         jetRunConfiguration.setModule(moduleWithDependency)
 
         val javaParameters = getJavaRunParameters(jetRunConfiguration)
 
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(dependencyModuleSrcDir))
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(moduleWithDependencySrcDir))
+        Assert.assertTrue(javaParameters.classPath.rootDirs.contains(dependencyModuleSrcDir))
+        Assert.assertTrue(javaParameters.classPath.rootDirs.contains(moduleWithDependencySrcDir))
     }
 
     fun testClassesAndObjects() {
@@ -141,7 +141,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     }
 
     fun testUpdateOnClassRename() {
-        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!)
+        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
@@ -154,7 +154,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     }
 
     fun testUpdateOnPackageRename() {
-        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!)
+        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
@@ -167,7 +167,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     }
 
     private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
-        val baseDir = getTestProject().getBaseDir()!!
+        val baseDir = getTestProject().baseDir!!
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         val srcDir = createModuleResult.srcDir
 
@@ -182,16 +182,16 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                     object : KtTreeVisitorVoid() {
                         override fun visitComment(comment: PsiComment) {
                             val declaration = comment.getStrictParentOfType<KtNamedDeclaration>()!!
-                            val text = comment.getText() ?: return
+                            val text = comment.text ?: return
                             if (!text.startsWith(RUN_PREFIX)) return
 
-                            val expectedClass = text.substring(RUN_PREFIX.length()).trim()
+                            val expectedClass = text.substring(RUN_PREFIX.length).trim()
                             if (expectedClass.isNotEmpty()) expectedClasses.add(expectedClass)
 
                             val dataContext = MapDataContext()
                             dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
                             val context = ConfigurationContext.getFromContext(dataContext)
-                            val actualClass = (context.getConfiguration()?.getConfiguration() as? JetRunConfiguration)?.getRunClass()
+                            val actualClass = (context.configuration?.configuration as? JetRunConfiguration)?.runClass
                             if (actualClass != null) {
                                 actualClasses.add(actualClass)
                             }
@@ -213,18 +213,18 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): JetRunConfiguration {
         val obj = KotlinFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
-        val mainFunction = obj.getDeclarations().single { it is KtFunction && it.getName() == "main" }
+        val mainFunction = obj.declarations.single { it is KtFunction && it.getName() == "main" }
         return createConfigurationFromElement(mainFunction, save) as JetRunConfiguration
     }
 
-    private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = getModule()): CreateModuleResult {
+    private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
         val srcPath = moduleDir + "/src"
-        val srcDir = PsiTestUtil.createTestProjectStructure(getProject(), configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
+        val srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
 
         val testPath = moduleDir + "/test"
         if (File(testPath).exists()) {
-            val testDir = PsiTestUtil.createTestProjectStructure(getProject(), configModule, testPath, PlatformTestCase.myFilesToDelete, false)
-            PsiTestUtil.addSourceRoot(getModule(), testDir, true)
+            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, PlatformTestCase.myFilesToDelete, false)
+            PsiTestUtil.addSourceRoot(module, testDir, true)
         }
 
         val (srcOutDir, testOutDir) = runWriteAction {
@@ -232,8 +232,8 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
             val srcOutDir = outDir.createChildDirectory(this, "production")
             val testOutDir = outDir.createChildDirectory(this, "test")
 
-            PsiTestUtil.setCompilerOutputPath(configModule, srcOutDir.getUrl(), false)
-            PsiTestUtil.setCompilerOutputPath(configModule, testOutDir.getUrl(), true)
+            PsiTestUtil.setCompilerOutputPath(configModule, srcOutDir.url, false)
+            PsiTestUtil.setCompilerOutputPath(configModule, testOutDir.url, true)
 
             Pair(srcOutDir, testOutDir)
         }
@@ -243,7 +243,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
         return CreateModuleResult(configModule, srcDir, srcOutDir, testOutDir)
     }
 
-    private fun moduleDirPath(moduleName: String) = "${getTestDataPath()}${getTestName(false)}/$moduleName"
+    private fun moduleDirPath(moduleName: String) = "${testDataPath}${getTestName(false)}/$moduleName"
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/"
     override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()

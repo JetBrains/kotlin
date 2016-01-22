@@ -23,14 +23,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
 import java.util.*
 
-public class KotlinImportOptimizer() : ImportOptimizer {
+class KotlinImportOptimizer() : ImportOptimizer {
 
     override fun supports(file: PsiFile?) = file is KtFile
 
@@ -52,7 +52,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
     }
 
     private class OptimizeProcess(private val file: KtFile) {
-        public fun execute() {
+        fun execute() {
             val oldImports = file.importDirectives
             if (oldImports.isEmpty()) return
 
@@ -70,7 +70,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         private val _descriptors = HashSet<DeclarationDescriptor>()
         private val currentPackageName = file.packageFqName
 
-        public val descriptors: Set<DeclarationDescriptor>
+        val descriptors: Set<DeclarationDescriptor>
             get() = _descriptors
 
         override fun visitElement(element: PsiElement) {
@@ -145,13 +145,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
     }
 
     companion object {
-        public fun collectDescriptorsToImport(file: KtFile): Set<DeclarationDescriptor> {
+        fun collectDescriptorsToImport(file: KtFile): Set<DeclarationDescriptor> {
             val visitor = CollectUsedDescriptorsVisitor(file)
             file.accept(visitor)
             return visitor.descriptors
         }
 
-        public fun prepareOptimizedImports(
+        fun prepareOptimizedImports(
                 file: KtFile,
                 descriptorsToImport: Collection<DeclarationDescriptor>
         ): List<ImportPath>? {
@@ -239,13 +239,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             }
 
             //TODO: drop unused aliases?
-            aliasImports.mapTo(importsToGenerate) { ImportPath(it.getValue(), false, it.getKey())}
+            aliasImports.mapTo(importsToGenerate) { ImportPath(it.value, false, it.key)}
 
             val sortedImportsToGenerate = importsToGenerate.sortedWith(importInsertHelper.importSortComparator)
 
             // check if no changes to imports required
             val oldImports = file.importDirectives
-            if (oldImports.size() == sortedImportsToGenerate.size() && oldImports.map { it.importPath } == sortedImportsToGenerate) return null
+            if (oldImports.size == sortedImportsToGenerate.size && oldImports.map { it.importPath } == sortedImportsToGenerate) return null
 
             return sortedImportsToGenerate
         }
@@ -256,14 +256,14 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             for (import in imports) {
                 val path = import.importPath ?: continue
                 val aliasName = path.alias
-                if (aliasName != null) {
+                if (aliasName != null && aliasName != path.fqnPart().shortName() /* we do not keep trivial aliases */) {
                     aliasImports.put(aliasName, path.fqnPart())
                 }
             }
             return aliasImports
         }
 
-        public fun replaceImports(file: KtFile, imports: List<ImportPath>) {
+        fun replaceImports(file: KtFile, imports: List<ImportPath>) {
             val importList = file.importList!!
             val oldImports = importList.imports
             val psiFactory = KtPsiFactory(file.project)

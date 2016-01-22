@@ -26,15 +26,15 @@ val random = Random()
 
 val HISTORY_LABEL_KEY = Key.create<String>("history label")
 
-public class MakeBackupCompileTask: CompileTask {
+class MakeBackupCompileTask: CompileTask {
     override fun execute(context: CompileContext?): Boolean {
-        val project = context!!.getProject()!!
+        val project = context!!.project!!
 
         val localHistory = LocalHistory.getInstance()!!
         val label = HISTORY_LABEL_PREFIX + Integer.toHexString(random.nextInt())
         localHistory.putSystemLabel(project, label)
 
-        context.getCompileScope()!!.putUserData(HISTORY_LABEL_KEY, label)
+        context.compileScope!!.putUserData(HISTORY_LABEL_KEY, label)
 
         return true
     }

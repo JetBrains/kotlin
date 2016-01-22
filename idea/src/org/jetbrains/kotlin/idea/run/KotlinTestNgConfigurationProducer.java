@@ -33,10 +33,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.theoryinpractice.testng.configuration.TestNGConfiguration;
 import com.theoryinpractice.testng.configuration.TestNGConfigurationProducer;
 import com.theoryinpractice.testng.util.TestNGUtil;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
@@ -44,7 +43,14 @@ import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
 
+import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
+
 public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProducer {
+    @Override
+    public boolean shouldReplace(ConfigurationFromContext self, ConfigurationFromContext other) {
+        return other.isProducedBy(TestNGConfigurationProducer.class);
+    }
+
     @Override
     protected boolean setupConfigurationFromContext(
             TestNGConfiguration configuration, ConfigurationContext context, Ref<PsiElement> sourceElement
@@ -83,7 +89,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
             KtElement owner = PsiTreeUtil.getParentOfType(function, KtFunction.class, KtClass.class);
 
             if (owner instanceof KtClass) {
-                PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((KtClass) owner);
+                PsiClass delegate = toLightClass((KtClass) owner);
                 if (delegate != null) {
                     for (PsiMethod method : delegate.getMethods()) {
                         if (method.getNavigationElement() == function) {
@@ -98,7 +104,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
         }
 
         if (declarationToRun instanceof KtClass) {
-            PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((KtClassOrObject) declarationToRun);
+            PsiClass delegate = toLightClass((KtClassOrObject) declarationToRun);
             if (!isTestNGClass(delegate)) {
                 return false;
             }

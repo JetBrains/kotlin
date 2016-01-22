@@ -27,15 +27,14 @@ import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
+class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {
         if (node !is KotlinStructureViewElement) return listOf()
 
-        val element = node.getElement()
+        val element = node.element
         if (element !is KtClassOrObject) return listOf()
 
-        @Suppress("USELESS_CAST") // KT-3996 Workaround
-        val project = (element as NavigatablePsiElement).getProject()
+        val project = element.project
 
         val context = element.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element]

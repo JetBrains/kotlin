@@ -62,16 +62,14 @@ private fun String.getRootLength(): Int {
  *
  * @return string representing the root for this file, or empty string is this file name is relative.
  */
-@Deprecated("This property has unclear semantics and will become internal soon.")
-public val File.rootName: String
+internal val File.rootName: String
     get() = path.substring(0, path.getRootLength())
 
 /**
  * Returns root component of this abstract name, like / from /home/user, or C:\ from C:\file.tmp,
  * or //my.host/home for //my.host/home/user
  */
-@Deprecated("This property has unclear semantics and will become internal soon.")
-public val File.root: File
+internal val File.root: File
     get() = File(rootName)
 
 /**
@@ -89,15 +87,8 @@ public val File.isRooted: Boolean
  * @property segments the list of [File] objects representing every directory in the path to the file,
  *     up to an including the file itself.
  */
-@Deprecated("FilePathComponents has unclear semantics and will become internal soon.")
-public data class FilePathComponents
+internal data class FilePathComponents
     internal constructor(public val root: File, public val segments: List<File>) {
-
-    @Deprecated("This constructor will be removed soon. Use File.toComponents() extension to create an instance of FilePathComponents.")
-    constructor (rootName: String, fileList: List<File>): this(File(rootName), fileList)
-
-    @Deprecated("Use 'segments' property instead.", ReplaceWith("segments"))
-    public val fileList: List<File> get() = segments
 
     /**
      *  Returns a string representing the root for this file, or an empty string is this file name is relative.
@@ -113,9 +104,6 @@ public data class FilePathComponents
      * Returns the number of elements in the path to the file.
      */
     public val size: Int get() = segments.size
-
-    @Deprecated("Use 'size' property instead.", ReplaceWith("size"))
-    public fun size(): Int = size
 
     /**
      * Returns a sub-path of the path, starting with the directory at the specified [beginIndex] and up
@@ -142,9 +130,6 @@ internal fun File.toComponents(): FilePathComponents {
     return FilePathComponents(File(rootName), list)
 }
 
-@Deprecated("FilePathComponents has unclear semantics and will become internal soon.")
-public fun File.filePathComponents(): FilePathComponents = toComponents()
-
 /**
  * Returns a relative pathname which is a subsequence of this pathname,
  * beginning from component [beginIndex], inclusive,
@@ -155,5 +140,4 @@ public fun File.filePathComponents(): FilePathComponents = toComponents()
 * or [endIndex] is greater than existing number of components,
 * or [beginIndex] is greater than [endIndex].
  */
-@Deprecated("This function can fail since path segment count isn't known in advance.")
-public fun File.subPath(beginIndex: Int, endIndex: Int): File = toComponents().subPath(beginIndex, endIndex)
+internal fun File.subPath(beginIndex: Int, endIndex: Int): File = toComponents().subPath(beginIndex, endIndex)

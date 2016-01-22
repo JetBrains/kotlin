@@ -28,9 +28,9 @@ fun renderDataFlowValue(value: DataFlowValue): String? {
 
     fun renderId(id: Any?): String? {
         return when (id) {
-            is KtExpression -> id.getText()
-            is ImplicitReceiver -> "this@${id.declarationDescriptor.getName()}"
-            is VariableDescriptor -> id.getName().asString()
+            is KtExpression -> id.text
+            is ImplicitReceiver -> "this@${id.declarationDescriptor.name}"
+            is VariableDescriptor -> id.name.asString()
             is PackageViewDescriptor -> id.fqName.asString()
             is com.intellij.openapi.util.Pair<*, *> -> renderId(id.first) + "." + renderId(id.second)
             else -> null

@@ -4,7 +4,7 @@ import java.util.AbstractList
 
 class MyList<T>(vararg val data: T) : AbstractList<T>() {
     override fun get(index: Int) = data[index]
-    override val size: Int get() = data.size()
+    override val size: Int get() = data.size
 }
 
 fun <T> test(expected: String, list: List<T>) {

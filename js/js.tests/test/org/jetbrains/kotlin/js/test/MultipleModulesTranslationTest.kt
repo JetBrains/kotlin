@@ -28,7 +28,7 @@ import java.io.File
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
-public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
+abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
 
     private val MAIN_MODULE_NAME: String = "main"
     private var dependencies: Map<String, List<String>>? = null
@@ -75,7 +75,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         val dirName = getTestName(true)
         assert(dependencies != null) { "dependencies should not be null" }
 
-        for (moduleName in dependencies!!.keySet()) {
+        for (moduleName in dependencies!!.keys) {
             if (moduleName != MAIN_MODULE_NAME) {
                 result.add(getOutputFilePath(getModuleDirectoryName(dirName, moduleName), ecmaVersion))
             }
@@ -86,13 +86,13 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
 
     private fun readModuleDependencies(testDataDir: String): Map<String, List<String>> {
         val dependenciesTxt = upsearchFile(testDataDir, "dependencies.txt")
-        assert(dependenciesTxt.isFile()) { "moduleDependencies should not be null" }
+        assert(dependenciesTxt.isFile) { "moduleDependencies should not be null" }
 
         val result = LinkedHashMap<String, List<String>>()
         for (line in dependenciesTxt.readLines()) {
             val split = line.split("->")
             val module = split[0]
-            val dependencies = if (split.size() > 1) split[1] else ""
+            val dependencies = if (split.size > 1) split[1] else ""
             val dependencyList = dependencies.split(",").filterNot { it.isEmpty() }
 
             result[module] = dependencyList
@@ -105,7 +105,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         var dir: File? = File(startingDir)
         var file = File(dir, name)
 
-        while (dir != null && dir.isDirectory() && !file.isFile()) {
+        while (dir != null && dir.isDirectory && !file.isFile) {
             dir = dir.parentFile
             file = File(dir, name)
         }

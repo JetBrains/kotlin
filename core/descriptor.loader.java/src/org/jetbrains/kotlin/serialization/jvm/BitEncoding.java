@@ -21,7 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.serialization.jvm.UtfEncodingKt.MAX_UTF8_INFO_LENGTH;
+
 public class BitEncoding {
+    private static final boolean FORCE_8TO7_ENCODING = "true".equals(System.getProperty("kotlin.jvm.serialization.use8to7"));
+
+    private static final char _8TO7_MODE_MARKER = (char) -1;
+
     private BitEncoding() {
     }
 
@@ -34,6 +40,10 @@ public class BitEncoding {
      */
     @NotNull
     public static String[] encodeBytes(@NotNull byte[] data) {
+        // TODO: try both encodings here and choose the best one (with the smallest size)
+        if (!FORCE_8TO7_ENCODING) {
+            return UtfEncodingKt.bytesToStrings(data);
+        }
         byte[] bytes = encode8to7(data);
         // Since 0x0 byte is encoded as two bytes in the Modified UTF-8 (0xc0 0x80) and zero is rather common to byte arrays, we increment
         // every byte by one modulo max byte value, so that the less common value 0x7f will be represented as two bytes instead.
@@ -105,9 +115,6 @@ public class BitEncoding {
         }
     }
 
-    // The maximum possible length of the byte array in the CONSTANT_Utf8_info structure in the bytecode, as per JVMS7 4.4.7
-    private static final int MAX_UTF8_INFO_LENGTH = 65535;
-
     /**
      * Converts a big byte array into the array of strings, where each string, when written to the constant pool table in bytecode, produces
      * a byte array of not more than MAX_UTF8_INFO_LENGTH. Each byte, except those which are 0x0, occupies exactly one byte in the constant
@@ -124,15 +131,25 @@ public class BitEncoding {
         // The offset where the currently processed string starts
         int off = 0;
 
-        // The effective length the bytes of the current string would occupy in the constant pool table
-        int len = 0;
+        // The effective length the bytes of the current string would occupy in the constant pool table.
+        // 2 because the first char is -1 which denotes the encoding mode and occupies two bytes in Modified UTF-8
+        int len = 2;
+
+        boolean encodingModeAdded = false;
 
         for (int i = 0, n = data.length; i < n; i++) {
             // When the effective length reaches at least MAX - 1, we add the current string to the result. Note that the effective length
             // is at most MAX here: non-zero bytes occupy 1 byte and zero bytes occupy 2 bytes, so we couldn't jump over more than one byte
             if (len >= MAX_UTF8_INFO_LENGTH - 1) {
                 assert len <= MAX_UTF8_INFO_LENGTH : "Produced strings cannot contain more than " + MAX_UTF8_INFO_LENGTH + " bytes: " + len;
-                result.add(new String(data, off, i - off));
+                String string = new String(data, off, i - off);
+                if (!encodingModeAdded) {
+                    encodingModeAdded = true;
+                    result.add(_8TO7_MODE_MARKER + string);
+                }
+                else {
+                    result.add(string);
+                }
                 off = i;
                 len = 0;
             }
@@ -157,10 +174,29 @@ public class BitEncoding {
      */
     @NotNull
     public static byte[] decodeBytes(@NotNull String[] data) {
+        if (data.length > 0 && !data[0].isEmpty()) {
+            char possibleMarker = data[0].charAt(0);
+            if (possibleMarker == UtfEncodingKt.UTF8_MODE_MARKER) {
+                return UtfEncodingKt.stringsToBytes(dropMarker(data));
+            }
+            if (possibleMarker == _8TO7_MODE_MARKER) {
+                data = dropMarker(data);
+            }
+        }
+
         byte[] bytes = combineStringArrayIntoBytes(data);
         // Adding 0x7f modulo max byte value is equivalent to subtracting 1 the same modulo, which is inverse to what happens in encodeBytes
         addModuloByte(bytes, 0x7f);
         return decode7to8(bytes);
+    }
+
+    @NotNull
+    private static String[] dropMarker(@NotNull String[] data) {
+        // Clone because the clients should be able to use the passed array for their own purposes.
+        // This is cheap because the size of the array is 1 or 2 almost always.
+        String[] result = data.clone();
+        result[0] = result[0].substring(1);
+        return result;
     }
 
     /**
@@ -170,7 +206,7 @@ public class BitEncoding {
     private static byte[] combineStringArrayIntoBytes(@NotNull String[] data) {
         int resultLength = 0;
         for (String s : data) {
-            assert s.length() <= MAX_UTF8_INFO_LENGTH : "Too long string: " + s.length();
+            assert s.length() <= MAX_UTF8_INFO_LENGTH : "String is too long: " + s.length();
             resultLength += s.length();
         }
 

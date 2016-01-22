@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
     val s1: String? = "a"
     val s2: String? = null
     //Breakpoint!
-    args.size()
+    args.size
 }
 
 // EXPRESSION: s1.length
