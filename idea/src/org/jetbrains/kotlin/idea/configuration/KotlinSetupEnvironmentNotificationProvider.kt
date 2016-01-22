@@ -69,6 +69,10 @@ class KotlinSetupEnvironmentNotificationProvider(
         }
 
         val module = ModuleUtilCore.findModuleForPsiElement(psiFile) ?: return null
+        if (!ModuleRootManager.getInstance(module).fileIndex.isInSourceContent(file)) {
+            return null
+        }
+
         if (ModuleRootManager.getInstance(module).sdk == null) {
             return createSetupSdkPanel(myProject, psiFile)
         }
