@@ -18,31 +18,25 @@ package org.jetbrains.kotlin.idea.core
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
 internal class TypesWithContainsDetector(
         private val scope: LexicalScope,
-        private val argumentType: KotlinType,
-        private val resolutionFacade: ResolutionFacade
+        private val argumentType: KotlinType
 ) {
     private val cache = HashMap<FuzzyType, Boolean>()
-    private val containsName = Name.identifier("contains")
-    private val booleanType = resolutionFacade.moduleDescriptor.builtIns.booleanType
-    private val heuristicSignatures = resolutionFacade.ideService<HeuristicSignatures>()
 
     private val typesWithExtensionContains: Collection<KotlinType> = scope
-            .collectFunctions(containsName, NoLookupLocation.FROM_IDE)
+            .collectFunctions(OperatorNameConventions.CONTAINS, NoLookupLocation.FROM_IDE)
             .filter { it.extensionReceiverParameter != null && isGoodContainsFunction(it, listOf()) }
             .map { it.extensionReceiverParameter!!.type }
 
@@ -52,15 +46,14 @@ internal class TypesWithContainsDetector(
 
     private fun hasContainsNoCache(type: FuzzyType): Boolean {
         return type.nullability() != TypeNullability.NULLABLE &&
-               type.type.memberScope.getContributedFunctions(containsName, NoLookupLocation.FROM_IDE).any { isGoodContainsFunction(it, type.freeParameters) }
+               type.type.memberScope.getContributedFunctions(OperatorNameConventions.CONTAINS, NoLookupLocation.FROM_IDE).any { isGoodContainsFunction(it, type.freeParameters) }
                || typesWithExtensionContains.any { type.checkIsSubtypeOf(it) != null }
     }
 
     private fun isGoodContainsFunction(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
-        if (!TypeUtils.equalTypes(function.returnType!!, booleanType)) return false
-        val parameter = function.valueParameters.singleOrNull() ?: return false
-        val parameterType = heuristicSignatures.correctedParameterType(function, parameter) ?: parameter.type
-        val fuzzyParameterType = FuzzyType(parameterType, function.typeParameters + freeTypeParams)
+        if (!function.isValidOperator()) return false
+        val parameter = function.valueParameters.single()
+        val fuzzyParameterType = FuzzyType(parameter.type, function.typeParameters + freeTypeParams)
         return fuzzyParameterType.checkIsSuperTypeOf(argumentType) != null
     }
 }

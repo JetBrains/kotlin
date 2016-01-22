@@ -1,5 +1,5 @@
 interface X<T> {
-    fun contains(t: T): Boolean
+    operator fun contains(t: T): Boolean
 }
 
 interface A {

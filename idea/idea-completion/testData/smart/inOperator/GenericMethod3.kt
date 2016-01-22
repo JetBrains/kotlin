@@ -1,6 +1,6 @@
 interface X<T>
 
-fun<T> X<T>.contains(t: T): Boolean
+operator fun<T> X<T>.contains(t: T): Boolean = true
 
 interface A {
     fun<T> createX(t: T): X<T>

@@ -586,7 +586,7 @@ class ExpectedInfos(
 
         val leftOperandType = binaryExpression.left?.let { bindingContext.getType(it) } ?: return null
         val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
-        val detector = TypesWithContainsDetector(scope, leftOperandType, resolutionFacade)
+        val detector = TypesWithContainsDetector(scope, leftOperandType)
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
