@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.types.*;
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.types.*;
 import java.util.*;
 
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
+import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 
 public class SingleAbstractMethodUtils {
     private SingleAbstractMethodUtils() {
@@ -53,38 +55,6 @@ public class SingleAbstractMethodUtils {
         return abstractMembers;
     }
 
-    private static KotlinType fixProjections(@NotNull KotlinType functionType) {
-        //removes redundant projection kinds and detects conflicts
-
-        List<TypeParameterDescriptor> typeParameters = functionType.getConstructor().getParameters();
-        List<TypeProjection> arguments = new ArrayList<TypeProjection>(typeParameters.size());
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            Variance variance = typeParameter.getVariance();
-            TypeProjection argument = functionType.getArguments().get(typeParameter.getIndex());
-            Variance kind = argument.getProjectionKind();
-            if (kind != INVARIANT && variance != INVARIANT) {
-                if (kind == variance) {
-                    arguments.add(new TypeProjectionImpl(argument.getType()));
-                }
-                else {
-                    return null;
-                }
-            }
-            else {
-                 arguments.add(argument);
-            }
-        }
-        ClassifierDescriptor classifier = functionType.getConstructor().getDeclarationDescriptor();
-        assert classifier instanceof ClassDescriptor : "Not class: " + classifier;
-        return KotlinTypeImpl.create(
-                functionType.getAnnotations(),
-                functionType.getConstructor(),
-                functionType.isMarkedNullable(),
-                arguments,
-                ((ClassDescriptor) classifier).getMemberScope(arguments)
-        );
-    }
-
     @Nullable
     public static KotlinType getFunctionTypeForSamType(@NotNull KotlinType samType) {
         // e.g. samType == Comparator<String>?
@@ -95,13 +65,13 @@ public class SingleAbstractMethodUtils {
             KotlinType functionTypeDefault = ((JavaClassDescriptor) classifier).getFunctionTypeForSamInterface();
 
             if (functionTypeDefault != null) {
+                KotlinType noProjectionsSamType = SingleAbstractMethodUtilsKt.nonProjectionParametrization(samType);
+                if (noProjectionsSamType == null) return null;
+
                 // Function2<String, String, Int>?
-                KotlinType substitute = TypeSubstitutor.create(samType).substitute(functionTypeDefault, Variance.INVARIANT);
-
-                if (substitute == null) return null;
-
-                KotlinType type = fixProjections(substitute);
-                if (type == null) return null;
+                KotlinType type = TypeSubstitutor.create(noProjectionsSamType).substitute(functionTypeDefault, IN_VARIANCE);
+                assert type != null : "Substitution based on type with no projections '" + noProjectionsSamType +
+                                      "' should not end with conflict";
 
                 if (FlexibleTypesKt.isNullabilityFlexible(samType)) {
                     return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(type, TypeUtils.makeNullable(type));
