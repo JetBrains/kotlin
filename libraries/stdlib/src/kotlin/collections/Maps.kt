@@ -232,30 +232,22 @@ public operator fun <K, V> MutableMap<K, V>.iterator(): MutableIterator<MutableM
  * Populates the given `destination` [Map] with entries having the keys of this map and the values obtained
  * by applying the `transform` function to each entry in this [Map].
  */
-public inline fun <K, V, R, C : MutableMap<K, R>> Map<K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
-    for (e in this) {
-        val newValue = transform(e)
-        destination.put(e.key, newValue)
-    }
-    return destination
+public inline fun <K, V, R, C : MutableMap<in K, in R>> Map<K, V>.mapValuesTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
+    return entries.associateByTo(destination, { it.key }, { transform(it) })
 }
 
 /**
  * Populates the given `destination` [Map] with entries having the keys obtained
  * by applying the `transform` function to each entry in this [Map] and the values of this map.
  */
-public inline fun <K, V, R, C : MutableMap<R, V>> Map<K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
-    for (e in this) {
-        val newKey = transform(e)
-        destination.put(newKey, e.value)
-    }
-    return destination
+public inline fun <K, V, R, C : MutableMap<in R, in V>> Map<K, V>.mapKeysTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
+    return entries.associateByTo(destination, { transform(it) }, { it.value })
 }
 
 /**
  * Puts all the given [pairs] into this [MutableMap] with the first component in the pair being the key and the second the value.
  */
-public fun <K, V> MutableMap<K, V>.putAll(pairs: Array<out Pair<K, V>>): Unit {
+public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Array<out Pair<K, V>>): Unit {
     for ((key, value) in pairs) {
         put(key, value)
     }
@@ -264,7 +256,7 @@ public fun <K, V> MutableMap<K, V>.putAll(pairs: Array<out Pair<K, V>>): Unit {
 /**
  * Puts all the elements of the given collection into this [MutableMap] with the first component in the pair being the key and the second the value.
  */
-public fun <K, V> MutableMap<K, V>.putAll(pairs: Iterable<Pair<K,V>>): Unit {
+public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Iterable<Pair<K,V>>): Unit {
     for ((key, value) in pairs) {
         put(key, value)
     }
@@ -273,7 +265,7 @@ public fun <K, V> MutableMap<K, V>.putAll(pairs: Iterable<Pair<K,V>>): Unit {
 /**
  * Puts all the elements of the given sequence into this [MutableMap] with the first component in the pair being the key and the second the value.
  */
-public fun <K, V> MutableMap<K, V>.putAll(pairs: Sequence<Pair<K,V>>): Unit {
+public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K,V>>): Unit {
     for ((key, value) in pairs) {
         put(key, value)
     }
@@ -331,7 +323,7 @@ public inline fun <K, V> Map<K, V>.filterValues(predicate: (V) -> Boolean): Map<
  *
  * @return the destination map.
  */
-public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
     for (element in this) {
         if (predicate(element)) {
             destination.put(element.key, element.value)
@@ -352,7 +344,7 @@ public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolea
  *
  * @return the destination map.
  */
-public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterNotTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+public inline fun <K, V, C : MutableMap<in K, in V>> Map<K, V>.filterNotTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
     for (element in this) {
         if (!predicate(element)) {
             destination.put(element.key, element.value)
@@ -371,21 +363,37 @@ public inline fun <K, V> Map<K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boo
 /**
  * Returns a new map containing all key-value pairs from the given collection of pairs.
  */
-public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V>
-        = LinkedHashMap<K, V>(collectionSizeOrNull()?.let { mapCapacity(it) } ?: 16).apply { putAll(this@toMap) }
+public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> = toMap(LinkedHashMap<K, V>(collectionSizeOrNull()?.let { mapCapacity(it) } ?: 16))
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs from the given collection of pairs.
+ */
+public fun <K, V, M : MutableMap<in K, in V>> Iterable<Pair<K, V>>.toMap(destination: M): M
+        = destination.apply { putAll(this@toMap) }
 
 /**
  * Returns a new map containing all key-value pairs from the given array of pairs.
  */
-public fun <K, V> Array<out Pair<K, V>>.toMap(): Map<K, V>
-        = LinkedHashMap<K, V>(mapCapacity(size)).apply { putAll(this@toMap) }
+public fun <K, V> Array<out Pair<K, V>>.toMap(): Map<K, V> = toMap(LinkedHashMap<K, V>(mapCapacity(size)))
+
+/**
+ *  Populates and returns the [destination] mutable map with key-value pairs from the given array of pairs.
+ */
+public fun <K, V, M : MutableMap<in K, in V>> Array<out Pair<K, V>>.toMap(destination: M): M
+        = destination.apply { putAll(this@toMap) }
 
 /**
  * Returns a new map containing all key-value pairs from the given sequence of pairs.
  */
 
-public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V>
-        = LinkedHashMap<K, V>().apply { putAll(this@toMap) }
+public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V> = toMap(LinkedHashMap<K, V>())
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs from the given sequence of pairs.
+ */
+
+public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destination: M): M
+        = destination.apply { putAll(this@toMap) }
 
 /**
  * Converts this [Map] to a [LinkedHashMap], maintaining the insertion order of elements added to that map afterwards.
@@ -427,35 +435,35 @@ public operator fun <K, V> Map<K, V>.plus(map: Map<K, V>): Map<K, V>
 /**
  * Appends or replaces the given [pair] in this mutable map.
  */
-public operator fun <K, V> MutableMap<K, V>.plusAssign(pair: Pair<K, V>) {
+public operator fun <K, V> MutableMap<in K, in V>.plusAssign(pair: Pair<K, V>) {
     put(pair.first, pair.second)
 }
 
 /**
  * Appends or replaces all pairs from the given collection of [pairs] in this mutable map.
  */
-public operator fun <K, V> MutableMap<K, V>.plusAssign(pairs: Iterable<Pair<K, V>>) {
+public operator fun <K, V> MutableMap<in K, in V>.plusAssign(pairs: Iterable<Pair<K, V>>) {
     putAll(pairs)
 }
 
 /**
  * Appends or replaces all pairs from the given array of [pairs] in this mutable map.
  */
-public operator fun <K, V> MutableMap<K, V>.plusAssign(pairs: Array<out Pair<K, V>>) {
+public operator fun <K, V> MutableMap<in K, in V>.plusAssign(pairs: Array<out Pair<K, V>>) {
     putAll(pairs)
 }
 
 /**
  * Appends or replaces all pairs from the given sequence of [pairs] in this mutable map.
  */
-public operator fun <K, V> MutableMap<K, V>.plusAssign(pairs: Sequence<Pair<K, V>>) {
+public operator fun <K, V> MutableMap<in K, in V>.plusAssign(pairs: Sequence<Pair<K, V>>) {
     putAll(pairs)
 }
 
 /**
  * Appends or replaces all entries from the given [map] in this mutable map.
  */
-public operator fun <K, V> MutableMap<K, V>.plusAssign(map: Map<K, V>) {
+public operator fun <K, V> MutableMap<in K, in V>.plusAssign(map: Map<K, V>) {
     putAll(map)
 }
 
