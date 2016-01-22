@@ -170,8 +170,16 @@ public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
  *
  * @sample test.collections.MapTest.getOrElse
  */
-@Deprecated("This function will change its behavior soon not to distinguish missing keys and keys mapped to nulls. To stick with the new behavior you can use get(key) with ?: operator after instead.")
 public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
+    val value = get(key)
+    if (value == null) {
+        return defaultValue()
+    } else {
+        return value
+    }
+}
+
+internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () -> V): V {
     val value = get(key)
     if (value == null && !containsKey(key)) {
         return defaultValue()
@@ -179,6 +187,8 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
         return value as V
     }
 }
+
+
 
 /**
  * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,

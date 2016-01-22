@@ -20,6 +20,10 @@ class MapTest {
         val empty = mapOf<String, Int?>()
         val c = empty.getOrElse("") { null }
         assertEquals(null, c)
+
+        val nullable = mapOf(1 to null)
+        val d = nullable.getOrElse(1) { "x" }
+        assertEquals("x", d)
     }
 
     @test fun getOrImplicitDefault() {
