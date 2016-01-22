@@ -356,42 +356,67 @@ class FilesTest {
     @test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
-        srcFile.writeText("Hello, World!")
-        assertFailsWith(FileAlreadyExistsException::class) {
-            srcFile.copyTo(dstFile)
+        try {
+            srcFile.writeText("Hello, World!")
+            assertFailsWith(FileAlreadyExistsException::class, "copy do not overwrite existing file") {
+                srcFile.copyTo(dstFile)
+            }
+
+            var len = srcFile.copyTo(dstFile, overwrite = true)
+            assertEquals(13L, len)
+            assertEquals(srcFile.readText(), dstFile.readText(Charsets.UTF_8), "copy with overwrite over existing file")
+
+            assertTrue(dstFile.delete())
+            len = srcFile.copyTo(dstFile)
+            assertEquals(13L, len)
+            assertEquals(srcFile.readText(Charsets.UTF_8), dstFile.readText(), "copy to new file")
+
+            assertTrue(dstFile.delete())
+            dstFile.mkdir()
+            val child = File(dstFile, "child")
+            child.createNewFile()
+            assertFailsWith(FileAlreadyExistsException::class, "copy with overwrite do not overwrite non-empty dir") {
+                srcFile.copyTo(dstFile, overwrite = true)
+            }
+            child.delete()
+
+            srcFile.copyTo(dstFile, overwrite = true)
+            assertEquals(srcFile.readText(), dstFile.readText(), "copy with overwrite over empty dir")
+
+            assertTrue(srcFile.delete())
+            assertTrue(dstFile.delete())
+
+            assertFailsWith(NoSuchFileException::class) {
+                srcFile.copyTo(dstFile)
+            }
+
+            srcFile.mkdir()
+            srcFile.resolve("somefile").writeText("some content")
+            dstFile.writeText("")
+            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite file") {
+                srcFile.copyTo(dstFile)
+            }
+            srcFile.copyTo(dstFile, overwrite = true)
+            assertTrue(dstFile.isDirectory)
+            assertTrue(dstFile.listFiles()!!.isEmpty(), "only directory is copied, but not its content")
+
+            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite dir") {
+                srcFile.copyTo(dstFile)
+            }
+
+            srcFile.copyTo(dstFile, overwrite = true)
+            assertTrue(dstFile.isDirectory)
+            assertTrue(dstFile.listFiles()!!.isEmpty(), "only directory is copied, but not its content")
+
+            dstFile.resolve("somefile2").writeText("some content2")
+            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite dir") {
+                srcFile.copyTo(dstFile, overwrite = true)
+            }
         }
-
-        var len = srcFile.copyTo(dstFile, overwrite = true)
-        assertEquals(13L, len)
-        assertEquals(srcFile.readText(), dstFile.readText(Charsets.UTF_8))
-
-        assertTrue(dstFile.delete())
-        len = srcFile.copyTo(dstFile)
-        assertEquals(13L, len)
-        assertEquals(srcFile.readText(Charsets.UTF_8), dstFile.readText())
-
-        assertTrue(dstFile.delete())
-        dstFile.mkdir()
-        val child = File(dstFile, "child")
-        child.createNewFile()
-        srcFile.copyTo(dstFile, overwrite = true)
-        assertEquals(13L, len)
-        val copy = dstFile.resolve(srcFile.name)
-        assertEquals(srcFile.readText(), copy.readText())
-
-        assertTrue(srcFile.delete())
-        assertTrue(child.delete() && copy.delete() && dstFile.delete())
-
-        assertFailsWith(NoSuchFileException::class) {
-            srcFile.copyTo(dstFile)
+        finally {
+            srcFile.deleteRecursively()
+            dstFile.deleteRecursively()
         }
-
-        srcFile.mkdir()
-
-        assertFailsWith(IllegalArgumentException::class) {
-            srcFile.copyTo(dstFile)
-        }
-        srcFile.delete()
     }
 
     @test fun copyToNameWithoutParent() {
