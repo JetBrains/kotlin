@@ -72,9 +72,10 @@ class Usage {
             sb.append(" ");
             sb.append(description.value());
         }
-        while (sb.length() < OPTION_NAME_PADDING_WIDTH) {
+        while (sb.length() < OPTION_NAME_PADDING_WIDTH - 1) {
             sb.append(" ");
         }
+        sb.append(" ");
         sb.append(argument.description());
         return sb.toString();
     }
