@@ -8,10 +8,10 @@ public class A<E> {
 
 // FILE: main.kt
 
-class B1(x: List<String>) : A<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><CharSequence><!>("", x)
-class B2(x: List<Int>) : A<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><CharSequence><!>("", x)
+class B1(x: List<String>) : A<CharSequence>("", x)
+class B2(x: List<Int>) : <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>A<CharSequence>("", x)<!>
 
 class C : A<CharSequence> {
-    constructor(x: List<String>) : super("", <!TYPE_MISMATCH(kotlin.collections.\(Mutable\)List<T!>!; kotlin.collections.List<kotlin.String>)!>x<!>)
-    constructor(x: List<Int>, y: Int) : super("", <!TYPE_MISMATCH!>x<!>)
+    constructor(x: List<String>) : super("", x)
+    constructor(x: List<Int>, y: Int) : <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>super<!>("", x)
 }

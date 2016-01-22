@@ -10247,6 +10247,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("superCallImpossibleToInfer.kt")
+                public void testSuperCallImpossibleToInfer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/superCallImpossibleToInfer.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("withClassTypeParameters.kt")
                 public void testWithClassTypeParameters() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/withClassTypeParameters.kt");

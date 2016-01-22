@@ -264,6 +264,24 @@ public class CallMaker {
         return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<KtExpression>emptyList());
     }
 
+
+    @NotNull
+    public static Call makeConstructorCallWithoutTypeArguments(@NotNull KtCallElement callElement) {
+        return new DelegatingCall(makeCall(null, null, callElement)) {
+            @NotNull
+            @Override
+            public List<KtTypeProjection> getTypeArguments() {
+                return Collections.emptyList();
+            }
+
+            @Nullable
+            @Override
+            public KtTypeArgumentList getTypeArgumentList() {
+                return null;
+            }
+        };
+    }
+
     @NotNull
     public static Call makeCall(@Nullable final Receiver explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
         return new Call() {
