@@ -196,8 +196,7 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
  *
  * @sample test.collections.MapTest.getOrPut
  */
-@kotlin.jvm.JvmVersion
-public inline fun <K, V: Any> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     val value = get(key)
     return if (value == null) {
         val answer = defaultValue()
@@ -205,21 +204,6 @@ public inline fun <K, V: Any> MutableMap<K, V>.getOrPut(key: K, defaultValue: ()
         answer
     } else {
         value
-    }
-}
-
-@kotlin.jvm.JvmName("getOrPutNullable")
-@kotlin.jvm.JvmVersion
-@Deprecated("This function will change its behavior soon not to distinguish missing keys and keys mapped to nulls.")
-@kotlin.internal.LowPriorityInOverloadResolution
-public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
-    val value = get(key)
-    return if (value == null && !containsKey(key)) {
-        val answer = defaultValue()
-        put(key, answer)
-        answer
-    } else {
-        value as V
     }
 }
 

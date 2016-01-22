@@ -23,6 +23,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.getOrPutNullable
 import java.util.HashMap
 
 interface KotlinMoveTarget {
@@ -64,7 +65,7 @@ class KotlinMoveTargetForDeferredFile(
 
     override fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiFile? {
         val originalFile = originalPsi.containingFile as? KtFile ?: return null
-        return createdFiles.getOrPut(originalFile) { createFile(originalFile) }
+        return createdFiles.getOrPutNullable(originalFile) { createFile(originalFile) }
     }
 
     override fun getTargetPsiIfExists(originalPsi: PsiElement) = null

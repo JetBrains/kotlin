@@ -41,6 +41,18 @@ fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
     return map
 }
 
+
+public inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> V): V {
+    return if (!containsKey(key)) {
+        val answer = defaultValue()
+        put(key, answer)
+        answer
+    }
+    else {
+        get(key) as V
+    }
+}
+
 inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
 
 inline fun <T> Array<out T>.ifEmpty(body: () -> Array<out T>): Array<out T> = if (isEmpty()) body() else this
