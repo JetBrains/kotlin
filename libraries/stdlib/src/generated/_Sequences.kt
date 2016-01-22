@@ -423,15 +423,12 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
 }
 
 /**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given sequence.
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given sequence.
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
-    val result = LinkedHashMap<K, V>()
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associateTo(LinkedHashMap<K, V>(), transform)
 }
 
 /**
@@ -440,11 +437,7 @@ public inline fun <T, K, V> Sequence<T>.associate(transform: (T) -> Pair<K, V>):
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
-    val result = LinkedHashMap<K, T>()
-    for (element in this) {
-        result.put(keySelector(element), element)
-    }
-    return result
+    return associateByTo(LinkedHashMap<K, T>(), keySelector)
 }
 
 /**
@@ -452,11 +445,45 @@ public inline fun <T, K> Sequence<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
-    val result = LinkedHashMap<K, V>()
+    return associateByTo(LinkedHashMap<K, V>(), keySelector, valueTransform)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given sequence
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K, M : MutableMap<in K, in T>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
-        result.put(keySelector(element), valueTransform(element))
+        destination.put(keySelector(element), element)
     }
-    return result
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given sequence.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
 }
 
 /**

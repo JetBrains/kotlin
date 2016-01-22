@@ -492,16 +492,13 @@ public fun String.reversed(): String {
 }
 
 /**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to characters of the given char sequence.
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to characters of the given char sequence.
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
 /**
@@ -510,12 +507,8 @@ public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>)
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(keySelector(element), element)
-    }
-    return result
+    val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
 
 /**
@@ -523,12 +516,46 @@ public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K,
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each character of the given char sequence
+ * and value is the character itself.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
-        result.put(keySelector(element), valueTransform(element))
+        destination.put(keySelector(element), element)
     }
-    return result
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to characters of the given char sequence.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each character of the given char sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
 }
 
 /**

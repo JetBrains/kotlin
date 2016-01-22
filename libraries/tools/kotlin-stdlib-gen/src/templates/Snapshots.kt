@@ -122,47 +122,56 @@ fun snapshots(): List<GenericFunction> {
         returns("Map<K, V>")
         doc { f ->
             """
-            Returns a [Map] containing key-value pairs provided by [transform] function applied to ${f.element}s of the given ${f.collection}.
+            Returns a [Map] containing key-value pairs provided by [transform] function
+            applied to ${f.element.pluralize()} of the given ${f.collection}.
             If any of two pairs would have the same key the last one gets added to the map.
             """
         }
         body {
             """
-            val capacity = (collectionSizeOrDefault(10)/.75f) + 1
-            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-            for (element in this) {
-                result += transform(element)
-            }
-            return result
+            val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
         }
         body(Sequences) {
             """
-            val result = LinkedHashMap<K, V>()
-            for (element in this) {
-                result += transform(element)
-            }
-            return result
+            return associateTo(LinkedHashMap<K, V>(), transform)
             """
         }
         body(CharSequences) {
             """
-            val capacity = (length/.75f) + 1
-            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-            for (element in this) {
-                result += transform(element)
-            }
-            return result
+            val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = (size/.75f) + 1
-            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+            val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateTo(LinkedHashMap<K, V>(capacity), transform)
+            """
+        }
+    }
+
+    templates add f("associateTo(destination: M, transform: (T) -> Pair<K, V>)") {
+        inline(true)
+        include(CharSequences)
+        typeParam("K")
+        typeParam("V")
+        typeParam("M : MutableMap<in K, in V>")
+        returns("M")
+        doc { f ->
+            """
+            Populates and returns the [destination] mutable map with key-value pairs
+            provided by [transform] function applied to each ${f.element} of the given ${f.collection}.
+            If any of two pairs would have the same key the last one gets added to the map.
+            """
+        }
+        body {
+            """
             for (element in this) {
-                result += transform(element)
+                destination += transform(element)
             }
-            return result
+            return destination
             """
         }
     }
@@ -177,6 +186,7 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("associateBy(keySelector: (T) -> K)") {
         inline(true)
+        include(CharSequences)
         typeParam("K")
         doc { f ->
             """
@@ -194,41 +204,49 @@ fun snapshots(): List<GenericFunction> {
 
         body {
             """
-            val capacity = (collectionSizeOrDefault(10)/.75f) + 1
-            val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
-            for (element in this) {
-                result.put(keySelector(element), element)
-            }
-            return result
+            val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
         }
         body(Sequences) {
             """
-            val result = LinkedHashMap<K, T>()
-            for (element in this) {
-                result.put(keySelector(element), element)
-            }
-            return result
+            return associateByTo(LinkedHashMap<K, T>(), keySelector)
             """
         }
         body(CharSequences) {
             """
-            val capacity = (length/.75f) + 1
-            val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
-            for (element in this) {
-                result.put(keySelector(element), element)
-            }
-            return result
+            val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = (size/.75f) + 1
-            val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
+            val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
+            """
+        }
+    }
+
+    templates add f("associateByTo(destination: M, keySelector: (T) -> K)") {
+        inline(true)
+        include(CharSequences)
+        typeParam("K")
+        typeParam("M : MutableMap<in K, in T>")
+        returns("M")
+        doc { f ->
+            """
+            Populates and returns the [destination] mutable map with key-value pairs,
+            where key is provided by the [keySelector] function applied to each ${f.element} of the given ${f.collection}
+            and value is the ${f.element} itself.
+            If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
+            """
+        }
+        body {
+            """
             for (element in this) {
-                result.put(keySelector(element), element)
+                destination.put(keySelector(element), element)
             }
-            return result
+            return destination
             """
         }
     }
@@ -259,6 +277,7 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("associateBy(keySelector: (T) -> K, valueTransform: (T) -> V)") {
         inline(true)
+        include(CharSequences)
         typeParam("K")
         typeParam("V")
         doc { f ->
@@ -276,41 +295,51 @@ fun snapshots(): List<GenericFunction> {
 
         body {
             """
-            val capacity = (collectionSizeOrDefault(10)/.75f) + 1
-            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-            for (element in this) {
-                result.put(keySelector(element), valueTransform(element))
-            }
-            return result
+            val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
         }
         body(Sequences) {
             """
-            val result = LinkedHashMap<K, V>()
-            for (element in this) {
-                result.put(keySelector(element), valueTransform(element))
-            }
-            return result
+            return associateByTo(LinkedHashMap<K, V>(), keySelector, valueTransform)
             """
         }
         body(CharSequences) {
             """
-            val capacity = (length/.75f) + 1
-            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-            for (element in this) {
-                result.put(keySelector(element), valueTransform(element))
-            }
-            return result
+            val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = (size/.75f) + 1
-            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+            val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+            return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+            """
+        }
+    }
+
+    templates add f("associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V)") {
+        inline(true)
+        include(CharSequences)
+        typeParam("K")
+        typeParam("V")
+        typeParam("M : MutableMap<in K, in V>")
+        returns("M")
+
+        doc { f ->
+            """
+            Populates and returns the [destination] mutable map with key-value pairs,
+            where key is provided by the [keySelector] function and
+            and value is provided by the [valueTransform] function applied to ${f.element.pluralize()} of the given ${f.collection}.
+            If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
+            """
+        }
+        body {
+            """
             for (element in this) {
-                result.put(keySelector(element), valueTransform(element))
+                destination.put(keySelector(element), valueTransform(element))
             }
-            return result
+            return destination
             """
         }
     }
