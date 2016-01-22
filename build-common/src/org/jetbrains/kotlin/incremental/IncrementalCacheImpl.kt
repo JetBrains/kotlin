@@ -62,6 +62,7 @@ open class IncrementalCacheImpl<Target>(
         private val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
         private val SUBTYPES = "subtypes"
         private val SUPERTYPES = "supertypes"
+        private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
@@ -86,6 +87,7 @@ open class IncrementalCacheImpl<Target>(
     private val dirtyOutputClassesMap = registerMap(DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile))
     private val subtypesMap = registerExperimentalMap(SubtypesMap(SUBTYPES.storageFile))
     private val supertypesMap = registerExperimentalMap(SupertypesMap(SUPERTYPES.storageFile))
+    private val classFqNameToSourceMap = registerExperimentalMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile))
 
     private val dependents = arrayListOf<IncrementalCacheImpl<Target>>()
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory: $target" } }
@@ -119,6 +121,8 @@ open class IncrementalCacheImpl<Target>(
 
     fun getSubtypesOf(className: FqName): Sequence<FqName> =
             subtypesMap[className].asSequence()
+
+    fun getSourceFileIfClass(fqName: FqName): File? = classFqNameToSourceMap[fqName]
 
     override fun getClassFilePath(internalClassName: String): String {
         return toSystemIndependentName(File(outputDir, "$internalClassName.class").canonicalPath)
@@ -165,6 +169,7 @@ open class IncrementalCacheImpl<Target>(
                 // because we don't write proto for multifile facades.
                 // As a workaround we can remove proto values for multifile facades.
                 protoMap.remove(className)
+                classFqNameToSourceMap.remove(className.fqNameForClassNameWithoutDollars)
 
                 // TODO NO_CHANGES? (delegates only)
                 constantsMap.process(kotlinClass) +
@@ -180,7 +185,8 @@ open class IncrementalCacheImpl<Target>(
                 additionalProcessChangedClass(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.CLASS -> {
-                addToClassStorage(kotlinClass)
+                assert(sourceFiles.size == 1) { "Class is expected to have only one source file: $sourceFiles" }
+                addToClassStorage(kotlinClass, sourceFiles.first())
 
                 protoMap.process(kotlinClass, isPackage = false) +
                 constantsMap.process(kotlinClass) +
@@ -515,7 +521,22 @@ open class IncrementalCacheImpl<Target>(
         }
     }
 
-    private fun addToClassStorage(kotlinClass: LocalFileKotlinClass) {
+    inner class ClassFqNameToSourceMap(storageFile: File) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
+        operator fun set(fqName: FqName, sourceFile: File) {
+            storage[fqName.asString()] = sourceFile.canonicalPath
+        }
+
+        operator fun get(fqName: FqName): File? =
+                storage[fqName.asString()]?.let(::File)
+
+        fun remove(fqName: FqName) {
+            storage.remove(fqName.asString())
+        }
+
+        override fun dumpValue(value: String) = value
+    }
+
+    private fun addToClassStorage(kotlinClass: LocalFileKotlinClass, srcFile: File) {
         if (!IncrementalCompilation.isExperimental()) return
 
         val classData = JvmProtoBufUtil.readClassDataFrom(kotlinClass.classHeader.data!!, kotlinClass.classHeader.strings!!)
@@ -531,6 +552,7 @@ open class IncrementalCacheImpl<Target>(
         removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
 
         supertypesMap[child] = parents
+        classFqNameToSourceMap[kotlinClass.className.fqNameForClassNameWithoutDollars] = srcFile
     }
 
     private fun removeAllFromClassStorage(removedClasses: Collection<JvmClassName>) {
@@ -558,6 +580,8 @@ open class IncrementalCacheImpl<Target>(
                 cache.subtypesMap.removeValues(parent, removedFqNames)
             }
         }
+
+        removedFqNames.forEach { classFqNameToSourceMap.remove(it) }
     }
 
     private inner class DirtyOutputClassesMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {

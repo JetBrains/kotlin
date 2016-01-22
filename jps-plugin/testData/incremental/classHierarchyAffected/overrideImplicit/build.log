@@ -1,0 +1,23 @@
+Cleaning output files:
+out/production/module/B.class
+End of files
+Compiling files:
+src/B.kt
+End of files
+Cleaning output files:
+out/production/module/BA.class
+End of files
+Compiling files:
+src/BA.kt
+End of files
+COMPILATION FAILED
+Class 'BA' must be declared abstract or implement abstract member public abstract fun f(c: C<kotlin.Any>): kotlin.Unit defined in A
+
+
+Cleaning output files:
+out/production/module/B.class
+End of files
+Compiling files:
+src/B.kt
+src/BA.kt
+End of files

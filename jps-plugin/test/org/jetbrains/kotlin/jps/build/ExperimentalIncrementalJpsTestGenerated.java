@@ -1213,6 +1213,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("overrideExplicit")
+        public void testOverrideExplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/overrideExplicit/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideImplicit")
+        public void testOverrideImplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/overrideImplicit/");
+            doTest(fileName);
+        }
+
         @TestMetadata("packageFacadeToClass")
         public void testPackageFacadeToClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/packageFacadeToClass/");
