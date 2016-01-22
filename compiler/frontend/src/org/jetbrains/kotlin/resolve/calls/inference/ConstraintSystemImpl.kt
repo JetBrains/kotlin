@@ -119,7 +119,7 @@ internal class ConstraintSystemImpl(
                     if (substituteOriginal) variable.originalTypeParameter.typeConstructor
                     else variable.type.constructor
             val type =
-                    if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) value
+                    if (value != null && !TypeUtils.contains(value, DONT_CARE)) value
                     else getDefaultType(variable)
             substitutionContext.put(typeConstructor, TypeProjectionImpl(type))
         }

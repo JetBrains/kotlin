@@ -843,7 +843,7 @@ class DeclarationsChecker(
                 descriptor: PropertyDescriptor): Boolean {
             val receiverParameter = descriptor.extensionReceiverParameter ?: return false
 
-            return TypeUtils.containsSpecialType(receiverParameter.type) { parameter == it.constructor.declarationDescriptor }
+            return TypeUtils.contains(receiverParameter.type) { parameter == it.constructor.declarationDescriptor }
         }
 
         private fun hasDefaultConstructor(classDescriptor: ClassDescriptor) =

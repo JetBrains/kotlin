@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.types.typeUtil.containsSpecialType
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 // If type 'samType' contains no projection, then it's non-projection parametrization is 'samType' itself
@@ -44,7 +44,7 @@ internal fun nonProjectionParametrization(samType: KotlinType): KotlinType? {
 
                     projection.isStarProjection ->
                         parameter.upperBounds.first().check {
-                            t -> !t.containsSpecialType { it.constructor.declarationDescriptor in parametersSet }
+                            t -> !t.contains { it.constructor.declarationDescriptor in parametersSet }
                         }?.asTypeProjection() ?: return@nonProjectionParametrization null
 
                     else -> projection.type.asTypeProjection()

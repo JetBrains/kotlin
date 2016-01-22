@@ -146,4 +146,4 @@ fun KotlinType.getImmediateSuperclassNotAny(): KotlinType? {
 }
 
 fun KotlinType.asTypeProjection(): TypeProjection = TypeProjectionImpl(this)
-fun KotlinType.containsSpecialType(predicate: (KotlinType) -> Boolean) = TypeUtils.containsSpecialType(this, predicate)
+fun KotlinType.contains(predicate: (KotlinType) -> Boolean) = TypeUtils.contains(this, predicate)

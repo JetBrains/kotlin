@@ -326,7 +326,7 @@ class FunctionDescriptorResolver(
             }
             else {
                 if (isFunctionLiteral(functionDescriptor) || isFunctionExpression(functionDescriptor)) {
-                    val containsUninferredParameter = TypeUtils.containsSpecialType(expectedType) {
+                    val containsUninferredParameter = TypeUtils.contains(expectedType) {
                         TypeUtils.isDontCarePlaceholder(it) || ErrorUtils.isUninferredParameter(it)
                     }
                     if (expectedType == null || containsUninferredParameter) {
