@@ -6,7 +6,6 @@ src/B.kt
 End of files
 Cleaning output files:
 out/production/module/C.class
-out/production/module/GetListOfAKt.class
 out/production/module/GetListOfBKt.class
 out/production/module/GetListOfCKt.class
 out/production/module/META-INF/module.kotlin_module
@@ -16,7 +15,6 @@ out/production/module/UseListOfAWithListOfCKt.class
 End of files
 Compiling files:
 src/C.kt
-src/getListOfA.kt
 src/getListOfB.kt
 src/getListOfC.kt
 src/useListOfA.kt
@@ -34,7 +32,6 @@ End of files
 Compiling files:
 src/B.kt
 src/C.kt
-src/getListOfA.kt
 src/getListOfB.kt
 src/getListOfC.kt
 src/useListOfA.kt
