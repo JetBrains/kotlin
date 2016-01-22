@@ -304,15 +304,6 @@ public class TypeUtils {
         return result;
     }
 
-    public static boolean hasNullableLowerBound(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-        for (KotlinType bound : typeParameterDescriptor.getLowerBounds()) {
-            if (bound.isMarkedNullable()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * A work-around of the generic nullability problem in the type checker
      * Semantics should be the same as `!isSubtype(T, Any)`
@@ -343,8 +334,7 @@ public class TypeUtils {
         if (FlexibleTypesKt.isFlexible(type) && acceptsNullable(FlexibleTypesKt.flexibility(type).getUpperBound())) {
             return true;
         }
-        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
-        return typeParameterDescriptor != null && hasNullableLowerBound(typeParameterDescriptor);
+        return false;
     }
 
     public static boolean hasNullableSuperType(@NotNull KotlinType type) {

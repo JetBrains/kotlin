@@ -321,7 +321,7 @@ class TypeResolver(
             KotlinTypeImpl.create(
                     annotations,
                     typeParameter.typeConstructor,
-                    TypeUtils.hasNullableLowerBound(typeParameter),
+                    false,
                     listOf(),
                     scopeForTypeParameter)
     }

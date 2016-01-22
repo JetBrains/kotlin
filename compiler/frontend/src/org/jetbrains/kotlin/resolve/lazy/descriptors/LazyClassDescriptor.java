@@ -562,7 +562,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         getTypeConstructor().getSupertypes();
         for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
             typeParameterDescriptor.getUpperBounds();
-            typeParameterDescriptor.getLowerBounds();
         }
         getUnsubstitutedPrimaryConstructor();
         getVisibility();

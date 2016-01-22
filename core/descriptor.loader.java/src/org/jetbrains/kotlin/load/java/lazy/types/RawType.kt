@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.renderer.CustomFlexibleRendering
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 
 object RawTypeTag : TypeCapability
@@ -150,7 +151,7 @@ internal object RawSubstitution : TypeSubstitution() {
         JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND, JavaTypeFlexibility.INFLEXIBLE -> {
             if (!parameter.variance.allowsOutPosition)
                 // in T -> Comparable<Nothing>
-                TypeProjectionImpl(Variance.INVARIANT, parameter.lowerBounds.first())
+                TypeProjectionImpl(Variance.INVARIANT, parameter.builtIns.nothingType)
             else if (erasedUpperBound.constructor.parameters.isNotEmpty())
                 // T : Enum<E> -> out Enum<*>
                 TypeProjectionImpl(Variance.OUT_VARIANCE, erasedUpperBound)

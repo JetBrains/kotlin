@@ -72,7 +72,6 @@ class FuzzyType(
     private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(type: KotlinType) {
         val typeParameter = type.constructor.declarationDescriptor as? TypeParameterDescriptor
         if (typeParameter != null && add(typeParameter)) {
-            typeParameter.lowerBounds.forEach { addUsedTypeParameters(it) }
             typeParameter.upperBounds.forEach { addUsedTypeParameters(it) }
         }
 
