@@ -1,0 +1,30 @@
+package
+
+public open class A</*0*/ E : kotlin.Any!> {
+    public constructor A</*0*/ E : kotlin.Any!, /*1*/ T : E!>(/*0*/ x: E!, /*1*/ y: kotlin.collections.(Mutable)List<T!>!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B1 : A<kotlin.CharSequence> {
+    public constructor B1(/*0*/ x: kotlin.collections.List<kotlin.String>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B2 : A<kotlin.CharSequence> {
+    public constructor B2(/*0*/ x: kotlin.collections.List<kotlin.Int>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C : A<kotlin.CharSequence> {
+    public constructor C(/*0*/ x: kotlin.collections.List<kotlin.Int>, /*1*/ y: kotlin.Int)
+    public constructor C(/*0*/ x: kotlin.collections.List<kotlin.String>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

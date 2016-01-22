@@ -10,9 +10,8 @@ public class J {
 
 import java.io.Serializable
 
-// TODO: report TYPE_MISMATCH here as well
-fun cloneable(c: Cloneable) = J(c)
+fun cloneable(c: Cloneable) = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>J<!>(c)
 
-fun serializable(s: Serializable) = J(<!TYPE_MISMATCH!>s<!>)
+fun serializable(s: Serializable) = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>J<!>(s)
 
 fun <T> both(t: T) where T : Cloneable, T : Serializable = J(t)

@@ -10197,6 +10197,63 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class GenericConstructor extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInGenericConstructor() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/genericConstructor"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("classTypeParameterInferredFromArgument.kt")
+                public void testClassTypeParameterInferredFromArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/classTypeParameterInferredFromArgument.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerClass.kt")
+                public void testInnerClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/innerClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noClassTypeParameters.kt")
+                public void testNoClassTypeParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/noClassTypeParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noClassTypeParametersInvParameter.kt")
+                public void testNoClassTypeParametersInvParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/noClassTypeParametersInvParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursive.kt")
+                public void testRecursive() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/recursive.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("selfTypes.kt")
+                public void testSelfTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/selfTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superCall.kt")
+                public void testSuperCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/superCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withClassTypeParameters.kt")
+                public void testWithClassTypeParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructor/withClassTypeParameters.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/properties")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

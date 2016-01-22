@@ -660,7 +660,7 @@ internal class DescriptorRendererImpl(
             val classDescriptor = constructor.containingDeclaration
             builder.append(" ")
             renderName(classDescriptor, builder)
-            renderTypeParameters(classDescriptor.declaredTypeParameters, builder, false)
+            renderTypeParameters(constructor.typeParameters, builder, false)
         }
 
         renderValueParameters(constructor.valueParameters, constructor.hasSynthesizedParameterNames(), builder)

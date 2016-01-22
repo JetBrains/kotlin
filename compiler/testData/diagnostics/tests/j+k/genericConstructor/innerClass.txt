@@ -1,0 +1,17 @@
+package
+
+public fun test(/*0*/ x: kotlin.collections.List<kotlin.Int>, /*1*/ y: kotlin.collections.List<kotlin.String>): kotlin.Unit
+
+public open class Outer</*0*/ T : kotlin.Any!> {
+    public constructor Outer</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open inner class Inner</*0*/ E : kotlin.Any!> /*captured type parameters: /*1*/ T : kotlin.Any!*/ {
+        public constructor Inner</*0*/ E : kotlin.Any!, /*1*/ F : E!, /*2*/ G : T!>(/*0*/ x: E!, /*1*/ y: kotlin.collections.(Mutable)List<F!>!, /*2*/ z: G!)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -506,9 +506,14 @@ class LazyJavaClassMemberScope(
                 classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.components.sourceElementFactory.source(constructor)
         )
 
-        val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.valueParameters)
 
-        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility)
+        val c = c.child(constructorDescriptor, constructor, typeParametersIndexOffset = classDescriptor.declaredTypeParameters.size)
+        val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.valueParameters)
+        val constructorTypeParameters =
+                classDescriptor.declaredTypeParameters +
+                constructor.typeParameters.map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
+
+        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility, constructorTypeParameters)
         constructorDescriptor.setHasStableParameterNames(false)
         constructorDescriptor.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
 

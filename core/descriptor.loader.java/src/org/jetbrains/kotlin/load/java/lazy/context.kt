@@ -75,5 +75,6 @@ fun LazyJavaResolverContext.child(
 
 fun LazyJavaResolverContext.child(
         containingDeclaration: DeclarationDescriptor,
-        typeParameterOwner: JavaTypeParameterListOwner
-) = this.child(LazyJavaTypeParameterResolver(this, containingDeclaration, typeParameterOwner))
+        typeParameterOwner: JavaTypeParameterListOwner,
+        typeParametersIndexOffset: Int = 0
+) = this.child(LazyJavaTypeParameterResolver(this, containingDeclaration, typeParameterOwner, typeParametersIndexOffset))

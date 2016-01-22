@@ -116,13 +116,8 @@ class LazyJavaTypeResolver(
                         ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.presentableText)
                 }
                 is JavaTypeParameter -> {
-                    if (isConstructorTypeParameter()) {
-                        getConstructorTypeParameterSubstitute().getConstructor()
-                    }
-                    else {
-                        typeParameterResolver.resolveTypeParameter(classifier)?.typeConstructor
-                            ?: ErrorUtils.createErrorTypeConstructor("Unresolved Java type parameter: " + javaType.presentableText)
-                    }
+                    typeParameterResolver.resolveTypeParameter(classifier)?.typeConstructor
+                        ?: ErrorUtils.createErrorTypeConstructor("Unresolved Java type parameter: " + javaType.presentableText)
                 }
                 else -> throw IllegalStateException("Unknown classifier kind: $classifier")
             }
@@ -156,24 +151,6 @@ class LazyJavaTypeResolver(
             }
 
             return kotlinDescriptor
-        }
-
-        private fun isConstructorTypeParameter(): Boolean {
-            val classifier = classifier()
-            return classifier is JavaTypeParameter && classifier.getOwner() is JavaConstructor
-        }
-
-        // We do not memoize the results of this method, because it would consume much memory, and the real gain is little:
-        // the case this method accounts for is very rare, no point in optimizing it
-        private fun getConstructorTypeParameterSubstitute(): KotlinType {
-            // If a Java constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
-            // so we replace each type parameter with its representative upper bound (which in Java is also the first bound)
-            val upperBounds = (classifier() as JavaTypeParameter).upperBounds
-            if (upperBounds.isEmpty()) {
-                return c.module.builtIns.nullableAnyType
-            }
-
-            return transformJavaType(upperBounds.first(), UPPER_BOUND.toAttributes())
         }
 
         private fun isRaw(): Boolean {
@@ -211,9 +188,6 @@ class LazyJavaTypeResolver(
 
                     RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
                 }
-            }
-            if (isConstructorTypeParameter()) {
-                return getConstructorTypeParameterSubstitute().getArguments()
             }
 
             if (typeParameters.size != javaType.typeArguments.size) {
@@ -265,10 +239,7 @@ class LazyJavaTypeResolver(
             // nullability will be taken care of in individual member signatures
             when (classifier()) {
                 is JavaTypeParameter -> {
-                    if (isConstructorTypeParameter())
-                        getConstructorTypeParameterSubstitute().isMarkedNullable()
-                    else
-                        attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
+                    attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 }
                 is JavaClass,
                 null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)

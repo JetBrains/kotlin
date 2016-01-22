@@ -1,0 +1,17 @@
+package
+
+public fun test(/*0*/ x: Inv<kotlin.Int>, /*1*/ y: Inv<kotlin.String>): kotlin.Unit
+
+public open class A {
+    public constructor A</*0*/ T : kotlin.Any!>(/*0*/ x: T!, /*1*/ y: Inv<T!>!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

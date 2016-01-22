@@ -45,8 +45,5 @@ class ReflectJavaConstructor(override val member: Constructor<*>) : ReflectJavaM
         return getValueParameters(realTypes, realAnnotations, member.isVarArgs)
     }
 
-    override fun getTypeParameters(): List<JavaTypeParameter> {
-        // TODO
-        return listOf()
-    }
+    override fun getTypeParameters() = member.typeParameters.map { ReflectJavaTypeParameter(it) }
 }
