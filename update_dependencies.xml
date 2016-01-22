@@ -1,8 +1,8 @@
 <project name="Update Dependencies" default="update_teamcity" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="143.1945"/>
-    <property name="idea.kotlin.branch" value="rr/stdlib/packages"/>
+    <property name="ideaVersion" value="143.1960"/>
+    <property name="idea.kotlin.branch" value="&lt;default&gt;"/>
 
 
     <property name="kotlin.bootstrap.branch" value=""/>
