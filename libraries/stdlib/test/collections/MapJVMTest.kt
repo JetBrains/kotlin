@@ -44,7 +44,7 @@ class MapJVMTest {
     }
 
     @test fun iterateAndRemove() {
-        val map = (1..5).associateBy({ it }, { 'a' + it }).toLinkedMap() // TODO: use associateByTo(linkedMapOf())
+        val map = (1..5).associateByTo(linkedMapOf(), { it }, { 'a' + it })
         val iterator = map.iterator()
         while (iterator.hasNext()) {
             if (iterator.next().key % 2 == 0)
