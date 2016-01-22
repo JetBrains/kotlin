@@ -297,15 +297,17 @@ internal class DelegatingDataFlowInfo private constructor(
                            typeInfo: SetMultimap<DataFlowValue, KotlinType>,
                            valueWithGivenTypeInfo: DataFlowValue? = null
         ): DataFlowInfo {
+            val toDelete = newTypeInfo()
             for (value in typeInfo.keys()) {
-                var iterator = typeInfo[value].iterator()
-                while (iterator.hasNext()) {
-                    val type = iterator.next()
+                for (type in typeInfo[value]) {
                     // Remove original type and for not flexible type also all its supertypes (see also KT-10666)
                     if (if (value.type.isFlexible()) value.type == type else value.type.isSubtypeOf(type)) {
-                        iterator.remove()
+                        toDelete.put(value, type)
                     }
                 }
+            }
+            for ((value, type) in toDelete.entries()) {
+                typeInfo.remove(value, type)
             }
             if (nullabilityInfo.isEmpty() && typeInfo.isEmpty && valueWithGivenTypeInfo == null) {
                 return parent ?: DataFlowInfoFactory.EMPTY
