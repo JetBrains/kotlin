@@ -325,7 +325,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                     .drop(1)
                     .takeWhile { it != '>' }
                     .split(",")
-                    .map { it.removePrefix("out").removePrefix("in").trim() }
+                    .map { it.trim().removePrefix("out").removePrefix("in").trim() }
 
             // TODO: Model for type parameter
             val types = ArrayList(typeParams)

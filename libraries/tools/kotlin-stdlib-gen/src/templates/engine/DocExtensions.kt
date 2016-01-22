@@ -32,6 +32,6 @@ object DocExtensions {
         else -> this + "s"
     }
 
-    fun String.prefixWithArticle() = (if ("aeiou".any { this.startsWith(it, ignoreCase = true) }) "an " else "a ").concat(this)
+    fun String.prefixWithArticle() = (if ("aeiou".any { this.startsWith(it, ignoreCase = true) }) "an " else "a ") + this
 
 }
