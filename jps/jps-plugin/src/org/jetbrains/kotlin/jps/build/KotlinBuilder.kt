@@ -744,6 +744,7 @@ private fun CompilationResult.doProcessChangesUsingLookups(
         caches: Collection<IncrementalCacheImpl<*>>
 ) {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
+    val dirtyClassesFqNames = HashSet<FqName>()
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches: Sequence<IncrementalCacheImpl<*>> = caches.asSequence().flatMap { it.dependentsWithThis }
 
@@ -764,10 +765,12 @@ private fun CompilationResult.doProcessChangesUsingLookups(
             }
         }
         else if (change is ChangeInfo.MembersChanged) {
-            val scopes = withSubtypes(change.fqName, allCaches).map { it.asString() }
+            val fqNames = withSubtypes(change.fqName, allCaches)
+            // need to recompile subtypes because changed member might break override
+            dirtyClassesFqNames.addAll(fqNames)
 
-            change.names.forAllPairs(scopes) { name, scope ->
-                dirtyLookupSymbols.add(LookupSymbol(name, scope))
+            change.names.forAllPairs(fqNames) { name, fqName ->
+                dirtyLookupSymbols.add(LookupSymbol(name, fqName.asString()))
             }
         }
     }
@@ -780,6 +783,13 @@ private fun CompilationResult.doProcessChangesUsingLookups(
         KotlinBuilder.LOG.debug { "${lookup.scope}#${lookup.name} caused recompilation of: $affectedFiles" }
 
         dirtyFiles.addAll(affectedFiles)
+    }
+
+    for (cache in allCaches) {
+        for (dirtyClassFqName in dirtyClassesFqNames) {
+            val srcFile = cache.getSourceFileIfClass(dirtyClassFqName) ?: continue
+            dirtyFiles.add(srcFile)
+        }
     }
 
     fsOperations.markFiles(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
