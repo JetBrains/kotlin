@@ -9684,6 +9684,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("annotationWithArgumentsMissingDependencies.kt")
+            public void testAnnotationWithArgumentsMissingDependencies() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/annotationWithArgumentsMissingDependencies.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("arrayOfStarParametrized.kt")
             public void testArrayOfStarParametrized() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/arrayOfStarParametrized.kt");
@@ -11934,6 +11940,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("methodTypeParameterDefaultBound.kt")
             public void testMethodTypeParameterDefaultBound() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodTypeParameterDefaultBound.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noAnnotationInClassPath.kt")
+            public void testNoAnnotationInClassPath() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/noAnnotationInClassPath.kt");
                 doTest(fileName);
             }
 

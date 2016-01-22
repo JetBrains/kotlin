@@ -215,7 +215,7 @@ class KotlinIndicesHelper(
         }
 
         // Note: Can't search with psi element as analyzer could be built over temp files
-        return ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, classFQName) { kindFilter(it.kind) }
+        return ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, classFQName) { kindFilter(it!!.kind) }
                 .filter(descriptorFilter)
     }
 

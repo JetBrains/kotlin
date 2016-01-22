@@ -51,12 +51,24 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull Collection<KotlinType> supertypes,
             @NotNull SourceElement source
     ) {
+        this(containingDeclaration, name, modality, kind, supertypes, source, name.asString());
+    }
+
+    public ClassDescriptorImpl(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Name name,
+            @NotNull Modality modality,
+            @NotNull ClassKind kind,
+            @NotNull Collection<KotlinType> supertypes,
+            @NotNull SourceElement source,
+            @NotNull String debugName
+    ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
         this.modality = modality;
         this.kind = kind;
 
-        this.typeConstructor = TypeConstructorImpl.createForClass(this, Annotations.Companion.getEMPTY(), false, getName().asString(),
-                                                       Collections.<TypeParameterDescriptor>emptyList(), supertypes);
+        this.typeConstructor = TypeConstructorImpl.createForClass(this, Annotations.Companion.getEMPTY(), false, debugName,
+                                                                  Collections.<TypeParameterDescriptor>emptyList(), supertypes);
     }
 
     public final void initialize(
