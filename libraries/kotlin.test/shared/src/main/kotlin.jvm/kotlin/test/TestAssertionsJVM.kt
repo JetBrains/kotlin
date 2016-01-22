@@ -5,11 +5,13 @@ package kotlin.test
 import kotlin.reflect.*
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
+@Deprecated("Use assertFailsWith with kotlin class.", ReplaceWith("assertFailsWith(exceptionClass.kotlin, block)"))
 fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, block: () -> Unit): T {
     return assertFailsWith(exceptionClass, null, block)
 }
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
+@Deprecated("Use assertFailsWith with kotlin class.", ReplaceWith("assertFailsWith(exceptionClass.kotlin, message, block)"))
 fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, block: () -> Unit): T {
     try {
         block()
