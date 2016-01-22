@@ -756,7 +756,7 @@ public fun <T> MutableList<T>.reverse(): Unit {
  */
 public fun <T> Iterable<T>.reversed(): List<T> {
     if (this is Collection && isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -787,10 +787,10 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
  */
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
     if (this is Collection) {
-        if (size <= 1) return this.toArrayList()
+        if (size <= 1) return this.toMutableList()
         return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
     }
-    return toArrayList().apply { sort() }
+    return toMutableList().apply { sort() }
 }
 
 /**
@@ -819,10 +819,10 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
  */
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
     if (this is Collection) {
-       if (size <= 1) return this.toArrayList()
+       if (size <= 1) return this.toMutableList()
        return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
     }
-    return toArrayList().apply { sortWith(comparator) }
+    return toMutableList().apply { sortWith(comparator) }
 }
 
 /**
@@ -983,6 +983,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun <T> Collection<T>.toArrayList(): ArrayList<T> {
     return ArrayList(this)
 }
@@ -990,6 +991,7 @@ public fun <T> Collection<T>.toArrayList(): ArrayList<T> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
     if (this is Collection<T>)
         return this.toArrayList()
@@ -1017,7 +1019,7 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
  * Returns a [List] containing all elements.
  */
 public fun <T> Iterable<T>.toList(): List<T> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
@@ -1043,6 +1045,22 @@ public inline fun <T, K> Iterable<T>.toMapBy(selector: (T) -> K): Map<K, T> {
 @Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Iterable<T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     return associateBy(selector, transform)
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this collection.
+ */
+public fun <T> Collection<T>.toMutableList(): MutableList<T> {
+    return ArrayList(this)
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this collection.
+ */
+public fun <T> Iterable<T>.toMutableList(): MutableList<T> {
+    if (this is Collection<T>)
+        return this.toMutableList()
+    return toCollection(ArrayList<T>())
 }
 
 /**

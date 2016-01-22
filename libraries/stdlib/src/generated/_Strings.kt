@@ -561,6 +561,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(de
 /**
  * Returns an [ArrayList] of all characters.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun CharSequence.toArrayList(): ArrayList<Char> {
     return toCollection(ArrayList<Char>(length))
 }
@@ -586,7 +587,7 @@ public fun CharSequence.toHashSet(): HashSet<Char> {
  * Returns a [List] containing all characters.
  */
 public fun CharSequence.toList(): List<Char> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
@@ -612,6 +613,13 @@ public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> 
 @Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> CharSequence.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     return associateBy(selector, transform)
+}
+
+/**
+ * Returns a [MutableList] filled with all characters of this char sequence.
+ */
+public fun CharSequence.toMutableList(): MutableList<Char> {
+    return toCollection(ArrayList<Char>(length))
 }
 
 /**

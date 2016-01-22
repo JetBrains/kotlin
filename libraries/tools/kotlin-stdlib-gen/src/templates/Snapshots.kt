@@ -81,6 +81,30 @@ fun snapshots(): List<GenericFunction> {
             return list
             """
         }
+        deprecate(Deprecation("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", "toCollection(arrayListOf())"))
+    }
+
+    templates add f("toMutableList()") {
+        doc { f -> "Returns a [MutableList] filled with all ${f.element.pluralize()} of this ${f.collection}." }
+        returns("MutableList<T>")
+        body { "return toCollection(ArrayList<T>())" }
+        body(Iterables) {
+            """
+            if (this is Collection<T>)
+                return this.toMutableList()
+            return toCollection(ArrayList<T>())
+            """
+        }
+        body(Collections) { "return ArrayList(this)" }
+        body(CharSequences) { "return toCollection(ArrayList<T>(length))" }
+        body(ArraysOfObjects) { "return ArrayList(this.asCollection())" }
+        body(ArraysOfPrimitives) {
+            """
+            val list = ArrayList<T>(size)
+            for (item in this) list.add(item)
+            return list
+            """
+        }
     }
 
     templates add f("toList()") {
@@ -101,7 +125,7 @@ fun snapshots(): List<GenericFunction> {
         include(CharSequences)
         doc { f -> "Returns a [List] containing all ${f.element.pluralize()}." }
         returns("List<T>")
-        body { "return this.toArrayList()" }
+        body { "return this.toMutableList()" }
     }
 
     templates add f("toMap(transform: (T) -> Pair<K, V>)") {

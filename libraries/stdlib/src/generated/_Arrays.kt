@@ -4378,7 +4378,7 @@ public fun ShortArray.reverse(): Unit {
  */
 public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4388,7 +4388,7 @@ public fun <T> Array<out T>.reversed(): List<T> {
  */
 public fun BooleanArray.reversed(): List<Boolean> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4398,7 +4398,7 @@ public fun BooleanArray.reversed(): List<Boolean> {
  */
 public fun ByteArray.reversed(): List<Byte> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4408,7 +4408,7 @@ public fun ByteArray.reversed(): List<Byte> {
  */
 public fun CharArray.reversed(): List<Char> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4418,7 +4418,7 @@ public fun CharArray.reversed(): List<Char> {
  */
 public fun DoubleArray.reversed(): List<Double> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4428,7 +4428,7 @@ public fun DoubleArray.reversed(): List<Double> {
  */
 public fun FloatArray.reversed(): List<Float> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4438,7 +4438,7 @@ public fun FloatArray.reversed(): List<Float> {
  */
 public fun IntArray.reversed(): List<Int> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4448,7 +4448,7 @@ public fun IntArray.reversed(): List<Int> {
  */
 public fun LongArray.reversed(): List<Long> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4458,7 +4458,7 @@ public fun LongArray.reversed(): List<Long> {
  */
 public fun ShortArray.reversed(): List<Short> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -6019,6 +6019,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(dest
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
     return ArrayList(this.asCollection())
 }
@@ -6026,6 +6027,7 @@ public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
     val list = ArrayList<Boolean>(size)
     for (item in this) list.add(item)
@@ -6035,6 +6037,7 @@ public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun ByteArray.toArrayList(): ArrayList<Byte> {
     val list = ArrayList<Byte>(size)
     for (item in this) list.add(item)
@@ -6044,6 +6047,7 @@ public fun ByteArray.toArrayList(): ArrayList<Byte> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun CharArray.toArrayList(): ArrayList<Char> {
     val list = ArrayList<Char>(size)
     for (item in this) list.add(item)
@@ -6053,6 +6057,7 @@ public fun CharArray.toArrayList(): ArrayList<Char> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun DoubleArray.toArrayList(): ArrayList<Double> {
     val list = ArrayList<Double>(size)
     for (item in this) list.add(item)
@@ -6062,6 +6067,7 @@ public fun DoubleArray.toArrayList(): ArrayList<Double> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun FloatArray.toArrayList(): ArrayList<Float> {
     val list = ArrayList<Float>(size)
     for (item in this) list.add(item)
@@ -6071,6 +6077,7 @@ public fun FloatArray.toArrayList(): ArrayList<Float> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun IntArray.toArrayList(): ArrayList<Int> {
     val list = ArrayList<Int>(size)
     for (item in this) list.add(item)
@@ -6080,6 +6087,7 @@ public fun IntArray.toArrayList(): ArrayList<Int> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun LongArray.toArrayList(): ArrayList<Long> {
     val list = ArrayList<Long>(size)
     for (item in this) list.add(item)
@@ -6089,6 +6097,7 @@ public fun LongArray.toArrayList(): ArrayList<Long> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun ShortArray.toArrayList(): ArrayList<Short> {
     val list = ArrayList<Short>(size)
     for (item in this) list.add(item)
@@ -6252,63 +6261,63 @@ public fun ShortArray.toHashSet(): HashSet<Short> {
  * Returns a [List] containing all elements.
  */
 public fun <T> Array<out T>.toList(): List<T> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun BooleanArray.toList(): List<Boolean> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun ByteArray.toList(): List<Byte> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun CharArray.toList(): List<Char> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun DoubleArray.toList(): List<Double> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun FloatArray.toList(): List<Float> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun IntArray.toList(): List<Int> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun LongArray.toList(): List<Long> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun ShortArray.toList(): List<Short> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
@@ -6534,6 +6543,85 @@ public inline fun <K, V> LongArray.toMapBy(selector: (Long) -> K, transform: (Lo
 @Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ShortArray.toMapBy(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
     return associateBy(selector, transform)
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun <T> Array<out T>.toMutableList(): MutableList<T> {
+    return ArrayList(this.asCollection())
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun BooleanArray.toMutableList(): MutableList<Boolean> {
+    val list = ArrayList<Boolean>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun ByteArray.toMutableList(): MutableList<Byte> {
+    val list = ArrayList<Byte>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun CharArray.toMutableList(): MutableList<Char> {
+    val list = ArrayList<Char>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun DoubleArray.toMutableList(): MutableList<Double> {
+    val list = ArrayList<Double>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun FloatArray.toMutableList(): MutableList<Float> {
+    val list = ArrayList<Float>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun IntArray.toMutableList(): MutableList<Int> {
+    val list = ArrayList<Int>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun LongArray.toMutableList(): MutableList<Long> {
+    val list = ArrayList<Long>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun ShortArray.toMutableList(): MutableList<Short> {
+    val list = ArrayList<Short>(size)
+    for (item in this) list.add(item)
+    return list
 }
 
 /**

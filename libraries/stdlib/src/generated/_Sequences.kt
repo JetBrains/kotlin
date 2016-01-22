@@ -381,7 +381,7 @@ public fun <T> Sequence<T>.takeWhile(predicate: (T) -> Boolean): Sequence<T> {
 public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
     return object : Sequence<T> {
         override fun iterator(): Iterator<T> {
-            val sortedList = this@sorted.toArrayList()
+            val sortedList = this@sorted.toMutableList()
             sortedList.sort()
             return sortedList.iterator()
         }
@@ -415,7 +415,7 @@ public fun <T : Comparable<T>> Sequence<T>.sortedDescending(): Sequence<T> {
 public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T> {
     return object : Sequence<T> {
         override fun iterator(): Iterator<T> {
-            val sortedList = this@sortedWith.toArrayList()
+            val sortedList = this@sortedWith.toMutableList()
             sortedList.sortWith(comparator)
             return sortedList.iterator()
         }
@@ -489,6 +489,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateTo(
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
     return toCollection(ArrayList<T>())
 }
@@ -514,7 +515,7 @@ public fun <T> Sequence<T>.toHashSet(): HashSet<T> {
  * Returns a [List] containing all elements.
  */
 public fun <T> Sequence<T>.toList(): List<T> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
@@ -540,6 +541,13 @@ public inline fun <T, K> Sequence<T>.toMapBy(selector: (T) -> K): Map<K, T> {
 @Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Sequence<T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     return associateBy(selector, transform)
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this sequence.
+ */
+public fun <T> Sequence<T>.toMutableList(): MutableList<T> {
+    return toCollection(ArrayList<T>())
 }
 
 /**
