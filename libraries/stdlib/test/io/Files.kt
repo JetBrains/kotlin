@@ -451,20 +451,22 @@ class FilesTest {
         }
     }
 
+    fun compareDirectories(src: File, dst: File) {
+        for (file in src.walkTopDown()) {
+            val dstFile = dst.resolve(file.relativeTo(src))
+            assertTrue(dstFile.exists())
+            assertEquals(file.isFile, dstFile.isFile)
+            if (dstFile.isFile) {
+                assertEquals(file.readText(), dstFile.readText())
+            }
+        }
+    }
+
     @test fun copyRecursively() {
         val src = createTempDir()
         val dst = createTempDir()
         dst.delete()
-        fun check() {
-            for (file in src.walkTopDown()) {
-                val dstFile = dst.resolve(file.relativeTo(src))
-                assertTrue(dstFile.exists())
-                if (dstFile.isFile) {
-                    assertEquals(file.readText(), dstFile.readText())
-                }
-
-            }
-        }
+        fun check() = compareDirectories(src, dst)
 
         try {
             val subDir1 = createTempDir(prefix = "d1_", directory = src)
@@ -526,6 +528,40 @@ class FilesTest {
                 OnErrorAction.TERMINATE
             })
         } finally {
+            src.deleteRecursively()
+            dst.deleteRecursively()
+        }
+    }
+
+    @test fun copyRecursivelyWithOverwrite() {
+        val src = createTempDir()
+        val dst = createTempDir()
+        fun check() = compareDirectories(src, dst)
+
+        try {
+            val srcFile = src.resolve("test")
+            val dstFile = dst.resolve("test")
+            srcFile.writeText("text1")
+
+            src.copyRecursively(dst)
+
+            srcFile.writeText("text1 modified")
+            src.copyRecursively(dst, overwrite = true)
+            check()
+
+            dstFile.delete()
+            dstFile.mkdir()
+            dstFile.resolve("subFile").writeText("subfile")
+            src.copyRecursively(dst, overwrite = true)
+            check()
+
+            srcFile.delete()
+            srcFile.mkdir()
+            srcFile.resolve("subFile").writeText("text2")
+            src.copyRecursively(dst, overwrite = true)
+            check()
+        }
+        finally {
             src.deleteRecursively()
             dst.deleteRecursively()
         }
