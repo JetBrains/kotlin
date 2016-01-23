@@ -200,6 +200,9 @@ class CollectionTest {
 
         val l3 = byLength.getOrElse(3, { ArrayList<String>() })
         assertEquals(2, l3.size)
+
+        val byLengthUpper = words.groupBy({ it.length }, { it.toUpperCase() })
+        assertEquals("ABCD", byLengthUpper[4]!!.single())
     }
 
     @test fun plusRanges() {

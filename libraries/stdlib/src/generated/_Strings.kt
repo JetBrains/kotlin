@@ -605,22 +605,49 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
 }
 
 /**
- * Returns a map of the characters in original char sequence grouped by the key returned by the given [selector] function.
+ * Groups characters of the original char sequence by the key returned by the given [keySelector] function
+ * applied to each character and returns a map where each group key is associated with a list of corresponding characters.
  */
-public inline fun <K> CharSequence.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
+public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
 }
 
 /**
- * Appends characters from original char sequence grouped by the key returned by the given [selector] function to the given [map].
+ * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
+ * by the key returned by the given [keySelector] function applied to the character
+ * and returns a map where each group key is associated with a list of corresponding values.
  */
-public inline fun <K> CharSequence.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
+public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups characters of the original char sequence by the key returned by the given [keySelector] function
+ * applied to each character and puts to the [destination] map each group key associated with a list of corresponding characters.
+ * @return The [destination] map.
+ */
+public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Char>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Char>() }
         list.add(element)
     }
-    return map
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
+ * by the key returned by the given [keySelector] function applied to the character
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
 }
 
 /**

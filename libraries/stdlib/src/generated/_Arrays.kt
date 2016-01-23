@@ -6456,174 +6456,417 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destinat
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <T, K> Array<out T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
+public inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> BooleanArray.groupBy(selector: (Boolean) -> K): Map<K, List<Boolean>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), selector)
+public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> ByteArray.groupBy(selector: (Byte) -> K): Map<K, List<Byte>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), selector)
+public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> CharArray.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
+public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> DoubleArray.groupBy(selector: (Double) -> K): Map<K, List<Double>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), selector)
+public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> FloatArray.groupBy(selector: (Float) -> K): Map<K, List<Float>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), selector)
+public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> IntArray.groupBy(selector: (Int) -> K): Map<K, List<Int>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), selector)
+public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> LongArray.groupBy(selector: (Long) -> K): Map<K, List<Long>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), selector)
+public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <K> ShortArray.groupBy(selector: (Short) -> K): Map<K, List<Short>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), selector)
+public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), keySelector)
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
  */
-public inline fun <T, K> Array<out T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K, V> Array<out T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> BooleanArray.groupBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> ByteArray.groupBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> DoubleArray.groupBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> FloatArray.groupBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> IntArray.groupBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> LongArray.groupBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ */
+public inline fun <K, V> ShortArray.groupBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ */
+public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<T>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> BooleanArray.groupByTo(map: MutableMap<K, MutableList<Boolean>>, selector: (Boolean) -> K): Map<K, MutableList<Boolean>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Boolean>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Boolean>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> ByteArray.groupByTo(map: MutableMap<K, MutableList<Byte>>, selector: (Byte) -> K): Map<K, MutableList<Byte>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Byte>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Byte>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> CharArray.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Char>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Char>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> DoubleArray.groupByTo(map: MutableMap<K, MutableList<Double>>, selector: (Double) -> K): Map<K, MutableList<Double>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Double>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Double>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> FloatArray.groupByTo(map: MutableMap<K, MutableList<Float>>, selector: (Float) -> K): Map<K, MutableList<Float>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Float>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Float>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> IntArray.groupByTo(map: MutableMap<K, MutableList<Int>>, selector: (Int) -> K): Map<K, MutableList<Int>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Int>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Int>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> LongArray.groupByTo(map: MutableMap<K, MutableList<Long>>, selector: (Long) -> K): Map<K, MutableList<Long>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Long>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Long>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
  */
-public inline fun <K> ShortArray.groupByTo(map: MutableMap<K, MutableList<Short>>, selector: (Short) -> K): Map<K, MutableList<Short>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Short>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Short>() }
         list.add(element)
     }
-    return map
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
 }
 
 /**

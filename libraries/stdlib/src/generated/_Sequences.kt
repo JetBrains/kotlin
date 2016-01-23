@@ -542,22 +542,49 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(dest
 }
 
 /**
- * Returns a map of the elements in original sequence grouped by the key returned by the given [selector] function.
+ * Groups elements of the original sequence by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  */
-public inline fun <T, K> Sequence<T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
+public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
 }
 
 /**
- * Appends elements from original sequence grouped by the key returned by the given [selector] function to the given [map].
+ * Groups values returned by the [valueTransform] function applied to each element of the original sequence
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
  */
-public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups elements of the original sequence by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ */
+public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<T>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
-    return map
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original sequence
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ */
+public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
 }
 
 /**

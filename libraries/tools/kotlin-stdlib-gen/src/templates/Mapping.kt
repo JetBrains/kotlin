@@ -277,33 +277,95 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("groupBy(selector: (T) -> K)") {
+    templates add f("groupBy(keySelector: (T) -> K)") {
         inline(true)
 
         include(CharSequences)
-        doc { f -> "Returns a map of the ${f.element.pluralize()} in original ${f.collection} grouped by the key returned by the given [selector] function." }
+        doc { f ->
+            """
+            Groups ${f.element.pluralize()} of the original ${f.collection} by the key returned by the given [keySelector] function
+            applied to each ${f.element} and returns a map where each group key is associated with a list of corresponding ${f.element.pluralize()}.
+            """
+        }
         typeParam("K")
         returns("Map<K, List<T>>")
-        body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)" }
+        body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)" }
     }
 
-    templates add f("groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K)") {
+    templates add f("groupByTo(destination: M, keySelector: (T) -> K)") {
         inline(true)
 
         include(CharSequences)
         typeParam("K")
-        doc { f -> "Appends ${f.element.pluralize()} from original ${f.collection} grouped by the key returned by the given [selector] function to the given [map]." }
-        returns("Map<K, MutableList<T>>")
+        typeParam("M : MutableMap<in K, MutableList<T>>")
+        doc { f ->
+            """
+            Groups ${f.element.pluralize()} of the original ${f.collection} by the key returned by the given [keySelector] function
+            applied to each ${f.element} and puts to the [destination] map each group key associated with a list of corresponding ${f.element.pluralize()}.
+
+            @return The [destination] map.
+            """
+        }
+        returns("M")
         body {
             """
                 for (element in this) {
-                    val key = selector(element)
-                    val list = map.getOrPut(key) { ArrayList<T>() }
+                    val key = keySelector(element)
+                    val list = destination.getOrPut(key) { ArrayList<T>() }
                     list.add(element)
                 }
-                return map
+                return destination
             """
         }
     }
+
+    templates add f("groupBy(keySelector: (T) -> K, valueTransform: (T) -> V)") {
+        inline(true)
+
+        include(CharSequences)
+        doc { f ->
+            """
+            Groups values returned by the [valueTransform] function applied to each ${f.element} of the original ${f.collection}
+            by the key returned by the given [keySelector] function applied to the ${f.element}
+            and returns a map where each group key is associated with a list of corresponding values.
+            """
+        }
+        typeParam("K")
+        typeParam("V")
+        returns("Map<K, List<V>>")
+        body { "return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)" }
+    }
+
+
+    templates add f("groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V)") {
+        inline(true)
+
+        include(CharSequences)
+        typeParam("K")
+        typeParam("V")
+        typeParam("M : MutableMap<in K, MutableList<V>>")
+
+        doc { f ->
+            """
+            Groups values returned by the [valueTransform] function applied to each ${f.element} of the original ${f.collection}
+            by the key returned by the given [keySelector] function applied to the ${f.element}
+            and puts to the [destination] map each group key associated with a list of corresponding values.
+
+            @return The [destination] map.
+            """
+        }
+        returns("M")
+        body {
+            """
+                for (element in this) {
+                    val key = keySelector(element)
+                    val list = destination.getOrPut(key) { ArrayList<V>() }
+                    list.add(valueTransform(element))
+                }
+                return destination
+            """
+        }
+    }
+
     return templates
 }
