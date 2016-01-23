@@ -36,7 +36,7 @@ fun comparables(): List<GenericFunction> {
             """
             Ensures that this value is not greater than the specified [maximumValue].
 
-            @return this value if it's greater than or equal to the [maximumValue] or the [maximumValue] otherwise.
+            @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
             """
         }
         body {
@@ -67,12 +67,13 @@ fun comparables(): List<GenericFunction> {
         }
     }
 
-    templates add f("coerceIn(minimumValue: SELF?, maximumValue: SELF?)") {
+    templates add f("coerceIn(minimumValue: SELF, maximumValue: SELF)") {
         sourceFile(SourceFile.Ranges)
         only(Primitives, Generic)
         only(numericPrimitives)
-        returns("SELF")
+        customSignature(Generic) { "coerceIn(minimumValue: SELF?, maximumValue: SELF?)" }
         typeParam("T: Comparable<T>")
+        returns("SELF")
         doc {
             """
             Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
@@ -80,7 +81,15 @@ fun comparables(): List<GenericFunction> {
             @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
             """
         }
-        body {
+        body(Primitives) {
+            """
+            if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum ${'$'}maximumValue is less than minimum ${'$'}minimumValue.")
+            if (this < minimumValue) return minimumValue
+            if (this > maximumValue) return maximumValue
+            return this
+            """
+        }
+        body(Generic) {
             """
             if (minimumValue !== null && maximumValue !== null) {
                 if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum ${'$'}maximumValue is less than minimum ${'$'}minimumValue.")
@@ -94,7 +103,6 @@ fun comparables(): List<GenericFunction> {
             return this
             """
         }
-
     }
 
     return templates
