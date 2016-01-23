@@ -92,7 +92,18 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     class DocProperty() : FamilyProperty<String>()
     operator fun DocProperty.invoke(vararg keys: Family, valueBuilder: DocExtensions.(Family) -> String) = set(keys.asList(), { f -> valueBuilder(DocExtensions, f) })
 
+    data class TypeParameter(val original: String, val name: String, val constraint: TypeRef? = null) {
+        constructor(simpleName: String) : this(simpleName, simpleName)
 
+        data class TypeRef(val name: String, val typeArguments: List<TypeArgument> = emptyList()) {
+            fun mentionedTypes(): List<TypeRef> =
+                    if (typeArguments.isEmpty()) listOf(this) else typeArguments.flatMap { it.type.mentionedTypes() }
+        }
+
+        data class TypeArgument(val type: TypeRef)
+
+        fun mentionedTypeRefs(): List<TypeRef> = constraint?.mentionedTypes().orEmpty()
+    }
 
     val defaultFamilies = Family.defaultFamilies
     val defaultPrimitives = PrimitiveType.defaultPrimitives
@@ -315,40 +326,28 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         fun String.renderType(): String = renderType(this, receiver)
 
-        fun effectiveTypeParams(): List<String> {
-            fun removeAnnotations(typeParam: String) =
-                    typeParam.replace("""^(@[\w\.]+\s+)+""".toRegex(), "")
+        fun effectiveTypeParams(): List<TypeParameter> {
+            val parameters = typeParams.mapTo(mutableListOf()) { parseTypeParameter(it) }
 
-            fun getGenericTypeParameters(genericType: String) =
-                removeAnnotations(genericType)
-                    .dropWhile { it != '<' }
-                    .drop(1)
-                    .takeWhile { it != '>' }
-                    .split(",")
-                    .map { it.trim().removePrefix("out").removePrefix("in").trim() }
-
-            // TODO: Model for type parameter
-            val types = ArrayList(typeParams)
             if (f == Generic) {
-                // ensure type parameter T, if it's not added to typeParams before
-                if (!types.any { removeAnnotations(it).let { it == "T" || it.startsWith("T:") } }) {
-                    types.add("T")
-                }
-                return types
+                if (parameters.none { it.name == "T" })
+                    parameters.add(TypeParameter("T"))
+                return parameters
             }
             else if (primitive == null && f != Strings && f != CharSequences) {
-                val implicitTypeParameters = getGenericTypeParameters(receiver) + types.flatMap { getGenericTypeParameters(it) }
+                val mentionedTypes = parseTypeRef(receiver).mentionedTypes() + parameters.flatMap { it.mentionedTypeRefs() }
+                val implicitTypeParameters = mentionedTypes.filter { it.name.all(Char::isUpperCase) }
                 for (implicit in implicitTypeParameters.reversed()) {
-                    if (implicit != "*" && !types.any { removeAnnotations(it).let { it.startsWith(implicit) || it.startsWith("reified " + implicit) } }) {
-                        types.add(0, implicit)
+                    if (implicit.name != "*" && parameters.none { it.name == implicit.name }) {
+                        parameters.add(0, TypeParameter(implicit.name))
                     }
                 }
 
-                return types
+                return parameters
             } else {
                 // remove T as parameter
                 // TODO: Substitute primitive or String instead of T in other parameters from effective types not from original typeParams
-                return typeParams.filterNot { removeAnnotations(it).startsWith("T") }
+                return parameters.filterNot { it.name == "T" }
             }
         }
 
@@ -396,7 +395,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         val types = effectiveTypeParams()
         if (!types.isEmpty()) {
-            builder.append(types.joinToString(separator = ", ", prefix = "<", postfix = "> ").renderType())
+            builder.append(types.joinToString(separator = ", ", prefix = "<", postfix = "> ", transform = { it.original }).renderType())
         }
 
         val receiverType = (if (toNullableT) receiver.replace("T>", "T?>") else receiver).renderType()
