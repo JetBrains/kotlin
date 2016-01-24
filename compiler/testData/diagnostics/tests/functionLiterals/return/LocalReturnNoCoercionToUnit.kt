@@ -4,5 +4,3 @@ fun test(a: Int) {
       else return@f <!RETURN_TYPE_MISMATCH!>1<!>
     }
 }
-
-fun <T> run(f: () -> T): T { return f() }

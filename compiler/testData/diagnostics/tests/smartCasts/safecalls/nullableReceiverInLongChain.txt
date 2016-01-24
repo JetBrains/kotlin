@@ -4,7 +4,6 @@ public fun test(/*0*/ foo: Foo?): kotlin.Unit
 public fun testNotNull(/*0*/ foo: Foo): kotlin.Unit
 public fun testNullable(/*0*/ foo: Foo?): kotlin.Unit
 public fun kotlin.String?.call(/*0*/ f: (kotlin.String?) -> kotlin.String?): kotlin.String?
-public inline fun </*0*/ T, /*1*/ R> T.let(/*0*/ f: (T) -> R): R
 public fun kotlin.String.notNullLet(/*0*/ f: (kotlin.String) -> kotlin.Unit): kotlin.Unit
 
 public final class Bar {

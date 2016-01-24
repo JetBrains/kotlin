@@ -2,7 +2,6 @@ package
 
 public var A.timeInMillis: kotlin.String
 public fun a(/*0*/ c: Calendar): kotlin.Unit
-public fun </*0*/ T> T.apply(/*0*/ f: T.() -> kotlin.Unit): T
 
 public final class A {
     public constructor A()

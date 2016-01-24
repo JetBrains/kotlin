@@ -1,5 +1,4 @@
 val flag = true
-fun <T> run(f: () -> T): T { return f() }
 
 // type of a was checked by txt
 val a = run { // () -> Unit

@@ -4,8 +4,6 @@ class Foo(val bar: Bar, val nbar: Bar?) {
     fun baz(s: String) = if (s != "") Bar(s) else null
 }
 
-public inline fun <T, R> T.let(f: (T) -> R): R = f(this)
-
 fun String?.call(f: (String?) -> String?) = f(this)
 
 fun String.notNullLet(f: (String) -> Unit) = f(this)

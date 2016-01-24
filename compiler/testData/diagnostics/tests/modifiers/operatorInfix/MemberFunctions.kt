@@ -41,7 +41,5 @@ fun a() {
     }
 }
 
-public fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
-
 fun consumeInt(i: Int) {}
 fun consumeString(s: String) {}

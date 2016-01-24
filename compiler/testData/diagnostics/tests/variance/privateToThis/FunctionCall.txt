@@ -2,7 +2,6 @@ package
 
 public fun </*0*/ T> getT(): T
 public fun </*0*/ I> test(/*0*/ t: Test<I>): kotlin.Unit
-public fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
 
 public final class Test</*0*/ in I> {
     public constructor Test</*0*/ in I>()

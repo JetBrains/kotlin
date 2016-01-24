@@ -1,7 +1,6 @@
 package
 
-public fun foo(/*0*/ arg: kotlin.Int?): kotlin.Int
-public fun run(/*0*/ f: () -> kotlin.Unit): kotlin.Int
+public fun foo(/*0*/ arg: kotlin.Int?): kotlin.Unit
 
 public final class My {
     public constructor My()

@@ -15,4 +15,3 @@ fun test(bal: Array<Int>) {
     val d = run { bar += 4 }
     checkSubtype<Unit>(d)
 }
-fun <T> run(f: () -> T): T = f()

@@ -1,7 +1,6 @@
 package
 
 package j {
-    public fun </*0*/ T> run(/*0*/ f: () -> T): T
 
     public final class P {
         public constructor P()

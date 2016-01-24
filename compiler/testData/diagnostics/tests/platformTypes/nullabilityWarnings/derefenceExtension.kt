@@ -43,4 +43,3 @@ fun test() {
 
 fun J.foo() {}
 fun J?.bar() {}
-fun <T> with(t: T, f: T.() -> Unit) {}

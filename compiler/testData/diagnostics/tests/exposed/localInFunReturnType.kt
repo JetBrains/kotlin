@@ -1,7 +1,3 @@
-fun <T> run(f: () -> T): T {
-    return f()
-}
-
 class My<T>(val value: T)
 
 open class Base

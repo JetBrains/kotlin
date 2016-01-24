@@ -3,8 +3,6 @@
 interface Foo
 fun foo(): Foo? = null
 
-fun <T> run(f: () -> T): T = f()
-
 val foo: Foo = run {
     val x = foo()
     if (x == null) throw Exception()

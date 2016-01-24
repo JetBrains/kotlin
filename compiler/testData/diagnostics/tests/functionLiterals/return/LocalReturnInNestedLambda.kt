@@ -9,5 +9,3 @@ fun test() {
     }
     checkSubtype<Int>(x)
 }
-
-fun <T> run(f: () -> T): T { return f() }

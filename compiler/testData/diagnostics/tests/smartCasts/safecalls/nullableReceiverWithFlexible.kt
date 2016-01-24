@@ -12,8 +12,6 @@ public class Foo {
 }
 
 // FILE: Test.kt
-public inline fun <T, R> T.let(f: (T) -> R): R = f(this)
-
 fun test() {
     val foo = Foo.create(null)
     foo?.bar.let {

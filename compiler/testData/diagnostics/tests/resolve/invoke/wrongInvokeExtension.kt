@@ -16,5 +16,3 @@ fun test(a: A, b: B) {
         <!FUNCTION_EXPECTED!>(a)<!>()
     }
 }
-
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()

@@ -16,5 +16,3 @@ fun main(args: Array<String>) {
         findByName("")
     }
 }
-
-fun <T> with(t: T, f: T.() -> Unit) {}

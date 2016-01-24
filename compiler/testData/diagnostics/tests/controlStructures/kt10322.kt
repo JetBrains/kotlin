@@ -1,5 +1,3 @@
-fun <T> run(block: () -> T) : T = block()
-
 fun test1() {
     run {
         if (true) {

@@ -1,7 +1,6 @@
 package
 
 public fun test(): kotlin.Unit
-public fun </*0*/ T> with(/*0*/ t: T, /*1*/ f: T.() -> kotlin.Unit): kotlin.Unit
 public fun J?.bar(): kotlin.Unit
 public fun J.foo(): kotlin.Unit
 

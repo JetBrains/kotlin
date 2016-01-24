@@ -1,5 +1,4 @@
 fun <T> getT(): T = null!!
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
 
 class Test<in I, out O> {
     private var i: I = getT()

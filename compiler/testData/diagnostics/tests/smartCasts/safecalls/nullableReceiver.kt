@@ -1,8 +1,6 @@
 // See KT-10056
 class Foo(val bar: String)
 
-public inline fun <T, R> T.let(f: (T) -> R): R = f(this)
-
 fun test(foo: Foo?) {
     foo?.bar.let {
         // Error, foo?.bar is nullable

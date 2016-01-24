@@ -1,5 +1,3 @@
-fun TODO(): Nothing = null!!
-
 fun fn(c: Char?): Any? =
         if (c == null) TODO()
         else when (<!DEBUG_INFO_SMARTCAST!>c<!>) {

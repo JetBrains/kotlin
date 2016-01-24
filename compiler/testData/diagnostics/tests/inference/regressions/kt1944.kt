@@ -12,5 +12,3 @@ class P {
         checkSubtype<Unit>(r)
     }
 }
-
-fun <T> run(f: () -> T) : T = f()

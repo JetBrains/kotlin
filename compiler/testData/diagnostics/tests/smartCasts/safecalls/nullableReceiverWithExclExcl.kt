@@ -1,7 +1,5 @@
 class Foo(val bar: String?)
 
-public inline fun <T, R> T.let(f: (T) -> R): R = f(this)
-
 fun test(foo: Foo?) {
     foo!!.bar.let {
         // Correct

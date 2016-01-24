@@ -1,5 +1,3 @@
-fun <T> run(f: () -> T): T = f()
-
 class My<T: Any>(val y: T?) {
 
     fun get(): T = run {

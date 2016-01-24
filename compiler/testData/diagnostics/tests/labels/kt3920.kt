@@ -7,5 +7,3 @@ fun test() {
         2
     }
 }
-
-fun <T> run(f: () -> T): T = f()
