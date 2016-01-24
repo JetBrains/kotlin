@@ -77,6 +77,7 @@ fun updateLibraries(
             if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
                 updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
                 updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
+                updateJar(project, JavaRuntimePresentationProvider.getTestJar(library), LibraryJarDescriptor.TEST_JAR)
 
                 if (kJvmConfigurator!!.changeOldSourcesPathIfNeeded(project, library)) {
                     kJvmConfigurator.copySourcesToPathFromLibrary(project, library)
@@ -111,6 +112,7 @@ private fun updateJar(
     val jarPath: File = when (libraryJarDescriptor) {
         LibraryJarDescriptor.RUNTIME_JAR -> paths.runtimePath
         LibraryJarDescriptor.REFLECT_JAR -> paths.reflectPath
+        LibraryJarDescriptor.TEST_JAR -> paths.kotlinTestPath
         LibraryJarDescriptor.RUNTIME_SRC_JAR -> paths.runtimeSourcesPath
         LibraryJarDescriptor.JS_STDLIB_JAR -> paths.jsStdLibJarPath
         LibraryJarDescriptor.JS_STDLIB_SRC_JAR -> paths.jsStdLibSrcJarPath
@@ -148,6 +150,7 @@ fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
 private enum class LibraryJarDescriptor private constructor(val jarName: String, val shouldExist: Boolean) {
     RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
     REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, false),
+    TEST_JAR(PathUtil.KOTLIN_TEST_JAR, false),
     RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR, false),
     JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, true),
     JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false)
