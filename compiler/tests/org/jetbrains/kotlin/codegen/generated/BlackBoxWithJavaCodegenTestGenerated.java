@@ -113,6 +113,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("invokeOnSyntheticProperty")
+    public void testInvokeOnSyntheticProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/invokeOnSyntheticProperty/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("jvmName")
     public void testJvmName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmName/");

@@ -1,0 +1,20 @@
+package
+
+package inferenceagain {
+    public fun </*0*/ T> derivedOf(/*0*/ vararg members: T /*kotlin.Array<out T>*/): inferenceagain.Derived<T>
+    public fun </*0*/ T> x(/*0*/ l: inferenceagain.Derived<T>): kotlin.Unit
+    public fun </*0*/ R : kotlin.Comparable<R>, /*1*/ T : kotlin.Any> inferenceagain.Base<T>.maxBy(/*0*/ f: (T) -> R): T?
+    public fun </*0*/ R : kotlin.Comparable<R>, /*1*/ T : kotlin.Any> inferenceagain.Derived<T>.maxBy(/*0*/ f: (T) -> R): T?
+
+    public interface Base</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Derived</*0*/ T> : inferenceagain.Base<T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
