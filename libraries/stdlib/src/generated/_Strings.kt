@@ -607,6 +607,7 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
 /**
  * Groups characters of the original char sequence by the key returned by the given [keySelector] function
  * applied to each character and returns a map where each group key is associated with a list of corresponding characters.
+ * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
     return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
@@ -616,6 +617,7 @@ public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, Lis
  * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
  * by the key returned by the given [keySelector] function applied to the character
  * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
     return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
@@ -625,6 +627,7 @@ public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTra
  * Groups characters of the original char sequence by the key returned by the given [keySelector] function
  * applied to each character and puts to the [destination] map each group key associated with a list of corresponding characters.
  * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
@@ -640,6 +643,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.grou
  * by the key returned by the given [keySelector] function applied to the character
  * and puts to the [destination] map each group key associated with a list of corresponding values.
  * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {

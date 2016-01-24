@@ -192,17 +192,24 @@ class CollectionTest {
         assertEquals(4, byLength.size)
 
         // verify that order of keys is preserved
-        val listOfPairs = byLength.toList()
-        assertEquals(1, listOfPairs[0].first)
-        assertEquals(3, listOfPairs[1].first)
-        assertEquals(2, listOfPairs[2].first)
-        assertEquals(4, listOfPairs[3].first)
+        assertEquals(listOf(
+                1 to listOf("a"),
+                3 to listOf("abc", "def"),
+                2 to listOf("ab"),
+                4 to listOf("abcd")
+        ), byLength.toList())
 
-        val l3 = byLength.getOrElse(3, { ArrayList<String>() })
-        assertEquals(2, l3.size)
+        val l3 = byLength[3].orEmpty()
+        assertEquals(listOf("abc", "def"), l3)
+    }
 
-        val byLengthUpper = words.groupBy({ it.length }, { it.toUpperCase() })
-        assertEquals("ABCD", byLengthUpper[4]!!.single())
+    @test fun groupByKeysAndValues() {
+        val pairs = listOf("bob" to "UGLY", "sue" to "PETTY", "bob" to "FAT")
+        val result = pairs.groupBy({ it.first }, { it.second })
+        assertEquals(listOf("bob" to listOf("UGLY", "FAT"), "sue" to listOf("PETTY")), result.toList())
+
+        val mutableResult = pairs.groupByTo(HashMap(), { it.first }, { it.second })
+        assertEquals(result, mutableResult)
     }
 
     @test fun plusRanges() {

@@ -1047,6 +1047,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
 /**
  * Groups elements of the original collection by the key returned by the given [keySelector] function
  * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
     return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
@@ -1056,6 +1057,7 @@ public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List
  * Groups values returned by the [valueTransform] function applied to each element of the original collection
  * by the key returned by the given [keySelector] function applied to the element
  * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
     return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
@@ -1065,6 +1067,7 @@ public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTran
  * Groups elements of the original collection by the key returned by the given [keySelector] function
  * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
  * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -1080,6 +1083,7 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.group
  * by the key returned by the given [keySelector] function applied to the element
  * and puts to the [destination] map each group key associated with a list of corresponding values.
  * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
