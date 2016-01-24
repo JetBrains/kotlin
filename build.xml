@@ -1051,7 +1051,7 @@
     </target>
 
     <target name="runtime"
-            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources"/>
+            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
@@ -1148,6 +1148,27 @@
             <zipfileset dir="idea/testData" prefix="ide"/>
             <zipfileset dir="idea/idea-completion/testData" prefix="ide/completion"/>
         </zip>
+    </target>
+
+    <target name="mock-runtime-for-test">
+        <delete dir="${output}/mock-runtime-src" failonerror="false"/>
+        <mkdir dir="${output}/mock-runtime-src"/>
+        <copy file="${basedir}/libraries/stdlib/src/kotlin/util/Standard.kt" todir="${output}/mock-runtime-src"/>
+
+        <new-kotlinc output="${output}/classes/mock-runtime" moduleName="kotlin-stdlib">
+            <src>
+                <include name="dist/mock-runtime-src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output}/classes/builtins"/>
+            </class-path>
+        </new-kotlinc>
+
+        <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-mock-runtime-for-test.jar" implementation-title="Kotlin Mock Runtime">
+            <jar-content>
+                <fileset dir="${output}/classes/mock-runtime"/>
+            </jar-content>
+        </pack-runtime-jar>
     </target>
 
     <target name="build-bootstrap-artifacts" depends="dist,zip-compiler"/>
