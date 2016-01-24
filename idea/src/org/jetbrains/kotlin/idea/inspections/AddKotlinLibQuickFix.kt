@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ExternalLibraryDescriptor
-import com.intellij.openapi.roots.JavaProjectModelModificationService
+import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -127,24 +127,20 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
     protected abstract fun hasLibJarInLibrary(library: Library): Boolean
     protected abstract fun getLibraryDescriptor(module: Module): MavenExternalLibraryDescriptor
 
-    class MavenExternalLibraryDescriptor(groupId: String, artifactId: String, version: String) :
-            ExternalLibraryDescriptor(groupId, artifactId, version, version) {
-        override fun getLibraryClassesRoots(): List<String> = emptyList()
-    }
+    class MavenExternalLibraryDescriptor(val groupId: String, val artifactId: String, val version: String)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(element.containingFile.virtualFile)
         if (module != null) {
             if (KotlinPluginUtil.isMavenModule(module)) {
-                val scope = OrderEntryFix.suggestScopeByLocation(module, element)
-                JavaProjectModelModificationService.getInstance(project).addDependency(module, getLibraryDescriptor(module), scope)
-
                 return
             }
 
             if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isAndroidGradleModule(module)) {
-                val scope = OrderEntryFix.suggestScopeByLocation(module, element)
-                KotlinWithGradleConfigurator.addKotlinLibraryToModule(module, scope, getLibraryDescriptor(module))
+                val scope = suggestScopeByLocation(module, element)
+                val descriptor = getLibraryDescriptor(module)
+
+                KotlinWithGradleConfigurator.addKotlinLibraryToModule(module, scope, descriptor.groupId, descriptor.artifactId, descriptor.version)
 
                 return
             }
@@ -211,6 +207,16 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
             }
 
             return null
+        }
+
+        private fun suggestScopeByLocation(module: Module, location: PsiElement?): DependencyScope {
+            if (location != null) {
+                val vFile = location.containingFile.virtualFile;
+                if (vFile != null && ModuleRootManager.getInstance(module).fileIndex.isInTestSourceContent(vFile)) {
+                    return DependencyScope.TEST;
+                }
+            }
+            return DependencyScope.COMPILE;
         }
     }
 }
