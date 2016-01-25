@@ -937,7 +937,7 @@ public abstract class KotlinBuiltIns {
         if (!BUILT_INS_PACKAGE_NAME.equals(first(segments))) return false;
 
         String shortName = last(segments).asString();
-        return BuiltInFictitiousFunctionClassFactory.parseClassName(shortName, BUILT_INS_PACKAGE_FQ_NAME) != null;
+        return BuiltInFictitiousFunctionClassFactory.isFunctionClassName(shortName, BUILT_INS_PACKAGE_FQ_NAME);
     }
 
     @Nullable

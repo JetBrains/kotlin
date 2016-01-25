@@ -33,13 +33,13 @@ object JvmFileClassUtil {
     val JVM_MULTIFILE_CLASS: FqName = FqName("kotlin.jvm.JvmMultifileClass")
     val JVM_MULTIFILE_CLASS_SHORT = JVM_MULTIFILE_CLASS.shortName().asString()
 
-    @JvmStatic fun getFileClassInfo(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations?): JvmFileClassInfo =
+    internal fun getFileClassInfo(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations?): JvmFileClassInfo =
             if (jvmFileClassAnnotations != null)
                 getFileClassInfoForAnnotation(file, jvmFileClassAnnotations)
             else
                 getDefaultFileClassInfo(file)
 
-    @JvmStatic fun getFileClassInfoForAnnotation(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations): JvmFileClassInfo =
+    private fun getFileClassInfoForAnnotation(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations): JvmFileClassInfo =
             if (jvmFileClassAnnotations.multipleFiles)
                 JvmMultifileClassPartInfo(getHiddenPartFqName(file, jvmFileClassAnnotations),
                                           getFacadeFqName(file, jvmFileClassAnnotations))
@@ -49,7 +49,7 @@ object JvmFileClassUtil {
     @JvmStatic fun getDefaultFileClassInfo(file: KtFile): JvmFileClassInfo =
             JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(file.packageFqName, file.name), false)
 
-    @JvmStatic fun getFacadeFqName(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations): FqName =
+    private fun getFacadeFqName(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations): FqName =
             file.packageFqName.child(Name.identifier(jvmFileClassAnnotations.name))
 
     @JvmStatic fun getPartFqNameForDeserializedCallable(callable: DeserializedCallableMemberDescriptor): FqName {
@@ -61,7 +61,7 @@ object JvmFileClassUtil {
     @JvmStatic fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name? =
             callable.getImplClassNameForDeserialized()
 
-    @JvmStatic fun getHiddenPartFqName(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations): FqName =
+    private fun getHiddenPartFqName(file: KtFile, jvmFileClassAnnotations: ParsedJvmFileClassAnnotations): FqName =
             file.packageFqName.child(Name.identifier(manglePartName(jvmFileClassAnnotations.name, file.name)))
 
     @JvmStatic fun manglePartName(facadeName: String, fileName: String): String =
@@ -70,7 +70,7 @@ object JvmFileClassUtil {
     @JvmStatic fun getFileClassInfoNoResolve(file: KtFile): JvmFileClassInfo =
             getFileClassInfo(file, parseJvmNameOnFileNoResolve(file))
 
-    @JvmStatic fun parseJvmNameOnFileNoResolve(file: KtFile): ParsedJvmFileClassAnnotations? {
+    internal fun parseJvmNameOnFileNoResolve(file: KtFile): ParsedJvmFileClassAnnotations? {
         val jvmName = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT) ?: return null
         val nameExpr = jvmName.valueArguments.firstOrNull()?.getArgumentExpression() ?: return null
         val name = getLiteralStringFromRestrictedConstExpression(nameExpr) ?: return null
@@ -94,7 +94,7 @@ object JvmFileClassUtil {
     }
 }
 
-private class ParsedJvmFileClassAnnotations(val name: String, val multipleFiles: Boolean)
+internal class ParsedJvmFileClassAnnotations(val name: String, val multipleFiles: Boolean)
 
 val KtFile.javaFileFacadeFqName: FqName
     get() {
