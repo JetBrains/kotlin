@@ -63,7 +63,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             }
 
             if (function.getName() != null) {
-                context.trace.report(ANONYMOUS_FUNCTION_WITH_NAME.on(function.getNameIdentifier()))
+                context.trace.report(ANONYMOUS_FUNCTION_WITH_NAME.on(function.nameIdentifier!!))
             }
 
             for (parameter in function.getValueParameters()) {

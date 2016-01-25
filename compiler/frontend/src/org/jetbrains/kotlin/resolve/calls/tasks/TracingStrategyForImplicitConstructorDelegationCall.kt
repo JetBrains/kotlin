@@ -59,7 +59,7 @@ class TracingStrategyForImplicitConstructorDelegationCall(
     }
 
     override fun unresolvedReference(trace: BindingTrace) {
-        trace.report(UNRESOLVED_REFERENCE.on(calleeExpression, calleeExpression))
+        trace.report(UNRESOLVED_REFERENCE.on(calleeExpression!!, calleeExpression))
     }
 
     override fun <D : CallableDescriptor> unresolvedReferenceWrongReceiver(trace: BindingTrace, candidates: Collection<ResolvedCall<D>>) {

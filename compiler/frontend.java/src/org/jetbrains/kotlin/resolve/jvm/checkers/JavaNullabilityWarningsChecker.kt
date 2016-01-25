@@ -108,7 +108,7 @@ class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                             if (WhenChecker.getEnumMissingCases(expression, context, enumClassDescriptor).isEmpty()
                                 && !WhenChecker.containsNullCase(expression, context)) {
 
-                                c.trace.report(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA.on(expression.getSubjectExpression()))
+                                c.trace.report(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA.on(expression.subjectExpression!!))
                             }
                         }
                     }
