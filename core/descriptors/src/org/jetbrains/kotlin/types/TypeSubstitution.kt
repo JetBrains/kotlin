@@ -117,11 +117,13 @@ fun KotlinType.computeNewSubstitution(
     return composedSubstitution
 }
 
+@JvmOverloads
 fun KotlinType.replace(
-        newArguments: List<TypeProjection>,
-        newAnnotations: Annotations = annotations
+        newArguments: List<TypeProjection> = arguments,
+        newAnnotations: Annotations = annotations,
+        newCapabilities: TypeCapabilities = capabilities
 ): KotlinType {
-    if (newArguments.isEmpty() && newAnnotations === annotations) return this
+    if (newArguments.isEmpty() && newAnnotations === annotations && newCapabilities === capabilities) return this
 
     if (newArguments.isEmpty()) {
         return KotlinTypeImpl.create(
@@ -131,7 +133,7 @@ fun KotlinType.replace(
                 arguments,
                 substitution,
                 memberScope,
-                capabilities
+                newCapabilities
         )
     }
 
@@ -150,7 +152,7 @@ fun KotlinType.replace(
             newArguments,
             newSubstitution,
             newScope,
-            capabilities
+            newCapabilities
     )
 }
 

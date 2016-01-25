@@ -38,6 +38,6 @@ fun main(a: A<String>, a1: A<String?>) {
     a.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNSAFE_CALL!>.<!>length
 
     a1.baz("")!!.length
-    a1.baz(null)!!.length
+    a1.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)!!.length
 }
 

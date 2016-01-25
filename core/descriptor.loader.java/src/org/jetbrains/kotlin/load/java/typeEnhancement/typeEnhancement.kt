@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 // The index in the lambda is the position of the type component:
@@ -104,6 +106,12 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
         typeConstructor, enhancedArguments
     )
 
+    val newCapabilities =
+            if (effectiveQualifiers.isNotNullTypeParameter)
+                capabilities.addCapability(CustomTypeVariable::class.java, NotNullTypeParameterTypeCapability)
+            else
+                capabilities
+
     val enhancedType = KotlinTypeImpl.create(
             newAnnotations,
             typeConstructor,
@@ -113,7 +121,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(newSubstitution)
             else enhancedClassifier.getDefaultType().getMemberScope(),
-            capabilities
+            newCapabilities
     )
     return Result(enhancedType, globalArgIndex - index)
 }
@@ -191,4 +199,30 @@ private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
     override fun getAllValueArguments() = throwError()
     override fun getSource() = throwError()
     override fun toString() = "[EnhancedType]"
+}
+
+internal object NotNullTypeParameterTypeCapability : CustomTypeVariable {
+    override val isTypeVariable: Boolean
+        get() = true
+
+    override fun substitutionResult(replacement: KotlinType): KotlinType {
+        if (!TypeUtils.isNullableType(replacement) && !replacement.isTypeParameter()) return replacement
+
+        if (replacement.isFlexible()) {
+            with(replacement.flexibility()) {
+                return DelegatingFlexibleType.create(lowerBound.prepareReplacement(), upperBound.prepareReplacement(), extraCapabilities)
+            }
+        }
+
+        return replacement.prepareReplacement()
+    }
+
+    private fun KotlinType.prepareReplacement(): KotlinType {
+        val result = makeNotNullable()
+        if (!this.isTypeParameter()) return result
+
+        return result.replace(
+                newCapabilities = capabilities.addCapability(
+                        CustomTypeVariable::class.java, NotNullTypeParameterTypeCapability))
+    }
 }

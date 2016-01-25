@@ -57,6 +57,8 @@ fun KotlinType.isNullableAny(): Boolean = KotlinBuiltIns.isNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 fun KotlinType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 
+fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
+
 fun KotlinType?.isArrayOfNothing(): Boolean {
     if (this == null || !KotlinBuiltIns.isArray(this)) return false
 

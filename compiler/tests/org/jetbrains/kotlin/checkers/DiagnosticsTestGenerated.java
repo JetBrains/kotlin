@@ -12435,6 +12435,51 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class NotNullTypeParameter extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInNotNullTypeParameter() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("enhancementFromAnnotation.kt")
+                public void testEnhancementFromAnnotation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/enhancementFromAnnotation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("enhancementFromKotlin.kt")
+                public void testEnhancementFromKotlin() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/enhancementFromKotlin.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("methodTypeParameter.kt")
+                public void testMethodTypeParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/methodTypeParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noInheritanceReturnType.kt")
+                public void testNoInheritanceReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/noInheritanceReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noInheritanceValueParameter.kt")
+                public void testNoInheritanceValueParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/noInheritanceValueParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("substitutionInSuperType.kt")
+                public void testSubstitutionInSuperType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/notNullTypeParameter/substitutionInSuperType.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

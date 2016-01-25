@@ -1,0 +1,14 @@
+package
+
+public fun test(): kotlin.Unit
+
+public open class A</*0*/ T : kotlin.Any!> {
+    public constructor A</*0*/ T : kotlin.Any!>()
+    public open fun bar(/*0*/ @org.jetbrains.annotations.NotNull() x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun create(): A<kotlin.String!>!
+}

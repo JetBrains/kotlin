@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.READ_ONLY
@@ -25,11 +24,10 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NOT_N
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.flexibility
-import org.jetbrains.kotlin.types.isFlexible
-import java.util.ArrayList
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import java.util.*
 
 enum class NullabilityQualifier {
     NULLABLE,
@@ -41,12 +39,13 @@ enum class MutabilityQualifier {
     MUTABLE
 }
 
-class JavaTypeQualifiers(
+class JavaTypeQualifiers internal constructor(
         val nullability: NullabilityQualifier?,
-        val mutability: MutabilityQualifier?
+        val mutability: MutabilityQualifier?,
+        internal val isNotNullTypeParameter: Boolean
 ) {
     companion object {
-        val NONE = JavaTypeQualifiers(null, null)
+        val NONE = JavaTypeQualifiers(null, null, false)
     }
 }
 
@@ -58,13 +57,13 @@ private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
 
     val mapping = JavaToKotlinClassMap.INSTANCE
     return JavaTypeQualifiers(
-            if (lower.isMarkedNullable()) NULLABLE else if (!upper.isMarkedNullable()) NOT_NULL else null,
-            if (mapping.isReadOnly(lower)) READ_ONLY else if (mapping.isMutable(upper)) MUTABLE else null
-    )
+            if (lower.isMarkedNullable) NULLABLE else if (!upper.isMarkedNullable) NOT_NULL else null,
+            if (mapping.isReadOnly(lower)) READ_ONLY else if (mapping.isMutable(upper)) MUTABLE else null,
+            isNotNullTypeParameter = getCapability<CustomTypeVariable>() is NotNullTypeParameterTypeCapability)
 }
 
-private fun Annotations.extractQualifiers(): JavaTypeQualifiers {
-    fun <T: Any> List<FqName>.ifPresent(qualifier: T) = if (any { findAnnotation(it) != null}) qualifier else null
+private fun KotlinType.extractQualifiersFromAnnotations(): JavaTypeQualifiers {
+    fun <T: Any> List<FqName>.ifPresent(qualifier: T) = if (any { annotations.findAnnotation(it) != null}) qualifier else null
 
     // These two overloads are just for sake of optimization as in most cases last parameter in second overload is null
     fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
@@ -76,7 +75,7 @@ private fun Annotations.extractQualifiers(): JavaTypeQualifiers {
 
     // Javax/FundBugs NonNull annotation has parameter `when` that determines actual nullability
     fun FqName.extractQualifierFromAnnotationWithWhen(): NullabilityQualifier? {
-        val annotationDescriptor = findAnnotation(this) ?: return null
+        val annotationDescriptor = annotations.findAnnotation(this) ?: return null
         return annotationDescriptor.allValueArguments.values.singleOrNull()?.value?.let {
             enumEntryDescriptor ->
             if (enumEntryDescriptor !is ClassDescriptor) return@let null
@@ -84,13 +83,15 @@ private fun Annotations.extractQualifiers(): JavaTypeQualifiers {
         } ?: NOT_NULL
     }
 
+    val nullability = uniqueNotNull(
+            NULLABLE_ANNOTATIONS.ifPresent(NULLABLE),
+            NOT_NULL_ANNOTATIONS.ifPresent(NOT_NULL),
+            JAVAX_NONNULL_ANNOTATION.extractQualifierFromAnnotationWithWhen()
+    )
     return JavaTypeQualifiers(
-            uniqueNotNull(
-                    NULLABLE_ANNOTATIONS.ifPresent(NULLABLE),
-                    NOT_NULL_ANNOTATIONS.ifPresent(NOT_NULL),
-                    JAVAX_NONNULL_ANNOTATION.extractQualifierFromAnnotationWithWhen()
-            ),
-            uniqueNotNull(READ_ONLY_ANNOTATIONS.ifPresent(READ_ONLY), MUTABLE_ANNOTATIONS.ifPresent(MUTABLE))
+            nullability,
+            uniqueNotNull(READ_ONLY_ANNOTATIONS.ifPresent(READ_ONLY), MUTABLE_ANNOTATIONS.ifPresent(MUTABLE)),
+            isNotNullTypeParameter = nullability == NOT_NULL && isTypeParameter()
     )
 }
 
@@ -143,14 +144,24 @@ fun KotlinType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<Ko
 private fun KotlinType.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>, isCovariant: Boolean): JavaTypeQualifiers {
     val nullabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().nullability }.filterNotNull().toSet()
     val mutabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().mutability }.filterNotNull().toSet()
-    val own = getAnnotations().extractQualifiers()
+
+    val own = extractQualifiersFromAnnotations()
+
+    val isAnyNonNullTypeParameter = own.isNotNullTypeParameter || fromSupertypes.any { it.extractQualifiers().isNotNullTypeParameter }
+
+    fun createJavaTypeQualifiers(nullability: NullabilityQualifier?, mutability: MutabilityQualifier?): JavaTypeQualifiers {
+        if (!isAnyNonNullTypeParameter || nullability != NOT_NULL) return JavaTypeQualifiers(nullability, mutability, false)
+        return JavaTypeQualifiers(
+                nullability, mutability,
+                isNotNullTypeParameter = true)
+    }
 
     if (isCovariant) {
         fun <T : Any> Set<T>.selectCovariantly(low: T, high: T, own: T?): T? {
             val supertypeQualifier = if (low in this) low else if (high in this) high else null
             return if (supertypeQualifier == low && own == high) null else own ?: supertypeQualifier
         }
-        return JavaTypeQualifiers(
+        return createJavaTypeQualifiers(
                 nullabilityFromSupertypes.selectCovariantly(NOT_NULL, NULLABLE, own.nullability),
                 mutabilityFromSupertypes.selectCovariantly(MUTABLE, READ_ONLY, own.mutability)
         )
@@ -163,7 +174,7 @@ private fun KotlinType.computeQualifiersForOverride(fromSupertypes: Collection<K
             // and all qualifiers are discarded
             return effectiveSet.singleOrNull()
         }
-        return JavaTypeQualifiers(
+        return createJavaTypeQualifiers(
                 nullabilityFromSupertypes.selectInvariantly(own.nullability),
                 mutabilityFromSupertypes.selectInvariantly(own.mutability)
         )

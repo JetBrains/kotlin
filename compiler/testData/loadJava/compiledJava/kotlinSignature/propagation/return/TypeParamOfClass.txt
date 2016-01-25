@@ -4,7 +4,7 @@ public interface TypeParamOfClass {
 
     public interface Sub</*0*/ T : kotlin.Any!> : test.TypeParamOfClass.Super<T!> {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*1*/ fun foo(): T!
+        public abstract override /*1*/ fun foo(): T
     }
 
     public interface Super</*0*/ T : kotlin.Any!> {

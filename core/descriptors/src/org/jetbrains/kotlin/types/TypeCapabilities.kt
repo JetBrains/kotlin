@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.PossiblyInnerType
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 interface TypeCapability
 
@@ -39,6 +38,14 @@ class SingletonTypeCapabilities(private val clazz: Class<*>, private val typeCap
         if (capabilityClass == clazz) return typeCapability as T
         return null
     }
+}
+
+fun <T : TypeCapability> TypeCapabilities.addCapability(clazz: Class<T>, typeCapability: T): TypeCapabilities {
+    if (getCapability(clazz) === typeCapability) return this
+    val newCapabilities = SingletonTypeCapabilities(clazz, typeCapability)
+    if (this === TypeCapabilities.NONE) return newCapabilities
+
+    return CompositeTypeCapabilities(this, newCapabilities)
 }
 
 inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
