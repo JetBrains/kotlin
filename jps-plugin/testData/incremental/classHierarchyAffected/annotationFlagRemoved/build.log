@@ -1,32 +1,47 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/Ann1.class
+  out/production/module/Ann1.class
 End of files
 Compiling files:
-src/Ann1.kt
+  src/Ann1.kt
 End of files
+Marked as dirty by Kotlin:
+  src/UseAnn1Class.kt
+  src/useAnn1Fun.kt
+  src/useAnn1Val.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UseAnn1.class
-out/production/module/UseAnn1FunKt.class
-out/production/module/UseAnn1ValKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseAnn1.class
+  out/production/module/UseAnn1FunKt.class
+  out/production/module/UseAnn1ValKt.class
 End of files
 Compiling files:
-src/UseAnn1Class.kt
-src/useAnn1Fun.kt
-src/useAnn1Val.kt
+  src/UseAnn1Class.kt
+  src/useAnn1Fun.kt
+  src/useAnn1Val.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 'Ann1' is not an annotation class
 'Ann1' is not an annotation class
 'Ann1' is not an annotation class
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/Ann1.class
+  out/production/module/Ann1.class
 End of files
 Compiling files:
-src/Ann1.kt
-src/UseAnn1Class.kt
-src/useAnn1Fun.kt
-src/useAnn1Val.kt
+  src/Ann1.kt
+  src/UseAnn1Class.kt
+  src/useAnn1Fun.kt
+  src/useAnn1Val.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

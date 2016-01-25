@@ -1,14 +1,24 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/inline/InlineKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/inline/InlineKt.class
 End of files
 Compiling files:
-src/inline.kt
+  src/inline.kt
 End of files
+Marked as dirty by Kotlin:
+  src/usage.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/usage/UsageKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/usage/UsageKt.class
 End of files
 Compiling files:
-src/usage.kt
+  src/usage.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

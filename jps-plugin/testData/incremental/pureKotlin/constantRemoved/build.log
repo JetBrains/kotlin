@@ -1,7 +1,13 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/ConstKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/ConstKt.class
 End of files
 Compiling files:
-src/const.kt
+  src/const.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

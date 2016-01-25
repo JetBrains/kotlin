@@ -1,9 +1,13 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/Fun2Kt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/Fun2Kt.class
 End of files
 Compiling files:
-src/fun2.kt
+  src/fun2.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 'public fun function(): kotlin.Unit' conflicts with another declaration in package 'test'

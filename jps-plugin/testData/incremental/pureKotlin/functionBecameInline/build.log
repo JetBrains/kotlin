@@ -1,13 +1,21 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/Y.class
+  out/production/module/Y.class
 End of files
 Compiling files:
-src/fun.kt
+  src/fun.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/X$main$1.class
-out/production/module/X.class
+  out/production/module/X$main$1.class
+  out/production/module/X.class
 End of files
 Compiling files:
-src/usage.kt
+  src/usage.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

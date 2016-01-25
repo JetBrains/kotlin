@@ -1,9 +1,13 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/AKt.class
-out/production/module/test/BKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/AKt.class
+  out/production/module/test/BKt.class
 End of files
 Compiling files:
-src/a.kt
-src/b.kt
+  src/a.kt
+  src/b.kt
 End of files
+Exit code: OK
+------------------------------------------

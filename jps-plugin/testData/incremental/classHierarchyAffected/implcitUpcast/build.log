@@ -1,37 +1,54 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/B.class
+  out/production/module/B.class
 End of files
 Compiling files:
-src/B.kt
+  src/B.kt
 End of files
+Marked as dirty by Kotlin:
+  src/C.kt
+  src/callUseAWithB.kt
+  src/callUseAWithC.kt
+  src/getB.kt
+  src/getC.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/C.class
-out/production/module/CallUseAWithBKt.class
-out/production/module/CallUseAWithCKt.class
-out/production/module/GetBKt.class
-out/production/module/GetCKt.class
-out/production/module/META-INF/module.kotlin_module
+  out/production/module/C.class
+  out/production/module/CallUseAWithBKt.class
+  out/production/module/CallUseAWithCKt.class
+  out/production/module/GetBKt.class
+  out/production/module/GetCKt.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Compiling files:
-src/C.kt
-src/callUseAWithB.kt
-src/callUseAWithC.kt
-src/getB.kt
-src/getC.kt
+  src/C.kt
+  src/callUseAWithB.kt
+  src/callUseAWithC.kt
+  src/getB.kt
+  src/getC.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Type mismatch: inferred type is B but A was expected
 Type mismatch: inferred type is C but A was expected
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/B.class
+  out/production/module/B.class
 End of files
 Compiling files:
-src/B.kt
-src/C.kt
-src/callUseAWithB.kt
-src/callUseAWithC.kt
-src/getB.kt
-src/getC.kt
+  src/B.kt
+  src/C.kt
+  src/callUseAWithB.kt
+  src/callUseAWithC.kt
+  src/getB.kt
+  src/getC.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

@@ -1,13 +1,23 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module1/a/A.class
+  out/production/module1/a/A.class
 End of files
 Compiling files:
-module1/src/module1_a.kt
+  module1/src/module1_a.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
 Cleaning output files:
-out/production/module2/META-INF/module2.kotlin_module
-out/production/module2/usage/Module2_usageKt.class
+  out/production/module2/META-INF/module2.kotlin_module
+  out/production/module2/usage/Module2_usageKt.class
 End of files
 Compiling files:
-module2/src/module2_usage.kt
+  module2/src/module2_usage.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

@@ -1,13 +1,24 @@
-Cleaning output files:
-out/production/module/Foo.class
-End of files
-Compiling files:
-src/b.kt
-End of files
-
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/Foo.class
+  out/production/module/Foo.class
+End of files
+Compiling files:
+  src/b.kt
+End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/Foo.class
 End of files
 Compiling files:
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

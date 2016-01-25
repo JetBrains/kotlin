@@ -1,7 +1,9 @@
 Compiling files:
-src/KotlinClass.kt
-src/usages.kt
+  src/KotlinClass.kt
+  src/usages.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Unresolved reference: setFoo
 Val cannot be reassigned

@@ -1,23 +1,38 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/B.class
+  out/production/module/B.class
 End of files
 Compiling files:
-src/B.kt
+  src/B.kt
 End of files
+Marked as dirty by Kotlin:
+  src/C.kt
+  src/getB.kt
+  src/getBorC.kt
+  src/getBorD.kt
+  src/getC.kt
+  src/getCorD.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/C.class
-out/production/module/GetBKt.class
-out/production/module/GetBorCKt.class
-out/production/module/GetBorDKt.class
-out/production/module/GetCKt.class
-out/production/module/GetCorDKt.class
-out/production/module/META-INF/module.kotlin_module
+  out/production/module/C.class
+  out/production/module/GetBKt.class
+  out/production/module/GetBorCKt.class
+  out/production/module/GetBorDKt.class
+  out/production/module/GetCKt.class
+  out/production/module/GetCorDKt.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Compiling files:
-src/C.kt
-src/getB.kt
-src/getBorC.kt
-src/getBorD.kt
-src/getC.kt
-src/getCorD.kt
+  src/C.kt
+  src/getB.kt
+  src/getBorC.kt
+  src/getBorD.kt
+  src/getC.kt
+  src/getCorD.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

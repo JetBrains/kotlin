@@ -1,36 +1,52 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/B.class
+  out/production/module/B.class
 End of files
 Compiling files:
-src/B.kt
+  src/B.kt
 End of files
+Marked as dirty by Kotlin:
+  src/consumeBExtLambda.kt
+  src/consumeBLambda.kt
+  src/useConsumeBExtLambda.kt
+  src/useConsumeBLambda.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/ConsumeBExtLambdaKt.class
-out/production/module/ConsumeBLambdaKt.class
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UseConsumeBExtLambdaKt$useConsumeBExtLambda$1.class
-out/production/module/UseConsumeBExtLambdaKt.class
-out/production/module/UseConsumeBLambdaKt$useConsumeBLambda$1.class
-out/production/module/UseConsumeBLambdaKt.class
+  out/production/module/ConsumeBExtLambdaKt.class
+  out/production/module/ConsumeBLambdaKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseConsumeBExtLambdaKt$useConsumeBExtLambda$1.class
+  out/production/module/UseConsumeBExtLambdaKt.class
+  out/production/module/UseConsumeBLambdaKt$useConsumeBLambda$1.class
+  out/production/module/UseConsumeBLambdaKt.class
 End of files
 Compiling files:
-src/consumeBExtLambda.kt
-src/consumeBLambda.kt
-src/useConsumeBExtLambda.kt
-src/useConsumeBLambda.kt
+  src/consumeBExtLambda.kt
+  src/consumeBLambda.kt
+  src/useConsumeBExtLambda.kt
+  src/useConsumeBLambda.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Type mismatch: inferred type is B but A was expected
 Type mismatch: inferred type is B but A was expected
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/B.class
+  out/production/module/B.class
 End of files
 Compiling files:
-src/B.kt
-src/consumeBExtLambda.kt
-src/consumeBLambda.kt
-src/useConsumeBExtLambda.kt
-src/useConsumeBLambda.kt
+  src/B.kt
+  src/consumeBExtLambda.kt
+  src/consumeBLambda.kt
+  src/useConsumeBExtLambda.kt
+  src/useConsumeBLambda.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

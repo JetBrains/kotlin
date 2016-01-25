@@ -1,8 +1,14 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/outer/nested/NestedKt$main$1.class
-out/production/module/outer/nested/NestedKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/outer/nested/NestedKt$main$1.class
+  out/production/module/outer/nested/NestedKt.class
 End of files
 Compiling files:
-src/nested.kt
+  src/nested.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

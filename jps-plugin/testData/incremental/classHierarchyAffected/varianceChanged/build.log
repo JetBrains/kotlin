@@ -1,32 +1,47 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/A.class
+  out/production/module/A.class
 End of files
 Compiling files:
-src/A.kt
+  src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  src/D.kt
+  src/useA.kt
+  src/useD.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/D$Companion.class
-out/production/module/D.class
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UseAKt.class
-out/production/module/UseDKt.class
+  out/production/module/D$Companion.class
+  out/production/module/D.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseAKt.class
+  out/production/module/UseDKt.class
 End of files
 Compiling files:
-src/D.kt
-src/useA.kt
-src/useD.kt
+  src/D.kt
+  src/useA.kt
+  src/useD.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Type mismatch: inferred type is A<B> but A<C> was expected
 Type mismatch: inferred type is A<B> but A<C> was expected
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/A.class
+  out/production/module/A.class
 End of files
 Compiling files:
-src/A.kt
-src/D.kt
-src/useA.kt
-src/useD.kt
+  src/A.kt
+  src/D.kt
+  src/useA.kt
+  src/useD.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

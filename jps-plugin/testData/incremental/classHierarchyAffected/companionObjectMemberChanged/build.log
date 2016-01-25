@@ -1,38 +1,54 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/A$AA.class
-out/production/module/A.class
+  out/production/module/A$AA.class
+  out/production/module/A.class
 End of files
 Compiling files:
-src/A.kt
+  src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  src/companionExtension.kt
+  src/companionReferenceExplicit.kt
+  src/companionReferenceImplicit.kt
+  src/importedMember.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/CompanionExtensionKt.class
-out/production/module/CompanionReferenceExplicitKt.class
-out/production/module/CompanionReferenceImplicitKt.class
-out/production/module/ImportedMemberKt.class
-out/production/module/META-INF/module.kotlin_module
+  out/production/module/CompanionExtensionKt.class
+  out/production/module/CompanionReferenceExplicitKt.class
+  out/production/module/CompanionReferenceImplicitKt.class
+  out/production/module/ImportedMemberKt.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Compiling files:
-src/companionExtension.kt
-src/companionReferenceExplicit.kt
-src/companionReferenceImplicit.kt
-src/importedMember.kt
+  src/companionExtension.kt
+  src/companionReferenceExplicit.kt
+  src/companionReferenceImplicit.kt
+  src/importedMember.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.String?
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.String?
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.String?
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.String?
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/A$AA.class
-out/production/module/A.class
+  out/production/module/A$AA.class
+  out/production/module/A.class
 End of files
 Compiling files:
-src/A.kt
-src/companionExtension.kt
-src/companionReferenceExplicit.kt
-src/companionReferenceImplicit.kt
-src/importedMember.kt
+  src/A.kt
+  src/companionExtension.kt
+  src/companionReferenceExplicit.kt
+  src/companionReferenceImplicit.kt
+  src/importedMember.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

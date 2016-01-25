@@ -42,9 +42,6 @@ abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : Abstract
 abstract class AbstractDataContainerVersionChangedTest : AbstractExperimentalIncrementalCacheVersionChangedTest() {
     override val experimentalBuildLogFileName = "data-container-version-build.log"
 
-    override fun createExperimentalBuildLog(incrementalMakeResults: List<MakeResult>) =
-            createDefaultBuildLog(incrementalMakeResults)
-
     override fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
             listOf(cacheVersionProvider.dataContainerVersion())
 }

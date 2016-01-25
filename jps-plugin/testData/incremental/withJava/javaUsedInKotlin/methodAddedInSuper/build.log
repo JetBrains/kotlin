@@ -1,15 +1,21 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/Super.class
+  out/production/module/Super.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/Super.java
+End of files
+Cleaning output files:
+  out/production/module/Sub.class
 End of files
 Compiling files:
-src/Super.java
+  src/Sub.kt
 End of files
-Cleaning output files:
-out/production/module/Sub.class
-End of files
-Compiling files:
-src/Sub.kt
-End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Cannot weaken access privilege 'public' for 'y' in 'Super'
 'y' hides member of supertype 'Super' and needs 'override' modifier

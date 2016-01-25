@@ -1,0 +1,45 @@
+================ Step #1 =================
+
+Exit code: NOTHING_DONE
+------------------------------------------
+Cleaning output files:
+  out/production/module4/module4/D.class
+End of files
+Compiling files:
+  module4/src/module4_d.kt
+End of files
+Marked as dirty by Kotlin:
+  module1/src/module1_a.kt
+  module2/src/module2_b.kt
+  module3/src/module3_c.kt
+  module4/src/module4_d.kt
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
+  out/production/module1/module1/A.class
+  out/production/module1/module1/Module1_aKt.class
+End of files
+Compiling files:
+  module1/src/module1_a.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
+  out/production/module2/module2/Module2_bKt.class
+End of files
+Compiling files:
+  module2/src/module2_b.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module3/META-INF/module3.kotlin_module
+  out/production/module3/module3/Module3_cKt.class
+End of files
+Compiling files:
+  module3/src/module3_c.kt
+End of files
+Exit code: OK
+------------------------------------------

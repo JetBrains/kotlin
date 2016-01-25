@@ -1,9 +1,15 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/AKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/AKt.class
 End of files
 Cleaning output files:
-out/production/module/test/BKt.class
+  out/production/module/test/BKt.class
 End of files
 Compiling files:
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
