@@ -77,7 +77,6 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     ): List<AnnotationWithTarget> {
         return propertyAnnotations.map { AnnotationWithTarget(it, null) } +
                fieldAnnotations.map { AnnotationWithTarget(it, fieldUseSiteTarget) }
-               fieldAnnotations.map { AnnotationWithTarget(it, fieldUseSiteTarget) }
     }
 
     override fun transformAnnotations(annotations: List<AnnotationDescriptor>): List<AnnotationWithTarget> {
