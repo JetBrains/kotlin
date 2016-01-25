@@ -66,9 +66,6 @@ fun oneMoreSpecificThanAnother(a: KotlinType, b: KotlinType) =
 interface CustomTypeVariable : TypeCapability {
     val isTypeVariable: Boolean
 
-    // If typeParameterDescriptor != null <=> isTypeVariable == true, this is not a type variable
-    val typeParameterDescriptor: TypeParameterDescriptor?
-
     // Throws an exception when isTypeVariable == false
     fun substitutionResult(replacement: KotlinType): KotlinType
 }
