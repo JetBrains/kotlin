@@ -16,50 +16,48 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.intellij.util.SmartFMap
-
 object SMAPParser {
-
+    /*null smap means that there is no any debug info in file (e.g. sourceName)*/
     @JvmStatic
-    /*null smap means that there is no any debug info in file (e.g. sourceName)*/ fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
-        if (mappingInfo == null || mappingInfo.isEmpty()) {
-            val fm: FileMapping
-            if (source == null || source.isEmpty()) {
-                fm = FileMapping.SKIP
-            }
-            else {
-                fm = FileMapping(source, path)
-                if (methodStartLine <= methodEndLine) {
-                    //one to one
-                    fm.addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
-                }
-            }
-            return SMAP(listOf(fm))
+    fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
+        if (mappingInfo != null && mappingInfo.isNotEmpty()) {
+            return parse(mappingInfo)
         }
-        return parse(mappingInfo)
+
+        val mapping =
+                if (source == null || source.isEmpty())
+                    FileMapping.SKIP
+                else
+                    FileMapping(source, path).apply {
+                        if (methodStartLine <= methodEndLine) {
+                            //one to one
+                            addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
+                        }
+                    }
+
+        return SMAP(listOf(mapping))
     }
 
-    @JvmStatic fun parse(mappingInfo: String): SMAP {
+    @JvmStatic
+    fun parse(mappingInfo: String): SMAP {
         val fileMappings = linkedMapOf<Int, FileMapping>()
 
         val fileSectionStart = mappingInfo.indexOf(SMAP.FILE_SECTION) + SMAP.FILE_SECTION.length
         val lineSectionAnchor = mappingInfo.indexOf(SMAP.LINE_SECTION)
         val files = mappingInfo.substring(fileSectionStart, lineSectionAnchor)
 
-
         val fileEntries = files.trim().split('+')
 
         for (fileDeclaration in fileEntries) {
-            if (fileDeclaration == "") continue;
+            if (fileDeclaration == "") continue
             val fileInternalName = fileDeclaration.trim()
 
             val indexEnd = fileInternalName.indexOf(' ')
-            val fileIndex = Integer.valueOf(fileInternalName.substring(0, indexEnd))
+            val fileIndex = fileInternalName.substring(0, indexEnd).toInt()
             val newLine = fileInternalName.indexOf('\n')
             val fileName = fileInternalName.substring(indexEnd + 1, newLine)
-            fileMappings.put(fileIndex, FileMapping(fileName, fileInternalName.substring(newLine + 1).trim()))
+            fileMappings[fileIndex] = FileMapping(fileName, fileInternalName.substring(newLine + 1).trim())
         }
-
 
         val lines = mappingInfo.substring(lineSectionAnchor + SMAP.LINE_SECTION.length, mappingInfo.indexOf(SMAP.END)).trim().split('\n')
         for (lineMapping in lines) {
@@ -69,11 +67,11 @@ object SMAPParser {
             var rangeSeparator = originalPart.indexOf(',').let { if (it < 0) targetSplit else it }
 
             val fileSeparator = lineMapping.indexOf('#')
-            val originalIndex = Integer.valueOf(originalPart.substring(0, fileSeparator))
-            val range = if (rangeSeparator == targetSplit) 1 else Integer.valueOf(originalPart.substring(rangeSeparator + 1, targetSplit))
+            val originalIndex = originalPart.substring(0, fileSeparator).toInt()
+            val range = if (rangeSeparator == targetSplit) 1 else originalPart.substring(rangeSeparator + 1, targetSplit).toInt()
 
-            val fileIndex = Integer.valueOf(lineMapping.substring(fileSeparator + 1, rangeSeparator))
-            val targetIndex = Integer.valueOf(lineMapping.substring(targetSplit + 1))
+            val fileIndex = lineMapping.substring(fileSeparator + 1, rangeSeparator).toInt()
+            val targetIndex = lineMapping.substring(targetSplit + 1).toInt()
             fileMappings[fileIndex]!!.addRangeMapping(RangeMapping(originalIndex, targetIndex, range))
         }
 

@@ -16,30 +16,26 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
-import org.jetbrains.org.objectweb.asm.Label
-import kotlin.properties.Delegates
-import java.util.Collections
-import kotlin.properties.ReadOnlyProperty
-import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.util.*
 
 //TODO comment
 class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
-
-    val lineNumbers =
-        InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map {
-            val index = Collections.binarySearch(classSMAP.intervals, RangeMapping(it.line, it.line, 1)) {
+    private val lineNumbers =
+        InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { node ->
+            val index = classSMAP.intervals.binarySearch(RangeMapping(node.line, node.line, 1), Comparator {
                 value, key ->
-                if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
+                if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
+            })
+            if (index < 0) {
+                error("Unmapped label in inlined function $node ${node.line}")
             }
-            if (index < 0)
-                throw IllegalStateException("Unmapped label in inlined function $it ${it.line}")
-            LabelAndMapping(it, classSMAP.intervals[index])
+            LabelAndMapping(node, classSMAP.intervals[index])
         }.toList()
 
-    val ranges = lineNumbers.asSequence().map { it.mapper }.distinct().toList();
+    val ranges = lineNumbers.asSequence().map { it.mapper }.distinct().toList()
 }
 
 class LabelAndMapping(val lineNumberNode: LineNumberNode, val mapper: RangeMapping)
