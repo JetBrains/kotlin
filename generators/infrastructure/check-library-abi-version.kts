@@ -31,26 +31,15 @@ fun loadClassVersions(bytes: ByteArray): Pair<List<Int>, List<Int>>? {
     var bytecode: IntArray? = null
     ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
         override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-            return when (desc) {
-                "Lkotlin/Metadata;" ->
-                    object : AnnotationVisitor(Opcodes.ASM5) {
-                        override fun visit(name: String, value: Any) {
-                            when (name) {
-                                "mv" -> metadata = value as IntArray
-                                "bv" -> bytecode = value as IntArray
-                            }
-                        }
+            if (desc != "Lkotlin/Metadata;") return null
+
+            return object : AnnotationVisitor(Opcodes.ASM5) {
+                override fun visit(name: String, value: Any) {
+                    when (name) {
+                        "mv" -> metadata = value as IntArray
+                        "bv" -> bytecode = value as IntArray
                     }
-                "Lkotlin/jvm/internal/KotlinClass;" ->
-                    object : AnnotationVisitor(Opcodes.ASM5) {
-                        override fun visit(name: String, value: Any) {
-                            if (name == "version") {
-                                metadata = value as IntArray
-                                bytecode = metadata
-                            }
-                        }
-                    }
-                else -> null
+                }
             }
         }
     }, 0)
