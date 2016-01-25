@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import java.io.File
 
 private val NORMAL_VERSION = 8
-private val EXPERIMENTAL_VERSION = 2
+private val EXPERIMENTAL_VERSION = 3
 private val DATA_CONTAINER_VERSION = 1
 
 private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
