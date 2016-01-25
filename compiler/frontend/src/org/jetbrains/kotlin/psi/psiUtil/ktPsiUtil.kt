@@ -116,7 +116,7 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.right else parent.left
         }
         parent is KtUnaryExpression && parent.operationReference == this -> {
-            return parent.baseExpression!!
+            return parent.baseExpression
         }
         parent is KtUserType -> {
             val qualifier = parent.getQualifier()
@@ -125,6 +125,7 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             }
         }
     }
+
     return null
 }
 
