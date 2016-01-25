@@ -28,7 +28,8 @@ import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.extensions.*
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.fileTypes.PlainTextFileType
@@ -382,8 +383,7 @@ class KotlinCoreEnvironment private constructor(
                 registerFileType(KotlinFileType.INSTANCE, "kt")
                 registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
                 registerParserDefinition(KotlinParserDefinition())
-                getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
-                getApplication().registerService(javaClass<JavaClassSupers>(), javaClass<JavaClassSupersImpl>())
+                application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
             }
         }
 
@@ -402,8 +402,8 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerProjectServicesForCLI(projectEnvironment: JavaCoreProjectEnvironment) {
-            with (projectEnvironment.getProject()) {
-                registerService(javaClass<CoreJavaFileManager>(), ServiceManager.getService(this, javaClass<JavaFileManager>()) as CoreJavaFileManager)
+            with (projectEnvironment.project) {
+                registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
