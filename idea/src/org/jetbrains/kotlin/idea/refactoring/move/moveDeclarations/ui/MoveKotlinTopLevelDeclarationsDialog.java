@@ -19,15 +19,11 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.JavaProjectRootsUtil;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Pass;
@@ -70,6 +66,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPan
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
+import org.jetbrains.kotlin.idea.refactoring.ui.KotlinFileChooserDialog;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -139,8 +136,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         initMemberInfo(elementsToMove, sourceFiles);
 
         updateControls();
-
-        pack();
     }
 
     private static List<KtFile> getSourceFiles(@NotNull Collection<KtNamedDeclaration> elementsToMove) {
@@ -337,12 +332,36 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             @NotNull Set<KtNamedDeclaration> elementsToMove,
             @NotNull List<KtFile> sourceFiles
     ) {
-        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
-                .withRoots(ProjectRootManager.getInstance(myProject).getContentRoots())
-                .withTreeRootVisible(true);
+        final PsiDirectory sourceDir = sourceFiles.get(0).getParent();
+        assert sourceDir != null : sourceFiles.get(0).getVirtualFile().getPath();
 
-        String title = KotlinRefactoringBundle.message("refactoring.move.top.level.declaration.file.title");
-        fileChooser.addBrowseFolderListener(title, null, myProject, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+        fileChooser.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        KotlinFileChooserDialog dialog = new KotlinFileChooserDialog("Choose Containing File", myProject);
+
+                        File targetFile = new File(getTargetFilePath());
+                        PsiFile targetPsiFile = JetRefactoringUtilKt.toPsiFile(targetFile, myProject);
+                        if (targetPsiFile instanceof KtFile) {
+                            dialog.select((KtFile) targetPsiFile);
+                        }
+                        else {
+                            PsiDirectory targetDir = JetRefactoringUtilKt.toPsiDirectory(targetFile.getParentFile(), myProject);
+                            if (targetDir == null) {
+                                targetDir = sourceDir;
+                            }
+                            dialog.selectDirectory(targetDir);
+                        }
+
+                        dialog.showDialog();
+                        KtFile selectedFile = dialog.isOK() ? dialog.getSelected() : null;
+                        if (selectedFile != null) {
+                            fileChooser.setText(selectedFile.getVirtualFile().getPath());
+                        }
+                    }
+                }
+        );
 
         String initialTargetPath =
                 targetFile != null
@@ -561,8 +580,11 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         File targetDir = targetFile.getParentFile();
-        final PsiDirectory psiDirectory = JetRefactoringUtilKt.toPsiDirectory(targetDir, myProject);
-        assert psiDirectory != null : "No directory found: " + targetDir.getPath();
+        final PsiDirectory psiDirectory = targetDir != null ? JetRefactoringUtilKt.toPsiDirectory(targetDir, myProject) : null;
+        if (psiDirectory == null) {
+            setErrorText("No directory found for file: " + targetFile.getPath());
+            return null;
+        }
 
         PsiPackage psiPackage = JavaDirectoryService.getInstance().getPackage(psiDirectory);
         if (psiPackage == null) {
