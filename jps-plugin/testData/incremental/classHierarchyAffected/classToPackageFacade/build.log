@@ -66,7 +66,5 @@ Compiling files:
   src/getAChild.kt
   src/useJ.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

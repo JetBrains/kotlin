@@ -17,7 +17,5 @@ End of files
 Compiling files:
   module1/src/module1_a.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

@@ -48,14 +48,10 @@ Compiling files:
   module2/src/module2_AChild.kt
   module2/src/module2_importA.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 Compiling files:
   module3/src/module3_importAChild.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

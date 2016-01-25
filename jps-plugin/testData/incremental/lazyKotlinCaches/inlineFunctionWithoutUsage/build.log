@@ -7,7 +7,5 @@ End of files
 Compiling files:
   src/inline.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

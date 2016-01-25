@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,8 @@ class FSOperationsHelper(
         private val chunk: ModuleChunk,
         private val log: Logger
 ) {
-    private var markedDirty = false
-
-    fun hasMarkedDirty(): Boolean = markedDirty
+    internal var hasMarkedDirty = false
+        private set
 
     private val buildLogger = compileContext.testingContext?.buildLogger ?: BuildLogger.DO_NOTHING
 
@@ -40,7 +39,7 @@ class FSOperationsHelper(
 
             if (file in excludeFiles) return false
 
-            markedDirty = true
+            hasMarkedDirty = true
             return true
         }
 
@@ -65,6 +64,6 @@ class FSOperationsHelper(
             FSOperations.markDirty(compileContext, CompilationRound.NEXT, file)
         }
 
-        markedDirty = markedDirty || filesToMark.isNotEmpty()
+        hasMarkedDirty = hasMarkedDirty || filesToMark.isNotEmpty()
     }
 }

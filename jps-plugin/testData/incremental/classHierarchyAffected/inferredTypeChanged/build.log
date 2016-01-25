@@ -32,7 +32,5 @@ Compiling files:
   src/getC.kt
   src/getCorD.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

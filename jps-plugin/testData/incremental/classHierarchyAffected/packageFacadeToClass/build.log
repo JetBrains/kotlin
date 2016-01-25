@@ -45,10 +45,8 @@ Compiling files:
   src/useF.kt
   src/useG.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Compiling files:
   src/UseFJava.java
 End of files
-Exit code: NOTHING_DONE
-------------------------------------------

@@ -51,7 +51,5 @@ Compiling files:
   src/companionReferenceImplicit.kt
   src/importedMember.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

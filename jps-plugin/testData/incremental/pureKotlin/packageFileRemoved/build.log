@@ -17,9 +17,7 @@ Compiling files:
   src/a.kt
   src/other.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 
 ================ Step #2 =================
@@ -31,7 +29,5 @@ End of files
 Compiling files:
   src/other.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

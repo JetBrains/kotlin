@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,7 +139,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         try {
             val proposedExitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 
-            val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty()) ADDITIONAL_PASS_REQUIRED else proposedExitCode
+            val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
             LOG.info("Build result: " + actualExitCode)
 
@@ -259,8 +259,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return OK
         }
 
+        @Suppress("REIFIED_TYPE_UNSAFE_SUBSTITUTION")
         val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass<ModuleBuildTarget>>()
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
+        val additionalPassRequired = updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
 
         if (!IncrementalCompilation.isEnabled()) {
             return OK
@@ -278,7 +279,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         processChanges(filesToCompile.values().toSet(), allCompiledFiles, dataManager, incrementalCaches.values, changesInfo, fsOperations)
         incrementalCaches.values.forEach { it.cleanDirtyInlineFunctions() }
 
-        return ADDITIONAL_PASS_REQUIRED
+        return if (additionalPassRequired) ADDITIONAL_PASS_REQUIRED else OK
     }
 
     private fun applyActionsOnCacheVersionChange(
@@ -369,7 +370,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
-            return compileToJs(chunk, commonArguments, environment, null, messageCollector, project)
+            return compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
 
         if (IncrementalCompilation.isEnabled()) {
@@ -475,7 +476,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>,
             incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>
-    ) {
+    ): Boolean {
         val previousMappings = context.projectDescriptor.dataManager.mappings
         val delta = previousMappings.createDelta()
         val callback = delta.callback
@@ -511,7 +512,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val allCompiled = filesToCompile.values()
         val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
-        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
+
+        return JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
     }
 
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, generatedFiles: List<GeneratedFile<ModuleBuildTarget>>) {
@@ -578,8 +580,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun compileToJs(chunk: ModuleChunk,
                             commonArguments: CommonCompilerArguments,
                             environment: CompilerEnvironment,
-                            incrementalCaches: MutableMap<TargetId, IncrementalCache>?,
-                            messageCollector: MessageCollectorAdapter, project: JpsProject
+                            messageCollector: MessageCollectorAdapter,
+                            project: JpsProject
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
 
@@ -706,7 +708,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             // IDEA can't find these files, and does not display paths in Messages View, so we add the position information
             // to the error message itself:
             val pathname = "" + location.path
-            return if (File(pathname).exists()) "" else " (" + location + ")"
+            return if (File(pathname).exists()) "" else " ($location)"
         }
 
         private fun kind(severity: CompilerMessageSeverity): BuildMessage.Kind {
