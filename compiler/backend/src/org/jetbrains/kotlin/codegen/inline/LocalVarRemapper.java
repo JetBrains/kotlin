@@ -94,8 +94,8 @@ public class LocalVarRemapper {
 
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index, MethodVisitor mv) {
         RemapInfo info = doRemap(index);
-        //add entries only for shifted vars
-        if (SHIFT == info.status) {
+        //add entries only for shifted vars or remapped to locals
+        if (SHIFT == info.status || REMAPPED == info.status && info.value instanceof StackValue.Local) {
             int newIndex = ((StackValue.Local) info.value).index;
             mv.visitLocalVariable(name, desc, signature, start, end, newIndex);
         }

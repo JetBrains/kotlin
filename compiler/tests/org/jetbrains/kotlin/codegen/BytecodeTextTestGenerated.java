@@ -760,6 +760,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("remappedLocalVar.kt")
+        public void testRemappedLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/remappedLocalVar.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removedFinallyMarkers.kt")
         public void testRemovedFinallyMarkers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/removedFinallyMarkers.kt");
