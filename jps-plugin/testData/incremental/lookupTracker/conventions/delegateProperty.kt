@@ -13,7 +13,7 @@ import kotlin.reflect./*p:kotlin.reflect*/KProperty
 }
 
 /*p:foo.bar*/operator fun /*p:foo.bar*/D2.getValue(t: /*p:foo.bar*/Any?, p: KProperty<*>) = 1
-/*p:foo.bar*/operator fun /*p:foo.bar*/D2.propertyDelegated(p: /*p:foo.bar*/Any?) {}
+/*p:foo.bar*/fun /*p:foo.bar*/D2.propertyDelegated(p: /*p:foo.bar*/Any?) {}
 
 /*p:foo.bar*/class D3 : /*p:foo.bar*/D2() {
     fun propertyDelegated(p: /*c:foo.bar.D3 c:foo.bar.D2 p:foo.bar*/Any?) {}

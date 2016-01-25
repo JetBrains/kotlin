@@ -2533,26 +2533,8 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceCallWithBinaryOperator extends AbstractIntentionTest {
-            @TestMetadata("acceptableVararg1.kt")
-            public void testAcceptableVararg1() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/acceptableVararg1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("acceptableVararg2.kt")
-            public void testAcceptableVararg2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/acceptableVararg2.kt");
-                doTest(fileName);
-            }
-
             public void testAllFilesPresentInReplaceCallWithBinaryOperator() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("allowableDefaultArgument.kt")
-            public void testAllowableDefaultArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/allowableDefaultArgument.kt");
-                doTest(fileName);
             }
 
             @TestMetadata("divSanityTest.kt")
@@ -2656,12 +2638,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceCallWithUnaryOperator extends AbstractIntentionTest {
-            @TestMetadata("acceptableVararg.kt")
-            public void testAcceptableVararg() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/acceptableVararg.kt");
-                doTest(fileName);
-            }
-
             public void testAllFilesPresentInReplaceCallWithUnaryOperator() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
@@ -2669,12 +2645,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("complexPlus.kt")
             public void testComplexPlus() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/complexPlus.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("defaultArgument.kt")
-            public void testDefaultArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/defaultArgument.kt");
                 doTest(fileName);
             }
 
@@ -2755,26 +2725,8 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceContains extends AbstractIntentionTest {
-            @TestMetadata("acceptableVararg.kt")
-            public void testAcceptableVararg() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/acceptableVararg.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("acceptableVararg2.kt")
-            public void testAcceptableVararg2() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/acceptableVararg2.kt");
-                doTest(fileName);
-            }
-
             public void testAllFilesPresentInReplaceContains() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/conventionNameCalls/replaceContains"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("allowableDefaultArgument.kt")
-            public void testAllowableDefaultArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/allowableDefaultArgument.kt");
-                doTest(fileName);
             }
 
             @TestMetadata("containsInExpression.kt")
@@ -2876,12 +2828,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("unacceptableVararg2.kt")
             public void testUnacceptableVararg2() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/unacceptableVararg2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("validNamedArgument.kt")
-            public void testValidNamedArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/validNamedArgument.kt");
                 doTest(fileName);
             }
         }

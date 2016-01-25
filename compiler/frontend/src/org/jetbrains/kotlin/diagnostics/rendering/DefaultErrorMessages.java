@@ -381,7 +381,7 @@ public class DefaultErrorMessages {
         MAP.put(UNDERSCORE_IS_RESERVED, "Names _, __, ___, ..., are reserved in Kotlin");
         MAP.put(INVALID_CHARACTERS, "Name {0}", STRING);
 
-        MAP.put(INAPPLICABLE_OPERATOR_MODIFIER, "'operator' modifier is inapplicable on this function");
+        MAP.put(INAPPLICABLE_OPERATOR_MODIFIER, "'operator' modifier is inapplicable on this function: {0}", STRING);
         MAP.put(INAPPLICABLE_INFIX_MODIFIER, "'infix' modifier is inapplicable on this function");
 
         MAP.put(OPERATOR_MODIFIER_REQUIRED, "'operator' modifier is required on ''{0}'' in ''{1}''", NAME, STRING);
