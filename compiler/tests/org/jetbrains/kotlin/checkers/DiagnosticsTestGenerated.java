@@ -6947,6 +6947,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("bareTypesComplex.kt")
+                public void testBareTypesComplex() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/bareTypesComplex.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("checkBoundsOuter.kt")
                 public void testCheckBoundsOuter() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/checkBoundsOuter.kt");
@@ -6956,6 +6962,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("importedInner.kt")
                 public void testImportedInner() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/importedInner.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerSuperCall.kt")
+                public void testInnerSuperCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/innerSuperCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerSuperCallSecondary.kt")
+                public void testInnerSuperCallSecondary() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/innerSuperCallSecondary.kt");
                     doTest(fileName);
                 }
 
@@ -6992,6 +7010,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("j+k_complex.kt")
                 public void testJ_k_complex() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3357.kt")
+                public void testKt3357() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/kt3357.kt");
                     doTest(fileName);
                 }
 
