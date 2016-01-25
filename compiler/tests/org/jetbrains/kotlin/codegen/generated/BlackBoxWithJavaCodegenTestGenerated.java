@@ -547,6 +547,18 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("protectedJavaProperty")
+        public void testProtectedJavaProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/protectedJavaProperty/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedJavaPropertyInCompanion")
+        public void testProtectedJavaPropertyInCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/protectedJavaPropertyInCompanion/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("substituteJavaSuperField")
         public void testSubstituteJavaSuperField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/substituteJavaSuperField/");
