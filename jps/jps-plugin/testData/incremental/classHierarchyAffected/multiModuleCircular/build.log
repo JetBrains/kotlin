@@ -61,9 +61,7 @@ End of files
 Compiling files:
   module4/src/module4_E.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 Cleaning output files:
   out/production/module5/foo/F.class
@@ -71,7 +69,5 @@ End of files
 Compiling files:
   module5/src/module5_F.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

@@ -20,10 +20,8 @@ End of files
 Compiling files:
   src/usageInKotlin.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Compiling files:
   src/Usage.java
 End of files
-Exit code: NOTHING_DONE
-------------------------------------------

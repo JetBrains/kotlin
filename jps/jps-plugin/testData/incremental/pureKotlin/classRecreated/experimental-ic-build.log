@@ -5,9 +5,7 @@ Cleaning output files:
 End of files
 Compiling files:
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 
 ================ Step #2 =================
@@ -15,7 +13,5 @@ Exit code: NOTHING_DONE
 Compiling files:
   src/A.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

@@ -49,9 +49,7 @@ Compiling files:
   src/returnType.kt
   src/returnTypeImplicit.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 
 ================ Step #2 =================
@@ -104,7 +102,5 @@ Compiling files:
   src/returnType.kt
   src/returnTypeImplicit.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------

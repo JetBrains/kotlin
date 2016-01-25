@@ -7,9 +7,7 @@ End of files
 Compiling files:
   src/const.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 
 ================ Step #2 =================
@@ -32,7 +30,5 @@ Compiling files:
   src/const.kt
   src/usage.kt
 End of files
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
