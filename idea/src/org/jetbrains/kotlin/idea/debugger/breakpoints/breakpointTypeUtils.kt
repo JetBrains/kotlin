@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -27,8 +26,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.XDebuggerUtil
-import com.intellij.xdebugger.XSourcePosition
-import com.intellij.xdebugger.impl.XSourcePositionImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
@@ -37,7 +34,6 @@ import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import java.util.*
 
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
@@ -114,6 +110,7 @@ fun computeVariants(
 
     return result
 }
+*/
 
 fun getLambdasAtLineIfAny(sourcePosition: SourcePosition): List<KtFunction> {
     val file = sourcePosition.file as? KtFile ?: return emptyList()
@@ -151,5 +148,5 @@ fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
         statement.getLineNumber() == line && statement.getLineNumber(false) == line
     }
 }
-*/
+
 

@@ -26,5 +26,5 @@ class KotlinBreakpointHandlerFactory: JavaBreakpointHandlerFactory {
     }
 }
 
-class KotlinFieldBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(javaClass<KotlinFieldBreakpointType>(), process)
+class KotlinFieldBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(KotlinFieldBreakpointType::class.java, process)
 

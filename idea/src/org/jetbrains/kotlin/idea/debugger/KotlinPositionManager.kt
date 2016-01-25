@@ -50,13 +50,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
-import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -64,12 +63,15 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class PositionedElement(val className: String?, val element: PsiElement?)
 
-public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
+class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
 
     private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
 
@@ -127,10 +129,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         val end = CodeInsightUtils.getEndLineOffset(file, lineNumber)
         if (start == null || end == null) return null
 
-        val literalsOrFunctions = CodeInsightUtils.
-                findElementsOfClassInRange(file, start, end, KtFunctionLiteral::class.java, KtNamedFunction::class.java).
-                filter { KtPsiUtil.getParentCallIfPresent(it as KtExpression) != null }
-
+        val literalsOrFunctions = getLambdasAtLineIfAny(file, lineNumber)
         if (literalsOrFunctions.isEmpty()) return null;
 
         val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
