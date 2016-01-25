@@ -24,11 +24,12 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import java.util.*
 
 //TODO join parameter
-class SMAPBuilder(val source: String,
-                         val path: String,
-                         val fileMappings: List<FileMapping>) {
-
-    val header = "SMAP\n$source\nKotlin\n*S Kotlin"
+class SMAPBuilder(
+        val source: String,
+        val path: String,
+        val fileMappings: List<FileMapping>
+) {
+    private val header = "SMAP\n$source\nKotlin\n*S Kotlin"
 
     fun build(): String? {
         var realMappings = fileMappings.filter {
@@ -37,7 +38,7 @@ class SMAPBuilder(val source: String,
         }
 
         if (realMappings.isEmpty()) {
-            return null;
+            return null
         }
 
         val fileIds = "*F" + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
@@ -46,29 +47,29 @@ class SMAPBuilder(val source: String,
         return "$header\n$fileIds\n$lineMappings\n*E\n"
     }
 
-
-    fun RangeMapping.toSMAP(fileId: Int): String {
+    private fun RangeMapping.toSMAP(fileId: Int): String {
         return if (range == 1) "$source#$fileId:$dest" else "$source#$fileId,$range:$dest"
     }
 
-    fun FileMapping.toSMAPFile(id: Int): String {
-        this.id = id;
+    private fun FileMapping.toSMAPFile(id: Int): String {
+        this.id = id
         return "+ $id $name\n$path"
     }
 
     //TODO inline
-    fun FileMapping.toSMAPMapping(): String {
+    private fun FileMapping.toSMAPMapping(): String {
         return lineMappings.joinToString("") { "\n${it.toSMAP(id)}" }
     }
 }
 
-open class NestedSourceMapper(parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo) : DefaultSourceMapper(sourceInfo, parent) {
-
+open class NestedSourceMapper(
+        parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
+) : DefaultSourceMapper(sourceInfo, parent) {
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
-        val index = Collections.binarySearch(ranges, RangeMapping(lineNumber, lineNumber, 1)) {
+        val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator {
             value, key ->
-            if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
-        }
+            if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
+        })
         if (index < 0) {
             parent!!.visitSource(sourceInfo.source,  sourceInfo.pathOrCleanFQN)
             parent!!.visitLineNumber(iv, lineNumber, start)
@@ -81,8 +82,9 @@ open class NestedSourceMapper(parent: SourceMapper, val ranges: List<RangeMappin
     }
 }
 
-open class InlineLambdaSourceMapper(parent: SourceMapper, smap: SMAPAndMethodNode) : NestedSourceMapper(parent, smap.ranges, smap.classSMAP.sourceInfo) {
-
+open class InlineLambdaSourceMapper(
+        parent: SourceMapper, smap: SMAPAndMethodNode
+) : NestedSourceMapper(parent, smap.ranges, smap.classSMAP.sourceInfo) {
     override fun visitSource(name: String, path: String) {
         super.visitSource(name, path)
         if (isOriginalVisited()) {
@@ -100,13 +102,13 @@ open class InlineLambdaSourceMapper(parent: SourceMapper, smap: SMAPAndMethodNod
     }
 
     override fun visitLineNumber(iv: MethodVisitor, lineNumber: Int, start: Label) {
-        val index = Collections.binarySearch(ranges, RangeMapping(lineNumber, lineNumber, 1)) {
+        val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator {
             value, key ->
-            if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
-        }
+            if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
+        })
         if (index >= 0) {
-            val fmapping = ranges[index].parent!!
-            if (fmapping.path == origin.path && fmapping.name == origin.name) {
+            val mapping = ranges[index].parent!!
+            if (mapping.path == origin.path && mapping.name == origin.name) {
                 parent!!.visitOrigin()
                 parent!!.visitLineNumber(iv, lineNumber, start)
                 return
@@ -117,7 +119,6 @@ open class InlineLambdaSourceMapper(parent: SourceMapper, smap: SMAPAndMethodNod
 }
 
 interface SourceMapper {
-
     val resultMappings: List<FileMapping>
     val parent: SourceMapper?
 
@@ -138,7 +139,6 @@ interface SourceMapper {
     }
 
     companion object {
-
         fun flushToClassBuilder(mapper: SourceMapper, v: ClassBuilder) {
             for (fileMapping in mapper.resultMappings) {
                 v.addSMAP(fileMapping)
@@ -179,15 +179,10 @@ object IdenticalSourceMapper : SourceMapper {
 }
 
 open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: SourceMapper?): SourceMapper {
-
     protected var maxUsedValue: Int = sourceInfo.linesInFile
-
     var lastVisited: RawFileMapping? = null
-
     private var lastMappedWithChanges: RawFileMapping? = null
-
-    var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
-
+    private var fileMappings: LinkedHashMap<String, RawFileMapping> = linkedMapOf()
     protected val origin: RawFileMapping
 
     init {
@@ -205,7 +200,7 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: 
         get() = fileMappings.values.map { it.toFileMapping() }
 
     override fun visitSource(name: String, path: String) {
-        lastVisited = fileMappings.getOrPut(createKey(name, path), { RawFileMapping(name, path) })
+        lastVisited = fileMappings.getOrPut(createKey(name, path)) { RawFileMapping(name, path) }
     }
 
     override fun visitOrigin() {
@@ -232,7 +227,6 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val parent: 
     }
 }
 
-/*Source Mapping*/
 class SMAP(val fileMappings: List<FileMapping>) {
     init {
         assert(fileMappings.isNotEmpty()) { "File Mappings shouldn't be empty" }
@@ -251,9 +245,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
 
     companion object {
         val FILE_SECTION = "*F"
-
         val LINE_SECTION = "*L"
-
         val END = "*E"
     }
 }
@@ -262,15 +254,14 @@ class RawFileMapping(val name: String, val path: String) {
     private val lineMappings = TIntIntHashMap()
     private val rangeMappings = arrayListOf<RangeMapping>()
 
-    private var lastMappedWithNewIndex = -1000;
+    private var lastMappedWithNewIndex = -1000
 
-    fun toFileMapping(): FileMapping {
-        val fileMapping = FileMapping(name, path)
-        for (range in rangeMappings) {
-            fileMapping.addRangeMapping(range)
-        }
-        return fileMapping
-    }
+    fun toFileMapping() =
+            FileMapping(name, path).apply {
+                for (range in rangeMappings) {
+                    addRangeMapping(range)
+                }
+            }
 
     fun initRange(start: Int, end: Int) {
         assert(lineMappings.isEmpty) { "initRange should only be called for empty mapping" }
@@ -315,14 +306,13 @@ class RawFileMapping(val name: String, val path: String) {
     private fun couldFoldInRange(first: Int, second: Int): Boolean {
         //TODO
         val delta = second - first
-        return delta > 0 && delta <= 10;
+        return delta > 0 && delta <= 10
     }
 }
 
 open class FileMapping(val name: String, val path: String) {
     val lineMappings = arrayListOf<RangeMapping>()
-
-    var id = -1;
+    var id = -1
 
     fun addRangeMapping(lineMapping: RangeMapping) {
         lineMappings.add(lineMapping)
@@ -338,12 +328,10 @@ open class FileMapping(val name: String, val path: String) {
 
 //TODO comparable
 data class RangeMapping(val source: Int, val dest: Int, var range: Int = 1) {
-
-    var parent: FileMapping? = null;
-
+    var parent: FileMapping? = null
     private val skip = source == -1 && dest == -1
 
-    fun contains(destLine: Int): Boolean {
+    operator fun contains(destLine: Int): Boolean {
         return if (skip) true else dest <= destLine && destLine < dest + range
     }
 
