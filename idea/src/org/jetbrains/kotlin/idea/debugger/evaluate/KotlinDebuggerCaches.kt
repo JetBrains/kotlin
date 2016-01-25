@@ -20,15 +20,26 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.libraries.LibraryUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.MultiMap
 import org.apache.log4j.Logger
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.Value
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -39,6 +50,18 @@ class KotlinDebuggerCaches(private val project: Project) {
             {
                 CachedValueProvider.Result<MultiMap<String, CompiledDataDescriptor>>(
                         MultiMap.create(), PsiModificationTracker.MODIFICATION_COUNT)
+            }, false)
+
+    private val cachedClassNames = CachedValuesManager.getManager(project).createCachedValue(
+            {
+                CachedValueProvider.Result<HashMap<PsiElement, List<String>>>(
+                        hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
+            }, false)
+
+    private val cachedTypeMappers = CachedValuesManager.getManager(project).createCachedValue(
+            {
+                CachedValueProvider.Result<HashMap<PsiElement, JetTypeMapper>>(
+                        hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
     companion object {
@@ -69,6 +92,85 @@ class KotlinDebuggerCaches(private val project: Project) {
                 cache.putValue(text, newCompiledData)
                 return@synchronized newCompiledData
             }
+        }
+
+        fun getOrComputeClassNames(psiElement: PsiElement, create: (PsiElement) -> List<String>): List<String> {
+            val cache = getInstance(psiElement.project)
+            synchronized(cache.cachedClassNames) {
+                val classNamesCache = cache.cachedClassNames.value
+
+                val cachedValue = classNamesCache[psiElement]
+                if (cachedValue != null) return cachedValue
+
+                val newValue = create(psiElement)
+
+                classNamesCache[psiElement] = newValue
+                return newValue
+            }
+        }
+
+        fun getOrCreateTypeMapper(psiElement: PsiElement): JetTypeMapper {
+            val cache = getInstance(psiElement.project)
+            synchronized(cache.cachedTypeMappers) {
+                val typeMappersCache = cache.cachedTypeMappers.value
+
+                val file = psiElement.containingFile as KtFile
+                val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+
+                if (!isInLibrary) {
+                    // Key = file
+                    val cachedValue = typeMappersCache[file]
+                    if (cachedValue != null) return cachedValue
+
+                    val newValue = createTypeMapperForSourceFile(file)
+                    typeMappersCache[file] = newValue
+                    return newValue
+                }
+                else {
+                    // key = KtElement
+                    val element = getElementToCreateTypeMapperForLibraryFile(psiElement)
+                    val cachedValue = typeMappersCache[psiElement]
+                    if (cachedValue != null) return cachedValue
+
+                    val newValue = createTypeMapperForLibraryFile(element, file)
+                    typeMappersCache[psiElement] = newValue
+                    return newValue
+                }
+            }
+        }
+
+        private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): JetTypeMapper {
+            val analysisResult = element.analyzeAndGetResult()
+
+            val state = GenerationState(
+                    file.project,
+                    ClassBuilderFactories.THROW_EXCEPTION,
+                    analysisResult.moduleDescriptor,
+                    analysisResult.bindingContext,
+                    listOf(file))
+            state.beforeCompile()
+            return state.typeMapper
+        }
+
+        private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
+                if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!!
+
+        private fun createTypeMapperForSourceFile(file: KtFile): JetTypeMapper {
+            val analysisResult = file.analyzeFullyAndGetResult()
+            analysisResult.throwIfError()
+
+            val state = GenerationState(
+                    file.project,
+                    ClassBuilderFactories.THROW_EXCEPTION,
+                    analysisResult.moduleDescriptor,
+                    analysisResult.bindingContext,
+                    listOf(file))
+            state.beforeCompile()
+            return state.typeMapper
+        }
+
+        @TestOnly fun addTypeMapper(file: KtFile, typeMapper: JetTypeMapper) {
+            getInstance(file.project).cachedTypeMappers.value[file] = typeMapper
         }
     }
 

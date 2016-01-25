@@ -32,16 +32,17 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
-import kotlin.sequences.SequencesKt;
-import kotlin.text.StringsKt;
 import kotlin.Unit;
 import kotlin.io.FilesKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.sequences.SequencesKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches;
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
@@ -93,7 +94,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
         assertNotNull(positionManager);
 
         for (KtFile file : files) {
-            KotlinPositionManagerCache.Companion.addTypeMapper(file, state.getTypeMapper());
+            KotlinDebuggerCaches.Companion.addTypeMapper(file, state.getTypeMapper());
         }
 
         return positionManager;

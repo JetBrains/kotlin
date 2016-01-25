@@ -20,6 +20,7 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtFunction
@@ -41,7 +42,7 @@ fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debug
 }
 
 private fun lambdaOrdinalIndex(elementAt: KtFunction): Int {
-    val typeMapper = KotlinPositionManagerCache.getOrCreateTypeMapper(elementAt)
+    val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)
 
     val type = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, elementAt)
     return type.className.substringAfterLast("$").toInt()

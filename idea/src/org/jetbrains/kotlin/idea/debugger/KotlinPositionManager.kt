@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
@@ -67,7 +68,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
@@ -160,7 +160,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         if (literalsOrFunctions.isEmpty()) return null;
 
         val elementAt = file.findElementAt(start) ?: return null
-        val typeMapper = KotlinPositionManagerCache.getOrCreateTypeMapper(elementAt)
+        val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)
 
         val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName
         for (literal in literalsOrFunctions) {
@@ -269,11 +269,11 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 emptyList()
             }
             else {
-                KotlinPositionManagerCache.getOrComputeClassNames(element) {
+                KotlinDebuggerCaches.getOrComputeClassNames(element) {
                     element ->
                     val file = element.containingFile as KtFile
                     val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
-                    val typeMapper = KotlinPositionManagerCache.getOrCreateTypeMapper(element)
+                    val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
 
                     getInternalClassNameForElement(element, typeMapper, file, isInLibrary)
                 }
