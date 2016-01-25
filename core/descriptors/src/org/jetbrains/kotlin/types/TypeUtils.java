@@ -522,7 +522,6 @@ public class TypeUtils {
     }
     @Nullable
     public static TypeParameterDescriptor getTypeParameterDescriptorOrNull(@NotNull KotlinType type) {
-        assert !(type instanceof CapturedType) : "Type should be non-captured " + type;
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return (TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor();
         }
