@@ -310,7 +310,8 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkObject(declaration: KtObjectDeclaration, classDescriptor: ClassDescriptor) {
+    private fun checkObject(declaration: KtObjectDeclaration, classDescriptor: ClassDescriptorWithResolutionScopes) {
+        checkOpenMembers(classDescriptor)
         if (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor))
         }
@@ -433,7 +434,12 @@ class DeclarationsChecker(
             if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
             val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtNamedDeclaration
             if (member != null && member.hasModifier(KtTokens.OPEN_KEYWORD)) {
-                trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member))
+                if (classDescriptor.kind == ClassKind.OBJECT) {
+                    trace.report(NON_FINAL_MEMBER_IN_OBJECT.on(member))
+                }
+                else {
+                    trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member))
+                }
             }
         }
     }

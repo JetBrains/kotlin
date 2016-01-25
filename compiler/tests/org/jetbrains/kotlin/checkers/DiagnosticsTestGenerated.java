@@ -11349,6 +11349,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("OpenInObject.kt")
+            public void testOpenInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/OpenInObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("upperBoundViolated.kt")
             public void testUpperBoundViolated() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/upperBoundViolated.kt");

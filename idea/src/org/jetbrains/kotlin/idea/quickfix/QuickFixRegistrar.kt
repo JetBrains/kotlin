@@ -111,6 +111,8 @@ class QuickFixRegistrar : QuickFixContributor {
         val removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD)
         NON_FINAL_MEMBER_IN_FINAL_CLASS.registerFactory(AddModifierFix.createFactory(OPEN_KEYWORD, KtClass::class.java),
                                                         removeOpenModifierFactory)
+        NON_FINAL_MEMBER_IN_OBJECT.registerFactory(AddModifierFix.createFactory(OPEN_KEYWORD, KtClass::class.java),
+                                                   removeOpenModifierFactory)
 
         val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
