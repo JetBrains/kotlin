@@ -32,7 +32,7 @@ fun ordering(): List<GenericFunction> {
         body {
             """
             if (this is Collection && isEmpty()) return emptyList()
-            val list = toArrayList()
+            val list = toMutableList()
             Collections.reverse(list)
             return list
             """
@@ -41,7 +41,7 @@ fun ordering(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty()) return emptyList()
-            val list = toArrayList()
+            val list = toMutableList()
             Collections.reverse(list)
             return list
             """
@@ -97,10 +97,10 @@ fun ordering(): List<GenericFunction> {
         body {
             """
                 if (this is Collection) {
-                    if (size <= 1) return this.toArrayList()
+                    if (size <= 1) return this.toMutableList()
                     return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
                 }
-                return toArrayList().apply { sort() }
+                return toMutableList().apply { sort() }
             """
         }
         body(ArraysOfPrimitives) {
@@ -122,7 +122,7 @@ fun ordering(): List<GenericFunction> {
             """
             return object : Sequence<T> {
                 override fun iterator(): Iterator<T> {
-                    val sortedList = this@sorted.toArrayList()
+                    val sortedList = this@sorted.toMutableList()
                     sortedList.sort()
                     return sortedList.iterator()
                 }
@@ -226,10 +226,10 @@ fun ordering(): List<GenericFunction> {
         body {
             """
              if (this is Collection) {
-                if (size <= 1) return this.toArrayList()
+                if (size <= 1) return this.toMutableList()
                 return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
             }
-            return toArrayList().apply { sortWith(comparator) }
+            return toMutableList().apply { sortWith(comparator) }
             """
         }
         body(ArraysOfPrimitives) {
@@ -251,7 +251,7 @@ fun ordering(): List<GenericFunction> {
             """
             return object : Sequence<T> {
                 override fun iterator(): Iterator<T> {
-                    val sortedList = this@sortedWith.toArrayList()
+                    val sortedList = this@sortedWith.toMutableList()
                     sortedList.sortWith(comparator)
                     return sortedList.iterator()
                 }

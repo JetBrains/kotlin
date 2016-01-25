@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.js.analyze
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.js.PredefinedAnnotation.*
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -35,7 +32,7 @@ private val NATIVE_ANNOTATIONS = arrayOf(NATIVE.fqName, NATIVE_INVOKE.fqName, NA
 
 class SuppressUnusedParameterForJsNative : SuppressDiagnosticsByAnnotations(listOf(Errors.UNUSED_PARAMETER), *NATIVE_ANNOTATIONS)
 
-class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS + PROPERTY_NOT_INITIALIZED_ERRORS, *NATIVE_ANNOTATIONS)
+class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS as List<DiagnosticFactory<*>> + PROPERTY_NOT_INITIALIZED_ERRORS, *NATIVE_ANNOTATIONS)
 
 class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {

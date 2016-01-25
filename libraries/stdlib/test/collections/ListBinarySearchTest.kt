@@ -29,7 +29,7 @@ class ListBinarySearchTest {
 
     @Test
     fun binarySearchByElementNullable() {
-        val list = listOf(null) + values
+        val list = listOf(null as Int?) + values
         list.forEachIndexed { index, item ->
             assertEquals(index, list.binarySearch(item))
 

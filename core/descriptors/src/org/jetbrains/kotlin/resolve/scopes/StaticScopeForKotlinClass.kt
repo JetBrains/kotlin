@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.*
@@ -51,7 +48,7 @@ class StaticScopeForKotlinClass(
     }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
-                                           nameFilter: (Name) -> Boolean) = functions + properties
+                                           nameFilter: (Name) -> Boolean) = functions as List<CallableMemberDescriptor> + properties
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = properties.filterTo(ArrayList(1)) { it.name == name }
 

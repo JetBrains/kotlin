@@ -108,7 +108,7 @@ fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<Declaration
             if (fromDescriptor is ClassDescriptor) {
                 val constructorDescriptor = fromDescriptor.unsubstitutedPrimaryConstructor
                 if (constructorDescriptor != null) {
-                    return typeParams + constructorDescriptor.valueParameters
+                    return typeParams as List<DeclarationDescriptor> + constructorDescriptor.valueParameters
                 }
             }
             return typeParams

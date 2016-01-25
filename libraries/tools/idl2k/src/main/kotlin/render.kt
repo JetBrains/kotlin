@@ -227,7 +227,7 @@ private fun Pair<String, String>.betterName() = if (((0..9).map { it.toString() 
 fun <K, V> List<Pair<K, V>>.toMultiMap(): Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }
 
 fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, unions : GenerateUnionTypes) {
-    val declaredTypes = ifaces.toMapBy { it.name }
+    val declaredTypes = ifaces.associateBy { it.name }
 
     val allTypes = declaredTypes + unions.anonymousUnionsMap + unions.typedefsMarkersMap
     declaredTypes.values.filter { it.namespace == namespace }.forEach {

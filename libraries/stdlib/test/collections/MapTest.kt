@@ -20,6 +20,10 @@ class MapTest {
         val empty = mapOf<String, Int?>()
         val c = empty.getOrElse("") { null }
         assertEquals(null, c)
+
+        val nullable = mapOf(1 to null)
+        val d = nullable.getOrElse(1) { "x" }
+        assertEquals("x", d)
     }
 
     @test fun getOrImplicitDefault() {
@@ -58,7 +62,7 @@ class MapTest {
         assertEquals(null, c)
 
         val d = empty.getOrPut("") { 1 }
-        assertEquals(null, d)  // soon will change to 1
+        assertEquals(1, d)
     }
 
     @test fun sizeAndEmpty() {
@@ -172,7 +176,7 @@ class MapTest {
     }
 
     @test fun createWithSelector() {
-        val map = listOf("a", "bb", "ccc").toMapBy { it.length }
+        val map = listOf("a", "bb", "ccc").associateBy { it.length }
         assertEquals(3, map.size)
         assertEquals("a", map.get(1))
         assertEquals("bb", map.get(2))
@@ -180,14 +184,14 @@ class MapTest {
     }
 
     @test fun createWithSelectorAndOverwrite() {
-        val map = listOf("aa", "bb", "ccc").toMapBy { it.length }
+        val map = listOf("aa", "bb", "ccc").associateBy { it.length }
         assertEquals(2, map.size)
         assertEquals("bb", map.get(2))
         assertEquals("ccc", map.get(3))
     }
 
     @test fun createWithSelectorForKeyAndValue() {
-        val map = listOf("a", "bb", "ccc").toMapBy({ it.length }, { it.toUpperCase() })
+        val map = listOf("a", "bb", "ccc").associateBy({ it.length }, { it.toUpperCase() })
         assertEquals(3, map.size)
         assertEquals("A", map[1])
         assertEquals("BB", map[2])
@@ -195,7 +199,7 @@ class MapTest {
     }
 
     @test fun createWithPairSelector() {
-        val map = listOf("a", "bb", "ccc").toMap { it.length to it.toUpperCase() }
+        val map = listOf("a", "bb", "ccc").associate { it.length to it.toUpperCase() }
         assertEquals(3, map.size)
         assertEquals("A", map[1])
         assertEquals("BB", map[2])

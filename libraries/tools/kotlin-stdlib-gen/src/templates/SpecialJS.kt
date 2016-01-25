@@ -62,7 +62,7 @@ fun specialJS(): List<GenericFunction> {
         }
     }
 
-    val allArrays = PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (ArraysOfObjects to null)
+    val allArrays = PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (ArraysOfObjects to null as PrimitiveType?)
     templates addAll allArrays.map {
             val (family, primitive) = it
             f("copyOf(newSize: Int)") {
@@ -94,10 +94,19 @@ fun specialJS(): List<GenericFunction> {
         operator(true)
 
         only(ArraysOfObjects, ArraysOfPrimitives)
+        typeParam("@kotlin.internal.OnlyInputTypes T")
+        annotations(ArraysOfObjects) {
+            """
+                @kotlin.internal.LowPriorityInOverloadResolution
+                @Suppress("NOTHING_TO_INLINE")
+            """.trimIndent()
+        }
+        annotations(ArraysOfPrimitives) {
+            """@Suppress("NOTHING_TO_INLINE")"""
+        }
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         inline(true)
-        annotations("""@Suppress("NOTHING_TO_INLINE")""")
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
         body() {
             """
@@ -110,6 +119,7 @@ fun specialJS(): List<GenericFunction> {
         operator(true)
 
         only(ArraysOfObjects, ArraysOfPrimitives)
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
@@ -125,6 +135,7 @@ fun specialJS(): List<GenericFunction> {
         operator(true)
 
         only(ArraysOfObjects, ArraysOfPrimitives)
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
         inline(true)
         annotations("""@Suppress("NOTHING_TO_INLINE")""")

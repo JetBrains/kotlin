@@ -161,7 +161,7 @@ public enum class CharCategory(public val value: Int, public val code: String) {
 
 
     public companion object {
-        private val categoryMap by lazy { CharCategory.values().toMapBy { it.value } }
+        private val categoryMap by lazy { CharCategory.values().associateBy { it.value } }
 
         public fun valueOf(category: Int): CharCategory = categoryMap[category] ?: throw IllegalArgumentException("Category #$category is not defined.")
     }

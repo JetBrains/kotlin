@@ -4378,7 +4378,7 @@ public fun ShortArray.reverse(): Unit {
  */
 public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4388,7 +4388,7 @@ public fun <T> Array<out T>.reversed(): List<T> {
  */
 public fun BooleanArray.reversed(): List<Boolean> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4398,7 +4398,7 @@ public fun BooleanArray.reversed(): List<Boolean> {
  */
 public fun ByteArray.reversed(): List<Byte> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4408,7 +4408,7 @@ public fun ByteArray.reversed(): List<Byte> {
  */
 public fun CharArray.reversed(): List<Char> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4418,7 +4418,7 @@ public fun CharArray.reversed(): List<Char> {
  */
 public fun DoubleArray.reversed(): List<Double> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4428,7 +4428,7 @@ public fun DoubleArray.reversed(): List<Double> {
  */
 public fun FloatArray.reversed(): List<Float> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4438,7 +4438,7 @@ public fun FloatArray.reversed(): List<Float> {
  */
 public fun IntArray.reversed(): List<Int> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4448,7 +4448,7 @@ public fun IntArray.reversed(): List<Int> {
  */
 public fun LongArray.reversed(): List<Long> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -4458,7 +4458,7 @@ public fun LongArray.reversed(): List<Long> {
  */
 public fun ShortArray.reversed(): List<Short> {
     if (isEmpty()) return emptyList()
-    val list = toArrayList()
+    val list = toMutableList()
     Collections.reverse(list)
     return list
 }
@@ -5414,8 +5414,612 @@ public fun Array<out Short>.toShortArray(): ShortArray {
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Boolean>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Byte>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Double>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Float>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Int>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Long>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the elements from the given array indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Short>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V> {
+    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each element of the given array
+ * and value is the element itself.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to elements of the given array.
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each element of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
     return ArrayList(this.asCollection())
 }
@@ -5423,6 +6027,7 @@ public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
     val list = ArrayList<Boolean>(size)
     for (item in this) list.add(item)
@@ -5432,6 +6037,7 @@ public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun ByteArray.toArrayList(): ArrayList<Byte> {
     val list = ArrayList<Byte>(size)
     for (item in this) list.add(item)
@@ -5441,6 +6047,7 @@ public fun ByteArray.toArrayList(): ArrayList<Byte> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun CharArray.toArrayList(): ArrayList<Char> {
     val list = ArrayList<Char>(size)
     for (item in this) list.add(item)
@@ -5450,6 +6057,7 @@ public fun CharArray.toArrayList(): ArrayList<Char> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun DoubleArray.toArrayList(): ArrayList<Double> {
     val list = ArrayList<Double>(size)
     for (item in this) list.add(item)
@@ -5459,6 +6067,7 @@ public fun DoubleArray.toArrayList(): ArrayList<Double> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun FloatArray.toArrayList(): ArrayList<Float> {
     val list = ArrayList<Float>(size)
     for (item in this) list.add(item)
@@ -5468,6 +6077,7 @@ public fun FloatArray.toArrayList(): ArrayList<Float> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun IntArray.toArrayList(): ArrayList<Int> {
     val list = ArrayList<Int>(size)
     for (item in this) list.add(item)
@@ -5477,6 +6087,7 @@ public fun IntArray.toArrayList(): ArrayList<Int> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun LongArray.toArrayList(): ArrayList<Long> {
     val list = ArrayList<Long>(size)
     for (item in this) list.add(item)
@@ -5486,6 +6097,7 @@ public fun LongArray.toArrayList(): ArrayList<Long> {
 /**
  * Returns an [ArrayList] of all elements.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
 public fun ShortArray.toArrayList(): ArrayList<Short> {
     val list = ArrayList<Short>(size)
     for (item in this) list.add(item)
@@ -5649,513 +6261,367 @@ public fun ShortArray.toHashSet(): HashSet<Short> {
  * Returns a [List] containing all elements.
  */
 public fun <T> Array<out T>.toList(): List<T> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun BooleanArray.toList(): List<Boolean> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun ByteArray.toList(): List<Byte> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun CharArray.toList(): List<Char> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun DoubleArray.toList(): List<Double> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun FloatArray.toList(): List<Float> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun IntArray.toList(): List<Int> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun LongArray.toList(): List<Long> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [List] containing all elements.
  */
 public fun ShortArray.toList(): List<Short> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <T, K, V> Array<out T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> BooleanArray.toMap(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> ByteArray.toMap(transform: (Byte) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> CharArray.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> DoubleArray.toMap(transform: (Double) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> FloatArray.toMap(transform: (Float) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> IntArray.toMap(transform: (Int) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> LongArray.toMap(transform: (Long) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> ShortArray.toMap(transform: (Short) -> Pair<K, V>): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boolean> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Boolean>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Byte>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Double> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Double>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Float>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Int>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Long>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the elements from the given array indexed by the key
- * returned from [selector] function applied to each element.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
 public inline fun <K> ShortArray.toMapBy(selector: (Short) -> K): Map<K, Short> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <T, K, V> Array<out T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> BooleanArray.toMapBy(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> ByteArray.toMapBy(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> CharArray.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> DoubleArray.toMapBy(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> FloatArray.toMapBy(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> IntArray.toMapBy(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
 public inline fun <K, V> LongArray.toMapBy(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return associateBy(selector, transform)
+}
+
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+public inline fun <K, V> ShortArray.toMapBy(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
+    return associateBy(selector, transform)
 }
 
 /**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
- * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ * Returns a [MutableList] filled with all elements of this array.
  */
-public inline fun <K, V> ShortArray.toMapBy(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+public fun <T> Array<out T>.toMutableList(): MutableList<T> {
+    return ArrayList(this.asCollection())
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun BooleanArray.toMutableList(): MutableList<Boolean> {
+    val list = ArrayList<Boolean>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun ByteArray.toMutableList(): MutableList<Byte> {
+    val list = ArrayList<Byte>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun CharArray.toMutableList(): MutableList<Char> {
+    val list = ArrayList<Char>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun DoubleArray.toMutableList(): MutableList<Double> {
+    val list = ArrayList<Double>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun FloatArray.toMutableList(): MutableList<Float> {
+    val list = ArrayList<Float>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun IntArray.toMutableList(): MutableList<Int> {
+    val list = ArrayList<Int>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun LongArray.toMutableList(): MutableList<Long> {
+    val list = ArrayList<Long>(size)
+    for (item in this) list.add(item)
+    return list
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun ShortArray.toMutableList(): MutableList<Short> {
+    val list = ArrayList<Short>(size)
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
@@ -6456,174 +6922,453 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destinat
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <T, K> Array<out T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
+public inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> BooleanArray.groupBy(selector: (Boolean) -> K): Map<K, List<Boolean>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), selector)
+public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> ByteArray.groupBy(selector: (Byte) -> K): Map<K, List<Byte>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), selector)
+public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> CharArray.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
+public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> DoubleArray.groupBy(selector: (Double) -> K): Map<K, List<Double>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), selector)
+public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> FloatArray.groupBy(selector: (Float) -> K): Map<K, List<Float>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), selector)
+public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> IntArray.groupBy(selector: (Int) -> K): Map<K, List<Int>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), selector)
+public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> LongArray.groupBy(selector: (Long) -> K): Map<K, List<Long>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), selector)
+public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), keySelector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> ShortArray.groupBy(selector: (Short) -> K): Map<K, List<Short>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), selector)
+public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), keySelector)
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
-public inline fun <T, K> Array<out T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K, V> Array<out T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> BooleanArray.groupBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> ByteArray.groupBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> DoubleArray.groupBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> FloatArray.groupBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> IntArray.groupBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> LongArray.groupBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V> ShortArray.groupBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
+ */
+public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<T>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> BooleanArray.groupByTo(map: MutableMap<K, MutableList<Boolean>>, selector: (Boolean) -> K): Map<K, MutableList<Boolean>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Boolean>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Boolean>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> ByteArray.groupByTo(map: MutableMap<K, MutableList<Byte>>, selector: (Byte) -> K): Map<K, MutableList<Byte>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Byte>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Byte>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> CharArray.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Char>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Char>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> DoubleArray.groupByTo(map: MutableMap<K, MutableList<Double>>, selector: (Double) -> K): Map<K, MutableList<Double>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Double>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Double>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> FloatArray.groupByTo(map: MutableMap<K, MutableList<Float>>, selector: (Float) -> K): Map<K, MutableList<Float>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Float>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Float>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> IntArray.groupByTo(map: MutableMap<K, MutableList<Int>>, selector: (Int) -> K): Map<K, MutableList<Int>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Int>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Int>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> LongArray.groupByTo(map: MutableMap<K, MutableList<Long>>, selector: (Long) -> K): Map<K, MutableList<Long>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Long>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Long>() }
         list.add(element)
     }
-    return map
+    return destination
 }
 
 /**
- * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
+ * Groups elements of the original array by the key returned by the given [keySelector] function
+ * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> ShortArray.groupByTo(map: MutableMap<K, MutableList<Short>>, selector: (Short) -> K): Map<K, MutableList<Short>> {
+public inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Short>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Short>() }
         list.add(element)
     }
-    return map
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each element of the original array
+ * by the key returned by the given [keySelector] function applied to the element
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
 }
 
 /**
@@ -11311,7 +12056,8 @@ public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destinat
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(element: T): Array<T> {
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<T>.plus(element: T): Array<T> {
     val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
@@ -11410,7 +12156,7 @@ public operator fun ShortArray.plus(element: Short): ShortArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<T>.plus(elements: Collection<T>): Array<T> {
     var index = size
     val result = Arrays.copyOf(this, index + elements.size)
     for (element in elements) result[index++] = element
@@ -11509,7 +12255,7 @@ public operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @kotlin.jvm.JvmVersion
-public operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Array<T>.plus(elements: Array<out T>): Array<T> {
     val thisSize = size
     val arraySize = elements.size
     val result = Arrays.copyOf(this, thisSize + arraySize)

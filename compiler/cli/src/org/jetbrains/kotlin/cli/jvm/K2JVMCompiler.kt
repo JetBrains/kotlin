@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
@@ -126,6 +127,10 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (arguments.script) {
             configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
             shouldReportPerf = false
+        }
+
+        if (arguments.skipMetadataVersionCheck) {
+            JvmMetadataVersion.skipCheck = true
         }
 
         putAdvancedOptions(configuration, arguments)

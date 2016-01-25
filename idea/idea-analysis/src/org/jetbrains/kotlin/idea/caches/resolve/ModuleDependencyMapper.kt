@@ -99,7 +99,7 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
 
     val sdksInfos = ideaSdks.map { SdkInfo(project, it) }
 
-    val collectAllModuleInfos = modulesSourcesInfos + librariesInfos + sdksInfos
+    val collectAllModuleInfos = modulesSourcesInfos as List<IdeaModuleInfo> + librariesInfos + sdksInfos
     return collectAllModuleInfos
 }
 

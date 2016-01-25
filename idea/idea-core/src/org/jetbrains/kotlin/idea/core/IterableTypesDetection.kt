@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.utils.getOrPutNullable
 import java.util.*
 
 class IterableTypesDetection(
@@ -62,7 +63,7 @@ class IterableTypesDetection(
                 = isIterable(FuzzyType(type, emptyList()), loopVarType)
 
         private fun elementType(type: FuzzyType): FuzzyType? {
-            return cache.getOrPut(type, { elementTypeNoCache(type) })
+            return cache.getOrPutNullable(type, { elementTypeNoCache(type) })
         }
 
         override fun elementType(type: KotlinType): FuzzyType?

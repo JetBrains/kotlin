@@ -9,6 +9,8 @@ fun specialJVM(): List<GenericFunction> {
         operator(true)
 
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        typeParam("@kotlin.internal.OnlyInputTypes T")
+        annotations(InvariantArraysOfObjects) { "@kotlin.internal.LowPriorityInOverloadResolution" }
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
         body() {
@@ -25,6 +27,7 @@ fun specialJVM(): List<GenericFunction> {
         operator(true)
 
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
         body {
@@ -41,6 +44,7 @@ fun specialJVM(): List<GenericFunction> {
         operator(true)
 
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         customSignature(InvariantArraysOfObjects) { "plus(elements: Array<out T>)" }
         doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
         returns("SELF")

@@ -97,6 +97,20 @@ class CollectionJVMTest {
         }
     }
 
+    @test fun plusCollectionInference() {
+        // TODO: test on both platforms
+        val listOfLists = listOf(listOf("s"))
+        val elementList = listOf("a")
+        val result: List<List<String>> = listOfLists + elementList
+        assertEquals(listOf(listOf("s"), listOf("a")), result, "should be list + element")
+
+        val listOfAny = listOf<Any>("a") + listOf<Any>("b")
+        assertEquals(listOf("a", "b"), listOfAny,  "should be list + list")
+
+        val listOfAnyAndList = listOf<Any>("a") + listOf<Any>("b") as Any
+        assertEquals(listOf("a", listOf("b")), listOfAnyAndList, "should be list + Any")
+    }
+
     @test fun first() {
         assertEquals(19, TreeSet(listOf(90, 47, 19)).first())
     }
