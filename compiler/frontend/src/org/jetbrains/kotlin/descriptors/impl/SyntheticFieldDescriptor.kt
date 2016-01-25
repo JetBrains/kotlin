@@ -36,7 +36,9 @@ class SyntheticFieldDescriptor private constructor(
 
     override fun getDispatchReceiverParameter() = null
 
-    fun getDispatchReceiverForBackend() = propertyDescriptor.dispatchReceiverParameter?.value
+    fun getDispatchReceiverForBackend() = getDispatchReceiverParameterForBackend()?.value
+
+    fun getDispatchReceiverParameterForBackend() = propertyDescriptor.dispatchReceiverParameter
 
     companion object {
         @JvmField

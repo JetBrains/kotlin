@@ -516,6 +516,9 @@ public abstract class StackValue {
                 dispatchReceiverParameter = extensionReceiverParameter;
                 extensionReceiverParameter = null;
             }
+            else if (descriptor instanceof SyntheticFieldDescriptor) {
+                dispatchReceiverParameter = ((SyntheticFieldDescriptor) descriptor).getDispatchReceiverParameterForBackend();
+            }
 
             boolean hasExtensionReceiver = callExtensionReceiver != null;
             StackValue dispatchReceiver = platformStaticCallIfPresent(
