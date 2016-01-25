@@ -34,8 +34,6 @@ import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.model.JpsProject
-import org.jetbrains.jps.model.JpsSimpleElement
-import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
@@ -78,7 +76,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
         @JvmField val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
-        val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     }
 
@@ -123,13 +120,19 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
     }
 
+
+    override fun chunkBuildFinished(context: CompileContext?, chunk: ModuleChunk?) {
+        super.chunkBuildFinished(context, chunk)
+
+        LOG.debug("------------------------------------------")
+    }
+
     override fun build(
             context: CompileContext,
             chunk: ModuleChunk,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
-        LOG.debug("------------------------------------------")
         val messageCollector = MessageCollectorAdapter(context)
         val fsOperations = FSOperationsHelper(context, chunk, LOG)
 
@@ -139,6 +142,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty()) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
             LOG.info("Build result: " + actualExitCode)
+
+            context.testingContext?.run {
+                buildLogger.buildFinished(actualExitCode)
+            }
+
             return actualExitCode
         }
         catch (e: StopBuildException) {
@@ -847,19 +855,11 @@ private fun withSubtypes(
 }
 
 private fun getLookupTracker(project: JpsProject): LookupTracker {
-    var lookupTracker = LookupTracker.DO_NOTHING
+    val testLookupTracker = project.testingContext?.lookupTracker ?: LookupTracker.DO_NOTHING
 
-    if ("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true)) {
-        val testTracker = project.container.getChild(KotlinBuilder.LOOKUP_TRACKER)?.data
+    if (IncrementalCompilation.isExperimental()) return LookupTrackerImpl(testLookupTracker)
 
-        if (testTracker != null) {
-            lookupTracker = testTracker
-        }
-    }
-
-    if (IncrementalCompilation.isExperimental()) return LookupTrackerImpl(lookupTracker)
-
-    return lookupTracker
+    return testLookupTracker
 }
 
 private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, JpsIncrementalCacheImpl> {

@@ -1,28 +1,48 @@
-Cleaning output files:
-out/production/module/inline/Inline.class
-End of files
-Compiling files:
-src/inline.kt
-End of files
-Cleaning output files:
-out/production/module/usage/UsageVal.class
-out/production/module/usage/UsageVar.class
-End of files
-Compiling files:
-src/UsageVal.kt
-src/UsageVar.kt
-End of files
-
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/inline/Inline.class
+  out/production/module/inline/Inline.class
 End of files
 Compiling files:
-src/inline.kt
+  src/inline.kt
 End of files
+Marked as dirty by Kotlin:
+  src/UsageVal.kt
+  src/UsageVar.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/usage/UsageVar.class
+  out/production/module/usage/UsageVal.class
+  out/production/module/usage/UsageVar.class
 End of files
 Compiling files:
-src/UsageVar.kt
+  src/UsageVal.kt
+  src/UsageVar.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/inline/Inline.class
+End of files
+Compiling files:
+  src/inline.kt
+End of files
+Marked as dirty by Kotlin:
+  src/UsageVar.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/usage/UsageVar.class
+End of files
+Compiling files:
+  src/UsageVar.kt
+End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

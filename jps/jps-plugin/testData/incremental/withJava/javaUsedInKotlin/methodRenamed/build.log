@@ -1,18 +1,24 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/JavaClass.class
+  out/production/module/JavaClass.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/JavaClass.java
+End of files
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/WillBeResolvedToOtherKt$willBeResolvedToOther$1.class
+  out/production/module/WillBeResolvedToOtherKt.class
+  out/production/module/WillBeUnresolvedKt.class
 End of files
 Compiling files:
-src/JavaClass.java
+  src/willBeResolvedToOther.kt
+  src/willBeUnresolved.kt
 End of files
-Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/WillBeResolvedToOtherKt$willBeResolvedToOther$1.class
-out/production/module/WillBeResolvedToOtherKt.class
-out/production/module/WillBeUnresolvedKt.class
-End of files
-Compiling files:
-src/willBeResolvedToOther.kt
-src/willBeUnresolved.kt
-End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Unresolved reference: f

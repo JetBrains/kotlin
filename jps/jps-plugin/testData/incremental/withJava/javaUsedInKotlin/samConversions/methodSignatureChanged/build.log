@@ -1,18 +1,26 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/SamInterface.class
+  out/production/module/SamInterface.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/SamInterface.java
+End of files
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UsageWithFunctionExpressionKt$sam$SamInterface$*.class
+  out/production/module/UsageWithFunctionExpressionKt$usageWithFunctionExpression$a$1.class
+  out/production/module/UsageWithFunctionExpressionKt.class
+  out/production/module/UsageWithFunctionLiteralKt$usageWithFunctionLiteral$1.class
+  out/production/module/UsageWithFunctionLiteralKt.class
 End of files
 Compiling files:
-src/SamInterface.java
+  src/usageWithFunctionExpression.kt
+  src/usageWithFunctionLiteral.kt
 End of files
-Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UsageWithFunctionExpressionKt$sam$SamInterface$*.class
-out/production/module/UsageWithFunctionExpressionKt$usageWithFunctionExpression$a$1.class
-out/production/module/UsageWithFunctionExpressionKt.class
-out/production/module/UsageWithFunctionLiteralKt$usageWithFunctionLiteral$1.class
-out/production/module/UsageWithFunctionLiteralKt.class
-End of files
-Compiling files:
-src/usageWithFunctionExpression.kt
-src/usageWithFunctionLiteral.kt
-End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

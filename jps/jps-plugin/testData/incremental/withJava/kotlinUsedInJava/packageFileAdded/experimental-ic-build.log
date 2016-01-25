@@ -1,11 +1,15 @@
-========== Step #1 ============
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/Usage.class
+  out/production/module/Usage.class
 End of files
 Compiling files:
-src/b.kt
+  src/b.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Compiling files:
-src/Usage.java
+  src/Usage.java
 End of files
+Exit code: NOTHING_DONE
+------------------------------------------

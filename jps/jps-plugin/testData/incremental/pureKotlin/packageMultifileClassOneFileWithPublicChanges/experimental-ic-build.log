@@ -1,12 +1,16 @@
-========== Step #1 ============
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/Utils.class
-out/production/module/test/Utils__Pkg1Kt.class
-out/production/module/test/Utils__Pkg2Kt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/Utils.class
+  out/production/module/test/Utils__Pkg1Kt.class
+  out/production/module/test/Utils__Pkg2Kt.class
 End of files
 Compiling files:
-src/pkg1.kt
-src/pkg2.kt
+  src/pkg1.kt
+  src/pkg2.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

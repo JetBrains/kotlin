@@ -1,18 +1,26 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/BKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/BKt.class
 End of files
 Compiling files:
-src/b.kt
+  src/b.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/other/OtherKt.class
-out/production/module/test/AKt.class
-out/production/module/test/UsageKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/other/OtherKt.class
+  out/production/module/test/AKt.class
+  out/production/module/test/UsageKt.class
 End of files
 Compiling files:
-src/a.kt
-src/other.kt
-src/usage.kt
+  src/a.kt
+  src/other.kt
+  src/usage.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

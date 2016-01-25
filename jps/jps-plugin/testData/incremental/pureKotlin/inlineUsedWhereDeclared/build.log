@@ -1,16 +1,27 @@
-Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/foo/InlineKt.class
-End of files
-Compiling files:
-src/inline.kt
-End of files
-
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/foo/InlineKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/foo/InlineKt.class
 End of files
 Compiling files:
-src/inline.kt
+  src/inline.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/foo/InlineKt.class
+End of files
+Compiling files:
+  src/inline.kt
+End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

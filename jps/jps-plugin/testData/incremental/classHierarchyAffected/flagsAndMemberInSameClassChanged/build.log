@@ -1,24 +1,36 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/A.class
+  out/production/module/A.class
 End of files
 Compiling files:
-src/A.kt
+  src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  src/B.kt
+  src/getA.kt
+  src/getB.kt
+  src/useA.kt
+  src/useB.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/B.class
-out/production/module/GetAKt.class
-out/production/module/GetBKt.class
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UseAKt.class
-out/production/module/UseBKt.class
+  out/production/module/B.class
+  out/production/module/GetAKt.class
+  out/production/module/GetBKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseAKt.class
+  out/production/module/UseBKt.class
 End of files
 Compiling files:
-src/B.kt
-src/getA.kt
-src/getB.kt
-src/useA.kt
-src/useB.kt
+  src/B.kt
+  src/getA.kt
+  src/getB.kt
+  src/useA.kt
+  src/useB.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Cannot access 'A': it is 'private' in file
 Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'private'
@@ -29,28 +41,36 @@ Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiv
 Cannot access 'x': it is 'invisible_fake' in 'B'
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/A.class
+  out/production/module/A.class
 End of files
 Compiling files:
-src/A.kt
-src/B.kt
-src/getA.kt
-src/getB.kt
-src/useA.kt
-src/useB.kt
+  src/A.kt
+  src/B.kt
+  src/getA.kt
+  src/getB.kt
+  src/useA.kt
+  src/useB.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
 
+================ Step #3 =================
 
 Compiling files:
-src/A.kt
-src/B.kt
-src/getA.kt
-src/getB.kt
-src/useA.kt
-src/useB.kt
+  src/A.kt
+  src/B.kt
+  src/getA.kt
+  src/getB.kt
+  src/useA.kt
+  src/useB.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

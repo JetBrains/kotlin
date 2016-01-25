@@ -1,24 +1,37 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/Enum.class
+  out/production/module/Enum.class
 End of files
 Compiling files:
-src/Enum.kt
+  src/Enum.kt
 End of files
+Marked as dirty by Kotlin:
+  src/useBecameNullable.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UseBecameNullableKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseBecameNullableKt.class
 End of files
 Compiling files:
-src/useBecameNullable.kt
+  src/useBecameNullable.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/Enum.class
+  out/production/module/Enum.class
 End of files
 Compiling files:
-src/Enum.kt
-src/useBecameNullable.kt
+  src/Enum.kt
+  src/useBecameNullable.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

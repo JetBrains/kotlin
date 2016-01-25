@@ -1,8 +1,14 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/A.class
-out/production/module/B.class
-out/production/module/C.class
+  out/production/module/A.class
+  out/production/module/B.class
+  out/production/module/C.class
 End of files
 Compiling files:
-src/main.kt
+  src/main.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

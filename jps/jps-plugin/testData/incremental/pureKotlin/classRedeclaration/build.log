@@ -1,13 +1,19 @@
+================ Step #1 =================
+
 Compiling files:
-src/class2.kt
+  src/class2.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/Klass.class
+  out/production/module/Klass.class
 End of files
 Compiling files:
-src/class1.kt
-src/class2.kt
+  src/class1.kt
+  src/class2.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Redeclaration: Klass
 Redeclaration: Klass

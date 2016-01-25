@@ -1,9 +1,13 @@
-========== Step #1 ============
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/b/B2Kt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/b/B2Kt.class
 End of files
 Compiling files:
-src/a2.kt
+  src/a2.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

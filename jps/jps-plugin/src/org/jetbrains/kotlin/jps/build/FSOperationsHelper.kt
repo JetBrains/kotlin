@@ -32,6 +32,8 @@ class FSOperationsHelper(
 
     fun hasMarkedDirty(): Boolean = markedDirty
 
+    private val buildLogger = compileContext.testingContext?.buildLogger ?: BuildLogger.DO_NOTHING
+
     fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = setOf()) {
         fun shouldMark(file: File): Boolean {
             if (kotlinOnly && !KotlinSourceFileCollector.isKotlinSourceFile(file)) return false
@@ -53,7 +55,9 @@ class FSOperationsHelper(
     fun markFiles(files: Iterable<File>, excludeFiles: Set<File> = setOf()) {
         val filesToMark = files.toMutableSet()
         filesToMark.removeAll(excludeFiles)
+
         log.debug("Mark dirty: $filesToMark")
+        buildLogger.markedAsDirty(filesToMark)
 
         for (file in filesToMark) {
             if (!file.exists()) continue

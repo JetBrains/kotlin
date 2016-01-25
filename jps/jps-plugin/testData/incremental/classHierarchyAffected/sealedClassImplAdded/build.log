@@ -1,29 +1,42 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/Base$A.class
-out/production/module/Base$B.class
-out/production/module/Base.class
+  out/production/module/Base$A.class
+  out/production/module/Base$B.class
+  out/production/module/Base.class
 End of files
 Compiling files:
-src/Base.kt
+  src/Base.kt
 End of files
+Marked as dirty by Kotlin:
+  src/use.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UseKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseKt.class
 End of files
 Compiling files:
-src/use.kt
+  src/use.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 when expression must be exhaustive, add necessary 'is C' branch or 'else' branch instead
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/Base$A.class
-out/production/module/Base$B.class
-out/production/module/Base$C.class
-out/production/module/Base.class
+  out/production/module/Base$A.class
+  out/production/module/Base$B.class
+  out/production/module/Base$C.class
+  out/production/module/Base.class
 End of files
 Compiling files:
-src/Base.kt
-src/use.kt
+  src/Base.kt
+  src/use.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

@@ -1,28 +1,42 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/foo/A.class
+  out/production/module/foo/A.class
 End of files
 Compiling files:
-src/A.kt
+  src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  src/AChild.kt
+  src/createA.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/foo/AChild.class
-out/production/module/foo/CreateAKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/foo/AChild.class
+  out/production/module/foo/CreateAKt.class
 End of files
 Compiling files:
-src/AChild.kt
-src/createA.kt
+  src/AChild.kt
+  src/createA.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Cannot access '<init>': it is 'private' in 'A'
 Cannot access '<init>': it is 'private' in 'A'
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/foo/A.class
+  out/production/module/foo/A.class
 End of files
 Compiling files:
-src/A.kt
-src/AChild.kt
-src/createA.kt
+  src/A.kt
+  src/AChild.kt
+  src/createA.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

@@ -1,0 +1,37 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
+  out/production/module1/a/A.class
+  out/production/module1/a/ClassAnnotation.class
+  out/production/module1/a/FileAnnotation.class
+  out/production/module1/a/Module1_aKt.class
+End of files
+Compiling files:
+  module1/src/module1_a.kt
+End of files
+Marked as dirty by Kotlin:
+  module2/src/module2_b.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
+  out/production/module2/b/B.class
+  out/production/module2/b/Module2_bKt.class
+End of files
+Compiling files:
+  module2/src/module2_b.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Cannot access 'FileAnnotation': it is 'internal' in 'a'
+Cannot access 'A': it is 'internal' in 'a'
+Cannot access 'FileAnnotation': it is 'internal' in 'a'
+Cannot access 'ClassAnnotation': it is 'internal' in 'a'
+Cannot access 'ClassAnnotation': it is 'internal' in 'a'
+Function effective visibility 'public' should be the same or less permissive than its parameter type effective visibility 'internal'
+Cannot access 'A': it is 'internal' in 'a'
+Cannot access 'a': it is 'internal' in 'a'

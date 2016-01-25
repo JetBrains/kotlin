@@ -1,24 +1,35 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/OtherKt.class
-out/production/module/UsageKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/OtherKt.class
+  out/production/module/UsageKt.class
 End of files
 Compiling files:
-src/other.kt
-src/usage.kt
+  src/other.kt
+  src/usage.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Expecting an expression
 
+================ Step #2 =================
 
 Compiling files:
-src/other.kt
-src/usage.kt
+  src/other.kt
+  src/usage.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/FunKt.class
-out/production/module/META-INF/module.kotlin_module
+  out/production/module/FunKt.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Compiling files:
-src/fun.kt
+  src/fun.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

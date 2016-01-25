@@ -1,55 +1,79 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/foo/A.class
+  out/production/module/foo/A.class
 End of files
 Compiling files:
-src/A.kt
+  src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  src/AChild.kt
+  src/AGrandChild.kt
+  src/ATypeParameter.kt
+  src/classLiteral.kt
+  src/functionParameter.kt
+  src/getA.kt
+  src/importA.kt
+  src/importAGrandChild.kt
+  src/importStar.kt
+  src/referencedByFqName.kt
+  src/returnType.kt
+  src/returnTypeImplicit.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/bar/ImportStarKt.class
-out/production/module/bar/ReferencedByFqNameKt.class
-out/production/module/foo/AChild.class
-out/production/module/foo/AGrandChild.class
-out/production/module/foo/ATypeParameter.class
-out/production/module/foo/ClassLiteralKt.class
-out/production/module/foo/FunctionParameterKt.class
-out/production/module/foo/GetAKt.class
-out/production/module/foo/ReturnTypeImplicitKt.class
-out/production/module/foo/ReturnTypeKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/bar/ImportStarKt.class
+  out/production/module/bar/ReferencedByFqNameKt.class
+  out/production/module/foo/AChild.class
+  out/production/module/foo/AGrandChild.class
+  out/production/module/foo/ATypeParameter.class
+  out/production/module/foo/ClassLiteralKt.class
+  out/production/module/foo/FunctionParameterKt.class
+  out/production/module/foo/GetAKt.class
+  out/production/module/foo/ReturnTypeImplicitKt.class
+  out/production/module/foo/ReturnTypeKt.class
 End of files
 Compiling files:
-src/AChild.kt
-src/AGrandChild.kt
-src/ATypeParameter.kt
-src/classLiteral.kt
-src/functionParameter.kt
-src/getA.kt
-src/importA.kt
-src/importAGrandChild.kt
-src/importStar.kt
-src/referencedByFqName.kt
-src/returnType.kt
-src/returnTypeImplicit.kt
+  src/AChild.kt
+  src/AGrandChild.kt
+  src/ATypeParameter.kt
+  src/classLiteral.kt
+  src/functionParameter.kt
+  src/getA.kt
+  src/importA.kt
+  src/importAGrandChild.kt
+  src/importStar.kt
+  src/referencedByFqName.kt
+  src/returnType.kt
+  src/returnTypeImplicit.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 This type is final, so it cannot be inherited from
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/foo/A.class
+  out/production/module/foo/A.class
 End of files
 Compiling files:
-src/A.kt
-src/AChild.kt
-src/AGrandChild.kt
-src/ATypeParameter.kt
-src/classLiteral.kt
-src/functionParameter.kt
-src/getA.kt
-src/importA.kt
-src/importAGrandChild.kt
-src/importStar.kt
-src/referencedByFqName.kt
-src/returnType.kt
-src/returnTypeImplicit.kt
+  src/A.kt
+  src/AChild.kt
+  src/AGrandChild.kt
+  src/ATypeParameter.kt
+  src/classLiteral.kt
+  src/functionParameter.kt
+  src/getA.kt
+  src/importA.kt
+  src/importAGrandChild.kt
+  src/importStar.kt
+  src/referencedByFqName.kt
+  src/returnType.kt
+  src/returnTypeImplicit.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

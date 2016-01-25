@@ -37,8 +37,8 @@ import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.IncProjectBuilder
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.incremental.ModuleLevelBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
-import org.jetbrains.jps.model.JpsElementFactory
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -151,8 +151,7 @@ abstract class AbstractIncrementalJpsTest(
         projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
 
         val lookupTracker = createLookupTracker()
-        val dataContainer = JpsElementFactory.getInstance().createSimpleElement(lookupTracker)
-        projectDescriptor.project.container.setChild(KotlinBuilder.LOOKUP_TRACKER, dataContainer)
+        projectDescriptor.project.setTestingContext(TestingContext(lookupTracker, logger))
 
         try {
             val builder = IncProjectBuilder(projectDescriptor, BuilderRegistry.getInstance(), myBuildParams, CanceledStatus.NULL, mockConstantSearch, true)
@@ -323,13 +322,11 @@ abstract class AbstractIncrementalJpsTest(
         return result
     }
 
-    protected fun createDefaultBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
-            incrementalMakeResults.joinToString("\n\n") { it.log }
-
-    protected open fun createExperimentalBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
+    protected open fun createBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
             buildString {
                 incrementalMakeResults.forEachIndexed { i, makeResult ->
-                    append("\n========== Step #${i + 1} ============\n\n")
+                    if (i > 0) append("\n")
+                    append("================ Step #${i + 1} =================\n\n")
                     append(makeResult.log)
                 }
             }
@@ -346,12 +343,12 @@ abstract class AbstractIncrementalJpsTest(
         val buildLogFile = File(testDataDir, BUILD_LOG_FILE_NAME)
         val experimentalBuildLog = File(testDataDir, experimentalBuildLogFileName)
 
+        val logs = createBuildLog(otherMakeResults)
+
         if (enableExperimentalIncrementalCompilation && experimentalBuildLog.exists()) {
-            val logs = createExperimentalBuildLog(otherMakeResults)
             UsefulTestCase.assertSameLinesWithFile(experimentalBuildLog.absolutePath, logs)
         }
         else if (buildLogFile.exists() || !allowNoBuildLogFileInTestData) {
-            val logs = createDefaultBuildLog(otherMakeResults)
             UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
         }
 
@@ -509,8 +506,28 @@ abstract class AbstractIncrementalJpsTest(
 
     override fun doGetProjectDir(): File? = workDir
 
-    // TODO replace with org.jetbrains.jps.builders.TestProjectBuilderLogger
-    private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase() {
+    private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase(), BuildLogger {
+
+        private val dirtyFiles = ArrayList<File>()
+
+        override fun markedAsDirty(files: Iterable<File>) {
+            dirtyFiles.addAll(files)
+        }
+
+        override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {
+
+            if (dirtyFiles.isNotEmpty()) {
+                logLine("Marked as dirty by Kotlin:")
+                dirtyFiles
+                        .map { FileUtil.toSystemIndependentName(it.path) }
+                        .sorted()
+                        .forEach { logLine(it) }
+                dirtyFiles.clear()
+            }
+            logLine("Exit code: $exitCode")
+            logLine("------------------------------------------")
+        }
+
         private val logBuf = StringBuilder()
         val log: String
             get() = logBuf.toString()
@@ -528,7 +545,7 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun logLine(message: String?) {
-            logBuf.append(KotlinTestUtils.replaceHashWithStar(message!!.removePrefix("$rootPath/"))).append('\n')
+            logBuf.append(KotlinTestUtils.replaceHashWithStar(message!!.replace("^$rootPath/".toRegex(), "  "))).append('\n')
         }
     }
 

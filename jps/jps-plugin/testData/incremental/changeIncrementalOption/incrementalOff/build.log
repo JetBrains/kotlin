@@ -1,20 +1,39 @@
+================ Step #1 =================
+
+Exit code: NOTHING_DONE
+------------------------------------------
 Cleaning output files:
-out/production/module2/META-INF/module2.kotlin_module
-out/production/module2/foo/Module2_aKt.class
+  out/production/module2/META-INF/module2.kotlin_module
+  out/production/module2/foo/Module2_aKt.class
 End of files
 Compiling files:
-module2/src/module2_a.kt
-module2/src/module2_b.kt
-module2/src/module2_c.kt
+  module2/src/module2_a.kt
+  module2/src/module2_b.kt
+  module2/src/module2_c.kt
 End of files
+Exit code: OK
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
 
+================ Step #2 =================
 
+Exit code: NOTHING_DONE
+------------------------------------------
 Cleaning output files:
-out/production/module2/META-INF/module2.kotlin_module
-out/production/module2/foo/Module2_aKt.class
+  out/production/module2/META-INF/module2.kotlin_module
+  out/production/module2/foo/Module2_aKt.class
 End of files
 Compiling files:
-module2/src/module2_a.kt
-module2/src/module2_b.kt
-module2/src/module2_c.kt
+  module2/src/module2_a.kt
+  module2/src/module2_b.kt
+  module2/src/module2_c.kt
 End of files
+Exit code: OK
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------

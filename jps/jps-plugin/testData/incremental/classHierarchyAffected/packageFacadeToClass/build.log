@@ -1,40 +1,54 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/A.class
-out/production/module/A__APartFKt.class
-out/production/module/META-INF/module.kotlin_module
+  out/production/module/A.class
+  out/production/module/A__APartFKt.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Cleaning output files:
-out/production/module/A__APartGKt.class
+  out/production/module/A__APartGKt.class
 End of files
 Compiling files:
-src/A.kt
+  src/A.kt
 End of files
+Marked as dirty by Kotlin:
+  src/useF.kt
+  src/useG.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/UseFJava.class
-out/production/module/UseFKt.class
-out/production/module/UseGKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseFJava.class
+  out/production/module/UseFKt.class
+  out/production/module/UseGKt.class
 End of files
 Compiling files:
-src/useF.kt
-src/useG.kt
+  src/useF.kt
+  src/useG.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Unresolved reference: f
 Unresolved reference: g
 
+================ Step #2 =================
 
 Cleaning output files:
-out/production/module/A.class
+  out/production/module/A.class
 End of files
 Cleaning output files:
-out/production/module/A$Companion.class
+  out/production/module/A$Companion.class
 End of files
 Compiling files:
-src/A.kt
-src/useF.kt
-src/useG.kt
+  src/A.kt
+  src/useF.kt
+  src/useG.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Compiling files:
-src/UseFJava.java
+  src/UseFJava.java
 End of files
+Exit code: NOTHING_DONE
+------------------------------------------
