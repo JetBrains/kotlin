@@ -10,7 +10,7 @@ public class Derived<<!EXPOSED_TYPE_PARAMETER_BOUND!>T: My<!>>(<!EXPOSED_PARAMET
 
     constructor(<!EXPOSED_PARAMETER_TYPE!>xx: My?<!>, <!EXPOSED_PARAMETER_TYPE!>x: My<!>): this(xx ?: x)
 
-    <!EXPOSED_PROPERTY_TYPE!>val y: Base? = null<!>
+    val <!EXPOSED_PROPERTY_TYPE!>y<!>: Base? = null
 
     val <!EXPOSED_RECEIVER_TYPE!>My<!>.z: Int
         get() = 42

@@ -10,7 +10,7 @@ internal open class Your: My() {
 open class His: <!EXPOSED_SUPER_CLASS!>Your()<!> {
     protected open class Nested
     // error, public from internal
-    <!EXPOSED_PROPERTY_TYPE!>val x = My()<!>
+    val <!EXPOSED_PROPERTY_TYPE!>x<!> = My()
     // valid, private from internal
     private fun bar() = My()
     // valid, internal from internal

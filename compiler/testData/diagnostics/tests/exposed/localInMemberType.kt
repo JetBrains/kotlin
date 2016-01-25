@@ -4,9 +4,9 @@ class Something {
     internal val internalVal1 = object { override fun toString() = "!" }
     private val privateVal1 = object { override fun toString() = "!" }
 
-    <!EXPOSED_PROPERTY_TYPE!>public val publicVal2 = run { class A; A() }<!>
-    <!EXPOSED_PROPERTY_TYPE!>protected val protectedVal2 = run { class A; A() }<!>
-    <!EXPOSED_PROPERTY_TYPE!>internal val internalVal2 = run { class A; A() }<!>
+    public val <!EXPOSED_PROPERTY_TYPE!>publicVal2<!> = run { class A; A() }
+    protected val <!EXPOSED_PROPERTY_TYPE!>protectedVal2<!> = run { class A; A() }
+    internal val <!EXPOSED_PROPERTY_TYPE!>internalVal2<!> = run { class A; A() }
     private val privateVal2 = run { class A; A() }
 
     public fun publicFun1() = object { override fun toString() = "!" }

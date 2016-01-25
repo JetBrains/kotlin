@@ -1,7 +1,7 @@
 // From KT-10753
 object My : <!EXPOSED_SUPER_CLASS!>Inter()<!> {
     fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>(<!EXPOSED_PARAMETER_TYPE!>arg: Inter<!>): Inter = arg
-    <!EXPOSED_PROPERTY_TYPE!>val x: Inter? = null<!>
+    val <!EXPOSED_PROPERTY_TYPE!>x<!>: Inter? = null
 }
 
 internal open class Inter

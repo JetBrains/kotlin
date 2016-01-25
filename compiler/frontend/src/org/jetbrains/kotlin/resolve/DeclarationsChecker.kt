@@ -639,7 +639,7 @@ class DeclarationsChecker(
         val propertyVisibility = propertyDescriptor.effectiveVisibility()
         val typeVisibility = propertyDescriptor.type.effectiveVisibility()
         if (!typeVisibility.sameOrMorePermissive(propertyVisibility)) {
-            trace.report(EXPOSED_PROPERTY_TYPE.on(property, propertyVisibility, typeVisibility))
+            trace.report(EXPOSED_PROPERTY_TYPE.on(property.nameIdentifier ?: property, propertyVisibility, typeVisibility))
         }
         checkMemberReceiverExposedType(property.receiverTypeReference, propertyDescriptor)
     }
