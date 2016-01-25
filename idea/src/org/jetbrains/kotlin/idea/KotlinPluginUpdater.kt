@@ -170,7 +170,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun checkUpdatesInCustomRepository(host: String): PluginUpdateStatus {
         val plugins = try {
-            RepositoryHelper.loadPlugins(host, null)
+            RepositoryHelper.loadPlugins(host, null, null)
         }
         catch(e: Exception) {
             return PluginUpdateStatus.fromException("Checking custom plugin repository $host failed", e)
