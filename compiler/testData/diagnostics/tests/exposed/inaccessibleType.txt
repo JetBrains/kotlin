@@ -1,0 +1,13 @@
+package
+
+package k {
+    public val d1: j.Derived1
+    public val d2: j.Derived2
+    public fun </*0*/ T> arrayOf2(/*0*/ x1: T, /*1*/ x2: T): kotlin.Array<T>
+    public fun </*0*/ T : j.Base> foo(/*0*/ x: T): kotlin.Unit
+    public fun </*0*/ T> listOf2(/*0*/ x1: T, /*1*/ x2: T): kotlin.collections.List<T>
+    public fun </*0*/ T> select(/*0*/ x1: T, /*1*/ x2: T): T
+    public fun </*0*/ T> selectn(/*0*/ vararg xx: T /*kotlin.Array<out T>*/): T
+    public fun test(): kotlin.Unit
+    public fun testOkInJava(): kotlin.Unit
+}

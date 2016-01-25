@@ -122,6 +122,8 @@ public class DefaultErrorMessages {
         MAP.put(EXPOSED_SUPER_CLASS, "Subclass effective visibility ''{0}'' should be the same or less permissive than its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
         MAP.put(EXPOSED_SUPER_INTERFACE, "Sub-interface effective visibility ''{0}'' should be the same or less permissive than its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
 
+        MAP.put(INACCESSIBLE_TYPE, "Type {0} is inaccessible in this context due to: {1}", RENDER_TYPE, RENDER_COLLECTION_OF_TYPES);
+
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
         MAP.put(ACCESSOR_PARAMETER_NAME_SHADOWING, "Accessor parameter name 'field' is shadowed by backing field variable");

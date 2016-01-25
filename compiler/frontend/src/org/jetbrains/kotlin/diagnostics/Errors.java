@@ -83,6 +83,8 @@ public interface Errors {
     DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_CLASS = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_INTERFACE = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory2<KtExpression, KotlinType, Collection<KotlinType>> INACCESSIBLE_TYPE = DiagnosticFactory2.create(ERROR);
+
     DiagnosticFactory1<KtElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

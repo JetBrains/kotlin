@@ -181,8 +181,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         // If break or continue was possible, take condition check info as the jump info
-        return TypeInfoFactoryKt.createTypeInfo(resultType, resultDataFlowInfo, loopBreakContinuePossible,
-                                                loopBreakContinuePossibleInCondition ? context.dataFlowInfo : conditionDataFlowInfo);
+        return TypeInfoFactoryKt.createTypeInfo(
+                components.dataFlowAnalyzer.checkType(resultType, ifExpression, contextWithExpectedType),
+                resultDataFlowInfo, loopBreakContinuePossible,
+                loopBreakContinuePossibleInCondition ? context.dataFlowInfo : conditionDataFlowInfo);
     }
 
     @NotNull

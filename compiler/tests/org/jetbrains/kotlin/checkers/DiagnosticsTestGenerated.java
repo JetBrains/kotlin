@@ -6180,6 +6180,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("inaccessibleType.kt")
+            public void testInaccessibleType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/inaccessibleType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("internal.kt")
             public void testInternal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/internal.kt");
