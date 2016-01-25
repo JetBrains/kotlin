@@ -2425,7 +2425,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private CallGenerator getOrCreateCallGenerator(
             @NotNull CallableDescriptor descriptor,
             @Nullable KtElement callElement,
-            @Nullable TypeParameterMappings typeParameterMappings
+            @Nullable TypeParameterMappings typeParameterMappings,
+            boolean isDefaultCompilation
     ) {
         if (callElement == null) return defaultCallGenerator;
 
@@ -2437,12 +2438,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (!isInline) return defaultCallGenerator;
 
         FunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal());
-        return new InlineCodegen(this, state, original, callElement, typeParameterMappings);
+        return new InlineCodegen(this, state, original, callElement, typeParameterMappings, isDefaultCompilation);
     }
 
     @NotNull
     protected CallGenerator getOrCreateCallGeneratorForDefaultImplBody(@NotNull FunctionDescriptor descriptor, @Nullable KtNamedFunction function) {
-        return getOrCreateCallGenerator(descriptor, function, null);
+        return getOrCreateCallGenerator(descriptor, function, null, true);
     }
 
     @NotNull
@@ -2473,8 +2474,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
         return getOrCreateCallGenerator(
-                resolvedCall.getResultingDescriptor(), resolvedCall.getCall().getCallElement(), mappings
-        );
+                resolvedCall.getResultingDescriptor(), resolvedCall.getCall().getCallElement(), mappings, false);
     }
 
 

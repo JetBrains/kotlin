@@ -370,7 +370,10 @@ public class MethodInliner {
                     @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
             ) {
                 if (isInliningLambda || InlineCodegenUtil.GENERATE_SMAP) {
-                    String varSuffix = inliningContext.isRoot() && !InlineCodegenUtil.isFakeLocalVariableForInline(name) ? INLINE_FUN_VAR_SUFFIX : "";
+                    String varSuffix = inliningContext.isRoot() &&
+                                       !((RootInliningContext) inliningContext).isDefaultCompilation &&
+                                       !InlineCodegenUtil.isFakeLocalVariableForInline(name) ?
+                                       INLINE_FUN_VAR_SUFFIX : "";
                     String varName = !varSuffix.isEmpty() && name.equals("this") ? name + "_" : name;
                     super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index));
                 }

@@ -85,6 +85,7 @@ public class InlineCodegen extends CallGenerator {
 
     private final ReifiedTypeInliner reifiedTypeInliner;
     @Nullable private final TypeParameterMappings typeParameterMappings;
+    private final boolean isDefaultCompilation;
 
     private LambdaInfo activeLambda;
 
@@ -95,11 +96,12 @@ public class InlineCodegen extends CallGenerator {
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor function,
             @NotNull KtElement callElement,
-            @Nullable TypeParameterMappings typeParameterMappings
+            @Nullable TypeParameterMappings typeParameterMappings,
+            boolean isDefaultCompilation
     ) {
         assert InlineUtil.isInline(function) || InlineUtil.isArrayConstructorWithLambda(function) :
                 "InlineCodegen can inline only inline functions and array constructors: " + function;
-
+        this.isDefaultCompilation = isDefaultCompilation;
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.codegen = codegen;
@@ -274,7 +276,7 @@ public class InlineCodegen extends CallGenerator {
 
         InliningContext info = new RootInliningContext(
                 expressionMap, state, codegen.getInlineNameGenerator().subGenerator(jvmSignature.getAsmMethod().getName()),
-                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings
+                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings, isDefaultCompilation
         );
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
