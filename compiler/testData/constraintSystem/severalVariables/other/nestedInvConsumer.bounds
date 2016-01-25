@@ -10,7 +10,7 @@ P <: My<My<Consumer<T>>>*, <: My<out My<out Consumer<Int>>>
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
--hasContradiction: true
+-hasContradiction: false
 -hasErrorInConstrainingTypes: false
 -hasParameterConstraintError: false
 -hasTypeInferenceIncorporationError: true
