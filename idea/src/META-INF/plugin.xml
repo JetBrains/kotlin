@@ -255,8 +255,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.KtLightClassForFacade$FacadeStubCache"
                     serviceImplementation="org.jetbrains.kotlin.asJava.KtLightClassForFacade$FacadeStubCache"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches"
+                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerCache"/>

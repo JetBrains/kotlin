@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class KotlinEvaluateExpressionCache(val project: Project) {
+class KotlinDebuggerCaches(private val project: Project) {
 
     private val cachedCompiledData = CachedValuesManager.getManager(project).createCachedValue(
             {
@@ -42,9 +42,9 @@ class KotlinEvaluateExpressionCache(val project: Project) {
             }, false)
 
     companion object {
-        private val LOG = Logger.getLogger(KotlinEvaluateExpressionCache::class.java)!!
+        private val LOG = Logger.getLogger(KotlinDebuggerCaches::class.java)!!
 
-        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinEvaluateExpressionCache::class.java)!!
+        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinDebuggerCaches::class.java)!!
 
         fun getOrCreateCompiledData(
                 codeFragment: KtCodeFragment,

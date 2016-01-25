@@ -54,8 +54,8 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.CompiledDataDescriptor
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
 import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
@@ -129,7 +129,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         var isCompiledDataFromCache = true
         try {
-            val compiledData = KotlinEvaluateExpressionCache.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
+            val compiledData = KotlinDebuggerCaches.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
                 fragment, position ->
                 isCompiledDataFromCache = false
                 extractAndCompile(fragment, position, context)

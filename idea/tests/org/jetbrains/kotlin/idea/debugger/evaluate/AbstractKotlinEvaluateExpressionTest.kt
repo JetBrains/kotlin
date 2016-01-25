@@ -62,7 +62,7 @@ import java.util.*
 import javax.swing.tree.TreeNode
 
 abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
-    private val logger = Logger.getLogger(KotlinEvaluateExpressionCache::class.java)!!
+    private val logger = Logger.getLogger(KotlinDebuggerCaches::class.java)!!
 
     private var appender: AppenderSkeleton? = null
 
