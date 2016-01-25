@@ -24,27 +24,23 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.IncrementalCacheImpl
+import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.incremental.storage.BasicMap
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
 import org.jetbrains.kotlin.incremental.storage.StringCollectionExternalizer
-import org.jetbrains.kotlin.incremental.storage.StringToLongMapExternalizer
-import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storages.PathCollectionExternalizer
 import org.jetbrains.kotlin.jps.incremental.storages.PathFunctionPair
 import org.jetbrains.kotlin.jps.incremental.storages.PathFunctionPairKeyDescriptor
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.org.objectweb.asm.*
 import java.io.File
-import java.util.*
 
 class JpsIncrementalCacheImpl(
         target: ModuleBuildTarget,
         paths: BuildDataPaths
 ) : IncrementalCacheImpl<ModuleBuildTarget>(paths.getTargetDataRoot(target), target.outputDir, target), StorageOwner {
 
-    private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
     private val dirtyInlineFunctionsMap = registerMap(DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile))
     private val inlinedTo = registerMap(InlineFunctionsFilesMap(INLINED_TO.storageFile))
 
@@ -56,13 +52,6 @@ class JpsIncrementalCacheImpl(
 
     override fun debugLog(message: String) {
         KotlinBuilder.LOG.debug(message)
-    }
-
-    override fun additionalProcessChangedClass(kotlinClass: LocalFileKotlinClass, isPackage: Boolean) =
-            inlineFunctionsMap.process(kotlinClass, isPackage)
-
-    override fun additionalProcessRemovedClasses(dirtyClasses: List<JvmClassName>) {
-        dirtyClasses.forEach { inlineFunctionsMap.remove(it) }
     }
 
     fun getFilesToReinline(): Collection<File> {
@@ -84,86 +73,10 @@ class JpsIncrementalCacheImpl(
         dirtyInlineFunctionsMap.clean()
     }
 
-    private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
-        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
-            val result = HashMap<String, Long>()
-
-            val inlineFunctions = inlineFunctionsJvmNames(bytes)
-            if (inlineFunctions.isEmpty()) return emptyMap()
-
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
-                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                    val dummyClassWriter = ClassWriter(Opcodes.ASM5)
-
-                    return object : MethodVisitor(Opcodes.ASM5, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
-                        override fun visitEnd() {
-                            val jvmName = name + desc
-                            if (jvmName !in inlineFunctions) return
-
-                            val dummyBytes = dummyClassWriter.toByteArray()!!
-                            val hash = dummyBytes.md5()
-                            result[jvmName] = hash
-                        }
-                    }
-                }
-
-            }, 0)
-
-            return result
+    override fun processChangedInlineFunctions(className: JvmClassName, changedFunctions: Collection<String>) {
+        if (changedFunctions.isNotEmpty()) {
+            dirtyInlineFunctionsMap.put(className, changedFunctions.toList())
         }
-
-        fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
-            return put(kotlinClass.className, getInlineFunctionsMap(kotlinClass.fileContents), isPackage)
-        }
-
-        private fun put(className: JvmClassName, newMap: Map<String, Long>, isPackage: Boolean): CompilationResult {
-            val internalName = className.internalName
-            val oldMap = storage[internalName] ?: emptyMap()
-
-            val added = hashSetOf<String>()
-            val changed = hashSetOf<String>()
-            val allFunctions = oldMap.keys + newMap.keys
-
-            for (fn in allFunctions) {
-                val oldHash = oldMap[fn]
-                val newHash = newMap[fn]
-
-                when {
-                    oldHash == null -> added.add(fn)
-                    oldHash != newHash -> changed.add(fn)
-                }
-            }
-
-            when {
-                newMap.isNotEmpty() -> storage[internalName] = newMap
-                else -> storage.remove(internalName)
-            }
-
-            if (changed.isNotEmpty()) {
-                dirtyInlineFunctionsMap.put(className, changed.toList())
-            }
-
-            val changes =
-                    if (IncrementalCompilation.isExperimental()) {
-                        val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
-                        // TODO get name in better way instead of using substringBefore
-                        (added.asSequence() + changed.asSequence()).map { ChangeInfo.MembersChanged(fqName, listOf(it.substringBefore("("))) }
-                    }
-                    else {
-                        emptySequence<ChangeInfo>()
-                    }
-
-            return CompilationResult(inlineChanged = changed.isNotEmpty(),
-                                     inlineAdded = added.isNotEmpty(),
-                                     changes = changes)
-        }
-
-        fun remove(className: JvmClassName) {
-            storage.remove(className.internalName)
-        }
-
-        override fun dumpValue(value: Map<String, Long>): String =
-                value.dumpMap { java.lang.Long.toHexString(it) }
     }
 
     private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
@@ -204,7 +117,6 @@ class JpsIncrementalCacheImpl(
     }
 
     companion object {
-        private val INLINE_FUNCTIONS = "inline-functions"
         private val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions"
         private val INLINED_TO = "inlined-to"
     }

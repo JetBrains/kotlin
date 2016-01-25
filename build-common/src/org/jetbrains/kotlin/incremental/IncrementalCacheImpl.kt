@@ -25,6 +25,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -37,10 +38,7 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.FieldVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.security.MessageDigest
 import java.util.*
@@ -60,6 +58,7 @@ open class IncrementalCacheImpl<Target>(
         private val MULTIFILE_CLASS_PARTS = "multifile-class-parts"
         private val SOURCE_TO_CLASSES = "source-to-classes"
         private val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
+        private val INLINE_FUNCTIONS = "inline-functions"
         private val SUBTYPES = "subtypes"
         private val SUPERTYPES = "supertypes"
         private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
@@ -85,6 +84,7 @@ open class IncrementalCacheImpl<Target>(
     private val partToMultifileFacade = registerMap(MultifileClassPartMap(MULTIFILE_CLASS_PARTS.storageFile))
     private val sourceToClassesMap = registerMap(SourceToClassesMap(SOURCE_TO_CLASSES.storageFile))
     private val dirtyOutputClassesMap = registerMap(DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile))
+    private val inlineFunctionsMap = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile))
     private val subtypesMap = registerExperimentalMap(SubtypesMap(SUBTYPES.storageFile))
     private val supertypesMap = registerExperimentalMap(SupertypesMap(SUPERTYPES.storageFile))
     private val classFqNameToSourceMap = registerExperimentalMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile))
@@ -161,7 +161,7 @@ open class IncrementalCacheImpl<Target>(
 
                 protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
-                additionalProcessChangedClass(kotlinClass, isPackage = true)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
                 val partNames = kotlinClass.classHeader.data?.toList()
@@ -176,7 +176,7 @@ open class IncrementalCacheImpl<Target>(
 
                 // TODO NO_CHANGES? (delegates only)
                 constantsMap.process(kotlinClass) +
-                additionalProcessChangedClass(kotlinClass, isPackage = true)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
@@ -185,7 +185,7 @@ open class IncrementalCacheImpl<Target>(
 
                 protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
-                additionalProcessChangedClass(kotlinClass, isPackage = true)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.CLASS -> {
                 assert(sourceFiles.size == 1) { "Class is expected to have only one source file: $sourceFiles" }
@@ -193,7 +193,7 @@ open class IncrementalCacheImpl<Target>(
 
                 protoMap.process(kotlinClass, isPackage = false) +
                 constantsMap.process(kotlinClass) +
-                additionalProcessChangedClass(kotlinClass, isPackage = false)
+                inlineFunctionsMap.process(kotlinClass, isPackage = false)
             }
             else -> CompilationResult.NO_CHANGES
         }
@@ -201,8 +201,6 @@ open class IncrementalCacheImpl<Target>(
         changesInfo.logIfSomethingChanged(className)
         return changesInfo
     }
-
-    protected open fun additionalProcessChangedClass(kotlinClass: LocalFileKotlinClass, isPackage: Boolean) = CompilationResult.NO_CHANGES
 
     private fun CompilationResult.logIfSomethingChanged(className: JvmClassName) {
         if (this == CompilationResult.NO_CHANGES) return
@@ -293,17 +291,13 @@ open class IncrementalCacheImpl<Target>(
             multifileFacadeToParts.remove(it)
             partToMultifileFacade.remove(it)
             constantsMap.remove(it)
+            inlineFunctionsMap.remove(it)
         }
-
-        additionalProcessRemovedClasses(dirtyClasses)
 
         removeAllFromClassStorage(dirtyClasses)
 
         dirtyOutputClassesMap.clean()
         return changesInfo
-    }
-
-    protected open fun additionalProcessRemovedClasses(dirtyClasses: List<JvmClassName>) {
     }
 
     override fun getObsoletePackageParts(): Collection<String> {
@@ -605,6 +599,91 @@ open class IncrementalCacheImpl<Target>(
                 storage.contains(className)
 
         override fun dumpValue(value: Boolean) = ""
+    }
+
+    private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
+            val result = HashMap<String, Long>()
+
+            val inlineFunctions = inlineFunctionsJvmNames(bytes)
+            if (inlineFunctions.isEmpty()) return emptyMap()
+
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+                    val dummyClassWriter = ClassWriter(Opcodes.ASM5)
+
+                    return object : MethodVisitor(Opcodes.ASM5, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
+                        override fun visitEnd() {
+                            val jvmName = name + desc
+                            if (jvmName !in inlineFunctions) return
+
+                            val dummyBytes = dummyClassWriter.toByteArray()!!
+                            val hash = dummyBytes.md5()
+                            result[jvmName] = hash
+                        }
+                    }
+                }
+
+            }, 0)
+
+            return result
+        }
+
+        fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
+            return put(kotlinClass.className, getInlineFunctionsMap(kotlinClass.fileContents), isPackage)
+        }
+
+        private fun put(className: JvmClassName, newMap: Map<String, Long>, isPackage: Boolean): CompilationResult {
+            val internalName = className.internalName
+            val oldMap = storage[internalName] ?: emptyMap()
+
+            val added = hashSetOf<String>()
+            val changed = hashSetOf<String>()
+            val allFunctions = oldMap.keys + newMap.keys
+
+            for (fn in allFunctions) {
+                val oldHash = oldMap[fn]
+                val newHash = newMap[fn]
+
+                when {
+                    oldHash == null -> added.add(fn)
+                    oldHash != newHash -> changed.add(fn)
+                }
+            }
+
+            when {
+                newMap.isNotEmpty() -> storage[internalName] = newMap
+                else -> storage.remove(internalName)
+            }
+
+            val changes =
+                    if (IncrementalCompilation.isExperimental()) {
+                        val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
+                        // TODO get name in better way instead of using substringBefore
+                        (added.asSequence() + changed.asSequence()).map { ChangeInfo.MembersChanged(fqName, listOf(it.substringBefore("("))) }
+                    }
+                    else {
+                        emptySequence<ChangeInfo>()
+                    }
+
+            processChangedInlineFunctions(className, changed)
+            return CompilationResult(inlineChanged = changed.isNotEmpty(),
+                                     inlineAdded = added.isNotEmpty(),
+                                     changes = changes)
+        }
+
+        fun remove(className: JvmClassName) {
+            storage.remove(className.internalName)
+        }
+
+        override fun dumpValue(value: Map<String, Long>): String =
+                value.dumpMap { java.lang.Long.toHexString(it) }
+    }
+
+    protected open fun processChangedInlineFunctions(
+            className: JvmClassName,
+            changedFunctions: Collection<String>
+    ) {
     }
 }
 
