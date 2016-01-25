@@ -216,7 +216,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.kotlinDebug("args.moduleName = ${args.moduleName}")
     }
 
-    override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
+    override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
 
         // TODO: consider other ways to pass incremental flag to compiler/builder
         System.setProperty("kotlin.incremental.compilation", "true")
@@ -232,12 +232,15 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         var currentRemoved = removed
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
+        val compiledSourcesSet = hashSetOf<File>()
 
         fun getOrCreateIncrementalCache(target: TargetId): IncrementalCacheImpl<TargetId> {
             val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
             cacheDir.mkdirs()
             return IncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
         }
+
+        fun getIncrementalCache(it: TargetId) = caches.getOrPut(it, { getOrCreateIncrementalCache(it) })
 
         fun PsiClass.findLookupSymbols(): Iterable<LookupSymbol> {
             val fqn = qualifiedName.orEmpty()
@@ -247,7 +250,18 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     innerClasses.flatMap { it.findLookupSymbols() }
         }
 
+        fun Iterable<LookupSymbol>.files(filesFilter: (File) -> Boolean = { true }, logAction: (LookupSymbol, Iterable<File>) -> Unit = { l,fs -> }): Iterable<File> =
+            flatMap { lookup ->
+                val files = lookupStorage.get(lookup).map(::File).filter(filesFilter)
+                if (files.any()) {
+                    logAction(lookup, files)
+                }
+                files
+            }
+
         fun dirtyKotlinSourcesFromGradle(): List<File> {
+            // TODO: take into account deleted files (take their symbols from caches
+            // TODO: handle classpath changes similarly - compare with cashed version (likely a big change, may be costly, some heuristics could be considered)
             val kotlinFiles = modified.filter { it.isKotlinFile() }
             val javaFiles = modified.filter { it.isJavaFile() }
             if (javaFiles.any()) {
@@ -262,9 +276,15 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                         javaFile.classes.flatMap { it.findLookupSymbols() }
                     else listOf()
                 }
-                logger.kotlinDebug("changed java symbols: ${lookupSymbols.joinToString { "${it.name}:${it.scope}" }}")
+//                logger.kotlinDebug("changed java symbols: ${lookupSymbols.joinToString { "${it.name}:${it.scope}" }}")
                 if (lookupSymbols.any()) {
-                    return kotlinFiles + lookupSymbols.flatMap { lookupStorage.get(it) }.map { File(it) }
+                    val kotlinFilesSet = kotlinFiles.toHashSet()
+                    return kotlinFiles +
+                            lookupSymbols.files(
+                                    filesFilter = { it !in kotlinFilesSet },
+                                    logAction = { lookup, files ->
+                                        logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
+                                    })
                 }
             }
             return kotlinFiles
@@ -274,11 +294,57 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             // TODO: that doesn't look to wise - join it first and then split here, consider storing it somewhere in between
             val classpath = args.classpath.split(File.pathSeparator).map { File(it) }.toHashSet()
             val changedClasspath = modified.filter { classpath.contains(it) }
-            if (changedClasspath.any()) {
-                logger.kotlinDebug("recompiling project because of classpath changes: $changedClasspath")
-                return true
+            return changedClasspath.any()
+        }
+
+        fun allCachesVersions() = allCachesVersions(cachesBaseDir, listOf(cachesBaseDir))
+
+        fun calculateSourcesToCompile(): Pair<List<File>, Boolean> {
+
+            // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
+            if (!isIncrementalRequested || isClassPathChanged()) {
+                logger.kotlinInfo(if (!isIncrementalRequested) "clean caches on rebuild" else "classpath changed, rebuilding all kotlin files")
+                targets.forEach { getIncrementalCache(it).clean() }
+                lookupStorage.clean()
+                return Pair(sources, false)
             }
-            return false
+            val actions = if (isIncrementalRequested) allCachesVersions().map { it.checkVersion() }
+                          else listOf(CacheVersion.Action.REBUILD_ALL_KOTLIN)
+            // TODO: find out whether these flags should be emulated too
+//            val hasKotlin = HasKotlinMarker(dataManager)
+//            val rebuildAfterCacheVersionChanged = RebuildAfterCacheVersionChangeMarker(dataManager)
+
+            for (status in actions.distinct().sorted()) {
+                when (status) {
+                    CacheVersion.Action.REBUILD_ALL_KOTLIN -> {
+                        logger.kotlinInfo("Kotlin global lookup map format changed, rebuilding all kotlin files")
+                        targets.forEach { getIncrementalCache(it).clean() }
+                        lookupStorage.clean()
+                        return Pair(sources, false)
+                    }
+                    CacheVersion.Action.REBUILD_CHUNK -> {
+                        logger.kotlinInfo("Clearing caches for " + targets.joinToString { it.name })
+                        targets.forEach { getIncrementalCache(it).clean() }
+                    }
+                    CacheVersion.Action.CLEAN_NORMAL_CACHES -> {
+                        logger.kotlinInfo("Clearing caches for all targets")
+                        targets.forEach { getIncrementalCache(it).clean() }
+                    }
+                    CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES -> {
+                        logger.kotlinInfo("Clearing experimental caches for all targets")
+                        targets.forEach { getIncrementalCache(it).cleanExperimental() }
+                    }
+                    CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
+                        logger.kotlinInfo("Clearing lookup cache")
+                        lookupStorage.clean()
+                        dataContainerCacheVersion(cachesBaseDir).clean()
+                    }
+                    else -> {
+                        assert(status == CacheVersion.Action.DO_NOTHING) { "Unknown version status $status" }
+                    }
+                }
+            }
+            return Pair(dirtyKotlinSourcesFromGradle().distinct(), true)
         }
 
         fun cleanupOnError() {
@@ -286,34 +352,32 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             assert(outputDirFile.exists())
             val generatedRelPaths = allGeneratedFiles.map { it.outputFile.toRelativeString(outputDirFile) }
-            logger.kotlinDebug("deleting output on error: ${generatedRelPaths.joinToString()}")
+            logger.kotlinInfo("deleting output on error: ${generatedRelPaths.joinToString()}")
 
             allGeneratedFiles.forEach { it.outputFile.delete() }
             generatedRelPaths.forEach { File(destinationDir, it).delete() }
         }
 
         fun outputRelativePath(f: File) = f.toRelativeString(outputDir)
-        fun outputRelativePath(p: String) = File(p).toRelativeString(outputDir)
+
 
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
-        // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
-        var sourcesToCompile =
-            if (isIncremental && !isClassPathChanged()) dirtyKotlinSourcesFromGradle().distinct()
-            else sources
+        var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile()
 
-        if (isIncremental) {
+        if (isIncrementalDecided) {
+            // TODO: process as list here, merge into string later
             args.classpath = args.classpath + File.pathSeparator + outputDir.absolutePath
         }
 
         while (sourcesToCompile.any()) {
-            logger.kotlinDebug("compile iteration: ${sourcesToCompile.joinToString(", ")}")
+            logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString{ projectRelativePath(it) }}")
 
             val (exitCode, generatedFiles) = compileChanged(
                     targets = targets,
                     sourcesToCompile = sourcesToCompile,
                     outputDir = outputDir,
                     args = args,
-                    getIncrementalCache = { caches.getOrPut(it, { getOrCreateIncrementalCache(it) }) },
+                    getIncrementalCache = ::getIncrementalCache,
                     lookupTracker = lookupTracker)
 
             allGeneratedFiles.addAll(generatedFiles)
@@ -325,11 +389,13 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     compiledWithErrors = exitCode != ExitCode.OK,
                     getIncrementalCache = { caches[it]!! })
 
-            lookupTracker.lookups.entrySet().forEach {
-                logger.kotlinDebug("lookups to ${it.key.name}:${it.key.scope} from ${it.value.joinToString { projectRelativePath(it) }}")
-            }
+//            lookupTracker.lookups.entrySet().forEach {
+//                logger.kotlinDebug("lookups to ${it.key.name}:${it.key.scope} from ${it.value.joinToString { projectRelativePath(it) }}")
+//            }
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
+
+            allCachesVersions().forEach { it.saveIfNeeded() }
 
             when (exitCode) {
                 ExitCode.COMPILATION_ERROR -> {
@@ -340,43 +406,46 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     cleanupOnError()
                     throw GradleException("Internal compiler error. See log for more details")
                 }
+                ExitCode.SCRIPT_EXECUTION_ERROR -> {
+                    cleanupOnError()
+                    throw GradleException("Script execution error. See log for more details")
+                }
+                ExitCode.OK -> {
+                    logger.kotlinInfo("Compilation succeeded")
+                }
             }
 
-            logger.kotlinDebug("generated ${generatedFiles.joinToString { outputRelativePath(it.outputFile) }}")
-            logger.kotlinDebug("changes: ${changes.changes.joinToString { "${it.fqName}: ${it.javaClass.simpleName}" }}")
+            if (!isIncrementalDecided) break;
 
-            logger.kotlinLazyDebug({
-                "known lookups:\n${lookupStorage.dump(changes.changes.flatMap {
-                    change ->
-                        if (change is ChangeInfo.MembersChanged)
-                            change.names.asSequence().map { LookupSymbol(it, change.fqName.asString()) }
-                        else
-                            sequenceOf<LookupSymbol>()
-                }.toSet(), project.projectDir)}" })
+//            logger.kotlinDebug("generated ${generatedFiles.joinToString { outputRelativePath(it.outputFile) }}")
+//            logger.kotlinDebug("changes: ${changes.changes.joinToString { "${it.fqName}: ${it.javaClass.simpleName}" }}")
+//
+//            logger.kotlinLazyDebug({
+//                "known lookups:\n${lookupStorage.dump(changes.changes.flatMap {
+//                    change ->
+//                        if (change is ChangeInfo.MembersChanged)
+//                            change.names.asSequence().map { LookupSymbol(it, change.fqName.asString()) }
+//                        else
+//                            sequenceOf<LookupSymbol>()
+//                }.toSet(), project.projectDir)}" })
 
-            if (!isIncremental) break;
-
-            // TODO: consider using some order-preserving set for sourcesToCompile instead
-            val compiledSourcesSet = sourcesToCompile.toHashSet()
+            compiledSourcesSet.addAll(sourcesToCompile)
 
             val dirtyLookups = changes.dirtyLookups<TargetId>(caches.values.asSequence())
 
-            logger.kotlinDebug("dirty lookups: ${dirtyLookups.joinToString { "${it.name}:${it.scope}" }}")
+//            logger.kotlinDebug("dirty lookups: ${dirtyLookups.joinToString { "${it.name}:${it.scope}" }}")
 
-            val dirty = dirtyLookups.flatMap { lookup ->
-                val files = lookupStorage.get(lookup).map(::File).filter { it !in compiledSourcesSet }
-                if (files.any()) {
-                    logger.kotlinDebug("changes in $lookup causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
-                }
-                files
-            }
-            //val dirty = changes.dirtyFiles(lookupStorage).filter { it !in compiledSourcesSet }
+            val dirty = dirtyLookups.files(
+                    filesFilter = { it !in compiledSourcesSet },
+                    logAction = { lookup, files ->
+                        logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
+                    })
             sourcesToCompile = dirty.filter { it in sources }.toList()
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
             }
-            logger.kotlinDebug("dirty: ${dirty.joinToString { projectRelativePath(it) }}")
-            logger.kotlinDebug("to compile: ${sourcesToCompile.joinToString { projectRelativePath(it) }}")
+//            logger.kotlinDebug("dirty: ${dirty.joinToString { projectRelativePath(it) }}")
+//            logger.kotlinDebug("to compile: ${sourcesToCompile.joinToString { projectRelativePath(it) }}")
         }
         lookupStorage.flush(false)
         lookupStorage.close()
@@ -622,11 +691,15 @@ class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItem
     }
 }
 
-fun Logger.kotlinDebug(message: String) {
+internal fun Logger.kotlinInfo(message: String) {
+    this.info("[KOTLIN] $message")
+}
+
+internal fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
 }
 
-fun Logger.kotlinLazyDebug(makeMessage: () -> String) {
+internal fun Logger.kotlinLazyDebug(makeMessage: () -> String) {
     if (this.isInfoEnabled)
         kotlinDebug(makeMessage())
 }
