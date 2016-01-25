@@ -4,6 +4,7 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 ceAnonymousObjectCapturedInClosure.kt:7
 Compile bytecode for lambda { localObject.test() }
 Compile bytecode for lambda { localObjectVar.test() }
+ceAnonymousObjectCapturedInClosure.kt:7
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

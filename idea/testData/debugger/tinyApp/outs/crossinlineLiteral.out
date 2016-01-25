@@ -18,7 +18,7 @@ LineBreakpoint created at crossinlineLiteral.kt:108
 LineBreakpoint created at crossinlineLiteral.kt:120
 LineBreakpoint created at crossinlineLiteral.kt:127
 LineBreakpoint created at crossinlineLiteral.kt:137
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! crossinlineLiteral.CrossinlineLiteralKt
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! crossinlineLiteral.CrossinlineLiteralKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 crossinlineLiteral.kt:74
 crossinlineLiteral.kt:12

@@ -5,6 +5,7 @@ twoLambdasOnOneLineFirst.kt:9
 twoLambdasOnOneLineFirst.kt:14
 twoLambdasOnOneLineFirst.kt:9
 Compile bytecode for it
+twoLambdasOnOneLineFirst.kt:9
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

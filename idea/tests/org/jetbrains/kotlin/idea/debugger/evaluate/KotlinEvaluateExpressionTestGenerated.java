@@ -730,6 +730,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("initializer.kt")
+        public void testInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/initializer.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/localFun.kt");
