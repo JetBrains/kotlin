@@ -253,7 +253,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     private fun Type.isDefaultUpperBound(): Boolean {
         return this.hasClassName() &&
-               c.nameResolver.getClassId(className).let { KotlinBuiltIns.isAny(it.asSingleFqName().toUnsafe()) } &&
+               c.nameResolver.getClassId(className).let { KotlinBuiltIns.FQ_NAMES.any == it.asSingleFqName().toUnsafe() } &&
                this.nullable
     }
 }

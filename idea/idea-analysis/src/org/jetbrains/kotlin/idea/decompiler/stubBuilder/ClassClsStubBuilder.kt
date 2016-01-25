@@ -61,7 +61,7 @@ private class ClassClsStubBuilder(
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
         //empty supertype list if single supertype is Any
-        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.isAny(it.asSingleFqName().toUnsafe()) } ?: false) {
+        if (supertypeIds.singleOrNull()?.let { KotlinBuiltIns.FQ_NAMES.any == it.asSingleFqName().toUnsafe() } ?: false) {
             listOf()
         }
         else {

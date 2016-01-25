@@ -678,6 +678,11 @@ public abstract class KotlinBuiltIns {
         return TypeUtils.makeNullable(getAnyType());
     }
 
+    @NotNull
+    public KotlinType getDefaultBound() {
+        return getNullableAnyType();
+    }
+
     // Primitive
 
     @NotNull
@@ -992,12 +997,14 @@ public abstract class KotlinBuiltIns {
         return parameterTypes;
     }
 
-    // Recognized & special
-
     private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null &&
-               /* quick check to avoid creation of full FqName instance */ descriptor.getName().equals(fqName.shortName()) &&
+        return descriptor instanceof ClassDescriptor && classFqNameEquals(descriptor, fqName);
+    }
+
+    private static boolean classFqNameEquals(@NotNull ClassifierDescriptor descriptor, @NotNull FqNameUnsafe fqName) {
+        // Quick check to avoid creation of full FqName instance
+        return descriptor.getName().equals(fqName.shortName()) &&
                fqName.equals(getFqName(descriptor));
     }
 
@@ -1006,12 +1013,11 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
-        FqNameUnsafe fqName = getFqName(descriptor);
-        return FQ_NAMES.any.equals(fqName) || FQ_NAMES.nothing.equals(fqName);
+        return classFqNameEquals(descriptor, FQ_NAMES.any) || classFqNameEquals(descriptor, FQ_NAMES.nothing);
     }
 
     public static boolean isAny(@NotNull ClassDescriptor descriptor) {
-        return isAny(getFqName(descriptor));
+        return classFqNameEquals(descriptor, FQ_NAMES.any);
     }
 
     public static boolean isAny(@NotNull KotlinType type) {
@@ -1019,7 +1025,6 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isBoolean(@NotNull KotlinType type) {
-
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._boolean);
     }
 
@@ -1028,7 +1033,7 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isBoolean(@NotNull ClassDescriptor classDescriptor) {
-        return FQ_NAMES._boolean.equals(getFqName(classDescriptor));
+        return classFqNameEquals(classDescriptor, FQ_NAMES._boolean);
     }
 
     public static boolean isChar(@NotNull KotlinType type) {
@@ -1061,10 +1066,6 @@ public abstract class KotlinBuiltIns {
 
     private static boolean isConstructedFromGivenClassAndNotNullable(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
         return isConstructedFromGivenClass(type, fqName) && !type.isMarkedNullable();
-    }
-
-    public static boolean isAny(@NotNull FqNameUnsafe fqName) {
-        return FQ_NAMES.any.equals(fqName);
     }
 
     public static boolean isNothing(@NotNull KotlinType type) {
@@ -1130,15 +1131,15 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isKClass(@NotNull ClassDescriptor descriptor) {
-        return FQ_NAMES.kClass.equals(getFqName(descriptor));
+        return classFqNameEquals(descriptor, FQ_NAMES.kClass);
     }
 
     public static boolean isNonPrimitiveArray(@NotNull ClassDescriptor descriptor) {
-        return FQ_NAMES.array.equals(getFqName(descriptor));
+        return classFqNameEquals(descriptor, FQ_NAMES.array);
     }
 
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
-        return FQ_NAMES.cloneable.equals(getFqName(descriptor));
+        return classFqNameEquals(descriptor, FQ_NAMES.cloneable);
     }
 
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
@@ -1173,13 +1174,4 @@ public abstract class KotlinBuiltIns {
 
         return false;
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @NotNull
-    public KotlinType getDefaultBound() {
-        return getNullableAnyType();
-    }
-
-
 }
