@@ -98,10 +98,11 @@ class DeclarationsChecker(
         for ((classOrObject, classDescriptor) in bodiesResolveContext.declaredClasses.entries) {
             checkSupertypesForConsistency(classDescriptor, classOrObject)
             checkTypesInClassHeader(classOrObject)
+            checkClassOrObjectMembers(classDescriptor)
 
             when (classOrObject) {
                 is KtClass -> {
-                    checkClass(classOrObject, classDescriptor)
+                    checkClassButNotObject(classOrObject, classDescriptor)
                     descriptorResolver.checkNamesInConstraints(
                             classOrObject, classDescriptor, classDescriptor.scopeForClassHeaderResolution, trace)
                 }
@@ -315,7 +316,7 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkClass(aClass: KtClass, classDescriptor: ClassDescriptorWithResolutionScopes) {
+    private fun checkClassButNotObject(aClass: KtClass, classDescriptor: ClassDescriptorWithResolutionScopes) {
         checkOpenMembers(classDescriptor)
         checkTypeParameters(aClass)
         checkTypeParameterConstraints(aClass)
@@ -336,7 +337,9 @@ class DeclarationsChecker(
         else if (aClass is KtEnumEntry) {
             checkEnumEntry(aClass, classDescriptor)
         }
+    }
 
+    private fun checkClassOrObjectMembers(classDescriptor: ClassDescriptorWithResolutionScopes) {
         for (memberDescriptor in classDescriptor.declaredCallableMembers) {
             if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
             val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtFunction
