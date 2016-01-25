@@ -229,8 +229,8 @@ class KotlinFindClassUsagesHandler(
                         if (topLevelClass != null) {
                             val topName = topLevelClass.qualifiedName
                             assert(topName != null)
-                            if (qname.length() > topName!!.length()) {
-                                result.add(topName + qname.substring(topName.length()).replace('.', '$'))
+                            if (qname.length > topName!!.length) {
+                                result.add(topName + qname.substring(topName.length).replace('.', '$'))
                             }
                         }
                     }

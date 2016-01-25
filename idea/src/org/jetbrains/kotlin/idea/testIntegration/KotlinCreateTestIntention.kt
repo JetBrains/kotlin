@@ -196,7 +196,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
             val containingFile = element.containingFile
             if (containingFile is PsiClassOwner) {
                 val classes = containingFile.classes
-                if (classes.size() == 1) {
+                if (classes.size == 1) {
                     return classes[0]
                 }
             }
