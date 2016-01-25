@@ -124,6 +124,9 @@ open class IncrementalCacheImpl<Target>(
 
     fun getSourceFileIfClass(fqName: FqName): File? = classFqNameToSourceMap[fqName]
 
+    fun isMultifileFacade(className: JvmClassName): Boolean =
+            className.internalName in multifileFacadeToParts
+
     override fun getClassFilePath(internalClassName: String): String {
         return toSystemIndependentName(File(outputDir, "$internalClassName.class").canonicalPath)
     }
@@ -477,7 +480,9 @@ open class IncrementalCacheImpl<Target>(
             storage[facadeName.internalName] = partNames
         }
 
-        operator fun get(facadeName: String): Collection<String>? = storage[facadeName]
+        operator fun get(internalName: String): Collection<String>? = storage[internalName]
+
+        operator fun contains(internalName: String): Boolean = internalName in storage
 
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)

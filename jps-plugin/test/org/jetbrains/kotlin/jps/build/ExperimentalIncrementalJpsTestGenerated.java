@@ -1213,6 +1213,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("multifilePackagePartMethodAdded")
+        public void testMultifilePackagePartMethodAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multifilePackagePartMethodAdded/");
+            doTest(fileName);
+        }
+
         @TestMetadata("overrideExplicit")
         public void testOverrideExplicit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/overrideExplicit/");

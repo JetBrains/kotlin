@@ -252,7 +252,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass<ModuleBuildTarget>>()
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
+        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
 
         if (!IncrementalCompilation.isEnabled()) {
             return OK
@@ -465,16 +465,38 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
-            generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>
+            generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>,
+            incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>
     ) {
         val previousMappings = context.projectDescriptor.dataManager.mappings
         val delta = previousMappings.createDelta()
         val callback = delta.callback
+        val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
+            val files = HashSet<File>()
+            dirtyFilesHolder.getRemovedFiles(it).mapTo(files, ::File)
+            files.addAll(filesToCompile.get(it))
+            files
+        }
+
+        fun getOldSourceFiles(generatedClass: GeneratedJvmClass<ModuleBuildTarget>): Set<File> {
+            val cache = incrementalCaches[generatedClass.target] ?: return emptySet()
+            val className = generatedClass.outputClass.className
+
+            if (!cache.isMultifileFacade(className)) return emptySet()
+
+            val name = previousMappings.getName(className.internalName)
+            return previousMappings.getClassSources(name)?.toSet() ?: emptySet()
+        }
 
         for (generatedClass in generatedClasses) {
+            val sourceFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
+            sourceFiles.addAll(getOldSourceFiles(generatedClass))
+            sourceFiles.removeAll(targetDirtyFiles[generatedClass.target] ?: emptySet())
+            sourceFiles.addAll(generatedClass.sourceFiles)
+
             callback.associate(
-                    FileUtil.toSystemIndependentName(generatedClass.outputFile.absolutePath),
-                    generatedClass.sourceFiles.map { FileUtil.toSystemIndependentName(it.absolutePath) },
+                    FileUtil.toSystemIndependentName(generatedClass.outputFile.canonicalPath),
+                    sourceFiles.map { FileUtil.toSystemIndependentName(it.canonicalPath) },
                     ClassReader(generatedClass.outputClass.fileContents)
             )
         }

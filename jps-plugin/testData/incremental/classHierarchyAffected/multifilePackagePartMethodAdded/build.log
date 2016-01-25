@@ -1,0 +1,20 @@
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/Utils.class
+out/production/module/Utils__PartBKt.class
+End of files
+Compiling files:
+src/partB.kt
+End of files
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UseFooFKt.class
+out/production/module/UseFooGKt.class
+out/production/module/Utils.class
+out/production/module/Utils__PartAKt.class
+End of files
+Compiling files:
+src/partA.kt
+src/useFooF.kt
+src/useFooG.kt
+End of files
