@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
+import org.jetbrains.kotlin.types.expressions.FakeCallKind;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -146,7 +147,7 @@ public class ExpectedResolveDataUtil {
                 DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         OverloadResolutionResults<FunctionDescriptor> functions = container.getFakeCallResolver().resolveFakeCall(
-                context, null, Name.identifier(name), null, parameterTypes);
+                context, null, Name.identifier(name), null, null, FakeCallKind.OTHER, parameterTypes);
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();

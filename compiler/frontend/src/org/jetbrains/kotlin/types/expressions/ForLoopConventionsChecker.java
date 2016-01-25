@@ -67,7 +67,7 @@ public class ForLoopConventionsChecker {
         Name iterator = Name.identifier("iterator");
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls =
                 fakeCallResolver.makeAndResolveFakeCall(loopRange, context, Collections.<KtExpression>emptyList(), iterator,
-                                                        loopRange.getExpression(), true);
+                                                        loopRangeExpression, FakeCallKind.ITERATOR, loopRangeExpression);
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
         if (iteratorResolutionResults.isSuccess()) {

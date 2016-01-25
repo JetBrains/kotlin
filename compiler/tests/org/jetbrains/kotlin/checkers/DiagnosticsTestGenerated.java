@@ -3600,6 +3600,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extensionComponentsOnNullable.kt")
+            public void testExtensionComponentsOnNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/extensionComponentsOnNullable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implementTraitWhichHasComponent1.kt")
             public void testImplementTraitWhichHasComponent1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/implementTraitWhichHasComponent1.kt");
