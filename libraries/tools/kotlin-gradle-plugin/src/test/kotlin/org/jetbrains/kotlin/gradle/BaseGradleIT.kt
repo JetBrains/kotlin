@@ -83,7 +83,7 @@ abstract class BaseGradleIT {
 
     open inner class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG) {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$projectName")
-        val projectDir = File(workingDir, projectName)
+        val projectDir = File(workingDir.canonicalFile, projectName)
 
         open fun setupWorkingDir() {
             copyRecursively(this.resourcesRoot, workingDir)
@@ -91,7 +91,14 @@ abstract class BaseGradleIT {
         }
     }
 
-    class CompiledProject(val project: Project, val output: String, val resultCode: Int)
+    class CompiledProject(val project: Project, val output: String, val resultCode: Int) {
+        companion object {
+            val kotlinSourcesListRegex = Regex("\\[KOTLIN\\] compile iteration: ([^\\r\\n]*)")
+            val javaSourcesListRegex = Regex("\\[DEBUG\\] \\[[^\\]]*JavaCompiler\\] Compiler arguments: ([^\\r\\n]*)")
+        }
+        val compiledKotlinSources : Iterable<File> by lazy { kotlinSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(", ").map { File(project.projectDir, it).canonicalFile } } }
+        val compiledJavaSources : Iterable<File> by lazy { javaSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(" ").filter { it.endsWith(".java", ignoreCase = true) }.map { File(it).canonicalFile } } }
+    }
 
     fun Project.build(vararg tasks: String, options: BuildOptions = defaultBuildOptions(), check: CompiledProject.() -> Unit) {
         val cmd = createBuildCommand(tasks, options)
@@ -172,6 +179,35 @@ abstract class BaseGradleIT {
         }
         return this
     }
+
+    private fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
+//        val projectDir = File(workingDir.canonicalFile, project.projectName)
+        return map { it.canonicalFile.toRelativeString(project.projectDir) }
+    }
+
+    fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
+        val expectedSet = expected.toSortedSet()
+        val actualSet = actual.toSortedSet()
+        assertTrue(actualSet == expectedSet, messagePrefix + "expected files: ${expectedSet.joinToString()}\n  actual files: ${actualSet.joinToString()}")
+        return this
+    }
+
+    fun CompiledProject.assertContainFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
+        val expectedSet = expected.toSortedSet()
+        assertTrue(expectedSet.containsAll(actual.toList()), messagePrefix + "expected files: ${expectedSet.joinToString()}\n  actual files: ${actual.toSortedSet().joinToString()}")
+        return this
+    }
+
+    fun CompiledProject.assertCompiledKotlinSources(sources: Iterable<String>): CompiledProject = assertSameFiles(sources, compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+    fun CompiledProject.assertCompiledKotlinSources(vararg sources: String): CompiledProject = assertCompiledKotlinSources(sources.asIterable())
+
+    fun CompiledProject.assertCompiledKotlinSourcesContain(vararg sources: String): CompiledProject = assertContainFiles(sources.asIterable(), compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
+
+    fun CompiledProject.assertCompiledJavaSources(sources: Iterable<String>): CompiledProject = assertSameFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
+    fun CompiledProject.assertCompiledJavaSources(vararg sources: String): CompiledProject = assertCompiledJavaSources(sources.asIterable())
+
+    fun CompiledProject.assertCompiledJavaSourcesContain(vararg sources: String): CompiledProject = assertContainFiles(sources.asIterable(), compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
+
 
     private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> =
             createGradleCommand(createGradleTailParameters(options, params))
