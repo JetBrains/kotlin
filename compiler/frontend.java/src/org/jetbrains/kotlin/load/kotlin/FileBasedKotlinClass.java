@@ -51,7 +51,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         this.innerClasses = innerClasses;
     }
 
-    private static class OuterAndInnerName {
+    public static class OuterAndInnerName {
         public final String outerInternalName;
         public final String innerSimpleName;
 
@@ -61,7 +61,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         }
     }
 
-    protected static class InnerClassesInfo {
+    public static class InnerClassesInfo {
         private Map<String, OuterAndInnerName> map = null;
 
         public void add(@NotNull String name, @Nullable String outerName, @Nullable String innerName) {
