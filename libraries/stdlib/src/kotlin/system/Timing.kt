@@ -14,8 +14,14 @@ public inline fun measureTimeMillis(block: () -> Unit) : Long {
 /**
  * Executes the given block and returns elapsed time in nanoseconds.
  */
-public inline fun measureTimeNano(block: () -> Unit) : Long {
+public inline fun measureNanoTime(block: () -> Unit) : Long {
     val start = System.nanoTime()
     block()
     return System.nanoTime() - start
 }
+
+/**
+ * Executes the given block and returns elapsed time in nanoseconds.
+ */
+@Deprecated("Use measureNanoTime.", ReplaceWith("measureNanoTime(block)"), level = DeprecationLevel.ERROR)
+public inline fun measureTimeNano(block: () -> Unit) : Long = measureNanoTime(block)
