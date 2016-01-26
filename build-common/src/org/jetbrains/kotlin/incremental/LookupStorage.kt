@@ -83,7 +83,7 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
     @Synchronized
     fun removeLookupsFrom(files: Sequence<File>) {
         for (file in files) {
-            val id = fileToId[file] ?: return
+            val id = fileToId[file] ?: continue
             idToFile.remove(id)
             fileToId.remove(file)
             deletedCount++
@@ -132,8 +132,12 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
     }
 
     private fun removeGarbageIfNeeded(force: Boolean = false) {
-        if (!force && size <= MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size <= DELETED_TO_SIZE_TRESHOLD) return
+        if (force || (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size > DELETED_TO_SIZE_TRESHOLD)) {
+            doRemoveGarbage()
+        }
+    }
 
+    private fun doRemoveGarbage() {
         for (hash in lookupMap.keys) {
             lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
