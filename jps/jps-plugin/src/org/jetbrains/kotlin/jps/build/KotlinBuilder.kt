@@ -560,9 +560,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
 
-        filesToCompile.values().forEach { lookupStorage.removeLookupsFrom(it) }
         val removedFiles = chunk.targets.flatMap { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it) }
-        removedFiles.forEach { lookupStorage.removeLookupsFrom(it) }
+        lookupStorage.removeLookupsFrom(filesToCompile.values().asSequence() + removedFiles.asSequence())
 
         lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
     }
