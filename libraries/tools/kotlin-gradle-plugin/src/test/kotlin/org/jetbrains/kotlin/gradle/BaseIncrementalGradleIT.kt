@@ -178,8 +178,9 @@ repositories {
 }
 
 
-private val knownExtensions = arrayListOf("kt", "java")
-private val knownModifyExtensions = arrayListOf("new", "touch", "delete")
+private val supportedSourceExtensions = arrayListOf("kt", "java")
+private val supportedModifyExtensions = arrayListOf("new", "delete")
+private val unsupportedModifyExtensions = arrayListOf("touch")
 
 private fun String.toIntOr(defaultVal: Int): Pair<Int, Boolean> {
     try {
@@ -202,10 +203,12 @@ fun testIsKnownJpsTestProject(projectRoot: File): Pair<Boolean, String?> {
             val (fileStage, hasStage) = nameParts.last().toIntOr(0)
             val modifyExt = nameParts[nameParts.size - (if (hasStage) 2 else 1)]
             val ext = nameParts[nameParts.size - (if (hasStage) 3 else 2)]
-            if (modifyExt in knownModifyExtensions && ext !in knownExtensions)
+            if (modifyExt in unsupportedModifyExtensions)
+                return@testIsKnownJpsTestProject Pair(false, "unsupported modification extension ${it.name}")
+            if (modifyExt in supportedModifyExtensions && ext !in supportedSourceExtensions)
                 return@testIsKnownJpsTestProject Pair(false, "unknown staged file ${it.name}")
         }
-        if (!hasKnownSources && it.extension in knownExtensions) {
+        if (!hasKnownSources && it.extension in supportedSourceExtensions) {
             hasKnownSources = true
         }
     }
