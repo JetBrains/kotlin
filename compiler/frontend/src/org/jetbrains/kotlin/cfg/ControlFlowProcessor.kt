@@ -14,508 +14,420 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.SmartFMap;
-import com.intellij.util.containers.ContainerUtil;
-import kotlin.collections.ArraysKt;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.pseudocode.ControlFlowInstructionsGenerator;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
-import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.lexer.KtToken;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.*;
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import com.google.common.collect.Lists
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.SmartFMap
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.pseudocode.ControlFlowInstructionsGenerator
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-import java.util.*;
+import java.util.*
 
-import static org.jetbrains.kotlin.cfg.ControlFlowBuilder.PredefinedOperation.*;
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.lexer.KtTokens.*;
+import org.jetbrains.kotlin.cfg.ControlFlowBuilder.PredefinedOperation.*
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.KtTokens.*
 
-public class ControlFlowProcessor {
+class ControlFlowProcessor(private val trace: BindingTrace) {
 
-    private final ControlFlowBuilder builder;
-    private final BindingTrace trace;
+    private val builder: ControlFlowBuilder = ControlFlowInstructionsGenerator()
 
-    public ControlFlowProcessor(BindingTrace trace) {
-        this.builder = new ControlFlowInstructionsGenerator();
-        this.trace = trace;
+    fun generatePseudocode(subroutine: KtElement): Pseudocode {
+        val pseudocode = generate(subroutine)
+        (pseudocode as PseudocodeImpl).postProcess()
+        return pseudocode
     }
 
-    @NotNull
-    public Pseudocode generatePseudocode(@NotNull KtElement subroutine) {
-        Pseudocode pseudocode = generate(subroutine);
-        ((PseudocodeImpl) pseudocode).postProcess();
-        return pseudocode;
-    }
-
-    @NotNull
-    private Pseudocode generate(@NotNull KtElement subroutine) {
-        builder.enterSubroutine(subroutine);
-        CFPVisitor cfpVisitor = new CFPVisitor(builder);
-        if (subroutine instanceof KtDeclarationWithBody && !(subroutine instanceof KtSecondaryConstructor)) {
-            KtDeclarationWithBody declarationWithBody = (KtDeclarationWithBody) subroutine;
-            List<KtParameter> valueParameters = declarationWithBody.getValueParameters();
-            for (KtParameter valueParameter : valueParameters) {
-                cfpVisitor.generateInstructions(valueParameter);
+    private fun generate(subroutine: KtElement): Pseudocode {
+        builder.enterSubroutine(subroutine)
+        val cfpVisitor = CFPVisitor(builder)
+        if (subroutine is KtDeclarationWithBody && subroutine !is KtSecondaryConstructor) {
+            val valueParameters = subroutine.valueParameters
+            for (valueParameter in valueParameters) {
+                cfpVisitor.generateInstructions(valueParameter)
             }
-            KtExpression bodyExpression = declarationWithBody.getBodyExpression();
+            val bodyExpression = subroutine.bodyExpression
             if (bodyExpression != null) {
-                cfpVisitor.generateInstructions(bodyExpression);
-                if (!declarationWithBody.hasBlockBody()) {
-                    generateImplicitReturnValue(bodyExpression, subroutine);
+                cfpVisitor.generateInstructions(bodyExpression)
+                if (!subroutine.hasBlockBody()) {
+                    generateImplicitReturnValue(bodyExpression, subroutine)
                 }
             }
-        } else {
-            cfpVisitor.generateInstructions(subroutine);
         }
-        return builder.exitSubroutine(subroutine);
+        else {
+            cfpVisitor.generateInstructions(subroutine)
+        }
+        return builder.exitSubroutine(subroutine)
     }
 
-    private void generateImplicitReturnValue(@NotNull KtExpression bodyExpression, @NotNull KtElement subroutine) {
-        CallableDescriptor subroutineDescriptor = (CallableDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
-        if (subroutineDescriptor == null) return;
+    private fun generateImplicitReturnValue(bodyExpression: KtExpression, subroutine: KtElement) {
+        val subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine) as CallableDescriptor? ?: return
 
-        KotlinType returnType = subroutineDescriptor.getReturnType();
-        if (returnType != null && KotlinBuiltIns.isUnit(returnType) && subroutineDescriptor instanceof AnonymousFunctionDescriptor) return;
+        val returnType = subroutineDescriptor.returnType
+        if (returnType != null && KotlinBuiltIns.isUnit(returnType) && subroutineDescriptor is AnonymousFunctionDescriptor) return
 
-        PseudoValue returnValue = builder.getBoundValue(bodyExpression);
-        if (returnValue == null) return;
+        val returnValue = builder.getBoundValue(bodyExpression) ?: return
 
-        builder.returnValue(bodyExpression, returnValue, subroutine);
+        builder.returnValue(bodyExpression, returnValue, subroutine)
     }
 
-    private void processLocalDeclaration(@NotNull KtDeclaration subroutine) {
-        Label afterDeclaration = builder.createUnboundLabel("after local declaration");
+    private fun processLocalDeclaration(subroutine: KtDeclaration) {
+        val afterDeclaration = builder.createUnboundLabel("after local declaration")
 
-        builder.nondeterministicJump(afterDeclaration, subroutine, null);
-        generate(subroutine);
-        builder.bindLabel(afterDeclaration);
+        builder.nondeterministicJump(afterDeclaration, subroutine, null)
+        generate(subroutine)
+        builder.bindLabel(afterDeclaration)
     }
 
-    private class CFPVisitor extends KtVisitorVoid {
-        private final ControlFlowBuilder builder;
+    private inner class CFPVisitor(private val builder: ControlFlowBuilder) : KtVisitorVoid() {
 
-        private final KtVisitorVoid conditionVisitor = new KtVisitorVoid() {
+        private val conditionVisitor = object : KtVisitorVoid() {
 
-            private KtExpression getSubjectExpression(KtWhenCondition condition) {
-                KtWhenExpression whenExpression = PsiTreeUtil.getParentOfType(condition, KtWhenExpression.class);
-                return whenExpression != null ? whenExpression.getSubjectExpression() : null;
+            private fun getSubjectExpression(condition: KtWhenCondition): KtExpression? {
+                return condition.getStrictParentOfType<KtWhenExpression>()?.subjectExpression
             }
 
-            @Override
-            public void visitWhenConditionInRange(@NotNull KtWhenConditionInRange condition) {
-                if (!generateCall(condition.getOperationReference())) {
-                    KtExpression rangeExpression = condition.getRangeExpression();
-                    generateInstructions(rangeExpression);
-                    createNonSyntheticValue(condition, MagicKind.UNRESOLVED_CALL, rangeExpression);
+            override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
+                if (!generateCall(condition.operationReference)) {
+                    val rangeExpression = condition.rangeExpression
+                    generateInstructions(rangeExpression)
+                    createNonSyntheticValue(condition, MagicKind.UNRESOLVED_CALL, rangeExpression)
                 }
             }
 
-            @Override
-            public void visitWhenConditionIsPattern(@NotNull KtWhenConditionIsPattern condition) {
-                mark(condition);
-                createNonSyntheticValue(condition, MagicKind.IS, getSubjectExpression(condition));
+            override fun visitWhenConditionIsPattern(condition: KtWhenConditionIsPattern) {
+                mark(condition)
+                createNonSyntheticValue(condition, MagicKind.IS, getSubjectExpression(condition))
             }
 
-            @Override
-            public void visitWhenConditionWithExpression(@NotNull KtWhenConditionWithExpression condition) {
-                mark(condition);
+            override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
+                mark(condition)
 
-                KtExpression expression = condition.getExpression();
-                generateInstructions(expression);
+                val expression = condition.expression
+                generateInstructions(expression)
 
-                KtExpression subjectExpression = getSubjectExpression(condition);
+                val subjectExpression = getSubjectExpression(condition)
                 if (subjectExpression != null) {
                     // todo: this can be replaced by equals() invocation (when corresponding resolved call is recorded)
-                    createNonSyntheticValue(condition, MagicKind.EQUALS_IN_WHEN_CONDITION, subjectExpression, expression);
+                    createNonSyntheticValue(condition, MagicKind.EQUALS_IN_WHEN_CONDITION, subjectExpression, expression)
                 }
                 else {
-                    copyValue(expression, condition);
+                    copyValue(expression, condition)
                 }
             }
 
-            @Override
-            public void visitKtElement(@NotNull KtElement element) {
-                throw new UnsupportedOperationException("[ControlFlowProcessor] " + element.toString());
+            override fun visitKtElement(element: KtElement) {
+                throw UnsupportedOperationException("[ControlFlowProcessor] " + element.toString())
             }
-        };
-
-        private CFPVisitor(@NotNull ControlFlowBuilder builder) {
-            this.builder = builder;
         }
 
-        private void mark(KtElement element) {
-            builder.mark(element);
+        private fun mark(element: KtElement) {
+            builder.mark(element)
         }
 
-        public void generateInstructions(@Nullable KtElement element) {
-            if (element == null) return;
-            element.accept(this);
-            checkNothingType(element);
+        fun generateInstructions(element: KtElement?) {
+            if (element == null) return
+            element.accept(this)
+            checkNothingType(element)
         }
 
-        private void checkNothingType(KtElement element) {
-            if (!(element instanceof KtExpression)) return;
+        private fun checkNothingType(element: KtElement) {
+            if (element !is KtExpression) return
 
-            KtExpression expression = KtPsiUtil.deparenthesize((KtExpression) element);
-            if (expression == null) return;
+            val expression = KtPsiUtil.deparenthesize(element) ?: return
 
-            if (expression instanceof KtStatementExpression || expression instanceof KtTryExpression
-                || expression instanceof KtIfExpression || expression instanceof KtWhenExpression) {
-                return;
+            if (expression is KtStatementExpression || expression is KtTryExpression
+                || expression is KtIfExpression || expression is KtWhenExpression) {
+                return
             }
 
-            KotlinType type = trace.getBindingContext().getType(expression);
+            val type = trace.bindingContext.getType(expression)
             if (type != null && KotlinBuiltIns.isNothing(type)) {
-                builder.jumpToError(expression);
+                builder.jumpToError(expression)
             }
         }
 
-        @NotNull
-        private PseudoValue createSyntheticValue(@NotNull KtElement instructionElement, @NotNull MagicKind kind, KtElement... from) {
-            List<PseudoValue> values = elementsToValues(from.length > 0 ? Arrays.asList(from) : Collections.<KtElement>emptyList());
-            return builder.magic(instructionElement, null, values, kind).getOutputValue();
+        private fun createSyntheticValue(instructionElement: KtElement, kind: MagicKind, vararg from: KtElement): PseudoValue {
+            return builder.magic(instructionElement, null, elementsToValues(from.asList()), kind).outputValue
         }
 
-        @NotNull
-        private PseudoValue createNonSyntheticValue(
-                @NotNull KtElement to, @NotNull List<? extends KtElement> from, @NotNull MagicKind kind
-        ) {
-            List<PseudoValue> values = elementsToValues(from);
-            return builder.magic(to, to, values, kind).getOutputValue();
+        private fun createNonSyntheticValue(to: KtElement, from: List<KtElement?>, kind: MagicKind): PseudoValue {
+            return builder.magic(to, to, elementsToValues(from), kind).outputValue
         }
 
-        @NotNull
-        private PseudoValue createNonSyntheticValue(@NotNull KtElement to, @NotNull MagicKind kind, KtElement... from) {
-            return createNonSyntheticValue(to, Arrays.asList(from), kind);
+        private fun createNonSyntheticValue(to: KtElement, kind: MagicKind, vararg from: KtElement?): PseudoValue {
+            return createNonSyntheticValue(to, from.asList(), kind)
         }
 
-        private void mergeValues(@NotNull List<KtExpression> from, @NotNull KtExpression to) {
-            builder.merge(to, elementsToValues(from));
+        private fun mergeValues(from: List<KtExpression>, to: KtExpression) {
+            builder.merge(to, elementsToValues(from))
         }
 
-        private void copyValue(@Nullable KtElement from, @NotNull KtElement to) {
-            PseudoValue value = getBoundOrUnreachableValue(from);
-            if (value != null) {
-                builder.bindValue(value, to);
-            }
+        private fun copyValue(from: KtElement?, to: KtElement) {
+            getBoundOrUnreachableValue(from)?.let { builder.bindValue(it, to) }
         }
 
-        @Nullable
-        private PseudoValue getBoundOrUnreachableValue(@Nullable KtElement element) {
-            if (element == null) return null;
+        private fun getBoundOrUnreachableValue(element: KtElement?): PseudoValue? {
+            if (element == null) return null
 
-            PseudoValue value = builder.getBoundValue(element);
-            return value != null || element instanceof KtDeclaration ? value : builder.newValue(element);
+            val value = builder.getBoundValue(element)
+            return if (value != null || element is KtDeclaration) value else builder.newValue(element)
         }
 
-        private List<PseudoValue> elementsToValues(List<? extends KtElement> from) {
-            if (from.isEmpty()) return Collections.emptyList();
-            return CollectionsKt.filterNotNull(
-                    CollectionsKt.map(
-                            from,
-                            new Function1<KtElement, PseudoValue>() {
-                                @Override
-                                public PseudoValue invoke(KtElement element) {
-                                    return getBoundOrUnreachableValue(element);
-                                }
-                            }
-                    )
-            );
+        private fun elementsToValues(from: List<KtElement?>): List<PseudoValue> {
+            return from.map { element -> getBoundOrUnreachableValue(element) }.filterNotNull()
         }
 
-        private void generateInitializer(@NotNull KtDeclaration declaration, @NotNull PseudoValue initValue) {
-            builder.write(
-                    declaration,
-                    declaration,
-                    initValue,
-                    getDeclarationAccessTarget(declaration),
-                    Collections.<PseudoValue, ReceiverValue>emptyMap()
-            );
+        private fun generateInitializer(declaration: KtDeclaration, initValue: PseudoValue) {
+            builder.write(declaration, declaration, initValue, getDeclarationAccessTarget(declaration), emptyMap())
         }
 
-        @NotNull
-        private AccessTarget getResolvedCallAccessTarget(KtElement element) {
-            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(element, trace.getBindingContext());
-            return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE;
+        private fun getResolvedCallAccessTarget(element: KtElement?): AccessTarget {
+            return element.getResolvedCall(trace.bindingContext)?.let { AccessTarget.Call(it) }
+                   ?: AccessTarget.BlackBox
         }
 
-        @NotNull
-        private AccessTarget getDeclarationAccessTarget(KtElement element) {
-            DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-            return descriptor instanceof VariableDescriptor
-                   ? new AccessTarget.Declaration((VariableDescriptor) descriptor)
-                   : AccessTarget.BlackBox.INSTANCE;
+        private fun getDeclarationAccessTarget(element: KtElement): AccessTarget {
+            val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+            return if (descriptor is VariableDescriptor)
+                AccessTarget.Declaration(descriptor)
+            else
+                AccessTarget.BlackBox
         }
 
-        @Override
-        public void visitParenthesizedExpression(@NotNull KtParenthesizedExpression expression) {
-            mark(expression);
-            KtExpression innerExpression = expression.getExpression();
+        override fun visitParenthesizedExpression(expression: KtParenthesizedExpression) {
+            mark(expression)
+            val innerExpression = expression.expression
             if (innerExpression != null) {
-                generateInstructions(innerExpression);
-                copyValue(innerExpression, expression);
+                generateInstructions(innerExpression)
+                copyValue(innerExpression, expression)
             }
         }
 
-        @Override
-        public void visitAnnotatedExpression(@NotNull KtAnnotatedExpression expression) {
-            KtExpression baseExpression = expression.getBaseExpression();
+        override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
+            val baseExpression = expression.baseExpression
             if (baseExpression != null) {
-                generateInstructions(baseExpression);
-                copyValue(baseExpression, expression);
+                generateInstructions(baseExpression)
+                copyValue(baseExpression, expression)
             }
         }
 
-        @Override
-        public void visitThisExpression(@NotNull KtThisExpression expression) {
-            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
+        override fun visitThisExpression(expression: KtThisExpression) {
+            val resolvedCall = expression.getResolvedCall(trace.bindingContext)
             if (resolvedCall == null) {
-                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL);
-                return;
+                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL)
+                return
             }
 
-            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-            if (resultingDescriptor instanceof ReceiverParameterDescriptor) {
-                builder.readVariable(expression, resolvedCall, getReceiverValues(resolvedCall));
+            val resultingDescriptor = resolvedCall.resultingDescriptor
+            if (resultingDescriptor is ReceiverParameterDescriptor) {
+                builder.readVariable(expression, resolvedCall, getReceiverValues(resolvedCall))
             }
 
-            copyValue(expression, expression.getInstanceReference());
+            copyValue(expression, expression.instanceReference)
         }
 
-        @Override
-        public void visitConstantExpression(@NotNull KtConstantExpression expression) {
-            CompileTimeConstant<?> constant = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext());
-            builder.loadConstant(expression, constant);
+        override fun visitConstantExpression(expression: KtConstantExpression) {
+            val constant = ConstantExpressionEvaluator.getConstant(expression, trace.bindingContext)
+            builder.loadConstant(expression, constant)
         }
 
-        @Override
-        public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
-            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
-            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-                generateCall(variableAsFunctionResolvedCall.getVariableCall());
+        override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+            val resolvedCall = expression.getResolvedCall(trace.bindingContext)
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
+                generateCall(resolvedCall.variableCall)
             }
-            else if (!generateCall(expression) && !(expression.getParent() instanceof KtCallExpression)) {
-                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, generateAndGetReceiverIfAny(expression));
+            else if (!generateCall(expression) && expression.parent !is KtCallExpression) {
+                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, generateAndGetReceiverIfAny(expression))
             }
         }
 
-        @Override
-        public void visitLabeledExpression(@NotNull KtLabeledExpression expression) {
-            mark(expression);
-            KtExpression baseExpression = expression.getBaseExpression();
+        override fun visitLabeledExpression(expression: KtLabeledExpression) {
+            mark(expression)
+            val baseExpression = expression.baseExpression
             if (baseExpression != null) {
-                generateInstructions(baseExpression);
-                copyValue(baseExpression, expression);
+                generateInstructions(baseExpression)
+                copyValue(baseExpression, expression)
             }
         }
 
-        @SuppressWarnings("SuspiciousMethodCalls")
-        @Override
-        public void visitBinaryExpression(@NotNull KtBinaryExpression expression) {
-            KtSimpleNameExpression operationReference = expression.getOperationReference();
-            IElementType operationType = operationReference.getReferencedNameElementType();
+        override fun visitBinaryExpression(expression: KtBinaryExpression) {
+            val operationReference = expression.operationReference
+            val operationType = operationReference.getReferencedNameElementType()
 
-            KtExpression left = expression.getLeft();
-            KtExpression right = expression.getRight();
-            if (operationType == ANDAND || operationType == OROR) {
-                generateBooleanOperation(expression);
+            val left = expression.left
+            val right = expression.right
+            if (operationType === ANDAND || operationType === OROR) {
+                generateBooleanOperation(expression)
             }
-            else if (operationType == EQ) {
-                visitAssignment(left, getDeferredValue(right), expression);
+            else if (operationType === EQ) {
+                visitAssignment(left, getDeferredValue(right), expression)
             }
             else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
-                ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
+                val resolvedCall = expression.getResolvedCall(trace.bindingContext)
                 if (resolvedCall != null) {
-                    PseudoValue rhsValue = generateCall(resolvedCall).getOutputValue();
-                    Name assignMethodName = OperatorConventions.getNameForOperationSymbol((KtToken) expression.getOperationToken());
-                    if (!resolvedCall.getResultingDescriptor().getName().equals(assignMethodName)) {
+                    val rhsValue = generateCall(resolvedCall).outputValue
+                    val assignMethodName = OperatorConventions.getNameForOperationSymbol(expression.operationToken as KtToken)
+                    if (resolvedCall.resultingDescriptor.name != assignMethodName) {
                         /* At this point assignment of the form a += b actually means a = a + b
                          * So we first generate call of "+" operation and then use its output pseudo-value
                          * as a right-hand side when generating assignment call
                          */
-                        visitAssignment(left, getValueAsFunction(rhsValue), expression);
+                        visitAssignment(left, getValueAsFunction(rhsValue), expression)
                     }
                 }
                 else {
-                    generateBothArgumentsAndMark(expression);
+                    generateBothArgumentsAndMark(expression)
                 }
             }
-            else if (operationType == ELVIS) {
-                generateInstructions(left);
-                mark(expression);
-                Label afterElvis = builder.createUnboundLabel("after elvis operator");
-                builder.jumpOnTrue(afterElvis, expression, builder.getBoundValue(left));
-                if (right != null) {
-                    generateInstructions(right);
-                }
-                builder.bindLabel(afterElvis);
-                mergeValues(Arrays.asList(left, right), expression);
+            else if (operationType === ELVIS) {
+                generateInstructions(left)
+                mark(expression)
+                val afterElvis = builder.createUnboundLabel("after elvis operator")
+                builder.jumpOnTrue(afterElvis, expression, builder.getBoundValue(left))
+                generateInstructions(right)
+                builder.bindLabel(afterElvis)
+                mergeValues(listOf(left, right).filterNotNull(), expression)
             }
             else {
                 if (!generateCall(expression)) {
-                    generateBothArgumentsAndMark(expression);
+                    generateBothArgumentsAndMark(expression)
                 }
             }
         }
 
-        private void generateBooleanOperation(KtBinaryExpression expression) {
-            IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-            KtExpression left = expression.getLeft();
-            KtExpression right = expression.getRight();
+        private fun generateBooleanOperation(expression: KtBinaryExpression) {
+            val operationType = expression.operationReference.getReferencedNameElementType()
+            val left = expression.left
+            val right = expression.right
 
-            Label resultLabel = builder.createUnboundLabel("result of boolean operation");
-            generateInstructions(left);
-            if (operationType == ANDAND) {
-                builder.jumpOnFalse(resultLabel, expression, builder.getBoundValue(left));
+            val resultLabel = builder.createUnboundLabel("result of boolean operation")
+            generateInstructions(left)
+            if (operationType === ANDAND) {
+                builder.jumpOnFalse(resultLabel, expression, builder.getBoundValue(left))
             }
             else {
-                builder.jumpOnTrue(resultLabel, expression, builder.getBoundValue(left));
+                builder.jumpOnTrue(resultLabel, expression, builder.getBoundValue(left))
             }
-            if (right != null) {
-                generateInstructions(right);
-            }
-            builder.bindLabel(resultLabel);
-            ControlFlowBuilder.PredefinedOperation operation = operationType == ANDAND ? AND : OR;
-            builder.predefinedOperation(expression, operation, elementsToValues(Arrays.asList(left, right)));
+            generateInstructions(right)
+            builder.bindLabel(resultLabel)
+            val operation = if (operationType === ANDAND) AND else OR
+            builder.predefinedOperation(expression, operation, elementsToValues(listOf(left, right).filterNotNull()))
         }
 
-        private Function0<PseudoValue> getValueAsFunction(final PseudoValue value) {
-            return new Function0<PseudoValue>() {
-                @Override
-                public PseudoValue invoke() {
-                    return value;
-                }
-            };
+        private fun getValueAsFunction(value: PseudoValue?) = { value }
+
+        private fun getDeferredValue(expression: KtExpression?) = {
+            generateInstructions(expression)
+            getBoundOrUnreachableValue(expression)
         }
 
-        private Function0<PseudoValue> getDeferredValue(final KtExpression expression) {
-            return new Function0<PseudoValue>() {
-                @Override
-                public PseudoValue invoke() {
-                    generateInstructions(expression);
-                    return getBoundOrUnreachableValue(expression);
-                }
-            };
-        }
-
-        private void generateBothArgumentsAndMark(KtBinaryExpression expression) {
-            KtExpression left = KtPsiUtil.deparenthesize(expression.getLeft());
+        private fun generateBothArgumentsAndMark(expression: KtBinaryExpression) {
+            val left = KtPsiUtil.deparenthesize(expression.left)
             if (left != null) {
-                generateInstructions(left);
+                generateInstructions(left)
             }
-            KtExpression right = expression.getRight();
+            val right = expression.right
             if (right != null) {
-                generateInstructions(right);
+                generateInstructions(right)
             }
-            mark(expression);
-            createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, left, right);
+            mark(expression)
+            createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, left, right)
         }
 
-        private void visitAssignment(
-                KtExpression lhs,
-                @NotNull Function0<PseudoValue> rhsDeferredValue,
-                KtExpression parentExpression
+        private fun visitAssignment(
+                lhs: KtExpression?,
+                rhsDeferredValue: () -> PseudoValue?,
+                parentExpression: KtExpression
         ) {
-            KtExpression left = KtPsiUtil.deparenthesize(lhs);
+            val left = KtPsiUtil.deparenthesize(lhs)
             if (left == null) {
-                List<PseudoValue> arguments = Collections.singletonList(rhsDeferredValue.invoke());
-                builder.magic(parentExpression, parentExpression, arguments, MagicKind.UNSUPPORTED_ELEMENT);
-                return;
+                val arguments = rhsDeferredValue()?.let { listOf(it) } ?: emptyList()
+                builder.magic(parentExpression, parentExpression, arguments, MagicKind.UNSUPPORTED_ELEMENT)
+                return
             }
 
-            if (left instanceof KtArrayAccessExpression) {
-                generateArrayAssignment((KtArrayAccessExpression) left, rhsDeferredValue, parentExpression);
-                return;
+            if (left is KtArrayAccessExpression) {
+                generateArrayAssignment(left, rhsDeferredValue, parentExpression)
+                return
             }
 
-            Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
-            AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE;
-            if (left instanceof KtSimpleNameExpression || left instanceof KtQualifiedExpression) {
-                accessTarget = getResolvedCallAccessTarget(KtPsiUtilKt.getQualifiedElementSelector(left));
-                if (accessTarget instanceof AccessTarget.Call) {
-                    receiverValues = getReceiverValues(((AccessTarget.Call) accessTarget).getResolvedCall());
+            var receiverValues: Map<PseudoValue, ReceiverValue> = SmartFMap.emptyMap<PseudoValue, ReceiverValue>()
+            var accessTarget: AccessTarget = AccessTarget.BlackBox
+            if (left is KtSimpleNameExpression || left is KtQualifiedExpression) {
+                accessTarget = getResolvedCallAccessTarget(left.getQualifiedElementSelector())
+                if (accessTarget is AccessTarget.Call) {
+                    receiverValues = getReceiverValues(accessTarget.resolvedCall)
                 }
             }
-            else if (left instanceof KtProperty) {
-                accessTarget = getDeclarationAccessTarget(left);
+            else if (left is KtProperty) {
+                accessTarget = getDeclarationAccessTarget(left)
             }
 
-            if (accessTarget == AccessTarget.BlackBox.INSTANCE && !(left instanceof KtProperty)) {
-                generateInstructions(left);
-                createSyntheticValue(left, MagicKind.VALUE_CONSUMER, left);
+            if (accessTarget === AccessTarget.BlackBox && left !is KtProperty) {
+                generateInstructions(left)
+                createSyntheticValue(left, MagicKind.VALUE_CONSUMER, left)
             }
 
-            PseudoValue rightValue = rhsDeferredValue.invoke();
-            PseudoValue rValue =
-                    rightValue != null ? rightValue : createSyntheticValue(parentExpression, MagicKind.UNRECOGNIZED_WRITE_RHS);
-            builder.write(parentExpression, left, rValue, accessTarget, receiverValues);
+            val rightValue = rhsDeferredValue.invoke()
+            val rValue = rightValue ?: createSyntheticValue(parentExpression, MagicKind.UNRECOGNIZED_WRITE_RHS)
+            builder.write(parentExpression, left, rValue, accessTarget, receiverValues)
         }
 
-        private void generateArrayAssignment(
-                KtArrayAccessExpression lhs,
-                @NotNull Function0<PseudoValue> rhsDeferredValue,
-                @NotNull KtExpression parentExpression
+        private fun generateArrayAssignment(
+                lhs: KtArrayAccessExpression,
+                rhsDeferredValue: () -> PseudoValue?,
+                parentExpression: KtExpression
         ) {
-            ResolvedCall<FunctionDescriptor> setResolvedCall = trace.get(BindingContext.INDEXED_LVALUE_SET, lhs);
+            val setResolvedCall = trace.get(BindingContext.INDEXED_LVALUE_SET, lhs)
 
             if (setResolvedCall == null) {
-                generateArrayAccess(lhs, null);
+                generateArrayAccess(lhs, null)
 
-                List<PseudoValue> arguments = CollectionsKt.filterNotNull(
-                        Arrays.asList(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke())
-                );
-                builder.magic(parentExpression, parentExpression, arguments, MagicKind.UNRESOLVED_CALL);
+                val arguments = listOf(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke()).filterNotNull()
+                builder.magic(parentExpression, parentExpression, arguments, MagicKind.UNRESOLVED_CALL)
 
-                return;
+                return
             }
 
             // In case of simple ('=') array assignment mark instruction is not generated yet, so we put it before generating "set" call
-            if (((KtOperationExpression) parentExpression).getOperationReference().getReferencedNameElementType() == EQ) {
-                mark(lhs);
+            if ((parentExpression as KtOperationExpression).operationReference.getReferencedNameElementType() === EQ) {
+                mark(lhs)
             }
 
-            generateInstructions(lhs.getArrayExpression());
+            generateInstructions(lhs.arrayExpression)
 
-            Map<PseudoValue, ReceiverValue> receiverValues = getReceiverValues(setResolvedCall);
-            SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues = getArraySetterArguments(rhsDeferredValue, setResolvedCall);
+            val receiverValues = getReceiverValues(setResolvedCall)
+            val argumentValues = getArraySetterArguments(rhsDeferredValue, setResolvedCall)
 
-            builder.call(parentExpression, setResolvedCall, receiverValues, argumentValues);
+            builder.call(parentExpression, setResolvedCall, receiverValues, argumentValues)
         }
 
         /* We assume that assignment right-hand side corresponds to the last argument of the call
@@ -524,1080 +436,986 @@ public class ControlFlowProcessor {
         *  For example, assignment a[1, 2] += 3 means a.set(1, 2, a.get(1) + 3), so in order to generate "set" call
         *  we first generate instructions for 1 and 2 whereas 3 is replaced by pseudo-value corresponding to "a.get(1) + 3"
         */
-        private SmartFMap<PseudoValue, ValueParameterDescriptor> getArraySetterArguments(
-                Function0<PseudoValue> rhsDeferredValue,
-                final ResolvedCall<FunctionDescriptor> setResolvedCall
-        ) {
-            List<ValueArgument> valueArguments = CollectionsKt.flatMapTo(
-                    setResolvedCall.getResultingDescriptor().getValueParameters(),
-                    new ArrayList<ValueArgument>(),
-                    new Function1<ValueParameterDescriptor, Iterable<? extends ValueArgument>>() {
-                        @Override
-                        public Iterable<? extends ValueArgument> invoke(ValueParameterDescriptor descriptor) {
-                            ResolvedValueArgument resolvedValueArgument = setResolvedCall.getValueArguments().get(descriptor);
-                            return resolvedValueArgument != null
-                                   ? resolvedValueArgument.getArguments()
-                                   : Collections.<ValueArgument>emptyList();
-                        }
-                    }
-            );
+        private fun getArraySetterArguments(
+                rhsDeferredValue: () -> PseudoValue?,
+                setResolvedCall: ResolvedCall<FunctionDescriptor>
+        ): SmartFMap<PseudoValue, ValueParameterDescriptor> {
+            val valueArguments = setResolvedCall.resultingDescriptor.valueParameters.flatMapTo(
+                    ArrayList<ValueArgument>()
+            ) { descriptor -> setResolvedCall.valueArguments[descriptor]?.arguments ?: emptyList() }
 
-            ValueArgument rhsArgument = CollectionsKt.lastOrNull(valueArguments);
-            SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues = SmartFMap.emptyMap();
-            for (ValueArgument valueArgument : valueArguments) {
-                ArgumentMapping argumentMapping = setResolvedCall.getArgumentMapping(valueArgument);
-                if (argumentMapping.isError() || (!(argumentMapping instanceof ArgumentMatch))) continue;
+            val rhsArgument = valueArguments.lastOrNull()
+            var argumentValues = SmartFMap.emptyMap<PseudoValue, ValueParameterDescriptor>()
+            for (valueArgument in valueArguments) {
+                val argumentMapping = setResolvedCall.getArgumentMapping(valueArgument)
+                if (argumentMapping.isError() || argumentMapping !is ArgumentMatch) continue
 
-                ValueParameterDescriptor parameterDescriptor = ((ArgumentMatch) argumentMapping).getValueParameter();
-                if (valueArgument != rhsArgument) {
-                    argumentValues = generateValueArgument(valueArgument, parameterDescriptor, argumentValues);
+                val parameterDescriptor = argumentMapping.valueParameter
+                if (valueArgument !== rhsArgument) {
+                    argumentValues = generateValueArgument(valueArgument, parameterDescriptor, argumentValues)
                 }
                 else {
-                    PseudoValue rhsValue = rhsDeferredValue.invoke();
+                    val rhsValue = rhsDeferredValue.invoke()
                     if (rhsValue != null) {
-                        argumentValues = argumentValues.plus(rhsValue, parameterDescriptor);
+                        argumentValues = argumentValues.plus(rhsValue, parameterDescriptor)
                     }
                 }
             }
-            return argumentValues;
+            return argumentValues
         }
 
-        private void generateArrayAccess(KtArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> resolvedCall) {
-            if (builder.getBoundValue(arrayAccessExpression) != null) return;
-            mark(arrayAccessExpression);
+        private fun generateArrayAccess(arrayAccessExpression: KtArrayAccessExpression, resolvedCall: ResolvedCall<*>?) {
+            if (builder.getBoundValue(arrayAccessExpression) != null) return
+            mark(arrayAccessExpression)
             if (!checkAndGenerateCall(resolvedCall)) {
-                generateArrayAccessWithoutCall(arrayAccessExpression);
+                generateArrayAccessWithoutCall(arrayAccessExpression)
             }
         }
 
-        private void generateArrayAccessWithoutCall(KtArrayAccessExpression arrayAccessExpression) {
-            createNonSyntheticValue(arrayAccessExpression, generateArrayAccessArguments(arrayAccessExpression), MagicKind.UNRESOLVED_CALL);
+        private fun generateArrayAccessWithoutCall(arrayAccessExpression: KtArrayAccessExpression) {
+            createNonSyntheticValue(arrayAccessExpression, generateArrayAccessArguments(arrayAccessExpression), MagicKind.UNRESOLVED_CALL)
         }
 
-        private List<KtExpression> generateArrayAccessArguments(KtArrayAccessExpression arrayAccessExpression) {
-            List<KtExpression> inputExpressions = new ArrayList<KtExpression>();
+        private fun generateArrayAccessArguments(arrayAccessExpression: KtArrayAccessExpression): List<KtExpression> {
+            val inputExpressions = ArrayList<KtExpression>()
 
-            KtExpression arrayExpression = arrayAccessExpression.getArrayExpression();
-            inputExpressions.add(arrayExpression);
-            generateInstructions(arrayExpression);
+            val arrayExpression = arrayAccessExpression.arrayExpression
+            if (arrayExpression != null) {
+                inputExpressions.add(arrayExpression)
+            }
+            generateInstructions(arrayExpression)
 
-            for (KtExpression index : arrayAccessExpression.getIndexExpressions()) {
-                generateInstructions(index);
-                inputExpressions.add(index);
+            for (index in arrayAccessExpression.indexExpressions) {
+                generateInstructions(index)
+                inputExpressions.add(index)
             }
 
-            return inputExpressions;
+            return inputExpressions
         }
 
-        @Override
-        public void visitUnaryExpression(@NotNull KtUnaryExpression expression) {
-            KtSimpleNameExpression operationSign = expression.getOperationReference();
-            IElementType operationType = operationSign.getReferencedNameElementType();
-            KtExpression baseExpression = expression.getBaseExpression();
-            if (baseExpression == null) return;
-            if (KtTokens.EXCLEXCL == operationType) {
-                generateInstructions(baseExpression);
-                builder.predefinedOperation(expression, NOT_NULL_ASSERTION, elementsToValues(Collections.singletonList(baseExpression)));
-                return;
+        override fun visitUnaryExpression(expression: KtUnaryExpression) {
+            val operationSign = expression.operationReference
+            val operationType = operationSign.getReferencedNameElementType()
+            val baseExpression = expression.baseExpression ?: return
+            if (KtTokens.EXCLEXCL === operationType) {
+                generateInstructions(baseExpression)
+                builder.predefinedOperation(expression, NOT_NULL_ASSERTION, elementsToValues(listOf(baseExpression)))
+                return
             }
 
-            boolean incrementOrDecrement = isIncrementOrDecrement(operationType);
-            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
+            val incrementOrDecrement = isIncrementOrDecrement(operationType)
+            val resolvedCall = expression.getResolvedCall(trace.bindingContext)
 
-            PseudoValue rhsValue;
+            val rhsValue: PseudoValue?
             if (resolvedCall != null) {
-                rhsValue = generateCall(resolvedCall).getOutputValue();
+                rhsValue = generateCall(resolvedCall).outputValue
             }
             else {
-                generateInstructions(baseExpression);
-                rhsValue = createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, baseExpression);
+                generateInstructions(baseExpression)
+                rhsValue = createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, baseExpression)
             }
 
             if (incrementOrDecrement) {
-                visitAssignment(baseExpression, getValueAsFunction(rhsValue), expression);
-                if (expression instanceof KtPostfixExpression) {
-                    copyValue(baseExpression, expression);
+                visitAssignment(baseExpression, getValueAsFunction(rhsValue), expression)
+                if (expression is KtPostfixExpression) {
+                    copyValue(baseExpression, expression)
                 }
             }
         }
 
-        private boolean isIncrementOrDecrement(IElementType operationType) {
-            return operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS;
+        private fun isIncrementOrDecrement(operationType: IElementType): Boolean {
+            return operationType === KtTokens.PLUSPLUS || operationType === KtTokens.MINUSMINUS
         }
 
-        @Override
-        public void visitIfExpression(@NotNull KtIfExpression expression) {
-            mark(expression);
-            List<KtExpression> branches = new ArrayList<KtExpression>(2);
-            KtExpression condition = expression.getCondition();
-            if (condition != null) {
-                generateInstructions(condition);
-            }
-            Label elseLabel = builder.createUnboundLabel("else branch");
-            builder.jumpOnFalse(elseLabel, expression, builder.getBoundValue(condition));
-            KtExpression thenBranch = expression.getThen();
+        override fun visitIfExpression(expression: KtIfExpression) {
+            mark(expression)
+            val branches = ArrayList<KtExpression>(2)
+            val condition = expression.condition
+            generateInstructions(condition)
+            val elseLabel = builder.createUnboundLabel("else branch")
+            builder.jumpOnFalse(elseLabel, expression, builder.getBoundValue(condition))
+            val thenBranch = expression.then
             if (thenBranch != null) {
-                branches.add(thenBranch);
-                generateInstructions(thenBranch);
+                branches.add(thenBranch)
+                generateInstructions(thenBranch)
             }
             else {
-                builder.loadUnit(expression);
+                builder.loadUnit(expression)
             }
-            Label resultLabel = builder.createUnboundLabel("'if' expression result");
-            builder.jump(resultLabel, expression);
-            builder.bindLabel(elseLabel);
-            KtExpression elseBranch = expression.getElse();
+            val resultLabel = builder.createUnboundLabel("'if' expression result")
+            builder.jump(resultLabel, expression)
+            builder.bindLabel(elseLabel)
+            val elseBranch = expression.`else`
             if (elseBranch != null) {
-                branches.add(elseBranch);
-                generateInstructions(elseBranch);
+                branches.add(elseBranch)
+                generateInstructions(elseBranch)
             }
             else {
-                builder.loadUnit(expression);
+                builder.loadUnit(expression)
             }
-            builder.bindLabel(resultLabel);
-            mergeValues(branches, expression);
+            builder.bindLabel(resultLabel)
+            mergeValues(branches, expression)
         }
 
-        private class FinallyBlockGenerator {
-            private final KtFinallySection finallyBlock;
-            private Label startFinally = null;
-            private Label finishFinally = null;
+        private inner class FinallyBlockGenerator(private val finallyBlock: KtFinallySection?) {
+            private var startFinally: Label? = null
+            private var finishFinally: Label? = null
 
-            private FinallyBlockGenerator(KtFinallySection block) {
-                finallyBlock = block;
-            }
-
-            public void generate() {
-                KtBlockExpression finalExpression = finallyBlock.getFinalExpression();
-                if (finalExpression == null) return;
-                if (startFinally != null) {
-                    assert finishFinally != null;
-                    builder.repeatPseudocode(startFinally, finishFinally);
-                    return;
+            fun generate() {
+                val finalExpression = finallyBlock?.finalExpression ?: return
+                startFinally?.let {
+                    assert(finishFinally != null) { "startFinally label is set to $startFinally but finishFinally label is not set" }
+                    builder.repeatPseudocode(it, finishFinally!!)
+                    return
                 }
-                startFinally = builder.createUnboundLabel("start finally");
-                builder.bindLabel(startFinally);
-                generateInstructions(finalExpression);
-                finishFinally = builder.createUnboundLabel("finish finally");
-                builder.bindLabel(finishFinally);
+                builder.createUnboundLabel("start finally").let {
+                    startFinally = it
+                    builder.bindLabel(it)
+                }
+                generateInstructions(finalExpression)
+                builder.createUnboundLabel("finish finally").let {
+                    finishFinally = it
+                    builder.bindLabel(it)
+                }
             }
         }
 
-        @Override
-        public void visitTryExpression(@NotNull KtTryExpression expression) {
-            mark(expression);
+        override fun visitTryExpression(expression: KtTryExpression) {
+            mark(expression)
 
-            KtFinallySection finallyBlock = expression.getFinallyBlock();
-            final FinallyBlockGenerator finallyBlockGenerator = new FinallyBlockGenerator(finallyBlock);
-            boolean hasFinally = finallyBlock != null;
+            val finallyBlock = expression.finallyBlock
+            val finallyBlockGenerator = FinallyBlockGenerator(finallyBlock)
+            val hasFinally = finallyBlock != null
             if (hasFinally) {
-                builder.enterTryFinally(new GenerationTrigger() {
-                    private boolean working = false;
+                builder.enterTryFinally(object : GenerationTrigger {
+                    private var working = false
 
-                    @Override
-                    public void generate() {
+                    override fun generate() {
                         // This checks are needed for the case of having e.g. return inside finally: 'try {return} finally{return}'
-                        if (working) return;
-                        working = true;
-                        finallyBlockGenerator.generate();
-                        working = false;
+                        if (working) return
+                        working = true
+                        finallyBlockGenerator.generate()
+                        working = false
                     }
-                });
+                })
             }
 
-            Label onExceptionToFinallyBlock = generateTryAndCatches(expression);
+            val onExceptionToFinallyBlock = generateTryAndCatches(expression)
 
             if (hasFinally) {
-                assert onExceptionToFinallyBlock != null : "No finally lable generated: " + expression.getText();
+                assert(onExceptionToFinallyBlock != null) { "No finally label generated: " + expression.text }
 
-                builder.exitTryFinally();
+                builder.exitTryFinally()
 
-                Label skipFinallyToErrorBlock = builder.createUnboundLabel("skipFinallyToErrorBlock");
-                builder.jump(skipFinallyToErrorBlock, expression);
-                builder.bindLabel(onExceptionToFinallyBlock);
-                finallyBlockGenerator.generate();
-                builder.jumpToError(expression);
-                builder.bindLabel(skipFinallyToErrorBlock);
+                val skipFinallyToErrorBlock = builder.createUnboundLabel("skipFinallyToErrorBlock")
+                builder.jump(skipFinallyToErrorBlock, expression)
+                builder.bindLabel(onExceptionToFinallyBlock!!)
+                finallyBlockGenerator.generate()
+                builder.jumpToError(expression)
+                builder.bindLabel(skipFinallyToErrorBlock)
 
-                finallyBlockGenerator.generate();
+                finallyBlockGenerator.generate()
             }
 
-            List<KtExpression> branches = new ArrayList<KtExpression>();
-            branches.add(expression.getTryBlock());
-            for (KtCatchClause catchClause : expression.getCatchClauses()) {
-                branches.add(catchClause.getCatchBody());
+            val branches = ArrayList<KtExpression>()
+            branches.add(expression.tryBlock)
+            for (catchClause in expression.catchClauses) {
+                catchClause.catchBody?.let { branches.add(it) }
             }
-            mergeValues(branches, expression);
+            mergeValues(branches, expression)
         }
 
         // Returns label for 'finally' block
-        @Nullable
-        private Label generateTryAndCatches(@NotNull KtTryExpression expression) {
-            List<KtCatchClause> catchClauses = expression.getCatchClauses();
-            boolean hasCatches = !catchClauses.isEmpty();
+        private fun generateTryAndCatches(expression: KtTryExpression): Label? {
+            val catchClauses = expression.catchClauses
+            val hasCatches = !catchClauses.isEmpty()
 
-            Label onException = null;
+            var onException: Label? = null
             if (hasCatches) {
-                onException = builder.createUnboundLabel("onException");
-                builder.nondeterministicJump(onException, expression, null);
+                onException = builder.createUnboundLabel("onException")
+                builder.nondeterministicJump(onException, expression, null)
             }
 
-            Label onExceptionToFinallyBlock = null;
-            if (expression.getFinallyBlock() != null) {
-                onExceptionToFinallyBlock = builder.createUnboundLabel("onExceptionToFinallyBlock");
-                builder.nondeterministicJump(onExceptionToFinallyBlock, expression, null);
+            var onExceptionToFinallyBlock: Label? = null
+            if (expression.finallyBlock != null) {
+                onExceptionToFinallyBlock = builder.createUnboundLabel("onExceptionToFinallyBlock")
+                builder.nondeterministicJump(onExceptionToFinallyBlock, expression, null)
             }
 
-            KtBlockExpression tryBlock = expression.getTryBlock();
-            generateInstructions(tryBlock);
+            val tryBlock = expression.tryBlock
+            generateInstructions(tryBlock)
 
-            if (hasCatches) {
-                Label afterCatches = builder.createUnboundLabel("afterCatches");
-                builder.jump(afterCatches, expression);
+            if (hasCatches && onException != null) {
+                val afterCatches = builder.createUnboundLabel("afterCatches")
+                builder.jump(afterCatches, expression)
 
-                builder.bindLabel(onException);
-                LinkedList<Label> catchLabels = Lists.newLinkedList();
-                int catchClausesSize = catchClauses.size();
-                for (int i = 0; i < catchClausesSize - 1; i++) {
-                    catchLabels.add(builder.createUnboundLabel("catch " + i));
+                builder.bindLabel(onException)
+                val catchLabels = Lists.newLinkedList<Label>()
+                val catchClausesSize = catchClauses.size
+                for (i in 0..catchClausesSize - 1 - 1) {
+                    catchLabels.add(builder.createUnboundLabel("catch " + i))
                 }
                 if (!catchLabels.isEmpty()) {
-                    builder.nondeterministicJump(catchLabels, expression);
+                    builder.nondeterministicJump(catchLabels, expression)
                 }
-                boolean isFirst = true;
-                for (KtCatchClause catchClause : catchClauses) {
-                    builder.enterLexicalScope(catchClause);
+                var isFirst = true
+                for (catchClause in catchClauses) {
+                    builder.enterLexicalScope(catchClause)
                     if (!isFirst) {
-                        builder.bindLabel(catchLabels.remove());
+                        builder.bindLabel(catchLabels.remove())
                     }
                     else {
-                        isFirst = false;
+                        isFirst = false
                     }
-                    KtParameter catchParameter = catchClause.getCatchParameter();
+                    val catchParameter = catchClause.catchParameter
                     if (catchParameter != null) {
-                        builder.declareParameter(catchParameter);
-                        generateInitializer(catchParameter, createSyntheticValue(catchParameter, MagicKind.FAKE_INITIALIZER));
+                        builder.declareParameter(catchParameter)
+                        generateInitializer(catchParameter, createSyntheticValue(catchParameter, MagicKind.FAKE_INITIALIZER))
                     }
-                    KtExpression catchBody = catchClause.getCatchBody();
-                    if (catchBody != null) {
-                        generateInstructions(catchBody);
-                    }
-                    builder.jump(afterCatches, expression);
-                    builder.exitLexicalScope(catchClause);
+                    generateInstructions(catchClause.catchBody)
+                    builder.jump(afterCatches, expression)
+                    builder.exitLexicalScope(catchClause)
                 }
 
-                builder.bindLabel(afterCatches);
+                builder.bindLabel(afterCatches)
             }
 
-            return onExceptionToFinallyBlock;
+            return onExceptionToFinallyBlock
         }
 
-        @Override
-        public void visitWhileExpression(@NotNull KtWhileExpression expression) {
-            LoopInfo loopInfo = builder.enterLoop(expression);
+        override fun visitWhileExpression(expression: KtWhileExpression) {
+            val loopInfo = builder.enterLoop(expression)
 
-            builder.bindLabel(loopInfo.getConditionEntryPoint());
-            KtExpression condition = expression.getCondition();
-            if (condition != null) {
-                generateInstructions(condition);
-            }
-            mark(expression);
-            if (!CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace.getBindingContext(), true)) {
-                builder.jumpOnFalse(loopInfo.getExitPoint(), expression, builder.getBoundValue(condition));
+            builder.bindLabel(loopInfo.conditionEntryPoint)
+            val condition = expression.condition
+            generateInstructions(condition)
+            mark(expression)
+            if (!CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace.bindingContext, true)) {
+                builder.jumpOnFalse(loopInfo.exitPoint, expression, builder.getBoundValue(condition))
             }
             else {
-                assert condition != null : "Invalid while condition: " + expression.getText();
-                createSyntheticValue(condition, MagicKind.VALUE_CONSUMER, condition);
+                assert(condition != null) { "Invalid while condition: " + expression.text }
+                createSyntheticValue(condition!!, MagicKind.VALUE_CONSUMER, condition)
             }
 
-            builder.enterLoopBody(expression);
-            KtExpression body = expression.getBody();
-            if (body != null) {
-                generateInstructions(body);
-            }
-            builder.jump(loopInfo.getEntryPoint(), expression);
-            builder.exitLoopBody(expression);
-            builder.bindLabel(loopInfo.getExitPoint());
-            builder.loadUnit(expression);
+            builder.enterLoopBody(expression)
+            generateInstructions(expression.body)
+            builder.jump(loopInfo.entryPoint, expression)
+            builder.exitLoopBody(expression)
+            builder.bindLabel(loopInfo.exitPoint)
+            builder.loadUnit(expression)
         }
 
-        @Override
-        public void visitDoWhileExpression(@NotNull KtDoWhileExpression expression) {
-            builder.enterLexicalScope(expression);
-            mark(expression);
-            LoopInfo loopInfo = builder.enterLoop(expression);
+        override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
+            builder.enterLexicalScope(expression)
+            mark(expression)
+            val loopInfo = builder.enterLoop(expression)
 
-            builder.enterLoopBody(expression);
-            KtExpression body = expression.getBody();
-            if (body != null) {
-                generateInstructions(body);
-            }
-            builder.exitLoopBody(expression);
-            builder.bindLabel(loopInfo.getConditionEntryPoint());
-            KtExpression condition = expression.getCondition();
-            if (condition != null) {
-                generateInstructions(condition);
-            }
-            builder.jumpOnTrue(loopInfo.getEntryPoint(), expression, builder.getBoundValue(condition));
-            builder.bindLabel(loopInfo.getExitPoint());
-            builder.loadUnit(expression);
-            builder.exitLexicalScope(expression);
+            builder.enterLoopBody(expression)
+            generateInstructions(expression.body)
+            builder.exitLoopBody(expression)
+            builder.bindLabel(loopInfo.conditionEntryPoint)
+            generateInstructions(expression.condition)
+            builder.jumpOnTrue(loopInfo.entryPoint, expression, builder.getBoundValue(expression.condition))
+            builder.bindLabel(loopInfo.exitPoint)
+            builder.loadUnit(expression)
+            builder.exitLexicalScope(expression)
         }
 
-        @Override
-        public void visitForExpression(@NotNull KtForExpression expression) {
-            builder.enterLexicalScope(expression);
+        override fun visitForExpression(expression: KtForExpression) {
+            builder.enterLexicalScope(expression)
 
-            KtExpression loopRange = expression.getLoopRange();
-            if (loopRange != null) {
-                generateInstructions(loopRange);
-            }
-            declareLoopParameter(expression);
+            generateInstructions(expression.loopRange)
+            declareLoopParameter(expression)
 
             // TODO : primitive cases
-            LoopInfo loopInfo = builder.enterLoop(expression);
+            val loopInfo = builder.enterLoop(expression)
 
-            builder.bindLabel(loopInfo.getConditionEntryPoint());
-            builder.nondeterministicJump(loopInfo.getExitPoint(), expression, null);
+            builder.bindLabel(loopInfo.conditionEntryPoint)
+            builder.nondeterministicJump(loopInfo.exitPoint, expression, null)
 
 
-            writeLoopParameterAssignment(expression);
+            writeLoopParameterAssignment(expression)
 
-            mark(expression);
-            builder.enterLoopBody(expression);
-            KtExpression body = expression.getBody();
-            if (body != null) {
-                generateInstructions(body);
-            }
-            builder.jump(loopInfo.getEntryPoint(), expression);
+            mark(expression)
+            builder.enterLoopBody(expression)
+            generateInstructions(expression.body)
+            builder.jump(loopInfo.entryPoint, expression)
 
-            builder.exitLoopBody(expression);
-            builder.bindLabel(loopInfo.getExitPoint());
-            builder.loadUnit(expression);
-            builder.exitLexicalScope(expression);
+            builder.exitLoopBody(expression)
+            builder.bindLabel(loopInfo.exitPoint)
+            builder.loadUnit(expression)
+            builder.exitLexicalScope(expression)
         }
 
-        private void declareLoopParameter(KtForExpression expression) {
-            KtParameter loopParameter = expression.getLoopParameter();
-            KtDestructuringDeclaration multiDeclaration = expression.getDestructuringParameter();
+        private fun declareLoopParameter(expression: KtForExpression) {
+            val loopParameter = expression.loopParameter
+            val multiDeclaration = expression.destructuringParameter
             if (loopParameter != null) {
-                builder.declareParameter(loopParameter);
+                builder.declareParameter(loopParameter)
             }
             else if (multiDeclaration != null) {
-                visitDestructuringDeclaration(multiDeclaration, false);
+                visitDestructuringDeclaration(multiDeclaration, false)
             }
         }
 
-        private void writeLoopParameterAssignment(KtForExpression expression) {
-            KtParameter loopParameter = expression.getLoopParameter();
-            KtDestructuringDeclaration multiDeclaration = expression.getDestructuringParameter();
-            KtExpression loopRange = expression.getLoopRange();
+        private fun writeLoopParameterAssignment(expression: KtForExpression) {
+            val loopParameter = expression.loopParameter
+            val multiDeclaration = expression.destructuringParameter
+            val loopRange = expression.loopRange
 
-            PseudoValue value = builder.magic(
-                    loopRange != null ? loopRange : expression,
+            val value = builder.magic(
+                    loopRange ?: expression,
                     null,
                     ContainerUtil.createMaybeSingletonList(builder.getBoundValue(loopRange)),
                     MagicKind.LOOP_RANGE_ITERATION
-            ).getOutputValue();
+            ).outputValue
 
             if (loopParameter != null) {
-                generateInitializer(loopParameter, value);
+                generateInitializer(loopParameter, value)
             }
             else if (multiDeclaration != null) {
-                for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
-                    generateInitializer(entry, value);
+                for (entry in multiDeclaration.entries) {
+                    generateInitializer(entry, value)
                 }
             }
         }
 
-        @Override
-        public void visitBreakExpression(@NotNull KtBreakExpression expression) {
-            KtElement loop = getCorrespondingLoop(expression);
+        override fun visitBreakExpression(expression: KtBreakExpression) {
+            val loop = getCorrespondingLoop(expression)
             if (loop != null) {
-                checkJumpDoesNotCrossFunctionBoundary(expression, loop);
-                builder.jump(builder.getExitPoint(loop), expression);
+                checkJumpDoesNotCrossFunctionBoundary(expression, loop)
+                builder.jump(builder.getExitPoint(loop), expression)
             }
         }
 
-        @Override
-        public void visitContinueExpression(@NotNull KtContinueExpression expression) {
-            KtElement loop = getCorrespondingLoop(expression);
+        override fun visitContinueExpression(expression: KtContinueExpression) {
+            val loop = getCorrespondingLoop(expression)
             if (loop != null) {
-                checkJumpDoesNotCrossFunctionBoundary(expression, loop);
-                builder.jump(builder.getConditionEntryPoint(loop), expression);
+                checkJumpDoesNotCrossFunctionBoundary(expression, loop)
+                builder.jump(builder.getConditionEntryPoint(loop), expression)
             }
         }
 
-        @Nullable
-        private KtElement getCorrespondingLoop(KtExpressionWithLabel expression) {
-            String labelName = expression.getLabelName();
-            KtLoopExpression loop;
+        private fun getCorrespondingLoop(expression: KtExpressionWithLabel): KtElement? {
+            val labelName = expression.getLabelName()
+            val loop: KtLoopExpression?
             if (labelName != null) {
-                KtSimpleNameExpression targetLabel = expression.getTargetLabel();
-                assert targetLabel != null;
-                PsiElement labeledElement = trace.get(BindingContext.LABEL_TARGET, targetLabel);
-                if (labeledElement instanceof KtLoopExpression) {
-                    loop = (KtLoopExpression) labeledElement;
+                val targetLabel = expression.getTargetLabel()!!
+                val labeledElement = trace.get(BindingContext.LABEL_TARGET, targetLabel)
+                if (labeledElement is KtLoopExpression) {
+                    loop = labeledElement
                 }
                 else {
-                    trace.report(NOT_A_LOOP_LABEL.on(expression, targetLabel.getText()));
-                    loop = null;
+                    trace.report(NOT_A_LOOP_LABEL.on(expression, targetLabel.text))
+                    loop = null
                 }
             }
             else {
-                loop = builder.getCurrentLoop();
+                loop = builder.currentLoop
                 if (loop == null) {
-                    trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
-                } else {
-                    KtWhenExpression whenExpression = PsiTreeUtil.getParentOfType(expression, KtWhenExpression.class, true,
-                                                                                  KtLoopExpression.class);
+                    trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression))
+                }
+                else {
+                    val whenExpression = PsiTreeUtil.getParentOfType(expression, KtWhenExpression::class.java, true,
+                                                                     KtLoopExpression::class.java)
                     if (whenExpression != null) {
-                        trace.report(BREAK_OR_CONTINUE_IN_WHEN.on(expression));
+                        trace.report(BREAK_OR_CONTINUE_IN_WHEN.on(expression))
                     }
                 }
             }
-            if (loop != null && loop.getBody() != null
-                    // the faster version of 'isAncestor' check:
-                    && !loop.getBody().getTextRange().contains(expression.getTextRange())) {
-                trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression));
-                return null;
+            loop?.body?.let {
+                if (!it.textRange.contains(expression.textRange)) {
+                    trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression))
+                    return null
+                }
             }
-            return loop;
+            return loop
         }
 
-        private void checkJumpDoesNotCrossFunctionBoundary(@NotNull KtExpressionWithLabel jumpExpression, @NotNull KtElement jumpTarget) {
-            BindingContext bindingContext = trace.getBindingContext();
+        private fun checkJumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtElement) {
+            val bindingContext = trace.bindingContext
 
-            FunctionDescriptor labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression);
-            FunctionDescriptor labelTargetEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpTarget);
-            if (labelExprEnclosingFunc != labelTargetEnclosingFunc) {
-                trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression));
+            val labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
+            val labelTargetEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
+            if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
+                trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
             }
         }
 
-        @Override
-        public void visitReturnExpression(@NotNull KtReturnExpression expression) {
-            KtExpression returnedExpression = expression.getReturnedExpression();
+        override fun visitReturnExpression(expression: KtReturnExpression) {
+            val returnedExpression = expression.returnedExpression
             if (returnedExpression != null) {
-                generateInstructions(returnedExpression);
+                generateInstructions(returnedExpression)
             }
-            KtSimpleNameExpression labelElement = expression.getTargetLabel();
-            KtElement subroutine;
-            String labelName = expression.getLabelName();
+            val labelElement = expression.getTargetLabel()
+            val subroutine: KtElement?
+            val labelName = expression.getLabelName()
             if (labelElement != null && labelName != null) {
-                PsiElement labeledElement = trace.get(BindingContext.LABEL_TARGET, labelElement);
+                val labeledElement = trace.get(BindingContext.LABEL_TARGET, labelElement)
                 if (labeledElement != null) {
-                    assert labeledElement instanceof KtElement;
-                    subroutine = (KtElement) labeledElement;
+                    assert(labeledElement is KtElement)
+                    subroutine = labeledElement as KtElement?
                 }
                 else {
-                    subroutine = null;
+                    subroutine = null
                 }
             }
             else {
-                subroutine = builder.getReturnSubroutine();
+                subroutine = builder.returnSubroutine
                 // TODO : a context check
             }
 
-            if (subroutine instanceof KtFunction || subroutine instanceof KtPropertyAccessor) {
-                PseudoValue returnValue = returnedExpression != null ? builder.getBoundValue(returnedExpression) : null;
+            if (subroutine is KtFunction || subroutine is KtPropertyAccessor) {
+                val returnValue = if (returnedExpression != null) builder.getBoundValue(returnedExpression) else null
                 if (returnValue == null) {
-                    builder.returnNoValue(expression, subroutine);
+                    builder.returnNoValue(expression, subroutine)
                 }
                 else {
-                    builder.returnValue(expression, returnValue, subroutine);
+                    builder.returnValue(expression, returnValue, subroutine)
                 }
             }
             else {
-                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, returnedExpression);
+                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, returnedExpression)
             }
         }
 
-        @Override
-        public void visitParameter(@NotNull KtParameter parameter) {
-            builder.declareParameter(parameter);
-            KtExpression defaultValue = parameter.getDefaultValue();
+        override fun visitParameter(parameter: KtParameter) {
+            builder.declareParameter(parameter)
+            val defaultValue = parameter.defaultValue
             if (defaultValue != null) {
-                Label skipDefaultValue = builder.createUnboundLabel("after default value for parameter " + parameter.getName());
-                builder.nondeterministicJump(skipDefaultValue, defaultValue, null);
-                generateInstructions(defaultValue);
-                builder.bindLabel(skipDefaultValue);
+                val skipDefaultValue = builder.createUnboundLabel("after default value for parameter " + parameter.name!!)
+                builder.nondeterministicJump(skipDefaultValue, defaultValue, null)
+                generateInstructions(defaultValue)
+                builder.bindLabel(skipDefaultValue)
             }
-            generateInitializer(parameter, computePseudoValueForParameter(parameter));
+            generateInitializer(parameter, computePseudoValueForParameter(parameter))
         }
 
-        @NotNull
-        private PseudoValue computePseudoValueForParameter(@NotNull KtParameter parameter) {
-            PseudoValue syntheticValue = createSyntheticValue(parameter, MagicKind.FAKE_INITIALIZER);
-            PseudoValue defaultValue = builder.getBoundValue(parameter.getDefaultValue());
-            if (defaultValue == null) {
-                return syntheticValue;
-            }
-            return builder.merge(parameter, Lists.newArrayList(defaultValue, syntheticValue)).getOutputValue();
+        private fun computePseudoValueForParameter(parameter: KtParameter): PseudoValue {
+            val syntheticValue = createSyntheticValue(parameter, MagicKind.FAKE_INITIALIZER)
+            val defaultValue = builder.getBoundValue(parameter.defaultValue) ?: return syntheticValue
+            return builder.merge(parameter, Lists.newArrayList(defaultValue, syntheticValue)).outputValue
         }
 
-        @Override
-        public void visitBlockExpression(@NotNull KtBlockExpression expression) {
-            boolean declareLexicalScope = !isBlockInDoWhile(expression);
+        override fun visitBlockExpression(expression: KtBlockExpression) {
+            val declareLexicalScope = !isBlockInDoWhile(expression)
             if (declareLexicalScope) {
-                builder.enterLexicalScope(expression);
+                builder.enterLexicalScope(expression)
             }
-            mark(expression);
-            List<KtExpression> statements = expression.getStatements();
-            for (KtExpression statement : statements) {
-                generateInstructions(statement);
+            mark(expression)
+            val statements = expression.statements
+            for (statement in statements) {
+                generateInstructions(statement)
             }
             if (statements.isEmpty()) {
-                builder.loadUnit(expression);
+                builder.loadUnit(expression)
             }
             else {
-                copyValue(CollectionsKt.lastOrNull(statements), expression);
+                copyValue(statements.lastOrNull(), expression)
             }
             if (declareLexicalScope) {
-                builder.exitLexicalScope(expression);
+                builder.exitLexicalScope(expression)
             }
         }
 
-        private boolean isBlockInDoWhile(@NotNull KtBlockExpression expression) {
-            PsiElement parent = expression.getParent();
-            if (parent == null) return false;
-            return parent.getParent() instanceof KtDoWhileExpression;
+        private fun isBlockInDoWhile(expression: KtBlockExpression): Boolean {
+            val parent = expression.parent ?: return false
+            return parent.parent is KtDoWhileExpression
         }
 
-        private void visitFunction(@NotNull KtFunction function) {
-            processLocalDeclaration(function);
-            boolean isAnonymousFunction = function instanceof KtFunctionLiteral || function.getName() == null;
-            if (isAnonymousFunction || (function.isLocal() && !(function.getParent() instanceof KtBlockExpression))) {
-                builder.createLambda(function);
+        private fun visitFunction(function: KtFunction) {
+            processLocalDeclaration(function)
+            val isAnonymousFunction = function is KtFunctionLiteral || function.name == null
+            if (isAnonymousFunction || function.isLocal && function.parent !is KtBlockExpression) {
+                builder.createLambda(function)
             }
         }
 
-        @Override
-        public void visitNamedFunction(@NotNull KtNamedFunction function) {
-            visitFunction(function);
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            visitFunction(function)
         }
 
-        @Override
-        public void visitLambdaExpression(@NotNull KtLambdaExpression lambdaExpression) {
-            mark(lambdaExpression);
-            KtFunctionLiteral functionLiteral = lambdaExpression.getFunctionLiteral();
-            visitFunction(functionLiteral);
-            copyValue(functionLiteral, lambdaExpression);
+        override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
+            mark(lambdaExpression)
+            val functionLiteral = lambdaExpression.functionLiteral
+            visitFunction(functionLiteral)
+            copyValue(functionLiteral, lambdaExpression)
         }
 
-        @Override
-        public void visitQualifiedExpression(@NotNull KtQualifiedExpression expression) {
-            mark(expression);
-            KtExpression selectorExpression = expression.getSelectorExpression();
-            KtExpression receiverExpression = expression.getReceiverExpression();
+        override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
+            mark(expression)
+            val selectorExpression = expression.selectorExpression
+            val receiverExpression = expression.receiverExpression
 
             // todo: replace with selectorExpresion != null after parser is fixed
-            if (selectorExpression instanceof KtCallExpression || selectorExpression instanceof KtSimpleNameExpression) {
-                generateInstructions(selectorExpression);
-                copyValue(selectorExpression, expression);
+            if (selectorExpression is KtCallExpression || selectorExpression is KtSimpleNameExpression) {
+                generateInstructions(selectorExpression)
+                copyValue(selectorExpression, expression)
             }
             else {
-                generateInstructions(receiverExpression);
-                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, receiverExpression);
+                generateInstructions(receiverExpression)
+                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, receiverExpression)
             }
         }
 
-        @Override
-        public void visitCallExpression(@NotNull KtCallExpression expression) {
+        override fun visitCallExpression(expression: KtCallExpression) {
             if (!generateCall(expression)) {
-                List<KtExpression> inputExpressions = new ArrayList<KtExpression>();
-                for (ValueArgument argument : expression.getValueArguments()) {
-                    KtExpression argumentExpression = argument.getArgumentExpression();
+                val inputExpressions = ArrayList<KtExpression>()
+                for (argument in expression.valueArguments) {
+                    val argumentExpression = argument.getArgumentExpression()
                     if (argumentExpression != null) {
-                        generateInstructions(argumentExpression);
-                        inputExpressions.add(argumentExpression);
+                        generateInstructions(argumentExpression)
+                        inputExpressions.add(argumentExpression)
                     }
                 }
-                KtExpression calleeExpression = expression.getCalleeExpression();
-                generateInstructions(calleeExpression);
-                inputExpressions.add(calleeExpression);
-                inputExpressions.add(generateAndGetReceiverIfAny(expression));
+                val calleeExpression = expression.calleeExpression
+                generateInstructions(calleeExpression)
+                if (calleeExpression != null) {
+                    inputExpressions.add(calleeExpression)
+                    generateAndGetReceiverIfAny(expression)?.let { inputExpressions.add(it) }
+                }
 
-                mark(expression);
-                createNonSyntheticValue(expression, inputExpressions, MagicKind.UNRESOLVED_CALL);
+                mark(expression)
+                createNonSyntheticValue(expression, inputExpressions, MagicKind.UNRESOLVED_CALL)
             }
         }
 
-        @Nullable
-        private KtExpression generateAndGetReceiverIfAny(KtExpression expression) {
-            PsiElement parent = expression.getParent();
-            if (!(parent instanceof KtQualifiedExpression)) return null;
+        private fun generateAndGetReceiverIfAny(expression: KtExpression): KtExpression? {
+            val parent = expression.parent
+            if (parent !is KtQualifiedExpression) return null
 
-            KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) parent;
-            if (qualifiedExpression.getSelectorExpression() != expression) return null;
+            if (parent.selectorExpression !== expression) return null
 
-            KtExpression receiverExpression = qualifiedExpression.getReceiverExpression();
-            generateInstructions(receiverExpression);
+            val receiverExpression = parent.receiverExpression
+            generateInstructions(receiverExpression)
 
-            return receiverExpression;
+            return receiverExpression
         }
 
-        @Override
-        public void visitProperty(@NotNull KtProperty property) {
-            builder.declareVariable(property);
-            KtExpression initializer = property.getInitializer();
+        override fun visitProperty(property: KtProperty) {
+            builder.declareVariable(property)
+            val initializer = property.initializer
             if (initializer != null) {
-                visitAssignment(property, getDeferredValue(initializer), property);
+                visitAssignment(property, getDeferredValue(initializer), property)
             }
-            KtExpression delegate = property.getDelegateExpression();
+            val delegate = property.delegateExpression
             if (delegate != null) {
-                generateInstructions(delegate);
+                generateInstructions(delegate)
                 if (builder.getBoundValue(delegate) != null) {
-                    createSyntheticValue(property, MagicKind.VALUE_CONSUMER, delegate);
+                    createSyntheticValue(property, MagicKind.VALUE_CONSUMER, delegate)
                 }
             }
 
             if (KtPsiUtil.isLocal(property)) {
-                for (KtPropertyAccessor accessor : property.getAccessors()) {
-                    generateInstructions(accessor);
+                for (accessor in property.accessors) {
+                    generateInstructions(accessor)
                 }
             }
         }
 
-        @Override
-        public void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration declaration) {
-            visitDestructuringDeclaration(declaration, true);
+        override fun visitDestructuringDeclaration(declaration: KtDestructuringDeclaration) {
+            visitDestructuringDeclaration(declaration, true)
         }
 
-        private void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration declaration, boolean generateWriteForEntries) {
-            KtExpression initializer = declaration.getInitializer();
-            generateInstructions(initializer);
-            for (KtDestructuringDeclarationEntry entry : declaration.getEntries()) {
-                builder.declareVariable(entry);
+        private fun visitDestructuringDeclaration(declaration: KtDestructuringDeclaration, generateWriteForEntries: Boolean) {
+            val initializer = declaration.initializer
+            generateInstructions(initializer)
+            for (entry in declaration.entries) {
+                builder.declareVariable(entry)
 
-                ResolvedCall<FunctionDescriptor> resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
+                val resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)
 
-                PseudoValue writtenValue;
+                val writtenValue: PseudoValue?
                 if (resolvedCall != null) {
                     writtenValue = builder.call(
                             entry,
                             resolvedCall,
                             getReceiverValues(resolvedCall),
-                            Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
-                    ).getOutputValue();
+                            emptyMap<PseudoValue, ValueParameterDescriptor>()).outputValue
                 }
                 else {
-                    writtenValue = createSyntheticValue(entry, MagicKind.UNRESOLVED_CALL, initializer);
+                    writtenValue = initializer?.let { createSyntheticValue(entry, MagicKind.UNRESOLVED_CALL, it) }
                 }
 
                 if (generateWriteForEntries) {
-                    generateInitializer(entry, writtenValue != null ? writtenValue : createSyntheticValue(entry, MagicKind.FAKE_INITIALIZER));
+                    generateInitializer(entry, writtenValue ?: createSyntheticValue(entry, MagicKind.FAKE_INITIALIZER))
                 }
             }
         }
 
-        @Override
-        public void visitPropertyAccessor(@NotNull KtPropertyAccessor accessor) {
-            processLocalDeclaration(accessor);
+        override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+            processLocalDeclaration(accessor)
         }
 
-        @Override
-        public void visitBinaryWithTypeRHSExpression(@NotNull KtBinaryExpressionWithTypeRHS expression) {
-            mark(expression);
+        override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS) {
+            mark(expression)
 
-            IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-            KtExpression left = expression.getLeft();
-            if (operationType == KtTokens.AS_KEYWORD || operationType == KtTokens.AS_SAFE) {
-                generateInstructions(left);
+            val operationType = expression.operationReference.getReferencedNameElementType()
+            val left = expression.left
+            if (operationType === KtTokens.AS_KEYWORD || operationType === KtTokens.`AS_SAFE`) {
+                generateInstructions(left)
                 if (getBoundOrUnreachableValue(left) != null) {
-                    createNonSyntheticValue(expression, MagicKind.CAST, left);
+                    createNonSyntheticValue(expression, MagicKind.CAST, left)
                 }
             }
             else {
-                visitKtElement(expression);
-                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, left);
+                visitKtElement(expression)
+                createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, left)
             }
         }
 
-        @Override
-        public void visitThrowExpression(@NotNull KtThrowExpression expression) {
-            mark(expression);
+        override fun visitThrowExpression(expression: KtThrowExpression) {
+            mark(expression)
 
-            KtExpression thrownExpression = expression.getThrownExpression();
-            if (thrownExpression == null) return;
+            val thrownExpression = expression.thrownExpression ?: return
 
-            generateInstructions(thrownExpression);
+            generateInstructions(thrownExpression)
 
-            PseudoValue thrownValue = builder.getBoundValue(thrownExpression);
-            if (thrownValue == null) return;
+            val thrownValue = builder.getBoundValue(thrownExpression) ?: return
 
-            builder.throwException(expression, thrownValue);
+            builder.throwException(expression, thrownValue)
         }
 
-        @Override
-        public void visitArrayAccessExpression(@NotNull KtArrayAccessExpression expression) {
-            generateArrayAccess(expression, trace.get(BindingContext.INDEXED_LVALUE_GET, expression));
+        override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
+            generateArrayAccess(expression, trace.get(BindingContext.INDEXED_LVALUE_GET, expression))
         }
 
-        @Override
-        public void visitIsExpression(@NotNull KtIsExpression expression) {
-            mark(expression);
-            KtExpression left = expression.getLeftHandSide();
-            generateInstructions(left);
-            createNonSyntheticValue(expression, MagicKind.IS, left);
+        override fun visitIsExpression(expression: KtIsExpression) {
+            mark(expression)
+            val left = expression.leftHandSide
+            generateInstructions(left)
+            createNonSyntheticValue(expression, MagicKind.IS, left)
         }
 
-        @Override
-        public void visitWhenExpression(@NotNull KtWhenExpression expression) {
-            mark(expression);
+        override fun visitWhenExpression(expression: KtWhenExpression) {
+            mark(expression)
 
-            KtExpression subjectExpression = expression.getSubjectExpression();
+            val subjectExpression = expression.subjectExpression
             if (subjectExpression != null) {
-                generateInstructions(subjectExpression);
+                generateInstructions(subjectExpression)
             }
 
-            List<KtExpression> branches = new ArrayList<KtExpression>();
+            val branches = ArrayList<KtExpression>()
 
-            Label doneLabel = builder.createUnboundLabel("after 'when' expression");
+            val doneLabel = builder.createUnboundLabel("after 'when' expression")
 
-            Label nextLabel = null;
-            for (Iterator<KtWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
-                KtWhenEntry whenEntry = iterator.next();
-                mark(whenEntry);
+            var nextLabel: Label? = null
+            val iterator = expression.entries.iterator()
+            while (iterator.hasNext()) {
+                val whenEntry = iterator.next()
+                mark(whenEntry)
 
-                boolean isElse = whenEntry.isElse();
+                val isElse = whenEntry.isElse
                 if (isElse) {
                     if (iterator.hasNext()) {
-                        trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
+                        trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry))
                     }
                 }
-                Label bodyLabel = builder.createUnboundLabel("'when' entry body");
+                val bodyLabel = builder.createUnboundLabel("'when' entry body")
 
-                KtWhenCondition[] conditions = whenEntry.getConditions();
-                for (int i = 0; i < conditions.length; i++) {
-                    KtWhenCondition condition = conditions[i];
-                    condition.accept(conditionVisitor);
-                    if (i + 1 < conditions.length) {
-                        builder.nondeterministicJump(bodyLabel, expression, builder.getBoundValue(condition));
+                val conditions = whenEntry.conditions
+                for (i in conditions.indices) {
+                    val condition = conditions[i]
+                    condition.accept(conditionVisitor)
+                    if (i + 1 < conditions.size) {
+                        builder.nondeterministicJump(bodyLabel, expression, builder.getBoundValue(condition))
                     }
                 }
 
                 if (!isElse) {
-                    nextLabel = builder.createUnboundLabel("next 'when' entry");
-                    KtWhenCondition lastCondition = ArraysKt.lastOrNull(conditions);
-                    builder.nondeterministicJump(nextLabel, expression, builder.getBoundValue(lastCondition));
+                    nextLabel = builder.createUnboundLabel("next 'when' entry")
+                    val lastCondition = conditions.lastOrNull()
+                    builder.nondeterministicJump(nextLabel, expression, builder.getBoundValue(lastCondition))
                 }
 
-                builder.bindLabel(bodyLabel);
-                KtExpression whenEntryExpression = whenEntry.getExpression();
+                builder.bindLabel(bodyLabel)
+                val whenEntryExpression = whenEntry.expression
                 if (whenEntryExpression != null) {
-                    generateInstructions(whenEntryExpression);
-                    branches.add(whenEntryExpression);
+                    generateInstructions(whenEntryExpression)
+                    branches.add(whenEntryExpression)
                 }
-                builder.jump(doneLabel, expression);
+                builder.jump(doneLabel, expression)
 
-                if (!isElse) {
-                    builder.bindLabel(nextLabel);
+                if (!isElse && nextLabel != null) {
+                    builder.bindLabel(nextLabel)
                     // For the last entry of exhaustive when,
                     // attempt to jump further should lead to error, not to "done"
                     if (!iterator.hasNext() && WhenChecker.isWhenExhaustive(expression, trace)) {
-                        builder.magic(expression, null, Collections.<PseudoValue>emptyList(), MagicKind.EXHAUSTIVE_WHEN_ELSE);
+                        builder.magic(expression, null, emptyList<PseudoValue>(), MagicKind.EXHAUSTIVE_WHEN_ELSE)
                     }
                 }
             }
-            builder.bindLabel(doneLabel);
+            builder.bindLabel(doneLabel)
 
-            mergeValues(branches, expression);
+            mergeValues(branches, expression)
         }
 
-        @Override
-        public void visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression) {
-            mark(expression);
-            KtObjectDeclaration declaration = expression.getObjectDeclaration();
-            generateInstructions(declaration);
+        override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
+            mark(expression)
+            val declaration = expression.objectDeclaration
+            generateInstructions(declaration)
 
-            builder.createAnonymousObject(expression);
+            builder.createAnonymousObject(expression)
         }
 
-        @Override
-        public void visitObjectDeclaration(@NotNull KtObjectDeclaration objectDeclaration) {
-            generateHeaderDelegationSpecifiers(objectDeclaration);
-            generateInitializersForScriptClassOrObject(objectDeclaration);
-            generateDeclarationForLocalClassOrObjectIfNeeded(objectDeclaration);
+        override fun visitObjectDeclaration(objectDeclaration: KtObjectDeclaration) {
+            generateHeaderDelegationSpecifiers(objectDeclaration)
+            generateInitializersForScriptClassOrObject(objectDeclaration)
+            generateDeclarationForLocalClassOrObjectIfNeeded(objectDeclaration)
         }
 
-        @Override
-        public void visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression) {
-            mark(expression);
+        override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
+            mark(expression)
 
-            List<KtExpression> inputExpressions = new ArrayList<KtExpression>();
-            for (KtStringTemplateEntry entry : expression.getEntries()) {
-                if (entry instanceof KtStringTemplateEntryWithExpression) {
-                    KtExpression entryExpression = entry.getExpression();
-                    generateInstructions(entryExpression);
-                    inputExpressions.add(entryExpression);
+            val inputExpressions = ArrayList<KtExpression>()
+            for (entry in expression.entries) {
+                if (entry is KtStringTemplateEntryWithExpression) {
+                    val entryExpression = entry.getExpression()
+                    generateInstructions(entryExpression)
+                    if (entryExpression != null) {
+                        inputExpressions.add(entryExpression)
+                    }
                 }
             }
-            builder.loadStringTemplate(expression, elementsToValues(inputExpressions));
+            builder.loadStringTemplate(expression, elementsToValues(inputExpressions))
         }
 
-        @Override
-        public void visitTypeProjection(@NotNull KtTypeProjection typeProjection) {
+        override fun visitTypeProjection(typeProjection: KtTypeProjection) {
             // TODO : Support Type Arguments. Companion object may be initialized at this point");
         }
 
-        @Override
-        public void visitAnonymousInitializer(@NotNull KtAnonymousInitializer classInitializer) {
-            generateInstructions(classInitializer.getBody());
+        override fun visitAnonymousInitializer(classInitializer: KtAnonymousInitializer) {
+            generateInstructions(classInitializer.body)
         }
 
-        private void generateHeaderDelegationSpecifiers(@NotNull KtClassOrObject classOrObject) {
-            for (KtSuperTypeListEntry specifier : classOrObject.getSuperTypeListEntries()) {
-                generateInstructions(specifier);
+        private fun generateHeaderDelegationSpecifiers(classOrObject: KtClassOrObject) {
+            for (specifier in classOrObject.getSuperTypeListEntries()) {
+                generateInstructions(specifier)
             }
         }
 
-        private void generateInitializersForScriptClassOrObject(@NotNull KtDeclarationContainer classOrObject) {
-            for (KtDeclaration declaration : classOrObject.getDeclarations()) {
-                if (declaration instanceof KtProperty || declaration instanceof KtAnonymousInitializer) {
-                    generateInstructions(declaration);
+        private fun generateInitializersForScriptClassOrObject(classOrObject: KtDeclarationContainer) {
+            for (declaration in classOrObject.declarations) {
+                if (declaration is KtProperty || declaration is KtAnonymousInitializer) {
+                    generateInstructions(declaration)
                 }
             }
         }
 
-        @Override
-        public void visitClass(@NotNull KtClass klass) {
+        override fun visitClass(klass: KtClass) {
             if (klass.hasPrimaryConstructor()) {
-                processParameters(klass.getPrimaryConstructorParameters());
+                processParameters(klass.getPrimaryConstructorParameters())
 
                 // delegation specifiers of primary constructor, anonymous class and property initializers
-                generateHeaderDelegationSpecifiers(klass);
-                generateInitializersForScriptClassOrObject(klass);
+                generateHeaderDelegationSpecifiers(klass)
+                generateInitializersForScriptClassOrObject(klass)
             }
 
-            generateDeclarationForLocalClassOrObjectIfNeeded(klass);
+            generateDeclarationForLocalClassOrObjectIfNeeded(klass)
         }
 
-        @Override
-        public void visitScript(@NotNull KtScript script) {
-            generateInitializersForScriptClassOrObject(script);
+        override fun visitScript(script: KtScript) {
+            generateInitializersForScriptClassOrObject(script)
         }
 
-        private void generateDeclarationForLocalClassOrObjectIfNeeded(@NotNull KtClassOrObject classOrObject) {
+        private fun generateDeclarationForLocalClassOrObjectIfNeeded(classOrObject: KtClassOrObject) {
             if (classOrObject.isLocal()) {
-                for (KtDeclaration declaration : classOrObject.getDeclarations()) {
-                    if (declaration instanceof KtSecondaryConstructor ||
-                        declaration instanceof KtProperty ||
-                        declaration instanceof KtAnonymousInitializer) {
-                        continue;
+                for (declaration in classOrObject.declarations) {
+                    if (declaration is KtSecondaryConstructor ||
+                        declaration is KtProperty ||
+                        declaration is KtAnonymousInitializer) {
+                        continue
                     }
-                    generateInstructions(declaration);
+                    generateInstructions(declaration)
                 }
             }
         }
 
-        private void processParameters(@NotNull List<KtParameter> parameters) {
-            for (KtParameter parameter : parameters) {
-                generateInstructions(parameter);
+        private fun processParameters(parameters: List<KtParameter>) {
+            for (parameter in parameters) {
+                generateInstructions(parameter)
             }
         }
 
-        @Override
-        public void visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor) {
-            KtClassOrObject classOrObject = PsiTreeUtil.getParentOfType(constructor, KtClassOrObject.class);
-            assert classOrObject != null : "Guaranteed by parsing contract";
+        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
+            val classOrObject = PsiTreeUtil.getParentOfType(constructor, KtClassOrObject::class.java) ?: error("Guaranteed by parsing contract")
 
-            processParameters(constructor.getValueParameters());
-            generateCallOrMarkUnresolved(constructor.getDelegationCall());
+            processParameters(constructor.valueParameters)
+            generateCallOrMarkUnresolved(constructor.getDelegationCall())
 
-            if (!constructor.getDelegationCall().isCallToThis()) {
-                generateInitializersForScriptClassOrObject(classOrObject);
+            if (!constructor.getDelegationCall().isCallToThis) {
+                generateInitializersForScriptClassOrObject(classOrObject)
             }
 
-            generateInstructions(constructor.getBodyExpression());
+            generateInstructions(constructor.bodyExpression)
         }
 
-        @Override
-        public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
-            generateCallOrMarkUnresolved(call);
+        override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
+            generateCallOrMarkUnresolved(call)
         }
 
-        private void generateCallOrMarkUnresolved(@Nullable KtCallElement call) {
-            if (call == null) return;
+        private fun generateCallOrMarkUnresolved(call: KtCallElement) {
             if (!generateCall(call)) {
-                List<KtExpression> arguments = CollectionsKt.map(
-                        call.getValueArguments(),
-                        new Function1<ValueArgument, KtExpression>() {
-                            @Override
-                            public KtExpression invoke(ValueArgument valueArgument) {
-                                return valueArgument.getArgumentExpression();
-                            }
-                        }
-                );
+                val arguments = call.valueArguments.map { valueArgument -> valueArgument.getArgumentExpression() }.filterNotNull()
 
-                for (KtExpression argument : arguments) {
-                    generateInstructions(argument);
+                for (argument in arguments) {
+                    generateInstructions(argument)
                 }
-                createNonSyntheticValue(call, arguments, MagicKind.UNRESOLVED_CALL);
+                createNonSyntheticValue(call, arguments, MagicKind.UNRESOLVED_CALL)
             }
         }
 
-        @Override
-        public void visitDelegatedSuperTypeEntry(@NotNull KtDelegatedSuperTypeEntry specifier) {
-            KtExpression delegateExpression = specifier.getDelegateExpression();
-            generateInstructions(delegateExpression);
-            createSyntheticValue(specifier, MagicKind.VALUE_CONSUMER, delegateExpression);
+        override fun visitDelegatedSuperTypeEntry(specifier: KtDelegatedSuperTypeEntry) {
+            val delegateExpression = specifier.delegateExpression
+            generateInstructions(delegateExpression)
+            if (delegateExpression != null) {
+                createSyntheticValue(specifier, MagicKind.VALUE_CONSUMER, delegateExpression)
+            }
         }
 
-        @Override
-        public void visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier) {
+        override fun visitSuperTypeEntry(specifier: KtSuperTypeEntry) {
             // Do not generate UNSUPPORTED_ELEMENT here
         }
 
-        @Override
-        public void visitSuperTypeList(@NotNull KtSuperTypeList list) {
-            list.acceptChildren(this);
+        override fun visitSuperTypeList(list: KtSuperTypeList) {
+            list.acceptChildren(this)
         }
 
-        @Override
-        public void visitKtFile(@NotNull KtFile file) {
-            for (KtDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof KtProperty) {
-                    generateInstructions(declaration);
+        override fun visitKtFile(file: KtFile) {
+            for (declaration in file.declarations) {
+                if (declaration is KtProperty) {
+                    generateInstructions(declaration)
                 }
             }
         }
 
-        @Override
-        public void visitDoubleColonExpression(@NotNull KtDoubleColonExpression expression) {
-            mark(expression);
-            createNonSyntheticValue(expression, MagicKind.CALLABLE_REFERENCE);
+        override fun visitDoubleColonExpression(expression: KtDoubleColonExpression) {
+            mark(expression)
+            createNonSyntheticValue(expression, MagicKind.CALLABLE_REFERENCE)
         }
 
-        @Override
-        public void visitKtElement(@NotNull KtElement element) {
-            createNonSyntheticValue(element, MagicKind.UNSUPPORTED_ELEMENT);
+        override fun visitKtElement(element: KtElement) {
+            createNonSyntheticValue(element, MagicKind.UNSUPPORTED_ELEMENT)
         }
 
-        private boolean generateCall(@Nullable KtElement callElement) {
-            if (callElement == null) return false;
-            return checkAndGenerateCall(CallUtilKt.getResolvedCall(callElement, trace.getBindingContext()));
+        private fun generateCall(callElement: KtElement): Boolean {
+            return checkAndGenerateCall(callElement.getResolvedCall(trace.bindingContext))
         }
 
-        private boolean checkAndGenerateCall(@Nullable ResolvedCall<?> resolvedCall) {
-            if (resolvedCall == null) return false;
-            generateCall(resolvedCall);
-            return true;
+        private fun checkAndGenerateCall(resolvedCall: ResolvedCall<*>?): Boolean {
+            if (resolvedCall == null) return false
+            generateCall(resolvedCall)
+            return true
         }
 
-        @NotNull
-        private InstructionWithValue generateCall(@NotNull ResolvedCall<?> resolvedCall) {
-            KtElement callElement = resolvedCall.getCall().getCallElement();
+        private fun generateCall(resolvedCall: ResolvedCall<*>): InstructionWithValue {
+            val callElement = resolvedCall.call.callElement
 
-            Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(resolvedCall);
+            val receivers = getReceiverValues(resolvedCall)
 
-            SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues = SmartFMap.emptyMap();
-            for (ValueArgument argument : resolvedCall.getCall().getValueArguments()) {
-                ArgumentMapping argumentMapping = resolvedCall.getArgumentMapping(argument);
-                KtExpression argumentExpression = argument.getArgumentExpression();
-                if (argumentMapping instanceof ArgumentMatch) {
-                    parameterValues = generateValueArgument(argument, ((ArgumentMatch) argumentMapping).getValueParameter(), parameterValues);
+            var parameterValues = SmartFMap.emptyMap<PseudoValue, ValueParameterDescriptor>()
+            for (argument in resolvedCall.call.valueArguments) {
+                val argumentMapping = resolvedCall.getArgumentMapping(argument)
+                val argumentExpression = argument.getArgumentExpression()
+                if (argumentMapping is ArgumentMatch) {
+                    parameterValues = generateValueArgument(argument, argumentMapping.valueParameter, parameterValues)
                 }
                 else if (argumentExpression != null) {
-                    generateInstructions(argumentExpression);
-                    createSyntheticValue(argumentExpression, MagicKind.VALUE_CONSUMER, argumentExpression);
+                    generateInstructions(argumentExpression)
+                    createSyntheticValue(argumentExpression, MagicKind.VALUE_CONSUMER, argumentExpression)
                 }
             }
 
-            if (resolvedCall.getResultingDescriptor() instanceof VariableDescriptor) {
+            if (resolvedCall.resultingDescriptor is VariableDescriptor) {
                 // If a callee of the call is just a variable (without 'invoke'), 'read variable' is generated.
                 // todo : process arguments for such a case (KT-5387)
-                KtExpression callExpression = callElement instanceof KtExpression ? (KtExpression) callElement : null;
-                assert callExpression != null
-                        : "Variable-based call without callee expression: " + callElement.getText();
-                assert parameterValues.isEmpty()
-                        : "Variable-based call with non-empty argument list: " + callElement.getText();
-                return builder.readVariable(callExpression, resolvedCall, receivers);
+                val callExpression = callElement as? KtExpression ?: error("Variable-based call without callee expression: " + callElement.text)
+                assert(parameterValues.isEmpty()) { "Variable-based call with non-empty argument list: " + callElement.text }
+                return builder.readVariable(callExpression, resolvedCall, receivers)
             }
 
-            mark(resolvedCall.getCall().getCallElement());
-            return builder.call(callElement, resolvedCall, receivers, parameterValues);
+            mark(resolvedCall.call.callElement)
+            return builder.call(callElement, resolvedCall, receivers, parameterValues)
         }
 
-        @NotNull
-        private Map<PseudoValue, ReceiverValue> getReceiverValues(ResolvedCall<?> resolvedCall) {
-            PseudoValue varCallResult = null;
-            ReceiverValue explicitReceiver = null;
-            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                varCallResult = generateCall(((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall()).getOutputValue();
+        private fun getReceiverValues(resolvedCall: ResolvedCall<*>): Map<PseudoValue, ReceiverValue> {
+            var varCallResult: PseudoValue? = null
+            var explicitReceiver: ReceiverValue? = null
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
+                varCallResult = generateCall(resolvedCall.variableCall).outputValue
 
-                ExplicitReceiverKind kind = resolvedCall.getExplicitReceiverKind();
+                val kind = resolvedCall.explicitReceiverKind
                 //noinspection EnumSwitchStatementWhichMissesCases
-                switch (kind) {
-                    case DISPATCH_RECEIVER:
-                        explicitReceiver = resolvedCall.getDispatchReceiver();
-                        break;
-                    case EXTENSION_RECEIVER:
-                    case BOTH_RECEIVERS:
-                        explicitReceiver = (ReceiverValue) resolvedCall.getExtensionReceiver();
-                        break;
+                when (kind) {
+                    ExplicitReceiverKind.DISPATCH_RECEIVER -> explicitReceiver = resolvedCall.dispatchReceiver
+                    ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> explicitReceiver = resolvedCall.extensionReceiver as ReceiverValue?
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> {}
                 }
             }
 
-            SmartFMap<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
+            var receiverValues = SmartFMap.emptyMap<PseudoValue, ReceiverValue>()
             if (explicitReceiver != null && varCallResult != null) {
-                receiverValues = receiverValues.plus(varCallResult, explicitReceiver);
+                receiverValues = receiverValues.plus(varCallResult, explicitReceiver)
             }
-            KtElement callElement = resolvedCall.getCall().getCallElement();
-            receiverValues = getReceiverValues(callElement, resolvedCall.getDispatchReceiver(), receiverValues);
-            receiverValues = getReceiverValues(callElement, (ReceiverValue) resolvedCall.getExtensionReceiver(), receiverValues);
-            return receiverValues;
+            val callElement = resolvedCall.call.callElement
+            receiverValues = getReceiverValues(callElement, resolvedCall.dispatchReceiver, receiverValues)
+            receiverValues = getReceiverValues(callElement, resolvedCall.extensionReceiver as ReceiverValue?, receiverValues)
+            return receiverValues
         }
 
-        @NotNull
-        private SmartFMap<PseudoValue, ReceiverValue> getReceiverValues(
-                KtElement callElement,
-                @Nullable ReceiverValue receiver,
-                SmartFMap<PseudoValue, ReceiverValue> receiverValues
-        ) {
-            if (receiver == null || receiverValues.containsValue(receiver)) return receiverValues;
+        private fun getReceiverValues(
+                callElement: KtElement,
+                receiver: ReceiverValue?,
+                receiverValuesArg: SmartFMap<PseudoValue, ReceiverValue>
+        ): SmartFMap<PseudoValue, ReceiverValue> {
+            var receiverValues = receiverValuesArg
+            if (receiver == null || receiverValues.containsValue(receiver)) return receiverValues
 
-            if (receiver instanceof ImplicitReceiver) {
-                receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver);
-            }
-            else if (receiver instanceof ExpressionReceiver) {
-                KtExpression expression = ((ExpressionReceiver) receiver).getExpression();
-                if (builder.getBoundValue(expression) == null) {
-                    generateInstructions(expression);
+            when (receiver) {
+                is ImplicitReceiver -> {
+                    receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver)
                 }
+                is ExpressionReceiver -> {
+                    val expression = receiver.expression
+                    if (builder.getBoundValue(expression) == null) {
+                        generateInstructions(expression)
+                    }
 
-                PseudoValue receiverPseudoValue = getBoundOrUnreachableValue(expression);
-                if (receiverPseudoValue != null) {
-                    receiverValues = receiverValues.plus(receiverPseudoValue, receiver);
+                    val receiverPseudoValue = getBoundOrUnreachableValue(expression)
+                    if (receiverPseudoValue != null) {
+                        receiverValues = receiverValues.plus(receiverPseudoValue, receiver)
+                    }
+                }
+                is TransientReceiver -> {
+                    // Do nothing
+                }
+                else -> {
+                    throw IllegalArgumentException("Unknown receiver kind: " + receiver)
                 }
             }
-            else if (receiver instanceof TransientReceiver) {
-                // Do nothing
-            }
-            else {
-                throw new IllegalArgumentException("Unknown receiver kind: " + receiver);
-            }
 
-            return receiverValues;
+            return receiverValues
         }
 
-        @NotNull
-        private SmartFMap<PseudoValue, ValueParameterDescriptor> generateValueArgument(
-                ValueArgument valueArgument,
-                ValueParameterDescriptor parameterDescriptor,
-                SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues) {
-            KtExpression expression = valueArgument.getArgumentExpression();
+        private fun generateValueArgument(
+                valueArgument: ValueArgument,
+                parameterDescriptor: ValueParameterDescriptor,
+                parameterValuesArg: SmartFMap<PseudoValue, ValueParameterDescriptor>
+        ): SmartFMap<PseudoValue, ValueParameterDescriptor> {
+            var parameterValues = parameterValuesArg
+            val expression = valueArgument.getArgumentExpression()
             if (expression != null) {
                 if (!valueArgument.isExternal()) {
-                    generateInstructions(expression);
+                    generateInstructions(expression)
                 }
 
-                PseudoValue argValue = getBoundOrUnreachableValue(expression);
+                val argValue = getBoundOrUnreachableValue(expression)
                 if (argValue != null) {
-                    parameterValues = parameterValues.plus(argValue, parameterDescriptor);
+                    parameterValues = parameterValues.plus(argValue, parameterDescriptor)
                 }
             }
-            return parameterValues;
+            return parameterValues
         }
     }
 }
