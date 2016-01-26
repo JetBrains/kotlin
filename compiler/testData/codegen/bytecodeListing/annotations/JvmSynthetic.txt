@@ -1,5 +1,4 @@
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public final class Example {
     private field prop2: int
     private synthetic final @org.jetbrains.annotations.NotNull field prop: java.lang.String

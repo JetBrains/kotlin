@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.AsmUtil.method
-import org.jetbrains.kotlin.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
@@ -158,9 +157,7 @@ class PropertyReferenceCodegen(
         }
     }
 
-    override fun generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(v, state)
-
+    override fun generateKotlinMetadataAnnotation() {
         writeSyntheticClassMetadata(v)
     }
 

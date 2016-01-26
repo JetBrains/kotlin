@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.FqName;
@@ -248,7 +247,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateKotlinAnnotation() {
+    protected void generateKotlinMetadataAnnotation() {
         final DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
 
@@ -257,15 +256,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, new Function1<AnnotationVisitor, Unit>() {
             @Override
             public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, classProto, false);
+                writeAnnotationData(av, serializer, classProto);
                 return Unit.INSTANCE;
             }
         });
-
-        AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        writeAbiVersion(av);
-        writeAnnotationData(av, serializer, classProto, true);
-        av.visitEnd();
     }
 
     private void writeEnclosingMethod() {

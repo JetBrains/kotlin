@@ -1,5 +1,4 @@
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public final class Foo {
     public method <init>(): void
     public final method bar(): void
@@ -8,7 +7,6 @@ public final class Foo {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFileFacade
 public final class InlineOnlyKt {
     public final static method bar(): void
     private final static method baz(): void
