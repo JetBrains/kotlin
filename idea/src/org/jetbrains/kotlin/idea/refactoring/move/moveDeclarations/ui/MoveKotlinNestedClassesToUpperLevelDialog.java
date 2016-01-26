@@ -359,15 +359,17 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             final FqName targetPackageFqName = getTargetPackageFqName();
             if (targetPackageFqName == null) return;
 
+            String innerClassName = innerClass.getName();
+            if (innerClassName == null) return;
             final String targetFileName = KotlinNameSuggester.INSTANCE.suggestNameByName(
-                    innerClass.getName() + "." + KotlinFileType.EXTENSION,
+                    innerClassName,
                     new Function1<String, Boolean>() {
                         @Override
                         public Boolean invoke(String s) {
-                            return targetDir.findFile(s) == null;
+                            return targetDir.findFile(s + "." + KotlinFileType.EXTENSION) == null;
                         }
                     }
-            );
+            ) + "." + KotlinFileType.EXTENSION;
             moveTarget = new KotlinMoveTargetForDeferredFile(
                     targetPackageFqName,
                     targetDir,
