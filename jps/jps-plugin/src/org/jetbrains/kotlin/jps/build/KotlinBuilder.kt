@@ -542,7 +542,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val removedFiles = chunk.targets.flatMap { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it) }
         removedFiles.forEach { lookupStorage.removeLookupsFrom(it) }
 
-        lookupStorage.addAll(lookupTracker.lookups.entrySet())
+        lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
     }
 
     // if null is returned, nothing was done
