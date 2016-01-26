@@ -29,7 +29,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_FQ_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_VERSION_FIELD_NAME;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
@@ -139,7 +139,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     }
 
     private void assertAnnotatedWithMetadata(@NotNull Class<?> aClass) {
-        String annotationFqName = METADATA.asString();
+        String annotationFqName = METADATA_FQ_NAME.asString();
         Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(annotationFqName);
         assertTrue("No annotation " + annotationFqName + " found in " + aClass, aClass.isAnnotationPresent(annotationClass));
 

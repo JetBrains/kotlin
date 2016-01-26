@@ -20,7 +20,6 @@ import com.intellij.openapi.fileTypes.StdFileTypes
 import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -40,8 +39,6 @@ object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVers
     override fun getVersion() = VERSION
 
     private val VERSION = 4
-
-    private val METADATA_DESC = asmDescByFqNameWithoutInnerClasses(METADATA)
 
     private val kindsToIndex = setOf(
             KotlinClassHeader.Kind.CLASS,

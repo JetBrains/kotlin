@@ -90,7 +90,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source) {
         FqName fqName = classId.asSingleFqName();
-        if (fqName.equals(METADATA)) {
+        if (fqName.equals(METADATA_FQ_NAME)) {
             return new KotlinMetadataArgumentVisitor();
         }
 
