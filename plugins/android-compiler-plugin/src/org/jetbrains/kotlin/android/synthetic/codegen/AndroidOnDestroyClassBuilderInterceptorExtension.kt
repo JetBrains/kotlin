@@ -39,7 +39,10 @@ class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptor
         return AndroidOnDestroyClassBuilderFactory(interceptedFactory, bindingContext)
     }
 
-    private inner class AndroidOnDestroyClassBuilderFactory(private val delegateFactory: ClassBuilderFactory, val bindingContext: BindingContext) : ClassBuilderFactory {
+    private inner class AndroidOnDestroyClassBuilderFactory(
+            private val delegateFactory: ClassBuilderFactory,
+            val bindingContext: BindingContext
+    ) : ClassBuilderFactory {
 
         override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
             return AndroidOnDestroyCollectorClassBuilder(delegateFactory.newClassBuilder(origin), bindingContext)
@@ -94,9 +97,15 @@ class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 exceptions: Array<out String>?
         ): MethodVisitor {
             return object : MethodVisitor(Opcodes.ASM5, super.newMethod(origin, access, name, desc, signature, exceptions)) {
-                override fun visitCode() {
-                    super.visitCode()
+                override fun visitInsn(opcode: Int) {
+                    if (opcode == Opcodes.RETURN) {
+                        generateClearCacheMethodCall()
+                    }
 
+                    super.visitInsn(opcode)
+                }
+
+                private fun generateClearCacheMethodCall() {
                     if (name != AndroidExpressionCodegenExtension.ON_DESTROY_METHOD_NAME || currentClass == null) return
                     if (Type.getArgumentTypes(desc).size != 0) return
                     if (Type.getReturnType(desc) != Type.VOID_TYPE) return
