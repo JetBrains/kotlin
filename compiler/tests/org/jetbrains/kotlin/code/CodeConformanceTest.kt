@@ -39,7 +39,9 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-maven-plugin/target/generated-sources",
                 "compiler/testData/psi/kdoc",
-                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt"
+                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "android-studio/sdk",
+                "libraries/tools/runtime/target/copied-sources/kotlin/reflect/jvm/internal/pcollections"
         ).map { File(it) }
     }
 
