@@ -699,8 +699,12 @@
                 url="@{base.repository.url}/intellij-core/@{idea.maven.version}/intellij-core-@{idea.maven.version}.zip"
                 usetimestamp="true"/>
 
-            <get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"
-                 dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
+            <!--<get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"-->
+            <!--dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>-->
+            <!-- Temporary get jps test artifact built with a newer Kotlin -->
+            <get
+                src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/679472:id/jps/jps-build-test-IC-143.SNAPSHOT.jar"
+                dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
 
             <download_and_unzip
                 dir="@{download.dir}/jps-standalone-@{idea.maven.version}"
