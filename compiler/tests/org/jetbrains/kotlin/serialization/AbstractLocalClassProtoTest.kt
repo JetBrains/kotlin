@@ -79,7 +79,7 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     @Suppress("UNCHECKED_CAST")
     private fun assertHasAnnotationData(clazz: Class<*>) {
         checkNotNull(clazz.getAnnotation(
-                clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_CLASS.asString()) as Class<Annotation>
-        )) { "KotlinClass annotation is not found for class $clazz" }
+                clazz.classLoader.loadClass(JvmAnnotationNames.METADATA.asString()) as Class<Annotation>
+        )) { "Metadata annotation is not found for class $clazz" }
     }
 }
