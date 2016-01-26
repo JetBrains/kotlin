@@ -170,8 +170,7 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        deprecate(Maps) { Deprecation("Use entries.mapIndexedTo instead.", replaceWith = "this.entries.mapIndexedTo(destination, transform)") }
-        include(Maps, CharSequences)
+        include(CharSequences)
     }
 
     templates add f("mapNotNullTo(destination: C, transform: (T) -> R?)") {
