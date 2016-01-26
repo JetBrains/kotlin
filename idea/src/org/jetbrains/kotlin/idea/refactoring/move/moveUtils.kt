@@ -22,7 +22,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringSettings
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
@@ -183,7 +182,12 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
                 return fqName.asString().let {
                     val prefix = containerFqName.asString()
                     val prefixOffset = it.indexOf(prefix)
-                    val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newContainer.fqName!!.asString()))
+                    val newFqName = if (prefix.isEmpty()) {
+                        FqName("${newContainer.fqName!!.asString()}.$it")
+                    }
+                    else {
+                        FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newContainer.fqName!!.asString()))
+                    }
                     MoveRenameSelfUsageInfo(refExpr.mainReference, declaration, newFqName)
                 }
             }
