@@ -10,10 +10,10 @@ out/production/module2/foo/B.class
 out/production/module3/foo/C.class
 End of files
 Compiling files:
-module2/src/module2_B.kt
+module3/src/module3_C.kt
 End of files
 Compiling files:
-module3/src/module3_C.kt
+module2/src/module2_B.kt
 End of files
 Compiling files:
 module1/src/module1_D.kt
@@ -26,10 +26,10 @@ Cleaning output files:
 out/production/module1/foo/A.class
 End of files
 Compiling files:
-module2/src/module2_B.kt
+module3/src/module3_C.kt
 End of files
 Compiling files:
-module3/src/module3_C.kt
+module2/src/module2_B.kt
 End of files
 Compiling files:
 module1/src/module1_A.kt
