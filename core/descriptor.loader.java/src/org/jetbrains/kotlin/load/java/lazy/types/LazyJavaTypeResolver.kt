@@ -196,12 +196,15 @@ class LazyJavaTypeResolver(
             }
             var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
             return javaType.typeArguments.withIndex().map {
-                javaTypeParameter ->
-                val (i, t) = javaTypeParameter
-                val parameter = if (i >= typeParameters.size)
-                                    ErrorUtils.createErrorTypeParameter(i, "#$i for ${typeConstructor}")
-                                else typeParameters[i]
-                transformToTypeProjection(t, howTheProjectionIsUsed.toAttributes(), parameter)
+                indexedArgument ->
+                val (i, javaTypeArgument) = indexedArgument
+
+                assert(i < typeParameters.size) {
+                    "Argument index should be less then type parameters count, but $i > ${typeParameters.size}"
+                }
+
+                val parameter = typeParameters[i]
+                transformToTypeProjection(javaTypeArgument, howTheProjectionIsUsed.toAttributes(), parameter)
             }.toList()
         }
 
