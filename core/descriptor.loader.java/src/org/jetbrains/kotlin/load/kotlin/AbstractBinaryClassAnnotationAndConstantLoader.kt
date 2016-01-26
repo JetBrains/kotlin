@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -59,7 +60,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             source: SourceElement,
             result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-        if (JvmAnnotationNames.isSpecialAnnotation(annotationClassId, true)) return null
+        if (annotationClassId in SPECIAL_ANNOTATIONS) return null
 
         return loadAnnotation(annotationClassId, source, result)
     }
@@ -334,4 +335,15 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
             val memberAnnotations: Map<MemberSignature, List<A>>,
             val propertyConstants: Map<MemberSignature, C>
     )
+
+    private companion object {
+        val SPECIAL_ANNOTATIONS = listOf(
+                JvmAnnotationNames.METADATA_FQ_NAME,
+                JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
+                JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
+                FqName("java.lang.annotation.Target"),
+                FqName("java.lang.annotation.Retention"),
+                FqName("java.lang.annotation.Documented")
+        ).map(ClassId::topLevel).toSet()
+    }
 }
