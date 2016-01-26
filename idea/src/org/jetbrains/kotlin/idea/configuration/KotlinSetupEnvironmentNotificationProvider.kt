@@ -20,7 +20,6 @@ import com.intellij.ProjectTopics
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.roots.ModuleRootAdapter
@@ -46,7 +45,7 @@ import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
 class KotlinSetupEnvironmentNotificationProvider(
         private val myProject: Project,
-        notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
+        notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>() {
 
     init {
         myProject.messageBus.connect(myProject).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootAdapter() {
