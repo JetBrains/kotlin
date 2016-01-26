@@ -52,7 +52,7 @@ class BuiltinsPackageFragment(
     override val nameResolver = NameResolverImpl(builtinsMessage.strings, builtinsMessage.qualifiedNames)
 
     override val classIdToProto =
-            builtinsMessage.classList.toMapBy { klass ->
+            builtinsMessage.classList.associateBy { klass ->
                 nameResolver.getClassId(klass.fqName)
             }
 

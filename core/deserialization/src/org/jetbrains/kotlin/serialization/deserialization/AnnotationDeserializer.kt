@@ -49,7 +49,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor) {
         if (proto.argumentCount != 0 && !ErrorUtils.isError(annotationClass) && DescriptorUtils.isAnnotationClass(annotationClass)) {
             val constructor = annotationClass.constructors.singleOrNull()
             if (constructor != null) {
-                val parameterByName = constructor.valueParameters.toMapBy { it.name }
+                val parameterByName = constructor.valueParameters.associateBy { it.name }
                 arguments = proto.argumentList.map { resolveArgument(it, parameterByName, nameResolver) }.filterNotNull().toMap()
             }
         }

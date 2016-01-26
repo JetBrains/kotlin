@@ -192,7 +192,7 @@ fun Annotated.getAnnotationRetention(): KotlinRetention? {
 }
 
 val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor>
-    get() = sequence(this, { it.containingDeclaration })
+    get() = generateSequence(this, { it.containingDeclaration })
 
 val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
     get() = parentsWithSelf.drop(1)

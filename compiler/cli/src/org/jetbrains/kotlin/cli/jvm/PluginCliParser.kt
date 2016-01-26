@@ -38,7 +38,7 @@ object PluginCliParser {
                 javaClass.classLoader
         )
 
-        val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toArrayList()
+        val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toMutableList()
         componentRegistrars.addAll(BundledCompilerPlugins.componentRegistrars)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
@@ -55,11 +55,11 @@ object PluginCliParser {
             it.pluginId
         } ?: mapOf()
 
-        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toArrayList()
+        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toMutableList()
         commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
 
         for (processor in commandLineProcessors) {
-            val declaredOptions = processor.pluginOptions.toMapBy { it.name }
+            val declaredOptions = processor.pluginOptions.associateBy { it.name }
             val optionsToValues = MultiMap<CliOption, CliOptionValue>()
 
             for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {

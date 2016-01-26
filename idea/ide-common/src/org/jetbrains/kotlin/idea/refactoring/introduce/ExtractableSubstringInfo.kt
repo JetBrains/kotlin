@@ -73,7 +73,7 @@ class ExtractableSubstringInfo(
         get() = contentRange.shiftRight(-template.startOffset)
 
     val entries: Sequence<KtStringTemplateEntry>
-        get() = sequence(startEntry) { if (it != endEntry) it.nextSiblingOfSameType() else null }
+        get() = generateSequence(startEntry) { if (it != endEntry) it.nextSiblingOfSameType() else null }
 
     fun createExpression(): KtExpression {
         val quote = template.firstChild.text

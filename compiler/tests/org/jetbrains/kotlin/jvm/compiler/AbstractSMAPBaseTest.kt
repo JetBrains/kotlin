@@ -67,7 +67,7 @@ interface AbstractSMAPBaseTest {
         }.map {
             val smap = it.value.mapNotNull { it.smap?.replaceHash() }.joinToString("\n")
             SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key)
-        }.toMapBy { it.sourceFile }
+        }.associateBy { it.sourceFile }
 
         for (source in sourceData) {
             val data = compiledData[source.sourceFile]

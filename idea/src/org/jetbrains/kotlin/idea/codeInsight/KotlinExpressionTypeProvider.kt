@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     override fun getExpressionsAt(elementAt: PsiElement): List<KtExpression> =
-            elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filterNot { it.shouldSkip() }.toArrayList()
+            elementAt.parentsWithSelf.filterIsInstance<KtExpression>().filterNot { it.shouldSkip() }.toList()
 
     private fun KtExpression.shouldSkip(): Boolean {
         return this is KtStatementExpression && this !is KtFunction

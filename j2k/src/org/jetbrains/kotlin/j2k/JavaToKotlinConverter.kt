@@ -107,7 +107,7 @@ class JavaToKotlinConverter(
 
             val intermediateResults = processor.processItems(0.25, inputElements) { inputElement ->
                 Converter.create(inputElement, settings, services, ::inConversionScope, usageProcessingCollector).convert()
-            }.toArrayList()
+            }.toMutableList()
 
             val results = processor.processItems(0.25, intermediateResults.withIndex()) { pair ->
                 val (i, result) = pair

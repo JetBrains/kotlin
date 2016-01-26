@@ -103,7 +103,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
             private fun getTempJavaClassName(project: Project, kotlinFile: VirtualFile): String {
                 val baseName = kotlinFile.nameWithoutExtension
                 val psiDir = kotlinFile.parent!!.toPsiDirectory(project)!!
-                return sequence(0) { it + 1 }
+                return generateSequence(0) { it + 1 }
                         .map { "$baseName$it" }
                         .first { psiDir.findFile("$it.java") == null && findTestClass(psiDir, it) == null }
             }

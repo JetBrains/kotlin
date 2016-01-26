@@ -77,7 +77,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                      null
                 }
                 else if (file.extension != "kt") {
-                    val filePath = file.relativeToFile(srcDir).invariantSeparatorsPath
+                    val filePath = file.relativeTo(srcDir).invariantSeparatorsPath
                     configureByFile(filePath)
                 }
                 else {

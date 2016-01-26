@@ -63,7 +63,7 @@ class GenerateProtoBufCompare {
     private val extensionsMap = DebugJvmProtoBuf.getDescriptor().extensions.groupBy { it.containingType }
 
     private val allMessages: MutableSet<Descriptors.Descriptor> = linkedSetOf()
-    private val messagesToProcess: Queue<Descriptors.Descriptor> = linkedListOf()
+    private val messagesToProcess: Queue<Descriptors.Descriptor> = LinkedList()
     private val repeatedFields: MutableSet<Descriptors.FieldDescriptor> = linkedSetOf()
 
     fun generate(): String {

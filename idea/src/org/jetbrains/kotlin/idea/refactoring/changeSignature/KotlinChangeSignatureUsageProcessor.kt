@@ -602,7 +602,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             caller: KtNamedDeclaration,
             callerDescriptor: DeclarationDescriptor) {
         val valueParameters = caller.getValueParameters()
-        val existingParameters = valueParameters.toMapBy { it.name }
+        val existingParameters = valueParameters.associateBy { it.name }
         val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
         for (parameterInfo in changeInfo.getNonReceiverParameters()) {
             if (!(parameterInfo.isNewParameter)) continue

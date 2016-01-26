@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.comparisons.*
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
@@ -303,7 +304,7 @@ class CompileServiceImpl(
                 synchronized(state.sessions) {
                     // 2. check if any session hanged - clean
                     // making copy of the list before calling release
-                    state.sessions.filterValues { !it.isAlive }.keys.toArrayList()
+                    state.sessions.filterValues { !it.isAlive }.keys.toList()
                 }.forEach { releaseCompileSession(it) }
 
                 // 3. check if in graceful shutdown state and all sessions are closed

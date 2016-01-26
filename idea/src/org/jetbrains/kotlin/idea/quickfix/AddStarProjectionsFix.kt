@@ -44,7 +44,7 @@ open class AddStarProjectionsFix private constructor(element: KtUserType,
         public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val diagnosticWithParameters = Errors.NO_TYPE_ARGUMENTS_ON_RHS.cast(diagnostic)
             val typeElement: KtTypeElement = diagnosticWithParameters.psiElement.typeElement ?: return null
-            val unwrappedType = sequence(typeElement) { (it as? KtNullableType)?.innerType }.lastOrNull() as? KtUserType ?: return null
+            val unwrappedType = generateSequence(typeElement) { (it as? KtNullableType)?.innerType }.lastOrNull() as? KtUserType ?: return null
             return AddStarProjectionsFix(unwrappedType, diagnosticWithParameters.a)
         }
     }

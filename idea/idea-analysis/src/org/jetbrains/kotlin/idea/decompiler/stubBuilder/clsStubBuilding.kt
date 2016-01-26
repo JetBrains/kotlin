@@ -110,7 +110,7 @@ private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
 }
 
 fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
-    val segments = packageFqName.pathSegments().toArrayList()
+    val segments = packageFqName.pathSegments()
     val iterator = segments.listIterator(segments.size)
 
     fun recCreateStubForPackageName(current: StubElement<out PsiElement>) {

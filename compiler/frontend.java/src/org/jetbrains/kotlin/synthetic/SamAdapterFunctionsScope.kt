@@ -108,7 +108,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
                                                       sourceFunction.original.source)
                 descriptor.sourceFunction = sourceFunction
 
-                val sourceTypeParams = (sourceFunction.typeParameters).toArrayList()
+                val sourceTypeParams = (sourceFunction.typeParameters).toMutableList()
                 val ownerClass = sourceFunction.containingDeclaration as ClassDescriptor
                 //TODO: should we go up parents for getters/setters too?
                 //TODO: non-inner classes

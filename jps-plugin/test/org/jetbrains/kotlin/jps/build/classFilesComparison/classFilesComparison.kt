@@ -36,6 +36,8 @@ import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
+import kotlin.comparisons.*
+
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
@@ -53,7 +55,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
         val listFiles = dir.listFiles()
         assertNotNull(listFiles)
 
-        val children = listFiles!!.sortedWith(compareBy ({ it.isDirectory }, { it.name } ))
+        val children = listFiles!!.sortedWith(compareBy({ it.isDirectory }, { it.name }))
         for (child in children) {
             if (child.isDirectory) {
                 p.println(child.name)

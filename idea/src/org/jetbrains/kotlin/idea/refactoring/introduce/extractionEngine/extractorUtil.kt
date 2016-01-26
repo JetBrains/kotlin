@@ -123,7 +123,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationPattern(
 
     return buildSignature(this, descriptorRenderer).let { builder ->
         builder.transform {
-            for (i in sequence(indexOf('$')) { indexOf('$', it + 2) }) {
+            for (i in generateSequence(indexOf('$')) { indexOf('$', it + 2) }) {
                 if (i < 0) break
                 insert(i + 1, '$')
             }
@@ -286,7 +286,7 @@ private fun makeCall(
         else -> calleeName
     }
 
-    val anchorInBlock = sequence(anchor) { it.parent }.firstOrNull { it.parent is KtBlockExpression }
+    val anchorInBlock = generateSequence(anchor) { it.parent }.firstOrNull { it.parent is KtBlockExpression }
     val block = (anchorInBlock?.parent as? KtBlockExpression) ?: anchorParent
 
     val psiFactory = KtPsiFactory(anchor.project)

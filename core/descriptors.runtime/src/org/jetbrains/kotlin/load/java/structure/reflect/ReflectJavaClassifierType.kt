@@ -45,7 +45,7 @@ class ReflectJavaClassifierType(public override val type: Type) : ReflectJavaTyp
     override fun isRaw(): Boolean = with(type) { this is Class<*> && getTypeParameters().isNotEmpty() }
 
     override fun getTypeArguments(): List<JavaType> {
-        return sequence({type as? ParameterizedType}, { it.ownerType as? ParameterizedType }).flatMap {
+        return generateSequence({type as? ParameterizedType}, { it.ownerType as? ParameterizedType }).flatMap {
             it.actualTypeArguments.asSequence().map { ReflectJavaType.create(it) }
         }.toList()
     }

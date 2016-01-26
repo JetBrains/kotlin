@@ -61,7 +61,7 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
         val extraFiles = mainFile.parentFile.listFiles { file, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
-        val extraFilesToPsi = extraFiles.toMapBy { fixture.configureByFile(it.name) }
+        val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
         val file = fixture.configureByFile(mainFileName)
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null

@@ -47,7 +47,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
     private data class FileId(val file: File, val lastModified: Long, val digest: ByteArray)
 
     private val fileIdsLock = Semaphore(1) // a barrier for ensuring ids are initialized, using semaphore to allow modifications from another thread
-    private var fileIds: ArrayList<FileId>? = null
+    private var fileIds: List<FileId>? = null
     private val lastChangedStatus = AtomicBoolean(false)
     private val lastUpdate = AtomicLong(0)
     private val lastDigestUpdate = AtomicLong(0)
@@ -63,7 +63,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
                         .asSequence()
                         .flatMap { it.walk().filter(::isClasspathFile) }
                         .map { FileId(it, it.lastModified(), it.md5Digest()) }
-                        .toArrayList()
+                        .toList()
                 val nowMs = TimeUnit.MILLISECONDS.toMillis(System.nanoTime())
                 lastUpdate.set(nowMs)
                 lastDigestUpdate.set(nowMs)

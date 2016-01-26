@@ -883,7 +883,7 @@ class KotlinPsiUnifier(
         }
     }
 
-    private val descriptorToParameter = parameters.toMapBy { (it.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() }
+    private val descriptorToParameter = parameters.associateBy { (it.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() }
 
     private fun PsiElement.unwrap(): PsiElement? {
         return when (this) {

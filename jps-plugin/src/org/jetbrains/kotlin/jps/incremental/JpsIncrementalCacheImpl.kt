@@ -81,7 +81,7 @@ class JpsIncrementalCacheImpl(
 
     private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
         fun getEntries(): Map<JvmClassName, Collection<String>> =
-                storage.keys.toMapBy(JvmClassName::byInternalName) { storage[it]!! }
+                storage.keys.associateBy(JvmClassName::byInternalName) { storage[it]!! }
 
         fun put(className: JvmClassName, changedFunctions: List<String>) {
             storage[className.internalName] = changedFunctions

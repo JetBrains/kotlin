@@ -59,7 +59,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             VARIANT_OPTION -> {
-                val paths = configuration.getList(AndroidConfigurationKeys.VARIANT).toArrayList()
+                val paths = configuration.getList(AndroidConfigurationKeys.VARIANT).toMutableList()
                 paths.add(value)
                 configuration.put(AndroidConfigurationKeys.VARIANT, paths)
             }

@@ -348,7 +348,7 @@ class MoveKotlinDeclarationsProcessor(
         }
 
         try {
-            val usageList = usages.toArrayList()
+            val usageList = usages.toList()
 
             descriptor.delegate.preprocessUsages(project, usageList)
 

@@ -59,7 +59,7 @@ abstract class SelfTargetingIntention<TElement : KtElement>(
         val leaf2 = file.findElementAt(offset - 1)
         val commonParent = if (leaf1 != null && leaf2 != null) PsiTreeUtil.findCommonParent(leaf1, leaf2) else null
 
-        var elementsToCheck: Sequence<PsiElement> = sequence { null }
+        var elementsToCheck: Sequence<PsiElement> = emptySequence()
         if (leaf1 != null) {
             elementsToCheck += leaf1.parentsWithSelf.takeWhile { it != commonParent }
         }

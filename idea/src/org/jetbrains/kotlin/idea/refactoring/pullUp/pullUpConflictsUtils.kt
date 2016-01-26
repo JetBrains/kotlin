@@ -160,7 +160,7 @@ private fun KotlinPullUpData.checkVisibility(
     }
 
     val member = memberInfo.member
-    val childrenToCheck = member.allChildren.toArrayList()
+    val childrenToCheck = member.allChildren.toMutableList()
     if (memberInfo.isToAbstract && member is KtCallableDeclaration) {
         when (member) {
             is KtNamedFunction -> childrenToCheck.remove(member.bodyExpression as PsiElement?)

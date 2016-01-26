@@ -698,7 +698,7 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
 ): ListType {
     originalList.children.takeWhile { it is PsiErrorElement }.forEach { it.delete() }
 
-    val oldParameters = originalList.itemsFun().toArrayList()
+    val oldParameters = originalList.itemsFun().toMutableList()
     val newParameters = newList.itemsFun()
     val oldCount = oldParameters.size
     val newCount = newParameters.size

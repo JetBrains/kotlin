@@ -85,7 +85,7 @@ class KotlinMethodNode(
             is PsiMethod -> myMethod.getJavaMethodDescriptor() ?: return
             else -> throw AssertionError("Invalid declaration: ${myMethod.getElementTextWithContext()}")
         }
-        val containerName = sequence<DeclarationDescriptor>(descriptor) { it.containingDeclaration }
+        val containerName = generateSequence<DeclarationDescriptor>(descriptor) { it.containingDeclaration }
                 .firstOrNull { it is ClassDescriptor }
                 ?.name
 
