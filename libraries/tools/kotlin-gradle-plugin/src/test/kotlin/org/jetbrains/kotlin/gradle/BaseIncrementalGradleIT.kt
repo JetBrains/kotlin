@@ -55,6 +55,10 @@ repositories {
      url 'file://' + pathToKotlinPlugin
   }
 }
+
+dependencies {
+    compile  'org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT'
+}
             """)
         }
     }
