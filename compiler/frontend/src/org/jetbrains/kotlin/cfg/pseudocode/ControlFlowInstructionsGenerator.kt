@@ -14,534 +14,415 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg.pseudocode;
+package org.jetbrains.kotlin.cfg.pseudocode
 
-import com.intellij.util.containers.Stack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.*;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-import java.util.*;
+import java.util.*
 
-public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter {
-    private ControlFlowBuilder builder = null;
+class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
+    private var builder: ControlFlowBuilder? = null
 
-    private final Stack<LoopInfo> loopInfo = new Stack<LoopInfo>();
-    private final Stack<LexicalScope> lexicalScopes = new Stack<LexicalScope>();
-    private final Map<KtElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<KtElement, BreakableBlockInfo>();
-    private int labelCount = 0;
+    override val delegateBuilder: ControlFlowBuilder
+        get() = builder ?: throw AssertionError("Builder stack is empty in ControlFlowInstructionsGenerator!")
 
-    private final Stack<ControlFlowInstructionsGeneratorWorker> builders = new Stack<ControlFlowInstructionsGeneratorWorker>();
+    private val loopInfo = Stack<LoopInfo>()
+    private val lexicalScopes = Stack<LexicalScope>()
+    private val elementToBlockInfo = HashMap<KtElement, BreakableBlockInfo>()
+    private var labelCount = 0
 
-    private final Stack<BlockInfo> allBlocks = new Stack<BlockInfo>();
+    private val builders = Stack<ControlFlowInstructionsGeneratorWorker>()
 
-    @NotNull
-    @Override
-    protected ControlFlowBuilder getDelegateBuilder() {
-        return builder;
+    private val allBlocks = Stack<BlockInfo>()
+
+    private fun pushBuilder(scopingElement: KtElement, subroutine: KtElement) {
+        val worker = ControlFlowInstructionsGeneratorWorker(scopingElement, subroutine)
+        builders.push(worker)
+        builder = worker
     }
 
-    private void pushBuilder(KtElement scopingElement, KtElement subroutine) {
-        ControlFlowInstructionsGeneratorWorker worker = new ControlFlowInstructionsGeneratorWorker(scopingElement, subroutine);
-        builders.push(worker);
-        builder = worker;
-    }
-
-    private ControlFlowInstructionsGeneratorWorker popBuilder(@NotNull KtElement element) {
-        ControlFlowInstructionsGeneratorWorker worker = builders.pop();
+    private fun popBuilder(): ControlFlowInstructionsGeneratorWorker {
+        val worker = builders.pop()
         if (!builders.isEmpty()) {
-            builder = builders.peek();
+            builder = builders.peek()
         }
         else {
-            builder = null;
+            builder = null
         }
-        return worker;
+        return worker
     }
 
-    @Override
-    public void enterSubroutine(@NotNull KtElement subroutine) {
-        if (builder != null && subroutine instanceof KtFunctionLiteral) {
-            pushBuilder(subroutine, builder.getReturnSubroutine());
+    override fun enterSubroutine(subroutine: KtElement) {
+        val builder = builder
+        if (builder != null && subroutine is KtFunctionLiteral) {
+            pushBuilder(subroutine, builder.returnSubroutine)
         }
         else {
-            pushBuilder(subroutine, subroutine);
+            pushBuilder(subroutine, subroutine)
         }
-        assert builder != null;
-        builder.enterLexicalScope(subroutine);
-        builder.enterSubroutine(subroutine);
+        delegateBuilder.enterLexicalScope(subroutine)
+        delegateBuilder.enterSubroutine(subroutine)
     }
 
-    @NotNull
-    @Override
-    public Pseudocode exitSubroutine(@NotNull KtElement subroutine) {
-        super.exitSubroutine(subroutine);
-        builder.exitLexicalScope(subroutine);
-        ControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
+    override fun exitSubroutine(subroutine: KtElement): Pseudocode {
+        super.exitSubroutine(subroutine)
+        delegateBuilder.exitLexicalScope(subroutine)
+        val worker = popBuilder()
         if (!builders.empty()) {
-            ControlFlowInstructionsGeneratorWorker builder = builders.peek();
-            builder.declareFunction(subroutine, worker.getPseudocode());
+            val builder = builders.peek()
+            builder.declareFunction(subroutine, worker.pseudocode)
         }
-        return worker.getPseudocode();
+        return worker.pseudocode
     }
 
-    private class ControlFlowInstructionsGeneratorWorker implements ControlFlowBuilder {
+    private inner class ControlFlowInstructionsGeneratorWorker(scopingElement: KtElement, override val returnSubroutine: KtElement) : ControlFlowBuilder {
 
-        private final PseudocodeImpl pseudocode;
-        private final Label error;
-        private final Label sink;
-        private final KtElement returnSubroutine;
+        val pseudocode: PseudocodeImpl
+        private val error: Label
+        private val sink: Label
 
-        private final PseudoValueFactory valueFactory = new PseudoValueFactoryImpl() {
-            @NotNull
-            @Override
-            public PseudoValue newValue(@Nullable KtElement element, @Nullable InstructionWithValue instruction) {
-                PseudoValue value = super.newValue(element, instruction);
+        private val valueFactory = object : PseudoValueFactoryImpl() {
+            override fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue {
+                val value = super.newValue(element, instruction)
                 if (element != null) {
-                    bindValue(value, element);
+                    bindValue(value, element)
                 }
-                return value;
+                return value
             }
-        };
-
-        private ControlFlowInstructionsGeneratorWorker(@NotNull KtElement scopingElement, @NotNull KtElement returnSubroutine) {
-            this.pseudocode = new PseudocodeImpl(scopingElement);
-            this.error = pseudocode.createLabel("error", null);
-            this.sink = pseudocode.createLabel("sink", null);
-            this.returnSubroutine = returnSubroutine;
         }
 
-        public PseudocodeImpl getPseudocode() {
-            return pseudocode;
+        init {
+            this.pseudocode = PseudocodeImpl(scopingElement)
+            this.error = pseudocode.createLabel("error", null)
+            this.sink = pseudocode.createLabel("sink", null)
         }
 
-        private void add(@NotNull Instruction instruction) {
-            pseudocode.addInstruction(instruction);
+        private fun add(instruction: Instruction) {
+            pseudocode.addInstruction(instruction)
         }
 
-        @NotNull
-        @Override
-        public final Label createUnboundLabel() {
-            return pseudocode.createLabel("L" + labelCount++, null);
+        override fun createUnboundLabel(): Label {
+            return pseudocode.createLabel("L" + labelCount++, null)
         }
 
-        @NotNull
-        @Override
-        public Label createUnboundLabel(@NotNull String name) {
-            return pseudocode.createLabel("L" + labelCount++, name);
+        override fun createUnboundLabel(name: String): Label {
+            return pseudocode.createLabel("L" + labelCount++, name)
         }
 
-        @NotNull
-        @Override
-        public final LoopInfo enterLoop(@NotNull KtLoopExpression expression) {
-            LoopInfo info = new LoopInfo(
+        override fun enterLoop(expression: KtLoopExpression): LoopInfo {
+            val info = LoopInfo(
                     expression,
                     createUnboundLabel("loop entry point"),
                     createUnboundLabel("loop exit point"),
                     createUnboundLabel("body entry point"),
                     createUnboundLabel("body exit point"),
-                    createUnboundLabel("condition entry point"));
-            bindLabel(info.getEntryPoint());
-            elementToBlockInfo.put(expression, info);
-            return info;
+                    createUnboundLabel("condition entry point"))
+            bindLabel(info.entryPoint)
+            elementToBlockInfo.put(expression, info)
+            return info
         }
 
-        @Override
-        public void enterLoopBody(@NotNull KtLoopExpression expression) {
-            LoopInfo info = (LoopInfo) elementToBlockInfo.get(expression);
-            bindLabel(info.getBodyEntryPoint());
-            loopInfo.push(info);
-            allBlocks.push(info);
+        override fun enterLoopBody(expression: KtLoopExpression) {
+            val info = elementToBlockInfo[expression] as LoopInfo
+            bindLabel(info.bodyEntryPoint)
+            loopInfo.push(info)
+            allBlocks.push(info)
         }
 
-        @Override
-        public final void exitLoopBody(@NotNull KtLoopExpression expression) {
-            LoopInfo info = loopInfo.pop();
-            elementToBlockInfo.remove(expression);
-            allBlocks.pop();
-            bindLabel(info.getBodyExitPoint());
+        override fun exitLoopBody(expression: KtLoopExpression) {
+            val info = loopInfo.pop()
+            elementToBlockInfo.remove(expression)
+            allBlocks.pop()
+            bindLabel(info.bodyExitPoint)
         }
 
-        @Override
-        public KtLoopExpression getCurrentLoop() {
-            return loopInfo.empty() ? null : loopInfo.peek().getElement();
-        }
+        override val currentLoop: KtLoopExpression?
+            get() = if (loopInfo.empty()) null else loopInfo.peek().element
 
-        @Override
-        public void enterSubroutine(@NotNull KtElement subroutine) {
-            BreakableBlockInfo blockInfo = new BreakableBlockInfo(
+        override fun enterSubroutine(subroutine: KtElement) {
+            val blockInfo = BreakableBlockInfo(
                     subroutine,
                     /* entry point */ createUnboundLabel(),
-                    /* exit point  */ createUnboundLabel());
-            elementToBlockInfo.put(subroutine, blockInfo);
-            allBlocks.push(blockInfo);
-            bindLabel(blockInfo.getEntryPoint());
-            add(new SubroutineEnterInstruction(subroutine, getCurrentScope()));
+                    /* exit point  */ createUnboundLabel())
+            elementToBlockInfo.put(subroutine, blockInfo)
+            allBlocks.push(blockInfo)
+            bindLabel(blockInfo.entryPoint)
+            add(SubroutineEnterInstruction(subroutine, currentScope))
         }
 
-        @NotNull
-        @Override
-        public KtElement getCurrentSubroutine() {
-            return pseudocode.getCorrespondingElement();
+        override val currentSubroutine: KtElement
+            get() = pseudocode.correspondingElement
+
+        override fun getConditionEntryPoint(labelElement: KtElement): Label {
+            val blockInfo = elementToBlockInfo[labelElement]
+            assert(blockInfo is LoopInfo) { "expected LoopInfo for " + labelElement.text }
+            return (blockInfo as LoopInfo).conditionEntryPoint
         }
 
-        @Override
-        public KtElement getReturnSubroutine() {
-            return returnSubroutine;// subroutineInfo.empty() ? null : subroutineInfo.peek().getElement();
+        override fun getExitPoint(labelElement: KtElement): Label {
+            val blockInfo = elementToBlockInfo[labelElement] ?: error(labelElement.text)
+            return blockInfo.exitPoint
         }
 
-        @NotNull
-        @Override
-        public Label getEntryPoint(@NotNull KtElement labelElement) {
-            return elementToBlockInfo.get(labelElement).getEntryPoint();
+        private val currentScope: LexicalScope
+            get() = lexicalScopes.peek()
+
+        override fun enterLexicalScope(element: KtElement) {
+            val current = if (lexicalScopes.isEmpty()) null else currentScope
+            val scope = LexicalScope(current, element)
+            lexicalScopes.push(scope)
         }
 
-        @NotNull
-        @Override
-        public Label getConditionEntryPoint(@NotNull KtElement labelElement) {
-            BreakableBlockInfo blockInfo = elementToBlockInfo.get(labelElement);
-            assert blockInfo instanceof LoopInfo : "expected LoopInfo for " + labelElement.getText() ;
-            return ((LoopInfo)blockInfo).getConditionEntryPoint();
-        }
-
-        @NotNull
-        @Override
-        public Label getExitPoint(@NotNull KtElement labelElement) {
-            BreakableBlockInfo blockInfo = elementToBlockInfo.get(labelElement);
-            assert blockInfo != null : labelElement.getText();
-            return blockInfo.getExitPoint();
-        }
-
-        @NotNull
-        private LexicalScope getCurrentScope() {
-            return lexicalScopes.peek();
-        }
-
-        @Override
-        public void enterLexicalScope(@NotNull KtElement element) {
-            LexicalScope current = lexicalScopes.isEmpty() ? null : getCurrentScope();
-            LexicalScope scope = new LexicalScope(current, element);
-            lexicalScopes.push(scope);
-        }
-
-        @Override
-        public void exitLexicalScope(@NotNull KtElement element) {
-            LexicalScope currentScope = getCurrentScope();
-            assert currentScope.getElement() == element : "Exit from not the current lexical scope.\n" +
-                    "Current scope is for: " + currentScope.getElement() + ".\n" +
-                    "Exit from the scope for: " + element.getText();
-            lexicalScopes.pop();
+        override fun exitLexicalScope(element: KtElement) {
+            val currentScope = currentScope
+            assert(currentScope.element === element) {
+                "Exit from not the current lexical scope.\n" +
+                "Current scope is for: " + currentScope.element + ".\n" +
+                "Exit from the scope for: " + element.text
+            }
+            lexicalScopes.pop()
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private void handleJumpInsideTryFinally(Label jumpTarget) {
-            List<TryFinallyBlockInfo> finallyBlocks = new ArrayList<TryFinallyBlockInfo>();
+        private fun handleJumpInsideTryFinally(jumpTarget: Label) {
+            val finallyBlocks = ArrayList<TryFinallyBlockInfo>()
 
-            for (int i = allBlocks.size() - 1; i >= 0; i--) {
-                BlockInfo blockInfo = allBlocks.get(i);
-                if (blockInfo instanceof BreakableBlockInfo) {
-                    BreakableBlockInfo breakableBlockInfo = (BreakableBlockInfo) blockInfo;
-                    if (breakableBlockInfo.getReferablePoints().contains(jumpTarget) || jumpTarget == error) {
-                        for (int j = finallyBlocks.size() - 1; j >= 0; j--) {
-                            finallyBlocks.get(j).generateFinallyBlock();
+            for (i in allBlocks.indices.reversed()) {
+                val blockInfo = allBlocks[i]
+                if (blockInfo is BreakableBlockInfo) {
+                    if (blockInfo.referablePoints.contains(jumpTarget) || jumpTarget === error) {
+                        for (j in finallyBlocks.indices.reversed()) {
+                            finallyBlocks[j].generateFinallyBlock()
                         }
-                        break;
+                        break
                     }
                 }
-                else if (blockInfo instanceof TryFinallyBlockInfo) {
-                    TryFinallyBlockInfo tryFinallyBlockInfo = (TryFinallyBlockInfo) blockInfo;
-                    finallyBlocks.add(tryFinallyBlockInfo);
+                else if (blockInfo is TryFinallyBlockInfo) {
+                    finallyBlocks.add(blockInfo)
                 }
             }
         }
 
-        @NotNull
-        @Override
-        public Pseudocode exitSubroutine(@NotNull KtElement subroutine) {
-            bindLabel(getExitPoint(subroutine));
-            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, getCurrentScope(), false));
-            bindLabel(error);
-            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, getCurrentScope(), true));
-            bindLabel(sink);
-            pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, getCurrentScope(), "<SINK>"));
-            elementToBlockInfo.remove(subroutine);
-            allBlocks.pop();
-            return pseudocode;
+        override fun exitSubroutine(subroutine: KtElement): Pseudocode {
+            bindLabel(getExitPoint(subroutine))
+            pseudocode.addExitInstruction(SubroutineExitInstruction(subroutine, currentScope, false))
+            bindLabel(error)
+            pseudocode.addErrorInstruction(SubroutineExitInstruction(subroutine, currentScope, true))
+            bindLabel(sink)
+            pseudocode.addSinkInstruction(SubroutineSinkInstruction(subroutine, currentScope, "<SINK>"))
+            elementToBlockInfo.remove(subroutine)
+            allBlocks.pop()
+            return pseudocode
         }
 
-        @Override
-        public void mark(@NotNull KtElement element) {
-            add(new MarkInstruction(element, getCurrentScope()));
+        override fun mark(element: KtElement) {
+            add(MarkInstruction(element, currentScope))
         }
 
-        @Nullable
-        @Override
-        public PseudoValue getBoundValue(@Nullable KtElement element) {
-            return pseudocode.getElementValue(element);
+        override fun getBoundValue(element: KtElement?): PseudoValue? {
+            return pseudocode.getElementValue(element)
         }
 
-        @Override
-        public void bindValue(@NotNull PseudoValue value, @NotNull KtElement element) {
-            pseudocode.bindElementToValue(element, value);
+        override fun bindValue(value: PseudoValue, element: KtElement) {
+            pseudocode.bindElementToValue(element, value)
         }
 
-        @NotNull
-        @Override
-        public PseudoValue newValue(@Nullable KtElement element) {
-            return valueFactory.newValue(element, null);
+        override fun newValue(element: KtElement?): PseudoValue {
+            return valueFactory.newValue(element, null)
         }
 
-        @Override
-        public void returnValue(@NotNull KtExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull KtElement subroutine) {
-            Label exitPoint = getExitPoint(subroutine);
-            handleJumpInsideTryFinally(exitPoint);
-            add(new ReturnValueInstruction(returnExpression, getCurrentScope(), exitPoint, returnValue));
+        override fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement) {
+            val exitPoint = getExitPoint(subroutine)
+            handleJumpInsideTryFinally(exitPoint)
+            add(ReturnValueInstruction(returnExpression, currentScope, exitPoint, returnValue))
         }
 
-        @Override
-        public void returnNoValue(@NotNull KtReturnExpression returnExpression, @NotNull KtElement subroutine) {
-            Label exitPoint = getExitPoint(subroutine);
-            handleJumpInsideTryFinally(exitPoint);
-            add(new ReturnNoValueInstruction(returnExpression, getCurrentScope(), exitPoint));
+        override fun returnNoValue(returnExpression: KtReturnExpression, subroutine: KtElement) {
+            val exitPoint = getExitPoint(subroutine)
+            handleJumpInsideTryFinally(exitPoint)
+            add(ReturnNoValueInstruction(returnExpression, currentScope, exitPoint))
         }
 
-        @Override
-        public void write(
-                @NotNull KtElement assignment,
-                @NotNull KtElement lValue,
-                @NotNull PseudoValue rValue,
-                @NotNull AccessTarget target,
-                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues) {
-            add(new WriteValueInstruction(assignment, getCurrentScope(), target, receiverValues, lValue, rValue));
+        override fun write(
+                assignment: KtElement,
+                lValue: KtElement,
+                rValue: PseudoValue,
+                target: AccessTarget,
+                receiverValues: Map<PseudoValue, ReceiverValue>) {
+            add(WriteValueInstruction(assignment, currentScope, target, receiverValues, lValue, rValue))
         }
 
-        @Override
-        public void declareParameter(@NotNull KtParameter parameter) {
-            add(new VariableDeclarationInstruction(parameter, getCurrentScope()));
+        override fun declareParameter(parameter: KtParameter) {
+            add(VariableDeclarationInstruction(parameter, currentScope))
         }
 
-        @Override
-        public void declareVariable(@NotNull KtVariableDeclaration property) {
-            add(new VariableDeclarationInstruction(property, getCurrentScope()));
+        override fun declareVariable(property: KtVariableDeclaration) {
+            add(VariableDeclarationInstruction(property, currentScope))
         }
 
-        @Override
-        public void declareFunction(@NotNull KtElement subroutine, @NotNull Pseudocode pseudocode) {
-            add(new LocalFunctionDeclarationInstruction(subroutine, pseudocode, getCurrentScope()));
+        override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
+            add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
         }
 
-        @Override
-        public void loadUnit(@NotNull KtExpression expression) {
-            add(new LoadUnitValueInstruction(expression, getCurrentScope()));
+        override fun loadUnit(expression: KtExpression) {
+            add(LoadUnitValueInstruction(expression, currentScope))
         }
 
-        @Override
-        public void jump(@NotNull Label label, @NotNull KtElement element) {
-            handleJumpInsideTryFinally(label);
-            add(new UnconditionalJumpInstruction(element, label, getCurrentScope()));
+        override fun jump(label: Label, element: KtElement) {
+            handleJumpInsideTryFinally(label)
+            add(UnconditionalJumpInstruction(element, label, currentScope))
         }
 
-        @Override
-        public void jumpOnFalse(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue) {
-            handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(element, false, getCurrentScope(), label, conditionValue));
+        override fun jumpOnFalse(label: Label, element: KtElement, conditionValue: PseudoValue?) {
+            handleJumpInsideTryFinally(label)
+            add(ConditionalJumpInstruction(element, false, currentScope, label, conditionValue))
         }
 
-        @Override
-        public void jumpOnTrue(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue) {
-            handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(element, true, getCurrentScope(), label, conditionValue));
+        override fun jumpOnTrue(label: Label, element: KtElement, conditionValue: PseudoValue?) {
+            handleJumpInsideTryFinally(label)
+            add(ConditionalJumpInstruction(element, true, currentScope, label, conditionValue))
         }
 
-        @Override
-        public void bindLabel(@NotNull Label label) {
-            pseudocode.bindLabel(label);
+        override fun bindLabel(label: Label) {
+            pseudocode.bindLabel(label)
         }
 
-        @Override
-        public void nondeterministicJump(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue inputValue) {
-            handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(element, Collections.singletonList(label), getCurrentScope(), inputValue));
+        override fun nondeterministicJump(label: Label, element: KtElement, inputValue: PseudoValue?) {
+            handleJumpInsideTryFinally(label)
+            add(NondeterministicJumpInstruction(element, listOf(label), currentScope, inputValue))
         }
 
-        @Override
-        public void nondeterministicJump(@NotNull List<? extends Label> labels, @NotNull KtElement element) {
+        override fun nondeterministicJump(label: List<Label>, element: KtElement) {
             //todo
             //handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(element, labels, getCurrentScope(), null));
+            add(NondeterministicJumpInstruction(element, label, currentScope, null))
         }
 
-        @Override
-        public void jumpToError(@NotNull KtElement element) {
-            handleJumpInsideTryFinally(error);
-            add(new UnconditionalJumpInstruction(element, error, getCurrentScope()));
+        override fun jumpToError(element: KtElement) {
+            handleJumpInsideTryFinally(error)
+            add(UnconditionalJumpInstruction(element, error, currentScope))
         }
 
-        @Override
-        public void enterTryFinally(@NotNull GenerationTrigger generationTrigger) {
-            allBlocks.push(new TryFinallyBlockInfo(generationTrigger));
+        override fun enterTryFinally(trigger: GenerationTrigger) {
+            allBlocks.push(TryFinallyBlockInfo(trigger))
         }
 
-        @Override
-        public void throwException(@NotNull KtThrowExpression expression, @NotNull PseudoValue thrownValue) {
-            handleJumpInsideTryFinally(error);
-            add(new ThrowExceptionInstruction(expression, getCurrentScope(), error, thrownValue));
+        override fun throwException(throwExpression: KtThrowExpression, thrownValue: PseudoValue) {
+            handleJumpInsideTryFinally(error)
+            add(ThrowExceptionInstruction(throwExpression, currentScope, error, thrownValue))
         }
 
-        @Override
-        public void exitTryFinally() {
-            BlockInfo pop = allBlocks.pop();
-            assert pop instanceof TryFinallyBlockInfo;
+        override fun exitTryFinally() {
+            val pop = allBlocks.pop()
+            assert(pop is TryFinallyBlockInfo)
         }
 
-        @Override
-        public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
-            labelCount = pseudocode.repeatPart(startLabel, finishLabel, labelCount);
+        override fun repeatPseudocode(startLabel: Label, finishLabel: Label) {
+            labelCount = pseudocode.repeatPart(startLabel, finishLabel, labelCount)
         }
 
-        @NotNull
-        @Override
-        public InstructionWithValue loadConstant(@NotNull KtExpression expression, @Nullable CompileTimeConstant<?> constant) {
-            return read(expression);
+        override fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?): InstructionWithValue {
+            return read(expression)
         }
 
-        @NotNull
-        @Override
-        public InstructionWithValue createAnonymousObject(@NotNull KtObjectLiteralExpression expression) {
-            return read(expression);
+        override fun createAnonymousObject(expression: KtObjectLiteralExpression): InstructionWithValue {
+            return read(expression)
         }
 
-        @NotNull
-        @Override
-        public InstructionWithValue createLambda(@NotNull KtFunction expression) {
-            return read(expression instanceof KtFunctionLiteral ? (KtLambdaExpression) expression.getParent() : expression);
+        override fun createLambda(expression: KtFunction): InstructionWithValue {
+            return read(if (expression is KtFunctionLiteral) expression.getParent() as KtLambdaExpression else expression)
         }
 
-        @NotNull
-        @Override
-        public InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
-            return inputValues.isEmpty() ? read(expression) : magic(expression, expression, inputValues, MagicKind.STRING_TEMPLATE);
+        override fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue {
+            return if (inputValues.isEmpty()) read(expression) else magic(expression, expression, inputValues, MagicKind.STRING_TEMPLATE)
         }
 
-        @NotNull
-        @Override
-        public MagicInstruction magic(
-                @NotNull KtElement instructionElement,
-                @Nullable KtElement valueElement,
-                @NotNull List<? extends PseudoValue> inputValues,
-                @NotNull MagicKind kind
-        ) {
-            MagicInstruction instruction = new MagicInstruction(
-                    instructionElement, valueElement, getCurrentScope(), inputValues, kind, valueFactory
-            );
-            add(instruction);
-            return instruction;
+        override fun magic(
+                instructionElement: KtElement,
+                valueElement: KtElement?,
+                inputValues: List<PseudoValue>,
+                kind: MagicKind): MagicInstruction {
+            val instruction = MagicInstruction(
+                    instructionElement, valueElement, currentScope, inputValues, kind, valueFactory)
+            add(instruction)
+            return instruction
         }
 
-        @NotNull
-        @Override
-        public MergeInstruction merge(@NotNull KtExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
-            MergeInstruction instruction = new MergeInstruction(expression, getCurrentScope(), inputValues, valueFactory);
-            add(instruction);
-            return instruction;
+        override fun merge(expression: KtExpression, inputValues: List<PseudoValue>): MergeInstruction {
+            val instruction = MergeInstruction(expression, currentScope, inputValues, valueFactory)
+            add(instruction)
+            return instruction
         }
 
-        @NotNull
-        @Override
-        public ReadValueInstruction readVariable(
-                @NotNull KtExpression expression,
-                @NotNull ResolvedCall<?> resolvedCall,
-                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues
-        ) {
-            return read(expression, resolvedCall, receiverValues);
+        override fun readVariable(
+                expression: KtExpression,
+                resolvedCall: ResolvedCall<*>,
+                receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction {
+            return read(expression, resolvedCall, receiverValues)
         }
 
-        @NotNull
-        @Override
-        public CallInstruction call(
-                @NotNull KtElement valueElement,
-                @NotNull ResolvedCall<?> resolvedCall,
-                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues,
-                @NotNull Map<PseudoValue, ? extends ValueParameterDescriptor> arguments
-        ) {
-            KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
-            CallInstruction instruction = new CallInstruction(
+        override fun call(
+                valueElement: KtElement,
+                resolvedCall: ResolvedCall<*>,
+                receiverValues: Map<PseudoValue, ReceiverValue>,
+                arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction {
+            val returnType = resolvedCall.resultingDescriptor.returnType
+            val instruction = CallInstruction(
                     valueElement,
-                    getCurrentScope(),
+                    currentScope,
                     resolvedCall,
                     receiverValues,
                     arguments,
-                    returnType != null && KotlinBuiltIns.isNothing(returnType) ? null : valueFactory
-            );
-            add(instruction);
-            return instruction;
+                    if (returnType != null && KotlinBuiltIns.isNothing(returnType)) null else valueFactory)
+            add(instruction)
+            return instruction
         }
 
-        @NotNull
-        @Override
-        public OperationInstruction predefinedOperation(
-                @NotNull KtExpression expression,
-                @NotNull PredefinedOperation operation,
-                @NotNull List<? extends PseudoValue> inputValues
-        ) {
-            return magic(expression, expression, inputValues, getMagicKind(operation));
+        override fun predefinedOperation(
+                expression: KtExpression,
+                operation: ControlFlowBuilder.PredefinedOperation,
+                inputValues: List<PseudoValue>): OperationInstruction {
+            return magic(expression, expression, inputValues, getMagicKind(operation))
         }
 
-        @NotNull
-        private MagicKind getMagicKind(@NotNull PredefinedOperation operation) {
-            switch(operation) {
-                case AND:
-                    return MagicKind.AND;
-                case OR:
-                    return MagicKind.OR;
-                case NOT_NULL_ASSERTION:
-                    return MagicKind.NOT_NULL_ASSERTION;
-                default:
-                    throw new IllegalArgumentException("Invalid operation: " + operation);
+        private fun getMagicKind(operation: ControlFlowBuilder.PredefinedOperation): MagicKind {
+            when (operation) {
+                ControlFlowBuilder.PredefinedOperation.AND -> return MagicKind.AND
+                ControlFlowBuilder.PredefinedOperation.OR -> return MagicKind.OR
+                ControlFlowBuilder.PredefinedOperation.NOT_NULL_ASSERTION -> return MagicKind.NOT_NULL_ASSERTION
+                else -> throw IllegalArgumentException("Invalid operation: " + operation)
             }
         }
 
-        @NotNull
-        private ReadValueInstruction read(
-                @NotNull KtExpression expression,
-                @Nullable ResolvedCall<?> resolvedCall,
-                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues
-        ) {
-            AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE;
-            ReadValueInstruction instruction = new ReadValueInstruction(
-                    expression, getCurrentScope(), accessTarget, receiverValues, valueFactory
-            );
-            add(instruction);
-            return instruction;
-        }
-
-        @NotNull
-        private ReadValueInstruction read(@NotNull KtExpression expression) {
-            return read(expression, null, Collections.<PseudoValue, ReceiverValue>emptyMap());
+        private fun read(
+                expression: KtExpression,
+                resolvedCall: ResolvedCall<*>? = null,
+                receiverValues: Map<PseudoValue, ReceiverValue> = emptyMap<PseudoValue, ReceiverValue>()): ReadValueInstruction {
+            val accessTarget = if (resolvedCall != null) AccessTarget.Call(resolvedCall) else AccessTarget.BlackBox
+            val instruction = ReadValueInstruction(
+                    expression, currentScope, accessTarget, receiverValues, valueFactory)
+            add(instruction)
+            return instruction
         }
     }
 
-    public static class TryFinallyBlockInfo extends BlockInfo {
-        private final GenerationTrigger finallyBlock;
+    private class TryFinallyBlockInfo(private val finallyBlock: GenerationTrigger) : BlockInfo() {
 
-        private TryFinallyBlockInfo(GenerationTrigger finallyBlock) {
-            this.finallyBlock = finallyBlock;
-        }
-
-        public void generateFinallyBlock() {
-            finallyBlock.generate();
+        fun generateFinallyBlock() {
+            finallyBlock.generate()
         }
     }
 

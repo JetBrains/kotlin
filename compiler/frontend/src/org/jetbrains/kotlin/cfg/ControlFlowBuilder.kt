@@ -32,15 +32,12 @@ interface ControlFlowBuilder {
     fun exitSubroutine(subroutine: KtElement): Pseudocode
 
     val currentSubroutine: KtElement
-    val returnSubroutine: KtElement?
+    val returnSubroutine: KtElement
 
     // Lexical scopes
     fun enterLexicalScope(element: KtElement)
 
     fun exitLexicalScope(element: KtElement)
-
-    // Entry/exit points
-    fun getEntryPoint(labelElement: KtElement): Label
 
     fun getExitPoint(labelElement: KtElement): Label
     fun getConditionEntryPoint(labelElement: KtElement): Label

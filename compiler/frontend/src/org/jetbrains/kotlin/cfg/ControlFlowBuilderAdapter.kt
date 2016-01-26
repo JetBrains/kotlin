@@ -123,10 +123,6 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.throwException(throwExpression, thrownValue)
     }
 
-    override fun getEntryPoint(labelElement: KtElement): Label {
-        return delegateBuilder.getEntryPoint(labelElement)
-    }
-
     override fun getExitPoint(labelElement: KtElement): Label {
         return delegateBuilder.getExitPoint(labelElement)
     }
@@ -169,7 +165,7 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
     override val currentSubroutine: KtElement
         get() = delegateBuilder.currentSubroutine
 
-    override val returnSubroutine: KtElement?
+    override val returnSubroutine: KtElement
         get() = delegateBuilder.returnSubroutine
 
     override fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement) {
