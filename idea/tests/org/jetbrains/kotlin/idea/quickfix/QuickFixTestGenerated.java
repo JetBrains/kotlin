@@ -7274,6 +7274,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notApplicableToConstructor.kt")
+            public void testNotApplicableToConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/notApplicableToConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertyGetterInitializerTypeMismatch.kt")
             public void testPropertyGetterInitializerTypeMismatch() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/propertyGetterInitializerTypeMismatch.kt");
