@@ -1,6 +1,7 @@
 package test.io
 
 import java.io.*
+import java.util.*
 import org.junit.Test as test
 import kotlin.io.walkTopDown
 import kotlin.test.*
@@ -362,14 +363,13 @@ class FilesTest {
                 srcFile.copyTo(dstFile)
             }
 
-            var len = srcFile.copyTo(dstFile, overwrite = true)
-            assertEquals(13L, len)
-            assertEquals(srcFile.readText(), dstFile.readText(Charsets.UTF_8), "copy with overwrite over existing file")
+            var dst = srcFile.copyTo(dstFile, overwrite = true)
+            assertTrue(dst === dstFile)
+            compareFiles(srcFile, dst, "copy with overwrite over existing file")
 
             assertTrue(dstFile.delete())
-            len = srcFile.copyTo(dstFile)
-            assertEquals(13L, len)
-            assertEquals(srcFile.readText(Charsets.UTF_8), dstFile.readText(), "copy to new file")
+            dst = srcFile.copyTo(dstFile)
+            compareFiles(srcFile, dst, "copy to new file")
 
             assertTrue(dstFile.delete())
             dstFile.mkdir()
@@ -476,14 +476,18 @@ class FilesTest {
         }
     }
 
+    fun compareFiles(src: File, dst: File, message: String? = null) {
+        assertTrue(dst.exists())
+        assertEquals(src.isFile, dst.isFile, message)
+        if (dst.isFile) {
+            assertTrue(Arrays.equals(src.readBytes(), dst.readBytes()), message)
+        }
+    }
+
     fun compareDirectories(src: File, dst: File) {
-        for (file in src.walkTopDown()) {
-            val dstFile = dst.resolve(file.relativeTo(src))
-            assertTrue(dstFile.exists())
-            assertEquals(file.isFile, dstFile.isFile)
-            if (dstFile.isFile) {
-                assertEquals(file.readText(), dstFile.readText())
-            }
+        for (srcFile in src.walkTopDown()) {
+            val dstFile = dst.resolve(srcFile.relativeTo(src))
+            compareFiles(srcFile, dstFile)
         }
     }
 

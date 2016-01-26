@@ -159,7 +159,7 @@ private fun File.toRelativeStringOrNull(base: File): String? {
 
 
 /**
- * Copies this file to the given output [target], returning the number of bytes copied.
+ * Copies this file to the given [target] file.
  *
  * If some directories on a way to the [target] are missing, then they will be created.
  * If the [target] file already exists, this function will fail unless [overwrite] argument is set to `true`.
@@ -171,12 +171,12 @@ private fun File.toRelativeStringOrNull(base: File): String? {
  *
  * @param overwrite `true` if destination overwrite is allowed.
  * @param bufferSize the buffer size to use when copying.
- * @return the number of bytes copied or zero if the copied file was a directory.
+ * @return the [target] file.
  * @throws NoSuchFileException if the source file doesn't exist.
  * @throws FileAlreadyExistsException if the destination file already exists and 'rewrite' argument is set to `false`.
  * @throws IOException if any errors occur while copying.
  */
-public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
+public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File {
     if (!this.exists()) {
         throw NoSuchFileException(file = this, reason = "The source file doesn't exist")
     }
@@ -194,16 +194,17 @@ public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int
     if (this.isDirectory) {
         if (!target.mkdirs())
             throw FileSystemException(file = this, other = target, reason = "Failed to create target directory")
-        return 0
-    }
+    } else {
+        target.parentFile?.mkdirs()
 
-    target.parentFile?.mkdirs()
-
-    return this.inputStream().use { input ->
-        target.outputStream().use { output ->
-            input.copyTo(output, bufferSize)
+        this.inputStream().use { input ->
+            target.outputStream().use { output ->
+                input.copyTo(output, bufferSize)
+            }
         }
     }
+
+    return target
 }
 
 /**
@@ -280,7 +281,7 @@ public fun File.copyRecursively(target: File,
                 if (src.isDirectory) {
                     dstFile.mkdirs()
                 } else {
-                    if (src.copyTo(dstFile, overwrite) != src.length()) {
+                    if (src.copyTo(dstFile, overwrite).length() != src.length()) {
                         if (onError(src, IOException("src.length() != dst.length()")) == OnErrorAction.TERMINATE)
                             return false
                     }
