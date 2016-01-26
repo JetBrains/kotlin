@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.Key
@@ -108,22 +109,28 @@ class KotlinSetupEnvironmentNotificationProvider(
                 val configurators = getApplicableConfigurators(module).toList()
                 if (!configurators.isEmpty()) {
                     createComponentActionLabel("Configure") { label ->
-                        val step = object : BaseListPopupStep<KotlinProjectConfigurator>("Choose Configurator", configurators) {
-                            override fun getTextFor(value: KotlinProjectConfigurator?): String {
-                                return value?.presentableText ?: "<none>"
-                            }
-
-                            override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
-                                selectedValue?.let {
-                                    it.configure(module.project, emptyList())
-                                }
-                                return null
-                            }
-                        }
-                        JBPopupFactory.getInstance().createListPopup(step).showUnderneathOf(label)
+                        val configuratorsPopup = createConfiguratorsPopup(module.project, configurators)
+                        configuratorsPopup.showUnderneathOf(label)
                     }
                 }
             }
+        }
+
+        fun createConfiguratorsPopup(project: Project, configurators: List<KotlinProjectConfigurator>): ListPopup {
+            val step = object : BaseListPopupStep<KotlinProjectConfigurator>("Choose Configurator", configurators) {
+                override fun getTextFor(value: KotlinProjectConfigurator?): String {
+                    return value?.presentableText ?: "<none>"
+                }
+
+                override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
+                    selectedValue?.let {
+                        it.configure(project, emptyList())
+                    }
+                    return null
+                }
+            }
+            val configuratorsPopup = JBPopupFactory.getInstance().createListPopup(step)
+            return configuratorsPopup
         }
     }
 }
