@@ -830,7 +830,7 @@ private fun withSubtypes(
         typeFqName: FqName,
         caches: Sequence<IncrementalCacheImpl<*>>
 ): Set<FqName> {
-    val types = linkedListOf(typeFqName)
+    val types = LinkedList(listOf(typeFqName))
     val subtypes = hashSetOf<FqName>()
 
     while (types.isNotEmpty()) {

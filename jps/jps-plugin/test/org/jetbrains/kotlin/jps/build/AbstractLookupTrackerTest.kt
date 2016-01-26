@@ -53,7 +53,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                 fail("File $actualFile unexpectedly contains multiline comments. In range ${matchResult.range} found: ${matchResult.value} in $text")
             }
 
-            val lines = text.lines().toArrayList()
+            val lines = text.lines().toMutableList()
 
             for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
                 val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
