@@ -69,7 +69,7 @@ class MultifileClassPartCodegen(
         }
     }
 
-    override fun generateKotlinAnnotation() {
+    override fun generateKotlinMetadataAnnotation() {
         val members = ArrayList<DeclarationDescriptor>()
         for (declaration in element.declarations) {
             when (declaration) {
@@ -88,15 +88,9 @@ class MultifileClassPartCodegen(
         val packageProto = serializer.packagePartProto(members).build()
 
         writeKotlinMetadata(v, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART) { av ->
-            AsmUtil.writeAnnotationData(av, serializer, packageProto, false)
+            AsmUtil.writeAnnotationData(av, serializer, packageProto)
             av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassType.internalName)
         }
-
-        val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS_PART), true)
-        JvmCodegenUtil.writeAbiVersion(av)
-        AsmUtil.writeAnnotationData(av, serializer, packageProto, true)
-        av.visit(JvmAnnotationNames.MULTIFILE_CLASS_NAME_FIELD_NAME, multifileClassType.internalName)
-        av.visitEnd()
     }
 
     override fun generateSyntheticParts() {

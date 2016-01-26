@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -60,7 +59,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeAbiVersion;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -219,9 +217,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     }
 
     @Override
-    protected void generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(v, state);
-
+    protected void generateKotlinMetadataAnnotation() {
         final DescriptorSerializer serializer =
                 DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
 
@@ -230,15 +226,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.SYNTHETIC_CLASS, new Function1<AnnotationVisitor, Unit>() {
             @Override
             public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, functionProto, false);
+                writeAnnotationData(av, serializer, functionProto);
                 return Unit.INSTANCE;
             }
         });
-
-        AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FUNCTION), true);
-        writeAbiVersion(av);
-        writeAnnotationData(av, serializer, functionProto, true);
-        av.visitEnd();
     }
 
     @Override

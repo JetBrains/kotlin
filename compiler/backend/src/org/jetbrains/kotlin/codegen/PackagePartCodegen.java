@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -43,9 +42,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeAbiVersion;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<KtFile> {
@@ -109,7 +106,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     }
 
     @Override
-    protected void generateKotlinAnnotation() {
+    protected void generateKotlinMetadataAnnotation() {
         List<DeclarationDescriptor> members = new ArrayList<DeclarationDescriptor>();
         for (KtDeclaration declaration : element.getDeclarations()) {
             if (declaration instanceof KtNamedFunction) {
@@ -128,15 +125,10 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
         WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.FILE_FACADE, new Function1<AnnotationVisitor, Unit>() {
             @Override
             public Unit invoke(AnnotationVisitor av) {
-                writeAnnotationData(av, serializer, packageProto, false);
+                writeAnnotationData(av, serializer, packageProto);
                 return Unit.INSTANCE;
             }
         });
-
-        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
-        writeAbiVersion(av);
-        writeAnnotationData(av, serializer, packageProto, true);
-        av.visitEnd();
     }
 
     @Override

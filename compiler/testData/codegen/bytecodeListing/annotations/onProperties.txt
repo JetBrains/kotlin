@@ -1,5 +1,4 @@
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public final class A {
     private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private @AnnField field p: int
@@ -21,41 +20,33 @@ public final class A {
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnDelegate
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnField
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnGetter
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnParam
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnProp
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnProp2
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnSetter
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public final class CustomDelegate {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String

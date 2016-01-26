@@ -63,7 +63,6 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
@@ -781,28 +780,20 @@ public class AsmUtil {
         }
     }
 
-    public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull GenerationState state) {
-        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS), true);
-        JvmCodegenUtil.writeAbiVersion(av);
-        av.visitEnd();
-    }
-
     public static void writeAnnotationData(
             @NotNull AnnotationVisitor av,
             @NotNull DescriptorSerializer serializer,
-            @NotNull MessageLite message,
-            boolean old
+            @NotNull MessageLite message
     ) {
         byte[] bytes = serializer.serialize(message);
 
-        AnnotationVisitor data = av.visitArray(old ? JvmAnnotationNames.DATA_FIELD_NAME : JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
+        AnnotationVisitor data = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(bytes)) {
             data.visit(null, string);
         }
         data.visitEnd();
-        AnnotationVisitor strings = av.visitArray(
-                old ? JvmAnnotationNames.STRINGS_FIELD_NAME : JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME
-        );
+
+        AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME);
         for (String string : ((JvmStringTable) serializer.getStringTable()).getStrings()) {
             strings.visit(null, string);
         }

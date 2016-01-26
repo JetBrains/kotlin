@@ -104,7 +104,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
     }
 
     @Override
-    protected void generateKotlinAnnotation() {
+    protected void generateKotlinMetadataAnnotation() {
         // TODO
     }
 

@@ -146,10 +146,8 @@ class InterfaceImplBodyCodegen(
                 })
     }
 
-    override fun generateKotlinAnnotation() {
+    override fun generateKotlinMetadataAnnotation() {
         (v as InterfaceImplClassBuilder).stopCounting()
-
-        AsmUtil.writeKotlinSyntheticClassAnnotation(v, state)
 
         writeSyntheticClassMetadata(v);
     }

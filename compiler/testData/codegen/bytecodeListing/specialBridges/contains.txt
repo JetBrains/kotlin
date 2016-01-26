@@ -1,5 +1,4 @@
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A1 {
     public method <init>(): void
     public method contains(p0: java.lang.Object): boolean
@@ -12,7 +11,6 @@ public abstract class A1 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A2 {
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
@@ -27,7 +25,6 @@ public abstract class A2 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A3 {
     public method <init>(): void
     public method contains(p0: java.lang.Object): boolean
@@ -41,7 +38,6 @@ public abstract class A3 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A4 {
     public method <init>(): void
     public method contains(p0: java.lang.Object): boolean
@@ -56,7 +52,6 @@ public abstract class A4 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A5 {
     public method <init>(): void
     public final method contains(p0: java.lang.Object): boolean
@@ -74,7 +69,6 @@ public abstract class A5 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A6 {
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
@@ -93,7 +87,6 @@ public abstract class A6 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A7 {
     public method <init>(): void
     public method contains(p0: int): boolean
@@ -107,7 +100,6 @@ public abstract class A7 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class A8 {
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
@@ -118,7 +110,6 @@ public abstract class A8 {
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
 public final class I1$DefaultImpls {
     inner class I1$DefaultImpls
@@ -127,7 +118,6 @@ public final class I1$DefaultImpls {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class I1 {
     inner class I1$DefaultImpls
     public abstract method contains(p0: java.lang.Object): boolean
@@ -136,7 +126,6 @@ public abstract class I1 {
     public abstract method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
 public final class I2$DefaultImpls {
     inner class I2$DefaultImpls
@@ -145,7 +134,6 @@ public final class I2$DefaultImpls {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class I2 {
     inner class I2$DefaultImpls
     public abstract method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean

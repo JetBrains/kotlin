@@ -2,26 +2,21 @@
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class ClsAnn
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class ExprAnn
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class FunAnn
 
-@kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFunction
 final class LiteralsKt$foo$1 {
     synthetic final field $arg: int
     inner class LiteralsKt$foo$1
@@ -30,9 +25,7 @@ final class LiteralsKt$foo$1 {
     public synthetic method invoke(): java.lang.Object
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFunction
 final class LiteralsKt$foo$2 {
     synthetic final field $arg: int
     inner class LiteralsKt$foo$2
@@ -43,15 +36,12 @@ final class LiteralsKt$foo$2 {
 
 @ClsAnn
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public final class LiteralsKt$foo$3 {
     inner class LiteralsKt$foo$3
     method <init>(): void
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFunction
 final class LiteralsKt$foo$x$1 {
     synthetic final field $arg: int
     inner class LiteralsKt$foo$x$1
@@ -61,7 +51,6 @@ final class LiteralsKt$foo$x$1 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFileFacade
 public final class LiteralsKt {
     inner class LiteralsKt$foo$1
     inner class LiteralsKt$foo$2
@@ -72,7 +61,6 @@ public final class LiteralsKt {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public class My {
     public method <init>(): void
 }
