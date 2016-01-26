@@ -1,0 +1,6 @@
+package
+
+public val test1: (kotlin.String) -> kotlin.Boolean
+public val test2: (kotlin.String) -> kotlin.Boolean
+public val test3: (kotlin.String) -> kotlin.Boolean
+public val test4: (kotlin.String) -> kotlin.Boolean

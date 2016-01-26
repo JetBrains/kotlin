@@ -1,0 +1,33 @@
+package
+
+public val testExclExcl1: kotlin.String
+public val testExclExcl2: kotlin.String?
+public val testExclExcl3: kotlin.String
+public val testExclExcl4: kotlin.String?
+public val testIf1: kotlin.String
+public val testIf2: kotlin.String?
+public val testIf3: kotlin.String
+public val testIf4: kotlin.String?
+public val testImplicitExclExcl1: kotlin.String
+public val testImplicitExclExcl2: kotlin.String?
+public val testImplicitExclExcl3: kotlin.String
+public val testImplicitExclExcl4: kotlin.String?
+public val testSafeCall1: kotlin.String
+public val testSafeCall2: kotlin.String?
+public val testSafeCall3: kotlin.String
+public val testSafeCall4: kotlin.String?
+public val testWhen1: kotlin.String
+public val testWhen2: kotlin.String?
+public val testWhen3: kotlin.String
+public val testWhen4: kotlin.String?
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final var m: kotlin.collections.(Mutable)Map<kotlin.String!, kotlin.String!>!
+    public final var s: kotlin.String!
+}

@@ -339,6 +339,16 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField val SPECIAL_CONSTRUCT_TOKEN: PositioningStrategy<KtExpression> = object : PositioningStrategy<KtExpression>() {
+        override fun mark(element: KtExpression): List<TextRange> =
+                when (element) {
+                    is KtWhenExpression -> markElement(element.whenKeyword)
+                    is KtIfExpression -> markElement(element.ifKeyword)
+                    is KtOperationExpression -> markElement(element.operationReference)
+                    else -> error("Expression is not an if, when or operation expression: ${element.getElementTextWithContext()}")
+                }
+    }
+
     @JvmField val NULLABLE_TYPE: PositioningStrategy<KtNullableType> = object : PositioningStrategy<KtNullableType>() {
         override fun mark(element: KtNullableType): List<TextRange> {
             return markNode(element.getQuestionMarkNode())

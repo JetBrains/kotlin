@@ -52,6 +52,14 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
+            @NotNull Call call, @NotNull D descriptor, @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
+    ) {
+        return new ResolutionCandidate<D>(call, descriptor,
+                                          null, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                                          knownTypeParametersResultingSubstitutor);
+    }
+
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor, @Nullable ReceiverValue dispatchReceiver,
             @Nullable Receiver receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor

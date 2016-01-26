@@ -1097,6 +1097,10 @@ public abstract class KotlinBuiltIns {
         return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
     }
 
+    public static boolean isUnitOrNullableUnit(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.unit);
+    }
+
     public boolean isBooleanOrSubtype(@NotNull KotlinType type) {
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(type, getBooleanType());
     }

@@ -1,0 +1,28 @@
+package
+
+public fun </*0*/ T> none(): None<T>
+public fun test1(): Maybe<kotlin.String?>
+public fun test2(): Maybe<kotlin.String?>
+public fun test3(): Maybe<kotlin.String?>
+public fun test4(): Maybe<kotlin.String?>
+
+public interface Maybe</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class None</*0*/ T> : Maybe<T> {
+    public constructor None</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Some</*0*/ T> : Maybe<T> {
+    public constructor Some</*0*/ T>(/*0*/ value: T)
+    public final val value: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

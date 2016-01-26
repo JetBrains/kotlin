@@ -528,6 +528,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtElement, KotlinType, KotlinType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory0<KtExpression> TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT = DiagnosticFactory0.create(ERROR, SPECIAL_CONSTRUCT_TOKEN);
+
     // Reflection
 
     DiagnosticFactory1<KtExpression, CallableMemberDescriptor> EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
