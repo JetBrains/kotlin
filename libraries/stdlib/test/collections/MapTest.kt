@@ -26,6 +26,7 @@ class MapTest {
         assertEquals("x", d)
     }
 
+    @Suppress("INVISIBLE_MEMBER")
     @test fun getOrImplicitDefault() {
         val data: MutableMap<String, Int> = hashMapOf("bar" to 1)
         assertTrue(assertFails { data.getOrImplicitDefault("foo") } is NoSuchElementException)
@@ -337,43 +338,6 @@ class MapTest {
     @test fun plusMap() = testPlus { it + mapOf("C" to 3, "B" to 4) }
 
 
-    fun testMinus(doMinus: (Map<String, Int>) -> Map<String, Int>) {
-        val original = mapOf("A" to 1, "B" to 2)
-        val shortened = doMinus(original)
-        assertEquals("A" to 1, shortened.entries.single().toPair())
-    }
-
-    @test fun minus() = testMinus { it - "B" - "C" }
-
-    @test fun minusList() = testMinus { it - listOf("B", "C") }
-
-    @test fun minusArray() = testMinus { it - arrayOf("B", "C") }
-
-    @test fun minusSequence() = testMinus { it - sequenceOf("B", "C") }
-
-    @test fun minusSet() = testMinus { it - setOf("B", "C") }
-
-
-
-    fun testMinusAssign(doMinusAssign: (MutableMap<String, Int>) -> Unit) {
-        val original = hashMapOf("A" to 1, "B" to 2)
-        doMinusAssign(original)
-        assertEquals("A" to 1, original.entries.single().toPair())
-    }
-
-/*
-    @test fun minusAssign() = testMinusAssign {
-        it.keys -= "B"
-        it.keys -= "C"
-    }
-
-    @test fun minusAssignList() = testMinusAssign { it.keys -= listOf("B", "C") }
-
-    @test fun minusAssignArray() = testMinusAssign { it.keys -= arrayOf("B", "C") }
-
-    @test fun minusAssignSequence() = testMinusAssign { it.keys -= sequenceOf("B", "C") }
-*/
-
 
     fun testIdempotent(operation: (Map<String, Int>) -> Map<String, Int>) {
         val original = mapOf("A" to 1, "B" to 2)
@@ -389,16 +353,12 @@ class MapTest {
 
 
     @test fun plusEmptyList() = testIdempotent { it + listOf() }
-//    @test fun minusEmptyList() = testIdempotent { it - listOf() }
 
     @test fun plusEmptySet() = testIdempotent { it + setOf() }
-//    @test fun minusEmptySet() = testIdempotent { it - setOf() }
 
     @test fun plusAssignEmptyList() = testIdempotentAssign { it += listOf() }
-//    @test fun minusAssignEmptyList() = testIdempotentAssign { it -= listOf() }
 
     @test fun plusAssignEmptySet() = testIdempotentAssign { it += setOf() }
-//    @test fun minusAssignEmptySet() = testIdempotentAssign { it -= setOf() }
 
 
 }

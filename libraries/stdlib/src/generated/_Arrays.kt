@@ -6019,7 +6019,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(dest
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
     return ArrayList(this.asCollection())
 }
@@ -6027,7 +6027,7 @@ public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
     val list = ArrayList<Boolean>(size)
     for (item in this) list.add(item)
@@ -6037,7 +6037,7 @@ public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun ByteArray.toArrayList(): ArrayList<Byte> {
     val list = ArrayList<Byte>(size)
     for (item in this) list.add(item)
@@ -6047,7 +6047,7 @@ public fun ByteArray.toArrayList(): ArrayList<Byte> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun CharArray.toArrayList(): ArrayList<Char> {
     val list = ArrayList<Char>(size)
     for (item in this) list.add(item)
@@ -6057,7 +6057,7 @@ public fun CharArray.toArrayList(): ArrayList<Char> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun DoubleArray.toArrayList(): ArrayList<Double> {
     val list = ArrayList<Double>(size)
     for (item in this) list.add(item)
@@ -6067,7 +6067,7 @@ public fun DoubleArray.toArrayList(): ArrayList<Double> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun FloatArray.toArrayList(): ArrayList<Float> {
     val list = ArrayList<Float>(size)
     for (item in this) list.add(item)
@@ -6077,7 +6077,7 @@ public fun FloatArray.toArrayList(): ArrayList<Float> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun IntArray.toArrayList(): ArrayList<Int> {
     val list = ArrayList<Int>(size)
     for (item in this) list.add(item)
@@ -6087,7 +6087,7 @@ public fun IntArray.toArrayList(): ArrayList<Int> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun LongArray.toArrayList(): ArrayList<Long> {
     val list = ArrayList<Long>(size)
     for (item in this) list.add(item)
@@ -6097,7 +6097,7 @@ public fun LongArray.toArrayList(): ArrayList<Long> {
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun ShortArray.toArrayList(): ArrayList<Short> {
     val list = ArrayList<Short>(size)
     for (item in this) list.add(item)
@@ -6324,7 +6324,7 @@ public fun ShortArray.toList(): List<Short> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6333,7 +6333,7 @@ public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6342,7 +6342,7 @@ public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform:
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6351,7 +6351,7 @@ public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6360,7 +6360,7 @@ public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6369,7 +6369,7 @@ public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6378,7 +6378,7 @@ public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Fl
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6387,7 +6387,7 @@ public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
@@ -6396,151 +6396,151 @@ public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <T, K, V> Array<out T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> BooleanArray.toMap(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> ByteArray.toMap(transform: (Byte) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> CharArray.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> DoubleArray.toMap(transform: (Double) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> FloatArray.toMap(transform: (Float) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> IntArray.toMap(transform: (Int) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> LongArray.toMap(transform: (Long) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> ShortArray.toMap(transform: (Short) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boolean> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Double> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> ShortArray.toMapBy(selector: (Short) -> K): Map<K, Short> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <T, K, V> Array<out T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> BooleanArray.toMapBy(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> ByteArray.toMapBy(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> CharArray.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> DoubleArray.toMapBy(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> FloatArray.toMapBy(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> IntArray.toMapBy(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> LongArray.toMapBy(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> ShortArray.toMapBy(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }

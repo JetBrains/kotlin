@@ -489,7 +489,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateTo(
 /**
  * Returns an [ArrayList] of all elements.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
     return toCollection(ArrayList<T>())
 }
@@ -522,23 +522,23 @@ public fun <T> Sequence<T>.toList(): List<T> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <T, K, V> Sequence<T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <T, K> Sequence<T>.toMapBy(selector: (T) -> K): Map<K, T> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <T, K, V> Sequence<T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }

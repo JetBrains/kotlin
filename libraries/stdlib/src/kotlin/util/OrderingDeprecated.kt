@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 @file:kotlin.jvm.JvmName("ComparisonsKt")
+@file:Suppress("DEPRECATION_ERROR")
 
 package kotlin
 
@@ -25,7 +26,7 @@ import java.util.Comparator
  * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
  * compare as equal, the result of that comparison is returned.
  */
-@Deprecated("Use compareValuesBy from kotlin.comparisons package.", ReplaceWith("compareValuesBy(a, b, *selectors)", "kotlin.comparisons.compareValuesBy"))
+@Deprecated("Use compareValuesBy from kotlin.comparisons package.", ReplaceWith("compareValuesBy(a, b, *selectors)", "kotlin.comparisons.compareValuesBy"), level = DeprecationLevel.ERROR)
 public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int {
     require(selectors.size > 0)
     for (fn in selectors) {
@@ -42,7 +43,7 @@ public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*
  * The function is applied to the given values [a] and [b] and return [Comparable] objects.
  * The result of comparison of these [Comparable] instances is returned.
  */
-@Deprecated("Use compareValuesBy from kotlin.comparisons package.", ReplaceWith("compareValuesBy(a, b, selector)", "kotlin.comparisons.compareValuesBy"))
+@Deprecated("Use compareValuesBy from kotlin.comparisons package.", ReplaceWith("compareValuesBy(a, b, selector)", "kotlin.comparisons.compareValuesBy"), level = DeprecationLevel.ERROR)
 public inline fun <T> compareValuesBy(a: T, b: T, selector: (T) -> Comparable<*>?): Int {
     return compareValues(selector(a), selector(b))
 }
@@ -52,7 +53,7 @@ public inline fun <T> compareValuesBy(a: T, b: T, selector: (T) -> Comparable<*>
  * The function is applied to the given values [a] and [b] and return objects of type K which are then being
  * compared with the given [comparator].
  */
-@Deprecated("Use compareValuesBy from kotlin.comparisons package.", ReplaceWith("compareValuesBy(a, b, comparator, selector)", "kotlin.comparisons.compareValuesBy"))
+@Deprecated("Use compareValuesBy from kotlin.comparisons package.", ReplaceWith("compareValuesBy(a, b, comparator, selector)", "kotlin.comparisons.compareValuesBy"), level = DeprecationLevel.ERROR)
 public inline fun <T, K> compareValuesBy(a: T, b: T, comparator: Comparator<in K>, selector: (T) -> K): Int {
     return comparator.compare(selector(a), selector(b))
 }
@@ -70,7 +71,7 @@ public inline fun <T, K> compareValuesBy(a: T, b: T, comparator: Comparator<in K
 /**
  * Compares two nullable [Comparable] values. Null is considered less than any value.
  */
-@Deprecated("Use compareValues from kotlin.comparisons package.", ReplaceWith("compareValues(a, b)", "kotlin.comparisons.compareValues"))
+@Deprecated("Use compareValues from kotlin.comparisons package.", ReplaceWith("compareValues(a, b)", "kotlin.comparisons.compareValues"), level = DeprecationLevel.ERROR)
 public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
     if (a === b) return 0
     if (a == null) return -1
@@ -85,7 +86,7 @@ public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
  * objects. As soon as the [Comparable] instances returned by a function for `a` and `b` values do not
  * compare as equal, the result of that comparison is returned from the [Comparator].
  */
-@Deprecated("Use compareBy from kotlin.comparisons package.", ReplaceWith("compareBy(*selectors)", "kotlin.comparisons.compareBy"))
+@Deprecated("Use compareBy from kotlin.comparisons package.", ReplaceWith("compareBy(*selectors)", "kotlin.comparisons.compareBy"), level = DeprecationLevel.ERROR)
 public fun <T> compareBy(vararg selectors: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, *selectors)
@@ -97,7 +98,7 @@ public fun <T> compareBy(vararg selectors: (T) -> Comparable<*>?): Comparator<T>
 /**
  * Creates a comparator using the function to transform value to a [Comparable] instance for comparison.
  */
-@Deprecated("Use compareBy from kotlin.comparisons package.", ReplaceWith("compareBy(selector)", "kotlin.comparisons.compareBy"))
+@Deprecated("Use compareBy from kotlin.comparisons package.", ReplaceWith("compareBy(selector)", "kotlin.comparisons.compareBy"), level = DeprecationLevel.ERROR)
 inline public fun <T> compareBy(crossinline selector: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, selector)
@@ -108,7 +109,7 @@ inline public fun <T> compareBy(crossinline selector: (T) -> Comparable<*>?): Co
  * Creates a comparator using the [selector] function to transform values being compared and then applying
  * the specified [comparator] to compare transformed values.
  */
-@Deprecated("Use compareBy from kotlin.comparisons package.", ReplaceWith("compareBy(comparator, selector)", "kotlin.comparisons.compareBy"))
+@Deprecated("Use compareBy from kotlin.comparisons package.", ReplaceWith("compareBy(comparator, selector)", "kotlin.comparisons.compareBy"), level = DeprecationLevel.ERROR)
 inline public fun <T, K> compareBy(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, comparator, selector)
@@ -118,7 +119,7 @@ inline public fun <T, K> compareBy(comparator: Comparator<in K>, crossinline sel
 /**
  * Creates a descending comparator using the function to transform value to a [Comparable] instance for comparison.
  */
-@Deprecated("Use compareByDescending from kotlin.comparisons package.", ReplaceWith("compareByDescending(selector)", "kotlin.comparisons.compareByDescending"))
+@Deprecated("Use compareByDescending from kotlin.comparisons package.", ReplaceWith("compareByDescending(selector)", "kotlin.comparisons.compareByDescending"), level = DeprecationLevel.ERROR)
 inline public fun <T> compareByDescending(crossinline selector: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(b, a, selector)
@@ -131,7 +132,7 @@ inline public fun <T> compareByDescending(crossinline selector: (T) -> Comparabl
  *
  * Note that an order of [comparator] is reversed by this wrapper.
  */
-@Deprecated("Use compareByDescending from kotlin.comparisons package.", ReplaceWith("compareByDescending(comparator, selector)", "kotlin.comparisons.compareByDescending"))
+@Deprecated("Use compareByDescending from kotlin.comparisons package.", ReplaceWith("compareByDescending(comparator, selector)", "kotlin.comparisons.compareByDescending"), level = DeprecationLevel.ERROR)
 inline public fun <T, K> compareByDescending(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(b, a, comparator, selector)
@@ -142,7 +143,7 @@ inline public fun <T, K> compareByDescending(comparator: Comparator<in K>, cross
  * Creates a comparator comparing values after the primary comparator defined them equal. It uses
  * the function to transform value to a [Comparable] instance for comparison.
  */
-@Deprecated("Use thenBy from kotlin.comparisons package.", ReplaceWith("this.thenBy(selector)", "kotlin.comparisons.thenBy"))
+@Deprecated("Use thenBy from kotlin.comparisons package.", ReplaceWith("this.thenBy(selector)", "kotlin.comparisons.thenBy"), level = DeprecationLevel.ERROR)
 inline public fun <T> Comparator<T>.thenBy(crossinline selector: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
@@ -156,7 +157,7 @@ inline public fun <T> Comparator<T>.thenBy(crossinline selector: (T) -> Comparab
  * Creates a comparator comparing values after the primary comparator defined them equal. It uses
  * the [selector] function to transform values and then compares them with the given [comparator].
  */
-@Deprecated("Use thenBy from kotlin.comparisons package.", ReplaceWith("this.thenBy(comparator, selector)", "kotlin.comparisons.thenBy"))
+@Deprecated("Use thenBy from kotlin.comparisons package.", ReplaceWith("this.thenBy(comparator, selector)", "kotlin.comparisons.thenBy"), level = DeprecationLevel.ERROR)
 inline public fun <T, K> Comparator<T>.thenBy(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
@@ -170,7 +171,7 @@ inline public fun <T, K> Comparator<T>.thenBy(comparator: Comparator<in K>, cros
  * Creates a descending comparator using the primary comparator and
  * the function to transform value to a [Comparable] instance for comparison.
  */
-@Deprecated("Use thenByDescending from kotlin.comparisons package.", ReplaceWith("this.thenByDescending(selector)", "kotlin.comparisons.thenByDescending"))
+@Deprecated("Use thenByDescending from kotlin.comparisons package.", ReplaceWith("this.thenByDescending(selector)", "kotlin.comparisons.thenByDescending"), level = DeprecationLevel.ERROR)
 inline public fun <T> Comparator<T>.thenByDescending(crossinline selector: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
@@ -184,7 +185,7 @@ inline public fun <T> Comparator<T>.thenByDescending(crossinline selector: (T) -
  * Creates a descending comparator comparing values after the primary comparator defined them equal. It uses
  * the [selector] function to transform values and then compares them with the given [comparator].
  */
-@Deprecated("Use thenByDescending from kotlin.comparisons package.", ReplaceWith("this.thenByDescending(comparator, selector)", "kotlin.comparisons.thenByDescending"))
+@Deprecated("Use thenByDescending from kotlin.comparisons package.", ReplaceWith("this.thenByDescending(comparator, selector)", "kotlin.comparisons.thenByDescending"), level = DeprecationLevel.ERROR)
 inline public fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<in K>, crossinline selector: (T) -> K): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
@@ -197,13 +198,13 @@ inline public fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<i
 /**
  * Creates a comparator using the function to calculate a result of comparison.
  */
-@Deprecated("Use Comparator SAM-constructor instead.", ReplaceWith("Comparator(comparison)", "java.util.Comparator"))
+@Deprecated("Use Comparator SAM-constructor instead.", ReplaceWith("Comparator(comparison)", "java.util.Comparator"), level = DeprecationLevel.ERROR)
 inline public fun <T> comparator(crossinline comparison: (T, T) -> Int) = Comparator<T> { a, b -> comparison(a, b) }
 
 /**
  * Creates a comparator using the primary comparator and function to calculate a result of comparison.
  */
-@Deprecated("Use thenComparator from kotlin.comparisons package.", ReplaceWith("this.thenComparator(comparison)", "kotlin.comparisons.thenComparator"))
+@Deprecated("Use thenComparator from kotlin.comparisons package.", ReplaceWith("this.thenComparator(comparison)", "kotlin.comparisons.thenComparator"), level = DeprecationLevel.ERROR)
 inline public fun <T> Comparator<T>.thenComparator(crossinline comparison: (T, T) -> Int): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
@@ -217,7 +218,7 @@ inline public fun <T> Comparator<T>.thenComparator(crossinline comparison: (T, T
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-@Deprecated("Use then from kotlin.comparisons package.", ReplaceWith("this.then(comparator)", "kotlin.comparisons.then"))
+@Deprecated("Use then from kotlin.comparisons package.", ReplaceWith("this.then(comparator)", "kotlin.comparisons.then"), level = DeprecationLevel.ERROR)
 public infix fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
@@ -231,7 +232,7 @@ public infix fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparato
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-@Deprecated("Use thenDescending from kotlin.comparisons package.", ReplaceWith("this.thenDescending(comparator)", "kotlin.comparisons.thenDescending"))
+@Deprecated("Use thenDescending from kotlin.comparisons package.", ReplaceWith("this.thenDescending(comparator)", "kotlin.comparisons.thenDescending"), level = DeprecationLevel.ERROR)
 public infix fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
@@ -246,7 +247,7 @@ public infix fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>):
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering `null` value less than any other value.
  */
-@Deprecated("Use nullsFirst from kotlin.comparisons package.", ReplaceWith("nullsFirst(comparator)", "kotlin.comparisons.nullsFirst"))
+@Deprecated("Use nullsFirst from kotlin.comparisons package.", ReplaceWith("nullsFirst(comparator)", "kotlin.comparisons.nullsFirst"), level = DeprecationLevel.ERROR)
 public fun <T: Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> {
     return object: Comparator<T?> {
         override fun compare(a: T?, b: T?): Int {
@@ -262,14 +263,14 @@ public fun <T: Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> {
  * Provides a comparator of nullable [Comparable] values
  * considering `null` value less than any other value.
  */
-@Deprecated("Use nullsFirst from kotlin.comparisons package.", ReplaceWith("nullsFirst<T>()", "kotlin.comparisons.nullsFirst"))
+@Deprecated("Use nullsFirst from kotlin.comparisons package.", ReplaceWith("nullsFirst<T>()", "kotlin.comparisons.nullsFirst"), level = DeprecationLevel.ERROR)
 public fun <T: Comparable<T>> nullsFirst(): Comparator<T?> = nullsFirst(naturalOrder())
 
 /**
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering `null` value greater than any other value.
  */
-@Deprecated("Use nullsLast from kotlin.comparisons package.", ReplaceWith("nullsLast(comparator)", "kotlin.comparisons.nullsLast"))
+@Deprecated("Use nullsLast from kotlin.comparisons package.", ReplaceWith("nullsLast(comparator)", "kotlin.comparisons.nullsLast"), level = DeprecationLevel.ERROR)
 public fun <T: Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> {
     return object: Comparator<T?> {
         override fun compare(a: T?, b: T?): Int {
@@ -285,23 +286,23 @@ public fun <T: Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> {
  * Provides a comparator of nullable [Comparable] values
  * considering `null` value greater than any other value.
  */
-@Deprecated("Use nullsLast from kotlin.comparisons package.", ReplaceWith("nullsLast<T>()", "kotlin.comparisons.nullsLast"))
+@Deprecated("Use nullsLast from kotlin.comparisons package.", ReplaceWith("nullsLast<T>()", "kotlin.comparisons.nullsLast"), level = DeprecationLevel.ERROR)
 public fun <T: Comparable<T>> nullsLast(): Comparator<T?> = nullsLast(naturalOrder())
 
 /**
  * Returns a comparator that compares [Comparable] objects in natural order.
  */
-@Deprecated("Use naturalOrder from kotlin.comparisons package.", ReplaceWith("naturalOrder<T>()", "kotlin.comparisons.naturalOrder"))
+@Deprecated("Use naturalOrder from kotlin.comparisons package.", ReplaceWith("naturalOrder<T>()", "kotlin.comparisons.naturalOrder"), level = DeprecationLevel.ERROR)
 public fun <T: Comparable<T>> naturalOrder(): Comparator<T> = NaturalOrderComparator as Comparator<T>
 
 /**
  * Returns a comparator that compares [Comparable] objects in reversed natural order.
  */
-@Deprecated("Use reverseOrder from kotlin.comparisons package.", ReplaceWith("reverseOrder<T>()", "kotlin.comparisons.reverseOrder"))
+@Deprecated("Use reverseOrder from kotlin.comparisons package.", ReplaceWith("reverseOrder<T>()", "kotlin.comparisons.reverseOrder"), level = DeprecationLevel.ERROR)
 public fun <T: Comparable<T>> reverseOrder(): Comparator<T> = ReverseOrderComparator as Comparator<T>
 
 /** Returns a comparator that imposes the reverse ordering of this comparator. */
-@Deprecated("Use reversed from kotlin.comparisons package.", ReplaceWith("this.reversed()", "kotlin.comparisons.reversed"))
+@Deprecated("Use reversed from kotlin.comparisons package.", ReplaceWith("this.reversed()", "kotlin.comparisons.reversed"), level = DeprecationLevel.ERROR)
 public fun <T> Comparator<T>.reversed(): Comparator<T> = when (this) {
     is ReversedComparator -> this.comparator
     NaturalOrderComparator -> ReverseOrderComparator as Comparator<T>

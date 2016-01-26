@@ -561,7 +561,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(de
 /**
  * Returns an [ArrayList] of all characters.
  */
-@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"))
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun CharSequence.toArrayList(): ArrayList<Char> {
     return toCollection(ArrayList<Char>(length))
 }
@@ -594,23 +594,23 @@ public fun CharSequence.toList(): List<Char> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }
 
-@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"))
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> CharSequence.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
     return associate(transform)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> {
     return associateBy(selector)
 }
 
-@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> CharSequence.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     return associateBy(selector, transform)
 }

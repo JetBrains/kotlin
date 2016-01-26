@@ -67,7 +67,7 @@ fun snapshots(): List<GenericFunction> {
         body(Iterables) {
             """
             if (this is Collection<T>)
-                return this.toArrayList()
+                return ArrayList(this)
             return toCollection(ArrayList<T>())
             """
         }
@@ -81,7 +81,7 @@ fun snapshots(): List<GenericFunction> {
             return list
             """
         }
-        deprecate(Deprecation("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", "toCollection(arrayListOf())"))
+        deprecate(Deprecation("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", "toCollection(arrayListOf())", level = DeprecationLevel.ERROR))
     }
 
     templates add f("toMutableList()") {
@@ -135,7 +135,7 @@ fun snapshots(): List<GenericFunction> {
         typeParam("V")
         returns("Map<K, V>")
         annotations("""@kotlin.jvm.JvmName("toMapOfPairs")""")
-        deprecate(Deprecation("Use associate instead.", replaceWith = "associate(transform)"))
+        deprecate(Deprecation("Use associate instead.", replaceWith = "associate(transform)", level = DeprecationLevel.ERROR))
     }
 
     templates add f("associate(transform: (T) -> Pair<K, V>)") {
@@ -205,7 +205,7 @@ fun snapshots(): List<GenericFunction> {
         typeParam("K")
         returns("Map<K, T>")
         include(CharSequences)
-        deprecate(Deprecation("Use associateBy instead.", replaceWith = "associateBy(selector)"))
+        deprecate(Deprecation("Use associateBy instead.", replaceWith = "associateBy(selector)", level = DeprecationLevel.ERROR))
     }
 
     templates add f("associateBy(keySelector: (T) -> K)") {
@@ -287,7 +287,7 @@ fun snapshots(): List<GenericFunction> {
             """
         }
         returns("Map<K, V>")
-        deprecate(Deprecation("Use associateBy instead.", "associateBy(selector, transform)"))
+        deprecate(Deprecation("Use associateBy instead.", "associateBy(selector, transform)", level = DeprecationLevel.ERROR))
     }
 
     templates add f("toMapBy(selector: (T) -> K, transform: (T) -> V)") {
@@ -296,7 +296,7 @@ fun snapshots(): List<GenericFunction> {
         typeParam("V")
         include(CharSequences)
         returns("Map<K, V>")
-        deprecate(Deprecation("Use associateBy instead.", replaceWith = "associateBy(selector, transform)"))
+        deprecate(Deprecation("Use associateBy instead.", replaceWith = "associateBy(selector, transform)", level = DeprecationLevel.ERROR))
     }
 
     templates add f("associateBy(keySelector: (T) -> K, valueTransform: (T) -> V)") {

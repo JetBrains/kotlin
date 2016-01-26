@@ -12,17 +12,8 @@ import java.util.*
  *
  * @throws NoSuchElementException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
  */
-@Deprecated("This function is used to support property delegation to map with defaults and will become internal soon.")
-public fun <K, V: Any> Map<K, V>.getOrImplicitDefault(key: K): V {
-    if (this is MapWithDefault)
-        return this.getOrImplicitDefault(key)
-
-    return getOrElseNullable(key, { throw NoSuchElementException("Key $key is missing in the map.") })
-}
-
 @kotlin.jvm.JvmName("getOrImplicitDefaultNullable")
-@Deprecated("This function is used to support property delegation to map with defaults and will become internal soon.")
-public fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
+internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)
 
@@ -31,7 +22,7 @@ public fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
 
 /**
  * Returns a wrapper of this read-only map, having the implicit default value provided with the specified function [defaultValue].
- * This implicit default value is used when [getOrImplicitDefault] is called on the returned map,
+ * This implicit default value is used when properties are delegated to the returned map,
  * and that map doesn't contain value for the key specified.
  *
  * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
@@ -44,7 +35,7 @@ public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> 
 
 /**
  * Returns a wrapper of this mutable map, having the implicit default value provided with the specified function [defaultValue].
- * This implicit default value is used when [getOrImplicitDefault] is called on the returned map,
+ * This implicit default value is used when properties are delegated to the returned map,
  * and that map doesn't contain value for the key specified.
  *
  * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
