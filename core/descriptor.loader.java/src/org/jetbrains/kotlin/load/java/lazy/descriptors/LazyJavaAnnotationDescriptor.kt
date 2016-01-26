@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.isSpecialAnnotation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -39,12 +37,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
-
-fun LazyJavaResolverContext.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
-    val classId = annotation.classId
-    if (classId == null || isSpecialAnnotation(classId, false)) return null
-    return LazyJavaAnnotationDescriptor(this, annotation)
-}
 
 class LazyJavaAnnotationDescriptor(
         private val c: LazyJavaResolverContext,
@@ -105,10 +97,8 @@ class LazyJavaAnnotationDescriptor(
         }
     }
 
-    private fun resolveFromAnnotation(javaAnnotation: JavaAnnotation): ConstantValue<*>? {
-        val descriptor = c.resolveAnnotation(javaAnnotation) ?: return null
-
-        return factory.createAnnotationValue(descriptor)
+    private fun resolveFromAnnotation(javaAnnotation: JavaAnnotation): ConstantValue<*> {
+        return factory.createAnnotationValue(LazyJavaAnnotationDescriptor(c, javaAnnotation))
     }
 
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): ConstantValue<*>? {
