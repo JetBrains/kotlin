@@ -27,7 +27,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class JvmAnnotationNames {
-    public static final FqName METADATA = new FqName("kotlin.Metadata");
+    public static final FqName METADATA_FQ_NAME = new FqName("kotlin.Metadata");
+    public static final String METADATA_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(METADATA_FQ_NAME).getInternalName() + ";";
 
     public static final String METADATA_VERSION_FIELD_NAME = "mv";
     public static final String BYTECODE_VERSION_FIELD_NAME = "bv";
@@ -68,7 +69,7 @@ public final class JvmAnnotationNames {
     }
 
     public static boolean isSpecialAnnotation(@NotNull ClassId classId, boolean javaSpecificAnnotationsAreSpecial) {
-        if (classId.asSingleFqName().equals(METADATA)) return true;
+        if (classId.asSingleFqName().equals(METADATA_FQ_NAME)) return true;
 
         if (javaSpecificAnnotationsAreSpecial) {
             JvmClassName className = JvmClassName.byClassId(classId);

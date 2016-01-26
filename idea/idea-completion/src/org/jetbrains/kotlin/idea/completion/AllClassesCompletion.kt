@@ -93,7 +93,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
 
     private fun PsiClass.isSyntheticKotlinClass(): Boolean {
         if ('$' !in name!!) return false // optimization to not analyze annotations of all classes
-        val metadata = modifierList?.findAnnotation(JvmAnnotationNames.METADATA.asString())
+        val metadata = modifierList?.findAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString())
         return (metadata?.findAttributeValue(JvmAnnotationNames.KIND_FIELD_NAME) as? PsiLiteral)?.value ==
                 KotlinClassHeader.Kind.SYNTHETIC_CLASS.id
     }

@@ -801,11 +801,6 @@ public class AsmUtil {
     }
 
     @NotNull
-    public static String asmDescByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
-        return asmTypeByFqNameWithoutInnerClasses(fqName).getDescriptor();
-    }
-
-    @NotNull
     public static Type asmTypeByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return Type.getObjectType(internalNameByFqNameWithoutInnerClasses(fqName));
     }

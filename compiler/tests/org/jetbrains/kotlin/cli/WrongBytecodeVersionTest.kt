@@ -20,7 +20,6 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
@@ -64,7 +63,7 @@ class WrongBytecodeVersionTest : UsefulTestCase() {
         ClassReader(file.inputStream()).accept(object : ClassVisitor(Opcodes.ASM5, writer) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                 val superVisitor = super.visitAnnotation(desc, visible)!!
-                if (desc == AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.METADATA)) {
+                if (desc == JvmAnnotationNames.METADATA_DESC) {
                     return object : AnnotationVisitor(Opcodes.ASM5, superVisitor) {
                         override fun visit(name: String?, value: Any) {
                             val updatedValue: Any =
