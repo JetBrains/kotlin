@@ -30,8 +30,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
 object InlineTestUtil {
-    private val KOTLIN_MULTIFILE_CLASS_DESC =
-            AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS)
+    private val KOTLIN_METADATA_DESC = AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.METADATA)
 
     fun checkNoCallsToInline(files: Iterable<OutputFile>, sourceFiles: List<KtFile>) {
         val inlineInfo = obtainInlineInfo(files)
@@ -87,14 +86,20 @@ object InlineTestUtil {
         val notInlined = ArrayList<NotInlinedCall>()
 
         files.forEach { file ->
-            val cr = ClassReader(file.asByteArray())
-            cr.accept(object : ClassVisitorWithName() {
+            ClassReader(file.asByteArray()).accept(object : ClassVisitorWithName() {
                 private var skipMethodsOfThisClass = false
 
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                    if (desc == KOTLIN_MULTIFILE_CLASS_DESC) {
-                        skipMethodsOfThisClass = true
+                    if (desc == KOTLIN_METADATA_DESC) {
+                        return object : AnnotationVisitor(Opcodes.ASM5) {
+                            override fun visit(name: String?, value: Any) {
+                                if (name == JvmAnnotationNames.KIND_FIELD_NAME && value == KotlinClassHeader.Kind.MULTIFILE_CLASS.id) {
+                                    skipMethodsOfThisClass = true
+                                }
+                            }
+                        }
                     }
+
                     return null
                 }
 

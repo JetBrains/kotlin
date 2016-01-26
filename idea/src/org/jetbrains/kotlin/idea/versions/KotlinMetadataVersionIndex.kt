@@ -23,6 +23,7 @@ import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -38,30 +39,37 @@ object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVers
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 3
+    private val VERSION = 4
 
-    private val kotlinAnnotationsDesc = setOf(
-            KOTLIN_CLASS,
-            KOTLIN_FILE_FACADE,
-            KOTLIN_MULTIFILE_CLASS
-    ).map { asmDescByFqNameWithoutInnerClasses(it) }
+    private val METADATA_DESC = asmDescByFqNameWithoutInnerClasses(METADATA)
+
+    private val kindsToIndex = setOf(
+            KotlinClassHeader.Kind.CLASS,
+            KotlinClassHeader.Kind.FILE_FACADE,
+            KotlinClassHeader.Kind.MULTIFILE_CLASS
+    )
 
     private val INDEXER = DataIndexer<BinaryVersion, Void, FileContent>() { inputData: FileContent ->
         var version: BinaryVersion? = null
         var annotationPresent = false
+        var kind: KotlinClassHeader.Kind? = null
 
         tryBlock(inputData) {
             val classReader = ClassReader(inputData.content)
             classReader.accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                    if (!kotlinAnnotationsDesc.contains(desc)) {
-                        return null
-                    }
+                    if (desc != METADATA_DESC) return null
+
                     annotationPresent = true
                     return object : AnnotationVisitor(Opcodes.ASM5) {
                         override fun visit(name: String, value: Any) {
-                            if (name == VERSION_FIELD_NAME && value is IntArray) {
-                                version = JvmMetadataVersion(*value)
+                            when (name) {
+                                METADATA_VERSION_FIELD_NAME -> if (value is IntArray) {
+                                    version = JvmMetadataVersion(*value)
+                                }
+                                KIND_FIELD_NAME -> if (value is Int) {
+                                    kind = KotlinClassHeader.Kind.getById(value)
+                                }
                             }
                         }
                     }
@@ -69,7 +77,11 @@ object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVers
             }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
         }
 
-        if (annotationPresent && version == null) {
+        if (kind !in kindsToIndex) {
+            // Do not index metadata version for synthetic classes
+            version = null
+        }
+        else if (annotationPresent && version == null) {
             // No version at all because the class is too old, or version is set to something weird
             version = JvmMetadataVersion.INVALID_VERSION
         }

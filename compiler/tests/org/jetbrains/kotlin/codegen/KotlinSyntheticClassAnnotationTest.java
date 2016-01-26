@@ -29,7 +29,8 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA;
+import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_VERSION_FIELD_NAME;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public static final FqName PACKAGE_NAME = new FqName("test");
@@ -112,14 +113,14 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     }
 
     private void doTestKotlinSyntheticClass(@NotNull String code, @NotNull String classFilePart) {
-        doTest(code, classFilePart, KOTLIN_SYNTHETIC_CLASS);
+        doTest(code, classFilePart);
     }
 
     private void doTestKotlinClass(@NotNull String code, @NotNull String classFilePart) {
-        doTest(code, classFilePart, KOTLIN_CLASS);
+        doTest(code, classFilePart);
     }
 
-    private void doTest(@NotNull String code, @NotNull final String classFilePart, @NotNull FqName annotationFqName) {
+    private void doTest(@NotNull String code, @NotNull final String classFilePart) {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
         Collection<OutputFile> files = Collections2.filter(output, new Predicate<OutputFile>() {
@@ -134,16 +135,17 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         String path = files.iterator().next().getRelativePath();
         String fqName = path.substring(0, path.length() - ".class".length()).replace('/', '.');
         Class<?> aClass = generateClass(fqName);
-        assertAnnotatedWith(aClass, annotationFqName.asString());
+        assertAnnotatedWithMetadata(aClass);
     }
 
-    private void assertAnnotatedWith(@NotNull Class<?> aClass, @NotNull String annotationFqName) {
+    private void assertAnnotatedWithMetadata(@NotNull Class<?> aClass) {
+        String annotationFqName = METADATA.asString();
         Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(annotationFqName);
         assertTrue("No annotation " + annotationFqName + " found in " + aClass, aClass.isAnnotationPresent(annotationClass));
 
         Annotation annotation = aClass.getAnnotation(annotationClass);
 
-        int[] version = (int[]) CodegenTestUtil.getAnnotationAttribute(annotation, VERSION_FIELD_NAME);
+        int[] version = (int[]) CodegenTestUtil.getAnnotationAttribute(annotation, METADATA_VERSION_FIELD_NAME);
         assertNotNull(version);
         assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
                    new JvmMetadataVersion(version).isCompatible());
