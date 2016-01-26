@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.containers.MultiMap
+import com.intellij.util.containers.StringInterner
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
@@ -62,8 +63,7 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         }
     }
 
-    fun addAll(lookups: Set<Map.Entry<LookupSymbol, Collection<String>>>) {
-        val allPaths = lookups.flatMapTo(HashSet<String>()) { it.value }
+    fun addAll(lookups: Set<Map.Entry<LookupSymbol, Collection<String>>>, allPaths: Set<String>) {
         val pathToId = allPaths.keysToMap { addFileIfNeeded(File(it)) }
 
         for ((lookupSymbol, paths) in lookups) {
@@ -183,13 +183,19 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
 
 class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
     val lookups = MultiMap<LookupSymbol, String>()
+    val pathInterner = StringInterner()
+    private val interner = StringInterner()
 
     override val requiresPosition: Boolean
         get() = delegate.requiresPosition
 
     override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        lookups.putValue(LookupSymbol(name, scopeFqName), filePath)
-        delegate.record(filePath, position, scopeFqName, scopeKind, name)
+        val internedScopeFqName = interner.intern(scopeFqName)
+        val internedName = interner.intern(name)
+        val internedFilePath = pathInterner.intern(filePath)
+
+        lookups.putValue(LookupSymbol(internedName, internedScopeFqName), internedFilePath)
+        delegate.record(internedFilePath, position, internedScopeFqName, scopeKind, internedName)
     }
 }
 
