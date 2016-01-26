@@ -171,6 +171,8 @@ public class TypeUtils {
         for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
             TypeParameterDescriptor parameterDescriptor = parameters.get(i);
             TypeProjection typeProjection = arguments.get(i);
+            if (typeProjection.isStarProjection()) return true;
+
             Variance projectionKind = typeProjection.getProjectionKind();
             KotlinType argument = typeProjection.getType();
 

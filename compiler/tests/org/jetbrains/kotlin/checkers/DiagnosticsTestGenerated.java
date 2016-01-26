@@ -7439,6 +7439,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/starProjections"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("checkBounds.kt")
+                public void testCheckBounds() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/starProjections/checkBounds.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("collectionInheritedFromJava.kt")
                 public void testCollectionInheritedFromJava() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/starProjections/collectionInheritedFromJava.kt");
