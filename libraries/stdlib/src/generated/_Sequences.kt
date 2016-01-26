@@ -1025,6 +1025,13 @@ public operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequence<T> {
 }
 
 /**
+ * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
+ */
+public fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
+    return minus(element)
+}
+
+/**
  * Splits the original sequence into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
@@ -1074,6 +1081,13 @@ public operator fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T> {
  */
 public operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence<T> {
     return sequenceOf(this, elements).flatten()
+}
+
+/**
+ * Returns a sequence containing all elements of the original sequence and then the given [element].
+ */
+public fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
+    return plus(element)
 }
 
 /**

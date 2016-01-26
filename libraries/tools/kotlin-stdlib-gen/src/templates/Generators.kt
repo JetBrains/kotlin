@@ -5,6 +5,17 @@ import templates.Family.*
 fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
+    templates add f("plusElement(element: T)") {
+        only(Iterables, Collections, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection and then the given [element]." }
+        doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
+        doc(Sequences) { "Returns a sequence containing all elements of the original sequence and then the given [element]." }
+
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body { "return plus(element)" }
+    }
+
     templates add f("plus(element: T)") {
         operator(true)
 
@@ -204,6 +215,17 @@ fun generators(): List<GenericFunction> {
             return sequenceOf(this, elements).flatten()
             """
         }
+    }
+
+    templates add f("minusElement(element: T)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
+        doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
+        doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
+
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body { "return minus(element)" }
     }
 
     templates add f("minus(element: T)") {

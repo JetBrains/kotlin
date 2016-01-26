@@ -90,6 +90,20 @@ fun specialJS(): List<GenericFunction> {
         }
 
 
+    templates add f("plusElement(element: T)") {
+        only(ArraysOfObjects)
+        returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
+        inline(true)
+        annotations("""@Suppress("NOTHING_TO_INLINE")""")
+        doc { "Returns an array containing all elements of the original array and then the given [element]." }
+        body() {
+            """
+            return this.asDynamic().concat(arrayOf(element))
+            """
+        }
+    }
+
     templates add f("plus(element: T)") {
         operator(true)
 

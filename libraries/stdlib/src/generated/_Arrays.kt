@@ -12359,6 +12359,14 @@ public operator fun ShortArray.plus(elements: ShortArray): ShortArray {
 }
 
 /**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+@kotlin.jvm.JvmVersion
+public fun <T> Array<T>.plusElement(element: T): Array<T> {
+    return plus(element)
+}
+
+/**
  * Sorts the array in-place.
  */
 @kotlin.jvm.JvmVersion

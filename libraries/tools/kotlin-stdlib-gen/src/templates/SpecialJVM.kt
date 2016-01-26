@@ -5,6 +5,13 @@ import templates.Family.*
 fun specialJVM(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
+    templates add f("plusElement(element: T)") {
+        only(InvariantArraysOfObjects)
+        returns("SELF")
+        doc { "Returns an array containing all elements of the original array and then the given [element]." }
+        body { "return plus(element)" }
+    }
+
     templates add f("plus(element: T)") {
         operator(true)
 

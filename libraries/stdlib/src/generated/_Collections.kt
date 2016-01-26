@@ -1600,6 +1600,13 @@ public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
 }
 
 /**
+ * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
+ */
+public fun <T> Iterable<T>.minusElement(element: T): List<T> {
+    return minus(element)
+}
+
+/**
  * Splits the original collection into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
@@ -1704,6 +1711,20 @@ public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
     result.addAll(this)
     result.addAll(elements)
     return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then the given [element].
+ */
+public fun <T> Collection<T>.plusElement(element: T): List<T> {
+    return plus(element)
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then the given [element].
+ */
+public fun <T> Iterable<T>.plusElement(element: T): List<T> {
+    return plus(element)
 }
 
 /**
