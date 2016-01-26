@@ -14,298 +14,218 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
-import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-import java.util.List;
-import java.util.Map;
+abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
 
-public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
+    protected abstract val delegateBuilder: ControlFlowBuilder
 
-    @NotNull
-    protected abstract ControlFlowBuilder getDelegateBuilder();
-
-    @Override
-    public void loadUnit(@NotNull KtExpression expression) {
-        getDelegateBuilder().loadUnit(expression);
+    override fun loadUnit(expression: KtExpression) {
+        delegateBuilder.loadUnit(expression)
     }
 
-    @NotNull
-    @Override
-    public InstructionWithValue loadConstant(@NotNull KtExpression expression, @Nullable CompileTimeConstant<?> constant) {
-        return getDelegateBuilder().loadConstant(expression, constant);
+    override fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?): InstructionWithValue {
+        return delegateBuilder.loadConstant(expression, constant)
     }
 
-    @NotNull
-    @Override
-    public InstructionWithValue createAnonymousObject(@NotNull KtObjectLiteralExpression expression) {
-        return getDelegateBuilder().createAnonymousObject(expression);
+    override fun createAnonymousObject(expression: KtObjectLiteralExpression): InstructionWithValue {
+        return delegateBuilder.createAnonymousObject(expression)
     }
 
-    @NotNull
-    @Override
-    public InstructionWithValue createLambda(@NotNull KtFunction expression) {
-        return getDelegateBuilder().createLambda(expression);
+    override fun createLambda(expression: KtFunction): InstructionWithValue {
+        return delegateBuilder.createLambda(expression)
     }
 
-    @NotNull
-    @Override
-    public InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
-        return getDelegateBuilder().loadStringTemplate(expression, inputValues);
+    override fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue {
+        return delegateBuilder.loadStringTemplate(expression, inputValues)
     }
 
-    @NotNull
-    @Override
-    public MagicInstruction magic(
-            @NotNull KtElement instructionElement,
-            @Nullable KtElement valueElement,
-            @NotNull List<? extends PseudoValue> inputValues,
-            @NotNull MagicKind kind
-    ) {
-        return getDelegateBuilder().magic(instructionElement, valueElement, inputValues, kind);
+    override fun magic(
+            instructionElement: KtElement,
+            valueElement: KtElement?,
+            inputValues: List<PseudoValue>,
+            kind: MagicKind): MagicInstruction {
+        return delegateBuilder.magic(instructionElement, valueElement, inputValues, kind)
     }
 
-    @NotNull
-    @Override
-    public MergeInstruction merge(@NotNull KtExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
-        return getDelegateBuilder().merge(expression, inputValues);
+    override fun merge(expression: KtExpression, inputValues: List<PseudoValue>): MergeInstruction {
+        return delegateBuilder.merge(expression, inputValues)
     }
 
-    @NotNull
-    @Override
-    public ReadValueInstruction readVariable(
-            @NotNull KtExpression expression,
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues
-    ) {
-        return getDelegateBuilder().readVariable(expression, resolvedCall, receiverValues);
+    override fun readVariable(
+            expression: KtExpression,
+            resolvedCall: ResolvedCall<*>,
+            receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction {
+        return delegateBuilder.readVariable(expression, resolvedCall, receiverValues)
     }
 
-    @NotNull
-    @Override
-    public CallInstruction call(
-            @NotNull KtElement valueElement,
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues,
-            @NotNull Map<PseudoValue, ? extends ValueParameterDescriptor> arguments
-    ) {
-        return getDelegateBuilder().call(valueElement, resolvedCall, receiverValues, arguments);
+    override fun call(
+            valueElement: KtElement,
+            resolvedCall: ResolvedCall<*>,
+            receiverValues: Map<PseudoValue, ReceiverValue>,
+            arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction {
+        return delegateBuilder.call(valueElement, resolvedCall, receiverValues, arguments)
     }
 
-    @NotNull
-    @Override
-    public OperationInstruction predefinedOperation(
-            @NotNull KtExpression expression,
-            @NotNull PredefinedOperation operation,
-            @NotNull List<? extends PseudoValue> inputValues
-    ) {
-        return getDelegateBuilder().predefinedOperation(expression, operation, inputValues);
+    override fun predefinedOperation(
+            expression: KtExpression,
+            operation: ControlFlowBuilder.PredefinedOperation,
+            inputValues: List<PseudoValue>): OperationInstruction {
+        return delegateBuilder.predefinedOperation(expression, operation, inputValues)
     }
 
-    @Override
-    @NotNull
-    public Label createUnboundLabel() {
-        return getDelegateBuilder().createUnboundLabel();
+    override fun createUnboundLabel(): Label {
+        return delegateBuilder.createUnboundLabel()
     }
 
-    @NotNull
-    @Override
-    public Label createUnboundLabel(@NotNull String name) {
-        return getDelegateBuilder().createUnboundLabel(name);
+    override fun createUnboundLabel(name: String): Label {
+        return delegateBuilder.createUnboundLabel(name)
     }
 
-    @Override
-    public void bindLabel(@NotNull Label label) {
-        getDelegateBuilder().bindLabel(label);
+    override fun bindLabel(label: Label) {
+        delegateBuilder.bindLabel(label)
     }
 
-    @Override
-    public void jump(@NotNull Label label, @NotNull KtElement element) {
-        getDelegateBuilder().jump(label, element);
+    override fun jump(label: Label, element: KtElement) {
+        delegateBuilder.jump(label, element)
     }
 
-    @Override
-    public void jumpOnFalse(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue) {
-        getDelegateBuilder().jumpOnFalse(label, element, conditionValue);
+    override fun jumpOnFalse(label: Label, element: KtElement, conditionValue: PseudoValue?) {
+        delegateBuilder.jumpOnFalse(label, element, conditionValue)
     }
 
-    @Override
-    public void jumpOnTrue(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue) {
-        getDelegateBuilder().jumpOnTrue(label, element, conditionValue);
+    override fun jumpOnTrue(label: Label, element: KtElement, conditionValue: PseudoValue?) {
+        delegateBuilder.jumpOnTrue(label, element, conditionValue)
     }
 
-    @Override
-    public void nondeterministicJump(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue inputValue) {
-        getDelegateBuilder().nondeterministicJump(label, element, inputValue);
+    override fun nondeterministicJump(label: Label, element: KtElement, inputValue: PseudoValue?) {
+        delegateBuilder.nondeterministicJump(label, element, inputValue)
     }
 
-    @Override
-    public void nondeterministicJump(@NotNull List<? extends Label> labels, @NotNull KtElement element) {
-        getDelegateBuilder().nondeterministicJump(labels, element);
+    override fun nondeterministicJump(label: List<Label>, element: KtElement) {
+        delegateBuilder.nondeterministicJump(label, element)
     }
 
-    @Override
-    public void jumpToError(@NotNull KtElement element) {
-        getDelegateBuilder().jumpToError(element);
+    override fun jumpToError(element: KtElement) {
+        delegateBuilder.jumpToError(element)
     }
 
-    @Override
-    public void throwException(@NotNull KtThrowExpression throwExpression, @NotNull PseudoValue thrownValue) {
-        getDelegateBuilder().throwException(throwExpression, thrownValue);
+    override fun throwException(throwExpression: KtThrowExpression, thrownValue: PseudoValue) {
+        delegateBuilder.throwException(throwExpression, thrownValue)
     }
 
-    @Override
-    @NotNull
-    public Label getEntryPoint(@NotNull KtElement labelElement) {
-        return getDelegateBuilder().getEntryPoint(labelElement);
+    override fun getEntryPoint(labelElement: KtElement): Label {
+        return delegateBuilder.getEntryPoint(labelElement)
     }
 
-    @NotNull
-    @Override
-    public Label getExitPoint(@NotNull KtElement labelElement) {
-        return getDelegateBuilder().getExitPoint(labelElement);
+    override fun getExitPoint(labelElement: KtElement): Label {
+        return delegateBuilder.getExitPoint(labelElement)
     }
 
-    @NotNull
-    @Override
-    public Label getConditionEntryPoint(@NotNull KtElement labelElement) {
-        return getDelegateBuilder().getConditionEntryPoint(labelElement);
+    override fun getConditionEntryPoint(labelElement: KtElement): Label {
+        return delegateBuilder.getConditionEntryPoint(labelElement)
     }
 
-    @NotNull
-    @Override
-    public LoopInfo enterLoop(@NotNull KtLoopExpression expression) {
-        return getDelegateBuilder().enterLoop(expression);
+    override fun enterLoop(expression: KtLoopExpression): LoopInfo {
+        return delegateBuilder.enterLoop(expression)
     }
 
-    @Override
-    public void enterLoopBody(@NotNull KtLoopExpression expression) {
-        getDelegateBuilder().enterLoopBody(expression);
+    override fun enterLoopBody(expression: KtLoopExpression) {
+        delegateBuilder.enterLoopBody(expression)
     }
 
-    @Override
-    public void exitLoopBody(@NotNull KtLoopExpression expression) {
-        getDelegateBuilder().exitLoopBody(expression);
+    override fun exitLoopBody(expression: KtLoopExpression) {
+        delegateBuilder.exitLoopBody(expression)
     }
 
-    @Override
-    @Nullable
-    public KtLoopExpression getCurrentLoop() {
-        return getDelegateBuilder().getCurrentLoop();
+    override val currentLoop: KtLoopExpression?
+        get() = delegateBuilder.currentLoop
+
+    override fun enterTryFinally(trigger: GenerationTrigger) {
+        delegateBuilder.enterTryFinally(trigger)
     }
 
-    @Override
-    public void enterTryFinally(@NotNull GenerationTrigger trigger) {
-        getDelegateBuilder().enterTryFinally(trigger);
+    override fun exitTryFinally() {
+        delegateBuilder.exitTryFinally()
     }
 
-    @Override
-    public void exitTryFinally() {
-        getDelegateBuilder().exitTryFinally();
+    override fun enterSubroutine(subroutine: KtElement) {
+        delegateBuilder.enterSubroutine(subroutine)
     }
 
-    @Override
-    public void enterSubroutine(@NotNull KtElement subroutine) {
-        getDelegateBuilder().enterSubroutine(subroutine);
+    override fun exitSubroutine(subroutine: KtElement): Pseudocode {
+        return delegateBuilder.exitSubroutine(subroutine)
     }
 
-    @NotNull
-    @Override
-    public Pseudocode exitSubroutine(@NotNull KtElement subroutine) {
-        return getDelegateBuilder().exitSubroutine(subroutine);
+    override val currentSubroutine: KtElement
+        get() = delegateBuilder.currentSubroutine
+
+    override val returnSubroutine: KtElement?
+        get() = delegateBuilder.returnSubroutine
+
+    override fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement) {
+        delegateBuilder.returnValue(returnExpression, returnValue, subroutine)
     }
 
-    @NotNull
-    @Override
-    public KtElement getCurrentSubroutine() {
-        return getDelegateBuilder().getCurrentSubroutine();
+    override fun returnNoValue(returnExpression: KtReturnExpression, subroutine: KtElement) {
+        delegateBuilder.returnNoValue(returnExpression, subroutine)
     }
 
-    @Override
-    @Nullable
-    public KtElement getReturnSubroutine() {
-        return getDelegateBuilder().getReturnSubroutine();
+    override fun write(
+            assignment: KtElement,
+            lValue: KtElement,
+            rValue: PseudoValue,
+            target: AccessTarget,
+            receiverValues: Map<PseudoValue, ReceiverValue>) {
+        delegateBuilder.write(assignment, lValue, rValue, target, receiverValues)
     }
 
-    @Override
-    public void returnValue(@NotNull KtExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull KtElement subroutine) {
-        getDelegateBuilder().returnValue(returnExpression, returnValue, subroutine);
+    override fun declareParameter(parameter: KtParameter) {
+        delegateBuilder.declareParameter(parameter)
     }
 
-    @Override
-    public void returnNoValue(@NotNull KtReturnExpression returnExpression, @NotNull KtElement subroutine) {
-        getDelegateBuilder().returnNoValue(returnExpression, subroutine);
+    override fun declareVariable(property: KtVariableDeclaration) {
+        delegateBuilder.declareVariable(property)
     }
 
-    @Override
-    public void write(
-            @NotNull KtElement assignment,
-            @NotNull KtElement lValue,
-            @NotNull PseudoValue rValue,
-            @NotNull AccessTarget target,
-            @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues) {
-        getDelegateBuilder().write(assignment, lValue, rValue, target, receiverValues);
+    override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
+        delegateBuilder.declareFunction(subroutine, pseudocode)
     }
 
-    @Override
-    public void declareParameter(@NotNull KtParameter parameter) {
-        getDelegateBuilder().declareParameter(parameter);
+    override fun repeatPseudocode(startLabel: Label, finishLabel: Label) {
+        delegateBuilder.repeatPseudocode(startLabel, finishLabel)
     }
 
-    @Override
-    public void declareVariable(@NotNull KtVariableDeclaration property) {
-        getDelegateBuilder().declareVariable(property);
+    override fun mark(element: KtElement) {
+        delegateBuilder.mark(element)
     }
 
-    @Override
-    public void declareFunction(@NotNull KtElement subroutine, @NotNull Pseudocode pseudocode) {
-        getDelegateBuilder().declareFunction(subroutine, pseudocode);
+    override fun getBoundValue(element: KtElement?): PseudoValue? {
+        return delegateBuilder.getBoundValue(element)
     }
 
-    @Override
-    public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
-        getDelegateBuilder().repeatPseudocode(startLabel, finishLabel);
+    override fun bindValue(value: PseudoValue, element: KtElement) {
+        delegateBuilder.bindValue(value, element)
     }
 
-    @Override
-    public void mark(@NotNull KtElement element) {
-        getDelegateBuilder().mark(element);
+    override fun newValue(element: KtElement?): PseudoValue {
+        return delegateBuilder.newValue(element)
     }
 
-    @Nullable
-    @Override
-    public PseudoValue getBoundValue(@Nullable KtElement element) {
-        return getDelegateBuilder().getBoundValue(element);
+    override fun enterLexicalScope(element: KtElement) {
+        delegateBuilder.enterLexicalScope(element)
     }
 
-    @Override
-    public void bindValue(@NotNull PseudoValue value, @NotNull KtElement element) {
-        getDelegateBuilder().bindValue(value, element);
-    }
-
-    @NotNull
-    @Override
-    public PseudoValue newValue(@Nullable KtElement element) {
-        return getDelegateBuilder().newValue(element);
-    }
-
-    @Override
-    public void enterLexicalScope(@NotNull KtElement element) {
-        getDelegateBuilder().enterLexicalScope(element);
-    }
-
-    @Override
-    public void exitLexicalScope(@NotNull KtElement element) {
-        getDelegateBuilder().exitLexicalScope(element);
+    override fun exitLexicalScope(element: KtElement) {
+        delegateBuilder.exitLexicalScope(element)
     }
 }
