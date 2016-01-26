@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
@@ -90,6 +91,9 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                 val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
                 val parameters = forExpression.loopParameter?.singletonList() ?: forExpression.destructuringParameter!!.entries
 
+                PsiDocumentManager.getInstance(project).commitDocument(editor.document)
+                editor.caretModel.moveToOffset(forExpression.startOffset)
+
                 val templateBuilder = TemplateBuilderImpl(forExpression)
                 for ((parameter, parameterNames) in (parameters zip names)) {
                     templateBuilder.replaceElement(parameter, ChooseStringExpression(parameterNames))
@@ -97,7 +101,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                 templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
                 templateBuilder.setEndVariableAfter(bodyPlaceholder)
 
-                templateBuilder.run(editor, true)
+                templateBuilder.run(editor, false)
             }
         }
     }
