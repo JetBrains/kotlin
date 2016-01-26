@@ -278,15 +278,15 @@ public class PseudocodeImpl implements Pseudocode {
 
     @NotNull
     @Override
-    public List<? extends KtElement> getValueElements(@Nullable PseudoValue value) {
-        List<? extends KtElement> result = elementsToValues.getKeysByValue(value);
+    public List<KtElement> getValueElements(@Nullable PseudoValue value) {
+        List<KtElement> result = elementsToValues.getKeysByValue(value);
         return result != null ? result : Collections.<KtElement>emptyList();
     }
 
     @NotNull
     @Override
-    public List<? extends Instruction> getUsages(@Nullable PseudoValue value) {
-        List<? extends Instruction> result = valueUsages.get(value);
+    public List<Instruction> getUsages(@Nullable PseudoValue value) {
+        List<Instruction> result = valueUsages.get(value);
         return result != null ? result : Collections.<Instruction>emptyList();
     }
 

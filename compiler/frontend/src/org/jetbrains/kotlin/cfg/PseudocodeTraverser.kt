@@ -208,7 +208,7 @@ fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction 
 fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
         if (traversalOrder == FORWARD) sinkInstruction else enterInstruction
 
-fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): MutableList<Instruction> =
+fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): List<Instruction> =
         if (traversalOrder == FORWARD) instructions else reversedInstructions
 
 fun Instruction.getNextInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =

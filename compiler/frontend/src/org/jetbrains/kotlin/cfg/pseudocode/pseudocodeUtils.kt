@@ -149,7 +149,7 @@ fun getExpectedTypePredicate(
                     val returnElement = it.element
                     val functionDescriptor = when(returnElement) {
                         is KtReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
-                        else -> bindingContext[DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
+                        else -> bindingContext[DECLARATION_TO_DESCRIPTOR, pseudocode.correspondingElement]
                     }
                     addSubtypesOf((functionDescriptor as? CallableDescriptor)?.getReturnType())
                 }
@@ -278,7 +278,7 @@ fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue
 
     fun Pseudocode.collectValues() {
         getElementValue(element)?.let { results.add(it) }
-        for (localFunction in getLocalDeclarations()) {
+        for (localFunction in localDeclarations) {
             localFunction.body.collectValues()
         }
     }
@@ -303,8 +303,8 @@ fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
 }
 
 fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
-    if (getCorrespondingElement() == element) return this
+    if (correspondingElement == element) return this
 
-    getLocalDeclarations().forEach { decl -> decl.body.getPseudocodeByElement(element)?.let { return it } }
+    localDeclarations.forEach { decl -> decl.body.getPseudocodeByElement(element)?.let { return it } }
     return null
 }

@@ -14,58 +14,41 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg.pseudocode;
+package org.jetbrains.kotlin.cfg.pseudocode
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
-import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
+import org.jetbrains.kotlin.psi.KtElement
 
-import java.util.List;
-import java.util.Set;
+interface Pseudocode {
+    val correspondingElement: KtElement
 
-public interface Pseudocode {
-    @NotNull
-    KtElement getCorrespondingElement();
+    val parent: Pseudocode?
 
-    @Nullable
-    Pseudocode getParent();
+    val localDeclarations: Set<LocalFunctionDeclarationInstruction>
 
-    @NotNull
-    Set<LocalFunctionDeclarationInstruction> getLocalDeclarations();
+    val instructions: List<Instruction>
 
-    @NotNull
-    List<Instruction> getInstructions();
+    val reversedInstructions: List<Instruction>
 
-    @NotNull
-    List<Instruction> getReversedInstructions();
+    val instructionsIncludingDeadCode: List<Instruction>
 
-    @NotNull
-    List<Instruction> getInstructionsIncludingDeadCode();
+    val exitInstruction: SubroutineExitInstruction
 
-    @NotNull
-    SubroutineExitInstruction getExitInstruction();
+    val sinkInstruction: SubroutineSinkInstruction
 
-    @NotNull
-    SubroutineSinkInstruction getSinkInstruction();
+    val enterInstruction: SubroutineEnterInstruction
 
-    @NotNull
-    SubroutineEnterInstruction getEnterInstruction();
+    fun getElementValue(element: KtElement?): PseudoValue?
 
-    @Nullable
-    PseudoValue getElementValue(@Nullable KtElement element);
+    fun getValueElements(value: PseudoValue?): List<KtElement>
 
-    @NotNull
-    List<? extends KtElement> getValueElements(@Nullable PseudoValue value);
+    fun getUsages(value: PseudoValue?): List<Instruction>
 
-    @NotNull
-    List<? extends Instruction> getUsages(@Nullable PseudoValue value);
+    fun isSideEffectFree(instruction: Instruction): Boolean
 
-    boolean isSideEffectFree(@NotNull Instruction instruction);
-
-    Pseudocode copy();
+    fun copy(): Pseudocode
 }
