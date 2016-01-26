@@ -32,17 +32,17 @@ abstract class BaseGradleIT {
     }
 
     companion object {
-        protected val ranDaemonVersions = hashSetOf<String>()
+
+        protected val ranDaemonVersions = hashMapOf<String, Int>()
         val resourcesRootFile = File("src/test/resources")
+        val MAX_DAEMON_RUNS = 30
 
         @AfterClass
         @JvmStatic
+        @Synchronized
         @Suppress("unused")
         fun tearDownAll() {
-            ranDaemonVersions.forEach {
-                println("Stopping gradle daemon v$it")
-                stopDaemon(it)
-            }
+            ranDaemonVersions.keys.forEach { stopDaemon(it) }
             ranDaemonVersions.clear()
         }
 
@@ -58,6 +58,7 @@ abstract class BaseGradleIT {
         }
 
         fun stopDaemon(ver: String) {
+            println("Stopping gradle daemon v$ver")
             val wrapperDir = File(resourcesRootFile, "GradleWrapper-$ver")
             val cmd = createGradleCommand(arrayListOf("-stop"))
             createProcess(cmd, wrapperDir)
@@ -70,10 +71,15 @@ abstract class BaseGradleIT {
             return builder.start()
         }
 
+        @Synchronized
         fun prepareDaemon(version: String) {
-            if (version !in ranDaemonVersions) {
+            val useCount = ranDaemonVersions.get(version)
+            if (useCount == null || useCount > MAX_DAEMON_RUNS) {
                 stopDaemon(version)
-                ranDaemonVersions.add(version)
+                ranDaemonVersions.put(version, 1)
+            }
+            else {
+                ranDaemonVersions.put(version, useCount + 1)
             }
         }
     }
