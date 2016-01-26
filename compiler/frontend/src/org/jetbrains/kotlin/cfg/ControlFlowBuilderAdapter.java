@@ -60,7 +60,7 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
 
     @NotNull
     @Override
-    public InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
+    public InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
         return getDelegateBuilder().loadStringTemplate(expression, inputValues);
     }
 
@@ -69,7 +69,7 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
     public MagicInstruction magic(
             @NotNull KtElement instructionElement,
             @Nullable KtElement valueElement,
-            @NotNull List<PseudoValue> inputValues,
+            @NotNull List<? extends PseudoValue> inputValues,
             @NotNull MagicKind kind
     ) {
         return getDelegateBuilder().magic(instructionElement, valueElement, inputValues, kind);
@@ -77,7 +77,7 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
 
     @NotNull
     @Override
-    public MergeInstruction merge(@NotNull KtExpression expression, @NotNull List<PseudoValue> inputValues) {
+    public MergeInstruction merge(@NotNull KtExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
         return getDelegateBuilder().merge(expression, inputValues);
     }
 
@@ -86,7 +86,7 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
     public ReadValueInstruction readVariable(
             @NotNull KtExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull Map<PseudoValue, ReceiverValue> receiverValues
+            @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues
     ) {
         return getDelegateBuilder().readVariable(expression, resolvedCall, receiverValues);
     }
@@ -96,8 +96,8 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
     public CallInstruction call(
             @NotNull KtElement valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
-            @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
+            @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues,
+            @NotNull Map<PseudoValue, ? extends ValueParameterDescriptor> arguments
     ) {
         return getDelegateBuilder().call(valueElement, resolvedCall, receiverValues, arguments);
     }
@@ -107,7 +107,7 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
     public OperationInstruction predefinedOperation(
             @NotNull KtExpression expression,
             @NotNull PredefinedOperation operation,
-            @NotNull List<PseudoValue> inputValues
+            @NotNull List<? extends PseudoValue> inputValues
     ) {
         return getDelegateBuilder().predefinedOperation(expression, operation, inputValues);
     }
@@ -150,7 +150,7 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
     }
 
     @Override
-    public void nondeterministicJump(@NotNull List<Label> labels, @NotNull KtElement element) {
+    public void nondeterministicJump(@NotNull List<? extends Label> labels, @NotNull KtElement element) {
         getDelegateBuilder().nondeterministicJump(labels, element);
     }
 
@@ -253,7 +253,7 @@ public abstract class ControlFlowBuilderAdapter implements ControlFlowBuilder {
             @NotNull KtElement lValue,
             @NotNull PseudoValue rValue,
             @NotNull AccessTarget target,
-            @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
+            @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues) {
         getDelegateBuilder().write(assignment, lValue, rValue, target, receiverValues);
     }
 

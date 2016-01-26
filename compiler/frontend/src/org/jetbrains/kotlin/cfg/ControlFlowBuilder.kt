@@ -14,151 +14,128 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
-import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-import java.util.List;
-import java.util.Map;
-
-public interface ControlFlowBuilder {
+interface ControlFlowBuilder {
     // Subroutines
-    void enterSubroutine(@NotNull KtElement subroutine);
+    fun enterSubroutine(subroutine: KtElement)
 
-    @NotNull
-    Pseudocode exitSubroutine(@NotNull KtElement subroutine);
+    fun exitSubroutine(subroutine: KtElement): Pseudocode
 
-    @NotNull
-    KtElement getCurrentSubroutine();
-    @Nullable
-    KtElement getReturnSubroutine();
+    val currentSubroutine: KtElement
+    val returnSubroutine: KtElement?
 
     // Lexical scopes
-    void enterLexicalScope(@NotNull KtElement element);
-    void exitLexicalScope(@NotNull KtElement element);
+    fun enterLexicalScope(element: KtElement)
+
+    fun exitLexicalScope(element: KtElement)
 
     // Entry/exit points
-    @NotNull
-    Label getEntryPoint(@NotNull KtElement labelElement);
-    @NotNull
-    Label getExitPoint(@NotNull KtElement labelElement);
-    @NotNull
-    Label getConditionEntryPoint(@NotNull KtElement labelElement);
+    fun getEntryPoint(labelElement: KtElement): Label
+
+    fun getExitPoint(labelElement: KtElement): Label
+    fun getConditionEntryPoint(labelElement: KtElement): Label
 
     // Declarations
-    void declareParameter(@NotNull KtParameter parameter);
-    void declareVariable(@NotNull KtVariableDeclaration property);
-    void declareFunction(@NotNull KtElement subroutine, @NotNull Pseudocode pseudocode);
+    fun declareParameter(parameter: KtParameter)
+
+    fun declareVariable(property: KtVariableDeclaration)
+    fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode)
 
     // Labels
-    @NotNull
-    Label createUnboundLabel();
-    @NotNull
-    Label createUnboundLabel(@NotNull String name);
+    fun createUnboundLabel(): Label
 
-    void bindLabel(@NotNull Label label);
+    fun createUnboundLabel(name: String): Label
+
+    fun bindLabel(label: Label)
 
     // Jumps
-    void jump(@NotNull Label label, @NotNull KtElement element);
-    void jumpOnFalse(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue);
-    void jumpOnTrue(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue conditionValue);
-    void nondeterministicJump(@NotNull Label label, @NotNull KtElement element, @Nullable PseudoValue inputValue); // Maybe, jump to label
-    void nondeterministicJump(@NotNull List<Label> label, @NotNull KtElement element);
-    void jumpToError(@NotNull KtElement element);
+    fun jump(label: Label, element: KtElement)
 
-    void returnValue(@NotNull KtExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull KtElement subroutine);
-    void returnNoValue(@NotNull KtReturnExpression returnExpression, @NotNull KtElement subroutine);
+    fun jumpOnFalse(label: Label, element: KtElement, conditionValue: PseudoValue?)
+    fun jumpOnTrue(label: Label, element: KtElement, conditionValue: PseudoValue?)
+    fun nondeterministicJump(label: Label, element: KtElement, inputValue: PseudoValue?)  // Maybe, jump to label
+    fun nondeterministicJump(label: List<Label>, element: KtElement)
+    fun jumpToError(element: KtElement)
 
-    void throwException(@NotNull KtThrowExpression throwExpression, @NotNull PseudoValue thrownValue);
+    fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement)
+    fun returnNoValue(returnExpression: KtReturnExpression, subroutine: KtElement)
+
+    fun throwException(throwExpression: KtThrowExpression, thrownValue: PseudoValue)
 
     // Loops
-    @NotNull
-    LoopInfo enterLoop(@NotNull KtLoopExpression expression);
-    void enterLoopBody(@NotNull KtLoopExpression expression);
-    void exitLoopBody(@NotNull KtLoopExpression expression);
-    @Nullable
-    KtLoopExpression getCurrentLoop();
+    fun enterLoop(expression: KtLoopExpression): LoopInfo
+
+    fun enterLoopBody(expression: KtLoopExpression)
+    fun exitLoopBody(expression: KtLoopExpression)
+    val currentLoop: KtLoopExpression?
 
     // Try-Finally
-    void enterTryFinally(@NotNull GenerationTrigger trigger);
-    void exitTryFinally();
+    fun enterTryFinally(trigger: GenerationTrigger)
 
-    void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel);
+    fun exitTryFinally()
+
+    fun repeatPseudocode(startLabel: Label, finishLabel: Label)
 
     // Reading values
-    void mark(@NotNull KtElement element);
+    fun mark(element: KtElement)
 
-    @Nullable
-    PseudoValue getBoundValue(@Nullable KtElement element);
-    void bindValue(@NotNull PseudoValue value, @NotNull KtElement element);
-    @NotNull
-    PseudoValue newValue(@Nullable KtElement element);
+    fun getBoundValue(element: KtElement?): PseudoValue?
+    fun bindValue(value: PseudoValue, element: KtElement)
+    fun newValue(element: KtElement?): PseudoValue
 
-    void loadUnit(@NotNull KtExpression expression);
+    fun loadUnit(expression: KtExpression)
 
-    @NotNull
-    InstructionWithValue loadConstant(@NotNull KtExpression expression, @Nullable CompileTimeConstant<?> constant);
-    @NotNull
-    InstructionWithValue createAnonymousObject(@NotNull KtObjectLiteralExpression expression);
-    @NotNull
-    InstructionWithValue createLambda(@NotNull KtFunction expression);
-    @NotNull
-    InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
+    fun loadConstant(expression: KtExpression, constant: CompileTimeConstant<*>?): InstructionWithValue
+    fun createAnonymousObject(expression: KtObjectLiteralExpression): InstructionWithValue
+    fun createLambda(expression: KtFunction): InstructionWithValue
+    fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue
 
-    @NotNull
-    MagicInstruction magic(
-            @NotNull KtElement instructionElement,
-            @Nullable KtElement valueElement,
-            @NotNull List<PseudoValue> inputValues,
-            @NotNull MagicKind kind
-    );
+    fun magic(
+            instructionElement: KtElement,
+            valueElement: KtElement?,
+            inputValues: List<PseudoValue>,
+            kind: MagicKind): MagicInstruction
 
-    @NotNull
-    MergeInstruction merge(
-            @NotNull KtExpression expression,
-            @NotNull List<PseudoValue> inputValues
-    );
+    fun merge(
+            expression: KtExpression,
+            inputValues: List<PseudoValue>): MergeInstruction
 
-    @NotNull
-    ReadValueInstruction readVariable(
-            @NotNull KtExpression expression,
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull Map<PseudoValue, ReceiverValue> receiverValues
-    );
+    fun readVariable(
+            expression: KtExpression,
+            resolvedCall: ResolvedCall<*>,
+            receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction
 
-    @NotNull
-    CallInstruction call(
-            @NotNull KtElement valueElement,
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
-            @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
-    );
+    fun call(
+            valueElement: KtElement,
+            resolvedCall: ResolvedCall<*>,
+            receiverValues: Map<PseudoValue, ReceiverValue>,
+            arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction
 
-    enum PredefinedOperation {
+    enum class PredefinedOperation {
         AND,
         OR,
         NOT_NULL_ASSERTION
     }
-    @NotNull
-    OperationInstruction predefinedOperation(
-            @NotNull KtExpression expression,
-            @NotNull PredefinedOperation operation,
-            @NotNull List<PseudoValue> inputValues
-    );
 
-    void write(
-            @NotNull KtElement assignment,
-            @NotNull KtElement lValue,
-            @NotNull PseudoValue rValue,
-            @NotNull AccessTarget target,
-            @NotNull Map<PseudoValue, ReceiverValue> receiverValues);
+    fun predefinedOperation(
+            expression: KtExpression,
+            operation: PredefinedOperation,
+            inputValues: List<PseudoValue>): OperationInstruction
+
+    fun write(
+            assignment: KtElement,
+            lValue: KtElement,
+            rValue: PseudoValue,
+            target: AccessTarget,
+            receiverValues: Map<PseudoValue, ReceiverValue>)
 }

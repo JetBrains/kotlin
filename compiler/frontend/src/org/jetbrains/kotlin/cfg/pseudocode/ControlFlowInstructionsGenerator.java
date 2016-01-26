@@ -323,7 +323,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
                 @NotNull KtElement lValue,
                 @NotNull PseudoValue rValue,
                 @NotNull AccessTarget target,
-                @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
+                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues) {
             add(new WriteValueInstruction(assignment, getCurrentScope(), target, receiverValues, lValue, rValue));
         }
 
@@ -377,7 +377,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
         }
 
         @Override
-        public void nondeterministicJump(@NotNull List<Label> labels, @NotNull KtElement element) {
+        public void nondeterministicJump(@NotNull List<? extends Label> labels, @NotNull KtElement element) {
             //todo
             //handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(element, labels, getCurrentScope(), null));
@@ -431,7 +431,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
 
         @NotNull
         @Override
-        public InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
+        public InstructionWithValue loadStringTemplate(@NotNull KtStringTemplateExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
             return inputValues.isEmpty() ? read(expression) : magic(expression, expression, inputValues, MagicKind.STRING_TEMPLATE);
         }
 
@@ -440,7 +440,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
         public MagicInstruction magic(
                 @NotNull KtElement instructionElement,
                 @Nullable KtElement valueElement,
-                @NotNull List<PseudoValue> inputValues,
+                @NotNull List<? extends PseudoValue> inputValues,
                 @NotNull MagicKind kind
         ) {
             MagicInstruction instruction = new MagicInstruction(
@@ -452,7 +452,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
 
         @NotNull
         @Override
-        public MergeInstruction merge(@NotNull KtExpression expression, @NotNull List<PseudoValue> inputValues) {
+        public MergeInstruction merge(@NotNull KtExpression expression, @NotNull List<? extends PseudoValue> inputValues) {
             MergeInstruction instruction = new MergeInstruction(expression, getCurrentScope(), inputValues, valueFactory);
             add(instruction);
             return instruction;
@@ -463,7 +463,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
         public ReadValueInstruction readVariable(
                 @NotNull KtExpression expression,
                 @NotNull ResolvedCall<?> resolvedCall,
-                @NotNull Map<PseudoValue, ReceiverValue> receiverValues
+                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues
         ) {
             return read(expression, resolvedCall, receiverValues);
         }
@@ -473,8 +473,8 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
         public CallInstruction call(
                 @NotNull KtElement valueElement,
                 @NotNull ResolvedCall<?> resolvedCall,
-                @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
-                @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
+                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues,
+                @NotNull Map<PseudoValue, ? extends ValueParameterDescriptor> arguments
         ) {
             KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
             CallInstruction instruction = new CallInstruction(
@@ -494,7 +494,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
         public OperationInstruction predefinedOperation(
                 @NotNull KtExpression expression,
                 @NotNull PredefinedOperation operation,
-                @NotNull List<PseudoValue> inputValues
+                @NotNull List<? extends PseudoValue> inputValues
         ) {
             return magic(expression, expression, inputValues, getMagicKind(operation));
         }
@@ -517,7 +517,7 @@ public class ControlFlowInstructionsGenerator extends ControlFlowBuilderAdapter 
         private ReadValueInstruction read(
                 @NotNull KtExpression expression,
                 @Nullable ResolvedCall<?> resolvedCall,
-                @NotNull Map<PseudoValue, ReceiverValue> receiverValues
+                @NotNull Map<PseudoValue, ? extends ReceiverValue> receiverValues
         ) {
             AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE;
             ReadValueInstruction instruction = new ReadValueInstruction(
