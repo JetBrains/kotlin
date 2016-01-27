@@ -4555,6 +4555,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("approximateCapturedTypes.kt")
+        public void testApproximateCapturedTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/approximateCapturedTypes.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("checkcast.kt")
         public void testCheckcast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reified/checkcast.kt");

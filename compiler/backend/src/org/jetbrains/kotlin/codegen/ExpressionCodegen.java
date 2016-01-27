@@ -83,6 +83,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -2452,19 +2453,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         TypeParameterMappings mappings = new TypeParameterMappings();
         for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
-
-            KotlinType type = TypeUtils.uncaptureTypeForInlineMapping(entry.getValue());
+            KotlinType type = entry.getValue();
 
             boolean isReified = key.isReified() || InlineUtil.isArrayConstructorWithLambda(resolvedCall.getResultingDescriptor());
 
             Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
             if (typeParameterAndReificationArgument == null) {
+                KotlinType approximatedType = CapturedTypeApproximationKt.approximateCapturedTypes(entry.getValue()).getUpper();
                 // type is not generic
                 BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-                Type asmType = typeMapper.mapTypeParameter(type, signatureWriter);
+                Type asmType = typeMapper.mapTypeParameter(approximatedType, signatureWriter);
 
                 mappings.addParameterMappingToType(
-                        key.getName().getIdentifier(), type, asmType, signatureWriter.toString(), isReified
+                        key.getName().getIdentifier(), approximatedType, asmType, signatureWriter.toString(), isReified
                 );
             }
             else {
