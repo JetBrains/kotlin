@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.MoveRenameUsageInfoForExtension
@@ -105,7 +104,7 @@ class MoveKotlinDeclarationsProcessor(
         val descriptor: MoveDeclarationsDescriptor,
         val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {
     companion object {
-        private val REFACTORING_NAME: String = KotlinRefactoringBundle.message("refactoring.move.top.level.declarations")
+        private val REFACTORING_NAME = "Move declarations"
     }
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
