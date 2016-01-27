@@ -20,6 +20,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
@@ -41,7 +42,11 @@ public class AndroidSubplugin : KotlinGradleSubplugin {
     }
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
-        project.extensions.getByName("android") as? BaseExtension ?: return false
+        try {
+            project.extensions.getByName("android") as? BaseExtension ?: return false
+        } catch (e: UnknownDomainObjectException) {
+            return false
+        }
         if (project.plugins.findPlugin(AndroidExtensionsSubpluginIndicator::class.java) == null) {
             val dependencies = project.buildscript.configurations.getByName("classpath").dependencies
             if (dependencies.any { it.name == getArtifactName() && it.group == getGroupName() } && !migrateWarningReported) {
