@@ -17,7 +17,8 @@ public operator fun <T> Enumeration<T>.iterator(): Iterator<T> = object : Iterat
 /**
  * Returns the given iterator itself. This allows to use an instance of iterator in a `for` loop.
  */
-public operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
+@kotlin.internal.InlineOnly
+public inline operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
 
 /**
  * Returns an [Iterator] wrapping each value produced by this [Iterator] with the [IndexedValue],

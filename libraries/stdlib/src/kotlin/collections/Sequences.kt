@@ -20,7 +20,8 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> {
 /**
  * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
  */
-public fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
+@kotlin.internal.InlineOnly
+public inline fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
 
 /**
  * Creates a sequence that returns the specified values.
