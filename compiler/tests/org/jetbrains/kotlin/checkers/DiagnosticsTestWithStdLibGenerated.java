@@ -824,6 +824,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inline extends AbstractDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inlineOnlySuppressesNothingToInline.kt")
+        public void testInlineOnlySuppressesNothingToInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inline/inlineOnlySuppressesNothingToInline.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kt7585")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
