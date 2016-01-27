@@ -4442,6 +4442,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/initializeWithConstructorParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("constructorWithThisDelegation.kt")
+        public void testConstructorWithThisDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/constructorWithThisDelegation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localVar.kt")
         public void testLocalVar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/localVar.kt");
