@@ -878,6 +878,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClass(type, FQ_NAMES.array);
     }
 
+    public static boolean isArrayOrPrimitiveArray(@NotNull ClassDescriptor descriptor) {
+        return classFqNameEquals(descriptor, FQ_NAMES.array) || getPrimitiveTypeByArrayClassFqName(getFqName(descriptor)) != null;
+    }
+
     public static boolean isPrimitiveArray(@NotNull KotlinType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor != null && getPrimitiveTypeByArrayClassFqName(getFqName(descriptor)) != null;
