@@ -139,7 +139,7 @@ open class IncrementalCacheImpl<Target>(
         return CompilationResult.NO_CHANGES
     }
 
-    fun saveFileToCache(generatedClass: GeneratedJvmClass<Target>): CompilationResult {
+    open fun saveFileToCache(generatedClass: GeneratedJvmClass<Target>): CompilationResult {
         val sourceFiles: Collection<File> = generatedClass.sourceFiles
         val kotlinClass: LocalFileKotlinClass = generatedClass.outputClass
         val className = kotlinClass.className
@@ -346,6 +346,9 @@ open class IncrementalCacheImpl<Target>(
         experimentalCacheVersion(targetDataRoot).clean()
         experimentalMaps.forEach { it.clean() }
     }
+
+    fun classesBySources(sources: Iterable<File>): Iterable<JvmClassName> =
+            sources.flatMap { sourceToClassesMap[it] }
 
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
 

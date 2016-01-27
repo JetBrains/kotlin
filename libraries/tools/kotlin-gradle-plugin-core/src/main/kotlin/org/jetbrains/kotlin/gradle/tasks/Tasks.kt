@@ -229,17 +229,17 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         val moduleName = args.moduleName
         val targets = listOf(TargetId(moduleName, targetType))
         val outputDir = File(args.destination)
-        val caches = hashMapOf<TargetId, IncrementalCacheImpl<TargetId>>()
+        val caches = hashMapOf<TargetId, GradleIncrementalCacheImpl>()
         val lookupStorage = LookupStorage(File(cachesBaseDir, "lookups"))
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         var currentRemoved = removed
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val compiledSourcesSet = hashSetOf<File>()
 
-        fun getOrCreateIncrementalCache(target: TargetId): IncrementalCacheImpl<TargetId> {
+        fun getOrCreateIncrementalCache(target: TargetId): GradleIncrementalCacheImpl {
             val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
             cacheDir.mkdirs()
-            return IncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
+            return GradleIncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
         }
 
         fun getIncrementalCache(it: TargetId) = caches.getOrPut(it, { getOrCreateIncrementalCache(it) })
@@ -261,35 +261,48 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 files
             }
 
-        fun dirtyKotlinSourcesFromGradle(): List<File> {
-            // TODO: take into account deleted files (take their symbols from caches
-            // TODO: handle classpath changes similarly - compare with cashed version (likely a big change, may be costly, some heuristics could be considered)
-            val kotlinFiles = modified.filter { it.isKotlinFile() }
-            val javaFiles = modified.filter { it.isJavaFile() }
-            if (javaFiles.any()) {
+        fun dirtyLookupSymbolsFromRemovedKotlinFiles(): List<LookupSymbol> {
+            val removedKotlinFiles = removed.filter { it.isKotlinFile() }
+            return if (removedKotlinFiles.isNotEmpty())
+                targets.flatMap { getIncrementalCache(it).classesBySources(removedKotlinFiles).map { LookupSymbol(it.fqNameForClassNameWithoutDollars.shortName().toString(), it.packageFqName.toString()) } }
+            else listOf()
+        }
+
+        fun dirtyLookupSymbolsFromModifiedJavaFiles(): List<LookupSymbol> {
+            val modifiedJavaFiles = modified.filter { it.isJavaFile() }
+            return (if (modifiedJavaFiles.any()) {
                 val rootDisposable = Disposer.newDisposable()
                 val configuration = CompilerConfiguration()
                 val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
                 val project = environment.project
                 val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
-                val lookupSymbols = javaFiles.flatMap {
+                modifiedJavaFiles.flatMap {
                     val javaFile = psiFileFactory.createFileFromText(it.nameWithoutExtension, Language.findLanguageByID("JAVA")!!, it.readText())
                     if (javaFile is PsiJavaFile)
                         javaFile.classes.flatMap { it.findLookupSymbols() }
                     else listOf()
                 }
-//                logger.kotlinDebug("changed java symbols: ${lookupSymbols.joinToString { "${it.name}:${it.scope}" }}")
-                if (lookupSymbols.any()) {
-                    val kotlinFilesSet = kotlinFiles.toHashSet()
-                    return kotlinFiles +
-                            lookupSymbols.files(
-                                    filesFilter = { it !in kotlinFilesSet },
-                                    logAction = { lookup, files ->
-                                        logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
-                                    })
-                }
+            } else listOf())
+        }
+
+        fun dirtyKotlinSourcesFromGradle(): List<File> {
+            // TODO: handle classpath changes similarly - compare with cashed version (likely a big change, may be costly, some heuristics could be considered)
+            val modifiedKotlinFiles = modified.filter { it.isKotlinFile() }
+            val lookupSymbols =
+                    dirtyLookupSymbolsFromModifiedJavaFiles() +
+                    dirtyLookupSymbolsFromRemovedKotlinFiles()
+                    // TODO: add dirty lookups from modified kotlin files to reduce number of steps needed
+
+            if (lookupSymbols.any()) {
+                val kotlinModifiedFilesSet = modifiedKotlinFiles.toHashSet()
+                return modifiedKotlinFiles +
+                        lookupSymbols.files(
+                                filesFilter = { it !in kotlinModifiedFilesSet },
+                                logAction = { lookup, files ->
+                                    logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
+                                })
             }
-            return kotlinFiles
+            return modifiedKotlinFiles
         }
 
         fun isClassPathChanged(): Boolean {
@@ -303,8 +316,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
         fun calculateSourcesToCompile(): Pair<List<File>, Boolean> {
 
-            // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
-            if (!isIncrementalRequested || isClassPathChanged()) {
+            if (!isIncrementalRequested ||
+                    // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
+                    isClassPathChanged() ||
+                    // so far considering it not incremental TODO: store java files in the cache and extract removed symbols from it here
+                    removed.any { it.isJavaFile() }
+            ) {
                 logger.kotlinInfo(if (!isIncrementalRequested) "clean caches on rebuild" else "classpath changed, rebuilding all kotlin files")
                 targets.forEach { getIncrementalCache(it).clean() }
                 lookupStorage.clean()
@@ -346,7 +363,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     }
                 }
             }
-            return Pair(dirtyKotlinSourcesFromGradle().distinct(), true)
+            val dirtyFiles = dirtyKotlinSourcesFromGradle().distinct()
+            // first dirty files should be found and only then caches cleared
+            val removedKotlinFiles = removed.filter { it.isKotlinFile() }
+            targets.forEach { getIncrementalCache(it).let {
+                it.markOutputClassesDirty(removedKotlinFiles)
+                it.removeClassfilesBySources(removedKotlinFiles)
+            }}
+            return Pair(dirtyFiles, true)
         }
 
         fun cleanupOnError() {
@@ -465,7 +489,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                                sourcesToCompile: List<File>,
                                outputDir: File,
                                args: K2JVMCompilerArguments,
-                               getIncrementalCache: (TargetId) -> IncrementalCacheImpl<TargetId>,
+                               getIncrementalCache: (TargetId) -> GradleIncrementalCacheImpl,
                                lookupTracker: LookupTracker)
             : CompileChangedResults
     {
