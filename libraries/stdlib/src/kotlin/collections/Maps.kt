@@ -145,7 +145,7 @@ public fun <@kotlin.internal.OnlyInputTypes K, V> MutableMap<out K, V>.remove(ke
  * }
  * ```
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <K, V> Map.Entry<K, V>.component1(): K = key
 
 /**
@@ -157,7 +157,7 @@ public inline operator fun <K, V> Map.Entry<K, V>.component1(): K = key
  * }
  * ```
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <K, V> Map.Entry<K, V>.component2(): V = value
 
 /**

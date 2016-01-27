@@ -16,7 +16,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component1(): T {
     return get(0)
 }
@@ -24,7 +24,7 @@ public inline operator fun <T> List<T>.component1(): T {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component2(): T {
     return get(1)
 }
@@ -32,7 +32,7 @@ public inline operator fun <T> List<T>.component2(): T {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component3(): T {
     return get(2)
 }
@@ -40,7 +40,7 @@ public inline operator fun <T> List<T>.component3(): T {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component4(): T {
     return get(3)
 }
@@ -48,7 +48,7 @@ public inline operator fun <T> List<T>.component4(): T {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component5(): T {
     return get(4)
 }
@@ -74,7 +74,8 @@ public fun <T> Iterable<T>.elementAt(index: Int): T {
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
  */
-public fun <T> List<T>.elementAt(index: Int): T {
+@kotlin.internal.InlineOnly
+public inline fun <T> List<T>.elementAt(index: Int): T {
     return get(index)
 }
 
@@ -99,6 +100,7 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -124,13 +126,15 @@ public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
-public fun <T> List<T>.elementAtOrNull(index: Int): T? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun <T> List<T>.elementAtOrNull(index: Int): T? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
 }
@@ -138,6 +142,7 @@ public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T? {
     return lastOrNull(predicate)
 }
@@ -145,6 +150,7 @@ public inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T? {
     return lastOrNull(predicate)
 }
@@ -227,6 +233,7 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1320,7 +1327,8 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
 /**
  * Returns the number of elements in this collection.
  */
-public fun <T> Collection<T>.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>.count(): Int {
     return size
 }
 
@@ -1657,7 +1665,8 @@ public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
-public fun <T> Iterable<T>.minusElement(element: T): List<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
     return minus(element)
 }
 
@@ -1771,14 +1780,16 @@ public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public fun <T> Collection<T>.plusElement(element: T): List<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public fun <T> Iterable<T>.plusElement(element: T): List<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
@@ -1857,7 +1868,8 @@ public fun <T> Iterable<T>.joinToString(separator: CharSequence = ", ", prefix: 
 /**
  * Returns this collection as an [Iterable].
  */
-public fun <T> Iterable<T>.asIterable(): Iterable<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.asIterable(): Iterable<T> {
     return this
 }
 

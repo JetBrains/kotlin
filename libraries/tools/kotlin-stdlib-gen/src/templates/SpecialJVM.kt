@@ -6,6 +6,8 @@ fun specialJVM(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plusElement(element: T)") {
+        inline(Inline.Only)
+
         only(InvariantArraysOfObjects)
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
@@ -64,6 +66,8 @@ fun specialJVM(): List<GenericFunction> {
 
 
     templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
+        inline(Inline.Only)
+
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
@@ -73,6 +77,8 @@ fun specialJVM(): List<GenericFunction> {
     }
 
     templates add f("copyOf()") {
+        inline(Inline.Only)
+
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
@@ -83,6 +89,8 @@ fun specialJVM(): List<GenericFunction> {
 
     // This overload can cause nulls if array size is expanding, hence different return overload
     templates add f("copyOf(newSize: Int)") {
+        inline(Inline.Only)
+
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")

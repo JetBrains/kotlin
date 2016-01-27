@@ -6,6 +6,8 @@ fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plusElement(element: T)") {
+        inline(Inline.Only)
+
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
         doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
@@ -218,6 +220,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("minusElement(element: T)") {
+        inline(Inline.Only)
+
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
         doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
