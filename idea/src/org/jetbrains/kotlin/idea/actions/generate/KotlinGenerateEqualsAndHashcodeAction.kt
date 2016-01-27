@@ -69,7 +69,10 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     )
 
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
-        return targetClass is KtClass && targetClass !is KtEnumEntry && !targetClass.isAnnotation()
+        return targetClass is KtClass
+               && targetClass !is KtEnumEntry
+               && !targetClass.isAnnotation()
+               && !targetClass.isInterface()
                && !targetClass.hasModifier(KtTokens.DATA_KEYWORD)
                && getPropertiesToUseInGeneratedMember(targetClass).isNotEmpty()
     }

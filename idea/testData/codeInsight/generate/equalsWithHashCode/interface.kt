@@ -1,6 +1,4 @@
 // NOT_APPLICABLE
 interface A {<caret>
-    fun foo() {
-
-    }
+    val foo: Int
 }
