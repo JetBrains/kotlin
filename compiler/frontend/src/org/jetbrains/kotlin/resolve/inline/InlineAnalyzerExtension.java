@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 import java.util.List;
@@ -125,7 +126,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
         hasInlinable |= InlineUtil.containsReifiedTypeParameters(functionDescriptor);
 
-        if (!hasInlinable) {
+        if (!hasInlinable && !AnnotationUtilKt.isInlineOnly(functionDescriptor)) {
             KtModifierList modifierList = function.getModifierList();
             PsiElement inlineModifier = modifierList == null ? null : modifierList.getModifier(KtTokens.INLINE_KEYWORD);
             PsiElement reportOn = inlineModifier == null ? function : inlineModifier;
