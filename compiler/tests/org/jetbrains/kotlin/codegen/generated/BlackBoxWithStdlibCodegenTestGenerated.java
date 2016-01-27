@@ -286,6 +286,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("nonLocalReturnArrayConstructor.kt")
+        public void testNonLocalReturnArrayConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/nonLocalReturnArrayConstructor.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("nonNullArray.kt")
         public void testNonNullArray() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/arrays/nonNullArray.kt");

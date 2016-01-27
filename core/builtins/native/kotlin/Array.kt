@@ -22,10 +22,14 @@ package kotlin
  * standard library functions.
  * See [Kotlin language documentation](http://kotlinlang.org/docs/reference/basic-types.html#arrays)
  * for more information on arrays.
- * @constructor Creates a new array with the specified [size], where each element is calculated by calling the specified
- * [init] function. The [init] function returns an array element given its index.
  */
-public class Array<T>(size: Int, init: (Int) -> T): Cloneable {
+public class Array<T> : Cloneable {
+    /**
+     * Creates a new array with the specified [size], where each element is calculated by calling the specified
+     * [init] function. The [init] function returns an array element given its index.
+     */
+    public inline constructor(size: Int, init: (Int) -> T)
+
     /**
      * Returns the array element at the specified [index]. This method can be called using the
      * index operator:
