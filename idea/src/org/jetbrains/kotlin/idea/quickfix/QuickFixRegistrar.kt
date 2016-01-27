@@ -142,6 +142,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         SUPERTYPE_NOT_INITIALIZED.registerFactory(SuperClassNotInitialized)
         FUNCTION_CALL_EXPECTED.registerFactory(ChangeToFunctionInvocationFix)
+        FUNCTION_EXPECTED.registerFactory(ChangeToPropertyAccessFix)
 
         CANNOT_CHANGE_ACCESS_PRIVILEGE.registerFactory(ChangeVisibilityModifierFix)
         CANNOT_WEAKEN_ACCESS_PRIVILEGE.registerFactory(ChangeVisibilityModifierFix)
