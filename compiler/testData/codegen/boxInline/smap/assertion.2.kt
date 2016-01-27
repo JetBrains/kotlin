@@ -13,7 +13,7 @@ public inline fun massert(value: Boolean, lazyMessage: () -> String) {
 
 
 public inline fun massert(value: Boolean, message: Any = "Assertion failed") {
-    if (ASSERTIONS_ENABLED) {
+    if (MASSERTIONS_ENABLED) {
         if (!value) {
             throw AssertionError(message)
         }

@@ -5,7 +5,7 @@ import kotlin.test.*
 fun box(): String {
     val c = J::class.constructors.single()
     assertFalse(c.isAccessible)
-    assertFailsWith(IllegalCallableAccessException::class.java) { c.call("") }
+    assertFailsWith(IllegalCallableAccessException::class) { c.call("") }
 
     c.isAccessible = true
     assertTrue(c.isAccessible)
@@ -13,7 +13,7 @@ fun box(): String {
 
     val m = J::class.members.single { it.name == "getResult" }
     assertFalse(m.isAccessible)
-    assertFailsWith(IllegalCallableAccessException::class.java) { m.call(j)!! }
+    assertFailsWith(IllegalCallableAccessException::class) { m.call(j)!! }
 
     m.isAccessible = true
     return m.call(j) as String

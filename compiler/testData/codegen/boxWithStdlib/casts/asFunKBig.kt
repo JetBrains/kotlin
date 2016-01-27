@@ -32,7 +32,7 @@ val fns = arrayOf<Any>(::fn0, ::fn1, ::fn2, ::fn3, ::fn4, ::fn5, ::fn6, ::fn7, :
                        ::fn20, ::fn21, ::fn22)
 
 inline fun asFailsWithCCE(operation: String, crossinline block: () -> Unit) {
-    assertFailsWith(ClassCastException::class.java, "$operation should throw an exception") {
+    assertFailsWith(ClassCastException::class, "$operation should throw an exception") {
         block()
     }
 }
