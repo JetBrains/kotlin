@@ -22,14 +22,3 @@ kotlinx.android.synthetic.main.test
 kotlinx.android.synthetic.main.test.view
 
     public val android.view.View.stub: android.view.View!
-
-
-kotlinx.android.synthetic.test
-
-    public val android.app.Activity.stub: android.view.View!
-    public val android.app.Fragment.stub: android.view.View!
-
-
-kotlinx.android.synthetic.test.view
-
-    public val android.view.View.stub: android.view.View!
