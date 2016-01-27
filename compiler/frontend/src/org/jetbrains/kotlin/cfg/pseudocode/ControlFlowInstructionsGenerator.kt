@@ -171,9 +171,9 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             return (blockInfo as LoopInfo).conditionEntryPoint
         }
 
-        override fun getExitPoint(labelElement: KtElement): Label {
-            val blockInfo = elementToBlockInfo[labelElement] ?: error(labelElement.text)
-            return blockInfo.exitPoint
+        override fun getExitPoint(labelElement: KtElement): Label? {
+            // It's quite possible to have null here, e.g. for non-local returns (see KT-10823)
+            return elementToBlockInfo[labelElement]?.exitPoint
         }
 
         private val currentScope: LexicalScope
@@ -217,7 +217,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun exitSubroutine(subroutine: KtElement): Pseudocode {
-            bindLabel(getExitPoint(subroutine))
+            getExitPoint(subroutine)?.let { bindLabel(it) }
             pseudocode.addExitInstruction(SubroutineExitInstruction(subroutine, currentScope, false))
             bindLabel(error)
             pseudocode.addErrorInstruction(SubroutineExitInstruction(subroutine, currentScope, true))
@@ -245,13 +245,13 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun returnValue(returnExpression: KtExpression, returnValue: PseudoValue, subroutine: KtElement) {
-            val exitPoint = getExitPoint(subroutine)
+            val exitPoint = getExitPoint(subroutine) ?: return
             handleJumpInsideTryFinally(exitPoint)
             add(ReturnValueInstruction(returnExpression, currentScope, exitPoint, returnValue))
         }
 
         override fun returnNoValue(returnExpression: KtReturnExpression, subroutine: KtElement) {
-            val exitPoint = getExitPoint(subroutine)
+            val exitPoint = getExitPoint(subroutine) ?: return
             handleJumpInsideTryFinally(exitPoint)
             add(ReturnNoValueInstruction(returnExpression, currentScope, exitPoint))
         }

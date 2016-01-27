@@ -123,7 +123,7 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.throwException(throwExpression, thrownValue)
     }
 
-    override fun getExitPoint(labelElement: KtElement): Label {
+    override fun getExitPoint(labelElement: KtElement): Label? {
         return delegateBuilder.getExitPoint(labelElement)
     }
 

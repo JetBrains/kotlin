@@ -39,7 +39,7 @@ interface ControlFlowBuilder {
 
     fun exitLexicalScope(element: KtElement)
 
-    fun getExitPoint(labelElement: KtElement): Label
+    fun getExitPoint(labelElement: KtElement): Label?
     fun getConditionEntryPoint(labelElement: KtElement): Label
 
     // Declarations
