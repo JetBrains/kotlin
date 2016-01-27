@@ -27,7 +27,7 @@ public class ByteArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Byte)
+    public inline constructor(size: Int, init: (Int) -> Byte)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Byte
@@ -52,7 +52,7 @@ public class CharArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Char)
+    public inline constructor(size: Int, init: (Int) -> Char)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Char
@@ -77,7 +77,7 @@ public class ShortArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Short)
+    public inline constructor(size: Int, init: (Int) -> Short)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Short
@@ -102,7 +102,7 @@ public class IntArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Int)
+    public inline constructor(size: Int, init: (Int) -> Int)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Int
@@ -127,7 +127,7 @@ public class LongArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Long)
+    public inline constructor(size: Int, init: (Int) -> Long)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Long
@@ -152,7 +152,7 @@ public class FloatArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Float)
+    public inline constructor(size: Int, init: (Int) -> Float)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Float
@@ -177,7 +177,7 @@ public class DoubleArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Double)
+    public inline constructor(size: Int, init: (Int) -> Double)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Double
@@ -202,7 +202,7 @@ public class BooleanArray(size: Int) : Cloneable {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    public constructor(size: Int, init: (Int) -> Boolean)
+    public inline constructor(size: Int, init: (Int) -> Boolean)
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): Boolean

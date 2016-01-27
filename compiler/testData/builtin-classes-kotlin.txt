@@ -22,7 +22,7 @@ public open class Any {
 }
 
 public final class Array</*0*/ T> : kotlin.Cloneable {
-    /*primary*/ public constructor Array</*0*/ T>(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> T)
+    public constructor Array</*0*/ T>(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> T)
     public final val size: kotlin.Int
         public final fun <get-size>(): kotlin.Int
     public open override /*1*/ fun clone(): kotlin.Array<T>

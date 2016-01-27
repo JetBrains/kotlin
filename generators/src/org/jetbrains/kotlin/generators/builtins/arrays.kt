@@ -37,7 +37,7 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println("     * Creates a new array of the specified [size], where each element is calculated by calling the specified")
             out.println("     * [init] function. The [init] function returns an array element given its index.")
             out.println("     */")
-            out.println("    public constructor(size: Int, init: (Int) -> $s)")
+            out.println("    public inline constructor(size: Int, init: (Int) -> $s)")
             out.println()
             out.println("    /** Returns the array element at the given [index]. This method can be called using the index operator. */")
             out.println("    public operator fun get(index: Int): $s")
