@@ -168,11 +168,6 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    public static Collection<JavaMethod> methods(@NotNull PsiMethod[] methods) {
-        return convert(methods, Factories.METHODS);
-    }
-
-    @NotNull
     public static Collection<JavaMethod> methods(@NotNull Iterable<PsiMethod> methods) {
         return convert(methods, Factories.METHODS);
     }
