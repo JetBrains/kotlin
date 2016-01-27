@@ -90,7 +90,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     private fun parseVariant(s: String): AndroidVariant? {
         val parts = s.split(';')
         if (parts.size < 2) return null
-        return AndroidVariant(parts[0], parts.drop(0))
+        return AndroidVariant(parts[0], parts.drop(1))
     }
 }
 
