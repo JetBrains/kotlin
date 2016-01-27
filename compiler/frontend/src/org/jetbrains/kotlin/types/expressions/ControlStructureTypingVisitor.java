@@ -109,7 +109,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (elseBranch == null) {
             if (thenBranch != null) {
                 KotlinTypeInfo result = getTypeInfoWhenOnlyOneBranchIsPresent(
-                        thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, ifExpression, isStatement);
+                        thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, ifExpression);
                 // If jump was possible, take condition check info as the jump info
                 return result.getJumpOutPossible()
                        ? result.replaceJumpOutPossible(true).replaceJumpFlowInfo(conditionDataFlowInfo)
@@ -119,7 +119,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
         if (thenBranch == null) {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
-                    elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression, isStatement);
+                    elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression);
         }
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(ifExpression);
         KtBlockExpression thenBlock = psiFactory.wrapInABlockWrapper(thenBranch);
@@ -135,42 +135,51 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         BindingContext bindingContext = context.trace.getBindingContext();
         KotlinTypeInfo thenTypeInfo = BindingContextUtils.getRecordedTypeInfo(thenBranch, bindingContext);
         KotlinTypeInfo elseTypeInfo = BindingContextUtils.getRecordedTypeInfo(elseBranch, bindingContext);
-        assert thenTypeInfo != null : "'Then' branch of if expression  was not processed: " + ifExpression;
-        assert elseTypeInfo != null : "'Else' branch of if expression  was not processed: " + ifExpression;
+        assert thenTypeInfo != null || elseTypeInfo != null : "Both branches of if expression were not processed: " + ifExpression.getText();
 
         KotlinType resultType = resolvedCall.getResultingDescriptor().getReturnType();
-        KotlinType thenType = thenTypeInfo.getType();
-        KotlinType elseType = elseTypeInfo.getType();
-        DataFlowInfo thenDataFlowInfo = thenTypeInfo.getDataFlowInfo();
-        DataFlowInfo elseDataFlowInfo = elseTypeInfo.getDataFlowInfo();
-        if (resultType != null && thenType != null && elseType != null) {
-            DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(ifExpression, resultType, context);
-            DataFlowValue thenValue = DataFlowValueFactory.createDataFlowValue(thenBranch, thenType, context);
-            thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue);
-            DataFlowValue elseValue = DataFlowValueFactory.createDataFlowValue(elseBranch, elseType, context);
-            elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue);
-        }
-
-        boolean loopBreakContinuePossible = loopBreakContinuePossibleInCondition ||
-                thenTypeInfo.getJumpOutPossible() || elseTypeInfo.getJumpOutPossible();
-
-        boolean jumpInThen = thenType != null && KotlinBuiltIns.isNothing(thenType);
-        boolean jumpInElse = elseType != null && KotlinBuiltIns.isNothing(elseType);
-
+        boolean loopBreakContinuePossible = loopBreakContinuePossibleInCondition;
         DataFlowInfo resultDataFlowInfo;
-        if (thenType == null && elseType == null) {
-            resultDataFlowInfo = thenDataFlowInfo.or(elseDataFlowInfo);
+
+        if (elseTypeInfo == null) {
+            loopBreakContinuePossible |= thenTypeInfo.getJumpOutPossible();
+            resultDataFlowInfo = thenTypeInfo.getDataFlowInfo();
         }
-        else if (thenType == null || (jumpInThen && !jumpInElse)) {
-            resultDataFlowInfo = elseDataFlowInfo;
-        }
-        else if (elseType == null || (jumpInElse && !jumpInThen)) {
-            resultDataFlowInfo = thenDataFlowInfo;
+        else if (thenTypeInfo == null) {
+            loopBreakContinuePossible |= elseTypeInfo.getJumpOutPossible();
+            resultDataFlowInfo = elseTypeInfo.getDataFlowInfo();
         }
         else {
-            resultDataFlowInfo = thenDataFlowInfo.or(elseDataFlowInfo);
-        }
+            KotlinType thenType = thenTypeInfo.getType();
+            KotlinType elseType = elseTypeInfo.getType();
+            DataFlowInfo thenDataFlowInfo = thenTypeInfo.getDataFlowInfo();
+            DataFlowInfo elseDataFlowInfo = elseTypeInfo.getDataFlowInfo();
+            if (resultType != null && thenType != null && elseType != null) {
+                DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(ifExpression, resultType, context);
+                DataFlowValue thenValue = DataFlowValueFactory.createDataFlowValue(thenBranch, thenType, context);
+                thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue);
+                DataFlowValue elseValue = DataFlowValueFactory.createDataFlowValue(elseBranch, elseType, context);
+                elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue);
+            }
 
+            loopBreakContinuePossible |= thenTypeInfo.getJumpOutPossible() || elseTypeInfo.getJumpOutPossible();
+
+            boolean jumpInThen = thenType != null && KotlinBuiltIns.isNothing(thenType);
+            boolean jumpInElse = elseType != null && KotlinBuiltIns.isNothing(elseType);
+
+            if (thenType == null && elseType == null) {
+                resultDataFlowInfo = thenDataFlowInfo.or(elseDataFlowInfo);
+            }
+            else if (thenType == null || (jumpInThen && !jumpInElse)) {
+                resultDataFlowInfo = elseDataFlowInfo;
+            }
+            else if (elseType == null || (jumpInElse && !jumpInThen)) {
+                resultDataFlowInfo = thenDataFlowInfo;
+            }
+            else {
+                resultDataFlowInfo = thenDataFlowInfo.or(elseDataFlowInfo);
+            }
+        }
         // If break or continue was possible, take condition check info as the jump info
         return TypeInfoFactoryKt.createTypeInfo(resultType, resultDataFlowInfo, loopBreakContinuePossible,
                                                 loopBreakContinuePossibleInCondition ? context.dataFlowInfo : conditionDataFlowInfo);
@@ -183,8 +192,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             @NotNull DataFlowInfo presentInfo,
             @NotNull DataFlowInfo otherInfo,
             @NotNull ExpressionTypingContext context,
-            @NotNull KtIfExpression ifExpression,
-            boolean isStatement
+            @NotNull KtIfExpression ifExpression
     ) {
         ExpressionTypingContext newContext = context.replaceDataFlowInfo(presentInfo).replaceExpectedType(NO_EXPECTED_TYPE)
                 .replaceContextDependency(INDEPENDENT);
