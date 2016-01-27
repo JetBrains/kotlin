@@ -95,6 +95,12 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         doTest(fileName);
     }
 
+    @TestMetadata("objectLiteralToLambda/objectLiteralToLambda.test")
+    public void testObjectLiteralToLambda_ObjectLiteralToLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/objectLiteralToLambda/objectLiteralToLambda.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("reconcilePackageWithDirectory/changeToDefaultPackage/changeToDefaultPackage.test")
     public void testReconcilePackageWithDirectory_changeToDefaultPackage_ChangeToDefaultPackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/changeToDefaultPackage/changeToDefaultPackage.test");
