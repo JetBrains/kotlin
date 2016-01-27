@@ -1354,13 +1354,6 @@
                      enabledByDefault="true"
                      level="WARNING"/>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OldStdlibApiInspection"
-                     displayName="Java usages of old Kotlin standard library APIs"
-                     groupName="Kotlin"
-                     enabledByDefault="true"
-                     cleanupTool="true"
-                     level="WARNING"/>
-
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantVisibilityModifierInspection"
                      displayName="Redundant visibility modifier"
                      groupName="Kotlin"
