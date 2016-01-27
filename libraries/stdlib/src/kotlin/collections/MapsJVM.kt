@@ -14,7 +14,8 @@ import java.util.concurrent.ConcurrentMap
  * Allows to use the index operator for storing values in a mutable map.
  */
 // this code is JVM-specific, because JS has native set function
-public operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
+@kotlin.internal.InlineOnly
+public inline operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
     put(key, value)
 }
 
@@ -72,6 +73,7 @@ public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedM
  *
  * @sample test.collections.MapJVMTest.toProperties
  */
-public fun Map<String, String>.toProperties(): Properties
+@kotlin.internal.InlineOnly
+public inline fun Map<String, String>.toProperties(): Properties
         = Properties().apply { putAll(this@toProperties) }
 

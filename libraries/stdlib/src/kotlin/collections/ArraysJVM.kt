@@ -15,7 +15,8 @@ public fun ByteArray.toString(charset: String): String = String(this, charset(ch
 /**
  * Converts the contents of this byte array to a string using the specified [charset].
  */
-public fun ByteArray.toString(charset: Charset): String = String(this, charset)
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.toString(charset: Charset): String = String(this, charset)
 
 /**
  * Returns a *typed* array containing all of the elements of this collection.
