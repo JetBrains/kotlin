@@ -1,0 +1,5 @@
+fun acceptLambda(f: () -> Unit) = f()
+
+fun foo() {
+    acceptLambda { }
+}

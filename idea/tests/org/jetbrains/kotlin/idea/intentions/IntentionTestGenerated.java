@@ -439,6 +439,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("emptyBody.kt")
+        public void testEmptyBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/emptyBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("expressionBody.kt")
         public void testExpressionBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/expressionBody.kt");
