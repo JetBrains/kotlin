@@ -94,7 +94,7 @@ class KotlinDebuggerCaches(private val project: Project) {
             }
         }
 
-        fun getOrComputeClassNames(psiElement: PsiElement, create: (PsiElement) -> List<String>): List<String> {
+        fun <T: PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> List<String>): List<String> {
             val cache = getInstance(psiElement.project)
             synchronized(cache.cachedClassNames) {
                 val classNamesCache = cache.cachedClassNames.value

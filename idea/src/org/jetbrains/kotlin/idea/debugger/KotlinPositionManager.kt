@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Companion.getOrComputeClassNames
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
@@ -269,7 +270,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 emptyList()
             }
             else {
-                KotlinDebuggerCaches.getOrComputeClassNames(element) {
+                val baseElement = getElementToCalculateClassName(element) ?: return@runReadAction emptyList()
+                getOrComputeClassNames(baseElement) {
                     element ->
                     val file = element.containingFile as KtFile
                     val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
@@ -321,13 +323,11 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
     // The order is used in ExtraSteppingFilter: original className should be the first
     private fun getInternalClassNameForElement(
-            notPositionedElement: PsiElement?,
+            element: KtElement,
             typeMapper: JetTypeMapper,
             file: KtFile,
             isInLibrary: Boolean
     ): List<String> {
-        val element = getElementToCalculateClassName(notPositionedElement)
-
         when (element) {
             is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toList()
             is KtFunction -> {
@@ -342,8 +342,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             }
         }
 
-        val crossInlineParameterUsages = element?.containsCrossInlineParameterUsages(typeMapper.bindingContext)
-        if (crossInlineParameterUsages != null && crossInlineParameterUsages.isNotEmpty()) {
+        val crossInlineParameterUsages = element.containsCrossInlineParameterUsages(typeMapper.bindingContext)
+        if (crossInlineParameterUsages.isNotEmpty()) {
             return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext).toList()
         }
 
@@ -360,14 +360,13 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 }
                 return classNamesForPosition(element.parent)
             }
-            element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
-                if (isInPropertyAccessor(notPositionedElement)) {
-                    val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
-                    if (classOrObject != null) {
-                        return getJvmInternalNameForImpl(typeMapper, classOrObject).toList()
-                    }
+            element is KtPropertyAccessor && (!element.property.isTopLevel || !isInLibrary)-> {
+                val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
+                if (classOrObject != null) {
+                    return getJvmInternalNameForImpl(typeMapper, classOrObject).toList()
                 }
-
+            }
+            element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
                 val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
                 if (descriptor !is PropertyDescriptor) {
                     return classNamesForPosition(element.parent)
@@ -401,6 +400,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     KtFunctionLiteral::class.java,
                     KtNamedFunction::class.java,
                     KtProperty::class.java,
+                    KtPropertyAccessor::class.java,
                     KtAnonymousInitializer::class.java)
 
     private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
@@ -414,10 +414,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.containingDeclaration else descriptor
         ).internalName
     }
-
-    private fun isInPropertyAccessor(element: PsiElement?) =
-            element is KtPropertyAccessor ||
-            PsiTreeUtil.getParentOfType(element, KtProperty::class.java, KtPropertyAccessor::class.java) is KtPropertyAccessor
 
     private fun getJvmInternalNameForImpl(typeMapper: JetTypeMapper, ktClass: KtClassOrObject): String? {
         val classDescriptor = typeMapper.bindingContext.get<PsiElement, ClassDescriptor>(BindingContext.CLASS, ktClass) ?: return null
