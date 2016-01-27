@@ -20,9 +20,11 @@ Cleaning output files:
   out/production/module/UseFooGKt.class
   out/production/module/Utils.class
   out/production/module/Utils__PartAKt.class
+  out/production/module/Utils__PartCKt.class
 End of files
 Compiling files:
   src/partA.kt
+  src/partC.kt
   src/useFooF.kt
   src/useFooG.kt
 End of files
