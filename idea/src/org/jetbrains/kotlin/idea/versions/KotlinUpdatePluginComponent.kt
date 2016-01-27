@@ -57,9 +57,6 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             requestFullJarUpdate(ideaPluginPaths.jsStdLibJarPath)
             requestFullJarUpdate(ideaPluginPaths.jsStdLibSrcJarPath)
 
-            requestFullJarUpdate(ideaPluginPaths.jdkAnnotationsPath)
-            requestFullJarUpdate(ideaPluginPaths.androidSdkAnnotationsPath)
-
             // Force update indices for files under config directory
             val fileBasedIndex = FileBasedIndex.getInstance()
             fileBasedIndex.requestRebuild(KotlinMetadataVersionIndex.name)
