@@ -158,6 +158,8 @@ class Kotlin2JvmSourceSetProcessor(
                 subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
                 if (aptConfiguration.dependencies.size > 1 && javaTask is JavaCompile) {
+                    javaTask.dependsOn(aptConfiguration.buildDependencies)
+
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
@@ -392,6 +394,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
                 // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
                 if (aptConfiguration != null && aptConfiguration.dependencies.size > 1) {
+                    javaTask.dependsOn(aptConfiguration.buildDependencies)
                     aptFiles.addAll(aptConfiguration.resolve())
                 }
             }

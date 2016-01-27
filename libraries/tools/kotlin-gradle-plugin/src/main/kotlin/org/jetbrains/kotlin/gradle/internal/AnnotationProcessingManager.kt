@@ -149,7 +149,7 @@ public class AnnotationProcessingManager(
         generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, stubOutputDir)
 
         val processorPath = setOf(stubOutputDir) + aptFiles
-        setProcessorPath(javaTask, processorPath.joinToString(File.pathSeparator))
+        setProcessorPath(javaTask, (processorPath + javaTask.classpath).joinToString(File.pathSeparator))
         javaTask.appendClasspath(stubOutputDir)
 
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
