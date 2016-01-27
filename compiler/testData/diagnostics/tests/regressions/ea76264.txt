@@ -1,0 +1,4 @@
+package
+
+public val p: [ERROR : Type for ::p]
+public fun foo(): [ERROR : Error function type]
