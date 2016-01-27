@@ -18,29 +18,55 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.codeStyle.PreFormatProcessor
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.nextSiblingOfSameType
+import org.jetbrains.kotlin.psi.psiUtil.prevSiblingOfSameType
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 class KotlinPreFormatProcessor : PreFormatProcessor {
     class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
+        private fun PsiElement.containsToken(type: IElementType) = allChildren.any { it.node.elementType == type }
+
         override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
             if (!range.contains(declaration.textRange)) return
 
-            if (declaration is KtEnumEntry) return
             val classBody = declaration.parent as? KtClassBody ?: return
             val klass = classBody.parent as? KtClass ?: return
             if (!klass.isEnum()) return
 
-            val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
-            if (lastEntry != null && lastEntry.allChildren.any { it.node.elementType == KtTokens.SEMICOLON }) return
-            if (lastEntry == null && classBody.allChildren.any { it.node.elementType == KtTokens.SEMICOLON }) return
+            var delta = 0
 
-            val semicolon = KtPsiFactory(klass).createSemicolon()
-            classBody.addAfter(semicolon, lastEntry)
-            range = TextRange(range.startOffset, range.endOffset + semicolon.textLength)
+            if (declaration is KtEnumEntry) {
+                val comma = KtPsiFactory(klass).createComma()
+
+                declaration.nextSiblingOfSameType()?.let { nextEntry ->
+                    if (declaration.containsToken(KtTokens.COMMA)) return@let
+                    classBody.addAfter(comma, declaration)
+                    delta += comma.textLength
+                }
+
+                declaration.prevSiblingOfSameType()?.let { prevEntry ->
+                    if (prevEntry.containsToken(KtTokens.COMMA)) return@let
+                    classBody.addAfter(comma, prevEntry)
+                    delta += comma.textLength
+                }
+            }
+            else {
+                val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
+                if (lastEntry != null && lastEntry.containsToken(KtTokens.SEMICOLON)) return
+                if (lastEntry == null && classBody.containsToken(KtTokens.SEMICOLON)) return
+
+                val semicolon = KtPsiFactory(klass).createSemicolon()
+                classBody.addAfter(semicolon, lastEntry)
+                delta += semicolon.textLength
+            }
+
+            range = TextRange(range.startOffset, range.endOffset + delta)
         }
     }
 

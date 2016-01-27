@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
+import org.jetbrains.kotlin.idea.quickfix.insertMember
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.util.DialogWithEditor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -576,7 +577,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
 
                     containingElement is KtClassOrObject -> {
-                        addDeclarationToClassOrObject(containingElement, declaration)
+                        insertMember(null, containingElement, declaration, containingElement.declarations.lastOrNull())
                     }
                     else -> throw AssertionError("Invalid containing element: ${containingElement.text}")
                 }
