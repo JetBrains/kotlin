@@ -13224,6 +13224,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ea76264.kt")
+            public void testEa76264() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ea76264.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ErrorsOnIbjectExpressionsAsParameters.kt")
             public void testErrorsOnIbjectExpressionsAsParameters() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ErrorsOnIbjectExpressionsAsParameters.kt");
