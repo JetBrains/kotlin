@@ -49,6 +49,11 @@
             <artifactId>kotlin-test-junit</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-build-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -138,6 +143,9 @@
                                 <relocation>
                                     <pattern>com.google</pattern>
                                     <shadedPattern>${kotlin.relocated.package}.com.google</shadedPattern>
+                                    <excludes>
+                                        <exclude>com.google.protobuf.*</exclude>
+                                    </excludes>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.sampullara</pattern>
