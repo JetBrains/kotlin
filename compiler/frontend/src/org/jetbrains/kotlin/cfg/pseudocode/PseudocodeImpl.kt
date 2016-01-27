@@ -58,8 +58,12 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         }
 
         fun resolveToInstruction(): Instruction {
-            assert(targetInstructionIndex != null)
-            return mutableInstructionList[targetInstructionIndex!!]
+            val index = targetInstructionIndex
+            if (index == null || index >= mutableInstructionList.size) {
+                error("resolveToInstruction: incorrect index $index for label $name " +
+                      "in subroutine ${correspondingElement.text} with instructions $mutableInstructionList")
+            }
+            return mutableInstructionList[index]
         }
 
         fun copy(newLabelIndex: Int): PseudocodeLabel {
