@@ -10,6 +10,9 @@ public val </*0*/ T> kotlin.collections.List<kotlin.collections.Map<kotlin.Int, 
 public val </*0*/ T> kotlin.collections.List<kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<kotlin.String, out T>>>.g: kotlin.Int
 public val </*0*/ T> kotlin.collections.List<kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<kotlin.String, in T>>>.h: kotlin.Int
 public val </*0*/ T> kotlin.collections.List<kotlin.collections.Map<T, kotlin.collections.Map<T, T>>>.i: kotlin.Int
+public val </*0*/ T : kotlin.Enum<T>> T.z1: kotlin.Int
+public val </*0*/ X : D<*>> X.z2: kotlin.Int
+public val </*0*/ Y> D<*>.z3: kotlin.Int
 
 public final class C</*0*/ T1, /*1*/ T2> {
     public constructor C</*0*/ T1, /*1*/ T2>()
@@ -18,6 +21,12 @@ public final class C</*0*/ T1, /*1*/ T2> {
     public final val </*0*/ E> E.c: kotlin.Int
     public final val </*0*/ E> kotlin.collections.Map<T1, T2>.d: kotlin.Int
     public final val </*0*/ E> kotlin.collections.Map<T1, E>.e: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface D</*0*/ T : kotlin.Enum<T>> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

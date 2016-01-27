@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.util.LookupTrackerUtilKt;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.utils.KotlinFrontEndException;
@@ -158,7 +160,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     }
 
     @NotNull
-    private static KotlinTypeInfo getTypeInfo(@NotNull final KtExpression expression, final ExpressionTypingContext context, final KtVisitor<KotlinTypeInfo, ExpressionTypingContext> visitor) {
+    private KotlinTypeInfo getTypeInfo(@NotNull final KtExpression expression, final ExpressionTypingContext context, final KtVisitor<KotlinTypeInfo, ExpressionTypingContext> visitor) {
         return typeInfoPerfCounter.time(new Function0<KotlinTypeInfo>() {
             @Override
             public KotlinTypeInfo invoke() {
@@ -192,6 +194,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                     // todo save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
                     BindingContextUtilsKt.recordScope(context.trace, context.scope, expression);
                     BindingContextUtilsKt.recordDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
+                    recordTypeInfo(expression, result);
                     return result;
                 }
                 catch (ProcessCanceledException e) {
@@ -210,6 +213,15 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                 }
             }
         });
+    }
+
+    private void recordTypeInfo(@NotNull KtExpression expression, @NotNull KotlinTypeInfo typeInfo) {
+        LookupTracker lookupTracker = getComponents().lookupTracker;
+        KotlinType resultType = typeInfo.getType();
+
+        if (resultType != null) {
+            LookupTrackerUtilKt.record(lookupTracker, expression, resultType);
+        }
     }
 
     private static void logOrThrowException(@NotNull KtExpression expression, Throwable e) {

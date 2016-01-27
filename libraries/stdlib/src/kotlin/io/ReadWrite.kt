@@ -99,13 +99,13 @@ public fun Reader.readText(): String {
 }
 
 /**
- * Copies this reader to the given [out] writer, returning the number of bytes copied.
+ * Copies this reader to the given [out] writer, returning the number of characters copied.
  *
  * **Note** it is the caller's responsibility to close both of these resources.
  *
  * @param out writer to write to.
  * @param bufferSize size of character buffer to use in process.
- * @return number of bytes copies.
+ * @return number of characters copied.
  */
 public fun Reader.copyTo(out: Writer, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     var charsCopied: Long = 0

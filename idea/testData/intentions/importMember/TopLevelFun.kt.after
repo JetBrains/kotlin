@@ -5,5 +5,5 @@ import kotlin.test.assertFailsWith
 
 fun foo() {
     <caret>assertFailsWith<Exception>("", {})
-    assertFailsWith(RuntimeException::class.java, "", {})
+    assertFailsWith(RuntimeException::class, "", {})
 }

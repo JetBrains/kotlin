@@ -245,7 +245,9 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                         findCallName(result.left!!)
                 }
 
-                is KtUnaryExpression -> findCallName(result.baseExpression!!)
+                is KtUnaryExpression -> {
+                    result.baseExpression?.let { findCallName(it) }
+                }
 
                 else -> result.getQualifiedElementSelector() as KtSimpleNameExpression?
             }

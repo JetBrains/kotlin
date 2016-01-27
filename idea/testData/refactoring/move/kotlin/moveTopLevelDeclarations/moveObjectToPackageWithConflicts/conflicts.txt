@@ -1,4 +1,4 @@
-Object a.Test uses package-private class a.Foo
-Object a.Test uses package-private function a.foo
-Package-private object a.Test will no longer be accessible from method J.bar()
-Package-private object a.Test will no longer be accessible from variable a.bar.t
+Method bar() uses object Test which will be inaccessible after move
+Object Test uses class Foo which will be inaccessible after move
+Object Test uses function foo() which will be inaccessible after move
+Variable t uses object Test which will be inaccessible after move

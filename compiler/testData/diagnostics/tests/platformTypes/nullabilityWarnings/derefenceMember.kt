@@ -38,6 +38,3 @@ fun test() {
         foo()
     }
 }
-
-fun <T> with(t: T, f: T.() -> Unit) {}
-

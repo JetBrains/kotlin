@@ -6,11 +6,11 @@ inline fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
 fun box() {
     val a = <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>arrayOf<!>(null!!)<!>
-    val b = <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Array<!><Nothing?>(5) { null!! }<!>
+    val b = <!UNSUPPORTED!>Array<<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Nothing?<!>>(5) { null!! }<!>
     val c = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo<!>() { null!! }
     val d = foo<Any> { null!! }
     val e = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo<!> { "1" as Nothing }
     val e1 = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo<!> { "1" as Nothing? }
 
-    val f = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>javaClass<!><Nothing>()
+    val f = javaClass<<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Nothing<!>>()
 }

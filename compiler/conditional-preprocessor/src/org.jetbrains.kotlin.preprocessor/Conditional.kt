@@ -47,7 +47,7 @@ interface Conditional {
 
 
     companion object {
-        val ANNOTATIONS: Map<String, Parser> = listOf<Parser>(JvmVersion, JsVersion, TargetName).toMapBy { it.name }
+        val ANNOTATIONS: Map<String, Parser> = listOf<Parser>(JvmVersion, JsVersion, TargetName).associateBy { it.name }
     }
 }
 

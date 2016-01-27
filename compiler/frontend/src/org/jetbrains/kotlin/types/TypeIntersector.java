@@ -78,20 +78,26 @@ public class TypeIntersector {
         outer:
         for (KotlinType type : nullabilityStripped) {
             if (!TypeUtils.canHaveSubtypes(typeChecker, type)) {
+                boolean relativeToAll = true;
                 for (KotlinType other : nullabilityStripped) {
                     // It makes sense to check for subtyping (other <: type), despite that
                     // type is not supposed to be open, for there're enums
-                    if (!TypeUnifier.mayBeEqual(type, other) && !typeChecker.isSubtypeOf(type, other) && !typeChecker.isSubtypeOf(other, type)) {
+                    boolean mayBeEqual = TypeUnifier.mayBeEqual(type, other);
+                    boolean relative = typeChecker.isSubtypeOf(type, other) || typeChecker.isSubtypeOf(other, type);
+                    if (!mayBeEqual && !relative) {
                         return null;
                     }
-                }
-                return TypeUtils.makeNullableAsSpecified(type, allNullable);
-            }
-            else {
-                for (KotlinType other : nullabilityStripped) {
-                    if (!type.equals(other) && typeChecker.isSubtypeOf(other, type)) {
-                        continue outer;
+                    else if (!relative) {
+                        // To build T & (final A), instead of returning just A as intersection
+                        relativeToAll = false;
+                        break;
                     }
+                }
+                if (relativeToAll) return TypeUtils.makeNullableAsSpecified(type, allNullable);
+            }
+            for (KotlinType other : nullabilityStripped) {
+                if (!type.equals(other) && typeChecker.isSubtypeOf(other, type)) {
+                    continue outer;
                 }
             }
 

@@ -50,18 +50,6 @@ public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): Li
 }
 
 /**
- * Applies the given [transform] function to each entry and its index in the original map
- * and appends the results to the given [destination].
- */
-@Deprecated("Use entries.mapIndexedTo instead.", ReplaceWith("this.entries.mapIndexedTo(destination, transform)"))
-public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapIndexedTo(destination: C, transform: (Int, Map.Entry<K, V>) -> R): C {
-    var index = 0
-    for (item in this)
-        destination.add(transform(index++, item))
-    return destination
-}
-
-/**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each entry in the original map.
  */

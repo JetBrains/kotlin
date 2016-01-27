@@ -16,26 +16,32 @@
 
 package org.jetbrains.kotlin.daemon
 
+import com.intellij.util.containers.StringInterner
+import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
 
 
 class RemoteLookupTrackerClient(val facade: CompilerCallbackServicesFacade, val eventManger: EventManger, val profiler: Profiler = DummyProfiler()) : LookupTracker {
     private val isDoNothing = profiler.withMeasure(this) { facade.lookupTracker_isDoNothing() }
 
     private val lookups = hashSetOf<LookupInfo>()
+    private val interner = StringInterner()
 
     override val requiresPosition: Boolean = profiler.withMeasure(this) { facade.lookupTracker_requiresPosition() }
 
     override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
         if (isDoNothing) return
 
-        lookups.add(LookupInfo(filePath, position, scopeFqName, scopeKind, name))
+        val internedFilePath = interner.intern(filePath)
+        val internedScopeFqName = interner.intern(scopeFqName)
+        val internedName = interner.intern(name)
+
+        lookups.add(LookupInfo(internedFilePath, position, internedScopeFqName, scopeKind, internedName))
     }
 
     init {

@@ -1,4 +1,3 @@
 package
 
-public fun TODO(): kotlin.Nothing
 public fun fn(/*0*/ c: kotlin.Char?): kotlin.Any?

@@ -25,7 +25,7 @@ data class Modification(val range: TextRange, val apply: (String) -> String)
 class CollectModificationsVisitor(evaluators: List<Evaluator>) : KtTreeVisitorVoid() {
 
     val elementModifications: Map<Evaluator, MutableList<Modification>> =
-            evaluators.toMapBy(selector = { it }, transform = { arrayListOf<Modification>() })
+            evaluators.associateBy(keySelector = { it }, valueTransform = { arrayListOf<Modification>() })
 
     override fun visitDeclaration(declaration: KtDeclaration) {
         super.visitDeclaration(declaration)

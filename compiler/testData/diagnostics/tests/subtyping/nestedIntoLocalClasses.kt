@@ -2,10 +2,6 @@
 
 package p
 
-fun <T> run(f: () -> T): T {
-    return f()
-}
-
 private fun foo(a: Int) = run {
     object {
         inner class A

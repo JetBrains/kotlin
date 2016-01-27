@@ -25,3 +25,11 @@ abstract class C(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x1: Int, <!MULTIPLE_VAR
     }
 }
 
+object O {
+    fun test(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x1: Int, <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x2: Int) {}
+
+    class CC(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x1: Int, <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x2: Int, b: Boolean) {
+        constructor(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x1: Int, <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x2: Int) {}
+        fun test(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x1: Int, <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x2: Int) {}
+    }
+}

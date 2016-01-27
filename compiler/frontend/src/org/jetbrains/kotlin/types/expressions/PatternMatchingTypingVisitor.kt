@@ -179,7 +179,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             val entryExpression = whenEntry.expression ?: continue
 
             val entryTypeInfo = BindingContextUtils.getRecordedTypeInfo(entryExpression, bindingContext) ?:
-                                throw AssertionError("When entry was not processed")
+                                continue
             val entryType = entryTypeInfo.type
 
             val entryDataFlowInfo =

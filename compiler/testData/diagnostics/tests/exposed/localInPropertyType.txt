@@ -12,7 +12,6 @@ public val valid4: My<Base>
 public val valid5: My<kotlin.Any>
 public val valid6: My<kotlin.Any>
 public val valid7: My<My<*>>
-public fun </*0*/ T> run(/*0*/ f: () -> T): T
 
 public open class Base {
     public constructor Base()

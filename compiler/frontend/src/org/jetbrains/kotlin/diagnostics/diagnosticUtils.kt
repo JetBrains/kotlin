@@ -39,7 +39,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
         expectedType: KotlinType,
         expressionType: KotlinType?
 ): Boolean {
-    if (!TypeUtils.containsSpecialType(expectedType) { it.isAnyOrNullableAny() || it.isNothing() || it.isNullableNothing() }) return false
+    if (!TypeUtils.contains(expectedType) { it.isAnyOrNullableAny() || it.isNothing() || it.isNullableNothing() }) return false
 
     val callPosition = this.callPosition
     val (resolvedCall, correspondingNotApproximatedTypeByDescriptor: (CallableDescriptor) -> KotlinType?) = when (callPosition) {
@@ -71,7 +71,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
                     .buildSubstitutor().let { callableDescriptor.substitute(it) } ?: return false
 
     val nonApproximatedExpectedType = correspondingNotApproximatedTypeByDescriptor(substitutedDescriptor) ?: return false
-    if (!TypeUtils.containsSpecialType(nonApproximatedExpectedType) { it.isCaptured() }) return false
+    if (!TypeUtils.contains(nonApproximatedExpectedType) { it.isCaptured() }) return false
 
     if (expectedType.isNothing()) {
         if (callPosition is CallPosition.PropertyAssignment) {

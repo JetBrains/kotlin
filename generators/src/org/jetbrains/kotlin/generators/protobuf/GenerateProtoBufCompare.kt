@@ -27,7 +27,7 @@ import java.util.*
 
 class GenerateProtoBufCompare {
     companion object {
-        val DEST_FILE: File = File("build/src/org/jetbrains/kotlin/incremental/ProtoCompareGenerated.kt")
+        val DEST_FILE: File = File("build-common/src/org/jetbrains/kotlin/incremental/ProtoCompareGenerated.kt")
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -63,7 +63,7 @@ class GenerateProtoBufCompare {
     private val extensionsMap = DebugJvmProtoBuf.getDescriptor().extensions.groupBy { it.containingType }
 
     private val allMessages: MutableSet<Descriptors.Descriptor> = linkedSetOf()
-    private val messagesToProcess: Queue<Descriptors.Descriptor> = linkedListOf()
+    private val messagesToProcess: Queue<Descriptors.Descriptor> = LinkedList()
     private val repeatedFields: MutableSet<Descriptors.FieldDescriptor> = linkedSetOf()
 
     fun generate(): String {

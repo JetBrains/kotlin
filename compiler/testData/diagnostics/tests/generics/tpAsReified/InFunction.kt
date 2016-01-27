@@ -8,7 +8,7 @@ fun <A> main() {
     <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f<!>()
 
     val <!UNUSED_VARIABLE!>a<!>: A = <!TYPE_PARAMETER_AS_REIFIED!>f<!>()
-    <!TYPE_PARAMETER_AS_REIFIED!>f<!><A>()
+    f<<!TYPE_PARAMETER_AS_REIFIED!>A<!>>()
 
     val <!UNUSED_VARIABLE!>b<!>: Int = f()
     f<Int>()

@@ -1,0 +1,3 @@
+package
+
+public fun checkJump(/*0*/ x: kotlin.Int?, /*1*/ y: kotlin.Int?): kotlin.Unit

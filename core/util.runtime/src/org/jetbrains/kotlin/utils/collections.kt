@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.utils
 import java.util.*
 
 fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
-    return toMapBy({ it }, value)
+    return associateBy({ it }, value)
 }
 
 fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
@@ -39,6 +39,18 @@ fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
         map[k] = index
     }
     return map
+}
+
+
+public inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> V): V {
+    return if (!containsKey(key)) {
+        val answer = defaultValue()
+        put(key, answer)
+        answer
+    }
+    else {
+        get(key) as V
+    }
 }
 
 inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this

@@ -5,8 +5,6 @@ fun CharSequence?.bar2() {}
 
 fun <T : CharSequence> T.bar3() {}
 
-fun <T, R> T.let(f: (T) -> R): R = f(this)
-
 fun <T : String?> foo(x: T) {
     x<!UNSAFE_CALL!>.<!>length
     x?.length

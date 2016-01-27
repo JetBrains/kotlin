@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.annotation
 
 import java.io.File
-import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.AnnotationMirror
@@ -25,7 +24,6 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
-import javax.tools.StandardLocation
 import kotlin.properties.Delegates
 
 public class AnnotationProcessorStub : AbstractProcessor() {
@@ -60,6 +58,7 @@ public abstract class AnnotationProcessorWrapper(
 
     private companion object {
         val KAPT_ANNOTATION_OPTION = "kapt.annotations"
+        val KAPT_KOTLIN_GENERATED_OPTION = "kapt.kotlin.generated"
     }
 
     private val processor: Processor by lazy {
@@ -117,18 +116,31 @@ public abstract class AnnotationProcessorWrapper(
         return processor.supportedSourceVersion
     }
 
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
+    override fun process(annotations: Set<TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         roundCounter += 1
 
         val roundEnvironmentWrapper = RoundEnvironmentWrapper(
                 processingEnv, roundEnv, roundCounter, kotlinAnnotationsProvider)
-        processor.process(annotations, roundEnvironmentWrapper)
+
+        val wrappedAnnotations = annotations?.toMutableSet() ?: hashSetOf<TypeElement>()
+        val existingFqNames = wrappedAnnotations.mapTo(hashSetOf<String>()) { it.qualifiedName.toString() }
+
+        if (roundCounter == 1) {
+            for (annotationFqName in kotlinAnnotationsProvider.annotatedKotlinElements.keys) {
+                if (annotationFqName in existingFqNames) continue
+                existingFqNames.add(annotationFqName)
+                processingEnv.elementUtils.getTypeElement(annotationFqName)?.let { wrappedAnnotations += it }
+            }
+        }
+
+        processor.process(wrappedAnnotations, roundEnvironmentWrapper)
         return false
     }
 
     override fun getSupportedOptions(): MutableSet<String> {
         val supportedOptions = processor.supportedOptions.toHashSet()
         supportedOptions.add(KAPT_ANNOTATION_OPTION)
+        supportedOptions.add(KAPT_KOTLIN_GENERATED_OPTION)
         return supportedOptions
     }
 

@@ -129,7 +129,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, descriptorsToImport) ?: return // return if already optimized
 
         // unwrap progress indicator
-        val progress = sequence(ProgressManager.getInstance().progressIndicator) {
+        val progress = generateSequence(ProgressManager.getInstance().progressIndicator) {
             (it as? ProgressWrapper)?.originalProgressIndicator
         }.last()
         val highlightingSession = ProgressableTextEditorHighlightingPass.getHighlightingSession(progress)

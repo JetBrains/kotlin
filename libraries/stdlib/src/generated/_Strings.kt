@@ -492,8 +492,76 @@ public fun String.reversed(): String {
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to characters of the given char sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
+ * Returns a [Map] containing the characters from the given char sequence indexed by the key
+ * returned from [keySelector] function applied to each character.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
+    val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to characters of the given char sequence.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
+    val capacity = ((length/.75f) + 1).toInt().coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function applied to each character of the given char sequence
+ * and value is the character itself.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K): M {
+    for (element in this) {
+        destination.put(keySelector(element), element)
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs,
+ * where key is provided by the [keySelector] function and
+ * and value is provided by the [valueTransform] function applied to characters of the given char sequence.
+ * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        destination.put(keySelector(element), valueTransform(element))
+    }
+    return destination
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs
+ * provided by [transform] function applied to each character of the given char sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
+    for (element in this) {
+        destination += transform(element)
+    }
+    return destination
+}
+
+/**
  * Returns an [ArrayList] of all characters.
  */
+@Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
 public fun CharSequence.toArrayList(): ArrayList<Char> {
     return toCollection(ArrayList<Char>(length))
 }
@@ -519,57 +587,39 @@ public fun CharSequence.toHashSet(): HashSet<Char> {
  * Returns a [List] containing all characters.
  */
 public fun CharSequence.toList(): List<Char> {
-    return this.toArrayList()
+    return this.toMutableList()
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
 public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    return toMapBy(selector, transform)
+    return associateBy(selector, transform)
 }
 
-/**
- * Returns a [Map] containing key-value pairs provided by [transform] function applied to characters of the given char sequence.
- * If any of two pairs would have the same key the last one gets added to the map.
- */
+@Deprecated("Use associate instead.", ReplaceWith("associate(transform)"), level = DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("toMapOfPairs")
 public inline fun <K, V> CharSequence.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result += transform(element)
-    }
-    return result
+    return associate(transform)
 }
 
-/**
- * Returns a [Map] containing the characters from the given char sequence indexed by the key
- * returned from [selector] function applied to each character.
- * If any two characters would have the same key returned by [selector] the last one gets added to the map.
- */
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector)"), level = DeprecationLevel.ERROR)
 public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), element)
-    }
-    return result
+    return associateBy(selector)
+}
+
+@Deprecated("Use associateBy instead.", ReplaceWith("associateBy(selector, transform)"), level = DeprecationLevel.ERROR)
+public inline fun <K, V> CharSequence.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
+    return associateBy(selector, transform)
 }
 
 /**
- * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
- * If any two characters would have the same key returned by [selector] the last one gets added to the map.
+ * Returns a [MutableList] filled with all characters of this char sequence.
  */
-public inline fun <K, V> CharSequence.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (length/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+public fun CharSequence.toMutableList(): MutableList<Char> {
+    return toCollection(ArrayList<Char>(length))
 }
 
 /**
@@ -605,22 +655,53 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
 }
 
 /**
- * Returns a map of the characters in original char sequence grouped by the key returned by the given [selector] function.
+ * Groups characters of the original char sequence by the key returned by the given [keySelector] function
+ * applied to each character and returns a map where each group key is associated with a list of corresponding characters.
+ * @sample test.collections.CollectionTest.groupBy
  */
-public inline fun <K> CharSequence.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
+public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
 }
 
 /**
- * Appends characters from original char sequence grouped by the key returned by the given [selector] function to the given [map].
+ * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
+ * by the key returned by the given [keySelector] function applied to the character
+ * and returns a map where each group key is associated with a list of corresponding values.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
  */
-public inline fun <K> CharSequence.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
+public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
+    return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
+}
+
+/**
+ * Groups characters of the original char sequence by the key returned by the given [keySelector] function
+ * applied to each character and puts to the [destination] map each group key associated with a list of corresponding characters.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupBy
+ */
+public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
-        val key = selector(element)
-        val list = map.getOrPut(key) { ArrayList<Char>() }
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<Char>() }
         list.add(element)
     }
-    return map
+    return destination
+}
+
+/**
+ * Groups values returned by the [valueTransform] function applied to each character of the original char sequence
+ * by the key returned by the given [keySelector] function applied to the character
+ * and puts to the [destination] map each group key associated with a list of corresponding values.
+ * @return The [destination] map.
+ * @sample test.collections.CollectionTest.groupByKeysAndValues
+ */
+public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
+    for (element in this) {
+        val key = keySelector(element)
+        val list = destination.getOrPut(key) { ArrayList<V>() }
+        list.add(valueTransform(element))
+    }
+    return destination
 }
 
 /**

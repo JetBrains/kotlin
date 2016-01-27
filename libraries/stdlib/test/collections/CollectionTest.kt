@@ -192,14 +192,30 @@ class CollectionTest {
         assertEquals(4, byLength.size)
 
         // verify that order of keys is preserved
-        val listOfPairs = byLength.toList()
-        assertEquals(1, listOfPairs[0].first)
-        assertEquals(3, listOfPairs[1].first)
-        assertEquals(2, listOfPairs[2].first)
-        assertEquals(4, listOfPairs[3].first)
+        assertEquals(listOf(
+                1 to listOf("a"),
+                3 to listOf("abc", "def"),
+                2 to listOf("ab"),
+                4 to listOf("abcd")
+        ), byLength.toList())
 
-        val l3 = byLength.getOrElse(3, { ArrayList<String>() })
-        assertEquals(2, l3.size)
+        val l3 = byLength[3].orEmpty()
+        assertEquals(listOf("abc", "def"), l3)
+    }
+
+    @test fun groupByKeysAndValues() {
+        val nameToTeam = listOf("Alice" to "Marketing", "Bob" to "Sales", "Carol" to "Marketing")
+        val namesByTeam = nameToTeam.groupBy({ it.second }, { it.first })
+        assertEquals(
+                listOf(
+                    "Marketing" to listOf("Alice", "Carol"),
+                    "Sales" to listOf("Bob")
+                ),
+                namesByTeam.toList())
+
+
+        val mutableNamesByTeam = nameToTeam.groupByTo(HashMap(), { it.second }, { it.first })
+        assertEquals(namesByTeam, mutableNamesByTeam)
     }
 
     @test fun plusRanges() {
@@ -231,6 +247,18 @@ class CollectionTest {
         assertEquals(listOf("foo", "bar", "cheese", "wine"), list)
     }
 
+    @test fun plusCollectionInference() {
+        val listOfLists = listOf(listOf("s"))
+        val elementList = listOf("a")
+        val result: List<List<String>> = listOfLists.plusElement(elementList)
+        assertEquals(listOf(listOf("s"), listOf("a")), result, "should be list + element")
+
+        val listOfAny = listOf<Any>("a") + listOf<Any>("b")
+        assertEquals(listOf("a", "b"), listOfAny,  "should be list + list")
+
+        val listOfAnyAndList = listOf<Any>("a") + listOf<Any>("b") as Any
+        assertEquals(listOf("a", listOf("b")), listOfAnyAndList, "should be list + Any")
+    }
 
     @test fun plusAssign() {
         // lets use a mutable variable of readonly list

@@ -3,5 +3,5 @@
 
 fun foo() {
     kotlin.test.<caret>assertFailsWith<Exception>("", {})
-    kotlin.test.assertFailsWith(RuntimeException::class.java, "", {})
+    kotlin.test.assertFailsWith(RuntimeException::class, "", {})
 }

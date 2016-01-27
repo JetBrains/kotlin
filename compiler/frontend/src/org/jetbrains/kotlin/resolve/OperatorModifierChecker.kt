@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.util.CheckResult
 import org.jetbrains.kotlin.util.OperatorChecks
 
 class OperatorModifierChecker : DeclarationChecker {
@@ -51,8 +52,14 @@ class OperatorModifierChecker : DeclarationChecker {
         if (!functionDescriptor.isOperator) return
         val modifier = declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD) ?: return
 
-        if (!OperatorChecks.canBeOperator(functionDescriptor)) {
-            diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier))
-        }
+        val checkResult = OperatorChecks.checkOperator(functionDescriptor)
+        if (checkResult.isSuccess) return
+
+        val errorDescription = if (checkResult is CheckResult.IllegalSignature)
+            checkResult.error
+        else
+            "illegal function name"
+
+        diagnosticHolder.report(Errors.INAPPLICABLE_OPERATOR_MODIFIER.on(modifier, errorDescription))
     }
 }

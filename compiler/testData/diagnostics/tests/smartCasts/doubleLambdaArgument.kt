@@ -1,8 +1,6 @@
 interface Foo
 fun foo(): Foo? = null
 
-fun <T> run(f: () -> T): T = f()
-
 val foo: Foo = run {
     run {
         val x = foo()

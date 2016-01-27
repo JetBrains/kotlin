@@ -158,6 +158,8 @@ class Kotlin2JvmSourceSetProcessor(
                 subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
                 if (aptConfiguration.dependencies.size > 1 && javaTask is JavaCompile) {
+                    javaTask.dependsOn(aptConfiguration.buildDependencies)
+
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
@@ -392,6 +394,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
                 // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
                 if (aptConfiguration != null && aptConfiguration.dependencies.size > 1) {
+                    javaTask.dependsOn(aptConfiguration.buildDependencies)
                     aptFiles.addAll(aptConfiguration.resolve())
                 }
             }
@@ -455,19 +458,21 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
 private fun loadSubplugins(project: Project): SubpluginEnvironment {
     try {
-        val subplugins = ServiceLoader.load(
-                KotlinGradleSubplugin::class.java, project.buildscript.classLoader).toList()
-        val subpluginDependencyNames =
-            subplugins.mapTo(hashSetOf<String>()) { it.getGroupName() + ":" + it.getArtifactName() }
+        val subplugins = ServiceLoader.load(KotlinGradleSubplugin::class.java, project.buildscript.classLoader).toList()
 
         val classpath = project.buildscript.configurations.getByName("classpath")
-        val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin, List<String>>()
+        val resolvedClasspathArtifacts = classpath.resolvedConfiguration.resolvedArtifacts.toList()
+        val subpluginClasspaths = hashMapOf<KotlinGradleSubplugin, List<File>>()
 
         for (subplugin in subplugins) {
-            val files = classpath.dependencies
-                    .filter { subpluginDependencyNames.contains(it.group + ":" + it.name) }
-                    .flatMap { classpath.files(it).map { it.absolutePath } }
-            subpluginClasspaths.put(subplugin, files)
+            val file = resolvedClasspathArtifacts
+                    .firstOrNull {
+                        val id = it.moduleVersion.id
+                        subplugin.getGroupName() == id.group && subplugin.getArtifactName() == id.name
+                    }?.file
+            if (file != null) {
+                subpluginClasspaths.put(subplugin, listOf(file))
+            }
         }
 
         return SubpluginEnvironment(subpluginClasspaths, subplugins)
@@ -479,7 +484,7 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
 }
 
 class SubpluginEnvironment(
-    val subpluginClasspaths: Map<KotlinGradleSubplugin, List<String>>,
+    val subpluginClasspaths: Map<KotlinGradleSubplugin, List<File>>,
     val subplugins: List<KotlinGradleSubplugin>
 ) {
 
@@ -488,17 +493,18 @@ class SubpluginEnvironment(
         val pluginArguments = arrayListOf<String>()
         fun getPluginOptionString(pluginId: String, key: String, value: String) = "plugin:$pluginId:$key=$value"
 
-        subplugins.forEach { subplugin ->
-            val args = subplugin.getExtraArguments(project, compileTask)
+        for (subplugin in subplugins) {
+            if (!subplugin.isApplicable(project, compileTask)) continue
 
             with (subplugin) {
                 project.logger.kotlinDebug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
             }
 
             val subpluginClasspath = subpluginClasspaths[subplugin]
-            if (args != null && subpluginClasspath != null) {
-                realPluginClasspaths.addAll(subpluginClasspath)
-                for (arg in args) {
+            if (subpluginClasspath != null) {
+                subpluginClasspath.forEach { realPluginClasspaths.add(it.absolutePath) }
+
+                for (arg in subplugin.getExtraArguments(project, compileTask)) {
                     val option = getPluginOptionString(subplugin.getPluginName(), arg.key, arg.value)
                     pluginArguments.add(option)
                 }

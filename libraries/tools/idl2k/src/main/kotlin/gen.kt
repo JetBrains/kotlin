@@ -170,11 +170,11 @@ fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefini
         definitions.filter { "NoInterfaceObject" !in it.extendedAttributes.map { it.call } }.map { generateTrait(repository, it) }
 
 fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>): GenerateUnionTypes {
-    val declaredTypes = ifaces.toMapBy { it.name }
+    val declaredTypes = ifaces.associateBy { it.name }
 
     val anonymousUnionTypes = collectUnionTypes(declaredTypes)
     val anonymousUnionTypeTraits = generateUnionTypeTraits(anonymousUnionTypes)
-    val anonymousUnionsMap = anonymousUnionTypeTraits.toMapBy { it.name }
+    val anonymousUnionsMap = anonymousUnionTypeTraits.associateBy { it.name }
 
     val typedefsToBeGenerated = typedefs.filter { it.types is UnionType }
             .map { NamedValue(it.name, it.types as UnionType) }

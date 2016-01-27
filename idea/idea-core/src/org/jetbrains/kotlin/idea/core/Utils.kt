@@ -52,7 +52,7 @@ fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<Val
     if (parameters.isEmpty()) return emptyMap()
 
     val map = HashMap<ValueArgument, ValueParameterDescriptor>()
-    val parametersByName = parameters.toMapBy { it.name }
+    val parametersByName = parameters.associateBy { it.name }
 
     var positionalArgumentIndex: Int? = 0
 

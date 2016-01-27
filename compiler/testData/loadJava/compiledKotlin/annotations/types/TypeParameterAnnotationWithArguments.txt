@@ -10,5 +10,5 @@ package test
 
 public final class SimpleTypeParameterAnnotation {
     /*primary*/ public constructor SimpleTypeParameterAnnotation()
-    public final fun </*0*/ T> foo(/*0*/ x: T): kotlin.Unit
+    public final fun </*0*/ @test.A(x = "a", y = 1.0.toDouble()) T> foo(/*0*/ x: T): kotlin.Unit
 }

@@ -166,8 +166,9 @@ class LocalLazyDeclarationResolver(
         globalContext: GlobalContext,
         trace: BindingTrace,
         private val localClassDescriptorManager: LocalClassDescriptorHolder,
-        topLevelDescriptorProvider : TopLevelDescriptorProvider
-) : LazyDeclarationResolver(globalContext, trace, topLevelDescriptorProvider) {
+        topLevelDescriptorProvider : TopLevelDescriptorProvider,
+        absentDescriptorHandler: AbsentDescriptorHandler
+) : LazyDeclarationResolver(globalContext, trace, topLevelDescriptorProvider, absentDescriptorHandler) {
 
     override fun getClassDescriptor(classOrObject: KtClassOrObject, location: LookupLocation): ClassDescriptor {
         if (localClassDescriptorManager.isMyClass(classOrObject)) {

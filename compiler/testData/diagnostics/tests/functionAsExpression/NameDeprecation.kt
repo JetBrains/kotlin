@@ -1,6 +1,4 @@
 fun foo() {
-    fun run(block: () -> Unit) = block()
-
     class A
     fun bar() {}
     (fun <!ANONYMOUS_FUNCTION_WITH_NAME!>bar<!>() {})

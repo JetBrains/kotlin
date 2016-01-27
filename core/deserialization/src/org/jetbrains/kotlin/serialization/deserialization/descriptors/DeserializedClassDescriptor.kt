@@ -287,7 +287,7 @@ class DeserializedClassDescriptor(
     }
 
     private inner class EnumEntryClassDescriptors {
-        private val enumEntryProtos = classProto.enumEntryList.toMapBy { c.nameResolver.getName(it.name) }
+        private val enumEntryProtos = classProto.enumEntryList.associateBy { c.nameResolver.getName(it.name) }
         private val protoContainer =
                 ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, (containingDeclaration as? ClassDescriptor)?.kind)
 

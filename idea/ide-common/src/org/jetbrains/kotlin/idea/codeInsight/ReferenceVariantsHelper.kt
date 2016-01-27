@@ -197,7 +197,7 @@ class ReferenceVariantsHelper(
         }
 
         if (callType == CallType.SUPER_MEMBERS) { // we need to unwrap fake overrides in case of "super." because ShadowedDeclarationsFilter does not work correctly
-            return descriptors.flatMapTo(LinkedHashSet()) {
+            return descriptors.flatMapTo(LinkedHashSet<DeclarationDescriptor>()) {
                 if (it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) it.overriddenDescriptors else listOf(it)
             }
         }

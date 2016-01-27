@@ -59,7 +59,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             VARIANT_OPTION -> {
-                val paths = configuration.getList(AndroidConfigurationKeys.VARIANT).toArrayList()
+                val paths = configuration.getList(AndroidConfigurationKeys.VARIANT).toMutableList()
                 paths.add(value)
                 configuration.put(AndroidConfigurationKeys.VARIANT, paths)
             }
@@ -90,7 +90,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     private fun parseVariant(s: String): AndroidVariant? {
         val parts = s.split(';')
         if (parts.size < 2) return null
-        return AndroidVariant(parts[0], parts.drop(0))
+        return AndroidVariant(parts[0], parts.drop(1))
     }
 }
 

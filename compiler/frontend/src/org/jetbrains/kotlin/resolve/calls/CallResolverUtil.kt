@@ -44,7 +44,7 @@ enum class ResolveArgumentsMode {
 fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return getParameterArgumentsOfCallableType(type).any {
-        TypeUtils.containsSpecialType(it.type, DONT_CARE) || ErrorUtils.containsUninferredParameter(it.type)
+        TypeUtils.contains(it.type, DONT_CARE) || ErrorUtils.containsUninferredParameter(it.type)
     }
 }
 

@@ -27,3 +27,20 @@ public interface I {
     public abstract fun test(/*0*/ vararg x1: kotlin.Int /*kotlin.IntArray*/, /*1*/ vararg x2: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public object O {
+    private constructor O()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test(/*0*/ vararg x1: kotlin.Int /*kotlin.IntArray*/, /*1*/ vararg x2: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class CC {
+        public constructor CC(/*0*/ vararg x1: kotlin.Int /*kotlin.IntArray*/, /*1*/ vararg x2: kotlin.Int /*kotlin.IntArray*/)
+        public constructor CC(/*0*/ vararg x1: kotlin.Int /*kotlin.IntArray*/, /*1*/ vararg x2: kotlin.Int /*kotlin.IntArray*/, /*2*/ b: kotlin.Boolean)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(/*0*/ vararg x1: kotlin.Int /*kotlin.IntArray*/, /*1*/ vararg x2: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

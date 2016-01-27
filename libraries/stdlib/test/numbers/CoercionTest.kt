@@ -89,7 +89,6 @@ class CoercionTest {
     }
 
     @Test
-    @Suppress("DEPRECATION_ERROR")
     fun coercionsComparable() {
         val v = (0..10).map { ComparableNumber(it) }
 
@@ -118,7 +117,7 @@ class CoercionTest {
     }
 }
 
-private class ComparableNumber(public val value: Int) : Comparable<ComparableNumber> {
+private class ComparableNumber(val value: Int) : Comparable<ComparableNumber> {
     override fun compareTo(other: ComparableNumber): Int = this.value - other.value
     override fun toString(): String = "CV$value"
 }

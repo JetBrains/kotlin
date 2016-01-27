@@ -1,6 +1,6 @@
 package-fragment kotlin
 
-public inline fun </*0*/ reified T> Array(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>
+public inline fun </*0*/ reified @kotlin.internal.PureReifiable() T> Array(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>
 public inline fun BooleanArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Boolean>): kotlin.BooleanArray
 public inline fun ByteArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Byte>): kotlin.ByteArray
 public inline fun CharArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Char>): kotlin.CharArray
@@ -9,13 +9,13 @@ public inline fun FloatArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function
 public inline fun IntArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.IntArray
 public inline fun LongArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Long>): kotlin.LongArray
 public inline fun ShortArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Short>): kotlin.ShortArray
-public inline fun </*0*/ reified T> arrayOf(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<T>
-public fun </*0*/ reified T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
+public inline fun </*0*/ reified @kotlin.internal.PureReifiable() T> arrayOf(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<T>
+public fun </*0*/ reified @kotlin.internal.PureReifiable() T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
 public fun booleanArrayOf(/*0*/ vararg elements: kotlin.Boolean /*kotlin.BooleanArray*/): kotlin.BooleanArray
 public fun byteArrayOf(/*0*/ vararg elements: kotlin.Byte /*kotlin.ByteArray*/): kotlin.ByteArray
 public fun charArrayOf(/*0*/ vararg elements: kotlin.Char /*kotlin.CharArray*/): kotlin.CharArray
 public fun doubleArrayOf(/*0*/ vararg elements: kotlin.Double /*kotlin.DoubleArray*/): kotlin.DoubleArray
-public inline fun </*0*/ reified T> emptyArray(): kotlin.Array<T>
+public inline fun </*0*/ reified @kotlin.internal.PureReifiable() T> emptyArray(): kotlin.Array<T>
 public fun floatArrayOf(/*0*/ vararg elements: kotlin.Float /*kotlin.FloatArray*/): kotlin.FloatArray
 public fun intArrayOf(/*0*/ vararg elements: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
 public fun longArrayOf(/*0*/ vararg elements: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray

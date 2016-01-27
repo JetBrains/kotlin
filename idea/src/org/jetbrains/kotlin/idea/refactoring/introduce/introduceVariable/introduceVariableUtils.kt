@@ -64,7 +64,7 @@ private fun getApplicableComponentFunctions(
 
     val psiFactory = KtPsiFactory(contextExpression)
     @Suppress("UNCHECKED_CAST")
-    return sequence(1) { it + 1 }
+    return generateSequence(1) { it + 1 }
             .map {
                 val componentCallExpr = psiFactory.createExpressionByPattern("$0.$1", receiverExpression ?: contextExpression, "component$it()")
                 val newContext = componentCallExpr.analyzeInContext(scope, contextExpression)

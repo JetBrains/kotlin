@@ -34,7 +34,7 @@ class TestStdlibWithDxTest {
     private fun doTest(file: File) {
         val zip = ZipInputStream(FileInputStream(file))
         zip.use {
-            sequence { zip.nextEntry }.forEach {
+            generateSequence { zip.nextEntry }.forEach {
                 if (it.name.endsWith(".class")) {
                     DxChecker.checkFileWithDx(zip.readBytes(), it.name)
                 }

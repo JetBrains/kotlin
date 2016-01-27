@@ -45,7 +45,8 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
-import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
+import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.lazilyProcessInternalReferencesToUpdateOnPackageNameChange
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -167,7 +168,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
             val targetPackages = referenceExpressions.mapNotNullTo(LinkedHashSet()) { (it.containingFile as? KtFile)?.packageFqName }
             for (targetPackage in targetPackages) {
                 if (targetPackage == file.packageFqName) continue
-                val packageNameInfo = PackageNameInfo(file.packageFqName, targetPackage.toUnsafe())
+                val packageNameInfo = ContainerChangeInfo(ContainerInfo.Package(file.packageFqName), ContainerInfo.Package(targetPackage))
                 initializer.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(packageNameInfo) { expr, factory ->
                     val infos = expr.internalUsageInfos
                                 ?: LinkedHashMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>()

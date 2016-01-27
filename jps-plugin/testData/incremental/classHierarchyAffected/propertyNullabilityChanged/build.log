@@ -7,9 +7,11 @@ src/A.kt
 End of files
 Cleaning output files:
 out/production/module/META-INF/module.kotlin_module
+out/production/module/foo/AChild.class
 out/production/module/foo/UseAChildKt.class
 End of files
 Compiling files:
+src/AChild.kt
 src/useAChild.kt
 End of files
 COMPILATION FAILED
@@ -21,5 +23,6 @@ out/production/module/foo/A.class
 End of files
 Compiling files:
 src/A.kt
+src/AChild.kt
 src/useAChild.kt
 End of files

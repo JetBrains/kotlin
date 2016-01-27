@@ -1,4 +1,4 @@
-// ERROR: Type inference failed: Not enough information to infer parameter T in fun <T : kotlin.Any!> emptyList(): kotlin.collections.(Mutable)List<T!>! Please specify it explicitly.
+// ERROR: Type inference failed: Not enough information to infer parameter T in fun <T> emptyList(): kotlin.collections.List<T> Please specify it explicitly.
 package test
 
 import java.util.Collections
@@ -72,7 +72,7 @@ internal class Java8Class {
     }
 
     fun testLibraryFunctions() {
-        val memberFunFromClass = { obj: String -> obj.length() }
+        val memberFunFromClass = { obj: String -> obj.length }
         memberFunFromClass.invoke("str")
     }
 
@@ -85,7 +85,7 @@ internal class Java8Class {
     }
 
     fun testGenericFunctions() {
-        val emptyList = { Collections.emptyList() }
+        val emptyList = { emptyList() }
         emptyList.invoke()
     }
 

@@ -16,11 +16,13 @@
 
 package kotlin
 
+import kotlin.internal.PureReifiable
+
 /**
  * Returns an array with the specified [size], where each element is calculated by calling the specified
  * [init] function. The `init` function returns an array element given its index.
  */
-public inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
+public inline fun <reified @PureReifiable T> Array(size: Int, init: (Int) -> T): Array<T> {
     val result = arrayOfNulls<T>(size)
     for (i in 0..size - 1)
         result[i] = init(i)
@@ -126,14 +128,14 @@ public inline fun BooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray 
 /**
  * Returns an empty array of the specified type [T].
  */
-public inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
+public inline fun <reified @PureReifiable T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
 
 
 // Array "constructor"
 /**
  * Returns an array containing the specified elements.
  */
-public inline fun <reified T> arrayOf(vararg elements: T) : Array<T> = elements as Array<T>
+public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T) : Array<T> = elements as Array<T>
 
 // "constructors" for primitive types array
 /**

@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import java.util.Stack
 
 class ScopeContext(scope: JsScope) {
-    private val rootScope = sequence(scope) { it.parent }.first { it is JsRootScope }
+    private val rootScope = generateSequence(scope) { it.parent }.first { it is JsRootScope }
     private val scopes = Stack<JsScope>();
 
     init {

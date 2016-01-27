@@ -98,10 +98,11 @@ class DeclarationsChecker(
         for ((classOrObject, classDescriptor) in bodiesResolveContext.declaredClasses.entries) {
             checkSupertypesForConsistency(classDescriptor, classOrObject)
             checkTypesInClassHeader(classOrObject)
+            checkClassOrObjectMembers(classDescriptor)
 
             when (classOrObject) {
                 is KtClass -> {
-                    checkClass(classOrObject, classDescriptor)
+                    checkClassButNotObject(classOrObject, classDescriptor)
                     descriptorResolver.checkNamesInConstraints(
                             classOrObject, classDescriptor, classDescriptor.scopeForClassHeaderResolution, trace)
                 }
@@ -309,13 +310,14 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkObject(declaration: KtObjectDeclaration, classDescriptor: ClassDescriptor) {
+    private fun checkObject(declaration: KtObjectDeclaration, classDescriptor: ClassDescriptorWithResolutionScopes) {
+        checkOpenMembers(classDescriptor)
         if (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor))
         }
     }
 
-    private fun checkClass(aClass: KtClass, classDescriptor: ClassDescriptorWithResolutionScopes) {
+    private fun checkClassButNotObject(aClass: KtClass, classDescriptor: ClassDescriptorWithResolutionScopes) {
         checkOpenMembers(classDescriptor)
         checkTypeParameters(aClass)
         checkTypeParameterConstraints(aClass)
@@ -336,7 +338,9 @@ class DeclarationsChecker(
         else if (aClass is KtEnumEntry) {
             checkEnumEntry(aClass, classDescriptor)
         }
+    }
 
+    private fun checkClassOrObjectMembers(classDescriptor: ClassDescriptorWithResolutionScopes) {
         for (memberDescriptor in classDescriptor.declaredCallableMembers) {
             if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
             val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtFunction
@@ -430,7 +434,12 @@ class DeclarationsChecker(
             if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
             val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtNamedDeclaration
             if (member != null && member.hasModifier(KtTokens.OPEN_KEYWORD)) {
-                trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member))
+                if (classDescriptor.kind == ClassKind.OBJECT) {
+                    trace.report(NON_FINAL_MEMBER_IN_OBJECT.on(member))
+                }
+                else {
+                    trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member))
+                }
             }
         }
     }
@@ -450,9 +459,26 @@ class DeclarationsChecker(
     }
 
     private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
-        for (typeParameter in descriptor.typeParameters) {
-            if (isTypeParameterUsedInReceiverType(typeParameter, descriptor)) continue
+        val allTypeParameters = descriptor.typeParameters.toSet()
+        val allAccessibleTypeParameters = HashSet<TypeParameterDescriptor>()
 
+        fun addAccessibleTypeParametersFromType(type: KotlinType?) {
+            TypeUtils.contains(type) {
+                val declarationDescriptor = it.constructor.declarationDescriptor
+                if (declarationDescriptor is TypeParameterDescriptor && declarationDescriptor in allTypeParameters) {
+                    if (allAccessibleTypeParameters.add(declarationDescriptor)) {
+                        declarationDescriptor.upperBounds.forEach {
+                            addAccessibleTypeParametersFromType(it)
+                        }
+                    }
+                }
+                false
+            }
+        }
+        addAccessibleTypeParametersFromType(descriptor.extensionReceiverParameter?.type)
+
+        val typeParametersInaccessibleFromReceiver = allTypeParameters - allAccessibleTypeParameters
+        for (typeParameter in typeParametersInaccessibleFromReceiver) {
             val typeParameterPsi = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameter)
             if (typeParameterPsi is KtTypeParameter) {
                 trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on(typeParameterPsi))
@@ -619,7 +645,7 @@ class DeclarationsChecker(
         val propertyVisibility = propertyDescriptor.effectiveVisibility()
         val typeVisibility = propertyDescriptor.type.effectiveVisibility()
         if (!typeVisibility.sameOrMorePermissive(propertyVisibility)) {
-            trace.report(EXPOSED_PROPERTY_TYPE.on(property, propertyVisibility, typeVisibility))
+            trace.report(EXPOSED_PROPERTY_TYPE.on(property.nameIdentifier ?: property, propertyVisibility, typeVisibility))
         }
         checkMemberReceiverExposedType(property.receiverTypeReference, propertyDescriptor)
     }
@@ -836,14 +862,6 @@ class DeclarationsChecker(
             val declaration = DescriptorToSourceUtils.descriptorToDeclaration(member) as? KtNamedDeclaration ?: return false
             val modifierList = declaration.modifierList ?: return true
             return !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-        }
-
-        private fun isTypeParameterUsedInReceiverType(
-                parameter: TypeParameterDescriptor,
-                descriptor: PropertyDescriptor): Boolean {
-            val receiverParameter = descriptor.extensionReceiverParameter ?: return false
-
-            return TypeUtils.containsSpecialType(receiverParameter.type) { parameter == it.constructor.declarationDescriptor }
         }
 
         private fun hasDefaultConstructor(classDescriptor: ClassDescriptor) =

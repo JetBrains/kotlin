@@ -181,8 +181,8 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> {
     else return { -> 1 }
 }
 
-fun returnFunctionLiteralDoesntWork(a: Any?): Function0<Int> =
-        if (a is Int) <!TYPE_MISMATCH!>{ -> a }<!>
+fun returnFunctionLiteralExpressionBody(a: Any?): Function0<Int> =
+        if (a is Int) { -> <!DEBUG_INFO_SMARTCAST!>a<!> }
         else { -> 1 }
 
 

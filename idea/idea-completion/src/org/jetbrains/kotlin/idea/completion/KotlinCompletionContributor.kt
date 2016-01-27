@@ -462,7 +462,7 @@ class KotlinCompletionContributor : CompletionContributor() {
     private fun isInUnclosedSuperQualifier(tokenBefore: PsiElement?): Boolean {
         if (tokenBefore == null) return false
         val tokensToSkip = TokenSet.orSet(TokenSet.create(KtTokens.IDENTIFIER, KtTokens.DOT ), KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET)
-        val tokens = sequence(tokenBefore) { it.prevLeaf() }
+        val tokens = generateSequence(tokenBefore) { it.prevLeaf() }
         val ltToken = tokens.firstOrNull { it.node.elementType !in tokensToSkip } ?: return false
         if (ltToken.node.elementType != KtTokens.LT) return false
         val superToken = ltToken.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }

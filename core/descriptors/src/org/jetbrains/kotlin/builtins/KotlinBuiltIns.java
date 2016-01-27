@@ -58,7 +58,8 @@ public abstract class KotlinBuiltIns {
             COLLECTIONS_PACKAGE_FQ_NAME,
             RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
-            ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME()
+            ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
+            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 
     protected final ModuleDescriptorImpl builtInsModule;
@@ -936,7 +937,7 @@ public abstract class KotlinBuiltIns {
         if (!BUILT_INS_PACKAGE_NAME.equals(first(segments))) return false;
 
         String shortName = last(segments).asString();
-        return BuiltInFictitiousFunctionClassFactory.parseClassName(shortName, BUILT_INS_PACKAGE_FQ_NAME) != null;
+        return BuiltInFictitiousFunctionClassFactory.isFunctionClassName(shortName, BUILT_INS_PACKAGE_FQ_NAME);
     }
 
     @Nullable
@@ -1094,6 +1095,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isUnit(@NotNull KotlinType type) {
         return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
+    }
+
+    public static boolean isUnitOrNullableUnit(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.unit);
     }
 
     public boolean isBooleanOrSubtype(@NotNull KotlinType type) {

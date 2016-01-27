@@ -20,7 +20,6 @@ import com.intellij.ProjectTopics
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.roots.ModuleRootAdapter
@@ -29,6 +28,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.util.Key
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
 class KotlinSetupEnvironmentNotificationProvider(
         private val myProject: Project,
-        notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
+        notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>() {
 
     init {
         myProject.messageBus.connect(myProject).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootAdapter() {
@@ -69,6 +69,10 @@ class KotlinSetupEnvironmentNotificationProvider(
         }
 
         val module = ModuleUtilCore.findModuleForPsiElement(psiFile) ?: return null
+        if (!ModuleRootManager.getInstance(module).fileIndex.isInSourceContent(file)) {
+            return null
+        }
+
         if (ModuleRootManager.getInstance(module).sdk == null) {
             return createSetupSdkPanel(myProject, psiFile)
         }
@@ -105,22 +109,28 @@ class KotlinSetupEnvironmentNotificationProvider(
                 val configurators = getApplicableConfigurators(module).toList()
                 if (!configurators.isEmpty()) {
                     createComponentActionLabel("Configure") { label ->
-                        val step = object : BaseListPopupStep<KotlinProjectConfigurator>("Choose Configurator", configurators) {
-                            override fun getTextFor(value: KotlinProjectConfigurator?): String {
-                                return value?.presentableText ?: "<none>"
-                            }
-
-                            override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
-                                selectedValue?.let {
-                                    it.configure(module.project, emptyList())
-                                }
-                                return null
-                            }
-                        }
-                        JBPopupFactory.getInstance().createListPopup(step).showUnderneathOf(label)
+                        val configuratorsPopup = createConfiguratorsPopup(module.project, configurators)
+                        configuratorsPopup.showUnderneathOf(label)
                     }
                 }
             }
+        }
+
+        fun createConfiguratorsPopup(project: Project, configurators: List<KotlinProjectConfigurator>): ListPopup {
+            val step = object : BaseListPopupStep<KotlinProjectConfigurator>("Choose Configurator", configurators) {
+                override fun getTextFor(value: KotlinProjectConfigurator?): String {
+                    return value?.presentableText ?: "<none>"
+                }
+
+                override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {
+                    selectedValue?.let {
+                        it.configure(project, emptyList())
+                    }
+                    return null
+                }
+            }
+            val configuratorsPopup = JBPopupFactory.getInstance().createListPopup(step)
+            return configuratorsPopup
         }
     }
 }

@@ -17,7 +17,7 @@ class E private constructor() {
 }
 
 val a = <!NO_COMPANION_OBJECT!>A<!>
-<!EXPOSED_PROPERTY_TYPE!>val b = <!INVISIBLE_MEMBER!>B<!><!>
+val <!EXPOSED_PROPERTY_TYPE!>b<!> = <!INVISIBLE_MEMBER!>B<!>
 val c = <!NO_COMPANION_OBJECT!>C<!>
 val d = D
 val e = E(42)

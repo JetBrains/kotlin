@@ -155,17 +155,17 @@ class LineIteratorTest {
     @test fun useLines() {
         // TODO we should maybe zap the useLines approach as it encourages
         // use of iterators which don't close the underlying stream
-        val list1 = sample().useLines { it.toArrayList() }
-        val list2 = sample().useLines<ArrayList<String>>{ it.toArrayList() }
+        val list1 = sample().useLines { it.toList() }
+        val list2 = sample().useLines<ArrayList<String>>{ it.toCollection(arrayListOf()) }
 
-        assertEquals(arrayListOf("Hello", "World"), list1)
-        assertEquals(arrayListOf("Hello", "World"), list2)
+        assertEquals(listOf("Hello", "World"), list1)
+        assertEquals(listOf("Hello", "World"), list2)
     }
 
     @test fun manualClose() {
         val reader = sample().buffered()
         try {
-            val list = reader.lineSequence().toArrayList()
+            val list = reader.lineSequence().toList()
             assertEquals(arrayListOf("Hello", "World"), list)
         } finally {
             reader.close()
@@ -174,19 +174,19 @@ class LineIteratorTest {
 
     @test fun boundaryConditions() {
         var reader = StringReader("").buffered()
-        assertEquals(ArrayList<String>(), reader.lineSequence().toArrayList())
+        assertEquals(emptyList(), reader.lineSequence().toList())
         reader.close()
 
         reader = StringReader(" ").buffered()
-        assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
+        assertEquals(listOf(" "), reader.lineSequence().toList())
         reader.close()
 
         reader = StringReader(" \n").buffered()
-        assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
+        assertEquals(listOf(" "), reader.lineSequence().toList())
         reader.close()
 
         reader = StringReader(" \n ").buffered()
-        assertEquals(arrayListOf(" ", " "), reader.lineSequence().toArrayList())
+        assertEquals(listOf(" ", " "), reader.lineSequence().toList())
         reader.close()
     }
 }

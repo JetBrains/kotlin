@@ -45,7 +45,7 @@ fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): Fun
     val containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, FunctionDescriptor::class.java, false)
     if (containingFunctionDescriptor == null) return null
 
-    return sequence(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, FunctionDescriptor::class.java) }
+    return generateSequence(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, FunctionDescriptor::class.java) }
             .dropWhile { it is AnonymousFunctionDescriptor }
             .firstOrNull()
 }

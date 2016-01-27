@@ -38,8 +38,8 @@ fun test4(
 ) {}
 
 fun test5() {
-    <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>arrayOf<!><Nothing>()<!>
-    <!UNSUPPORTED!><!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Array<!><Nothing>(10) { throw Exception() }<!>
+    <!UNSUPPORTED!>arrayOf<<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Nothing<!>>()<!>
+    <!UNSUPPORTED!>Array<<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Nothing<!>>(10) { throw Exception() }<!>
 }
 
 fun <T> foo(): Array<T> = (object {} as Any) as Array<T>

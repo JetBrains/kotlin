@@ -7,6 +7,15 @@ PsiJetFileStubImpl[package=kotlin]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         MODIFIER_LIST:[reified]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=PureReifiable]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=internal]
+                  REFERENCE_EXPRESSION:[referencedName=PureReifiable]
     VALUE_PARAMETER_LIST:
       VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=size]
         TYPE_REFERENCE:
@@ -274,6 +283,15 @@ PsiJetFileStubImpl[package=kotlin]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         MODIFIER_LIST:[reified]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=PureReifiable]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=internal]
+                  REFERENCE_EXPRESSION:[referencedName=PureReifiable]
     VALUE_PARAMETER_LIST:
       VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
         MODIFIER_LIST:[vararg]
@@ -295,6 +313,15 @@ PsiJetFileStubImpl[package=kotlin]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         MODIFIER_LIST:[reified]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=PureReifiable]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=internal]
+                  REFERENCE_EXPRESSION:[referencedName=PureReifiable]
     VALUE_PARAMETER_LIST:
       VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=size]
         TYPE_REFERENCE:
@@ -378,6 +405,15 @@ PsiJetFileStubImpl[package=kotlin]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         MODIFIER_LIST:[reified]
+          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=PureReifiable]
+            CONSTRUCTOR_CALLEE:
+              TYPE_REFERENCE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=kotlin]
+                    REFERENCE_EXPRESSION:[referencedName=internal]
+                  REFERENCE_EXPRESSION:[referencedName=PureReifiable]
     VALUE_PARAMETER_LIST:
     TYPE_REFERENCE:
       USER_TYPE:[isAbsoluteInRootPackage=false]

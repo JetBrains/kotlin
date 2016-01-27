@@ -176,6 +176,9 @@
       <action id="KotlinGenerateEqualsAndHashCode"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"
               text="equals() and hashCode()" />
+      <action id="KotlinGenerateToString"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateToStringAction"
+              text="toString()" />
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
@@ -327,7 +330,7 @@
         order="before moveJavaFileOrDir"/>
     <refactoring.moveHandler
         id="kotlin.moveTopLevelDeclarations"
-        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsHandler"
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler"
         order="before kotlin.moveFilesOrDirectories"/>
     <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
     <refactoring.moveDirectoryWithClassesHelper
@@ -1051,7 +1054,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveDeclarationToSeparateFileIntention</className>
+      <className>org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveDeclarationToSeparateFileIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

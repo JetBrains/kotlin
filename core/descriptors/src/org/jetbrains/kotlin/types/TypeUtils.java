@@ -304,15 +304,6 @@ public class TypeUtils {
         return result;
     }
 
-    public static boolean hasNullableLowerBound(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-        for (KotlinType bound : typeParameterDescriptor.getLowerBounds()) {
-            if (bound.isMarkedNullable()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * A work-around of the generic nullability problem in the type checker
      * Semantics should be the same as `!isSubtype(T, Any)`
@@ -343,8 +334,7 @@ public class TypeUtils {
         if (FlexibleTypesKt.isFlexible(type) && acceptsNullable(FlexibleTypesKt.flexibility(type).getUpperBound())) {
             return true;
         }
-        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
-        return typeParameterDescriptor != null && hasNullableLowerBound(typeParameterDescriptor);
+        return false;
     }
 
     public static boolean hasNullableSuperType(@NotNull KotlinType type) {
@@ -426,8 +416,8 @@ public class TypeUtils {
         return false;
     }
 
-    public static boolean containsSpecialType(@Nullable KotlinType type, @NotNull final KotlinType specialType) {
-        return containsSpecialType(type, new Function1<KotlinType, Boolean>() {
+    public static boolean contains(@Nullable KotlinType type, @NotNull final KotlinType specialType) {
+        return contains(type, new Function1<KotlinType, Boolean>() {
             @Override
             public Boolean invoke(KotlinType type) {
                 return specialType.equals(type);
@@ -435,7 +425,7 @@ public class TypeUtils {
         });
     }
 
-    public static boolean containsSpecialType(
+    public static boolean contains(
             @Nullable KotlinType type,
             @NotNull Function1<KotlinType, Boolean> isSpecialType
     ) {
@@ -443,11 +433,11 @@ public class TypeUtils {
         if (isSpecialType.invoke(type)) return true;
         Flexibility flexibility = type.getCapability(Flexibility.class);
         if (flexibility != null
-                && (containsSpecialType(flexibility.getLowerBound(), isSpecialType) || containsSpecialType(flexibility.getUpperBound(), isSpecialType))) {
+                && (contains(flexibility.getLowerBound(), isSpecialType) || contains(flexibility.getUpperBound(), isSpecialType))) {
             return true;
         }
         for (TypeProjection projection : type.getArguments()) {
-            if (!projection.isStarProjection() && containsSpecialType(projection.getType(), isSpecialType)) return true;
+            if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType)) return true;
         }
         return false;
     }

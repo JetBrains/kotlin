@@ -88,7 +88,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             return
         }
         createTypeAnnotationStubs(parent, annotations)
-        val outerTypeChain = sequence(type) { it.outerType(c.typeTable) }.toList()
+        val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
 
         createStubForTypeName(classId, parent) {
             userTypeStub, index ->
@@ -240,7 +240,15 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (typeParameterProto.reified) {
             modifiers.add(KtTokens.REIFIED_KEYWORD)
         }
-        createModifierListStub(typeParameterStub, modifiers)
+
+        val modifierList = createModifierListStub(typeParameterStub, modifiers)
+
+        val annotations = c.components.annotationLoader.loadTypeParameterAnnotations(typeParameterProto, c.nameResolver)
+        if (annotations.isNotEmpty()) {
+            createAnnotationStubs(
+                    annotations,
+                    modifierList ?: createEmptyModifierListStub(typeParameterStub))
+        }
     }
 
     private fun Type.isDefaultUpperBound(): Boolean {

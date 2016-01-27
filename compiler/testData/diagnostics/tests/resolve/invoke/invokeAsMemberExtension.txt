@@ -5,7 +5,6 @@ public fun test(/*0*/ c: C, /*1*/ b: B): kotlin.Unit
 public fun test(/*0*/ e: E, /*1*/ d: D): kotlin.Unit
 public fun test(/*0*/ g: G, /*1*/ f: F): kotlin.Unit
 public fun test(/*0*/ u: U, /*1*/ v: V, /*2*/ x: X): kotlin.Unit
-public fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
 
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

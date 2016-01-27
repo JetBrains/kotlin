@@ -79,7 +79,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends KotlinLiteFi
     @NotNull
     protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
         return KotlinTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY,
+                ConfigurationKind.MOCK_RUNTIME,
                 TestJdkKind.MOCK_JDK,
                 Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
                 Collections.singletonList(javaFilesDir)

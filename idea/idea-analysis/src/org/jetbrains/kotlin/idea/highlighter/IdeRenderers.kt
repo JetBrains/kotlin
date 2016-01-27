@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.types.KotlinType
+import kotlin.comparisons.*
 
 object IdeRenderers {
 
@@ -43,8 +44,7 @@ object IdeRenderers {
 
     @JvmField val HTML_NONE_APPLICABLE_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
-            // TODO: compareBy(comparator, selector) in stdlib
-            val comparator = comparator<ResolvedCall<*>> { c1, c2 -> MemberComparator.INSTANCE.compare(c1.resultingDescriptor, c2.resultingDescriptor) }
+            val comparator = compareBy(MemberComparator.INSTANCE) { c: ResolvedCall<*> -> c.resultingDescriptor }
             calls
                 .sortedWith(comparator)
                 .joinToString("") { "<li>" + renderResolvedCall(it) + "</li>" }

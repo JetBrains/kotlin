@@ -87,7 +87,7 @@ public fun File.toRelativeString(base: File): String
  */
 public fun File.relativeTo(base: File): File = File(this.toRelativeString(base))
 
-@Deprecated("Use relativeTo instead.", ReplaceWith("this.relativeTo(base)"), level = DeprecationLevel.WARNING)
+@Deprecated("Use relativeTo instead.", ReplaceWith("this.relativeTo(base)"), level = DeprecationLevel.ERROR)
 public fun File.relativeToFile(base: File): File = File(this.toRelativeString(base))
 
 
@@ -159,47 +159,52 @@ private fun File.toRelativeStringOrNull(base: File): String? {
 
 
 /**
- * Copies this file to the given output [dst], returning the number of bytes copied.
+ * Copies this file to the given [target] file.
  *
- * If some directories on a way to the [dst] are missing, then they will be created.
- * If the [dst] file already exists, then this function will fail unless [overwrite] argument is set to `true`.
- * Otherwise this file overwrites [dst] if it's a file to, or is written into [dst] if it's a directory.
+ * If some directories on a way to the [target] are missing, then they will be created.
+ * If the [target] file already exists, this function will fail unless [overwrite] argument is set to `true`.
  *
- * Note: this function fails if you call it on a directory.
- * If you want to copy directories, use 'copyRecursively' function instead.
+ * When [overwrite] is `true` and [target] is a directory, it is replaced only if it is empty.
+ *
+ * If this file is a directory, it is copied without its content, i.e. an empty [target] directory is created.
+ * If you want to copy directory including its contents, use [copyRecursively].
  *
  * @param overwrite `true` if destination overwrite is allowed.
  * @param bufferSize the buffer size to use when copying.
- * @return the number of bytes copied
+ * @return the [target] file.
  * @throws NoSuchFileException if the source file doesn't exist.
  * @throws FileAlreadyExistsException if the destination file already exists and 'rewrite' argument is set to `false`.
  * @throws IOException if any errors occur while copying.
  */
-public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
-    if (!exists()) {
+public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File {
+    if (!this.exists()) {
         throw NoSuchFileException(file = this, reason = "The source file doesn't exist")
-    } else if (isDirectory) {
-        throw IllegalArgumentException("Use copyRecursively to copy a directory $this")
-    } else if (dst.exists()) {
-        if (!overwrite) {
+    }
+
+    if (target.exists()) {
+        val stillExists = if (!overwrite) true else !target.delete()
+
+        if (stillExists) {
             throw FileAlreadyExistsException(file = this,
-                    other = dst,
+                    other = target,
                     reason = "The destination file already exists")
-        } else if (dst.isDirectory && dst.listFiles().any()) {
-            // In this case file should be copied *into* this directory,
-            // no matter whether it is empty or not
-            return copyTo(dst.resolve(name), overwrite, bufferSize)
         }
     }
-    dst.parentFile?.mkdirs()
-    dst.delete()
-    val input = FileInputStream(this)
-    return input.use<FileInputStream, Long> {
-        val output = FileOutputStream(dst)
-        output.use<FileOutputStream, Long> {
-            input.copyTo(output, bufferSize)
+
+    if (this.isDirectory) {
+        if (!target.mkdirs())
+            throw FileSystemException(file = this, other = target, reason = "Failed to create target directory")
+    } else {
+        target.parentFile?.mkdirs()
+
+        this.inputStream().use { input ->
+            target.outputStream().use { output ->
+                input.copyTo(output, bufferSize)
+            }
         }
     }
+
+    return target
 }
 
 /**
@@ -218,7 +223,7 @@ public enum class OnErrorAction {
 private class TerminateException(file: File) : FileSystemException(file) {}
 
 /**
- * Copies this file with all its children to the specified destination [dst] path.
+ * Copies this file with all its children to the specified destination [target] path.
  * If some directories on the way to the destination are missing, then they will be created.
  *
  * If any errors occur during the copying, then further actions will depend on the result of the call
@@ -231,11 +236,13 @@ private class TerminateException(file: File) : FileSystemException(file) {}
  * AccessDeniedException - if there was an attempt to open a directory that didn't succeed.
  * IOException - if some problems occur when copying.
  *
+ * @param overwrite `true` if it is allowed to overwrite existing destination files and directories.
  * @return `false` if the copying was terminated, `true` otherwise.
 *
 * Note that if this function fails, then partial copying may have taken place.
  */
-public fun File.copyRecursively(dst: File,
+public fun File.copyRecursively(target: File,
+                                overwrite: Boolean = false,
                                 onError: (File, IOException) -> OnErrorAction =
                                 { file, exception -> throw exception }
 ): Boolean {
@@ -252,16 +259,29 @@ public fun File.copyRecursively(dst: File,
                     return false
             } else {
                 val relPath = src.toRelativeString(this)
-                val dstFile = File(dst, relPath)
+                val dstFile = File(target, relPath)
                 if (dstFile.exists() && !(src.isDirectory && dstFile.isDirectory)) {
-                    if (onError(dstFile, FileAlreadyExistsException(file = src,
-                            other = dstFile,
-                            reason = "The destination file already exists")) == OnErrorAction.TERMINATE)
-                        return false
-                } else if (src.isDirectory) {
+                    val stillExists = if (!overwrite) true else {
+                        if (dstFile.isDirectory)
+                            !dstFile.deleteRecursively()
+                        else
+                            !dstFile.delete()
+                    }
+
+                    if (stillExists) {
+                        if (onError(dstFile, FileAlreadyExistsException(file = src,
+                                    other = dstFile,
+                                    reason = "The destination file already exists")) == OnErrorAction.TERMINATE)
+                                return false
+
+                        continue
+                    }
+                }
+
+                if (src.isDirectory) {
                     dstFile.mkdirs()
                 } else {
-                    if (src.copyTo(dstFile, true) != src.length()) {
+                    if (src.copyTo(dstFile, overwrite).length() != src.length()) {
                         if (onError(src, IOException("src.length() != dst.length()")) == OnErrorAction.TERMINATE)
                             return false
                     }

@@ -121,6 +121,3 @@ fun test(u: U, v: V, x: X) {
         }
     }
 }
-
-//--------------
-fun <T, R> with(receiver: T, f: T.() -> R) : R = receiver.f()

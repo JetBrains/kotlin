@@ -621,7 +621,6 @@ class KotlinPsiUnifier(
                 desc2: TypeParameterDescriptor
         ): Status {
             if (desc1.variance != desc2.variance) return UNMATCHED
-            if (!matchTypes(desc1.lowerBounds, desc2.lowerBounds)) return UNMATCHED
             if (!matchTypes(desc1.upperBounds, desc2.upperBounds)) return UNMATCHED
             return MATCHED
         }
@@ -884,7 +883,7 @@ class KotlinPsiUnifier(
         }
     }
 
-    private val descriptorToParameter = parameters.toMapBy { (it.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() }
+    private val descriptorToParameter = parameters.associateBy { (it.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() }
 
     private fun PsiElement.unwrap(): PsiElement? {
         return when (this) {

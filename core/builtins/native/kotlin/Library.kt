@@ -16,6 +16,8 @@
 
 package kotlin
 
+import kotlin.internal.PureReifiable
+
 /**
  * Returns a string representation of the object. Can be called with a null receiver, in which case
  * it returns the string "null".
@@ -31,4 +33,4 @@ public operator fun String?.plus(other: Any?): String
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
  */
-public fun arrayOfNulls<reified T>(size: Int): Array<T?>
+public fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?>

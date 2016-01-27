@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeVariableKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -141,7 +143,7 @@ public class DelegatedPropertyResolver {
         TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 traceToResolvePDMethod, delegateFunctionsScope,
-                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
+                DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
         List<KtExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
@@ -242,7 +244,7 @@ public class DelegatedPropertyResolver {
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, delegateFunctionsScope,
-                DataFlowInfo.EMPTY, expectedType);
+                DataFlowInfoFactory.EMPTY, expectedType);
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
 
@@ -332,7 +334,7 @@ public class DelegatedPropertyResolver {
                                                                        dataFlowInfo, traceToResolveDelegatedProperty);
         traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
             @Override
-            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
+            public boolean accept(@Nullable WritableSlice<?, ?> slice, @Nullable Diagnostic diagnostic, Object key) {
                 return slice != CONSTRAINT_SYSTEM_COMPLETER;
             }
         }, true);

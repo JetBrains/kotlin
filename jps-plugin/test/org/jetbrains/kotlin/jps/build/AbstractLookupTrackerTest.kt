@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
@@ -52,7 +53,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                 fail("File $actualFile unexpectedly contains multiline comments. In range ${matchResult.range} found: ${matchResult.value} in $text")
             }
 
-            val lines = text.lines().toArrayList()
+            val lines = text.lines().toMutableList()
 
             for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
                 val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
@@ -119,12 +120,17 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 
 class TestLookupTracker : LookupTracker {
     val lookups = arrayListOf<LookupInfo>()
+    private val interner = StringInterner()
 
     override val requiresPosition: Boolean
         get() = true
 
     override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        lookups.add(LookupInfo(filePath, position, scopeFqName, scopeKind, name))
+        val internedFilePath = interner.intern(filePath)
+        val internedScopeFqName = interner.intern(scopeFqName)
+        val internedName = interner.intern(name)
+
+        lookups.add(LookupInfo(internedFilePath, position, internedScopeFqName, scopeKind, internedName))
     }
 }
 

@@ -20,4 +20,3 @@ fun a(c: Calendar) {
         timeInMillis = ""
     }
 }
-fun <T> T.apply(f: T.() -> Unit): T { f(); return this }

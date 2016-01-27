@@ -95,12 +95,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
-    @TestMetadata("kt10192.kt")
-    public void testKt10192() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kt10192.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("kt9078.kt")
     public void testKt9078() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kt9078.kt");
@@ -122,6 +116,18 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("PropertyDelegateWithPrivateSet.kt")
     public void testPropertyDelegateWithPrivateSet() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/PropertyDelegateWithPrivateSet.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("pureReifiable.kt")
+    public void testPureReifiable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/pureReifiable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("pureReifiableArrayOperations.kt")
+    public void testPureReifiableArrayOperations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/pureReifiableArrayOperations.kt");
         doTest(fileName);
     }
 
@@ -996,6 +1002,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/kt2082.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("kt9345.kt")
+        public void testKt9345() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/kt9345.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/reified")
@@ -1186,6 +1198,33 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("kt5534.kt")
         public void testKt5534() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/varargs/kt5534.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/when")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class When extends AbstractDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInWhen() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/when"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("kt10192.kt")
+        public void testKt10192() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/when/kt10192.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt10807.kt")
+        public void testKt10807() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/when/kt10807.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noTypeArgumentsInConstructor.kt")
+        public void testNoTypeArgumentsInConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/when/noTypeArgumentsInConstructor.kt");
             doTest(fileName);
         }
     }

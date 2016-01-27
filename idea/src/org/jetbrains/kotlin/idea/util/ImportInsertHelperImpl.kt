@@ -350,7 +350,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         private fun detectNeededImports(importedClasses: Collection<ClassifierDescriptor>): Set<ClassifierDescriptor> {
             if (importedClasses.isEmpty()) return setOf()
 
-            val classesToCheck = importedClasses.map { it.name to it }.toMap().toLinkedMap()
+            val classesToCheck = importedClasses.associateByTo(mutableMapOf()) { it.name }
             val result = LinkedHashSet<ClassifierDescriptor>()
             file.accept(object : KtVisitorVoid() {
                 override fun visitElement(element: PsiElement) {

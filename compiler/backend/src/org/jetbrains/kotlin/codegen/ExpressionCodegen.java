@@ -2213,9 +2213,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StackValue receiver
     ) {
         Type type = typeMapper.mapType(propertyDescriptor.getOriginal().getType());
-        CallableMethod callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetMethod(), false);
+        CallableMethod callableGetter =
+                typeMapper.mapToCallableMethod(context.accessibleDescriptor(propertyDescriptor.getGetMethod(), null), false);
         FunctionDescriptor setMethod = propertyDescriptor.getSetMethod();
-        CallableMethod callableSetter = setMethod != null ? typeMapper.mapToCallableMethod(setMethod, false) : null;
+        CallableMethod callableSetter =
+                setMethod != null ? typeMapper.mapToCallableMethod(context.accessibleDescriptor(setMethod, null), false) : null;
         return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, state, receiver);
     }
 

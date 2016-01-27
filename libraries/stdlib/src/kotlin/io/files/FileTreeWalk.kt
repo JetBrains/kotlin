@@ -60,7 +60,6 @@ public class FileTreeWalk private constructor(
     /** Abstract class that encapsulates directory visiting in some order, beginning from a given [rootDir] */
     private abstract class DirectoryState(rootDir: File): WalkState(rootDir) {
         init {
-            @Suppress("DEPRECATION")
             if (ASSERTIONS_ENABLED)
                 assert(rootDir.isDirectory) { "rootDir must be verified to be directory beforehand." }
         }
@@ -208,7 +207,6 @@ public class FileTreeWalk private constructor(
             private var visited: Boolean = false
 
             init {
-                @Suppress("DEPRECATION")
                 if (ASSERTIONS_ENABLED)
                     assert(rootFile.isFile) { "rootFile must be verified to be file beforehand." }
             }

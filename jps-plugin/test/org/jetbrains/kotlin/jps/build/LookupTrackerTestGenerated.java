@@ -47,6 +47,12 @@ public class LookupTrackerTestGenerated extends AbstractLookupTrackerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("expressionType")
+    public void testExpressionType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/expressionType/");
+        doTest(fileName);
+    }
+
     @TestMetadata("java")
     public void testJava() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/java/");

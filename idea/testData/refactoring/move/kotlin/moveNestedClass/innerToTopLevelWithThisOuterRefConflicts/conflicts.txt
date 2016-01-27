@@ -1,0 +1,3 @@
+Call with two implicit receivers won't be processed: bar()
+Call with two implicit receivers won't be processed: foo()
+Qualified call won't be processed: 1.foo()

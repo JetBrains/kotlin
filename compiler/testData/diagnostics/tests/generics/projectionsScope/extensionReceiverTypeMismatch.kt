@@ -4,8 +4,6 @@ class A<T> {
 }
 class Out<out E>
 
-public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
-
 fun test(x: A<out CharSequence>, y: Out<CharSequence>) {
     with(x) {
         // TODO: this diagnostic could be replaced with TYPE_MISMATCH_DUE_TO_TYPE_PROJECTION

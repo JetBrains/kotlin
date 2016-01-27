@@ -183,12 +183,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public List<KotlinType> getLowerBounds() {
-        return Collections.singletonList(getBuiltIns(this).getNothingType());
-    }
-
-    @NotNull
-    @Override
     @Deprecated
     public TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException("Don't call substitute() on type parameters");

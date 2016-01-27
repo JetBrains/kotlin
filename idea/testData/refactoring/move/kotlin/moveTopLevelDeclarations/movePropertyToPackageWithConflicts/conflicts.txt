@@ -1,4 +1,4 @@
-Package-private property a.test will no longer be accessible from function a.bar
-Package-private property a.test will no longer be accessible from method J.bar()
-Property a.test uses package-private class a.Foo
-Property a.test uses package-private function a.foo
+Function bar() uses property test which will be inaccessible after move
+Method bar() uses property test which will be inaccessible after move
+Property test uses class Foo which will be inaccessible after move
+Property test uses function foo() which will be inaccessible after move

@@ -31,5 +31,3 @@ fun test(c: () -> String, e: Int.() -> String) {
         (e)()
     }
 }
-
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()

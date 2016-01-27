@@ -65,7 +65,7 @@ fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?, approxi
     if (typeProjection.isStarProjection) return typeProjection
 
     val type = typeProjection.type
-    if (!TypeUtils.containsSpecialType(type, { it.isCaptured() })) {
+    if (!TypeUtils.contains(type, { it.isCaptured() })) {
         return typeProjection
     }
     val howThisTypeIsUsed = typeProjection.projectionKind

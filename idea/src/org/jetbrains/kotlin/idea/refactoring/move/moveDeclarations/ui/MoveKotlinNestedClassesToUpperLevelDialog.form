@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinNestedClassesToUpperLevelDialog">
+  <grid id="27dc6" binding="panel" layout-manager="GridLayoutManager" row-count="10" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="39dca" class="javax.swing.JLabel" binding="classNameLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/RefactoringBundle" key="class.name.prompt"/>
+        </properties>
+      </component>
+      <hspacer id="dbb8e">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <vspacer id="34c3">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="8093b" class="com.intellij.ui.EditorTextField" binding="classNameField">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="13f65" class="com.intellij.ui.NonFocusableCheckBox" binding="passOuterClassCheckBox">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/RefactoringBundle" key="pass.outer.class.instance.as.parameter"/>
+        </properties>
+      </component>
+      <component id="ec0ba" class="javax.swing.JLabel" binding="parameterNameLabel">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/RefactoringBundle" key="parameter.name.prompt"/>
+        </properties>
+      </component>
+      <component id="73425" class="com.intellij.refactoring.ui.NameSuggestionsField" binding="parameterField" custom-create="true">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="1" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <grid id="60537" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="46c54" class="com.intellij.ui.NonFocusableCheckBox" binding="searchInCommentsCheckBox">
+            <constraints/>
+            <properties>
+              <text resource-bundle="messages/RefactoringBundle" key="search.in.comments.and.strings"/>
+            </properties>
+          </component>
+          <component id="e1ccb" class="com.intellij.ui.NonFocusableCheckBox" binding="searchForTextOccurrencesCheckBox">
+            <constraints/>
+            <properties>
+              <text resource-bundle="messages/RefactoringBundle" key="search.for.text.occurrences"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="ca9da" class="javax.swing.JLabel" binding="packageNameLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Packa&amp;ge name:"/>
+        </properties>
+      </component>
+      <component id="18010" class="com.intellij.refactoring.ui.PackageNameReferenceEditorCombo" binding="packageNameField" custom-create="true">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <grid id="f9ba1" binding="openInEditorPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+    </children>
+  </grid>
+</form>

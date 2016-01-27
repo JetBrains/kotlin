@@ -489,6 +489,14 @@ public inline operator fun ShortArray.plus(elements: ShortArray): ShortArray {
 }
 
 /**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
+    return this.asDynamic().concat(arrayOf(element))
+}
+
+/**
  * Sorts the array in-place.
  */
 @library("primitiveArraySort")

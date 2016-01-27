@@ -45,8 +45,8 @@ abstract class ConfigureKotlinInProjectAction : AnAction() {
             configurators.size == 1 -> configurators.first().configure(project, emptyList())
             configurators.isEmpty() -> Messages.showErrorDialog("There aren't configurators available", e.presentation.text!!)
             else -> {
-                Messages.showErrorDialog("More than one configurator is available", e.presentation.text!!)
-                showConfigureKotlinNotificationIfNeeded(project)
+                val configuratorsPopup = KotlinSetupEnvironmentNotificationProvider.createConfiguratorsPopup(project, configurators.toList())
+                configuratorsPopup.showInBestPositionFor(e.dataContext)
             }
         }
     }

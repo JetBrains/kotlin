@@ -62,6 +62,10 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         doTest("simple.kt")
     }
 
+    fun testTypeParameterAnnotation() {
+        doTest("typeParameterAnnotation.kt")
+    }
+
     fun testNestedClassesAndObjects() {
         doTest("nestedClassesAndObjects.kt")
     }

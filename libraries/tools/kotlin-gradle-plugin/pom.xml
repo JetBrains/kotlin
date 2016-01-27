@@ -26,6 +26,11 @@
           <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-android-extensions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.android.tools.build</groupId>
             <artifactId>gradle</artifactId>
             <version>1.1.0</version>

@@ -1,7 +1,3 @@
-fun <T> run(f: () -> T): T {
-    return f()
-}
-
 // invalid, depends on local class
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = run {
     class A

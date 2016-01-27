@@ -1,0 +1,31 @@
+package
+
+public fun bare(/*0*/ x: SuperOuter<*>.SuperInner<*>, /*1*/ y: kotlin.Any?): kotlin.Unit
+
+public final class DerivedOuter</*0*/ G> : SuperOuter<G> {
+    public constructor DerivedOuter</*0*/ G>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class DerivedInner</*0*/ H> /*captured type parameters: /*1*/ G*/ : SuperOuter<G>.SuperInner<H> {
+        public constructor DerivedInner</*0*/ H>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class SuperOuter</*0*/ E> {
+    public constructor SuperOuter</*0*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open inner class SuperInner</*0*/ F> /*captured type parameters: /*1*/ E*/ {
+        public constructor SuperInner</*0*/ F>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

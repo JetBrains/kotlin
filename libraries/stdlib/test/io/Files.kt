@@ -1,6 +1,7 @@
 package test.io
 
 import java.io.*
+import java.util.*
 import org.junit.Test as test
 import kotlin.io.walkTopDown
 import kotlin.test.*
@@ -356,42 +357,66 @@ class FilesTest {
     @test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
-        srcFile.writeText("Hello, World!")
-        assertFailsWith(FileAlreadyExistsException::class) {
-            srcFile.copyTo(dstFile)
+        try {
+            srcFile.writeText("Hello, World!")
+            assertFailsWith(FileAlreadyExistsException::class, "copy do not overwrite existing file") {
+                srcFile.copyTo(dstFile)
+            }
+
+            var dst = srcFile.copyTo(dstFile, overwrite = true)
+            assertTrue(dst === dstFile)
+            compareFiles(srcFile, dst, "copy with overwrite over existing file")
+
+            assertTrue(dstFile.delete())
+            dst = srcFile.copyTo(dstFile)
+            compareFiles(srcFile, dst, "copy to new file")
+
+            assertTrue(dstFile.delete())
+            dstFile.mkdir()
+            val child = File(dstFile, "child")
+            child.createNewFile()
+            assertFailsWith(FileAlreadyExistsException::class, "copy with overwrite do not overwrite non-empty dir") {
+                srcFile.copyTo(dstFile, overwrite = true)
+            }
+            child.delete()
+
+            srcFile.copyTo(dstFile, overwrite = true)
+            assertEquals(srcFile.readText(), dstFile.readText(), "copy with overwrite over empty dir")
+
+            assertTrue(srcFile.delete())
+            assertTrue(dstFile.delete())
+
+            assertFailsWith(NoSuchFileException::class) {
+                srcFile.copyTo(dstFile)
+            }
+
+            srcFile.mkdir()
+            srcFile.resolve("somefile").writeText("some content")
+            dstFile.writeText("")
+            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite file") {
+                srcFile.copyTo(dstFile)
+            }
+            srcFile.copyTo(dstFile, overwrite = true)
+            assertTrue(dstFile.isDirectory)
+            assertTrue(dstFile.listFiles()!!.isEmpty(), "only directory is copied, but not its content")
+
+            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite dir") {
+                srcFile.copyTo(dstFile)
+            }
+
+            srcFile.copyTo(dstFile, overwrite = true)
+            assertTrue(dstFile.isDirectory)
+            assertTrue(dstFile.listFiles()!!.isEmpty(), "only directory is copied, but not its content")
+
+            dstFile.resolve("somefile2").writeText("some content2")
+            assertFailsWith(FileAlreadyExistsException::class, "copy dir do not overwrite dir") {
+                srcFile.copyTo(dstFile, overwrite = true)
+            }
         }
-
-        var len = srcFile.copyTo(dstFile, overwrite = true)
-        assertEquals(13L, len)
-        assertEquals(srcFile.readText(), dstFile.readText(Charsets.UTF_8))
-
-        assertTrue(dstFile.delete())
-        len = srcFile.copyTo(dstFile)
-        assertEquals(13L, len)
-        assertEquals(srcFile.readText(Charsets.UTF_8), dstFile.readText())
-
-        assertTrue(dstFile.delete())
-        dstFile.mkdir()
-        val child = File(dstFile, "child")
-        child.createNewFile()
-        srcFile.copyTo(dstFile, overwrite = true)
-        assertEquals(13L, len)
-        val copy = dstFile.resolve(srcFile.name)
-        assertEquals(srcFile.readText(), copy.readText())
-
-        assertTrue(srcFile.delete())
-        assertTrue(child.delete() && copy.delete() && dstFile.delete())
-
-        assertFailsWith(NoSuchFileException::class) {
-            srcFile.copyTo(dstFile)
+        finally {
+            srcFile.deleteRecursively()
+            dstFile.deleteRecursively()
         }
-
-        srcFile.mkdir()
-
-        assertFailsWith(IllegalArgumentException::class) {
-            srcFile.copyTo(dstFile)
-        }
-        srcFile.delete()
     }
 
     @test fun copyToNameWithoutParent() {
@@ -451,20 +476,26 @@ class FilesTest {
         }
     }
 
+    fun compareFiles(src: File, dst: File, message: String? = null) {
+        assertTrue(dst.exists())
+        assertEquals(src.isFile, dst.isFile, message)
+        if (dst.isFile) {
+            assertTrue(Arrays.equals(src.readBytes(), dst.readBytes()), message)
+        }
+    }
+
+    fun compareDirectories(src: File, dst: File) {
+        for (srcFile in src.walkTopDown()) {
+            val dstFile = dst.resolve(srcFile.relativeTo(src))
+            compareFiles(srcFile, dstFile)
+        }
+    }
+
     @test fun copyRecursively() {
         val src = createTempDir()
         val dst = createTempDir()
         dst.delete()
-        fun check() {
-            for (file in src.walkTopDown()) {
-                val dstFile = dst.resolve(file.relativeTo(src))
-                assertTrue(dstFile.exists())
-                if (dstFile.isFile) {
-                    assertEquals(file.readText(), dstFile.readText())
-                }
-
-            }
-        }
+        fun check() = compareDirectories(src, dst)
 
         try {
             val subDir1 = createTempDir(prefix = "d1_", directory = src)
@@ -526,6 +557,40 @@ class FilesTest {
                 OnErrorAction.TERMINATE
             })
         } finally {
+            src.deleteRecursively()
+            dst.deleteRecursively()
+        }
+    }
+
+    @test fun copyRecursivelyWithOverwrite() {
+        val src = createTempDir()
+        val dst = createTempDir()
+        fun check() = compareDirectories(src, dst)
+
+        try {
+            val srcFile = src.resolve("test")
+            val dstFile = dst.resolve("test")
+            srcFile.writeText("text1")
+
+            src.copyRecursively(dst)
+
+            srcFile.writeText("text1 modified")
+            src.copyRecursively(dst, overwrite = true)
+            check()
+
+            dstFile.delete()
+            dstFile.mkdir()
+            dstFile.resolve("subFile").writeText("subfile")
+            src.copyRecursively(dst, overwrite = true)
+            check()
+
+            srcFile.delete()
+            srcFile.mkdir()
+            srcFile.resolve("subFile").writeText("text2")
+            src.copyRecursively(dst, overwrite = true)
+            check()
+        }
+        finally {
             src.deleteRecursively()
             dst.deleteRecursively()
         }

@@ -58,6 +58,3 @@ fun test(d: D, c: C) {
         }
     }
 }
-
-//--------------
-fun <T, R> with(receiver: T, f: T.() -> R) : R = receiver.f()

@@ -5,12 +5,16 @@ package kotlin.test
 import kotlin.reflect.*
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
+@Deprecated("Use assertFailsWith with kotlin class.", ReplaceWith("assertFailsWith(exceptionClass.kotlin, block)"), level = DeprecationLevel.ERROR)
 fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, block: () -> Unit): T {
-    return assertFailsWith(exceptionClass, null, block)
+    return assertFailsWithImpl(exceptionClass, null, block)
 }
 
+@Deprecated("Use assertFailsWith with kotlin class.", ReplaceWith("assertFailsWith(exceptionClass.kotlin, message, block)"), level = DeprecationLevel.ERROR)
+fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, block: () -> Unit): T = assertFailsWithImpl(exceptionClass, message, block)
+
 /** Asserts that a [block] fails with a specific exception being thrown. */
-fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, block: () -> Unit): T {
+private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, message: String?, block: () -> Unit): T {
     try {
         block()
     } catch (e: Throwable) {
@@ -28,12 +32,12 @@ fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, 
 fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T = assertFailsWith(exceptionClass.java, message, block)
+fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T = assertFailsWithImpl(exceptionClass.java, message, block)
 
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
-inline fun <reified T : Throwable> assertFailsWith(message: String, noinline block: () -> Unit): T = assertFailsWith(T::class.java, message, block)
+inline fun <reified T : Throwable> assertFailsWith(message: String, noinline block: () -> Unit): T = assertFailsWith(T::class, message, block)
 
 
 /**

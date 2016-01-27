@@ -28,5 +28,5 @@ object RuntimeSourceElementFactory : JavaSourceElementFactory {
         override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
     }
 
-    override fun source(javaElement: JavaElement) = RuntimeSourceElement(javaElement as ReflectJavaElement)
+    override fun source(javaElement: JavaElement): JavaSourceElement = RuntimeSourceElement(javaElement as ReflectJavaElement)
 }

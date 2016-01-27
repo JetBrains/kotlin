@@ -63,12 +63,6 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 
                 createPackageFragment(packageFqName, false)
                 createPackageFragment(packageFqName + ".view", true)
-
-                if (variantData.variant.isMainVariant && !moduleData.any { it.variant.name == layoutName }) {
-                    val deprecatedPackageFqName = AndroidConst.SYNTHETIC_PACKAGE + '.' + layoutName
-                    createPackageFragment(deprecatedPackageFqName, false, isDeprecated = true)
-                    createPackageFragment(deprecatedPackageFqName + ".view", true, isDeprecated = true)
-                }
             }
         }
 

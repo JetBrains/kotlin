@@ -60,7 +60,7 @@ fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Se
 }
 
 val PsiElement.parentsWithSelf: Sequence<PsiElement>
-    get() = sequence(this) { if (it is PsiFile) null else it.parent }
+    get() = generateSequence(this) { if (it is PsiFile) null else it.parent }
 
 val PsiElement.parents: Sequence<PsiElement>
     get() = parentsWithSelf.drop(1)
@@ -72,10 +72,10 @@ fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
         = PsiTreeUtil.nextLeaf(this, skipEmptyElements)
 
 val PsiElement.prevLeafs: Sequence<PsiElement>
-    get() = sequence({ prevLeaf() }, { it.prevLeaf() })
+    get() = generateSequence({ prevLeaf() }, { it.prevLeaf() })
 
 val PsiElement.nextLeafs: Sequence<PsiElement>
-    get() = sequence({ nextLeaf() }, { it.nextLeaf() })
+    get() = generateSequence({ nextLeaf() }, { it.nextLeaf() })
 
 fun PsiElement.prevLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     var leaf = prevLeaf()

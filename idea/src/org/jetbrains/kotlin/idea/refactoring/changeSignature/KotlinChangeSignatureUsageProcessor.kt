@@ -623,7 +623,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             caller: KtNamedDeclaration,
             callerDescriptor: DeclarationDescriptor) {
         val valueParameters = caller.getValueParameters()
-        val existingParameters = valueParameters.toMapBy { it.name }
+        val existingParameters = valueParameters.associateBy { it.name }
         val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
         for (parameterInfo in changeInfo.getNonReceiverParameters()) {
             if (!(parameterInfo.isNewParameter)) continue
@@ -873,9 +873,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
             if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true
 
-            val methodDescriptor = method.getJavaMethodDescriptor()
-            assert(methodDescriptor != null)
-            descriptorWrapper.originalJavaMethodDescriptor = KotlinChangeSignatureData(methodDescriptor!!, method, listOf(methodDescriptor))
+            val methodDescriptor = method.getJavaMethodDescriptor() ?: return false
+            descriptorWrapper.originalJavaMethodDescriptor = KotlinChangeSignatureData(methodDescriptor, method, listOf(methodDescriptor))
 
             // This change info is used as a placeholder before primary method update
             // It gets replaced with real change info afterwards

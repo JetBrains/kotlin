@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtExpression
@@ -32,6 +34,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
+enum class FakeCallKind {
+    ITERATOR,
+    COMPONENT,
+    OTHER
+}
+
 class FakeCallResolver(
         private val project: Project,
         private val callResolver: CallResolver
@@ -41,33 +49,31 @@ class FakeCallResolver(
             receiver: ReceiverValue?,
             name: Name,
             callElement: KtExpression?,
+            reportErrorsOn: KtExpression? = callElement,
+            callKind: FakeCallKind = FakeCallKind.OTHER,
             vararg argumentTypes: KotlinType
     ): OverloadResolutionResults<FunctionDescriptor> {
         val traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name)
         val fakeArguments = ArrayList<KtExpression>()
         for (type in argumentTypes) {
-            fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size, type))
+            fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(project, traceWithFakeArgumentInfo,
+                                                                               "fakeArgument" + fakeArguments.size, type))
         }
-        return makeAndResolveFakeCall(receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), fakeArguments, name, callElement).second
+        return makeAndResolveFakeCall(receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo),
+                                      fakeArguments, name, callElement, callKind, reportErrorsOn).second
     }
 
+    @JvmOverloads
     fun resolveFakeCall(
             context: ExpressionTypingContext,
             receiver: ReceiverValue,
             name: Name,
-            callElement: KtExpression
+            callElement: KtExpression,
+            reportErrorsOn: KtExpression = callElement,
+            callKind: FakeCallKind = FakeCallKind.OTHER,
+            valueArguments: List<KtExpression> = emptyList()
     ): OverloadResolutionResults<FunctionDescriptor> {
-        return resolveFakeCall(receiver, context, emptyList(), name, callElement)
-    }
-
-    fun resolveFakeCall(
-            receiver: ReceiverValue,
-            context: ExpressionTypingContext,
-            valueArguments: List<KtExpression>,
-            name: Name,
-            callElement: KtExpression
-    ): OverloadResolutionResults<FunctionDescriptor> {
-        return makeAndResolveFakeCall(receiver, context, valueArguments, name, callElement).second
+        return makeAndResolveFakeCall(receiver, context, valueArguments, name, callElement, callKind, reportErrorsOn).second
     }
 
     fun makeAndResolveFakeCall(
@@ -75,17 +81,36 @@ class FakeCallResolver(
             context: ExpressionTypingContext,
             valueArguments: List<KtExpression>,
             name: Name,
-            callElement: KtExpression?
+            callElement: KtExpression?,
+            callKind: FakeCallKind = FakeCallKind.OTHER,
+            reportErrorsOn: KtExpression? = callElement
     ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
         val fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name)
         val fakeBindingTrace = context.replaceBindingTrace(fakeTrace)
 
-        return makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake ->
-            fakeTrace.commit({ slice, key ->
+        var hasUnreportedError = false
+        val result = makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake ->
+            fakeTrace.commit({ slice, diagnostic, key ->
                 // excluding all entries related to fake expression
-                key != fake
+                // convert all errors on this expression to ITERATOR_MISSING on callElement
+                val isFakeKey = key == fake
+                if (diagnostic?.severity == Severity.ERROR && isFakeKey) {
+                    hasUnreportedError = true
+                }
+                !isFakeKey
             }, true)
         }
+        if (hasUnreportedError && reportErrorsOn != null) {
+            when (callKind) {
+                FakeCallKind.ITERATOR -> context.trace.report(Errors.ITERATOR_MISSING.on(reportErrorsOn))
+                FakeCallKind.COMPONENT ->
+                    if (receiver != null) {
+                        context.trace.report(Errors.COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, name, receiver.type))
+                    }
+                FakeCallKind.OTHER -> {}
+            }
+        }
+        return result
     }
 
     @JvmOverloads fun makeAndResolveFakeCallInContext(

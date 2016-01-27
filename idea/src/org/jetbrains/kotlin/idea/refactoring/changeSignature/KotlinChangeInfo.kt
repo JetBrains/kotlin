@@ -83,7 +83,7 @@ open class KotlinChangeInfo(
             field = value
         }
 
-    private val newParameters = parameterInfos.toArrayList()
+    private val newParameters = parameterInfos.toMutableList()
 
     private val originalPsiMethods = method.toLightMethods()
     private val originalParameters = (method as? KtFunction)?.valueParameters ?: emptyList()
@@ -323,7 +323,7 @@ open class KotlinChangeInfo(
         val defaultValueCount = parameters.count { getDefaultValue(it) != null }
         if (psiMethods.size != defaultValueCount + 1) return emptyList()
 
-        val mandatoryParams = parameters.toArrayList()
+        val mandatoryParams = parameters.toMutableList()
         val defaultValues = ArrayList<KtExpression>()
         return psiMethods.map {
             JvmOverloadSignature(it, mandatoryParams.map(getPsi).toSet(), defaultValues.toSet()).apply {
@@ -360,7 +360,7 @@ open class KotlinChangeInfo(
             currentPsiMethods.singleOrNull()?.let { method -> return originalPsiMethods.keysToMap { method } }
 
             val currentSignatures = initCurrentSignatures(currentPsiMethods)
-            return originalSignatures.toMapBy({ it.method }) { originalSignature ->
+            return originalSignatures.associateBy({ it.method }) { originalSignature ->
                 var constrainedCurrentSignatures = currentSignatures.map { it.constrainBy(originalSignature) }
                 val maxMandatoryCount = constrainedCurrentSignatures.maxBy { it.mandatoryParams.size }!!.mandatoryParams.size
                 constrainedCurrentSignatures = constrainedCurrentSignatures.filter { it.mandatoryParams.size == maxMandatoryCount }

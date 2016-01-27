@@ -22,7 +22,9 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -53,6 +55,8 @@ class KotlinImportOptimizer() : ImportOptimizer {
 
     private class OptimizeProcess(private val file: KtFile) {
         fun execute() {
+            if (file.getNullableModuleInfo() !is ModuleSourceInfo) return
+
             val oldImports = file.importDirectives
             if (oldImports.isEmpty()) return
 

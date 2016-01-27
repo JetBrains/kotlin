@@ -19,5 +19,3 @@ fun test(a: A) {
         }
     }
 }
-
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()

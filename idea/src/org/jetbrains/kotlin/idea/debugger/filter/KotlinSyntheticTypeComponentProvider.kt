@@ -24,7 +24,6 @@ import com.sun.jdi.TypeComponent
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.org.objectweb.asm.Opcodes
-import sun.tools.java.RuntimeConstants
 
 class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
     override fun isSynthetic(typeComponent: TypeComponent?): Boolean {
@@ -54,6 +53,7 @@ class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvider {
 
     private fun Method.isDelegateToDefaultInterfaceImpl(): Boolean {
         if (allLineLocations().size != 1) return false
+        if (!virtualMachine().canGetBytecodes()) return false
 
         if (!hasOnlyInvokeStatic(this)) return false
 

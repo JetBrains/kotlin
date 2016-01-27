@@ -3,7 +3,7 @@
 
 package kotlin
 
-public inline fun <reified T> Array(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.Array<T> { /* compiled code */ }
+public inline fun <reified @kotlin.internal.PureReifiable T> Array(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.Array<T> { /* compiled code */ }
 
 public inline fun BooleanArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Boolean): kotlin.BooleanArray { /* compiled code */ }
 
@@ -21,9 +21,9 @@ public inline fun LongArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Long)
 
 public inline fun ShortArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Short): kotlin.ShortArray { /* compiled code */ }
 
-public inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
+public inline fun <reified @kotlin.internal.PureReifiable T> arrayOf(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
 
-public fun <reified T> arrayOfNulls(size: kotlin.Int): kotlin.Array<T?> { /* compiled code */ }
+public fun <reified @kotlin.internal.PureReifiable T> arrayOfNulls(size: kotlin.Int): kotlin.Array<T?> { /* compiled code */ }
 
 public fun booleanArrayOf(vararg elements: kotlin.Boolean): kotlin.BooleanArray { /* compiled code */ }
 
@@ -33,7 +33,7 @@ public fun charArrayOf(vararg elements: kotlin.Char): kotlin.CharArray { /* comp
 
 public fun doubleArrayOf(vararg elements: kotlin.Double): kotlin.DoubleArray { /* compiled code */ }
 
-public inline fun <reified T> emptyArray(): kotlin.Array<T> { /* compiled code */ }
+public inline fun <reified @kotlin.internal.PureReifiable T> emptyArray(): kotlin.Array<T> { /* compiled code */ }
 
 public fun floatArrayOf(vararg elements: kotlin.Float): kotlin.FloatArray { /* compiled code */ }
 

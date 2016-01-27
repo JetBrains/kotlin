@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
@@ -168,6 +168,6 @@ public class KotlinOverridingTest extends KotlinLiteFixture {
         KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
         LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(root.getBuiltIns());
         return functionDescriptorResolver.resolveFunctionDescriptor(root, scope, function,
-                                                                    KotlinTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
+                                                                    KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
     }
 }

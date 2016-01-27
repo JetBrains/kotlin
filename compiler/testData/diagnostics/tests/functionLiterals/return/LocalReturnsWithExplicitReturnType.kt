@@ -7,5 +7,3 @@ fun test(a: Int) {
     run<Int>{ <!TYPE_MISMATCH!>""<!> }
     run<Int>{ 1 }
 }
-
-fun <T> run(f: () -> T): T { return f() }

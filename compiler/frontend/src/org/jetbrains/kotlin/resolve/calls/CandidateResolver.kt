@@ -112,7 +112,10 @@ class CandidateResolver(
 
     private fun CallCandidateResolutionContext<*>.processTypeArguments() = check {
         val jetTypeArguments = call.getTypeArguments()
-        if (!jetTypeArguments.isEmpty()) {
+        if (candidateCall.knownTypeParametersSubstitutor != null) {
+            candidateCall.setResultingSubstitutor(candidateCall.knownTypeParametersSubstitutor!!)
+        }
+        else if (!jetTypeArguments.isEmpty()) {
             // Explicit type arguments passed
 
             val typeArguments = ArrayList<KotlinType>()
@@ -139,9 +142,6 @@ class CandidateResolver(
             }
 
             candidateCall.setResultingSubstitutor(substitutor)
-        }
-        else if (candidateCall.getKnownTypeParametersSubstitutor() != null) {
-            candidateCall.setResultingSubstitutor(candidateCall.getKnownTypeParametersSubstitutor()!!)
         }
     }
 

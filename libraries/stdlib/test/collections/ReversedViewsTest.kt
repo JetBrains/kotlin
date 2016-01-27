@@ -79,7 +79,7 @@ class ReversedViewsTest {
     }
 
     @test fun testMutableReversedSubList() {
-        val reversed = (1..10).toArrayList().asReversed()
+        val reversed = (1..10).toMutableList().asReversed()
         assertEquals(listOf(9, 8, 7), reversed.subList(1, 4))
     }
 

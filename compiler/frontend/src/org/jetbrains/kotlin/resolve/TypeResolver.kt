@@ -321,7 +321,7 @@ class TypeResolver(
             KotlinTypeImpl.create(
                     annotations,
                     typeParameter.typeConstructor,
-                    TypeUtils.hasNullableLowerBound(typeParameter),
+                    false,
                     listOf(),
                     scopeForTypeParameter)
     }
@@ -481,7 +481,7 @@ class TypeResolver(
     }
 
     private fun ClassifierDescriptor?.classDescriptorChain(): List<ClassDescriptor>
-            = sequence({ this as? ClassDescriptor }, { it.containingDeclaration as? ClassDescriptor }).toList()
+            = generateSequence({ this as? ClassDescriptor }, { it.containingDeclaration as? ClassDescriptor }).toList()
 
     private fun TypeParameterDescriptor.isDeclaredInScope(c: TypeResolutionContext): Boolean {
         assert(containingDeclaration is ClassDescriptor) { "This function is implemented for classes only, but $containingDeclaration was given" }
@@ -499,7 +499,7 @@ class TypeResolver(
     }
 
     private fun DeclarationDescriptor.isInsideOfClass(classDescriptor: ClassDescriptor)
-            = sequence(this, { it.containingDeclaration }).any { it.original == classDescriptor }
+            = generateSequence(this, { it.containingDeclaration }).any { it.original == classDescriptor }
 
 
     private fun resolveTypeProjectionsWithErrorConstructor(

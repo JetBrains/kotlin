@@ -1,0 +1,18 @@
+import java.util.Arrays
+
+// GENERATOR: MULTIPLE_TEMPLATES
+class A(val n: IntArray, val s: Array<String>) {
+    val f: Float = 1.0f
+
+    fun foo() {
+
+    }
+
+    override fun toString(): String{
+        return "A(" +
+                "n=${Arrays.toString(n)}," +
+                "s=${Arrays.toString(s)}," +
+                "f=$f" +
+                ")"
+    }
+}

@@ -17,9 +17,3 @@ kotlinx.android.synthetic.main.test
 
 
 kotlinx.android.synthetic.main.test.view
-
-
-kotlinx.android.synthetic.test
-
-
-kotlinx.android.synthetic.test.view

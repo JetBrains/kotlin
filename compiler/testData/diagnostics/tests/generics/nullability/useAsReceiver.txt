@@ -4,4 +4,3 @@ public fun </*0*/ T : kotlin.String?> foo(/*0*/ x: T): kotlin.Unit
 public fun </*0*/ T : kotlin.CharSequence?> T.bar1(): kotlin.Unit
 public fun kotlin.CharSequence?.bar2(): kotlin.Unit
 public fun </*0*/ T : kotlin.CharSequence> T.bar3(): kotlin.Unit
-public fun </*0*/ T, /*1*/ R> T.let(/*0*/ f: (T) -> R): R

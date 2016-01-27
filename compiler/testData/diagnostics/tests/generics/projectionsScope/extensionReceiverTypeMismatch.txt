@@ -1,7 +1,6 @@
 package
 
 public fun test(/*0*/ x: A<out kotlin.CharSequence>, /*1*/ y: Out<kotlin.CharSequence>): kotlin.Unit
-public inline fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>()

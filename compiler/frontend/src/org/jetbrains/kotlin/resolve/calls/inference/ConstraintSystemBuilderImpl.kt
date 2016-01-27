@@ -100,7 +100,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         )))
     }
 
-    private fun KotlinType.isProper() = !TypeUtils.containsSpecialType(this) {
+    private fun KotlinType.isProper() = !TypeUtils.contains(this) {
         type -> type.constructor.declarationDescriptor.let { it is TypeParameterDescriptor && isMyTypeVariable(it) }
     }
 

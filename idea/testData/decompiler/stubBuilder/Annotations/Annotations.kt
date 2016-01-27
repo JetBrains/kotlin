@@ -3,6 +3,8 @@
     protected @a fun f() {
     }
 
+    inline fun <reified @a T, @a F> inlineFun() { }
+
     private fun annotationWithVararg(@a vararg i: Int) {}
 
     @b(E.E1) private val c: Int = 1
@@ -29,7 +31,7 @@
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,
         AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
-        AnnotationTarget.TYPE, AnnotationTarget.CLASS)
+        AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER)
 annotation class a
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS,

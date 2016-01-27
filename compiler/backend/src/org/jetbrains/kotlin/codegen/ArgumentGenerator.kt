@@ -40,7 +40,7 @@ abstract class ArgumentGenerator {
 
         val actualArgsWithDeclIndex = actualArgs.filter { it !is DefaultValueArgument }.map {
             ArgumentAndDeclIndex(it, arg2Index[it]!!)
-        }.toArrayList()
+        }.toMutableList()
 
         valueArgumentsByIndex.withIndex().forEach {
             if (it.value is DefaultValueArgument) {

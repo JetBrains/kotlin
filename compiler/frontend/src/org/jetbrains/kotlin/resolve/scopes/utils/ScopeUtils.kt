@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 
 val HierarchicalScope.parentsWithSelf: Sequence<HierarchicalScope>
-    get() = sequence(this) { it.parent }
+    get() = generateSequence(this) { it.parent }
 
 val HierarchicalScope.parents: Sequence<HierarchicalScope>
     get() = parentsWithSelf.drop(1)

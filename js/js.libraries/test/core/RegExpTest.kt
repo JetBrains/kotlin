@@ -55,12 +55,12 @@ class RegExpTest {
     @test fun regExpExec() {
         val string = "R2D2 beats A5D5 "
         var re = RegExp("""(\w\d)(\w\d)""", "g")
-        val m1 = re.exec(string)!!
+        val m1: Array<out String?> = re.exec(string)!!
         assertEquals(arrayOf("R2D2", "R2", "D2"), m1)
         assertEquals(0, (m1 as RegExpMatch).index)
         assertEquals(4, re.lastIndex)
 
-        val m2 = re.exec(string)!!
+        val m2: Array<out String?> = re.exec(string)!!
         assertEquals(arrayOf("A5D5", "A5", "D5"), m2)
         assertEquals(string.indexOf(m2[0]!!), (m2 as RegExpMatch).index)
 

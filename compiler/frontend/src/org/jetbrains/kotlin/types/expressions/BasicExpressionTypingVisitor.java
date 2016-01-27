@@ -1178,7 +1178,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
             @Override
-            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
+            public boolean accept(@Nullable WritableSlice<?, ?> slice, @Nullable Diagnostic diagnostic, Object key) {
                 // the type of the right (and sometimes left) expression isn't 'Any?' actually
                 if ((key == right || key == left) && slice == EXPRESSION_TYPE_INFO) return false;
 

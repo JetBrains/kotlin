@@ -1,0 +1,1 @@
+fun consumeA(a: A) {}

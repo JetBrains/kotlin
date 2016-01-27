@@ -113,6 +113,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("invokeOnSyntheticProperty")
+    public void testInvokeOnSyntheticProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/invokeOnSyntheticProperty/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("jvmName")
     public void testJvmName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmName/");
@@ -544,6 +550,18 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("commonProperties")
         public void testCommonProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/commonProperties/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedJavaProperty")
+        public void testProtectedJavaProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/protectedJavaProperty/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedJavaPropertyInCompanion")
+        public void testProtectedJavaPropertyInCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/properties/protectedJavaPropertyInCompanion/");
             doTestWithJava(fileName);
         }
 

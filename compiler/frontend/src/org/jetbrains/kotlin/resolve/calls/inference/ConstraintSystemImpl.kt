@@ -45,14 +45,14 @@ internal class ConstraintSystemImpl(
     override val status = object : ConstraintSystemStatus {
         // for debug ConstraintsUtil.getDebugMessageForStatus might be used
 
-        override fun isSuccessful() = !hasContradiction() && !hasUnknownParameters()
+        override fun isSuccessful() = !hasContradiction() && !hasUnknownParameters() && satisfyInitialConstraints()
 
         override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
-                                          || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
-                                          // hacks for library migration todo: remove its later
-                                          || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
+                                          || hasCannotCaptureTypesError() || errors.any { it is TypeInferenceError }
 
         /**
+         * All hacks were removed. This comment is left for information.
+         *
          * Hacks above are needed for the following example:
          *
          * @kotlin.jvm.JvmName("containsAny")
@@ -119,7 +119,7 @@ internal class ConstraintSystemImpl(
                     if (substituteOriginal) variable.originalTypeParameter.typeConstructor
                     else variable.type.constructor
             val type =
-                    if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) value
+                    if (value != null && !TypeUtils.contains(value, DONT_CARE)) value
                     else getDefaultType(variable)
             substitutionContext.put(typeConstructor, TypeProjectionImpl(type))
         }

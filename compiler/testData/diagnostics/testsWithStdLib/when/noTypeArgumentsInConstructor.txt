@@ -1,0 +1,11 @@
+package
+
+public val test1: java.util.ArrayList<kotlin.Int>
+public val test2: kotlin.collections.MutableList<kotlin.Int?>
+public val test3: kotlin.collections.MutableList<kotlin.Int>
+public val test4: kotlin.collections.Collection<kotlin.Int>
+public val test5: kotlin.collections.Collection<kotlin.Int>
+public val test6: kotlin.collections.Collection<kotlin.Int>
+public val test7: kotlin.collections.Collection<kotlin.Int>
+public fun </*0*/ T> nullable(/*0*/ x: T): T?
+@kotlin.Suppress(names = {"UNUSED_PARAMETER"}) public fun </*0*/ T> select(/*0*/ x1: T, /*1*/ x2: T): T

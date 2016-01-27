@@ -117,11 +117,11 @@ internal class Java8Class {
     }
 
     fun testLibraryFunctions() {
-        val memberFunFromClass = JFunction2<String, Int> { it.length() }
+        val memberFunFromClass = JFunction2<String, Int> { it.length }
         memberFunFromClass.foo("str")
 
-        Thread(Runnable { System.out.println() }).start()
-        Runnable { System.out.println() }.run()
+        Thread(Runnable { println() }).start()
+        Runnable { println() }.run()
     }
 
     fun testOverloads() {
@@ -137,10 +137,10 @@ internal class Java8Class {
     }
 
     fun testGenericFunctions() {
-        val emptyList = JFunction1<List<String>> { Collections.emptyList() }
+        val emptyList = JFunction1<List<String>> { emptyList() }
         emptyList.foo()
-        MethodReferenceHelperClass.staticFun1(JFunction1<List<String>> { Collections.emptyList() })
-        h.memberFun1(JFunction1<List<String>> { Collections.emptyList() })
+        MethodReferenceHelperClass.staticFun1(JFunction1<List<String>> { emptyList() })
+        h.memberFun1(JFunction1<List<String>> { emptyList() })
     }
 
     fun memberFun(): Int {

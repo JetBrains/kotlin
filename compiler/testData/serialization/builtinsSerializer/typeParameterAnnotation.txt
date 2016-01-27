@@ -1,0 +1,8 @@
+package test
+
+public inline fun </*0*/ reified @test.Ann(value = "abc") T> foo(): kotlin.Unit
+
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+}

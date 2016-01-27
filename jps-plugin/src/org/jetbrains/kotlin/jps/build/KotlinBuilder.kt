@@ -252,7 +252,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass<ModuleBuildTarget>>()
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
+        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
 
         if (!IncrementalCompilation.isEnabled()) {
             return OK
@@ -465,16 +465,38 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
-            generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>
+            generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>,
+            incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>
     ) {
         val previousMappings = context.projectDescriptor.dataManager.mappings
         val delta = previousMappings.createDelta()
         val callback = delta.callback
+        val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
+            val files = HashSet<File>()
+            dirtyFilesHolder.getRemovedFiles(it).mapTo(files, ::File)
+            files.addAll(filesToCompile.get(it))
+            files
+        }
+
+        fun getOldSourceFiles(generatedClass: GeneratedJvmClass<ModuleBuildTarget>): Set<File> {
+            val cache = incrementalCaches[generatedClass.target] ?: return emptySet()
+            val className = generatedClass.outputClass.className
+
+            if (!cache.isMultifileFacade(className)) return emptySet()
+
+            val name = previousMappings.getName(className.internalName)
+            return previousMappings.getClassSources(name)?.toSet() ?: emptySet()
+        }
 
         for (generatedClass in generatedClasses) {
+            val sourceFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
+            sourceFiles.addAll(getOldSourceFiles(generatedClass))
+            sourceFiles.removeAll(targetDirtyFiles[generatedClass.target] ?: emptySet())
+            sourceFiles.addAll(generatedClass.sourceFiles)
+
             callback.associate(
-                    FileUtil.toSystemIndependentName(generatedClass.outputFile.absolutePath),
-                    generatedClass.sourceFiles.map { FileUtil.toSystemIndependentName(it.absolutePath) },
+                    FileUtil.toSystemIndependentName(generatedClass.outputFile.canonicalPath),
+                    sourceFiles.map { FileUtil.toSystemIndependentName(it.canonicalPath) },
                     ClassReader(generatedClass.outputClass.fileContents)
             )
         }
@@ -538,11 +560,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
 
-        filesToCompile.values().forEach { lookupStorage.removeLookupsFrom(it) }
         val removedFiles = chunk.targets.flatMap { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it) }
-        removedFiles.forEach { lookupStorage.removeLookupsFrom(it) }
+        lookupStorage.removeLookupsFrom(filesToCompile.values().asSequence() + removedFiles.asSequence())
 
-        lookupTracker.lookups.entrySet().forEach { lookupStorage.add(it.key, it.value) }
+        lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
     }
 
     // if null is returned, nothing was done
@@ -744,6 +765,7 @@ private fun CompilationResult.doProcessChangesUsingLookups(
         caches: Collection<IncrementalCacheImpl<*>>
 ) {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
+    val dirtyClassesFqNames = HashSet<FqName>()
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
     val allCaches: Sequence<IncrementalCacheImpl<*>> = caches.asSequence().flatMap { it.dependentsWithThis }
 
@@ -764,10 +786,12 @@ private fun CompilationResult.doProcessChangesUsingLookups(
             }
         }
         else if (change is ChangeInfo.MembersChanged) {
-            val scopes = withSubtypes(change.fqName, allCaches).map { it.asString() }
+            val fqNames = withSubtypes(change.fqName, allCaches)
+            // need to recompile subtypes because changed member might break override
+            dirtyClassesFqNames.addAll(fqNames)
 
-            change.names.forAllPairs(scopes) { name, scope ->
-                dirtyLookupSymbols.add(LookupSymbol(name, scope))
+            change.names.forAllPairs(fqNames) { name, fqName ->
+                dirtyLookupSymbols.add(LookupSymbol(name, fqName.asString()))
             }
         }
     }
@@ -780,6 +804,13 @@ private fun CompilationResult.doProcessChangesUsingLookups(
         KotlinBuilder.LOG.debug { "${lookup.scope}#${lookup.name} caused recompilation of: $affectedFiles" }
 
         dirtyFiles.addAll(affectedFiles)
+    }
+
+    for (cache in allCaches) {
+        for (dirtyClassFqName in dirtyClassesFqNames) {
+            val srcFile = cache.getSourceFileIfClass(dirtyClassFqName) ?: continue
+            dirtyFiles.add(srcFile)
+        }
     }
 
     fsOperations.markFiles(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
@@ -799,7 +830,7 @@ private fun withSubtypes(
         typeFqName: FqName,
         caches: Sequence<IncrementalCacheImpl<*>>
 ): Set<FqName> {
-    val types = linkedListOf(typeFqName)
+    val types = LinkedList(listOf(typeFqName))
     val subtypes = hashSetOf<FqName>()
 
     while (types.isNotEmpty()) {

@@ -14,6 +14,7 @@ out/production/module/foo/ATypeParameter.class
 out/production/module/foo/ClassLiteralKt.class
 out/production/module/foo/FunctionParameterKt.class
 out/production/module/foo/GetAKt.class
+out/production/module/foo/ReturnTypeImplicitKt.class
 out/production/module/foo/ReturnTypeKt.class
 End of files
 Compiling files:
@@ -28,6 +29,7 @@ src/importAGrandChild.kt
 src/importStar.kt
 src/referencedByFqName.kt
 src/returnType.kt
+src/returnTypeImplicit.kt
 End of files
 
 
@@ -48,6 +50,7 @@ out/production/module/foo/ATypeParameter.class
 out/production/module/foo/ClassLiteralKt.class
 out/production/module/foo/FunctionParameterKt.class
 out/production/module/foo/GetAKt.class
+out/production/module/foo/ReturnTypeImplicitKt.class
 out/production/module/foo/ReturnTypeKt.class
 End of files
 Compiling files:
@@ -62,4 +65,5 @@ src/importAGrandChild.kt
 src/importStar.kt
 src/referencedByFqName.kt
 src/returnType.kt
+src/returnTypeImplicit.kt
 End of files

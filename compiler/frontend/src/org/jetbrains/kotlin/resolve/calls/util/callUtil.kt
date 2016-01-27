@@ -105,7 +105,7 @@ fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument?
             else -> null
         }
     }
-    fun KtElement.isParenthesizedExpression() = sequence(this) { it.deparenthesizeStructurally() }.any { it == expression }
+    fun KtElement.isParenthesizedExpression() = generateSequence(this) { it.deparenthesizeStructurally() }.any { it == expression }
     return valueArguments.firstOrNull { it?.getArgumentExpression()?.isParenthesizedExpression() ?: false }
 }
 

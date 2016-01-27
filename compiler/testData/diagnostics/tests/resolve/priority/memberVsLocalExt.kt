@@ -16,5 +16,3 @@ fun test(a: A) {
         this.foo() checkType { _<A>() }
     }
 }
-
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()

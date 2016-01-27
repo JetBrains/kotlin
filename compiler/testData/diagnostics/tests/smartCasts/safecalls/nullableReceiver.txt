@@ -1,7 +1,6 @@
 package
 
 public fun test(/*0*/ foo: Foo?): kotlin.Unit
-public inline fun </*0*/ T, /*1*/ R> T.let(/*0*/ f: (T) -> R): R
 
 public final class Foo {
     public constructor Foo(/*0*/ bar: kotlin.String)

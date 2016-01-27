@@ -13,4 +13,3 @@ fun test(bal: Array<Int>) {
 
     val <!UNUSED_VARIABLE!>f<!>: Int = run { <!ASSIGNMENT_TYPE_MISMATCH!>bar += 4<!> }
 }
-fun <T> run(f: () -> T): T = f()

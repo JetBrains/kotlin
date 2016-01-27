@@ -1,0 +1,27 @@
+package
+
+public fun bar(): kotlin.Int
+public fun foo(): kotlin.Int
+public operator fun </*0*/ T> Data<T>.component1(): T
+public operator fun </*0*/ T> Data<T>.component2(): T
+
+public final class Data</*0*/ T> {
+    public constructor Data</*0*/ T>(/*0*/ x: T, /*1*/ y: T)
+    public final val x: T
+    public final val y: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final data class NormalData</*0*/ T> {
+    public constructor NormalData</*0*/ T>(/*0*/ x: T, /*1*/ y: T)
+    public final val x: T
+    public final val y: T
+    public final operator /*synthesized*/ fun component1(): T
+    public final operator /*synthesized*/ fun component2(): T
+    public final /*synthesized*/ fun copy(/*0*/ x: T = ..., /*1*/ y: T = ...): NormalData<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

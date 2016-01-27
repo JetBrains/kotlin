@@ -7,5 +7,3 @@ fun test(a: Int) {
     }
     checkSubtype<Unit>(x)
 }
-
-fun <T> run(f: () -> T): T { return f() }

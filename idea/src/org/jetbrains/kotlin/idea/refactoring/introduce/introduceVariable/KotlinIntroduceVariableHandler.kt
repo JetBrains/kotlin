@@ -500,16 +500,6 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
 
         val allOccurrences = occurrencesToReplace ?: expression.findOccurrences(occurrenceContainer)
 
-        fun postProcess(declaration: KtDeclaration) {
-            if (typeArgumentList == null) return
-            val initializer = when (declaration) {
-                is KtProperty -> declaration.initializer
-                is KtDestructuringDeclaration -> declaration.initializer
-                else -> null
-            } ?: return
-            runWriteAction { addTypeArgumentsIfNeeded(initializer, typeArgumentList) }
-        }
-
         val callback = Pass<OccurrencesChooser.ReplaceChoice> { replaceChoice ->
             val allReplaces = when (replaceChoice) {
                 OccurrencesChooser.ReplaceChoice.ALL -> allOccurrences
@@ -523,6 +513,21 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             var commonContainer = commonParent.getContainer()!!
             if (commonContainer != container && container.isAncestor(commonContainer, true)) {
                 commonContainer = container
+            }
+
+            fun postProcess(declaration: KtDeclaration) {
+                if (typeArgumentList != null) {
+                    val initializer = when (declaration) {
+                                          is KtProperty -> declaration.initializer
+                                          is KtDestructuringDeclaration -> declaration.initializer
+                                          else -> null
+                                      } ?: return
+                    runWriteAction { addTypeArgumentsIfNeeded(initializer, typeArgumentList) }
+                }
+
+                if (editor != null && !replaceOccurrence) {
+                    editor.caretModel.moveToOffset(declaration.endOffset)
+                }
             }
 
             physicalExpression.chooseApplicableComponentFunctionsForVariableDeclaration(replaceOccurrence, editor) { componentFunctions ->

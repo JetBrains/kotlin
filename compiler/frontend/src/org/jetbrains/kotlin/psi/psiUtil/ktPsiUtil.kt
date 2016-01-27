@@ -69,7 +69,7 @@ fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
 }
 
 fun KtSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): KtQualifiedExpression? {
-    return sequence<KtExpression>(this) {
+    return generateSequence<KtExpression>(this) {
         val parentQualified = it.parent as? KtQualifiedExpression
         if (parentQualified?.selectorExpression == it) parentQualified else null
     }.last() as? KtQualifiedExpression
@@ -116,7 +116,7 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.right else parent.left
         }
         parent is KtUnaryExpression && parent.operationReference == this -> {
-            return parent.baseExpression!!
+            return parent.baseExpression
         }
         parent is KtUserType -> {
             val qualifier = parent.getQualifier()
@@ -125,6 +125,7 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             }
         }
     }
+
     return null
 }
 

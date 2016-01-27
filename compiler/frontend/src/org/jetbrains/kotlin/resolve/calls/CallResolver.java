@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Condition;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -372,14 +373,18 @@ public class CallResolver {
             context.trace.report(NOT_A_CLASS.on(expression));
             return checkArgumentTypesAndFail(context);
         }
+
         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+
         Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
         if (constructors.isEmpty()) {
             context.trace.report(NO_CONSTRUCTOR.on(CallUtilKt.getValueArgumentListOrElement(context.call)));
             return checkArgumentTypesAndFail(context);
         }
+        TypeSubstitutor knownSubstitutor = TypeSubstitutor.create(constructedType);
         Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(context.scope, constructors, context.call);
+                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
+                        context.scope, constructors, context.call, knownSubstitutor);
 
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
@@ -450,26 +455,28 @@ public class CallResolver {
             return checkArgumentTypesAndFail(context);
         }
 
-        List<ResolutionCandidate<CallableDescriptor>> candidates = Lists.newArrayList();
-        ReceiverValue constructorDispatchReceiver = !delegateClassDescriptor.isInner() ? null :
-                                                    ((ClassDescriptor) delegateClassDescriptor.getContainingDeclaration()).
-                                                            getThisAsReceiverParameter().getValue();
 
-        KotlinType expectedType = isThisCall ?
+        KotlinType superType = isThisCall ?
                                   calleeConstructor.getContainingDeclaration().getDefaultType() :
                                   DescriptorUtils.getSuperClassType(currentClassDescriptor);
 
-        TypeSubstitutor knownTypeParametersSubstitutor = TypeSubstitutor.create(expectedType);
-        for (CallableDescriptor descriptor : constructors) {
-            candidates.add(ResolutionCandidate.create(
-                    context.call, descriptor, constructorDispatchReceiver, null,
-                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                    knownTypeParametersSubstitutor));
-        }
+        TypeSubstitutor knownTypeParametersSubstitutor = TypeSubstitutor.create(superType);
+
+        Collection<ResolutionCandidate<CallableDescriptor>> candidates =
+                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
+                        context.scope, constructors, context.call, knownTypeParametersSubstitutor);
 
         TracingStrategy tracing = call.isImplicit() ?
                                   new TracingStrategyForImplicitConstructorDelegationCall(call, context.call) :
                                   TracingStrategyImpl.create(calleeExpression, context.call);
+
+        PsiElement reportOn = call.isImplicit() ? call : calleeExpression;
+
+        if (delegateClassDescriptor.isInner()
+                && !DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, reportOn,
+                                                                  (ClassDescriptor) delegateClassDescriptor.getContainingDeclaration())) {
+            return checkArgumentTypesAndFail(context);
+        }
 
         return computeTasksFromCandidatesAndResolvedCall(context, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }

@@ -43,7 +43,7 @@ class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandler
                 StubClassBuilderFactory(),
                 module,
                 bindingContext,
-                files.toArrayList(),
+                files.toList(),
                 disableCallAssertions = false,
                 disableParamAssertions = false)
 

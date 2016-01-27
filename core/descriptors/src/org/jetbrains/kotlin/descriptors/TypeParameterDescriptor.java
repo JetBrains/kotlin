@@ -34,9 +34,6 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     List<KotlinType> getUpperBounds();
 
     @NotNull
-    List<KotlinType> getLowerBounds();
-
-    @NotNull
     @Override
     TypeConstructor getTypeConstructor();
 

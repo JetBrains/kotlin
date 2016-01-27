@@ -1,0 +1,2 @@
+changes in test/MainKt: MEMBERS
+    [constFlagAddedVal, constFlagRemovedVal, externalFlagAddedFun, externalFlagRemovedFun, infixFlagAddedFun, infixFlagRemovedFun, inlineFlagAddedFun, inlineFlagRemovedFun, internalFlagAddedFun, internalFlagAddedVal, internalFlagRemovedFun, internalFlagRemovedVal, operatorFlagAddedFun, operatorFlagRemovedFun, privateFlagAddedFun, privateFlagAddedVal, privateFlagRemovedFun, privateFlagRemovedVal, tailrecFlagAddedFun, tailrecFlagRemovedFun]

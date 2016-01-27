@@ -127,6 +127,8 @@ open class DelegatingFlexibleType protected constructor(
             if (lowerBound == upperBound) return lowerBound
             return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)
         }
+
+        internal val ASSERTIONS_ENABLED = DelegatingFlexibleType::class.java.desiredAssertionStatus()
     }
 
      // These assertions are needed for checking invariants of flexible types.

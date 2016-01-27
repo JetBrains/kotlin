@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isDynamic
@@ -427,24 +428,24 @@ class TaskPrioritizer(
     fun <D : CallableDescriptor> convertWithImpliedThisAndNoReceiver(
             scope: LexicalScope,
             descriptors: Collection<D>,
-            call: Call
+            call: Call,
+            knownSubstitutor: TypeSubstitutor? = null
     ): Collection<ResolutionCandidate<D>> {
-        return convertWithImpliedThis(scope, null, descriptors, NO_EXPLICIT_RECEIVER, call)
+        return convertWithImpliedThis(scope, null, descriptors, NO_EXPLICIT_RECEIVER, call, knownSubstitutor)
     }
 
     fun <D : CallableDescriptor> convertWithImpliedThis(
             scope: LexicalScope,
-            receiverParameter: ReceiverValue?,
+            receiverValue: ReceiverValue?,
             descriptors: Collection<D>,
             receiverKind: ExplicitReceiverKind,
-            call: Call
+            call: Call,
+            knownSubstitutor: TypeSubstitutor? = null
     ): Collection<ResolutionCandidate<D>> {
         val result = Lists.newArrayList<ResolutionCandidate<D>>()
         for (descriptor in descriptors) {
-            val candidate = ResolutionCandidate.create<D>(call, descriptor)
-            candidate.setReceiverArgument(receiverParameter)
-            candidate.explicitReceiverKind = receiverKind
-            if (setImpliedThis(scope, candidate)) {
+            val candidate = ResolutionCandidate.create(call, descriptor, null, receiverValue, receiverKind, knownSubstitutor)
+            if (setImpliedThis(scope, candidate, knownSubstitutor)) {
                 result.add(candidate)
             }
         }
@@ -453,15 +454,18 @@ class TaskPrioritizer(
 
     private fun <D : CallableDescriptor> setImpliedThis(
             scope: LexicalScope,
-            candidate: ResolutionCandidate<D>
+            candidate: ResolutionCandidate<D>,
+            knownSubstitutor: TypeSubstitutor?
     ): Boolean {
-        val dispatchReceiver = candidate.descriptor.dispatchReceiverParameter
-        if (dispatchReceiver == null) return true
+        val dispatchReceiver = candidate.descriptor.dispatchReceiverParameter ?: return true
+        val substitutedDispatchReceiver = knownSubstitutor?.let {
+            dispatchReceiver.substitute(it) ?: return false
+        } ?: dispatchReceiver
+
         val receivers = scope.getImplicitReceiversHierarchy()
         for (receiver in receivers) {
-            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(receiver.type, dispatchReceiver.type)) {
-                // TODO : Smartcasts & nullability
-                candidate.dispatchReceiver = dispatchReceiver.value
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(receiver.type, substitutedDispatchReceiver.type)) {
+                candidate.dispatchReceiver = substitutedDispatchReceiver.value
                 return true
             }
         }

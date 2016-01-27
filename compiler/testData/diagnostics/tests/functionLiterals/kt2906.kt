@@ -19,5 +19,4 @@ fun main(args: Array<String>) {
     foo2 { println ("foo2")} // prints "foo2"
 }
 
-fun <T> run(f: () -> T) : T = f()
 fun println(s: String) = s

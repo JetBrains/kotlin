@@ -1,18 +1,18 @@
 package foo.bar
 
-/*p:foo.bar*/fun testComparisons(a: /*p:foo.bar*/A, b: /*p:foo.bar*/Int, c: /*p:foo.bar*/Any, na: /*p:foo.bar*/A?) {
-    a /*c:foo.bar.A(equals)*/== c
-    a /*c:foo.bar.A(equals)*/!= c
-    na /*c:foo.bar.A(equals)*/== a
-    na /*c:foo.bar.A(equals)*/== null
+/*p:foo.bar*/fun testComparisons(a: /*p:foo.bar*/A, b: /*p:foo.bar*/Int, c: /*p:foo.bar*/Any, na: /*p:foo.bar*/A?) /*p:kotlin(Boolean)*/{
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(equals)*/== /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(equals)*/!= /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/na /*c:foo.bar.A(equals)*/== /*p:foo.bar(A)*/a
+    /*p:foo.bar(A) p:kotlin(Boolean)*/na /*c:foo.bar.A(equals)*/== /*p:kotlin(Nothing)*/null
 
-    a /*c:foo.bar.A(compareTo)*/> b
-    a /*c:foo.bar.A(compareTo)*/< b
-    a /*c:foo.bar.A(compareTo)*/>= b
-    a /*c:foo.bar.A(compareTo)*/<= b
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo)*/> /*p:kotlin(Int)*/b
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo)*/< /*p:kotlin(Int)*/b
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo)*/>= /*p:kotlin(Int)*/b
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo)*/<= /*p:kotlin(Int)*/b
 
-    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/> c
-    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/< c
-    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/>= c
-    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/<= c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/> /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/< /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/>= /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/<= /*p:kotlin(Any)*/c
 }

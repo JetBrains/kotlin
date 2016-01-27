@@ -61,6 +61,8 @@ class LazyJavaTypeResolver(
                     )
                 else LazyJavaClassifierType(javaType, attr)
             is JavaArrayType -> transformArrayType(javaType, attr)
+            // Top level type can be a wildcard only in case of broken Java code, but we should not fail with exceptions in such cases
+            is JavaWildcardType -> javaType.bound?.let { transformJavaType(it, attr) } ?: c.module.builtIns.defaultBound
             else -> throw UnsupportedOperationException("Unsupported type: " + javaType)
         }
     }

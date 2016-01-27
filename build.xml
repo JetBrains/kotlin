@@ -489,7 +489,6 @@
                 <fileset dir="${output}/classes/compiler"/>
                 <fileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
-                    <exclude name="kotlin/internal/**"/>
                 </fileset>
                 <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
                 <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
@@ -551,10 +550,7 @@
 
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-compiler">
-                <!-- remove after bootstrapping packages -->
-                <compilerarg value="-Xallow-kotlin-package"/>
-            </withKotlin>
+            <withKotlin modulename="kotlin-compiler"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src refid="compilerSources.path"/>
@@ -607,15 +603,15 @@
         </jar>
     </target>
 
-    <target name="kotlin-build">
-        <cleandir dir="${output}/classes/kotlin-build"/>
+    <target name="kotlin-build-common">
+        <cleandir dir="${output}/classes/kotlin-build-common"/>
 
-        <javac2 destdir="${output}/classes/kotlin-build" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
+        <javac2 destdir="${output}/classes/kotlin-build-common" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-build"/>
+            <withKotlin modulename="kotlin-build-common"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
-                <pathelement path="build/src"/>
+                <pathelement path="build-common/src"/>
             </src>
             <classpath>
                 <pathelement path="${bootstrap.runtime}"/>
@@ -625,28 +621,28 @@
             </classpath>
         </javac2>
 
-        <jar destfile="${kotlin-home}/lib/kotlin-build.jar">
-            <fileset dir="${output}/classes/kotlin-build"/>
+        <jar destfile="${kotlin-home}/lib/kotlin-build-common.jar">
+            <fileset dir="${output}/classes/kotlin-build-common"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build.common}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
 
-        <jar jarfile="${output}/kotlin-build-sources.jar">
-            <fileset dir="build/src"/>
+        <jar jarfile="${output}/kotlin-build-common-sources.jar">
+            <fileset dir="build-common/src"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build.sources}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.build.common.sources}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -954,7 +950,6 @@
                 <fileset dir="${output}/classes/stdlib"/>
                 <zipfileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
-                    <exclude name="kotlin/internal/**"/>
                     <!-- TODO: load metadata from @KotlinClass annotation in KotlinBuiltIns on JVM and restore this exclusion -->
                     <!-- exclude name="kotlin/reflect/**"/ -->
                 </zipfileset>
@@ -1056,10 +1051,10 @@
     </target>
 
     <target name="runtime"
-            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources"/>
+            depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
@@ -1106,7 +1101,6 @@
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${output}/builtins">
                 <include name="kotlin/**"/>
-                <exclude name="kotlin/internal/**"/>
             </fileset>
             <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="META-INF/services/**"/>
             <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
@@ -1154,6 +1148,27 @@
             <zipfileset dir="idea/testData" prefix="ide"/>
             <zipfileset dir="idea/idea-completion/testData" prefix="ide/completion"/>
         </zip>
+    </target>
+
+    <target name="mock-runtime-for-test">
+        <delete dir="${output}/mock-runtime-src" failonerror="false"/>
+        <mkdir dir="${output}/mock-runtime-src"/>
+        <copy file="${basedir}/libraries/stdlib/src/kotlin/util/Standard.kt" todir="${output}/mock-runtime-src"/>
+
+        <new-kotlinc output="${output}/classes/mock-runtime" moduleName="kotlin-stdlib">
+            <src>
+                <include name="dist/mock-runtime-src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output}/classes/builtins"/>
+            </class-path>
+        </new-kotlinc>
+
+        <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-mock-runtime-for-test.jar" implementation-title="Kotlin Mock Runtime">
+            <jar-content>
+                <fileset dir="${output}/classes/mock-runtime"/>
+            </jar-content>
+        </pack-runtime-jar>
     </target>
 
     <target name="build-bootstrap-artifacts" depends="dist,zip-compiler"/>

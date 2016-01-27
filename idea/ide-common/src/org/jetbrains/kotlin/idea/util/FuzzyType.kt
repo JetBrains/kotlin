@@ -72,7 +72,6 @@ class FuzzyType(
     private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(type: KotlinType) {
         val typeParameter = type.constructor.declarationDescriptor as? TypeParameterDescriptor
         if (typeParameter != null && add(typeParameter)) {
-            typeParameter.lowerBounds.forEach { addUsedTypeParameters(it) }
             typeParameter.upperBounds.forEach { addUsedTypeParameters(it) }
         }
 
@@ -143,7 +142,7 @@ class FuzzyType(
         if (otherSubstitutedType.isError) return null
         if (!substitutedType.checkInheritance(otherSubstitutedType)) return null
 
-        val substitution = constraintSystem.typeVariables.map { it.originalTypeParameter }.toMapBy({ it.typeConstructor }) {
+        val substitution = constraintSystem.typeVariables.map { it.originalTypeParameter }.associateBy({ it.typeConstructor }) {
             val type = it.defaultType
             val solution = substitutor.substitute(type, Variance.INVARIANT)
             TypeProjectionImpl(if (solution != null && !ErrorUtils.containsUninferredParameter(solution)) solution else type)

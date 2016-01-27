@@ -84,16 +84,20 @@ val <T : Any> Class<T>.kotlin: KClass<T>
  * Returns the runtime Java class of this object.
  */
 val <T: Any> T.javaClass : Class<T>
-    get() = (this as java.lang.Object).`class` as Class<T>
+    @Suppress("UsePropertyAccessSyntax")
+    get() = (this as java.lang.Object).getClass() as Class<T>
 
-@Deprecated("Use 'java' property to get Java class corresponding to this Kotlin class or cast this instance to Any if you really want to get the runtime Java class of this implementation of KClass.", ReplaceWith("(this as Any).javaClass"), level = DeprecationLevel.ERROR) val <T: Any> KClass<T>.javaClass: Class<KClass<T>>
+@Deprecated("Use 'java' property to get Java class corresponding to this Kotlin class or cast this instance to Any if you really want to get the runtime Java class of this implementation of KClass.", ReplaceWith("(this as Any).javaClass"), level = DeprecationLevel.ERROR)
+val <T: Any> KClass<T>.javaClass: Class<KClass<T>>
     @JvmName("getRuntimeClassOfKClassInstance")
-    get() = (this as java.lang.Object).`class` as Class<KClass<T>>
+    @Suppress("UsePropertyAccessSyntax")
+    get() = (this as java.lang.Object).getClass() as Class<KClass<T>>
 
 /**
  * Checks if array can contain element of type [T].
  */
-@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
         T::class.java.isAssignableFrom(this.javaClass.componentType)
 
 /**

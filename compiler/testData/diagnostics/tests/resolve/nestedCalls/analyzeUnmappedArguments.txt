@@ -3,5 +3,4 @@ package
 package c {
     public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
     public fun test(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
 }

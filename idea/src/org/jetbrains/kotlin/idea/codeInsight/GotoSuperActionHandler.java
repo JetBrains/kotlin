@@ -65,7 +65,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
 
         List<PsiElement> superDeclarations = findSuperDeclarations(descriptor);
 
-        if (superDeclarations.isEmpty()) return;
+        if (superDeclarations == null || superDeclarations.isEmpty()) return;
         if (superDeclarations.size() == 1) {
             Navigatable navigatable = EditSourceUtil.getDescriptor(superDeclarations.get(0));
             if (navigatable != null && navigatable.canNavigate()) {
@@ -100,6 +100,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
         return null;
     }
 
+    @Nullable
     private static List<PsiElement> findSuperDeclarations(DeclarationDescriptor descriptor) {
         Collection<? extends DeclarationDescriptor> superDescriptors;
         if (descriptor instanceof ClassDescriptor) {
