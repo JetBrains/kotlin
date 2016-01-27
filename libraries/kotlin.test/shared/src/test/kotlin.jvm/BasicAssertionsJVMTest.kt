@@ -20,7 +20,7 @@ class BasicAssertionsJVMTest {
 
     @Test
     fun testFailsWithMessage() {
-        assertFailsWith<IllegalArgumentException>("") {
+        assertFailsWith<IllegalArgumentException>() {
             throw IllegalArgumentException()
         }
     }
