@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class IntrinsicMethods {
@@ -150,6 +148,7 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(arrayTypeFqName, "get", 1, ARRAY_GET);
         declareIntrinsicFunction(arrayTypeFqName, "clone", 0, CLONE);
         declareIntrinsicFunction(arrayTypeFqName, "iterator", 0, ARRAY_ITERATOR);
+        declareIntrinsicFunction(arrayTypeFqName, "<init>", 2, ArrayConstructor.INSTANCE);
     }
 
     private void declareBinaryOp(@NotNull String methodName, int opcode) {

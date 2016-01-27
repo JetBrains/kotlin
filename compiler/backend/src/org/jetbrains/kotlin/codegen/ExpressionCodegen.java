@@ -56,8 +56,6 @@ import org.jetbrains.kotlin.jvm.bindingContextSlices.BindingContextSlicesKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -80,13 +78,11 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
-import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -101,7 +97,8 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
@@ -2435,11 +2432,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
         boolean isInline = (state.isInlineEnabled() || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
-                           InlineUtil.isInline(descriptor);
+                           (InlineUtil.isInline(descriptor) || InlineUtil.isArrayConstructorWithLambda(descriptor));
 
         if (!isInline) return defaultCallGenerator;
 
-        SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
+        FunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal());
         return new InlineCodegen(this, state, original, callElement, typeParameterMappings);
     }
 
@@ -2457,6 +2454,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             KotlinType type = TypeUtils.uncaptureTypeForInlineMapping(entry.getValue());
 
+            boolean isReified = key.isReified() || InlineUtil.isArrayConstructorWithLambda(resolvedCall.getResultingDescriptor());
+
             Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
             if (typeParameterAndReificationArgument == null) {
                 // type is not generic
@@ -2464,16 +2463,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 Type asmType = typeMapper.mapTypeParameter(type, signatureWriter);
 
                 mappings.addParameterMappingToType(
-                        key.getName().getIdentifier(),
-                        type,
-                        asmType,
-                        signatureWriter.toString(),
-                        key.isReified());
+                        key.getName().getIdentifier(), type, asmType, signatureWriter.toString(), isReified
+                );
             }
             else {
                 mappings.addParameterMappingForFurtherReification(
-                        key.getName().getIdentifier(), type,
-                        typeParameterAndReificationArgument.getSecond(), key.isReified());
+                        key.getName().getIdentifier(), type, typeParameterAndReificationArgument.getSecond(), isReified
+                );
             }
         }
         return getOrCreateCallGenerator(
@@ -3412,50 +3408,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             });
         }
 
-        final ConstructorDescriptor constructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
-
-        final ClassDescriptor intrinsicConstructors =
-                FindClassInModuleKt.findClassAcrossModuleDependencies(
-                        getContainingModule(context.getContextDescriptor()),
-                        ClassId.topLevel(new FqName("kotlin.jvm.internal.IntrinsicArrayConstructors"))
-                );
-        // TODO: do not depend on a class from the runtime
-        assert intrinsicConstructors != null : "Class IntrinsicArrayConstructors is not found";
-
-        ResolvedCall<?> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {
-            private final CallableDescriptor descriptor;
-
-            {
-                Collection<FunctionDescriptor> functions = intrinsicConstructors.getUnsubstitutedMemberScope().getContributedFunctions(
-                        constructor.getContainingDeclaration().getName(), NoLookupLocation.FROM_BACKEND);
-                assert functions.size() == 1
-                        : "IntrinsicArrayConstructors does not have a single constructor for " +
-                          constructor.getContainingDeclaration().getName() + ":\n" + StringsKt.join(functions, "\n");
-                descriptor = CollectionsKt.single(functions);
-            }
-
-            @NotNull
-            @Override
-            public CallableDescriptor getResultingDescriptor() {
-                return descriptor;
-            }
-
-            @NotNull
-            @Override
-            public Map<TypeParameterDescriptor, KotlinType> getTypeArguments() {
-                Map<TypeParameterDescriptor, KotlinType> originalArgs = super.getTypeArguments();
-                if (originalArgs.isEmpty()) return originalArgs;
-
-                assert originalArgs.size() == 1 : "Unknown constructor called: " + originalArgs.size() + " type arguments";
-
-                return Collections.singletonMap(
-                        CollectionsKt.single(descriptor.getTypeParameters()),
-                        CollectionsKt.single(originalArgs.values())
-                );
-            }
-        };
-
-        return invokeFunction(fakeResolvedCall, StackValue.singleton(intrinsicConstructors, typeMapper));
+        return invokeFunction(resolvedCall, StackValue.none());
     }
 
     public void newArrayInstruction(@NotNull KotlinType arrayType) {

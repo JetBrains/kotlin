@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.*;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -69,7 +70,7 @@ public class InlineCodegen extends CallGenerator {
     private final GenerationState state;
     private final JetTypeMapper typeMapper;
 
-    private final SimpleFunctionDescriptor functionDescriptor;
+    private final FunctionDescriptor functionDescriptor;
     private final JvmMethodSignature jvmSignature;
     private final KtElement callElement;
     private final MethodContext context;
@@ -92,17 +93,21 @@ public class InlineCodegen extends CallGenerator {
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
             @NotNull GenerationState state,
-            @NotNull SimpleFunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor function,
             @NotNull KtElement callElement,
             @Nullable TypeParameterMappings typeParameterMappings
     ) {
-        assert InlineUtil.isInline(functionDescriptor) : "InlineCodegen could inline only inline function: " + functionDescriptor;
+        assert InlineUtil.isInline(function) || InlineUtil.isArrayConstructorWithLambda(function) :
+                "InlineCodegen can inline only inline functions and array constructors: " + function;
 
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.codegen = codegen;
         this.callElement = callElement;
-        this.functionDescriptor = functionDescriptor.getOriginal();
+        this.functionDescriptor =
+                InlineUtil.isArrayConstructorWithLambda(function)
+                ? FictitiousArrayConstructor.create((ConstructorDescriptor) function)
+                : function.getOriginal();
         this.typeParameterMappings = typeParameterMappings;
 
         reifiedTypeInliner = new ReifiedTypeInliner(typeParameterMappings);
@@ -119,13 +124,14 @@ public class InlineCodegen extends CallGenerator {
         isSameModule = JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext(), state.getOutDirectory());
 
         sourceMapper = codegen.getParentCodegen().getOrCreateSourceMapper();
-        reportIncrementalInfo(functionDescriptor, codegen.getContext().getFunctionDescriptor().getOriginal());
+
+        if (!(functionDescriptor instanceof FictitiousArrayConstructor)) {
+            reportIncrementalInfo(functionDescriptor, codegen.getContext().getFunctionDescriptor().getOriginal());
+        }
     }
 
     @Override
-    public void genCallWithoutAssertions(
-            @NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen
-    ) {
+    public void genCallWithoutAssertions(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen) {
         genCall(callableMethod, null, false, codegen);
     }
 
@@ -176,19 +182,25 @@ public class InlineCodegen extends CallGenerator {
     }
 
     @NotNull
-    private SMAPAndMethodNode createMethodNode(boolean callDefault) throws ClassNotFoundException, IOException {
-        JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
-
-        Method asmMethod;
-        if (callDefault) {
-            asmMethod = typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind());
-        }
-        else {
-            asmMethod = jvmSignature.getAsmMethod();
-        }
+    private SMAPAndMethodNode createMethodNode(boolean callDefault) throws IOException {
+        Method asmMethod = callDefault
+                           ? typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind())
+                           : jvmSignature.getAsmMethod();
 
         SMAPAndMethodNode nodeAndSMAP;
-        if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
+        if (functionDescriptor instanceof FictitiousArrayConstructor) {
+            nodeAndSMAP = InlineCodegenUtil.getMethodNode(
+                    IntrinsicArrayConstructorsKt.getBytecode(),
+                    asmMethod.getName(),
+                    asmMethod.getDescriptor(),
+                    IntrinsicArrayConstructorsKt.getClassId()
+            );
+
+            if (nodeAndSMAP == null) {
+                throw new IllegalStateException("Couldn't obtain array constructor body for " + descriptorName(functionDescriptor));
+            }
+        }
+        else if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
             JetTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
@@ -203,14 +215,14 @@ public class InlineCodegen extends CallGenerator {
             );
 
             if (nodeAndSMAP == null) {
-                throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
+                throw new IllegalStateException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
             }
         }
         else {
             PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
 
-            if (element == null || !(element instanceof KtNamedFunction)) {
-                throw new RuntimeException("Couldn't find declaration for function " + descriptorName(functionDescriptor));
+            if (!(element instanceof KtNamedFunction)) {
+                throw new IllegalStateException("Couldn't find declaration for function " + descriptorName(functionDescriptor));
             }
             KtNamedFunction inliningFunction = (KtNamedFunction) element;
 
@@ -260,14 +272,10 @@ public class InlineCodegen extends CallGenerator {
 
         Parameters parameters = invocationParamBuilder.buildParameters();
 
-        InliningContext info = new RootInliningContext(expressionMap,
-                                                       state,
-                                                       codegen.getInlineNameGenerator()
-                                                               .subGenerator(functionDescriptor.getName().asString()),
-                                                       codegen.getContext(),
-                                                       callElement,
-                                                       getInlineCallSiteInfo(), reifiedTypeInliner,
-                                                       typeParameterMappings);
+        InliningContext info = new RootInliningContext(
+                expressionMap, state, codegen.getInlineNameGenerator().subGenerator(jvmSignature.getAsmMethod().getName()),
+                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings
+        );
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
                                                   "Method inlining " + callElement.getText(),
@@ -529,13 +537,11 @@ public class InlineCodegen extends CallGenerator {
 
     @Override
     public void putHiddenParams() {
-        List<JvmMethodParameterSignature> valueParameters = jvmSignature.getValueParameters();
-
-        if (!isStaticMethod(functionDescriptor, context)) {
+        if ((getMethodAsmFlags(functionDescriptor, context.getContextKind()) & Opcodes.ACC_STATIC) == 0) {
             invocationParamBuilder.addNextParameter(AsmTypes.OBJECT_TYPE, false, null);
         }
 
-        for (JvmMethodParameterSignature param : valueParameters) {
+        for (JvmMethodParameterSignature param : jvmSignature.getValueParameters()) {
             if (param.getKind() == JvmMethodParameterKind.VALUE) {
                 break;
             }
@@ -641,10 +647,6 @@ public class InlineCodegen extends CallGenerator {
         }
 
         throw new IllegalStateException("Couldn't build context for " + descriptorName(descriptor));
-    }
-
-    private static boolean isStaticMethod(FunctionDescriptor functionDescriptor, MethodContext context) {
-        return (getMethodAsmFlags(functionDescriptor, context.getContextKind()) & Opcodes.ACC_STATIC) != 0;
     }
 
     private static String descriptorName(DeclarationDescriptor descriptor) {
