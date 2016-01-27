@@ -37,7 +37,7 @@ fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?,
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
-inline fun <reified T : Throwable> assertFailsWith(message: String, noinline block: () -> Unit): T = assertFailsWith(T::class, message, block)
+inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T = assertFailsWith(T::class, message, block)
 
 
 /**
