@@ -134,7 +134,7 @@ dependencies {
     }
 
 
-    fun IncrementalTestProject.performAndAssertBuildStages(options: BuildOptions = defaultBuildOptions()) {
+    fun IncrementalTestProject.performAndAssertBuildStages(options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
 
         val checkKnown = testIsKnownJpsTestProject(resourcesRoot)
         Assume.assumeTrue(checkKnown.second ?: "", checkKnown.first)
@@ -157,22 +157,22 @@ dependencies {
 
         if (buildLog.size == 1) {
             modify()
-            buildAndAssertStageResults(buildLog.first())
+            buildAndAssertStageResults(buildLog.first(), weakTesting = weakTesting)
         }
         else {
             buildLog.forEachIndexed { stage, stageResults ->
                 modify(stage + 1)
-                buildAndAssertStageResults(stageResults)
+                buildAndAssertStageResults(stageResults, weakTesting = weakTesting)
             }
         }
     }
 
-    fun IncrementalTestProject.buildAndAssertStageResults(expected: StageResults, options: BuildOptions = defaultBuildOptions()) {
+    fun IncrementalTestProject.buildAndAssertStageResults(expected: StageResults, options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
         build("build", options = options) {
             if (expected.compileSucceeded) {
                 assertSuccessful()
-                assertCompiledJavaSources(expected.compiledJavaFiles)
-                assertCompiledKotlinSources(expected.compiledKotlinFiles)
+                assertCompiledJavaSources(expected.compiledJavaFiles, weakTesting)
+                assertCompiledKotlinSources(expected.compiledKotlinFiles, weakTesting)
             }
             else {
                 assertFailed()
