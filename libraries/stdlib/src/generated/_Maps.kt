@@ -103,7 +103,8 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
 /**
  * Returns the number of entries in this map.
  */
-public fun <K, V> Map<K, V>.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<K, V>.count(): Int {
     return size
 }
 
@@ -127,6 +128,7 @@ public inline fun <K, V> Map<K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): U
 /**
  * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
  */
+@kotlin.internal.InlineOnly
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     return entries.maxBy(selector)
 }
@@ -134,7 +136,8 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(selector: (Map.Entry
 /**
  * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
  */
-public fun <K, V> Map<K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
     return entries.maxWith(comparator)
 }
 
@@ -171,7 +174,8 @@ public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean)
 /**
  * Creates an [Iterable] instance that wraps the original map returning its entries when being iterated.
  */
-public fun <K, V> Map<K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
     return entries
 }
 

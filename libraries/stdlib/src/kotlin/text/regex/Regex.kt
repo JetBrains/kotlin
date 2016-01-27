@@ -94,15 +94,25 @@ public interface MatchResult {
     @Suppress("NOTHING_TO_INLINE")
     @kotlin.jvm.JvmVersion
     public class Destructured internal constructor(public val match: MatchResult) {
+        @kotlin.internal.InlineOnly
         public operator inline fun component1():  String = match.groupValues[1]
+        @kotlin.internal.InlineOnly
         public operator inline fun component2():  String = match.groupValues[2]
+        @kotlin.internal.InlineOnly
         public operator inline fun component3():  String = match.groupValues[3]
+        @kotlin.internal.InlineOnly
         public operator inline fun component4():  String = match.groupValues[4]
+        @kotlin.internal.InlineOnly
         public operator inline fun component5():  String = match.groupValues[5]
+        @kotlin.internal.InlineOnly
         public operator inline fun component6():  String = match.groupValues[6]
+        @kotlin.internal.InlineOnly
         public operator inline fun component7():  String = match.groupValues[7]
+        @kotlin.internal.InlineOnly
         public operator inline fun component8():  String = match.groupValues[8]
+        @kotlin.internal.InlineOnly
         public operator inline fun component9():  String = match.groupValues[9]
+        @kotlin.internal.InlineOnly
         public operator inline fun component10(): String = match.groupValues[10]
         /**
          *  Returns destructured group values as a list of strings.

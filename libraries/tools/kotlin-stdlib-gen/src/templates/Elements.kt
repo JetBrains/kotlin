@@ -204,6 +204,7 @@ fun elements(): List<GenericFunction> {
             return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
             """
         }
+        inline(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
         body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return get(index)
@@ -244,7 +245,7 @@ fun elements(): List<GenericFunction> {
             return defaultValue(index)
             """
         }
-        inline(true, CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        inline(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
         body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
@@ -255,7 +256,7 @@ fun elements(): List<GenericFunction> {
     templates add f("getOrElse(index: Int, defaultValue: (Int) -> T)") {
         doc { f -> "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
         returns("T")
-        inline(true)
+        inline(Inline.Only)
         only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body {
             """
@@ -298,9 +299,10 @@ fun elements(): List<GenericFunction> {
             return null
             """
         }
+        inline(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
         body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return if (index >= 0 && index <= lastIndex) get(index) else null
+            return this.getOrNull(index)
             """
         }
     }
@@ -422,7 +424,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("find(predicate: (T) -> Boolean)") {
-        inline(true)
+        inline(Inline.Only)
         include(CharSequences)
         doc { f -> "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
@@ -590,7 +592,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("findLast(predicate: (T) -> Boolean)") {
-        inline(true)
+        inline(Inline.Only)
         include(Lists, CharSequences)
         doc { f -> "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         returns("T?")
@@ -740,8 +742,7 @@ fun elements(): List<GenericFunction> {
     templates addAll (1..5).map { n ->
         f("component$n()") {
             operator(true)
-            inline(true)
-            annotations("""@Suppress("NOTHING_TO_INLINE")""")
+            inline(Inline.Only)
             fun getOrdinal(n: Int) = n.toString() + when (n) {
                 1 -> "st"
                 2 -> "nd"

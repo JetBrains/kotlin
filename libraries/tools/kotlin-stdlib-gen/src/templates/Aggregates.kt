@@ -95,6 +95,7 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
+        inline(CharSequences, Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) { Inline.Only }
         doc(CharSequences) { "Returns the length of this char sequence."}
         body(CharSequences) {
             "return length"
@@ -315,6 +316,7 @@ fun aggregates(): List<GenericFunction> {
             return maxElem
             """
         }
+        inline(Maps) { Inline.Only }
         body(Maps) { "return entries.maxBy(selector)" }
     }
 
@@ -346,6 +348,7 @@ fun aggregates(): List<GenericFunction> {
             return max
             """
         }
+        inline(Maps) { Inline.Only }
         body(Maps) { "return entries.maxWith(comparator)" }
     }
 

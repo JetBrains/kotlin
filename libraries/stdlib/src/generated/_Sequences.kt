@@ -62,6 +62,7 @@ public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
 }
@@ -69,6 +70,7 @@ public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.findLast(predicate: (T) -> Boolean): T? {
     return lastOrNull(predicate)
 }
@@ -1053,7 +1055,8 @@ public operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequence<T> {
 /**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  */
-public fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
     return minus(element)
 }
 
@@ -1112,7 +1115,8 @@ public operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence<T> {
 /**
  * Returns a sequence containing all elements of the original sequence and then the given [element].
  */
-public fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
     return plus(element)
 }
 
@@ -1174,7 +1178,8 @@ public fun <T> Sequence<T>.asIterable(): Iterable<T> {
 /**
  * Returns this sequence as a [Sequence].
  */
-public fun <T> Sequence<T>.asSequence(): Sequence<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.asSequence(): Sequence<T> {
     return this
 }
 

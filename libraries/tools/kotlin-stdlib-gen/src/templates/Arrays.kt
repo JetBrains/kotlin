@@ -6,6 +6,7 @@ fun arrays(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("isEmpty()") {
+        inline(Inline.Only)
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns `true` if the array is empty." }
         returns("Boolean")
@@ -15,6 +16,7 @@ fun arrays(): List<GenericFunction> {
     }
 
     templates add f("isNotEmpty()") {
+        inline(Inline.Only)
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns `true` if the array is not empty." }
         returns("Boolean")
