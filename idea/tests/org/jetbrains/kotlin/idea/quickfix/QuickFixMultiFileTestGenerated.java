@@ -1303,33 +1303,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
-        @TestMetadata("idea/testData/quickfix/migration/stdlib")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Stdlib extends AbstractQuickFixMultiFileTest {
-            public void testAllFilesPresentInStdlib() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/stdlib"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
-            }
-
-            @TestMetadata("basic.before.Main.java")
-            public void testBasic() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/stdlib/basic.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("importStatic.before.Main.java")
-            public void testImportStatic() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/stdlib/importStatic.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-
-            @TestMetadata("method.before.Main.java")
-            public void testMethod() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/stdlib/method.before.Main.java");
-                doTestWithExtraFile(fileName);
-            }
-        }
-
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")
