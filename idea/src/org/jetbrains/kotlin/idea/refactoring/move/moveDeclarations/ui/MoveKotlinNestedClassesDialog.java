@@ -40,7 +40,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.projectView.KtClassOrObjectTreeNode;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
@@ -118,14 +117,13 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                                         if (!(aClass instanceof KtLightClassForExplicitDeclaration)) return false;
                                         KtClassOrObject classOrObject = ((KtLightClassForExplicitDeclaration) aClass).getOrigin();
 
-                                        if (classOrObject.isTopLevel()) return true;
-
                                         if (classOrObject instanceof KtObjectDeclaration) {
                                             return !((KtObjectDeclaration) classOrObject).isObjectLiteral();
                                         }
 
                                         if (classOrObject instanceof KtClass) {
-                                            return !((KtClass) classOrObject).isInner();
+                                            KtClass ktClass = (KtClass) classOrObject;
+                                            return !(ktClass.isInner() || ktClass.isAnnotation());
                                         }
 
                                         return false;
