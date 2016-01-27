@@ -58,6 +58,7 @@ public abstract class AnnotationProcessorWrapper(
 
     private companion object {
         val KAPT_ANNOTATION_OPTION = "kapt.annotations"
+        val KAPT_KOTLIN_GENERATED_OPTION = "kapt.kotlin.generated"
     }
 
     private val processor: Processor by lazy {
@@ -139,6 +140,7 @@ public abstract class AnnotationProcessorWrapper(
     override fun getSupportedOptions(): MutableSet<String> {
         val supportedOptions = processor.supportedOptions.toHashSet()
         supportedOptions.add(KAPT_ANNOTATION_OPTION)
+        supportedOptions.add(KAPT_KOTLIN_GENERATED_OPTION)
         return supportedOptions
     }
 
