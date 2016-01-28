@@ -66,10 +66,12 @@ class LibraryModificationTracker(project: Project) : SimpleModificationTracker()
 
     private inline fun processBulk(events: List<VFileEvent>, check: (VirtualFile) -> Boolean) {
         events.forEach { event ->
-            val file = event.file
-            if (file != null && check(file)) {
-                incModificationCount()
-                return
+            if (event.isValid) {
+                val file = event.file
+                if (file != null && check(file)) {
+                    incModificationCount()
+                    return
+                }
             }
         }
     }
