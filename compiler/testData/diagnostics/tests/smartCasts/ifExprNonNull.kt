@@ -7,9 +7,9 @@ fun baz(s: String?): String {
         val u: String? = null
         if (u == null) return ""
         // !! is detected as unnecessary here
-        u
+        <!DEBUG_INFO_SMARTCAST!>u<!>
     }
-    return <!DEBUG_INFO_SMARTCAST!>t<!>
+    return t
 }
 
 fun foo(s: String?): String {
