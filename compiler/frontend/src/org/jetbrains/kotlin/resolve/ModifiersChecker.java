@@ -228,7 +228,10 @@ public class ModifiersChecker {
         }
 
 
-        private void runDeclarationCheckers(@NotNull KtDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+        public void runDeclarationCheckers(
+                @NotNull KtDeclaration declaration,
+                @NotNull DeclarationDescriptor descriptor
+        ) {
             for (DeclarationChecker checker : declarationCheckers) {
                 checker.check(declaration, descriptor, trace, trace.getBindingContext());
             }
