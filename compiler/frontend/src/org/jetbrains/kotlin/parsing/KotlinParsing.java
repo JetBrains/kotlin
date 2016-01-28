@@ -123,7 +123,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
             int endOffset = myBuilder.rawTokenTypeStart(0);
             CharSequence tokenChars = myBuilder.getOriginalText().subSequence(startOffset, endOffset);
             if (!(tokenChars.length() > 2 && tokenChars.subSequence(tokenChars.length() - 2, tokenChars.length()).toString().equals("*/"))) {
-                error("Unclosed comment");
+                PsiBuilder.Marker marker = myBuilder.mark();
+                marker.error("Unclosed comment");
+                marker.setCustomEdgeTokenBinders(WhitespacesBinders.GREEDY_RIGHT_BINDER, null);
             }
         }
     }

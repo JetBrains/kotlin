@@ -3,10 +3,10 @@ JetFile: DocCommentAtBeginningOfFile3.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiErrorElement:Unclosed comment
-    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     PsiWhiteSpace('\n\n')
     KDOC_SECTION
       PsiElement(KDOC_TEXT)('fooo')
+  PsiErrorElement:Unclosed comment
+    <empty list>
