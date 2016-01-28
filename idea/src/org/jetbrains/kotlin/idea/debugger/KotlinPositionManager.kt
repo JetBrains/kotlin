@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
@@ -260,7 +259,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
     private fun classNamesForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
         val result = hashSetOf<String>()
-        val names = classNamesForPosition(sourcePosition)
+        val names = classNamesForPosition(sourcePosition, true)
         result.addAll(names)
 
         val lambdas = findLambdas(sourcePosition)
@@ -281,12 +280,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
     }
 
-    fun classNamesForPosition(sourcePosition: SourcePosition): Collection<String> {
+    fun classNamesForPosition(sourcePosition: SourcePosition, withInlines: Boolean): Collection<String> {
         val psiElement = runReadAction { sourcePosition.elementAt } ?: return emptyList()
-        return classNamesForPosition(psiElement)
+        return classNamesForPosition(psiElement, withInlines)
     }
 
-    private fun classNamesForPosition(element: PsiElement): Collection<String> {
+    private fun classNamesForPosition(element: PsiElement, withInlines: Boolean): Collection<String> {
         return runReadAction {
             if (DumbService.getInstance(element.project).isDumb) {
                 emptySet()
@@ -295,7 +294,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 val file = element.containingFile as KtFile
                 val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
                 val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
-                getInternalClassNameForElement(element, typeMapper, file, isInLibrary)
+                getInternalClassNameForElement(element, typeMapper, file, isInLibrary, withInlines)
             }
         }
     }
@@ -357,7 +356,13 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         myTypeMappers.put(key, value)
     }
 
-    private fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: KtFile, isInLibrary: Boolean): Collection<String> {
+    private fun getInternalClassNameForElement(
+            notPositionedElement: PsiElement?,
+            typeMapper: JetTypeMapper,
+            file: KtFile,
+            isInLibrary: Boolean,
+            withInlines: Boolean = true
+    ): Collection<String> {
         val element = getElementToCalculateClassName(notPositionedElement)
 
         when (element) {
@@ -365,7 +370,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             is KtFunction -> {
                 val descriptor = InlineUtil.getInlineArgumentDescriptor(element, typeMapper.bindingContext)
                 if (descriptor != null) {
-                    val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                    val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary, withInlines)
                     if (descriptor.isCrossinline) {
                         return findCrossInlineArguments(element, descriptor, typeMapper.bindingContext) + classNamesForParent
                     }
@@ -388,9 +393,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 val parent = getElementToCalculateClassName(element.parent)
                 // Class-object initializer
                 if (parent is KtObjectDeclaration && parent.isCompanion()) {
-                    return getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary)
+                    return getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary, withInlines)
                 }
-                return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary, withInlines)
             }
             element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
                 if (isInPropertyAccessor(notPositionedElement)) {
@@ -402,7 +407,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
                 val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
                 if (descriptor !is PropertyDescriptor) {
-                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary, withInlines)
                 }
 
                 return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toSet()
@@ -419,6 +424,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 else {
                     NoResolveFileClassesProvider.getFileClassInternalName(file)
                 }
+
+                if (!withInlines) return parentInternalName.toSet()
 
                 val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
                 return inlinedCalls + parentInternalName.toSet()
@@ -490,7 +497,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                         val usage = it.element
                         if (usage is KtElement) {
                             //TODO recursive search
-                            val names = classNamesForPosition(usage)
+                            val names = classNamesForPosition(usage, false)
                             result.addAll(names)
                         }
                     }

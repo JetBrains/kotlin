@@ -56,7 +56,7 @@ class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
 
         if (sourcePosition == null) return false
 
-        val classNames = positionManager.classNamesForPosition(sourcePosition).map { it.replace('/', '.') }
+        val classNames = positionManager.classNamesForPosition(sourcePosition, false).map { it.replace('/', '.') }
 
         classNames.forEach { className ->
             val settings = DebuggerSettings.getInstance()
