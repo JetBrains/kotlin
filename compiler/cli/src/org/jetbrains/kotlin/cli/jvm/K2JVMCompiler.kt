@@ -126,7 +126,6 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         if (arguments.script) {
             configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
-            shouldReportPerf = false
         }
 
         if (arguments.skipMetadataVersionCheck) {
@@ -238,7 +237,6 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         // allows to track GC time for each run when repeated compilation is used
         private val elapsedGCTime = hashMapOf<String, Long>()
         private var elapsedJITTime = 0L
-        private var shouldReportPerf = true
 
         fun resetInitStartTime() {
             if (initStartNanos == 0L) {
@@ -251,7 +249,9 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         fun reportPerf(configuration: CompilerConfiguration, message: String) {
-            if (!shouldReportPerf) return
+            if (!configuration.get(CLIConfigurationKeys.REPORT_PERF, false)) {
+                return
+            }
 
             val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
             collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
@@ -281,6 +281,7 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
             configuration.put(JVMConfigurationKeys.MULTIFILE_FACADES_OPEN, arguments.multifileFacadesOpen);
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage);
+            configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf);
         }
 
         private fun getClasspath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {
