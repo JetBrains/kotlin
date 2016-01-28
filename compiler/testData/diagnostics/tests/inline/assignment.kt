@@ -9,6 +9,6 @@ inline fun inlineFunWithInvoke(s: (p: Int) -> Unit, ext: Int.(p: Int) -> Unit) {
 
 
 inline fun Function1<Int, Unit>.inlineExt() {
-    var d = <!USAGE_IS_NOT_INLINABLE!>this<!>
-    d = <!USAGE_IS_NOT_INLINABLE!>this<!>
+    var d = this
+    d = this
 }

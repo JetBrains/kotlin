@@ -8,8 +8,8 @@ inline <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T, U> Function1<T, U>.
 }
 
 inline operator fun <T, U> Function1<T, U>.plusAssign(p: Function1<T, U>) {
-    <!USAGE_IS_NOT_INLINABLE!>this<!> -= <!USAGE_IS_NOT_INLINABLE!>p<!>
-    <!USAGE_IS_NOT_INLINABLE!>p<!> -= <!USAGE_IS_NOT_INLINABLE!>this<!>
+    this -= <!USAGE_IS_NOT_INLINABLE!>p<!>
+    <!USAGE_IS_NOT_INLINABLE!>p<!> -= this
 }
 
 operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.minusAssign(ext : @ExtensionFunctionType Function2<T, U, V>) {}
@@ -20,8 +20,8 @@ inline <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T, U, V> @ExtensionFun
 }
 
 inline operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.plusAssign(ext : @ExtensionFunctionType Function2<T, U, V>) {
-    <!USAGE_IS_NOT_INLINABLE!>this<!> -= <!USAGE_IS_NOT_INLINABLE!>ext<!>
-    <!USAGE_IS_NOT_INLINABLE!>ext<!> -= <!USAGE_IS_NOT_INLINABLE!>this<!>
+    this -= <!USAGE_IS_NOT_INLINABLE!>ext<!>
+    <!USAGE_IS_NOT_INLINABLE!>ext<!> -= this
 }
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {

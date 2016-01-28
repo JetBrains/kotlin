@@ -12,6 +12,6 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit, ext: Int.(
 
 inline fun Function1<Int, Unit>.inlineExt() {
     invoke(11)
-    <!USAGE_IS_NOT_INLINABLE!>this<!> && <!USAGE_IS_NOT_INLINABLE!>this<!>
-    <!USAGE_IS_NOT_INLINABLE!>this<!> || <!USAGE_IS_NOT_INLINABLE!>this<!>
+    this && this
+    this || this
 }

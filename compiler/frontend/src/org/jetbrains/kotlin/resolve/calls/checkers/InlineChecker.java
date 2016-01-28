@@ -63,14 +63,6 @@ class InlineChecker implements CallChecker {
                 inlinableParameters.add(param);
             }
         }
-
-        //add extension receiver as inlinable
-        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
-        if (receiverParameter != null) {
-            if (isInlinableParameter(receiverParameter)) {
-                inlinableParameters.add(receiverParameter);
-            }
-        }
     }
 
     @Override

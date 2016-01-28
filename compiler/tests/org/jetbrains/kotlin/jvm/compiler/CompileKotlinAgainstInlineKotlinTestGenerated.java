@@ -823,6 +823,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
+        @TestMetadata("extensionReceiver.1.kt")
+        public void testExtensionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/extensionReceiver.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("lambdaAsGeneric.1.kt")
         public void testLambdaAsGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/lambdaAsGeneric.1.kt");

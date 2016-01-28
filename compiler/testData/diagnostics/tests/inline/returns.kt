@@ -13,8 +13,8 @@ inline fun inlineFunWithExt2(ext: Int.(p: Int) -> Unit) : Int.(p: Int) -> Unit =
 
 
 
-inline fun Function1<Int, Unit>.inlineExt(): Function1<Int, Unit> {
-    return <!USAGE_IS_NOT_INLINABLE!>this<!>
+<!NOTHING_TO_INLINE!>inline<!> fun Function1<Int, Unit>.inlineExt(): Function1<Int, Unit> {
+    return this
 }
 
-inline fun Function1<Int, Unit>.inlineExt2(): Function1<Int, Unit> = <!USAGE_IS_NOT_INLINABLE!>this<!>
+<!NOTHING_TO_INLINE!>inline<!> fun Function1<Int, Unit>.inlineExt2(): Function1<Int, Unit> = this
