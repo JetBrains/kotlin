@@ -52,6 +52,7 @@ public fun thread(start: Boolean = true, isDaemon: Boolean = false, contextClass
  * Then if it is still `null`, the provided [default] function is called and its result
  * is stored for the current thread and then returned.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T: Any> ThreadLocal<T>.getOrSet(default: () -> T): T {
     return get() ?: default().apply { set(this) }
 }

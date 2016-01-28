@@ -9,7 +9,8 @@ import java.util.TimerTask
 /**
  * Schedules an [action] to be executed after the specified [delay] (expressed in milliseconds).
  */
-public fun Timer.schedule(delay: Long, action: TimerTask.() -> Unit): TimerTask {
+@kotlin.internal.InlineOnly
+public inline fun Timer.schedule(delay: Long, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
     schedule(task, delay)
     return task
@@ -18,7 +19,8 @@ public fun Timer.schedule(delay: Long, action: TimerTask.() -> Unit): TimerTask 
 /**
  * Schedules an [action] to be executed at the specified [time].
  */
-public fun Timer.schedule(time: Date, action: TimerTask.() -> Unit): TimerTask {
+@kotlin.internal.InlineOnly
+public inline fun Timer.schedule(time: Date, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
     schedule(task, time)
     return task
@@ -29,7 +31,8 @@ public fun Timer.schedule(time: Date, action: TimerTask.() -> Unit): TimerTask {
  * in milliseconds) and with the interval of [period] milliseconds between the end of the previous task
  * and the start of the next one.
  */
-public fun Timer.schedule(delay: Long, period: Long, action: TimerTask.() -> Unit): TimerTask {
+@kotlin.internal.InlineOnly
+public inline fun Timer.schedule(delay: Long, period: Long, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
     schedule(task, delay, period)
     return task
@@ -39,7 +42,8 @@ public fun Timer.schedule(delay: Long, period: Long, action: TimerTask.() -> Uni
  * Schedules an [action] to be executed periodically, starting at the specified [time] and with the
  * interval of [period] milliseconds between the end of the previous task and the start of the next one.
  */
-public fun Timer.schedule(time: Date, period: Long, action: TimerTask.() -> Unit): TimerTask {
+@kotlin.internal.InlineOnly
+public inline fun Timer.schedule(time: Date, period: Long, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
     schedule(task, time, period)
     return task
@@ -50,7 +54,8 @@ public fun Timer.schedule(time: Date, period: Long, action: TimerTask.() -> Unit
  * in milliseconds) and with the interval of [period] milliseconds between the start of the previous task
  * and the start of the next one.
  */
-public fun Timer.scheduleAtFixedRate(delay: Long, period: Long, action: TimerTask.() -> Unit): TimerTask {
+@kotlin.internal.InlineOnly
+public inline fun Timer.scheduleAtFixedRate(delay: Long, period: Long, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
     scheduleAtFixedRate(task, delay, period)
     return task
@@ -60,11 +65,16 @@ public fun Timer.scheduleAtFixedRate(delay: Long, period: Long, action: TimerTas
  * Schedules an [action] to be executed periodically, starting at the specified [time] and with the
  * interval of [period] milliseconds between the start of the previous task and the start of the next one.
  */
-public fun Timer.scheduleAtFixedRate(time: Date, period: Long, action: TimerTask.() -> Unit): TimerTask {
+@kotlin.internal.InlineOnly
+public inline fun Timer.scheduleAtFixedRate(time: Date, period: Long, crossinline action: TimerTask.() -> Unit): TimerTask {
     val task = timerTask(action)
     scheduleAtFixedRate(task, time, period)
     return task
 }
+
+
+// exposed as public
+internal fun timer(name: String?, daemon: Boolean) = if (name == null) Timer(daemon) else Timer(name, daemon)
 
 /**
  * Creates a timer that executes the specified [action] periodically, starting after the specified [initialDelay]
@@ -74,8 +84,10 @@ public fun Timer.scheduleAtFixedRate(time: Date, period: Long, action: TimerTask
  * @param name the name to use for the thread which is running the timer.
  * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
-public fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, action: TimerTask.() -> Unit): Timer {
-    val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
+@kotlin.internal.InlineOnly
+public inline fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, crossinline action: TimerTask.() -> Unit): Timer {
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    val timer = timer(name, daemon)
     timer.schedule(initialDelay, period, action)
     return timer
 }
@@ -87,8 +99,10 @@ public fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Lo
  * @param name the name to use for the thread which is running the timer.
  * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
-public fun timer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, action: TimerTask.() -> Unit): Timer {
-    val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
+@kotlin.internal.InlineOnly
+public inline fun timer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, crossinline action: TimerTask.() -> Unit): Timer {
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    val timer = timer(name, daemon)
     timer.schedule(startAt, period, action)
     return timer
 }
@@ -101,8 +115,10 @@ public fun timer(name: String? = null, daemon: Boolean = false, startAt: Date, p
  * @param name the name to use for the thread which is running the timer.
  * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
-public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, action: TimerTask.() -> Unit): Timer {
-    val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
+@kotlin.internal.InlineOnly
+public inline fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, crossinline action: TimerTask.() -> Unit): Timer {
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    val timer = timer(name, daemon)
     timer.scheduleAtFixedRate(initialDelay, period, action)
     return timer
 }
@@ -114,8 +130,10 @@ public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initial
  * @param name the name to use for the thread which is running the timer.
  * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
-public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, action: TimerTask.() -> Unit): Timer {
-    val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
+@kotlin.internal.InlineOnly
+public inline fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, crossinline action: TimerTask.() -> Unit): Timer {
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    val timer = timer(name, daemon)
     timer.scheduleAtFixedRate(startAt, period, action)
     return timer
 }
@@ -123,8 +141,7 @@ public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt
 /**
  * Wraps the specified [action] in a [TimerTask].
  */
-public fun timerTask(action: TimerTask.() -> Unit): TimerTask = object : TimerTask() {
-    public override fun run() {
-        action()
-    }
+@kotlin.internal.InlineOnly
+public inline fun timerTask(crossinline action: TimerTask.() -> Unit): TimerTask = object : TimerTask() {
+    override fun run() = action()
 }
