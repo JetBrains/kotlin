@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
@@ -172,8 +173,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return (syntaxKind == ClassKind.CLASS && modifierList != null && modifierList.hasModifier(KtTokens.ANNOTATION_KEYWORD)) ? ClassKind.ANNOTATION_CLASS : syntaxKind;
             }
         });
-
+        // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
+        List<KtAnnotationEntry> annotationEntries = new ArrayList<KtAnnotationEntry>();
+        if (classOrObject != null && classOrObject.getParent() instanceof KtObjectLiteralExpression) {
+            // TODO: it would be better to have separate ObjectLiteralDescriptor without so much magic
+            annotationEntries.addAll(KtPsiUtilKt.getAnnotationEntries((KtObjectLiteralExpression) classOrObject.getParent()));
+        }
         if (modifierList != null) {
+            annotationEntries.addAll(modifierList.getAnnotationEntries());
+        }
+        if (!annotationEntries.isEmpty()) {
             this.annotations = new LazyAnnotations(
                     new LazyAnnotationsContext(
                             c.getAnnotationResolver(),
@@ -186,7 +195,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                             return getOuterScope();
                         }
                     },
-                    modifierList.getAnnotationEntries()
+                    annotationEntries
             );
         }
         else {

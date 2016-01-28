@@ -64,6 +64,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("annotatedObjectLiteral.kt")
+        public void testAnnotatedObjectLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/annotatedObjectLiteral.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("annotationsOnDefault.kt")
         public void testAnnotationsOnDefault() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/annotationsOnDefault.kt");
