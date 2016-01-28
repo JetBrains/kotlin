@@ -7322,6 +7322,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("iterateOnExtension.kt")
+                public void testIterateOnExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/iterateOnExtension.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt7296.kt")
                 public void testKt7296() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/kt7296.kt");
