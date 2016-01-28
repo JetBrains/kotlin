@@ -15,10 +15,10 @@ fun bar(s: Any?): String {
     else {
         val u: Any? = null
         if (u !is String) return ""
-        u
+        <!DEBUG_INFO_SMARTCAST!>u<!>
     }) ?: "xyz"
     // Ideally we should have smart cast to String here
-    return <!TYPE_MISMATCH!>t<!>
+    return t
 }
 
 fun baz(s: String?, r: String?): String {
