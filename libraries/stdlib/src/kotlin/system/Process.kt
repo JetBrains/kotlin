@@ -9,7 +9,8 @@ package kotlin.system
  *
  * This method never returns normally.
  */
-public fun exitProcess(status: Int): Nothing {
+@kotlin.internal.InlineOnly
+public inline fun exitProcess(status: Int): Nothing {
     System.exit(status)
     throw RuntimeException("System.exit returned normally, while it was supposed to halt JVM.")
 }

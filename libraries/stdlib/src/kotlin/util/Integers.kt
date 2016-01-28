@@ -7,6 +7,7 @@ package kotlin
  *
  * A zero-based index of current iteration is passed as a parameter to [action].
  */
+@kotlin.internal.InlineOnly
 public inline fun repeat(times: Int, action: (Int) -> Unit) {
     for (index in 0..times - 1) {
         action(index)
