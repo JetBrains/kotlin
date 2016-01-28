@@ -233,6 +233,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noSuperCheckInDefaultConstuctor.kt")
+    public void testNoSuperCheckInDefaultConstuctor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noSuperCheckInDefaultConstuctor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noWrapperForMethodReturningPrimitive.kt")
     public void testNoWrapperForMethodReturningPrimitive() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noWrapperForMethodReturningPrimitive.kt");

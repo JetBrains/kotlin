@@ -1450,6 +1450,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("superCallCheck.kt")
+        public void testSuperCallCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/defaultArguments/superCallCheck.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/defaultArguments/constructor")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
