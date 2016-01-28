@@ -44,16 +44,16 @@ other code on the target platform.
 
 # Package kotlin.properties
 
-Standard implementations of delegates for [delegated properties](/docs/reference/delegated-properties.html)
+Standard implementations of delegates for [delegated properties](https://kotlinlang.org/docs/reference/delegated-properties.html)
 and helper functions for implementing custom delegates.
 
 # Package kotlin.reflect
 
-Runtime API for [Kotlin reflection](/docs/reference/reflection.html)
+Runtime API for [Kotlin reflection](https://kotlinlang.org/docs/reference/reflection.html)
 
 # Package kotlin.reflect.jvm
 
-Runtime API for interoperability between [Kotlin reflection](/docs/reference/reflection.html) and
+Runtime API for interoperability between [Kotlin reflection](https://kotlinlang.org/docs/reference/reflection.html) and
 Java reflection.
 
 # Package kotlin.test
