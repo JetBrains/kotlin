@@ -3,4 +3,6 @@ JetFile: BlockCommentAtBeginningOfFile4.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiErrorElement:Unclosed comment
+    <empty list>
   PsiComment(BLOCK_COMMENT)('/*\n\n/*foo*/\n\nasdfas')
