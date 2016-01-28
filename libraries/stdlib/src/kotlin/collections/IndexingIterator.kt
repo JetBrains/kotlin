@@ -1,4 +1,4 @@
-package kotlin
+package kotlin.collections
 
 /**
  * Data class representing a value from a collection or sequence, along with its index in that collection or sequence.

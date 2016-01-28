@@ -24,14 +24,19 @@
             <password>${GITHUB_PASSWORD}</password>
         </server>
         <server>
-       		<id>sonatype-nexus-snapshots</id>
-       		<username>${kotlin.sonatype.user}</username>
-       		<password>${kotlin.sonatype.password}</password>
-       	</server>
-       	<server>
-       		<id>sonatype-nexus-staging</id>
+            <id>sonatype-nexus-snapshots</id>
             <username>${kotlin.sonatype.user}</username>
-       		<password>${kotlin.sonatype.password}</password>
-       	</server>
+            <password>${kotlin.sonatype.password}</password>
+        </server>
+        <server>
+            <id>sonatype-nexus-staging</id>
+            <username>${kotlin.sonatype.user}</username>
+            <password>${kotlin.sonatype.password}</password>
+        </server>
+        <server>
+            <id>bintray</id>
+            <username>${kotlin.bintray.user}</username>
+            <password>${kotlin.bintray.password}</password>
+        </server>
     </servers>
 </settings>
