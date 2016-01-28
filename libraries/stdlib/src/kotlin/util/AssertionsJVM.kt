@@ -19,6 +19,7 @@ public fun assert(value: Boolean) {
  * Throws an [AssertionError] calculated by [lazyMessage] if the [value] is false
  * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
  */
+@kotlin.internal.InlineOnly
 public inline fun assert(value: Boolean, lazyMessage: () -> Any) {
     @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
     if (ASSERTIONS_ENABLED) {
