@@ -247,7 +247,7 @@ public class InlineCodegen extends CallGenerator {
                                                                         implementationOwner.getInternalName());
                 FunctionCodegen.generateDefaultImplBody(
                         methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
-                        inliningFunction, parentCodegen
+                        inliningFunction, parentCodegen, asmMethod
                 );
                 smap = createSMAPWithDefaultMapping(inliningFunction, parentCodegen.getOrCreateSourceMapper().getResultMappings());
             }

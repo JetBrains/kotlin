@@ -22,6 +22,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
@@ -672,7 +673,7 @@ public class FunctionCodegen {
             }
             else {
                 mv.visitCode();
-                generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen);
+                generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen, defaultMethod);
                 endVisit(mv, "default method", getSourceFromDescriptor(functionDescriptor));
             }
 
@@ -693,7 +694,8 @@ public class FunctionCodegen {
             @NotNull MethodVisitor mv,
             @NotNull DefaultParameterValueLoader loadStrategy,
             @Nullable KtNamedFunction function,
-            @NotNull MemberCodegen<?> parentCodegen
+            @NotNull MemberCodegen<?> parentCodegen,
+            @NotNull Method defaultMethod
     ) {
         GenerationState state = parentCodegen.state;
         JvmMethodSignature signature = state.getTypeMapper().mapSignature(functionDescriptor, methodContext.getContextKind());
@@ -705,6 +707,9 @@ public class FunctionCodegen {
 
         CallGenerator generator = codegen.getOrCreateCallGeneratorForDefaultImplBody(functionDescriptor, function);
 
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        genDefaultSuperCallCheckIfNeeded(iv, defaultMethod);
+
         loadExplicitArgumentsOnStack(OBJECT_TYPE, isStatic, signature, generator);
 
         List<JvmMethodParameterSignature> mappedParameters = signature.getValueParameters();
@@ -713,8 +718,6 @@ public class FunctionCodegen {
                mappedParameters.get(capturedArgumentsCount).getKind() != JvmMethodParameterKind.VALUE) {
             capturedArgumentsCount++;
         }
-
-        InstructionAdapter iv = new InstructionAdapter(mv);
 
         int maskIndex = 0;
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
@@ -746,6 +749,22 @@ public class FunctionCodegen {
         generator.genCallWithoutAssertions(method, codegen);
 
         iv.areturn(signature.getReturnType());
+    }
+
+    private static void genDefaultSuperCallCheckIfNeeded(@NotNull InstructionAdapter iv, @NotNull Method defaultMethod) {
+        String defaultMethodName = defaultMethod.getName();
+        if ("<init>".equals(defaultMethodName)) {
+            return;
+        }
+        Label end = new Label();
+        int handleIndex = (Type.getArgumentsAndReturnSizes(defaultMethod.getDescriptor()) >> 2) - 2; /*-1 for this, and -1 for handle*/
+        iv.load(handleIndex, OBJECT_TYPE);
+        iv.ifnull(end);
+        AsmUtil.genThrow(iv,
+                         "java/lang/UnsupportedOperationException",
+                         "Super calls with default arguments not supported in this target, function: " +
+                         StringsKt.substringBeforeLast(defaultMethodName, JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodName));
+        iv.visitLabel(end);
     }
 
     private void generateOldDefaultForFun(
