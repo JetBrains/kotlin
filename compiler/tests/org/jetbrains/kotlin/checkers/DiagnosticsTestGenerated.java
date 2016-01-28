@@ -8580,6 +8580,39 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class RecursiveLocalFuns extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInRecursiveLocalFuns() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("localFactorial.kt")
+                public void testLocalFactorial() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns/localFactorial.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveFun.kt")
+                public void testRecursiveFun() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns/recursiveFun.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveLambda.kt")
+                public void testRecursiveLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns/recursiveLambda.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("selfCall.kt")
+                public void testSelfCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/recursiveLocalFuns/selfCall.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/inference/regressions")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

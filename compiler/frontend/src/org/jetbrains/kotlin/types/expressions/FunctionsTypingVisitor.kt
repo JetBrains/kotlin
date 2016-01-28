@@ -92,12 +92,17 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             )
         }
         // Necessary for local functions
-        ForceResolveUtil.forceResolveAllContents(functionDescriptor.annotations);
+        ForceResolveUtil.forceResolveAllContents(functionDescriptor.annotations)
 
-        val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
-        components.expressionTypingServices.checkFunctionReturnType(
-                functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace
-        )
+        if (!function.hasDeclaredReturnType() && !function.hasBlockBody()) {
+            ForceResolveUtil.forceResolveAllContents(functionDescriptor.returnType)
+        }
+        else {
+            val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
+            components.expressionTypingServices.checkFunctionReturnType(
+                    functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace
+            )
+        }
 
         components.valueParameterResolver.resolveValueParameters(
                 function.getValueParameters(), functionDescriptor.valueParameters, context.scope, context.dataFlowInfo, context.trace
