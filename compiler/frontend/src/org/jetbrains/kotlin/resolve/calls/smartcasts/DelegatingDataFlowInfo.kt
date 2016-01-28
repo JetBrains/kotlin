@@ -300,8 +300,8 @@ internal class DelegatingDataFlowInfo private constructor(
             val toDelete = newTypeInfo()
             for (value in typeInfo.keys()) {
                 for (type in typeInfo[value]) {
-                    // Remove original type and for not flexible type also all its supertypes (see also KT-10666)
-                    if (if (value.type.isFlexible()) value.type == type else value.type.isSubtypeOf(type)) {
+                    // Remove original type (see also KT-10666)
+                    if (value.type == type) {
                         toDelete.put(value, type)
                     }
                 }
