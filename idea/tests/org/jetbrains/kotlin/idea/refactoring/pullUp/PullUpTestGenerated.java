@@ -205,6 +205,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("propertyWithoutLightMethod.kt")
+        public void testPropertyWithoutLightMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/propertyWithoutLightMethod.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("publicToInterface.kt")
         public void testPublicToInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/publicToInterface.kt");
