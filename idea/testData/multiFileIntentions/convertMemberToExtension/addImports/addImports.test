@@ -1,0 +1,5 @@
+{
+  "mainFile": "x/test.kt",
+  "intentionClass": "org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtensionIntention",
+  "withRuntime": "true"
+}

@@ -35,6 +35,12 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileIntentions"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("convertMemberToExtension/addImports/addImports.test")
+    public void testConvertMemberToExtension_addImports_AddImports() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/convertMemberToExtension/addImports/addImports.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("implementAbstractMember/implementFunctionInJava/implementAllInJava.test")
     public void testImplementAbstractMember_implementFunctionInJava_ImplementAllInJava() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/implementAbstractMember/implementFunctionInJava/implementAllInJava.test");
