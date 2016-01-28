@@ -67,6 +67,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt9320.kt")
+        public void testKt9320() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/kt9320.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("literals.kt")
         public void testLiterals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/literals.kt");
