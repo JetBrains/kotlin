@@ -17435,6 +17435,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("toFlexibleType.kt")
+                public void testToFlexibleType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/toFlexibleType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("unnecessary.kt")
                 public void testUnnecessary() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/unnecessary.kt");
