@@ -58,7 +58,18 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.contextDependency, context.resolutionResultsCache,
                 context.callChecker,
                 context.statementFilter,
-                context.isAnnotationContext, context.collectAllCandidates,
+                context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
+                context.callPosition);
+    }
+
+    @NotNull
+    public static ExpressionTypingContext newContext(@NotNull ResolutionContext context, boolean isDebuggerContext) {
+        return new ExpressionTypingContext(
+                context.trace, context.scope, context.dataFlowInfo, context.expectedType,
+                context.contextDependency, context.resolutionResultsCache,
+                context.callChecker,
+                context.statementFilter,
+                context.isAnnotationContext, isDebuggerContext, context.collectAllCandidates,
                 context.callPosition);
     }
 
@@ -76,7 +87,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return new ExpressionTypingContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker,
-                statementFilter, isAnnotationContext, false, CallPosition.Unknown.INSTANCE);
+                statementFilter, isAnnotationContext, false, false, CallPosition.Unknown.INSTANCE);
     }
 
     private ExpressionTypingContext(
@@ -89,12 +100,13 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
+            boolean isDebuggerContext,
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
               callChecker,
-              statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
+              statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 
     @Override
@@ -112,6 +124,6 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache,
                                            callChecker,
-                                           statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
+                                           statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 }

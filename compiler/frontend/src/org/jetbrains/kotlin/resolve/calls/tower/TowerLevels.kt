@@ -62,10 +62,13 @@ internal abstract class AbstractScopeTowerLevel(
             if (descriptor.isSynthesized) diagnostics.add(SynthesizedDescriptorDiagnostic)
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-            Visibilities.findInvisibleMember(
-                    dispatchReceiver, descriptor,
-                    scopeTower.lexicalScope.ownerDescriptor
-            )?.let { diagnostics.add(VisibilityError(it)) }
+            val shouldSkipVisibilityCheck = scopeTower is ScopeTowerImpl && scopeTower.isDebuggerContext
+            if (!shouldSkipVisibilityCheck) {
+                Visibilities.findInvisibleMember(
+                        dispatchReceiver, descriptor,
+                        scopeTower.lexicalScope.ownerDescriptor
+                )?.let { diagnostics.add(VisibilityError(it)) }
+            }
         }
         return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
     }

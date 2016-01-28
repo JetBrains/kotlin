@@ -78,7 +78,9 @@ class CandidateResolver(
             return
         }
 
-        checkVisibility()
+        if (!context.isDebuggerContext) {
+            checkVisibility()
+        }
 
         when (checkArguments) {
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->

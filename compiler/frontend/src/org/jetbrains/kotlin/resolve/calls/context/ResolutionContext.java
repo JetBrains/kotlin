@@ -52,6 +52,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
 
     public final boolean isAnnotationContext;
 
+    public final boolean isDebuggerContext;
+
     public final boolean collectAllCandidates;
 
     @NotNull
@@ -67,6 +69,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
+            boolean isDebuggerContext,
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition
     ) {
@@ -79,6 +82,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.callChecker = callChecker;
         this.statementFilter = statementFilter;
         this.isAnnotationContext = isAnnotationContext;
+        this.isDebuggerContext = isDebuggerContext;
         this.collectAllCandidates = collectAllCandidates;
         this.callPosition = callPosition;
     }

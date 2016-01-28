@@ -58,11 +58,12 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull StatementFilter statementFilter,
             @NotNull Collection<MutableResolvedCall<F>> resolvedCalls,
             boolean isAnnotationContext,
+            boolean isDebuggerContext,
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
+              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
         this.lazyCandidates = lazyCandidates;
         this.resolvedCalls = resolvedCalls;
         this.tracing = tracing;
@@ -79,7 +80,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.resolutionResultsCache, context.dataFlowInfoForArguments,
              context.callChecker,
              context.statementFilter, new SmartList<MutableResolvedCall<F>>(),
-             context.isAnnotationContext, context.collectAllCandidates, context.callPosition);
+             context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
     }
 
     @NotNull
@@ -113,7 +114,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
                 resolutionResultsCache, dataFlowInfoForArguments,
                 callChecker,
                 statementFilter, resolvedCalls,
-                isAnnotationContext, collectAllCandidates, callPosition);
+                isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 
     @Override
