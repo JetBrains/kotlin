@@ -1,0 +1,14 @@
+package
+
+public fun bar(): kotlin.Unit
+public fun gav(/*0*/ v: kotlin.String): kotlin.String
+
+public/*package*/ open class J {
+    public/*package*/ constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open fun foo(): kotlin.String!
+}

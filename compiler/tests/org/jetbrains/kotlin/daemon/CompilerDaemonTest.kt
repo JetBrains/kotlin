@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.daemon
 
-import org.jetbrains.kotlin.cli.CliBaseTest
-import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -56,7 +55,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             assertEquals("first compilation failed:\n${res1.out}", 0, res1.resultCode)
             val res2 = compileOnDaemon(clientAliveFile, compilerId, daemonJVMOptions, daemonOptions, *args)
             assertEquals("second compilation failed:\n${res2.out}", 0, res2.resultCode)
-            assertEquals("build results differ", CliBaseTest.removePerfOutput(res1.out), CliBaseTest.removePerfOutput(res2.out))
+            assertEquals("build results differ", res1.out, res2.out)
     }
 
     private fun getTestBaseDir(): String = KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true)
