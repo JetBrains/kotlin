@@ -863,6 +863,15 @@ class StringTest {
         // get the 3rd character
         assertEquals('c', arg1("bacfd").reduceIndexed { index, v, c -> if (index == 2) c else v })
 
+        expect('c') {
+            "ab".reduceIndexed { index, acc, e ->
+                assertEquals(1, index)
+                assertEquals('a', acc)
+                assertEquals('b', e)
+                e + (e - acc)
+            }
+        }
+
         assertTrue(assertFails {
             arg1("").reduceIndexed { index, a, b -> '\n' }
         } is UnsupportedOperationException)
@@ -871,6 +880,15 @@ class StringTest {
     @test fun reduceRightIndexed() = withOneCharSequenceArg { arg1 ->
         // get the 3rd character
         assertEquals('c', arg1("bacfd").reduceRightIndexed { index, c, v -> if (index == 2) c else v })
+
+        expect('c') {
+            "ab".reduceRightIndexed { index, e, acc ->
+                assertEquals(0, index)
+                assertEquals('b', acc)
+                assertEquals('a', e)
+                acc + (acc - e)
+            }
+        }
 
         assertTrue(assertFails {
             arg1("").reduceRightIndexed { index, a, b -> '\n' }
