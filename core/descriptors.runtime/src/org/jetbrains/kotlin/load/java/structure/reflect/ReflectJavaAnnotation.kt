@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
 
-class ReflectJavaAnnotation(private val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
+class ReflectJavaAnnotation(val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
     override fun findArgument(name: Name): JavaAnnotationArgument? {
         return getArgumentValue(annotation.annotationClass.java.getDeclaredMethod(name.asString()))
     }
