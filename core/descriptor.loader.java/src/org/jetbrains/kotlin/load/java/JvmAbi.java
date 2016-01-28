@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.text.StringsKt;
+import kotlin.text.Regex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -52,6 +52,8 @@ public final class JvmAbi {
 
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "$i$f$";
+
+    private static final Regex SANITIZE_AS_JAVA_INVALID_CHARACTERS = new Regex("[^\\p{L}\\p{Digit}]");
 
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
@@ -90,7 +92,7 @@ public final class JvmAbi {
 
     @NotNull
     public static String sanitizeAsJavaIdentifier(@NotNull String str) {
-        return StringsKt.replace(str, StringsKt.toRegex("[^\\p{L}\\p{Digit}]"), "_");
+        return SANITIZE_AS_JAVA_INVALID_CHARACTERS.replace(str, "_");
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
