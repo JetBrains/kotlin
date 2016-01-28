@@ -25,8 +25,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
 import kotlin.Pair;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -2432,11 +2432,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
         boolean isInline = (state.isInlineEnabled() || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
-                           InlineUtil.isInline(descriptor);
+                           (InlineUtil.isInline(descriptor) || InlineUtil.isArrayConstructorWithLambda(descriptor));
 
         if (!isInline) return defaultCallGenerator;
 
-        SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
+        FunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal());
         return new InlineCodegen(this, state, original, callElement, typeParameterMappings);
     }
 
@@ -2454,6 +2454,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             KotlinType type = TypeUtils.uncaptureTypeForInlineMapping(entry.getValue());
 
+            boolean isReified = key.isReified() || InlineUtil.isArrayConstructorWithLambda(resolvedCall.getResultingDescriptor());
+
             Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
             if (typeParameterAndReificationArgument == null) {
                 // type is not generic
@@ -2461,16 +2463,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 Type asmType = typeMapper.mapTypeParameter(type, signatureWriter);
 
                 mappings.addParameterMappingToType(
-                        key.getName().getIdentifier(),
-                        type,
-                        asmType,
-                        signatureWriter.toString(),
-                        key.isReified());
+                        key.getName().getIdentifier(), type, asmType, signatureWriter.toString(), isReified
+                );
             }
             else {
                 mappings.addParameterMappingForFurtherReification(
-                        key.getName().getIdentifier(), type,
-                        typeParameterAndReificationArgument.getSecond(), key.isReified());
+                        key.getName().getIdentifier(), type, typeParameterAndReificationArgument.getSecond(), isReified
+                );
             }
         }
         return getOrCreateCallGenerator(
@@ -3345,7 +3344,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type type = expressionType(expression);
         if (type.getSort() == Type.ARRAY) {
             //noinspection ConstantConditions
-            return generateNewArray(expression, bindingContext.getType(expression));
+            return generateNewArray(expression, bindingContext.getType(expression), resolvedCall);
         }
 
         return generateConstructorCall(resolvedCall, type);
@@ -3391,20 +3390,25 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         });
     }
 
-    public StackValue generateNewArray(@NotNull KtCallExpression expression, @NotNull final KotlinType arrayType) {
-        assert expression.getValueArguments().size() == 1 : "Size argument expected";
+    public StackValue generateNewArray(
+            @NotNull KtCallExpression expression, @NotNull final KotlinType arrayType, @NotNull ResolvedCall<?> resolvedCall
+    ) {
+        List<KtValueArgument> args = expression.getValueArguments();
+        assert args.size() == 1 || args.size() == 2 : "Unknown constructor called: " + args.size() + " arguments";
 
-        final KtExpression sizeExpression = expression.getValueArguments().get(0).getArgumentExpression();
-        Type type = typeMapper.mapType(arrayType);
+        if (args.size() == 1) {
+            final KtExpression sizeExpression = args.get(0).getArgumentExpression();
+            return StackValue.operation(typeMapper.mapType(arrayType), new Function1<InstructionAdapter, Unit>() {
+                @Override
+                public Unit invoke(InstructionAdapter v) {
+                    gen(sizeExpression, Type.INT_TYPE);
+                    newArrayInstruction(arrayType);
+                    return Unit.INSTANCE;
+                }
+            });
+        }
 
-        return StackValue.operation(type, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                gen(sizeExpression, Type.INT_TYPE);
-                newArrayInstruction(arrayType);
-                return Unit.INSTANCE;
-            }
-        });
+        return invokeFunction(resolvedCall, StackValue.none());
     }
 
     public void newArrayInstruction(@NotNull KotlinType arrayType) {

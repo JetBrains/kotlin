@@ -111,26 +111,37 @@ public class InlineUtil {
         if (!canBeInlineArgument(argument)) return null;
 
         KtExpression call = KtPsiUtil.getParentCallIfPresent(argument);
-        if (call != null) {
-            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(call, bindingContext);
-            if (resolvedCall != null && isInline(resolvedCall.getResultingDescriptor())) {
-                ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), argument);
-                if (valueArgument != null) {
-                    ArgumentMapping mapping = resolvedCall.getArgumentMapping(valueArgument);
-                    if (mapping instanceof ArgumentMatch) {
-                        ValueParameterDescriptor parameter = ((ArgumentMatch) mapping).getValueParameter();
-                        if (isInlineLambdaParameter(parameter)) {
-                            return parameter;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
+        if (call == null) return null;
+
+        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(call, bindingContext);
+        if (resolvedCall == null) return null;
+
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        if (!isInline(descriptor) && !isArrayConstructorWithLambda(descriptor)) return null;
+
+        ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), argument);
+        if (valueArgument == null) return null;
+
+        ArgumentMapping mapping = resolvedCall.getArgumentMapping(valueArgument);
+        if (!(mapping instanceof ArgumentMatch)) return null;
+
+        ValueParameterDescriptor parameter = ((ArgumentMatch) mapping).getValueParameter();
+        return isInlineLambdaParameter(parameter) ? parameter : null;
     }
 
     public static boolean canBeInlineArgument(@Nullable PsiElement functionalExpression) {
         return functionalExpression instanceof KtFunctionLiteral || functionalExpression instanceof KtNamedFunction;
+    }
+
+    /**
+     * @return true if the descriptor is the constructor of one of 9 array classes (Array&lt;T&gt;, IntArray, FloatArray, ...)
+     * which takes the size and an initializer lambda as parameters. Such constructors are marked as 'inline' but they are not loaded
+     * as such because the 'inline' flag is not stored for constructors in the binary metadata. Therefore we pretend that they are inline
+     */
+    public static boolean isArrayConstructorWithLambda(@NotNull CallableDescriptor descriptor) {
+        return descriptor.getValueParameters().size() == 2 &&
+               descriptor instanceof ConstructorDescriptor &&
+               KotlinBuiltIns.isArrayOrPrimitiveArray(((ConstructorDescriptor) descriptor).getContainingDeclaration());
     }
 
     @Nullable

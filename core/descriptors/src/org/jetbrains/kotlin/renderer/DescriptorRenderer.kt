@@ -171,7 +171,6 @@ interface DescriptorRendererOptions {
     var withoutReturnType: Boolean
     var normalizedVisibilities: Boolean
     var showInternalKeyword: Boolean
-    var prettyFunctionTypes: Boolean
     var uninferredTypeParameterAsName: Boolean
     var overrideRenderingPolicy: OverrideRenderingPolicy
     var valueParametersHandler: DescriptorRenderer.ValueParametersHandler

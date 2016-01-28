@@ -69,6 +69,8 @@ messages/**)
     public protected *;
 }
 
+-keep class org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt { *; }
+
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
 
 -keep class org.jetbrains.kotlin.codegen.extensions.** {

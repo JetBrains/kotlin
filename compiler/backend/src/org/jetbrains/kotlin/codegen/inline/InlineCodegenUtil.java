@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
 import org.jetbrains.kotlin.codegen.context.InlineLambdaContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -84,7 +85,7 @@ public class InlineCodegenUtil {
             final String methodName,
             final String methodDescriptor,
             ClassId classId
-    ) throws ClassNotFoundException, IOException {
+    ) throws IOException {
         ClassReader cr = new ClassReader(classData);
         final MethodNode[] node = new MethodNode[1];
         final String[] debugInfo = new String[2];
@@ -126,6 +127,15 @@ public class InlineCodegenUtil {
                 return null;
             }
         }, ClassReader.SKIP_FRAMES | (GENERATE_SMAP ? 0 : ClassReader.SKIP_DEBUG));
+
+        if (node[0] == null) {
+            return null;
+        }
+
+        if (classId.equals(IntrinsicArrayConstructorsKt.getClassId())) {
+            // Don't load source map for intrinsic array constructors
+            debugInfo[0] = null;
+        }
 
         SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.asString(), lines[0], lines[1]);
         return new SMAPAndMethodNode(node[0], smap);

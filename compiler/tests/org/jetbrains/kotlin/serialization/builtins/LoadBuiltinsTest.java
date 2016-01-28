@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.serialization.builtins;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
@@ -72,7 +72,6 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                                         options.setWithDefinedIn(false);
                                         options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                                         options.setVerbose(true);
-                                        options.setPrettyFunctionTypes(false);
                                         options.setModifiers(DescriptorRendererModifier.ALL);
                                         return Unit.INSTANCE;
                                     }
