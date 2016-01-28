@@ -489,7 +489,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         PsiDirectory sourceDirectory = getSourceDirectory(sourceFiles);
 
         if (isMoveToPackage()) {
-            MoveDestination moveDestination = selectPackageBasedMoveDestination(true);
+            final MoveDestination moveDestination = selectPackageBasedMoveDestination(true);
             if (moveDestination == null) return null;
 
             final String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
@@ -533,15 +533,15 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             }
 
             // All source files must be in the same directory
-            final PsiDirectory targetDir = moveDestination.getTargetDirectory(sourceFiles.get(0));
             return new KotlinMoveTargetForDeferredFile(
                     new FqName(getTargetPackage()),
-                    targetDir,
+                    moveDestination.getTargetIfExists(sourceFiles.get(0)),
                     new Function1<KtFile, KtFile>() {
                         @Override
                         public KtFile invoke(@NotNull KtFile originalFile) {
                             return JetRefactoringUtilKt.getOrCreateKotlinFile(
-                                    targetFileName != null ? targetFileName : originalFile.getName(), targetDir
+                                    targetFileName != null ? targetFileName : originalFile.getName(),
+                                    moveDestination.getTargetDirectory(originalFile)
                             );
                         }
                     }
