@@ -147,6 +147,7 @@ private fun KotlinPullUpData.checkVisibility(
         conflicts: MultiMap<PsiElement, String>
 ) {
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
+        if (targetDescriptor in memberDescriptors.values) return
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
             && !Visibilities.isVisibleWithIrrelevantReceiver(targetDescriptor, targetClassDescriptor)) {

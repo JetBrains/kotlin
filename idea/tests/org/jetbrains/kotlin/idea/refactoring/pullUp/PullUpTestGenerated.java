@@ -181,6 +181,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("noVisibilityCheckBetweenMovedMembers.kt")
+        public void testNoVisibilityCheckBetweenMovedMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noVisibilityCheckBetweenMovedMembers.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("outsideOfClass.kt")
         public void testOutsideOfClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/outsideOfClass.kt");
