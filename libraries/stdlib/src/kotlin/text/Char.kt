@@ -22,7 +22,8 @@ package kotlin.text
 /**
  * Concatenates this Char and a String.
  */
-public operator fun Char.plus(other: String) : String = this.toString() + other
+@kotlin.internal.InlineOnly
+public inline operator fun Char.plus(other: String) : String = this.toString() + other
 
 /**
  * Returns `true` if this character is equal to the [other] character, optionally ignoring character case.
@@ -42,16 +43,6 @@ public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
     if (this.toLowerCase() === other.toLowerCase()) return true
     return false
 }
-
-/**
- * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
- */
-public fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROGATE..Char.MAX_HIGH_SURROGATE
-
-/**
- * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
- */
-public fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGATE..Char.MAX_LOW_SURROGATE
 
 /**
  * Returns `true` if this character is a Unicode surrogate code unit.

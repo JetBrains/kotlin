@@ -12,22 +12,26 @@ import java.util.*
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
-internal fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
+@kotlin.internal.InlineOnly
+internal inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).indexOf(ch.toInt(), fromIndex)
 
 /**
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
  */
-internal fun String.nativeIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
+@kotlin.internal.InlineOnly
+internal inline fun String.nativeIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).indexOf(str, fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character.
  */
-internal fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
+@kotlin.internal.InlineOnly
+internal inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(ch.toInt(), fromIndex)
 
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
-internal fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
+@kotlin.internal.InlineOnly
+internal inline fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
 
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
@@ -81,17 +85,20 @@ public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
-public fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
+@kotlin.internal.InlineOnly
+public inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
 
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
-public fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
+@kotlin.internal.InlineOnly
+public inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
 
 /**
  * Returns a new character array containing the characters from this string.
  */
-public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
+@kotlin.internal.InlineOnly
+public inline fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
 
 /**
  * Copies characters from this string into the [destination] character array and returns that array.
@@ -101,7 +108,8 @@ public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharAr
  * @param startIndex the start offset (inclusive) of the substring to copy.
  * @param endIndex the end offset (exclusive) of the substring to copy.
  */
-public fun String.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = length): CharArray {
+@kotlin.internal.InlineOnly
+public inline fun String.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = length): CharArray {
     (this as java.lang.String).getChars(startIndex, endIndex, destination, destinationOffset)
     return destination
 }
@@ -110,13 +118,15 @@ public fun String.toCharArray(destination: CharArray, destinationOffset: Int = 0
  * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
  * using the default locale.
  */
-public fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
+@kotlin.internal.InlineOnly
+public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
 /**
  * Uses this string as a format string and returns a string obtained by substituting the specified arguments, using
  * the specified locale.
  */
-public fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
+@kotlin.internal.InlineOnly
+public inline fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
 
 /**
  * Splits this char sequence around matches of the given regular expression.
@@ -133,12 +143,14 @@ public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
 /**
  * Returns a substring of this string starting with the specified index.
  */
-public fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
+@kotlin.internal.InlineOnly
+public inline fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
 
 /**
  * Returns the substring of this string starting and ending at the specified indices.
  */
-public fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
+@kotlin.internal.InlineOnly
+public inline fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
@@ -193,7 +205,8 @@ public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: Strin
  * @param length the number of bytes to be converted.
  * @param charset the character set to use.
  */
-public fun String(bytes: ByteArray, offset: Int, length: Int, charset: Charset): String = java.lang.String(bytes, offset, length, charset) as String
+@kotlin.internal.InlineOnly
+public inline fun String(bytes: ByteArray, offset: Int, length: Int, charset: Charset): String = java.lang.String(bytes, offset, length, charset) as String
 
 /**
  * Converts the data from the specified array of bytes to characters using the specified character set
@@ -206,7 +219,8 @@ public fun String(bytes: ByteArray, charsetName: String): String = java.lang.Str
  * Converts the data from the specified array of bytes to characters using the specified character set
  * and returns the conversion result as a string.
  */
-public fun String(bytes: ByteArray, charset: Charset): String = java.lang.String(bytes, charset) as String
+@kotlin.internal.InlineOnly
+public inline fun String(bytes: ByteArray, charset: Charset): String = java.lang.String(bytes, charset) as String
 
 /**
  * Converts the data from a portion of the specified array of bytes to characters using the UTF-8 character set
@@ -216,53 +230,63 @@ public fun String(bytes: ByteArray, charset: Charset): String = java.lang.String
  * @param offset the offset in the array of the data to be converted.
  * @param length the number of bytes to be converted.
  */
-public fun String(bytes: ByteArray, offset: Int, length: Int): String = java.lang.String(bytes, offset, length, Charsets.UTF_8) as String
+@kotlin.internal.InlineOnly
+public inline fun String(bytes: ByteArray, offset: Int, length: Int): String = java.lang.String(bytes, offset, length, Charsets.UTF_8) as String
 
 /**
  * Converts the data from the specified array of bytes to characters using the UTF-8 character set
  * and returns the conversion result as a string.
  */
-public fun String(bytes: ByteArray): String = java.lang.String(bytes, Charsets.UTF_8) as String
+@kotlin.internal.InlineOnly
+public inline fun String(bytes: ByteArray): String = java.lang.String(bytes, Charsets.UTF_8) as String
 
 /**
  * Converts the characters in the specified array to a string.
  */
-public fun String(chars: CharArray): String = java.lang.String(chars) as String
+@kotlin.internal.InlineOnly
+public inline fun String(chars: CharArray): String = java.lang.String(chars) as String
 
 /**
  * Converts the characters from a portion of the specified array to a string.
  */
-public fun String(chars: CharArray, offset: Int, length: Int): String = java.lang.String(chars, offset, length) as String
+@kotlin.internal.InlineOnly
+public inline fun String(chars: CharArray, offset: Int, length: Int): String = java.lang.String(chars, offset, length) as String
 
 /**
  * Converts the code points from a portion of the specified Unicode code point array to a string.
  */
-public fun String(codePoints: IntArray, offset: Int, length: Int): String = java.lang.String(codePoints, offset, length) as String
+@kotlin.internal.InlineOnly
+public inline fun String(codePoints: IntArray, offset: Int, length: Int): String = java.lang.String(codePoints, offset, length) as String
 
 /**
  * Converts the contents of the specified StringBuffer to a string.
  */
-public fun String(stringBuffer: java.lang.StringBuffer): String = java.lang.String(stringBuffer) as String
+@kotlin.internal.InlineOnly
+public inline fun String(stringBuffer: java.lang.StringBuffer): String = java.lang.String(stringBuffer) as String
 
 /**
  * Converts the contents of the specified StringBuilder to a string.
  */
-public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.String(stringBuilder) as String
+@kotlin.internal.InlineOnly
+public inline fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.String(stringBuilder) as String
 
 /**
  * Returns the character (Unicode code point) at the specified index.
  */
-public fun String.codePointAt(index: Int): Int = (this as java.lang.String).codePointAt(index)
+@kotlin.internal.InlineOnly
+public inline fun String.codePointAt(index: Int): Int = (this as java.lang.String).codePointAt(index)
 
 /**
  * Returns the character (Unicode code point) before the specified index.
  */
-public fun String.codePointBefore(index: Int): Int = (this as java.lang.String).codePointBefore(index)
+@kotlin.internal.InlineOnly
+public inline fun String.codePointBefore(index: Int): Int = (this as java.lang.String).codePointBefore(index)
 
 /**
  * Returns the number of Unicode code points in the specified text range of this String.
  */
-public fun String.codePointCount(beginIndex: Int, endIndex: Int): Int = (this as java.lang.String).codePointCount(beginIndex, endIndex)
+@kotlin.internal.InlineOnly
+public inline fun String.codePointCount(beginIndex: Int, endIndex: Int): Int = (this as java.lang.String).codePointCount(beginIndex, endIndex)
 
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
@@ -283,17 +307,20 @@ public fun String.concat(other: String): String = (this as java.lang.String).con
 /**
  * Returns `true` if this string is equal to the contents of the specified CharSequence.
  */
-public fun String.contentEquals(charSequence: CharSequence): Boolean = (this as java.lang.String).contentEquals(charSequence)
+@kotlin.internal.InlineOnly
+public inline fun String.contentEquals(charSequence: CharSequence): Boolean = (this as java.lang.String).contentEquals(charSequence)
 
 /**
  * Returns `true` if this string is equal to the contents of the specified StringBuffer.
  */
-public fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as java.lang.String).contentEquals(stringBuilder)
+@kotlin.internal.InlineOnly
+public inline fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as java.lang.String).contentEquals(stringBuilder)
 
 /**
  * Returns a canonical representation for this string object.
  */
-public fun String.intern(): String = (this as java.lang.String).intern()
+@kotlin.internal.InlineOnly
+public inline fun String.intern(): String = (this as java.lang.String).intern()
 
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
@@ -303,7 +330,8 @@ public fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[i
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
  */
-public fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset)
+@kotlin.internal.InlineOnly
+public inline fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset)
 
 /**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
@@ -335,53 +363,62 @@ public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int
 /**
  * Returns a copy of this string converted to lower case using the rules of the specified locale.
  */
-public fun String.toLowerCase(locale: java.util.Locale): String = (this as java.lang.String).toLowerCase(locale)
+@kotlin.internal.InlineOnly
+public inline fun String.toLowerCase(locale: java.util.Locale): String = (this as java.lang.String).toLowerCase(locale)
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the specified locale.
  */
-public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
+@kotlin.internal.InlineOnly
+public inline fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
 
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
-public fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
+@kotlin.internal.InlineOnly
+public inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
+@kotlin.internal.InlineOnly
+public inline fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
 
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toShort(): Short = java.lang.Short.parseShort(this)
+@kotlin.internal.InlineOnly
+public inline fun String.toShort(): Short = java.lang.Short.parseShort(this)
 
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toInt(): Int = java.lang.Integer.parseInt(this)
+@kotlin.internal.InlineOnly
+public inline fun String.toInt(): Int = java.lang.Integer.parseInt(this)
 
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toLong(): Long = java.lang.Long.parseLong(this)
+@kotlin.internal.InlineOnly
+public inline fun String.toLong(): Long = java.lang.Long.parseLong(this)
 
 /**
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
+@kotlin.internal.InlineOnly
+public inline fun String.toFloat(): Float = java.lang.Float.parseFloat(this)
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
+@kotlin.internal.InlineOnly
+public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
@@ -392,7 +429,8 @@ public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.S
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
  */
-public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
+@kotlin.internal.InlineOnly
+public inline fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
 
 
@@ -401,7 +439,8 @@ public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (t
  * with the specified [flags] from [Pattern] or'd together
  * so that strings can be split or matched on.
  */
-public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
+@kotlin.internal.InlineOnly
+public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
 

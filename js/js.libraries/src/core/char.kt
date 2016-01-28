@@ -22,3 +22,13 @@ public fun Char.isWhitespace(): Boolean = toString().matches("[\\s\\xA0]")
 @native public fun Char.toLowerCase(): Char = noImpl
 
 @native public fun Char.toUpperCase(): Char = noImpl
+
+/**
+ * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
+ */
+public fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROGATE..Char.MAX_HIGH_SURROGATE
+
+/**
+ * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
+ */
+public fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGATE..Char.MAX_LOW_SURROGATE
