@@ -59,6 +59,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     }
     abstract protected fun populateTargetSpecificArgs(args: T)
 
+    var experimentalIncremental: Boolean = false
     var kotlinOptions: T = createBlankArgs()
     var kotlinDestinationDir: File? = destinationDir
     var compilerCalled: Boolean = false
@@ -220,10 +221,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
 
-        // TODO: consider other ways to pass incremental flag to compiler/builder
-        System.setProperty("kotlin.incremental.compilation", "true")
-        // TODO: experimental should be removed as soon as it becomes standard
-        System.setProperty("kotlin.incremental.compilation.experimental", "true")
+        if (experimentalIncremental) {
+            // TODO: consider other ways to pass incremental flag to compiler/builder
+            System.setProperty("kotlin.incremental.compilation", "true")
+            // TODO: experimental should be removed as soon as it becomes standard
+            System.setProperty("kotlin.incremental.compilation.experimental", "true")
+        }
 
         val targetType = "java-production"
         val moduleName = args.moduleName
@@ -316,7 +319,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
         fun calculateSourcesToCompile(): Pair<List<File>, Boolean> {
 
-            if (!isIncrementalRequested ||
+            if (!experimentalIncremental ||
+                    !isIncrementalRequested ||
                     // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
                     isClassPathChanged() ||
                     // so far considering it not incremental TODO: store java files in the cache and extract removed symbols from it here
@@ -384,8 +388,27 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             generatedRelPaths.forEach { File(destinationDir, it).delete() }
         }
 
+        fun processCompilerExitCode(exitCode: ExitCode) {
+            if (exitCode != ExitCode.OK) {
+                cleanupOnError()
+            }
+            when (exitCode) {
+                ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
+                ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
+                ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
+                ExitCode.OK -> logger.kotlinInfo("Compilation succeeded")
+            }
+        }
+
         fun outputRelativePath(f: File) = f.toRelativeString(outputDir)
 
+
+        if (!experimentalIncremental) {
+            anyClassesCompiled = true
+            processCompilerExitCode(compileNotIncremental(sources, outputDir, args))
+            return
+        }
+        logger.warn("Using experimental kotlin incremental compilation")
 
         anyClassesCompiled = false
 
@@ -425,23 +448,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             allCachesVersions().forEach { it.saveIfNeeded() }
 
-            when (exitCode) {
-                ExitCode.COMPILATION_ERROR -> {
-                    cleanupOnError()
-                    throw GradleException("Compilation error. See log for more details")
-                }
-                ExitCode.INTERNAL_ERROR -> {
-                    cleanupOnError()
-                    throw GradleException("Internal compiler error. See log for more details")
-                }
-                ExitCode.SCRIPT_EXECUTION_ERROR -> {
-                    cleanupOnError()
-                    throw GradleException("Script execution error. See log for more details")
-                }
-                ExitCode.OK -> {
-                    logger.kotlinInfo("Compilation succeeded")
-                }
-            }
+            processCompilerExitCode(exitCode)
 
             if (!isIncrementalDecided) break;
 
@@ -520,6 +527,20 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                         representativeTarget = targets.first(),
                         getSources = { sourcesToCompile },
                         getOutputDir = { outputDir }))
+    }
+
+    private fun compileNotIncremental(sourcesToCompile: List<File>,
+                                      outputDir: File,
+                                      args: K2JVMCompilerArguments)
+            : ExitCode
+    {
+        // show kotlin compiler where to look for java source files
+        args.freeArgs = (sourcesToCompile.map { it.absolutePath } + getJavaSourceRoots().map { it.absolutePath }).distinct()
+        args.destination = outputDir.absolutePath
+
+        logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
+
+        return compiler.exec(GradleMessageCollector(logger), Services.EMPTY, args)
     }
 
 

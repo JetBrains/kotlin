@@ -50,6 +50,10 @@ sourceSets {
   }
 }
 
+compileKotlin {
+  experimentalIncremental = true
+}
+
 repositories {
   maven {
      url 'file://' + pathToKotlinPlugin
