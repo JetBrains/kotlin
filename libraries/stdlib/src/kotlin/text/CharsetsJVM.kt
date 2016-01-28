@@ -8,7 +8,8 @@ import java.nio.charset.*
  *
  * @throws UnsupportedCharsetException If the specified named charset is not available.
  */
-public fun charset(charsetName: String): Charset = Charset.forName(charsetName)
+@kotlin.internal.InlineOnly
+public inline fun charset(charsetName: String): Charset = Charset.forName(charsetName)
 
 /**
  * Constant definitions for the standard [charsets](Charset). These
