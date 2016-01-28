@@ -146,6 +146,8 @@ object ModifierCheckerCore {
         // private is compatible with open / abstract only for classes
         result += compatibilityForClassesRegister(PRIVATE_KEYWORD, OPEN_KEYWORD)
         result += compatibilityForClassesRegister(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
+
+        result += incompatibilityRegister(CROSSINLINE_KEYWORD, NOINLINE_KEYWORD)
         return result
     }
 
