@@ -223,6 +223,15 @@ class CollectionTest {
             list.reduceIndexed { index, a, b -> if (index == 3) a else a + b }
         }
 
+        expect(5) {
+            listOf(2, 3).reduceIndexed { index, acc: Number, e ->
+                assertEquals(1, index)
+                assertEquals(2, acc)
+                assertEquals(3, e)
+                acc.toInt() + e
+            }
+        }
+
         assertTrue(assertFails {
             arrayListOf<Int>().reduceIndexed { index, a, b -> a + b }
         } is UnsupportedOperationException)
@@ -232,6 +241,15 @@ class CollectionTest {
         expect("234") {
             val list = listOf("1", "2", "3", "4")
             list.reduceRightIndexed { index, a, b -> if (index == 0) b else a + b }
+        }
+
+        expect(1) {
+            listOf(2, 3).reduceRightIndexed { index, e, acc: Number ->
+                assertEquals(0, index)
+                assertEquals(3, acc)
+                assertEquals(2, e)
+                acc.toInt() - e
+            }
         }
 
         assertTrue(assertFails {
