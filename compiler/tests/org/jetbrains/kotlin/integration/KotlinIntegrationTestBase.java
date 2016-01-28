@@ -30,7 +30,6 @@ import kotlin.text.Regex;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.CliBaseTest;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -85,7 +84,6 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, getKotlinProjectHome(), "[KotlinProjectHome]");
         content = content.replaceAll(Pattern.quote(KotlinVersion.VERSION), "[KotlinVersion]");
         content = StringUtil.convertLineSeparators(content);
-        content = CliBaseTest.removePerfOutput(content);
         return content;
     }
 
@@ -110,7 +108,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         int exitCode = handler.getProcess().exitValue();
 
         appendIfNotEmpty(executionLog, "OUT:\n", outContent.toString());
-        appendIfNotEmpty(executionLog, "\nERR:\n", CliBaseTest.removePerfOutput(errContent.toString()));
+        appendIfNotEmpty(executionLog, "\nERR:\n", errContent.toString());
 
         executionLog.append("\nReturn code: ").append(exitCode).append("\n");
 

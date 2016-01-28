@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.cli;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.text.Charsets;
 import kotlin.Pair;
 import kotlin.io.FilesKt;
+import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -89,18 +88,7 @@ public class CliBaseTest {
                 .replace("\\", "/")
                 .replace(KotlinVersion.VERSION, "$VERSION$");
 
-        return removePerfOutput(normalizedOutputWithoutExitCode) + exitCode;
-    }
-
-    public static String removePerfOutput(String output) {
-        String[] lines = StringUtil.splitByLinesKeepSeparators(output);
-        StringBuilder result = new StringBuilder();
-        for (String line : lines) {
-            if (!line.contains("PERF:")) {
-                result.append(line);
-            }
-        }
-        return result.toString();
+        return normalizedOutputWithoutExitCode + exitCode;
     }
 
     private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
