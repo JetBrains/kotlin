@@ -1168,6 +1168,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("listOfGeneric.kt")
+        public void testListOfGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/listOfGeneric.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("withChangesToNull.kt")
         public void testWithChangesToNull() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/withChangesToNull.kt");
