@@ -19,15 +19,13 @@ package org.jetbrains.kotlin.resolve.calls.results
 import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -42,7 +40,8 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
     fun <D : CallableDescriptor> findMaximallySpecific(
             candidates: Set<MutableResolvedCall<D>>,
             checkArgumentsMode: CheckArgumentTypesMode,
-            discriminateGenerics: Boolean
+            discriminateGenerics: Boolean,
+            isDebuggerContext: Boolean
     ): MutableResolvedCall<D>? =
             if (candidates.size <= 1)
                 candidates.firstOrNull()
@@ -56,7 +55,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
                     }.singleOrNull()
 
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
-                    findMaximallySpecificCall(candidates, discriminateGenerics)
+                    findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)
             }
 
     fun <D : CallableDescriptor> findMaximallySpecificVariableAsFunctionCalls(candidates: Set<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> {
@@ -67,7 +66,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
                 throw AssertionError("Regular call among variable-as-function calls: $it")
         }
 
-        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, false) ?: return emptySet()
+        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, false, false) ?: return emptySet()
 
         return candidates.filterTo(newResolvedCallSet<MutableResolvedCall<D>>(2)) {
             it.resultingVariableDescriptor == maxSpecificVariableCall.resultingDescriptor
@@ -76,7 +75,8 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
     private fun <D : CallableDescriptor> findMaximallySpecificCall(
             candidates: Set<MutableResolvedCall<D>>,
-            discriminateGenerics: Boolean
+            discriminateGenerics: Boolean,
+            isDebuggerContext: Boolean
     ): MutableResolvedCall<D>? {
         val filteredCandidates = uniquifyCandidatesSet(candidates)
 
@@ -97,7 +97,10 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             }
         }
 
-        return bestCandidatesByParameterTypes.exactMaxWith { call1, call2 -> isOfNotLessSpecificShape(call1, call2) }?.resolvedCall
+        return bestCandidatesByParameterTypes.exactMaxWith {
+            call1, call2 ->
+            isOfNotLessSpecificShape(call1, call2) && isOfNotLessSpecificVisibilityForDebugger(call1, call2, isDebuggerContext)
+        }?.resolvedCall
     }
 
     private inline fun <C : Any> Collection<C>.exactMaxWith(isNotWorse: (C, C) -> Boolean): C? {
@@ -226,6 +229,22 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
         if (call1.parametersWithDefaultValuesCount > call2.parametersWithDefaultValuesCount) {
             return false
+        }
+
+        return true
+    }
+
+    private fun <D: CallableDescriptor, K> isOfNotLessSpecificVisibilityForDebugger(
+            call1: CandidateCallWithArgumentMapping<D, K>,
+            call2: CandidateCallWithArgumentMapping<D, K>,
+            isDebuggerContext: Boolean
+    ): Boolean {
+        if (isDebuggerContext) {
+            val isMoreVisible1 = Visibilities.compare(
+                    call1.resolvedCall.resultingDescriptor.visibility,
+                    call2.resolvedCall.resultingDescriptor.visibility
+            )
+            if (isMoreVisible1 != null && isMoreVisible1 < 0) return false
         }
 
         return true
