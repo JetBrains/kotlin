@@ -99,7 +99,12 @@ class PlatformStaticAnnotationChecker : DeclarationChecker {
 }
 
 class JvmNameAnnotationChecker : DeclarationChecker {
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+    override fun check(
+            declaration: KtDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
         val platformNameAnnotation = DescriptorUtils.getJvmNameAnnotation(descriptor)
         if (platformNameAnnotation != null) {
             checkDeclaration(descriptor, platformNameAnnotation, diagnosticHolder)
