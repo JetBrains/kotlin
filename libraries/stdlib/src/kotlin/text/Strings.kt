@@ -634,7 +634,7 @@ public inline fun CharSequence.replace(regex: Regex, replacement: String): Strin
  * replacement for that match.
  */
 @kotlin.internal.InlineOnly
-public inline fun CharSequence.replace(regex: Regex, transform: (MatchResult) -> CharSequence): String = regex.replace(this, transform)
+public inline fun CharSequence.replace(regex: Regex, noinline transform: (MatchResult) -> CharSequence): String = regex.replace(this, transform)
 
 /**
  * Replaces the first occurrence of the given regular expression [regex] in this char sequence with specified [replacement] expression.
