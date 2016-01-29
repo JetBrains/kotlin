@@ -55,6 +55,14 @@ enum class PrimitiveType {
 fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
 fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 
+enum class Inline {
+    No,
+    Yes,
+    Only;
+
+    fun isInline() = this != No
+}
+
 data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
 val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 
@@ -92,6 +100,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     class DocProperty() : FamilyProperty<String>()
     operator fun DocProperty.invoke(vararg keys: Family, valueBuilder: DocExtensions.(Family) -> String) = set(keys.asList(), { f -> valueBuilder(DocExtensions, f) })
 
+    class InlineProperty() : FamilyProperty<Inline>()
+    operator fun InlineProperty.invoke(vararg keys: Family) = set(keys.asList(), { Inline.Yes })
+    operator fun InlineProperty.invoke(value: Boolean, vararg keys: Family) = set(keys.asList(), { if (value) Inline.Yes else Inline.No })
+
+
     data class TypeParameter(val original: String, val name: String, val constraint: TypeRef? = null) {
         constructor(simpleName: String) : this(simpleName, simpleName)
 
@@ -122,7 +135,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val deprecate = DeprecationProperty()
     val doc = DocProperty()
     val platformName = PrimitiveProperty<String>()
-    val inline = FamilyProperty<Boolean>()
+    val inline = InlineProperty()
     val jvmOnly = FamilyProperty<Boolean>()
     val typeParams = ArrayList<String>()
     val returns = FamilyProperty<String>()
@@ -383,8 +396,12 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
         annotations[f]?.let { builder.append(it).append('\n') }
 
+        if (inline[f] == Inline.Only) {
+            builder.append("@kotlin.internal.InlineOnly").append('\n')
+        }
+
         builder.append("public ")
-        if (inline[f] == true)
+        if (inline[f]?.isInline() == true)
             builder.append("inline ")
         if (infix[f] == true)
             builder.append("infix ")
