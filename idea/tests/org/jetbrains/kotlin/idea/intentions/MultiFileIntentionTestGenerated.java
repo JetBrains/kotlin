@@ -101,6 +101,36 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         doTest(fileName);
     }
 
+    @TestMetadata("moveOutOfCompanion/moveClass/moveClass.test")
+    public void testMoveOutOfCompanion_moveClass_MoveClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveOutOfCompanion/moveClass/moveClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveToCompanion/moveFunction/moveFunction.test")
+    public void testMoveToCompanion_moveFunction_MoveFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveToCompanion/moveFunction/moveFunction.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveToCompanion/moveInnerClass/moveInnerClass.test")
+    public void testMoveToCompanion_moveInnerClass_MoveInnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveToCompanion/moveInnerClass/moveInnerClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveToCompanion/moveNonInnerClass/moveNonInnerClass.test")
+    public void testMoveToCompanion_moveNonInnerClass_MoveNonInnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveToCompanion/moveNonInnerClass/moveNonInnerClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveToCompanion/moveProperty/moveProperty.test")
+    public void testMoveToCompanion_moveProperty_MoveProperty() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveToCompanion/moveProperty/moveProperty.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("objectLiteralToLambda/objectLiteralToLambda.test")
     public void testObjectLiteralToLambda_ObjectLiteralToLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/objectLiteralToLambda/objectLiteralToLambda.test");

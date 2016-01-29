@@ -25,6 +25,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.BaseRefactoringProcessor;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Convertor;
@@ -189,6 +190,9 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
         }
         catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
             assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.getMessages(), ", "));
+        }
+        catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
+            assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
         }
     }
 

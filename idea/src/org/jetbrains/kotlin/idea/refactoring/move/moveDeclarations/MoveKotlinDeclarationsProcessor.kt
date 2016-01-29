@@ -318,10 +318,10 @@ class MoveKotlinDeclarationsProcessor(
             collectUsages(kotlinToLightElements, usages)
             checkVisibilityInUsages(usages)
             checkVisibilityInDeclarations()
-            descriptor.delegate.collectConflicts(usages, conflicts)
+            descriptor.delegate.collectConflicts(descriptor, usages, conflicts)
         }
 
-        descriptor.delegate.collectConflicts(usagesToProcessBeforeMove, conflicts)
+        descriptor.delegate.collectConflicts(descriptor, usagesToProcessBeforeMove, conflicts)
 
         return UsageViewUtil.removeDuplicatedUsages(usages.toTypedArray())
     }
