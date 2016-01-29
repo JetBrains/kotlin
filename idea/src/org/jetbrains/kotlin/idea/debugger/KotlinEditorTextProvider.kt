@@ -116,7 +116,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         }
 
         private val NOT_ACCEPTED_AS_CONTEXT_TYPES =
-                arrayOf(KtUserType::class.java, KtImportDirective::class.java, KtPackageDirective::class.java)
+                arrayOf(KtUserType::class.java, KtImportDirective::class.java, KtPackageDirective::class.java, KtValueArgumentName::class.java)
 
         fun isAcceptedAsCodeFragmentContext(element: PsiElement): Boolean {
             return !NOT_ACCEPTED_AS_CONTEXT_TYPES.contains(element.javaClass as Class<*>) &&

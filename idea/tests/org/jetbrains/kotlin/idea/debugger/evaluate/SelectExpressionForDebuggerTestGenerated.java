@@ -121,6 +121,12 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
             doTest(fileName);
         }
 
+        @TestMetadata("nameArgument.kt")
+        public void testNameArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/nameArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("package.kt")
         public void testPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/package.kt");
