@@ -286,13 +286,23 @@ public class ClassFileFactory implements OutputFileCollection {
         @NotNull
         @Override
         public byte[] asByteArray() {
-            return generators.get(relativeClassFilePath).asBytes(builderFactory);
+            try {
+                return generators.get(relativeClassFilePath).asBytes(builderFactory);
+            }
+            catch (RuntimeException e) {
+                throw new RuntimeException("Error generating class file " + this.toString() + ": " + e.getMessage(), e);
+            }
         }
 
         @NotNull
         @Override
         public String asText() {
-            return generators.get(relativeClassFilePath).asText(builderFactory);
+            try {
+                return generators.get(relativeClassFilePath).asText(builderFactory);
+            }
+            catch (RuntimeException e) {
+                throw new RuntimeException("Error generating class file " + this.toString() + ": " + e.getMessage(), e);
+            }
         }
 
         @NotNull
