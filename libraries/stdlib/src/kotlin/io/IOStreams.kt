@@ -41,32 +41,38 @@ public operator fun BufferedInputStream.iterator(): ByteIterator =
 
 
 /** Creates a new byte input stream for the string. */
-public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): ByteArrayInputStream = ByteArrayInputStream(toByteArray(charset))
+@kotlin.internal.InlineOnly
+public inline fun String.byteInputStream(charset: Charset = Charsets.UTF_8): ByteArrayInputStream = ByteArrayInputStream(toByteArray(charset))
 
 /**
  * Creates an input stream for reading data from this byte array.
  */
-public fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInputStream(this)
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInputStream(this)
 
 /**
  * Creates an input stream for reading data from the specified portion of this byte array.
  * @param offset the start offset of the portion of the array to read.
  * @param length the length of the portion of the array to read.
  */
-public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
 /**
  * Creates a buffered input stream wrapping this stream.
  * @param bufferSize the buffer size to use.
  */
-public fun InputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedInputStream
+@kotlin.internal.InlineOnly
+public inline fun InputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedInputStream
         = if (this is BufferedInputStream) this else BufferedInputStream(this, bufferSize)
 
 /** Creates a reader on this input stream using UTF-8 or the specified [charset]. */
-public fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = InputStreamReader(this, charset)
+@kotlin.internal.InlineOnly
+public inline fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = InputStreamReader(this, charset)
 
 /** Creates a buffered reader on this input stream using UTF-8 or the specified [charset]. */
-public fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8): BufferedReader = reader(charset).buffered()
+@kotlin.internal.InlineOnly
+public inline fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8): BufferedReader = reader(charset).buffered()
 
 /** Creates a reader on this input stream using the specified [charset]. */
 @Deprecated("Use InputStream.reader(Charset) instead.", ReplaceWith("this.reader(charset(charset))"), level = DeprecationLevel.ERROR)
@@ -80,14 +86,17 @@ public fun InputStream.bufferedReader(charset: String): BufferedReader = reader(
  * Creates a buffered output stream wrapping this stream.
  * @param bufferSize the buffer size to use.
  */
-public fun OutputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedOutputStream
+@kotlin.internal.InlineOnly
+public inline fun OutputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedOutputStream
         = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
 /** Creates a writer on this output stream using UTF-8 or the specified [charset]. */
-public fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = OutputStreamWriter(this, charset)
+@kotlin.internal.InlineOnly
+public inline fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = OutputStreamWriter(this, charset)
 
 /** Creates a buffered writer on this output stream using UTF-8 or the specified [charset]. */
-public fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
+@kotlin.internal.InlineOnly
+public inline fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
 
 /** Creates a writer on this output stream using the specified [charset]. */
 @Deprecated("Use OutputStream.writer(Charset) instead.", ReplaceWith("this.writer(charset(charset))"), level = DeprecationLevel.ERROR)
