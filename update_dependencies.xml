@@ -2,7 +2,7 @@
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
     <property name="ideaVersion" value="143.2072"/>
-    <property name="idea.kotlin.branch" value="rc"/>
+    <property name="idea.kotlin.branch" value="rr/stdlib/inlineOnly"/>
 
 
     <property name="kotlin.bootstrap.branch" value="rc"/>
@@ -410,6 +410,8 @@
                     <equals arg1="${markdown.abi.incompatible}" arg2="0"/>
                 </not>
             </condition>
+            <!-- remove after bootstrapping markdown -->
+            <property name="markdown.need.recompile" value="true" />
 
             <sequential if:set="markdown.need.recompile">
                 <echo message="Recompiling intellij-markdown manually"/>
