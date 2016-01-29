@@ -559,7 +559,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 val call = (it.element as? KtExpression)?.let { KtPsiUtil.getParentCallIfPresent(it) }
                 if (call != null) {
                     val resolvedCall = call.getResolvedCall(context)
-                    val argument = resolvedCall?.valueArguments?.get(parameter)
+                    val argument = resolvedCall?.valueArguments?.entries?.firstOrNull { it.key.original == parameter }?.value
                     if (argument != null) {
                         val argumentExpression = getArgumentExpression(argument.arguments.first())
                         if (argumentExpression is KtFunction) {
