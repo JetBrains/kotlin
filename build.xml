@@ -312,6 +312,7 @@
                 <arg value="-output"/>
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
+                <arg value="-version"/>
                 <arg value="-meta-info"/>
                 <arg value="-kjsm"/>
                 <arg line="-main noCall"/>
@@ -776,6 +777,7 @@
                 <arg value="-d"/>
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
+                <arg value="-version"/>
                 <arg line="@{additionalOptions}"/>
                 <arg value="-classpath"/>
                 <arg value="${toString:classpath.path}"/>
@@ -960,6 +962,7 @@
             </jarjar>
 
             <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
+                <compilerarg value="-version"/>
                 <compilerarg value="-script"/>
                 <compilerarg value="kotlin/jvm/internal/.*|kotlin/Metadata"/> <!-- Annotations to strip -->
                 <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
