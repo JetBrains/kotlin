@@ -1,0 +1,18 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Any?, /*1*/ y: C<*>): kotlin.Unit
+
+public final class C</*0*/ R> {
+    public constructor C</*0*/ R>()
+    public final fun bindTo(/*0*/ property: Inv<R>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ E> {
+    public constructor Inv</*0*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

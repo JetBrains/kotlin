@@ -94,6 +94,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private ConstraintSystem constraintSystem = null;
     private Boolean hasInferredReturnType = null;
     private boolean completed = false;
+    private KotlinType smartCastDispatchReceiverType = null;
 
     private ResolvedCallImpl(
             @NotNull ResolutionCandidate<D> candidate,
@@ -369,5 +370,16 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Nullable
     public TypeSubstitutor getKnownTypeParametersSubstitutor() {
         return knownTypeParametersSubstitutor;
+    }
+
+    @Override
+    public void setSmartCastDispatchReceiverType(@NotNull KotlinType smartCastDispatchReceiverType) {
+        this.smartCastDispatchReceiverType = smartCastDispatchReceiverType;
+    }
+
+    @Override
+    @Nullable
+    public KotlinType getSmartCastDispatchReceiverType() {
+        return smartCastDispatchReceiverType;
     }
 }

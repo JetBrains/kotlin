@@ -85,4 +85,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     DataFlowInfoForArguments getDataFlowInfoForArguments();
 
     boolean isSafeCall();
+
+    @Nullable
+    KotlinType getSmartCastDispatchReceiverType();
 }

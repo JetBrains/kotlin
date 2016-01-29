@@ -436,7 +436,7 @@ class CandidateResolver(
     }
 
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkReceiver(
-            candidateCall: ResolvedCall<D>,
+            candidateCall: MutableResolvedCall<D>,
             receiverParameter: ReceiverParameterDescriptor?,
             receiverArgument: ReceiverValue?,
             isExplicitReceiver: Boolean,
@@ -497,9 +497,12 @@ class CandidateResolver(
             if (smartCastResult == null) {
                 reportUnsafeCall = true
             }
-            else if (!smartCastResult.isCorrect) {
-                // Error about unstable smart cast reported within checkAndRecordPossibleCast
-                return OTHER_ERROR
+            else {
+                candidateCall.setSmartCastDispatchReceiverType(smartCastResult.resultType)
+                if (!smartCastResult.isCorrect) {
+                    // Error about unstable smart cast reported within checkAndRecordPossibleCast
+                    return OTHER_ERROR
+                }
             }
         }
 
