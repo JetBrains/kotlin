@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 private val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
 
@@ -69,5 +70,8 @@ private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly"
 
 fun MemberDescriptor.isInlineOnly(): Boolean {
     if (this !is FunctionDescriptor) return false
-    return typeParameters.any { it.isReified } || annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
+    return typeParameters.any { it.isReified } ||
+           annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) && InlineUtil.isInline(this).apply {
+               assert(this) { "Function is not inline: ${this@isInlineOnly}"; }
+           }
 }
