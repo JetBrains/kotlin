@@ -106,6 +106,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"));
         }
 
+        @TestMetadata("androidIllegalIdentifiers/inspectionData/inspections.test")
+        public void testAndroidIllegalIdentifiers_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/androidIllegalIdentifiers/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("conflictingExtensionProperty/inspectionData/inspections.test")
         public void testConflictingExtensionProperty_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/conflictingExtensionProperty/inspectionData/inspections.test");
