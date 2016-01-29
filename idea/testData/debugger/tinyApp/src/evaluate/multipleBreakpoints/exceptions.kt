@@ -4,12 +4,12 @@ import java.util.ArrayList
 
 fun throwException() {
     // EXPRESSION: fail()
-    // RESULT: Exception occurred in target VM: Method threw 'java.lang.UnsupportedOperationException' exception.
+    // RESULT: Method threw 'java.lang.UnsupportedOperationException' exception.
     //Breakpoint!
     val a = 1
 
     // EXPRESSION: fail()
-    // RESULT: Exception occurred in target VM: Method threw 'java.lang.UnsupportedOperationException' exception.
+    // RESULT: Method threw 'java.lang.UnsupportedOperationException' exception.
     //Breakpoint!
     val b = 1
 }

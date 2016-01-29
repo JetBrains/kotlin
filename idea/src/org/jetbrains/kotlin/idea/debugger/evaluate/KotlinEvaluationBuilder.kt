@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.engine.evaluation.EvaluateException
@@ -37,11 +36,10 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.ExceptionUtil
-import com.sun.jdi.InvocationException
-import com.sun.jdi.ObjectReference
-import com.sun.jdi.VMDisconnectedException
+import com.sun.jdi.*
 import com.sun.jdi.request.EventRequest
 import org.jetbrains.eval4j.*
+import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.asValue
@@ -56,12 +54,12 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
-import org.jetbrains.kotlin.idea.refactoring.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
@@ -77,6 +75,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
@@ -151,10 +150,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             LOG.debug(e)
             exception(e)
         }
-        catch(e: VMDisconnectedException) {
-            exception(DebuggerBundle.message("error.vm.disconnected"))
-        }
         catch (e: Exception) {
+            val isSpecialException = isSpecialException(e)
+            if (isSpecialException) {
+                exception(e)
+            }
+
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${sourcePosition.line}"))
@@ -165,6 +166,20 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
             val cause = if (e.message != null) ": ${e.message}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")
+        }
+    }
+
+    private fun isSpecialException(th: Throwable): Boolean {
+        return when (th) {
+            is ClassNotPreparedException,
+            is InternalException,
+            is AbsentInformationException,
+            is ClassNotLoadedException,
+            is IncompatibleThreadStateException,
+            is InconsistentDebugInfoException,
+            is ObjectCollectedException,
+            is VMDisconnectedException -> true
+            else -> false
         }
     }
 
@@ -424,13 +439,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
         private fun exception(msg: String) = throw EvaluateExceptionUtil.createEvaluateException(msg)
 
-        private fun exception(e: Throwable): Nothing {
-            val message = e.message
-            if (message != null) {
-                throw EvaluateExceptionUtil.createEvaluateException(message, e)
-            }
-            throw EvaluateExceptionUtil.createEvaluateException(e)
-        }
+        private fun exception(e: Throwable) = throw EvaluateExceptionUtil.createEvaluateException(e)
 
         // contextFile must be NotNull when analyzeInlineFunctions = true
         private fun KtFile.checkForErrors(analyzeInlineFunctions: Boolean = false, contextFile: KtFile? = null): ExtendedAnalysisResult {
@@ -447,12 +456,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val analysisResult = resolutionFacade.analyzeFullyAndGetResult(filesToAnalyze)
 
                 if (analysisResult.isError()) {
-                    throw EvaluateExceptionUtil.createEvaluateException(analysisResult.error)
+                    exception(analysisResult.error)
                 }
 
                 val bindingContext = analysisResult.bindingContext
                 bindingContext.diagnostics.firstOrNull { it.severity == Severity.ERROR }?.let {
-                    throw EvaluateExceptionUtil.createEvaluateException(DefaultErrorMessages.render(it))
+                    exception(DefaultErrorMessages.render(it))
                 }
 
                 if (analyzeInlineFunctions) {
