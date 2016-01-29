@@ -2,13 +2,10 @@
 @file:JvmName("ThreadsKt")
 package kotlin.concurrent
 
-import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Future
-
 /**
  * Returns the current thread.
  */
+@Deprecated("Use Thread.currentThread()", ReplaceWith("Thread.currentThread()"), level = DeprecationLevel.ERROR)
 public val currentThread: Thread
     get() = Thread.currentThread()
 
