@@ -2877,6 +2877,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt10805.kt")
+            public void testKt10805() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt10805.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1156.kt")
             public void testKt1156() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt1156.kt");
@@ -13092,6 +13098,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ea76264.kt")
+            public void testEa76264() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ea76264.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ErrorsOnIbjectExpressionsAsParameters.kt")
             public void testErrorsOnIbjectExpressionsAsParameters() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ErrorsOnIbjectExpressionsAsParameters.kt");
@@ -13233,6 +13245,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt10633.kt")
             public void testKt10633() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt10633.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt10824.kt")
+            public void testKt10824() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt10824.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt10843.kt")
+            public void testKt10843() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt10843.kt");
                 doTest(fileName);
             }
 

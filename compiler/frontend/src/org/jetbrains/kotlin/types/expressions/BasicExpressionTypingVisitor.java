@@ -940,6 +940,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         if (ArgumentTypeResolver.isFunctionLiteralArgument(baseExpression, context)) {
             context.trace.report(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION.on(operationSign));
+            if (baseTypeInfo == null) {
+                return TypeInfoFactoryKt.createTypeInfo(ErrorUtils.createErrorType("Unresolved lambda expression"), context);
+            }
             return baseTypeInfo;
         }
         assert baseTypeInfo != null : "Base expression was not processed: " + expression;

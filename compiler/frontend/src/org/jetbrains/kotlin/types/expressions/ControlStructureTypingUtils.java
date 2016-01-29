@@ -187,7 +187,7 @@ public class ControlStructureTypingUtils {
 
             @Override
             public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
-                //todo
+                dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
             }
 
             @NotNull
