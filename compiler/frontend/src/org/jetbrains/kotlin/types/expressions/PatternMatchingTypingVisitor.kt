@@ -19,13 +19,11 @@ package org.jetbrains.kotlin.types.expressions
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean
 import org.jetbrains.kotlin.cfg.WhenChecker
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -81,9 +79,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
         checkSmartCastsInSubjectIfRequired(expression, contextBeforeSubject, subjectType)
 
-        val resolvedCall = resolveSpecialCallForWhen(expression, contextWithExpectedType, contextAfterSubject, subjectDataFlowValue, subjectType)
-
-        val whenReturnType = resolvedCall.resultingDescriptor.returnType
+        val dataFlowInfoForEntries = analyzeConditionsInWhenEntries(expression, contextAfterSubject, subjectDataFlowValue, subjectType)
+        val whenReturnType = inferTypeForWhenExpression(expression, contextWithExpectedType, contextAfterSubject, dataFlowInfoForEntries)
         val whenResultValue = whenReturnType?.let { DataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
 
         val (outputDataFlowInfo, jumpOutPossible) =
@@ -111,20 +108,21 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         return createTypeInfo(resultType, resultDataFlowInfo, jumpOutPossible, contextWithExpectedType.dataFlowInfo)
     }
 
-    private fun resolveSpecialCallForWhen(
+    private fun inferTypeForWhenExpression(
             expression: KtWhenExpression,
             contextWithExpectedType: ExpressionTypingContext,
             contextAfterSubject: ExpressionTypingContext,
-            subjectDataFlowValue: DataFlowValue,
-            subjectType: KotlinType
-    ): ResolvedCall<FunctionDescriptor> {
+            dataFlowInfoForEntries: List<DataFlowInfo>
+    ): KotlinType? {
+        if (expression.entries.all { it.expression == null }) {
+            return components.builtIns.unitType
+        }
+
         val wrappedArgumentExpressions = wrapWhenEntryExpressionsAsSpecialCallArguments(expression)
-        val argumentDataFlowInfos = collectInputDataFlowForWhenEntryExpressions(expression, contextAfterSubject, subjectDataFlowValue, subjectType)
-
         val callForWhen = createCallForSpecialConstruction(expression, expression, wrappedArgumentExpressions)
-        val dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfWhenCall(callForWhen, contextAfterSubject.dataFlowInfo, argumentDataFlowInfos)
+        val dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfWhenCall(callForWhen, contextAfterSubject.dataFlowInfo, dataFlowInfoForEntries)
 
-        return components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
+        val resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 callForWhen, ResolveConstruct.WHEN,
                 object : AbstractList<String>() {
                     override fun get(index: Int): String = "entry$index"
@@ -132,6 +130,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                 },
                 Collections.nCopies(wrappedArgumentExpressions.size, false),
                 contextWithExpectedType, dataFlowInfoForArguments)
+
+        return resolvedCall.resultingDescriptor.returnType
     }
 
     private fun wrapWhenEntryExpressionsAsSpecialCallArguments(expression: KtWhenExpression): List<KtExpression> {
@@ -142,7 +142,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         return wrappedArgumentExpressions
     }
 
-    private fun collectInputDataFlowForWhenEntryExpressions(
+    private fun analyzeConditionsInWhenEntries(
             expression: KtWhenExpression,
             contextAfterSubject: ExpressionTypingContext,
             subjectDataFlowValue: DataFlowValue,

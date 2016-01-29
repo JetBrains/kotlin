@@ -8287,6 +8287,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("emptyWhen.kt")
+        public void testEmptyWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/emptyWhen.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("exhaustiveBoolean.kt")
         public void testExhaustiveBoolean() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exhaustiveBoolean.kt");
