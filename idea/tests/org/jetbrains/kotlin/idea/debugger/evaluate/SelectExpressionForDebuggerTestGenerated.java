@@ -55,6 +55,18 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
             doTest(fileName);
         }
 
+        @TestMetadata("companionObjectCall.kt")
+        public void testCompanionObjectCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/companionObjectCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionObjectCall2.kt")
+        public void testCompanionObjectCall2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/companionObjectCall2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("expressionInPropertyInitializer.kt")
         public void testExpressionInPropertyInitializer() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/expressionInPropertyInitializer.kt");
@@ -64,6 +76,12 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         @TestMetadata("extensionFun.kt")
         public void testExtensionFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/extensionFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fullyQualified.kt")
+        public void testFullyQualified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/fullyQualified.kt");
             doTest(fileName);
         }
 
@@ -109,6 +127,12 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
             doTest(fileName);
         }
 
+        @TestMetadata("javaStaticMehtodCall.kt")
+        public void testJavaStaticMehtodCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/javaStaticMehtodCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("keyword.kt")
         public void testKeyword() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/keyword.kt");
@@ -124,6 +148,12 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
         @TestMetadata("nameArgument.kt")
         public void testNameArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/nameArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectMethodCall.kt")
+        public void testObjectMethodCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/selectExpression/objectMethodCall.kt");
             doTest(fileName);
         }
 
