@@ -16,5 +16,5 @@ JetFile: unexpectedSymbol.kts
                 PsiElement(INTEGER_LITERAL)('1')
             PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
-      PsiErrorElement:unexpected symbol
+      PsiErrorElement:Unexpected symbol
         PsiElement(RBRACE)('}')
