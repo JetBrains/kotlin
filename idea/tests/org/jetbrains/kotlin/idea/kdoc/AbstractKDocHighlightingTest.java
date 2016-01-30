@@ -23,5 +23,6 @@ public abstract class AbstractKDocHighlightingTest extends AbstractHighlightingT
     protected void setUp() {
         super.setUp();
         myFixture.enableInspections(KDocUnresolvedReferenceInspection.class);
+        myFixture.enableInspections(KDocMissingDocumentationInspection.class);
     }
 }
