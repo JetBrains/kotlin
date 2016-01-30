@@ -74,6 +74,7 @@ public inline fun Timer.scheduleAtFixedRate(time: Date, period: Long, crossinlin
 
 
 // exposed as public
+@kotlin.internal.InlineExposed
 internal fun timer(name: String?, daemon: Boolean) = if (name == null) Timer(daemon) else Timer(name, daemon)
 
 /**
