@@ -1319,6 +1319,13 @@
                      level="WARNING"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocMissingDocumentationInspection"
+                     displayName="Missing Documentation for public entities"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"
                      displayName="Package name does not match containing directory"
                      groupName="Kotlin"
