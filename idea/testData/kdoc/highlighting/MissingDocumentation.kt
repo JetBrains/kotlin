@@ -1,6 +1,22 @@
+
+fun <warning descr="Missing Documentation">undocumentedFun</warning>() {}
+
 /**
- * [<warning descr="Cannot resolve symbol 'unresolvedLink'">unresolvedLink</warning>]
+ * Some documentation
  */
-fun foo() {}
+fun documentedFun() {}
+
+private fun privateUndocumentedFun() {}
+
+
+class <warning descr="Missing Documentation">undocumentedClass</warning>() {}
+
+/**
+ * Some documentation
+ */
+class documentedClass() {}
+
+private fun privateUndocumentedClass() {}
+
 
 // NO_CHECK_INFOS

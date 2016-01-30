@@ -20,8 +20,8 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
@@ -29,11 +29,9 @@ class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
 
     private class KDocMissingDocumentationInspection(private val holder: ProblemsHolder): PsiElementVisitor() {
         override fun visitElement(element: PsiElement) {
-            if (element is KDocName) {
-                val ref = element.mainReference
-                if (ref.resolve() == null) {
-                    holder.registerProblem(ref)
-                }
+            if (element is KtNamedDeclaration && !element.isPrivate() && element.docComment == null) {
+                val nameIdentifier = element.nameIdentifier
+                if (nameIdentifier != null) holder.registerProblem(nameIdentifier, "Missing Documentation")
             }
         }
     }
