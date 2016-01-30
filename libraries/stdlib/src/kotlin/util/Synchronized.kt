@@ -8,14 +8,15 @@ import kotlin.jvm.internal.unsafe.*
 /**
  * Executes the given function [block] while holding the monitor of the given object [lock].
  */
-@Suppress("DEPRECATION_ERROR")
 @kotlin.internal.InlineOnly
 public inline fun <R> synchronized(lock: Any, block: () -> R): R {
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
     monitorEnter(lock)
     try {
         return block()
     }
     finally {
+        @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
         monitorExit(lock)
     }
 }

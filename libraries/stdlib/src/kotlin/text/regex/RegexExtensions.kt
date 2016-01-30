@@ -27,4 +27,6 @@ public inline fun String.toRegex(options: Set<RegexOption>): Regex = Regex(this,
  * Provides the way to use Regex API on the instances of [Pattern].
  */
 @JvmVersion
-public fun java.util.regex.Pattern.toRegex(): Regex = Regex(this)
+@kotlin.internal.InlineOnly
+@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+public inline fun java.util.regex.Pattern.toRegex(): Regex = Regex(this)

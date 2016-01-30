@@ -83,6 +83,7 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V>
 
 private val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
+@kotlin.internal.InlineExposed
 internal fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
@@ -277,8 +278,9 @@ public fun <K, V> MutableMap<in K, in V>.putAll(pairs: Sequence<Pair<K,V>>): Uni
  *
  * @sample test.collections.MapTest.mapValues
  */
+@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
 public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
-    return mapValuesTo(LinkedHashMap<K, R>(size), transform)
+    return mapValuesTo(LinkedHashMap<K, R>(mapCapacity(size)), transform)
 }
 
 /**
@@ -287,8 +289,9 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
  *
  * @sample test.collections.MapTest.mapKeys
  */
+@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
 public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
-    return mapKeysTo(LinkedHashMap<R, V>(size), transform)
+    return mapKeysTo(LinkedHashMap<R, V>(mapCapacity(size)), transform)
 }
 
 /**

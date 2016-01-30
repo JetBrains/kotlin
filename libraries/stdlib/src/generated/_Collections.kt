@@ -926,7 +926,8 @@ public fun Collection<Short>.toShortArray(): ShortArray {
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -936,7 +937,8 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
-    val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
 }
 
@@ -945,7 +947,8 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
-    val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -1165,6 +1168,7 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.gr
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
  */
+@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
@@ -1173,6 +1177,7 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
  * Returns a list containing the results of applying the given [transform] function
  * to each element and its index in the original collection.
  */
+@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
@@ -1805,6 +1810,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
  */
 public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
     val arraySize = other.size
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in this) {
@@ -1827,6 +1833,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
+    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))

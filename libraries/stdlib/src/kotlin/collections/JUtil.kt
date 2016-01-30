@@ -135,13 +135,14 @@ public inline fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
 /**
  * Returns the size of this iterable if it is known, or `null` otherwise.
  */
-@kotlin.internal.InlineOnly
-public inline fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) this.size else null
+@kotlin.internal.InlineExposed
+internal fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) this.size else null
 
 /**
  * Returns the size of this iterable if it is known, or the specified [default] value otherwise.
  */
-public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
+@kotlin.internal.InlineExposed
+internal fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
 
 /** Returns true when it's safe to convert this collection to a set without changing contains method behavior. */
 private fun <T> Collection<T>.safeToConvertToSet() = size > 2 && this is ArrayList

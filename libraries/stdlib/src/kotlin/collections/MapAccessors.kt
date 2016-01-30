@@ -12,7 +12,10 @@ import kotlin.internal.Exact
  *
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
-public operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1 = getOrImplicitDefault(property.name) as V1
+@kotlin.internal.InlineOnly
+@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+public inline operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1
+        = getOrImplicitDefault(property.name) as V1
 
 /**
  * Returns the value of the property for the given object from this mutable map.
@@ -23,7 +26,10 @@ public operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, 
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
 @kotlin.jvm.JvmName("getVar")
-public operator fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: KProperty<*>): V = getOrImplicitDefault(property.name) as V
+@kotlin.internal.InlineOnly
+@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+public inline operator fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: KProperty<*>): V
+        = getOrImplicitDefault(property.name) as V
 
 /**
  * Stores the value of the property for the given object in this mutable map.
@@ -31,6 +37,7 @@ public operator fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, prop
  * @param property the metadata for the property, used to get the name of property and store the value associated with that name in the map.
  * @param value the value to set.
  */
-public operator fun <V> MutableMap<in String, in V>.setValue(thisRef: Any?, property: KProperty<*>, value: V) {
+@kotlin.internal.InlineOnly
+public inline operator fun <V> MutableMap<in String, in V>.setValue(thisRef: Any?, property: KProperty<*>, value: V) {
     this.put(property.name, value)
 }

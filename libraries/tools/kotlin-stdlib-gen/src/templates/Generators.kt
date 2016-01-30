@@ -485,6 +485,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
+            @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
             val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
@@ -495,6 +496,7 @@ fun generators(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             val arraySize = size
+            @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
             val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in other) {
@@ -520,6 +522,7 @@ fun generators(): List<GenericFunction> {
         body {
             """
             val arraySize = other.size
+            @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
             val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in this) {
