@@ -1,3 +1,4 @@
+fun print(v: Any?) {}
 
 fun foo() {
     val array = intArrayOf(1,2,3)

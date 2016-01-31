@@ -2,6 +2,8 @@ public fun <T> Iterable<T>.myforEach(operation: (T) -> Unit) : Unit {
     for (element in this) operation(element)
 }
 
+public fun println(v: Any?) {}
+
 fun foo1() {
     (1..5).myforEach {
         println(it)

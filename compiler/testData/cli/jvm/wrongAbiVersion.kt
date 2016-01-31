@@ -3,5 +3,5 @@ import wrong.*
 fun foo(x: ClassWithWrongAbiVersion) {
     bar()
 
-    1.printStackTrace(2, 3)
+    1.replaceIndent(2, 3)
 }
