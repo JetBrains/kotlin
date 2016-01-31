@@ -1320,7 +1320,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocMissingDocumentationInspection"
-                     displayName="Missing KDoc for non-private declarations"
+                     displayName="Missing KDoc comments for public declarations"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
