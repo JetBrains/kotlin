@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -41,23 +40,22 @@ public class ExpectedLoadErrorsUtil {
             @NotNull PackageViewDescriptor packageFromJava,
             @NotNull BindingContext bindingContext
     ) {
-        Map<DeclarationDescriptor, List<String>> expectedErrors = getExpectedLoadErrors(packageFromJava);
-        Map<DeclarationDescriptor, List<String>> actualErrors = getActualLoadErrors(bindingContext);
+        Map<SourceElement, List<String>> expectedErrors = getExpectedLoadErrors(packageFromJava);
+        Map<SourceElement, List<String>> actualErrors = getActualLoadErrors(bindingContext);
 
-        for (DeclarationDescriptor descriptor : ContainerUtil.union(expectedErrors.keySet(), actualErrors.keySet())) {
-            List<String> actual = actualErrors.get(descriptor);
-            List<String> expected = expectedErrors.get(descriptor);
-            String rendered = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor);
+        for (SourceElement source : ContainerUtil.union(expectedErrors.keySet(), actualErrors.keySet())) {
+            List<String> actual = actualErrors.get(source);
+            List<String> expected = expectedErrors.get(source);
 
-            assertNotNull("Unexpected load error(s):\n" + actual + "\ncontainer:" + rendered, expected);
-            assertNotNull("Missing load error(s):\n" + expected + "\ncontainer:" + rendered, actual);
+            assertNotNull("Unexpected load error(s):\n" + actual + "\ncontainer:" + source, expected);
+            assertNotNull("Missing load error(s):\n" + expected + "\ncontainer:" + source, actual);
 
-            assertSameElements("Unexpected/missing load error(s)\ncontainer:" + rendered, actual, expected);
+            assertSameElements("Unexpected/missing load error(s)\ncontainer:" + source, actual, expected);
         }
     }
 
-    private static Map<DeclarationDescriptor, List<String>> getExpectedLoadErrors(@NotNull PackageViewDescriptor packageFromJava) {
-        final Map<DeclarationDescriptor, List<String>> map = new HashMap<DeclarationDescriptor, List<String>>();
+    private static Map<SourceElement, List<String>> getExpectedLoadErrors(@NotNull PackageViewDescriptor packageFromJava) {
+        final Map<SourceElement, List<String>> map = new HashMap<SourceElement, List<String>>();
 
         packageFromJava.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
             @Override
@@ -91,7 +89,7 @@ public class ExpectedLoadErrorsUtil {
                 //noinspection ConstantConditions
                 List<String> errors = Arrays.asList(error.split("\\|"));
 
-                map.put(descriptor.getOriginal(), errors);
+                putError(map, descriptor, errors);
 
                 return null;
             }
@@ -108,16 +106,28 @@ public class ExpectedLoadErrorsUtil {
         return map;
     }
 
-    private static Map<DeclarationDescriptor, List<String>> getActualLoadErrors(@NotNull BindingContext bindingContext) {
-        Map<DeclarationDescriptor, List<String>> result = new HashMap<DeclarationDescriptor, List<String>>();
+    private static Map<SourceElement, List<String>> getActualLoadErrors(@NotNull BindingContext bindingContext) {
+        Map<SourceElement, List<String>> result = new HashMap<SourceElement, List<String>>();
 
         Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         for (DeclarationDescriptor descriptor : descriptors) {
             List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
-            result.put(descriptor.getOriginal(), errors);
+            if (errors == null) continue;
+
+            putError(result, descriptor, errors);
         }
 
         return result;
+    }
+
+    private static void putError(
+            @NotNull Map<SourceElement, List<String>> result,
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull List<String> errors
+    ) {
+        assert descriptor.getOriginal() instanceof DeclarationDescriptorWithSource
+                : "Signature errors should be reported only on declarations with source, but " + descriptor + " found";
+        result.put(((DeclarationDescriptorWithSource) descriptor.getOriginal()).getSource(), errors);
     }
 
     private ExpectedLoadErrorsUtil() {
