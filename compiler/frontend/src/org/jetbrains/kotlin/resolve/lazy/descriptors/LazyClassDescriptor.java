@@ -262,6 +262,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 }
 
                 List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
+                if (typeParameters.isEmpty()) return Collections.emptyList();
 
                 List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
 
