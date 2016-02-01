@@ -16,7 +16,7 @@
 
 package kotlin.jvm.internal
 
-private object DoubleCompanionObject {
+internal object DoubleCompanionObject {
     val MIN_VALUE: Double = java.lang.Double.MIN_VALUE
     val MAX_VALUE: Double = java.lang.Double.MAX_VALUE
     val POSITIVE_INFINITY : Double = java.lang.Double.POSITIVE_INFINITY
@@ -24,7 +24,7 @@ private object DoubleCompanionObject {
     val NaN : Double = java.lang.Double.NaN
 }
 
-private object FloatCompanionObject {
+internal object FloatCompanionObject {
     val MIN_VALUE: Float = java.lang.Float.MIN_VALUE
     val MAX_VALUE: Float = java.lang.Float.MAX_VALUE
     val POSITIVE_INFINITY : Float = java.lang.Float.POSITIVE_INFINITY
@@ -32,28 +32,28 @@ private object FloatCompanionObject {
     val NaN : Float = java.lang.Float.NaN
 }
 
-private object IntCompanionObject {
+internal object IntCompanionObject {
     const val MIN_VALUE: Int = java.lang.Integer.MIN_VALUE
     const val MAX_VALUE: Int = java.lang.Integer.MAX_VALUE
 }
 
-private object LongCompanionObject {
+internal object LongCompanionObject {
     const val MIN_VALUE: Long = java.lang.Long.MIN_VALUE
     const val MAX_VALUE: Long = java.lang.Long.MAX_VALUE
 }
 
-private object ShortCompanionObject {
+internal object ShortCompanionObject {
     const val MIN_VALUE: Short = java.lang.Short.MIN_VALUE
     const val MAX_VALUE: Short = java.lang.Short.MAX_VALUE
 }
 
-private object ByteCompanionObject {
+internal object ByteCompanionObject {
     const val MIN_VALUE: Byte = java.lang.Byte.MIN_VALUE
     const val MAX_VALUE: Byte = java.lang.Byte.MAX_VALUE
 }
 
 
-private object CharCompanionObject {
+internal object CharCompanionObject {
     const val MIN_HIGH_SURROGATE: Char = '\uD800'
     const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
     const val MIN_LOW_SURROGATE: Char = '\uDC00'
@@ -62,5 +62,5 @@ private object CharCompanionObject {
     const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
 }
 
-private object StringCompanionObject {}
-private object EnumCompanionObject {}
+internal object StringCompanionObject {}
+internal object EnumCompanionObject {}
