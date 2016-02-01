@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -97,7 +98,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
 
         val isSetUsage = callExpression.valueArguments.size == 1
 
-        if (isSetUsage && bindingContext[BindingContext.USED_AS_EXPRESSION, qualifiedExpression] == true) {
+        if (isSetUsage && qualifiedExpression.isUsedAsExpression(bindingContext)) {
             // call to the setter used as expression can be converted in the only case when it's used as body expression for some declaration and its type is Unit
             val parent = qualifiedExpression.parent
             if (parent !is KtDeclarationWithBody || qualifiedExpression != parent.bodyExpression) return null
