@@ -291,8 +291,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @Nullable KotlinType newExtensionReceiverParameterType;
         protected @NotNull KotlinType newReturnType;
         protected @Nullable Name name;
-        protected boolean copyOverrides;
-        protected boolean signatureChange;
+        protected boolean copyOverrides = true;
+        protected boolean signatureChange = false;
+        protected boolean preserveSourceElement = false;
+        protected boolean dropOriginalInContainingParts = false;
         private boolean isHiddenToOvercomeSignatureClash;
         private List<TypeParameterDescriptor> newTypeParameters = null;
 
@@ -316,8 +318,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newExtensionReceiverParameterType = newExtensionReceiverParameterType;
             this.newReturnType = newReturnType;
             this.name = name;
-            this.copyOverrides = true;
-            this.signatureChange = false;
             this.isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
         }
 
@@ -392,11 +392,24 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         @NotNull
+        public CopyConfiguration setPreserveSourceElement() {
+            this.preserveSourceElement = true;
+            return this;
+        }
+
+        @NotNull
+        public CopyConfiguration setDropOriginalInContainingParts() {
+            this.dropOriginalInContainingParts = true;
+            return this;
+        }
+
+        @NotNull
         public CopyConfiguration setHidden() {
             isHiddenToOvercomeSignatureClash = true;
             return this;
         }
 
+        @Nullable
         public FunctionDescriptor build() {
             return doSubstitute(this);
         }
@@ -429,7 +442,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected FunctionDescriptor doSubstitute(@NotNull CopyConfiguration configuration) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(
                 configuration.newOwner, configuration.original, configuration.kind, configuration.name,
-                /* preserveSource = */ configuration.signatureChange);
+                configuration.preserveSourceElement);
 
         List<TypeParameterDescriptor> substitutedTypeParameters;
         TypeSubstitutor substitutor;
@@ -474,7 +487,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(
-                substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor
+                substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor, configuration.dropOriginalInContainingParts
         );
         if (substitutedValueParameters == null) {
             return null;
@@ -511,7 +524,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         if (configuration.copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
+                if (configuration.originalSubstitutor.isEmpty()) {
+                    substitutedDescriptor.addOverriddenDescriptor(overriddenFunction);
+                }
+                else {
+                    substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
+                }
             }
         }
 
@@ -543,7 +561,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
             FunctionDescriptor substitutedDescriptor,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull TypeSubstitutor substitutor
+            @NotNull TypeSubstitutor substitutor,
+            boolean dropOriginal
     ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(unsubstitutedValueParameters.size());
         for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
@@ -556,7 +575,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             result.add(
                     new ValueParameterDescriptorImpl(
                             substitutedDescriptor,
-                            unsubstitutedValueParameter,
+                            dropOriginal ? null : unsubstitutedValueParameter,
                             unsubstitutedValueParameter.getIndex(),
                             unsubstitutedValueParameter.getAnnotations(),
                             unsubstitutedValueParameter.getName(),

@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 
@@ -29,6 +32,30 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
         this.declaration = declaration;
         setHasStableParameterNames(declaration.hasStableParameterNames());
         setHasSynthesizedParameterNames(declaration.hasSynthesizedParameterNames());
+    }
+
+    private SamAdapterConstructorDescriptor(
+            @NotNull ClassDescriptor containingDeclaration,
+            @Nullable JavaConstructorDescriptor original,
+            @NotNull Annotations annotations,
+            boolean isPrimary,
+            @NotNull Kind kind,
+            @NotNull SourceElement source,
+            @NotNull JavaConstructorDescriptor declaration
+    ) {
+        super(containingDeclaration, original, annotations, isPrimary, kind, source);
+        this.declaration = declaration;
+    }
+
+    @NotNull
+    @Override
+    protected JavaConstructorDescriptor createDescriptor(
+            @NotNull ClassDescriptor newOwner,
+            @Nullable JavaConstructorDescriptor original,
+            @NotNull Kind kind,
+            @NotNull SourceElement sourceElement
+    ) {
+        return new SamAdapterConstructorDescriptor(newOwner, original, getAnnotations(), isPrimary, kind, sourceElement, declaration);
     }
 
     @NotNull

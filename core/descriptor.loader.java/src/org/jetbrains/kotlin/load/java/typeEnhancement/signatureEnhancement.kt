@@ -26,7 +26,7 @@ fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collect
     }
 }
 
-fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
+private fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
     // TODO type parameters
     // TODO use new type parameters while enhancing other types
     // TODO Propagation into generic type arguments

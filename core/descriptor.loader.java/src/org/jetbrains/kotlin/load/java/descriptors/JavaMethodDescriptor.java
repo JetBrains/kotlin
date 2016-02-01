@@ -138,15 +138,13 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         List<ValueParameterDescriptor> enhancedValueParameters =
                 UtilKt.copyValueParameters(enhancedValueParametersTypes, getValueParameters(), this);
 
-        // We use `doSubstitute` here because it does exactly what we need:
-        // 1. creates full copy of descriptor
-        // 2. copies method's type parameters (with new containing declaration) and properly substitute to them in value parameters, return type and etc.
         JavaMethodDescriptor enhancedMethod =
                 (JavaMethodDescriptor) newCopyBuilder()
                         .setValueParameters(enhancedValueParameters)
                         .setReturnType(enhancedReturnType)
                         .setExtensionReceiverType(enhancedReceiverType)
-                        .setOriginal(getOriginal())
+                        .setDropOriginalInContainingParts()
+                        .setPreserveSourceElement()
                         .build();
 
         assert enhancedMethod != null : "null after substitution while enhancing " + toString();
