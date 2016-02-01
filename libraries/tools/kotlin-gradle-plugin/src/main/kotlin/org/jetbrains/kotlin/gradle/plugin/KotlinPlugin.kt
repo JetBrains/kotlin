@@ -166,7 +166,7 @@ class Kotlin2JvmSourceSetProcessor(
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
 
                     val kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
-                            sourceSetName, kotlinDestinationDir, subpluginEnvironment) {
+                            sourceSetName, kotlinDestinationDir, null, subpluginEnvironment) {
                         createKotlinCompileTask(it)
                     }
 
@@ -431,7 +431,8 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
-                project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOutputDir, subpluginEnvironment) {
+                project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName,
+                        kotlinOutputDir, kotlinOptions, subpluginEnvironment) {
                     tasksProvider.createKotlinJVMTask(project, kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX)
                 }
             }
