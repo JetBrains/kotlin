@@ -611,7 +611,7 @@ public class DefaultErrorMessages {
         MAP.put(MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits multiple interface methods of it",
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
-        MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
+        MAP.put(CONFLICTING_OVERLOADS, "''{0}'' conflicts with another declaration: {1}", COMPACT_WITH_MODIFIERS, COMPACT_WITH_MODIFIERS);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",

@@ -23,10 +23,22 @@ class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
         val testAnnotation = "MyTestAnnotation"
         EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(testAnnotation)
         try {
-            doTest("idea/testData/checker/custom/noUnusedParameterWhenCustom.kt")
+            doTest(getTestDataFile("noUnusedParameterWhenCustom.kt"))
         }
         finally {
             EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(testAnnotation)
         }
     }
+
+    fun testConflictingOverloadsMultifile1() {
+        doTest(getTestDataFile("conflictingOverloadsMultifile1a.kt"),
+               getTestDataFile("conflictingOverloadsMultifile1b.kt"))
+    }
+
+    fun testConflictingOverloadsMultifile2() {
+        doTest(getTestDataFile("conflictingOverloadsMultifile2a.kt"),
+               getTestDataFile("conflictingOverloadsMultifile2b.kt"))
+    }
+
+    private fun getTestDataFile(localName: String) = "idea/testData/checker/custom/$localName"
 }

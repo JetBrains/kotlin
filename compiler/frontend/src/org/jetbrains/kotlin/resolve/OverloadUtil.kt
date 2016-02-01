@@ -82,14 +82,18 @@ object OverloadUtil {
 
     @JvmStatic fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,
-            constructorsInPackages: MultiMap<FqNameUnsafe, ConstructorDescriptor>,
             overloadFilter: OverloadFilter
     ): MultiMap<FqNameUnsafe, CallableMemberDescriptor> {
         val packageMembersByName = MultiMap<FqNameUnsafe, CallableMemberDescriptor>()
 
-        collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values, overloadFilter) {
+        collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values + c.declaredClasses.values, overloadFilter) {
             scope, name ->
-            scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            val functions = scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            if (classifier is ClassDescriptor && !classifier.kind.isSingleton)
+                functions + classifier.constructors
+            else
+                functions
         }
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) {
@@ -97,15 +101,12 @@ object OverloadUtil {
             scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filterIsInstance<CallableMemberDescriptor>()
         }
 
-        // TODO handle constructor redeclarations in modules. See also: https://youtrack.jetbrains.com/issue/KT-3632
-        packageMembersByName.putAllValues(constructorsInPackages)
-
         return packageMembersByName
     }
 
     private inline fun collectModulePackageMembersWithSameName(
             packageMembersByName: MultiMap<FqNameUnsafe, CallableMemberDescriptor>,
-            interestingDescriptors: Collection<CallableMemberDescriptor>,
+            interestingDescriptors: Collection<DeclarationDescriptor>,
             overloadFilter: OverloadFilter,
             getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
     ) {
@@ -123,20 +124,25 @@ object OverloadUtil {
     }
 
     private inline fun getModulePackageMembersWithSameName(
-            packageMember: CallableMemberDescriptor,
+            descriptor: DeclarationDescriptor,
             overloadFilter: OverloadFilter,
             getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
     ): Collection<CallableMemberDescriptor> {
-        val containingPackage = packageMember.containingDeclaration
+        val containingPackage = descriptor.containingDeclaration
         if (containingPackage !is PackageFragmentDescriptor) {
-            throw AssertionError("$packageMember is not a top-level package member")
+            throw AssertionError("$descriptor is not a top-level package member")
         }
 
-        val containingModule = DescriptorUtils.getContainingModuleOrNull(packageMember) ?: return listOf(packageMember)
+        val containingModule = DescriptorUtils.getContainingModuleOrNull(descriptor) ?:
+                               return when (descriptor) {
+                                   is CallableMemberDescriptor -> listOf(descriptor)
+                                   is ClassDescriptor -> descriptor.constructors
+                                   else -> throw AssertionError("Unexpected descriptor kind: $descriptor")
+                               }
 
         val containingPackageScope = containingModule.getPackage(containingPackage.fqName).memberScope
         val possibleOverloads =
-                getMembersByName(containingPackageScope, packageMember.name).filter {
+                getMembersByName(containingPackageScope, descriptor.name).filter {
                     // NB memberScope for PackageViewDescriptor includes module dependencies
                     DescriptorUtils.getContainingModule(it) == containingModule
                 }

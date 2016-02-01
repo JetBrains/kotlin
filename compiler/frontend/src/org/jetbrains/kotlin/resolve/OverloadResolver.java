@@ -28,10 +28,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class OverloadResolver {
     @NotNull private final BindingTrace trace;
@@ -50,49 +49,43 @@ public class OverloadResolver {
     }
 
     private void checkOverloads(@NotNull BodiesResolveContext c) {
-        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
-        MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages = MultiMap.create();
-        fillGroupedConstructors(c, inClasses, inPackages);
+        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = findConstructorsInNestedClasses(c);
 
         for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
-        checkOverloadsInPackages(c, inPackages);
+        checkOverloadsInPackages(c);
     }
 
-    private static void fillGroupedConstructors(
-            @NotNull BodiesResolveContext c,
-            @NotNull MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses,
-            @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
-    ) {
+    private static MultiMap<ClassDescriptor, ConstructorDescriptor> findConstructorsInNestedClasses(@NotNull BodiesResolveContext c) {
+        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
+
         for (ClassDescriptorWithResolutionScopes klass : c.getDeclaredClasses().values()) {
             if (klass.getKind().isSingleton() || klass.getName().isSpecial()) {
                 // Constructors of singletons or anonymous object aren't callable from the code, so they shouldn't participate in overload name checking
                 continue;
             }
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
-            if (containingDeclaration instanceof ClassDescriptor) {
+            if (containingDeclaration instanceof ScriptDescriptor) {
+                // TODO: check overload conflicts of functions with constructors in scripts
+            }
+            else if (containingDeclaration instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
                 inClasses.putValues(classDescriptor, klass.getConstructors());
             }
-            else if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                inPackages.putValues(getFqName(klass), klass.getConstructors());
-            }
-            else if (containingDeclaration instanceof ScriptDescriptor) {
-                // TODO: check overload conflicts of functions with constructors in scripts
-            }
-            else if (!(containingDeclaration instanceof FunctionDescriptor || containingDeclaration instanceof PropertyDescriptor)) {
+            else if (!(containingDeclaration instanceof FunctionDescriptor ||
+                       containingDeclaration instanceof PropertyDescriptor ||
+                       containingDeclaration instanceof PackageFragmentDescriptor)) {
                 throw new IllegalStateException("Illegal class container: " + containingDeclaration);
             }
         }
+
+        return inClasses;
     }
 
-    private void checkOverloadsInPackages(
-            @NotNull BodiesResolveContext c,
-            @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
-    ) {
+    private void checkOverloadsInPackages(@NotNull BodiesResolveContext c) {
         MultiMap<FqNameUnsafe, CallableMemberDescriptor> membersByName =
-                OverloadUtil.groupModulePackageMembersByFqName(c, inPackages, overloadFilter);
+                OverloadUtil.groupModulePackageMembersByFqName(c, overloadFilter);
 
         for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : membersByName.entrySet()) {
             FqNameUnsafe fqName = e.getKey().parent();
@@ -203,22 +196,38 @@ public class OverloadResolver {
         return file == null || file2 == null || file != file2;
     }
 
-    private void reportRedeclarations(@NotNull String functionContainer,
-            @NotNull Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations) {
+    private void reportRedeclarations(
+            @NotNull String functionContainer,
+            @NotNull Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations
+    ) {
+        if (redeclarations.isEmpty()) return;
+
+        Iterator<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarationsIterator = redeclarations.iterator();
+        CallableMemberDescriptor firstRedeclarationDescriptor = redeclarationsIterator.next().getSecond();
+        CallableMemberDescriptor otherRedeclarationDescriptor = redeclarationsIterator.hasNext()
+                                                                ? redeclarationsIterator.next().getSecond()
+                                                                : null;
+
         for (Pair<KtDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
+            KtDeclaration ktDeclaration = redeclaration.getFirst();
             CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
 
-            KtDeclaration ktDeclaration = redeclaration.getFirst();
+            CallableMemberDescriptor redeclarationDescriptor;
+            if (otherRedeclarationDescriptor == null) {
+                redeclarationDescriptor = firstRedeclarationDescriptor;
+            }
+            else if (firstRedeclarationDescriptor == memberDescriptor) {
+                redeclarationDescriptor = otherRedeclarationDescriptor;
+            }
+            else {
+                redeclarationDescriptor = firstRedeclarationDescriptor;
+            }
+
             if (memberDescriptor instanceof PropertyDescriptor) {
                 trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.getName().asString()));
             }
             else {
-                String containingClassName = ktDeclaration instanceof KtSecondaryConstructor ?
-                                             ((KtSecondaryConstructor) ktDeclaration).getContainingClassOrObject().getName() : null;
-
-                trace.report(Errors.CONFLICTING_OVERLOADS.on(
-                        ktDeclaration, memberDescriptor,
-                        containingClassName != null ? containingClassName : functionContainer));
+                trace.report(Errors.CONFLICTING_OVERLOADS.on(ktDeclaration, memberDescriptor, redeclarationDescriptor));
             }
         }
     }

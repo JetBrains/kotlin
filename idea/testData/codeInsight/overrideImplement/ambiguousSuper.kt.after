@@ -1,5 +1,5 @@
-// ERROR: 'public open fun foo(): kotlin.Unit' is already defined in C
-// ERROR: 'public open fun foo(): kotlin.Unit' is already defined in C
+// ERROR: 'public open fun foo(): kotlin.Unit' conflicts with another declaration: public open fun foo(): kotlin.Unit
+// ERROR: 'public open fun foo(): kotlin.Unit' conflicts with another declaration: public open fun foo(): kotlin.Unit
 interface I {
     open fun foo(){}
 }
