@@ -54,7 +54,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
 
         public void testTopLevelVisibilities() {
             checkModifiers("test.Public", PUBLIC, FINAL);
-            checkModifiers("test.Private", PUBLIC, FINAL);
+            checkModifiers("test.Private", PACKAGE_LOCAL, FINAL);
             checkModifiers("test.Internal", PUBLIC, FINAL);
         }
 
@@ -253,6 +253,7 @@ public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase
     enum ClassProperty {
         PUBLIC(PsiModifier.PUBLIC), 
         PROTECTED(PsiModifier.PROTECTED),
+        PACKAGE_LOCAL(PsiModifier.PACKAGE_LOCAL),
         PRIVATE(PsiModifier.PRIVATE),
         STATIC(PsiModifier.STATIC),
         ABSTRACT(PsiModifier.ABSTRACT),
