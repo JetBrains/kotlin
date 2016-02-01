@@ -100,14 +100,27 @@ class FakeCallResolver(
                 !isFakeKey
             }, true)
         }
-        if (hasUnreportedError && reportErrorsOn != null) {
-            when (callKind) {
-                FakeCallKind.ITERATOR -> context.trace.report(Errors.ITERATOR_MISSING.on(reportErrorsOn))
-                FakeCallKind.COMPONENT ->
-                    if (receiver != null) {
-                        context.trace.report(Errors.COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, name, receiver.type))
+
+        val resolutionResults = result.second
+        if ((!resolutionResults.isSuccess || hasUnreportedError) && reportErrorsOn != null) {
+            val diagnostic = when (callKind) {
+                FakeCallKind.ITERATOR ->
+                    when {
+                        resolutionResults.isAmbiguity -> Errors.ITERATOR_AMBIGUITY.on(reportErrorsOn, resolutionResults.resultingCalls)
+                        else                          -> Errors.ITERATOR_MISSING.on(reportErrorsOn)
                     }
-                FakeCallKind.OTHER -> {}
+                FakeCallKind.COMPONENT ->
+                    when {
+                        resolutionResults.isAmbiguity -> Errors.COMPONENT_FUNCTION_AMBIGUITY.on(
+                                                            reportErrorsOn, name, resolutionResults.resultingCalls)
+                        receiver != null              -> Errors.COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, name, receiver.type)
+                        else                          -> null
+                    }
+                FakeCallKind.OTHER -> null
+            }
+
+            if (diagnostic != null) {
+                context.trace.report(diagnostic)
             }
         }
         return result

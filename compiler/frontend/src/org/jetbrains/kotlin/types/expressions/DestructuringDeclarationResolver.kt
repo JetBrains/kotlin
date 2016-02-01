@@ -64,12 +64,6 @@ class DestructuringDeclarationResolver(
                     context.trace.report(Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(reportErrorsOn, componentName, componentType, expectedType))
                 }
             }
-            else if (results.isAmbiguity) {
-                context.trace.report(Errors.COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, componentName, results.getResultingCalls()))
-            }
-            else {
-                context.trace.report(Errors.COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName, receiver.getType()))
-            }
             if (componentType == null) {
                 componentType = ErrorUtils.createErrorType("$componentName() return type")
             }

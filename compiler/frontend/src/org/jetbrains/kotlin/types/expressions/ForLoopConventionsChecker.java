@@ -90,14 +90,6 @@ public class ForLoopConventionsChecker {
                                               NEXT_AMBIGUITY, NEXT_MISSING, NEXT_NONE_APPLICABLE,
                                               LOOP_RANGE_NEXT_RESOLVED_CALL);
         }
-        else {
-            if (iteratorResolutionResults.isAmbiguity()) {
-                context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResultingCalls()));
-            }
-            else {
-                context.trace.report(ITERATOR_MISSING.on(loopRangeExpression));
-            }
-        }
         return null;
     }
 
