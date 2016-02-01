@@ -119,12 +119,12 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
-        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
-
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
             ReplFromTerminal.run(rootDisposable, configuration)
             return ExitCode.OK
         }
+
+        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
 
         if (arguments.skipMetadataVersionCheck) {
             JvmMetadataVersion.skipCheck = true
