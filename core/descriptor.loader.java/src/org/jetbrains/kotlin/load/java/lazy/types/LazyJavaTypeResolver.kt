@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
@@ -187,12 +188,12 @@ class LazyJavaTypeResolver(
                         }
 
                     RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
-                }
+                }.toReadOnlyList()
             }
 
             if (typeParameters.size != javaType.typeArguments.size) {
                 // Most of the time this means there is an error in the Java code
-                return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }
+                return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }.toReadOnlyList()
             }
             var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
             return javaType.typeArguments.withIndex().map {
@@ -205,7 +206,7 @@ class LazyJavaTypeResolver(
 
                 val parameter = typeParameters[i]
                 transformToTypeProjection(javaTypeArgument, howTheProjectionIsUsed.toAttributes(), parameter)
-            }.toList()
+            }.toReadOnlyList()
         }
 
         private fun transformToTypeProjection(
