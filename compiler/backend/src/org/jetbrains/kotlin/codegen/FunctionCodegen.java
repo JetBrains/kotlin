@@ -676,15 +676,6 @@ public class FunctionCodegen {
                 generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen, defaultMethod);
                 endVisit(mv, "default method", getSourceFromDescriptor(functionDescriptor));
             }
-
-            generateOldDefaultForFun(defaultMethod,
-                                     JvmDeclarationOriginKt.Synthetic(function, functionDescriptor),
-                                     flags,
-                                     getThrownExceptions(functionDescriptor, typeMapper),
-                                     (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS ?
-                                      typeMapper.mapDefaultImpls((ClassDescriptor) functionDescriptor.getContainingDeclaration()) :
-                                      typeMapper.mapImplementationOwner(functionDescriptor)).getInternalName()
-            );
         }
     }
 
@@ -765,38 +756,6 @@ public class FunctionCodegen {
                          "Super calls with default arguments not supported in this target, function: " +
                          StringsKt.substringBeforeLast(defaultMethodName, JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodName));
         iv.visitLabel(end);
-    }
-
-    private void generateOldDefaultForFun(
-            Method newDefaultMethod,
-            JvmDeclarationOrigin origin,
-            int flags,
-            String[] exceptions,
-            String owner
-    ) {
-        if ("<init>".equals(newDefaultMethod.getName())) {
-            return;
-        }
-        String oldSignature = newDefaultMethod.getDescriptor().replaceFirst("Ljava/lang/Object;\\)", ")");
-        MethodVisitor mv = v.newMethod(
-                origin,
-                flags,
-                newDefaultMethod.getName(),
-                oldSignature,
-                null,
-                exceptions
-        );
-        mv.visitCode();
-        int index = 0;
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        for (Type type: Type.getArgumentTypes(oldSignature)) {
-            iv.load(index, type);
-            index += type.getSize();
-        }
-        iv.aconst(null);
-        iv.visitMethodInsn(Opcodes.INVOKESTATIC, owner, newDefaultMethod.getName(), newDefaultMethod.getDescriptor(), false);
-        iv.areturn(newDefaultMethod.getReturnType());
-        mv.visitEnd();
     }
 
     @NotNull

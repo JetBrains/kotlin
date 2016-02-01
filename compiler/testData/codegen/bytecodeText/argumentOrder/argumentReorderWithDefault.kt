@@ -9,5 +9,5 @@ class A {
     }
 }
 // Test argument reordering when call site argument order differs from declaration one: 18 + 1 for super call check
-// 19 LOAD
+// 13 LOAD
 // 5 STORE
