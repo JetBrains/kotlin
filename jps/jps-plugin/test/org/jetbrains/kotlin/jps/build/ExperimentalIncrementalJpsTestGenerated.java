@@ -335,6 +335,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("funVsConstructorOverloadConflict")
+        public void testFunVsConstructorOverloadConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/funVsConstructorOverloadConflict/");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionBecameInline")
         public void testFunctionBecameInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/functionBecameInline/");
