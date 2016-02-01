@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
@@ -154,28 +155,35 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val resolutionResults = getResolutionResultsCachedData(argumentExpression, context)?.resolutionResults
         if (resolutionResults == null || !resolutionResults.isSingleResult) return false
 
-        val resultingCall = resolutionResults.resultingCall
-        if (resultingCall.isCompleted) return false
+        val nestedCall = resolutionResults.resultingCall
+        if (nestedCall.isCompleted) return false
 
-        val argumentConstraintSystem = resultingCall.constraintSystem ?: return false
+        val nestedConstraintSystem = nestedCall.constraintSystem ?: return false
 
-        val candidateDescriptor = resultingCall.candidateDescriptor
+        val candidateDescriptor = nestedCall.candidateDescriptor
         val returnType = candidateDescriptor.returnType ?: return false
 
-        val nestedTypeVariables = argumentConstraintSystem.getNestedTypeVariables(returnType)
+        val nestedTypeVariables = nestedConstraintSystem.getNestedTypeVariables(returnType)
 
         // we add an additional type variable only if no information is inferred for it.
         // otherwise we add currently inferred return type as before
-        if (nestedTypeVariables.any { argumentConstraintSystem.getTypeBounds(it).bounds.isNotEmpty() }) return false
+        if (nestedTypeVariables.any { nestedConstraintSystem.getTypeBounds(it).bounds.isNotEmpty() }) return false
 
         val candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidateDescriptor)
         val conversion = candidateDescriptor.typeParameters.zip(candidateWithFreshVariables.typeParameters).toMap()
 
         val freshVariables = returnType.getNestedTypeParameters().mapNotNull { conversion[it] }
-        builder.registerTypeVariables(resultingCall.call.toHandle(), freshVariables, external = true)
+        builder.registerTypeVariables(nestedCall.call.toHandle(), freshVariables, external = true)
+        // Looks not too nice, but safe call result must be nullable if receiver is nullable
+        val argumentExpressionType = candidateWithFreshVariables.returnType?.let {
+            if (nestedCall.isSafeCall && nestedCall.getExplicitReceiverValue()?.type?.let {TypeUtils.isNullableType(it) } ?: true ) {
+                TypeUtils.makeNullable(it)
+            }
+            else it
+        }
 
         builder.addSubtypeConstraint(
-                candidateWithFreshVariables.returnType,
+                argumentExpressionType,
                 builder.compositeSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT),
                 constraintPosition
         )
