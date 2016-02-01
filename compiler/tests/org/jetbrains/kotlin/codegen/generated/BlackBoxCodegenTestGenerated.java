@@ -6601,6 +6601,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("companionPrivateField.kt")
+        public void testCompanionPrivateField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/companionPrivateField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionPrivateFieldInsideLambda.kt")
+        public void testCompanionPrivateFieldInsideLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/companionPrivateFieldInsideLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("field.kt")
         public void testField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/field.kt");
@@ -6646,6 +6658,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt10715.kt")
         public void testKt10715() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/kt10715.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt10729.kt")
+        public void testKt10729() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/kt10729.kt");
             doTest(fileName);
         }
 

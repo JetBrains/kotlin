@@ -601,12 +601,13 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                     boolean syntheticBackingField = accessor instanceof AccessorForPropertyBackingFieldFromLocal;
-                    boolean forceField = (JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
-                                          !isCompanionObject(accessor.getContainingDeclaration())) ||
+                    boolean forceFieldForCompanionProperty = JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
+                                                             !isCompanionObject(accessor.getContainingDeclaration());
+                    boolean forceField = forceFieldForCompanionProperty ||
                                          syntheticBackingField ||
                                          original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
                     StackValue property = codegen.intermediateValueForProperty(
-                            original, forceField, syntheticBackingField, accessor.getSuperCallTarget(), true, StackValue.none()
+                            original, forceField, syntheticBackingField, accessor.getSuperCallTarget(), forceFieldForCompanionProperty, StackValue.none()
                     );
 
                     InstructionAdapter iv = codegen.v;

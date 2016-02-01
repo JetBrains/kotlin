@@ -1302,6 +1302,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Private extends AbstractBlackBoxInlineCodegenTest {
+        @TestMetadata("accessorForConst.1.kt")
+        public void testAccessorForConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/accessorForConst.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("accessorStability.1.kt")
         public void testAccessorStability() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/accessorStability.1.kt");
