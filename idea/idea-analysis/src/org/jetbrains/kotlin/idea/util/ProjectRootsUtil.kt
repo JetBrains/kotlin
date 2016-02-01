@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -33,21 +34,30 @@ object ProjectRootsUtil {
     @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
                                includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
                                fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
-                               isJsProject: Boolean? = null): Boolean {
+                               isJsProjectRef: Ref<Boolean?>? = null): Boolean {
         if (includeProjectSource && fileIndex.isInSourceContent(file)) {
             return true
         }
-        if (!includeLibraryClasses && !includeLibrarySource) return false
 
-        //NOTE: avoid computing isJsProject if redundant
-        if (isJsProject ?: JsProjectDetector.isJsProject(project)) {
-            return (includeLibrarySource && fileIndex.isInLibrarySource(file))
-                   || (includeLibraryClasses && fileIndex.isLibraryClassFile(file))
-        }
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
         val isClassFile = file.fileType in classFileLike
-        return (includeLibraryClasses && isClassFile && fileIndex.isInLibraryClasses(file))
-               || (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))
+
+        if ((includeLibraryClasses && isClassFile && fileIndex.isInLibraryClasses(file)) ||
+            (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))) {
+
+            return true
+        }
+
+        if ((includeLibraryClasses && fileIndex.isInLibraryClasses(file)) ||
+            (includeLibrarySource && fileIndex.isInLibrarySource(file))) {
+
+            //NOTE: avoid computing isJsProject if redundant
+            val isJsProject = isJsProjectRef?.get() ?: JsProjectDetector.isJsProject(project)
+            isJsProjectRef?.set(isJsProject)
+            return isJsProject
+        }
+
+        return false
     }
 
     @JvmStatic fun isInContent(
