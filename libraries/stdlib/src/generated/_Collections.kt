@@ -1943,23 +1943,8 @@ public fun Iterable<Byte>.average(): Double {
 /**
  * Returns an average value of elements in the collection.
  */
-@kotlin.jvm.JvmName("averageOfDouble")
-public fun Iterable<Double>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the collection.
- */
-@kotlin.jvm.JvmName("averageOfFloat")
-public fun Iterable<Float>.average(): Double {
+@kotlin.jvm.JvmName("averageOfShort")
+public fun Iterable<Short>.average(): Double {
     val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
@@ -2003,8 +1988,23 @@ public fun Iterable<Long>.average(): Double {
 /**
  * Returns an average value of elements in the collection.
  */
-@kotlin.jvm.JvmName("averageOfShort")
-public fun Iterable<Short>.average(): Double {
+@kotlin.jvm.JvmName("averageOfFloat")
+public fun Iterable<Float>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection.
+ */
+@kotlin.jvm.JvmName("averageOfDouble")
+public fun Iterable<Double>.average(): Double {
     val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
@@ -2031,23 +2031,10 @@ public fun Iterable<Byte>.sum(): Int {
 /**
  * Returns the sum of all elements in the collection.
  */
-@kotlin.jvm.JvmName("sumOfDouble")
-public fun Iterable<Double>.sum(): Double {
+@kotlin.jvm.JvmName("sumOfShort")
+public fun Iterable<Short>.sum(): Int {
     val iterator = iterator()
-    var sum: Double = 0.0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the collection.
- */
-@kotlin.jvm.JvmName("sumOfFloat")
-public fun Iterable<Float>.sum(): Float {
-    val iterator = iterator()
-    var sum: Float = 0.0f
+    var sum: Int = 0
     while (iterator.hasNext()) {
         sum += iterator.next()
     }
@@ -2083,10 +2070,23 @@ public fun Iterable<Long>.sum(): Long {
 /**
  * Returns the sum of all elements in the collection.
  */
-@kotlin.jvm.JvmName("sumOfShort")
-public fun Iterable<Short>.sum(): Int {
+@kotlin.jvm.JvmName("sumOfFloat")
+public fun Iterable<Float>.sum(): Float {
     val iterator = iterator()
-    var sum: Int = 0
+    var sum: Float = 0.0f
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("sumOfDouble")
+public fun Iterable<Double>.sum(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
     while (iterator.hasNext()) {
         sum += iterator.next()
     }

@@ -32,14 +32,14 @@ enum class Family {
 }
 
 enum class PrimitiveType {
-    Boolean,
     Byte,
-    Char,
     Short,
     Int,
     Long,
     Float,
-    Double;
+    Double,
+    Boolean,
+    Char;
 
     companion object {
         val defaultPrimitives = PrimitiveType.values().toSet()
@@ -208,7 +208,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         val onlyPrimitives = buildFamilyPrimitives[f]
 
         if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
-            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.name }
+            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.ordinal }
                     .map { primitive -> ConcreteFunction( { build(it, f, primitive) }, sourceFileFor(f) ) }
         } else {
             return listOf(ConcreteFunction( { build(it, f, null) }, sourceFileFor(f) ))
