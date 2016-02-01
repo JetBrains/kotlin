@@ -547,6 +547,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtDestructuringDeclaration> INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, KotlinType> COMPONENT_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR, DEFAULT);
+    DiagnosticFactory1<KtExpression, Name> COMPONENT_FUNCTION_ON_NULLABLE = DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, Collection<? extends ResolvedCall<?>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
     DiagnosticFactory3<KtExpression, Name, KotlinType, KotlinType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
 
@@ -589,6 +590,7 @@ public interface Errors {
     DiagnosticFactory1<KtExpression, KotlinType> NEXT_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtExpression> ITERATOR_MISSING = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> ITERATOR_ON_NULLABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> ITERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory2<KtExpression, String, KotlinType> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR);

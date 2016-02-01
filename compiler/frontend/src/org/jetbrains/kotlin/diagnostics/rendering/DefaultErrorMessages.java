@@ -214,6 +214,7 @@ public class DefaultErrorMessages {
 
         MAP.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration");
         MAP.put(COMPONENT_FUNCTION_MISSING, "Destructuring declaration initializer of type {1} must have a ''{0}()'' function", TO_STRING, RENDER_TYPE);
+        MAP.put(COMPONENT_FUNCTION_ON_NULLABLE, "Not nullable value required to call ''{0}()'' function of destructuring declaration initializer", TO_STRING);
         MAP.put(COMPONENT_FUNCTION_AMBIGUITY, "Function ''{0}()'' is ambiguous for this expression: {1}", TO_STRING, AMBIGUOUS_CALLS);
         MAP.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, "''{0}()'' function returns ''{1}'', but ''{2}'' is expected",
                                                                                     TO_STRING, RENDER_TYPE, RENDER_TYPE);
@@ -368,6 +369,7 @@ public class DefaultErrorMessages {
         MAP.put(NEXT_NONE_APPLICABLE, "None of the next() functions is applicable for iterator() of type ''{0}''", RENDER_TYPE);
 
         MAP.put(ITERATOR_MISSING, "For-loop range must have an iterator() method");
+        MAP.put(ITERATOR_ON_NULLABLE, "Not nullable value required to call an iterator() method on for-loop range");
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
         MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);

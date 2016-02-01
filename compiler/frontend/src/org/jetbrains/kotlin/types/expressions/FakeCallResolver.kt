@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.Name
@@ -28,10 +29,10 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
 enum class FakeCallKind {
@@ -88,31 +89,34 @@ class FakeCallResolver(
         val fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name)
         val fakeBindingTrace = context.replaceBindingTrace(fakeTrace)
 
-        var hasUnreportedError = false
-        val result = makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake ->
-            fakeTrace.commit({ slice, diagnostic, key ->
+        var unreportedDiagnostic: Diagnostic? = null
+        val result = makeAndResolveFakeCallInContext(receiver, fakeBindingTrace, valueArguments, name, callElement) { fake, isSuccess ->
+            unreportedDiagnostic = fakeTrace.bindingContext.diagnostics.noSuppression().forElement(fake).firstOrNull { it.severity == Severity.ERROR }
+
+            if (!isSuccess) return@makeAndResolveFakeCallInContext
+
+            fakeTrace.commit({ slice, key ->
                 // excluding all entries related to fake expression
                 // convert all errors on this expression to ITERATOR_MISSING on callElement
-                val isFakeKey = key == fake
-                if (diagnostic?.severity == Severity.ERROR && isFakeKey) {
-                    hasUnreportedError = true
-                }
-                !isFakeKey
+                key != fake
             }, true)
         }
 
         val resolutionResults = result.second
-        if ((!resolutionResults.isSuccess || hasUnreportedError) && reportErrorsOn != null) {
+        if ((!resolutionResults.isSuccess || unreportedDiagnostic != null) && reportErrorsOn != null) {
+            val isUnsafeCall = unreportedDiagnostic?.factory == Errors.UNSAFE_CALL
             val diagnostic = when (callKind) {
                 FakeCallKind.ITERATOR ->
                     when {
                         resolutionResults.isAmbiguity -> Errors.ITERATOR_AMBIGUITY.on(reportErrorsOn, resolutionResults.resultingCalls)
+                        isUnsafeCall                  -> Errors.ITERATOR_ON_NULLABLE.on(reportErrorsOn)
                         else                          -> Errors.ITERATOR_MISSING.on(reportErrorsOn)
                     }
                 FakeCallKind.COMPONENT ->
                     when {
                         resolutionResults.isAmbiguity -> Errors.COMPONENT_FUNCTION_AMBIGUITY.on(
                                                             reportErrorsOn, name, resolutionResults.resultingCalls)
+                        isUnsafeCall                  -> Errors.COMPONENT_FUNCTION_ON_NULLABLE.on(reportErrorsOn, name)
                         receiver != null              -> Errors.COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, name, receiver.type)
                         else                          -> null
                     }
@@ -132,15 +136,13 @@ class FakeCallResolver(
             valueArguments: List<KtExpression>,
             name: Name,
             callElement: KtExpression?,
-            onSuccess: (KtSimpleNameExpression) -> Unit = doNothing()
+            onComplete: (KtSimpleNameExpression, Boolean) -> Unit = { x, y -> }
     ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
         val fake = KtPsiFactory(project).createSimpleName(name.asString())
         val call = CallMaker.makeCallWithExpressions(callElement ?: fake, receiver, null, fake, valueArguments)
         val results = callResolver.resolveCallWithGivenName(context, call, fake, name)
 
-        if (results.isSuccess) {
-            onSuccess(fake)
-        }
+        onComplete(fake, results.isSuccess)
 
         return Pair(call, results)
     }

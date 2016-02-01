@@ -298,7 +298,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NEXT_MISSING.registerFactory(CreateNextFunctionActionFactory)
         NEXT_NONE_APPLICABLE.registerFactory(CreateNextFunctionActionFactory)
         ITERATOR_MISSING.registerFactory(CreateIteratorFunctionActionFactory)
-        ITERATOR_MISSING.registerFactory(MissingIteratorExclExclFixFactory)
+        ITERATOR_ON_NULLABLE.registerFactory(MissingIteratorExclExclFixFactory)
         COMPONENT_FUNCTION_MISSING.registerFactory(CreateComponentFunctionActionFactory)
 
         DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(CreatePropertyDelegateAccessorsActionFactory)

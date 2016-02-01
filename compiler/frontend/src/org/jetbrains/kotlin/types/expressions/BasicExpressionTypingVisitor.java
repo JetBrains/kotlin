@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -1181,7 +1179,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
             @Override
-            public boolean accept(@Nullable WritableSlice<?, ?> slice, @Nullable Diagnostic diagnostic, Object key) {
+            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
                 // the type of the right (and sometimes left) expression isn't 'Any?' actually
                 if ((key == right || key == left) && slice == EXPRESSION_TYPE_INFO) return false;
 
