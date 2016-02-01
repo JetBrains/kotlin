@@ -6573,6 +6573,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("higherOrderCallMissingParameters.kt")
+            public void testHigherOrderCallMissingParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/higherOrderCallMissingParameters.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt2906.kt")
             public void testKt2906() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");

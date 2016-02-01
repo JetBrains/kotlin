@@ -90,7 +90,13 @@ fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.
 
 fun KtCallElement.getValueArgumentsInParentheses(): List<ValueArgument> = valueArguments.filterArgsInParentheses()
 
-fun Call.getValueArgumentListOrElement(): KtElement = valueArgumentList ?: calleeExpression ?: callElement
+fun Call.getValueArgumentListOrElement(): KtElement =
+        if (this is CallTransformer.CallForImplicitInvoke) {
+            outerCall.getValueArgumentListOrElement()
+        }
+        else {
+            valueArgumentList ?: calleeExpression ?: callElement
+        }
 
 @Suppress("UNCHECKED_CAST")
 private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is KtLambdaArgument } as List<ValueArgument>
