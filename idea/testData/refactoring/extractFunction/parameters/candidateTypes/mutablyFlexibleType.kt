@@ -1,6 +1,6 @@
 // WITH_RUNTIME
-// PARAM_DESCRIPTOR: val data: (kotlin.collections.MutableList<(kotlin.String..kotlin.String?)>..kotlin.collections.List<(kotlin.String..kotlin.String?)>) defined in test
-// PARAM_TYPES: kotlin.collections.List<(kotlin.String..kotlin.String?)>, kotlin.collections.MutableList<(kotlin.String..kotlin.String?)>, kotlin.collections.MutableCollection<(kotlin.String..kotlin.String?)>, kotlin.collections.Collection<(kotlin.String..kotlin.String?)>
+// PARAM_DESCRIPTOR: val data: (kotlin.collections.MutableList<(String..String?)>..kotlin.collections.List<(String..String?)>) defined in test
+// PARAM_TYPES: kotlin.collections.List<(String..String?)>, kotlin.collections.MutableList<(String..String?)>, kotlin.collections.MutableCollection<(String..String?)>, kotlin.collections.Collection<(String..String?)>
 fun test(): Boolean {
     val j: J? = null
     val data = j?.getData() ?: return false

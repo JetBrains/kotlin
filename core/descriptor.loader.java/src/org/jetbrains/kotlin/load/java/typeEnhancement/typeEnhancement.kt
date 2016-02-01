@@ -33,13 +33,14 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 // The index in the lambda is the position of the type component:
 // Example: for `A<B, C<D, E>>`, indices go as follows: `0 - A<...>, 1 - B, 2 - C<D, E>, 3 - D, 4 - E`,
 // which corresponds to the left-to-right breadth-first walk of the tree representation of the type.
 // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
-fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = this.enhancePossiblyFlexible(qualifiers, 0).type
+fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = this.enhancePossiblyFlexible(qualifiers, 0).typeIfChanged
 
 
 private enum class TypeComponentPosition {
@@ -48,10 +49,12 @@ private enum class TypeComponentPosition {
     INFLEXIBLE
 }
 
-private data class Result(val type: KotlinType, val subtreeSize: Int)
+private data class Result(val type: KotlinType, val subtreeSize: Int, val wereChanges: Boolean) {
+    val typeIfChanged: KotlinType? get() = type.check { wereChanges }
+}
 
 private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
-    if (this.isError()) return Result(this, 1)
+    if (this.isError) return Result(this, 1, false)
     return if (this.isFlexible()) {
         with(this.flexibility()) {
             val lowerResult = lowerBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER)
@@ -61,8 +64,15 @@ private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQual
                 "lower = ($lowerBound, ${lowerResult.subtreeSize}), " +
                 "upper = ($upperBound, ${upperResult.subtreeSize})"
             }
+
+            val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
             Result(
-                DelegatingFlexibleType.create(lowerResult.type, upperResult.type, extraCapabilities), lowerResult.subtreeSize
+                if (wereChanges)
+                    DelegatingFlexibleType.create(lowerResult.type, upperResult.type, extraCapabilities)
+                else
+                    this@enhancePossiblyFlexible,
+                lowerResult.subtreeSize,
+                wereChanges
             )
         }
     }
@@ -71,10 +81,10 @@ private fun KotlinType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQual
 
 private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int, position: TypeComponentPosition): Result {
     val shouldEnhance = position.shouldEnhance()
-    if (!shouldEnhance && getArguments().isEmpty()) return Result(this, 1)
+    if (!shouldEnhance && arguments.isEmpty()) return Result(this, 1, false)
 
-    val originalClass = getConstructor().declarationDescriptor
-                        ?: return Result(this, 1)
+    val originalClass = constructor.declarationDescriptor
+                        ?: return Result(this, 1, false)
 
     val effectiveQualifiers = qualifiers(index)
     val (enhancedClassifier, enhancedMutabilityAnnotations) = originalClass.enhanceMutability(effectiveQualifiers, position)
@@ -82,6 +92,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
     val typeConstructor = enhancedClassifier.typeConstructor
 
     var globalArgIndex = index + 1
+    var wereChanges = enhancedMutabilityAnnotations != null
     val enhancedArguments = getArguments().mapIndexed {
         localArgIndex, arg ->
         if (arg.isStarProjection) {
@@ -89,13 +100,19 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             TypeUtils.makeStarProjection(enhancedClassifier.typeConstructor.parameters[localArgIndex])
         }
         else {
-            val (enhancedType, subtreeSize) = arg.type.enhancePossiblyFlexible(qualifiers, globalArgIndex)
+            val (enhancedType, subtreeSize, wasChangeInArgument) = arg.type.enhancePossiblyFlexible(qualifiers, globalArgIndex)
+            wereChanges = wereChanges || wasChangeInArgument
             globalArgIndex += subtreeSize
             createProjection(enhancedType, arg.projectionKind, typeParameterDescriptor = typeConstructor.parameters[localArgIndex])
         }
     }
 
     val (enhancedNullability, enhancedNullabilityAnnotations) = this.getEnhancedNullability(effectiveQualifiers, position)
+    wereChanges = wereChanges || enhancedNullabilityAnnotations != null
+
+    val subtreeSize = globalArgIndex - index
+    if (!wereChanges) return Result(this, subtreeSize, wereChanges = false)
+
     val newAnnotations = listOf(
             getAnnotations(),
             enhancedMutabilityAnnotations,
@@ -123,7 +140,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
             else enhancedClassifier.getDefaultType().getMemberScope(),
             newCapabilities
     )
-    return Result(enhancedType, globalArgIndex - index)
+    return Result(enhancedType, subtreeSize, wereChanges = true)
 }
 
 private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
