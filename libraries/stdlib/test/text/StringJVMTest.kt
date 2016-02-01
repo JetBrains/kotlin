@@ -93,4 +93,10 @@ class StringJVMTest {
         assertEquals(listOf("Ast", "Beast", "asterisk"), list.sorted())
         assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
     }
+
+    @test fun charsets() {
+        assertEquals("UTF-32", Charsets.UTF_32.name())
+        assertEquals("UTF-32LE", Charsets.UTF_32LE.name())
+        assertEquals("UTF-32BE", Charsets.UTF_32BE.name())
+    }
 }
