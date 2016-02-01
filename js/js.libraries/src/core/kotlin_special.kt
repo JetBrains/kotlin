@@ -149,22 +149,8 @@ public inline fun ShortArray.copyOf(): ShortArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
-    return arrayCopyResize(this, newSize, false)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
 public fun ByteArray.copyOf(newSize: Int): ByteArray {
     return arrayCopyResize(this, newSize, 0)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-public fun CharArray.copyOf(newSize: Int): CharArray {
-    return arrayCopyResize(this, newSize, '\u0000')
 }
 
 /**
@@ -200,6 +186,20 @@ public fun FloatArray.copyOf(newSize: Int): FloatArray {
  */
 public fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     return arrayCopyResize(this, newSize, 0.0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+    return arrayCopyResize(this, newSize, false)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun CharArray.copyOf(newSize: Int): CharArray {
+    return arrayCopyResize(this, newSize, '\u0000')
 }
 
 /**
