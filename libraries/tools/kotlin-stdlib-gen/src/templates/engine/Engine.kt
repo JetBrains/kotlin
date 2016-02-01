@@ -6,22 +6,22 @@ import java.io.StringReader
 import java.util.*
 
 enum class Family {
-    Sequences,
     Iterables,
     Collections,
     Lists,
-    Maps,
     Sets,
+    Maps,
     InvariantArraysOfObjects,
     ArraysOfObjects,
     ArraysOfPrimitives,
+    Sequences,
     CharSequences,
     Strings,
     Ranges,
     RangesOfPrimitives,
     ProgressionsOfPrimitives,
-    Primitives,
-    Generic;
+    Generic,
+    Primitives;
 
     val isPrimitiveSpecialization: Boolean by lazy { this in primitiveSpecializations }
 
@@ -199,7 +199,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     fun instantiate(vararg families: Family = Family.values()): List<ConcreteFunction> {
         return families
-                .sortedBy { if (it == InvariantArraysOfObjects) "ArraysOfObjectsInvariant" else it.name }
+                .sortedBy { it.ordinal }
                 .filter { buildFamilies.contains(it) }
                 .flatMap { family -> instantiate(family) }
     }
