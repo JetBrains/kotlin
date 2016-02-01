@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.console
 
 import com.intellij.execution.process.OSProcessHandler
+import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -27,8 +28,6 @@ import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import javax.xml.parsers.DocumentBuilderFactory
-
-private val XML_PREFIX = "<?xml"
 
 val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
 val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
@@ -42,7 +41,7 @@ class ReplOutputHandler(
 ) : OSProcessHandler(process, commandLine) {
 
     private var isBuildInfoChecked = false
-    private val dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    private val factory = DocumentBuilderFactory.newInstance()
     private val outputProcessor = ReplOutputProcessor(runner)
     private val inputBuffer = StringBuilder()
 
@@ -52,19 +51,28 @@ class ReplOutputHandler(
         // hide warning about adding test folder to classpath
         if (text.startsWith("warning: classpath entry points to a non-existent location")) return
 
-        // skip "/usr/lib/jvm/java-8-oracle/bin/java -cp ..." intro
-        if (!text.startsWith(XML_PREFIX) && inputBuffer.length == 0) return super.notifyTextAvailable(text, key)
-
-        inputBuffer.append(text)
-        val resultingText = inputBuffer.toString()
-        if (resultingText.endsWith("\n")) {
-            handleReplMessage(resultingText)
-            inputBuffer.setLength(0)
+        if (key == ProcessOutputTypes.STDOUT) {
+            inputBuffer.append(text)
+            val resultingText = inputBuffer.toString()
+            if (resultingText.endsWith("\n")) {
+                handleReplMessage(resultingText)
+                inputBuffer.setLength(0)
+            }
+        }
+        else {
+            super.notifyTextAvailable(text, key)
         }
     }
 
     private fun handleReplMessage(text: String) {
-        val output = dBuilder.parse(strToSource(text))
+        val output = try {
+            factory.newDocumentBuilder().parse(strToSource(text))
+        }
+        catch (e: Exception) {
+            logError(ReplOutputHandler::class.java, "Couldn't parse REPL output: $text")
+            return
+        }
+
         val root = output.firstChild as Element
         val outputType = root.getAttribute("type")
         val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS)
@@ -102,7 +110,7 @@ class ReplOutputHandler(
     private fun createCompilerMessages(runtimeErrorsReport: String): List<SeverityDetails> {
         val compilerMessages = arrayListOf<SeverityDetails>()
 
-        val report = dBuilder.parse(strToSource(runtimeErrorsReport, Charsets.UTF_16))
+        val report = factory.newDocumentBuilder().parse(strToSource(runtimeErrorsReport, Charsets.UTF_16))
         val entries = report.getElementsByTagName("reportEntry")
         for (i in 0..entries.length - 1) {
             val reportEntry = entries.item(i) as Element
