@@ -1,5 +1,6 @@
 == foo ==
 val foo: Int by throw NullPointerException()
 ---------------------
-NullPointerException()   <v0>: {<: Throwable}   NEW: call(NullPointerException(), <init>) -> <v0>
+                         <v0>: Int              NEW: magic[UNRECOGNIZED_WRITE_RHS](val foo: Int by throw NullPointerException()) -> <v0>
+NullPointerException()   <v1>: {<: Throwable}   NEW: call(NullPointerException(), <init>) -> <v1>
 =====================

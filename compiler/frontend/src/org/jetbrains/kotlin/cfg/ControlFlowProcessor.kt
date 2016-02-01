@@ -1001,6 +1001,8 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             }
             val delegate = property.delegateExpression
             if (delegate != null) {
+                // We do not want to have getDeferredValue(delegate) here, because delegate value will be read anyway later
+                visitAssignment(property, getDeferredValue(null), property)
                 generateInstructions(delegate)
                 if (builder.getBoundValue(delegate) != null) {
                     createSyntheticValue(property, MagicKind.VALUE_CONSUMER, delegate)
