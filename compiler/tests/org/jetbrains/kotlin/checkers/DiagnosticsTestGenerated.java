@@ -2853,6 +2853,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("delegatedPropertyEarlyAccess.kt")
+            public void testDelegatedPropertyEarlyAccess() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedPropertyEarlyAccess.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("initializationInLambda.kt")
             public void testInitializationInLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLambda.kt");

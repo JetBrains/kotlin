@@ -360,6 +360,14 @@ public class ControlFlowInformationProvider {
         }
     }
 
+    private boolean isDefinitelyInitialized(@NotNull PropertyDescriptor propertyDescriptor) {
+        if (propertyDescriptor.isLateInit()) return true;
+        if (trace.get(BACKING_FIELD_REQUIRED, propertyDescriptor) == Boolean.TRUE) return false;
+        PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
+        if (property instanceof KtProperty && ((KtProperty) property).hasDelegate()) return false;
+        return true;
+    }
+
     private void checkIsInitialized(
             @NotNull VariableInitContext ctxt,
             @NotNull KtElement element,
@@ -370,11 +378,8 @@ public class ControlFlowInformationProvider {
 
         boolean isDefinitelyInitialized = ctxt.exitInitState.definitelyInitialized();
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (variableDescriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            if (propertyDescriptor.isLateInit() || !trace.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                isDefinitelyInitialized = true;
-            }
+        if (!isDefinitelyInitialized && variableDescriptor instanceof PropertyDescriptor) {
+            isDefinitelyInitialized = isDefinitelyInitialized((PropertyDescriptor) variableDescriptor);
         }
         if (!isDefinitelyInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
             if (!(variableDescriptor instanceof PropertyDescriptor)) {
