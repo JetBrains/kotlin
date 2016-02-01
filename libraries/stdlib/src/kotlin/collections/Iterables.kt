@@ -20,6 +20,15 @@ package kotlin.collections
 import java.util.*
 
 /**
+ * Given an [iterator] function constructs an [Iterable] instance that returns values through the [Iterator]
+ * provided by that function.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable(crossinline iterator: () -> Iterator<T>): Iterable<T> = object : Iterable<T> {
+    override fun iterator(): Iterator<T> = iterator()
+}
+
+/**
  * A wrapper over another [Iterable] (or any other object that can produce an [Iterator]) that returns
  * an indexing iterator.
  */

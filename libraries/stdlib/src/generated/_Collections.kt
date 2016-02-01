@@ -1884,11 +1884,7 @@ public inline fun <T> Iterable<T>.asIterable(): Iterable<T> {
  * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
  */
 public fun <T> Iterable<T>.asSequence(): Sequence<T> {
-    return object : Sequence<T> {
-        override fun iterator(): Iterator<T> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**

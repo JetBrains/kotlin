@@ -11949,9 +11949,7 @@ public fun CharArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
  */
 public fun <T> Array<out T>.asIterable(): Iterable<T> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<T> {
-        override fun iterator(): Iterator<T> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -11959,9 +11957,7 @@ public fun <T> Array<out T>.asIterable(): Iterable<T> {
  */
 public fun ByteArray.asIterable(): Iterable<Byte> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Byte> {
-        override fun iterator(): Iterator<Byte> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -11969,9 +11965,7 @@ public fun ByteArray.asIterable(): Iterable<Byte> {
  */
 public fun ShortArray.asIterable(): Iterable<Short> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Short> {
-        override fun iterator(): Iterator<Short> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -11979,9 +11973,7 @@ public fun ShortArray.asIterable(): Iterable<Short> {
  */
 public fun IntArray.asIterable(): Iterable<Int> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Int> {
-        override fun iterator(): Iterator<Int> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -11989,9 +11981,7 @@ public fun IntArray.asIterable(): Iterable<Int> {
  */
 public fun LongArray.asIterable(): Iterable<Long> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Long> {
-        override fun iterator(): Iterator<Long> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -11999,9 +11989,7 @@ public fun LongArray.asIterable(): Iterable<Long> {
  */
 public fun FloatArray.asIterable(): Iterable<Float> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Float> {
-        override fun iterator(): Iterator<Float> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -12009,9 +11997,7 @@ public fun FloatArray.asIterable(): Iterable<Float> {
  */
 public fun DoubleArray.asIterable(): Iterable<Double> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Double> {
-        override fun iterator(): Iterator<Double> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -12019,9 +12005,7 @@ public fun DoubleArray.asIterable(): Iterable<Double> {
  */
 public fun BooleanArray.asIterable(): Iterable<Boolean> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Boolean> {
-        override fun iterator(): Iterator<Boolean> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -12029,9 +12013,7 @@ public fun BooleanArray.asIterable(): Iterable<Boolean> {
  */
 public fun CharArray.asIterable(): Iterable<Char> {
     if (isEmpty()) return emptyList()
-    return object : Iterable<Char> {
-        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -12039,11 +12021,7 @@ public fun CharArray.asIterable(): Iterable<Char> {
  */
 public fun <T> Array<out T>.asSequence(): Sequence<T> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<T> {
-        override fun iterator(): Iterator<T> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12051,11 +12029,7 @@ public fun <T> Array<out T>.asSequence(): Sequence<T> {
  */
 public fun ByteArray.asSequence(): Sequence<Byte> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Byte> {
-        override fun iterator(): Iterator<Byte> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12063,11 +12037,7 @@ public fun ByteArray.asSequence(): Sequence<Byte> {
  */
 public fun ShortArray.asSequence(): Sequence<Short> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Short> {
-        override fun iterator(): Iterator<Short> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12075,11 +12045,7 @@ public fun ShortArray.asSequence(): Sequence<Short> {
  */
 public fun IntArray.asSequence(): Sequence<Int> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Int> {
-        override fun iterator(): Iterator<Int> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12087,11 +12053,7 @@ public fun IntArray.asSequence(): Sequence<Int> {
  */
 public fun LongArray.asSequence(): Sequence<Long> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Long> {
-        override fun iterator(): Iterator<Long> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12099,11 +12061,7 @@ public fun LongArray.asSequence(): Sequence<Long> {
  */
 public fun FloatArray.asSequence(): Sequence<Float> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Float> {
-        override fun iterator(): Iterator<Float> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12111,11 +12069,7 @@ public fun FloatArray.asSequence(): Sequence<Float> {
  */
 public fun DoubleArray.asSequence(): Sequence<Double> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Double> {
-        override fun iterator(): Iterator<Double> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12123,11 +12077,7 @@ public fun DoubleArray.asSequence(): Sequence<Double> {
  */
 public fun BooleanArray.asSequence(): Sequence<Boolean> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Boolean> {
-        override fun iterator(): Iterator<Boolean> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -12135,11 +12085,7 @@ public fun BooleanArray.asSequence(): Sequence<Boolean> {
  */
 public fun CharArray.asSequence(): Sequence<Char> {
     if (isEmpty()) return emptySequence()
-    return object : Sequence<Char> {
-        override fun iterator(): Iterator<Char> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**

@@ -1131,9 +1131,7 @@ public inline fun <V> CharSequence.zip(other: CharSequence, transform: (Char, Ch
  */
 public fun CharSequence.asIterable(): Iterable<Char> {
     if (this is String && isEmpty()) return emptyList()
-    return object : Iterable<Char> {
-        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
-    }
+    return Iterable { this.iterator() }
 }
 
 /**
@@ -1141,10 +1139,6 @@ public fun CharSequence.asIterable(): Iterable<Char> {
  */
 public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
-    return object : Sequence<Char> {
-        override fun iterator(): Iterator<Char> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 

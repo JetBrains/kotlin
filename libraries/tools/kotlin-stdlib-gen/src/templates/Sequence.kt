@@ -16,9 +16,7 @@ fun sequences(): List<GenericFunction> {
                 CharSequences -> "if (this is String && isEmpty()) return emptyList()"
                 else -> ""
             }}
-            return object : Iterable<T> {
-                override fun iterator(): Iterator<T> = this@asIterable.iterator()
-            }
+            return Iterable { this.iterator() }
             """
         }
 
@@ -30,7 +28,7 @@ fun sequences(): List<GenericFunction> {
     }
 
     templates add f("asSequence()") {
-        include(Maps)
+        include(CharSequences, Maps)
         doc { f -> "Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated." }
         returns("Sequence<T>")
         body { f ->
@@ -40,24 +38,7 @@ fun sequences(): List<GenericFunction> {
                 CharSequences -> "if (this is String && isEmpty()) return emptySequence()"
                 else -> ""
             }}
-            return object : Sequence<T> {
-                override fun iterator(): Iterator<T> {
-                    return this@asSequence.iterator()
-                }
-            }
-            """
-        }
-
-        // TODO: Drop special case
-
-        body(CharSequences) {
-            """
-            if (this is String && isEmpty()) return emptySequence()
-            return object : Sequence<T> {
-                override fun iterator(): Iterator<T> {
-                    return this@asSequence.iterator()
-                }
-            }
+            return Sequence { this.iterator() }
             """
         }
 
