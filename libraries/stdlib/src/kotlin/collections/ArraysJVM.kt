@@ -3,7 +3,6 @@
 
 package kotlin.collections
 
-import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 
 /**

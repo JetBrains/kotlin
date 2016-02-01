@@ -133,39 +133,13 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 public inline fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
 
 /**
- * Returns the size of this iterable if it is known, or `null` otherwise.
+ * Checks if all elements in the specified collection are contained in this collection.
+ *
+ * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
  */
-@kotlin.internal.InlineExposed
-internal fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) this.size else null
+@kotlin.internal.InlineOnly
+public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
 
-/**
- * Returns the size of this iterable if it is known, or the specified [default] value otherwise.
- */
-@kotlin.internal.InlineExposed
-internal fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
-
-/** Returns true when it's safe to convert this collection to a set without changing contains method behavior. */
-private fun <T> Collection<T>.safeToConvertToSet() = size > 2 && this is ArrayList
-
-/** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-internal fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
-        when(this) {
-            is Set -> this
-            is Collection ->
-                when {
-                    source is Collection && source.size < 2 -> this
-                    else -> if (this.safeToConvertToSet()) toHashSet() else this
-                }
-            else -> toHashSet()
-        }
-
-/** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
-internal fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
-        when(this) {
-            is Set -> this
-            is Collection -> if (this.safeToConvertToSet()) toHashSet() else this
-            else -> toHashSet()
-        }
 
 // copies typed varargs array to array of objects
 @JvmVersion
@@ -278,30 +252,4 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
     }
 }
 
-/**
- * Returns a single list of all elements from all collections in the given collection.
- */
-public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
-    val result = ArrayList<T>()
-    for (element in this) {
-        result.addAll(element)
-    }
-    return result
-}
-
-/**
- * Returns a pair of lists, where
- * *first* list is built from the first values of each pair from this collection,
- * *second* list is built from the second values of each pair from this collection.
- */
-public fun <T, R> Iterable<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
-    val expectedSize = collectionSizeOrDefault(10)
-    val listT = ArrayList<T>(expectedSize)
-    val listR = ArrayList<R>(expectedSize)
-    for (pair in this) {
-        listT.add(pair.first)
-        listR.add(pair.second)
-    }
-    return listT to listR
-}
 

@@ -53,3 +53,16 @@ public inline fun <T> T.apply(block: T.() -> Unit): T { block(); return this }
  */
 @kotlin.internal.InlineOnly
 public inline fun <T, R> T.let(block: (T) -> R): R = block(this)
+
+
+/**
+ * Executes the given function [action] specified number of [times].
+ *
+ * A zero-based index of current iteration is passed as a parameter to [action].
+ */
+@kotlin.internal.InlineOnly
+public inline fun repeat(times: Int, action: (Int) -> Unit) {
+    for (index in 0..times - 1) {
+        action(index)
+    }
+}
