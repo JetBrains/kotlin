@@ -5,7 +5,7 @@ Compiling files:
 src/A.kt
 End of files
 COMPILATION FAILED
-'public constructor A(x: kotlin.String)' conflicts with another declaration: public constructor A(x: kotlin.String)
+'public constructor A(x: kotlin.String)' conflicts with another declaration in package '<root>'
 
 
 Cleaning output files:
