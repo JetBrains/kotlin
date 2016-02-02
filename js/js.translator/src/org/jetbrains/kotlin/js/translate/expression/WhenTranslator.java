@@ -19,19 +19,15 @@ package org.jetbrains.kotlin.js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -214,18 +210,11 @@ public final class WhenTranslator extends AbstractTranslator {
         assert expressionToMatch != null : "Range pattern is only available for 'when (C) { in ... }'  expressions: " +
                                            PsiUtilsKt.getTextWithLocation(condition);
 
-        ResolvedCall<? extends CallableDescriptor> call = CallUtilKt.getResolvedCallWithAssert(condition.getOperationReference(),
-                                                                                               context.bindingContext());
-        assert call.getResultingDescriptor() instanceof FunctionDescriptor : "rangeTo must imply FunctionDescriptor: " +
-                                                                             PsiUtilsKt.getTextWithLocation(condition);
-        @SuppressWarnings("unchecked")
-        ResolvedCall<? extends FunctionDescriptor> functionCall = (ResolvedCall<? extends FunctionDescriptor>) call;
-
-        JsExpression receiver = Translation.translateAsExpression(condition.getRangeExpression(), context());
         Map<KtExpression, JsExpression> subjectAliases = new HashMap<KtExpression, JsExpression>();
         subjectAliases.put(whenExpression.getSubjectExpression(), expressionToMatch);
         TranslationContext callContext = context.innerContextWithAliasesForExpressions(subjectAliases);
-        return CallTranslator.translate(callContext, functionCall, receiver);
+        return new InOperationTranslator(callContext, expressionToMatch, condition.getRangeExpression(), condition.getOperationReference())
+                .translate();
     }
 
     @Nullable
