@@ -1342,6 +1342,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("nestedInPrivateClass.1.kt")
+        public void testNestedInPrivateClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/nestedInPrivateClass.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("privateClass.1.kt")
+        public void testPrivateClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/privateClass.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("privateClassExtensionLambda.1.kt")
+        public void testPrivateClassExtensionLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/privateClassExtensionLambda.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("privateInInlineInMultiFileFacade.1.kt")
         public void testPrivateInInlineInMultiFileFacade() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/privateInInlineInMultiFileFacade.1.kt");

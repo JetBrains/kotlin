@@ -101,7 +101,7 @@ class InlineChecker implements CallChecker {
             }
         }
 
-        checkVisibility(targetDescriptor, expression, context);
+        checkVisibilityAndAccess(targetDescriptor, expression, context);
         checkRecursion(context, targetDescriptor, expression);
     }
 
@@ -248,10 +248,25 @@ class InlineChecker implements CallChecker {
         return isInvoke || InlineUtil.isInline(descriptor);
     }
 
-    private void checkVisibility(@NotNull CallableDescriptor declarationDescriptor, @NotNull KtElement expression, @NotNull BasicCallResolutionContext context){
+    private void checkVisibilityAndAccess(@NotNull CallableDescriptor declarationDescriptor, @NotNull KtElement expression, @NotNull BasicCallResolutionContext context){
         boolean declarationDescriptorIsPublicApi = DescriptorUtilsKt.isEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
         if (isEffectivelyPublicApiFunction && !declarationDescriptorIsPublicApi && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
             context.trace.report(Errors.INVISIBLE_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
+        }
+        else {
+            checkPrivateClassMemberAccess(declarationDescriptor, expression, context);
+        }
+    }
+
+    private void checkPrivateClassMemberAccess(
+            @NotNull DeclarationDescriptor declarationDescriptor,
+            @NotNull KtElement expression,
+            @NotNull BasicCallResolutionContext context
+    ) {
+        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
+            if (DescriptorUtilsKt.isInsidePrivateClass(declarationDescriptor)) {
+                context.trace.report(Errors.PRIVATE_CLASS_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
+            }
         }
     }
 

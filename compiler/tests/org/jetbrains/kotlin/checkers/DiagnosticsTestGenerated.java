@@ -9150,6 +9150,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateClass.kt")
+            public void testPrivateClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/privateClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propagation.kt")
             public void testPropagation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/propagation.kt");
