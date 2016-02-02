@@ -51,13 +51,19 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
     @Override
     public PsiClass createClass(@NotNull PsiClassStub stub) {
         final PsiElement origin = getOriginalElement(stub);
-        if (origin == null) return delegate.createClass(stub);
-
         return new ClsClassImpl(stub) {
             @NotNull
             @Override
             public PsiElement getNavigationElement() {
-                return origin;
+                if (origin != null) return origin;
+
+                return super.getNavigationElement();
+            }
+
+            @Nullable
+            @Override
+            public PsiClass getSourceMirrorClass() {
+                return null;
             }
         };
     }
