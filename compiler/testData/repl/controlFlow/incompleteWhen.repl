@@ -2,9 +2,6 @@
 error: 'when' expression must be exhaustive, add necessary 'else' branch
 val a = when(null) { }
         ^
-warning: the expression is unused
-val a = when(null) { }
-             ^
 >>> "" + when (true) { true -> 42 }
 error: 'when' expression must be exhaustive, add necessary 'false' branch or 'else' branch instead
 "" + when (true) { true -> 42 }
