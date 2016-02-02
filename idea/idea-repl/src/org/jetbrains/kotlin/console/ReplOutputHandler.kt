@@ -65,6 +65,7 @@ class ReplOutputHandler(
     }
 
     private fun handleReplMessage(text: String) {
+        if (text.isBlank()) return
         val output = try {
             factory.newDocumentBuilder().parse(strToSource(text))
         }
