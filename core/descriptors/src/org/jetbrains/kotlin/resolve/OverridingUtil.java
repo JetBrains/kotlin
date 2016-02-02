@@ -338,6 +338,8 @@ public class OverridingUtil {
         assert aReturnType != null : "Return type of " + a + " is null";
         assert bReturnType != null : "Return type of " + b + " is null";
 
+        if (!isVisibilityMoreSpecific(a, b)) return false;
+
         if (a instanceof SimpleFunctionDescriptor) {
             assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
 
@@ -348,6 +350,9 @@ public class OverridingUtil {
 
             PropertyDescriptor pa = (PropertyDescriptor) a;
             PropertyDescriptor pb = (PropertyDescriptor) b;
+
+            if (!isAccessorMoreSpecific(pa.getSetter(), pb.getSetter())) return false;
+
             if (pa.isVar() && pb.isVar()) {
                 return DEFAULT.createTypeChecker(a.getTypeParameters(), b.getTypeParameters()).equalTypes(aReturnType, bReturnType);
             }
@@ -357,6 +362,19 @@ public class OverridingUtil {
             }
         }
         throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
+    }
+
+    private static boolean isVisibilityMoreSpecific(
+            @NotNull DeclarationDescriptorWithVisibility a,
+            @NotNull DeclarationDescriptorWithVisibility b
+    ) {
+        Integer result = Visibilities.compare(a.getVisibility(), b.getVisibility());
+        return result == null || result >= 0;
+    }
+
+    private static boolean isAccessorMoreSpecific(@Nullable PropertyAccessorDescriptor a, @Nullable PropertyAccessorDescriptor b) {
+        if (a == null || b == null) return true;
+        return isVisibilityMoreSpecific(a, b);
     }
 
     private static boolean isMoreSpecificThenAllOf(@NotNull CallableDescriptor candidate, @NotNull Collection<CallableDescriptor> descriptors) {

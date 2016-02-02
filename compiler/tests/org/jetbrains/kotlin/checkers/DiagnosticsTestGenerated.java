@@ -16538,6 +16538,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("moreSpecificSetter.kt")
+                public void testMoreSpecificSetter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/moreSpecificSetter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("moreSpecificVisibility.kt")
+                public void testMoreSpecificVisibility() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/moreSpecificVisibility.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("mostSpecific.kt")
                 public void testMostSpecific() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/mostSpecific.kt");
