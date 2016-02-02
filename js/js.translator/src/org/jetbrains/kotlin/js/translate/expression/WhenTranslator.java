@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -27,6 +29,12 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 
@@ -199,21 +207,25 @@ public final class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateRangeCondition(@NotNull KtWhenConditionInRange condition, @NotNull TranslationContext context) {
         KtExpression patternExpression = condition.getRangeExpression();
-        assert patternExpression != null : "Expression pattern should have an expression.";
+        assert patternExpression != null : "Expression pattern should have an expression: " +
+                                           PsiUtilsKt.getTextWithLocation(condition);
 
         JsExpression expressionToMatch = getExpressionToMatch();
-        assert expressionToMatch != null : "Range pattern is only available for 'when (C) { ... }'  expressions";
+        assert expressionToMatch != null : "Range pattern is only available for 'when (C) { in ... }'  expressions: " +
+                                           PsiUtilsKt.getTextWithLocation(condition);
 
-        // Obviously, caller function should perform such guard itself, since when may contain several clauses, each requiring
-        // expressionToMatch. However, caller function may implement some optimizations according to the number of
-        // clauses, so we just pe a little paranoid
-        if (!(expressionToMatch instanceof JsNameRef)) {
-            TemporaryConstVariable matchedValueHolder = context.getOrDeclareTemporaryConstVariable(expressionToMatch);
-            expressionToMatch = matchedValueHolder.reference();
-            context.addStatementToCurrentBlock(new JsExpressionStatement(matchedValueHolder.assignmentExpression()));
-        }
+        ResolvedCall<? extends CallableDescriptor> call = CallUtilKt.getResolvedCallWithAssert(condition.getOperationReference(),
+                                                                                               context.bindingContext());
+        assert call.getResultingDescriptor() instanceof FunctionDescriptor : "rangeTo must imply FunctionDescriptor: " +
+                                                                             PsiUtilsKt.getTextWithLocation(condition);
+        @SuppressWarnings("unchecked")
+        ResolvedCall<? extends FunctionDescriptor> functionCall = (ResolvedCall<? extends FunctionDescriptor>) call;
 
-        return Translation.patternTranslator(context).translateRangePattern(expressionToMatch, patternExpression);
+        JsExpression receiver = Translation.translateAsExpression(condition.getRangeExpression(), context());
+        Map<KtExpression, JsExpression> subjectAliases = new HashMap<KtExpression, JsExpression>();
+        subjectAliases.put(whenExpression.getSubjectExpression(), expressionToMatch);
+        TranslationContext callContext = context.innerContextWithAliasesForExpressions(subjectAliases);
+        return CallTranslator.translate(callContext, functionCall, receiver);
     }
 
     @Nullable
