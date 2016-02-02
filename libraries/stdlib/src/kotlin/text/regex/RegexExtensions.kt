@@ -28,5 +28,5 @@ public inline fun String.toRegex(options: Set<RegexOption>): Regex = Regex(this,
  */
 @JvmVersion
 @kotlin.internal.InlineOnly
-@Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun java.util.regex.Pattern.toRegex(): Regex = Regex(this)

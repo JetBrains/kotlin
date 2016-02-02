@@ -499,7 +499,7 @@ public inline fun String.reversed(): String {
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
@@ -510,7 +510,7 @@ public inline fun <K, V> CharSequence.associate(transform: (Char) -> Pair<K, V>)
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
@@ -520,7 +520,7 @@ public inline fun <K> CharSequence.associateBy(keySelector: (Char) -> K): Map<K,
  * If any two characters would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val capacity = mapCapacity(length).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }

@@ -5,8 +5,8 @@ private class Z public constructor(){
 }
 
 public inline fun test() {
-    <!INVISIBLE_MEMBER_FROM_INLINE!>Z<!>().<!INVISIBLE_MEMBER_FROM_INLINE!>publicProperty<!>
-    <!INVISIBLE_MEMBER_FROM_INLINE!>Z<!>().<!INVISIBLE_MEMBER_FROM_INLINE!>publicFun<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Z<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicProperty<!>
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Z<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicFun<!>()
 }
 
 internal inline fun testInternal() {
