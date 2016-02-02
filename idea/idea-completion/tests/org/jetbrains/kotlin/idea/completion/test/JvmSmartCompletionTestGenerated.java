@@ -1436,6 +1436,51 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         }
     }
 
+    @TestMetadata("idea/idea-completion/testData/smart/propertyDelegate")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PropertyDelegate extends AbstractJvmSmartCompletionTest {
+        public void testAllFilesPresentInPropertyDelegate() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/propertyDelegate"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ExplicitValType.kt")
+        public void testExplicitValType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitValType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExplicitVarType.kt")
+        public void testExplicitVarType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitVarType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionVal.kt")
+        public void testExtensionVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtensionVar.kt")
+        public void testExtensionVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInClass.kt")
+        public void testValInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("VarInClass.kt")
+        public void testVarInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/VarInClass.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/smart/smartCasts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

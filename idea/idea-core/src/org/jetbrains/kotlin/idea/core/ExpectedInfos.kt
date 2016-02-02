@@ -158,6 +158,7 @@ class ExpectedInfos(
                             ?: calculateForReturn(expressionWithType)
                             ?: calculateForLoopRange(expressionWithType)
                             ?: calculateForInOperatorArgument(expressionWithType)
+                            ?: calculateForPropertyDelegate(expressionWithType)
                             ?: getFromBindingContext(expressionWithType)
                             ?: return emptyList()
         return expectedInfos.filterNot { it.fuzzyType?.type?.isError ?: false }
@@ -590,10 +591,42 @@ class ExpectedInfos(
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
-                return if (detector.hasContains(descriptorType)) TypeSubstitutor.EMPTY else null
+                return if (detector.findOperator(descriptorType) != null) TypeSubstitutor.EMPTY else null
             }
         }
         return listOf(ExpectedInfo(byTypeFilter, null, null))
+    }
+
+    private fun calculateForPropertyDelegate(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
+        val delegate = expressionWithType.parent as? KtPropertyDelegate ?: return null
+        val propertyDeclaration = delegate.parent as? KtProperty ?: return null
+        val property = resolutionFacade.resolveToDescriptor(propertyDeclaration) as? PropertyDescriptor ?: return null
+
+        val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
+        val propertyOwnerType = property.extensionReceiverParameter?.type
+                            ?: property.dispatchReceiverParameter?.type
+                            ?: return null
+
+        val explicitPropertyType = property.returnType?.check { propertyDeclaration.typeReference != null }
+        val typesWithGetDetector = TypesWithGetValueDetector(scope, propertyOwnerType, explicitPropertyType)
+        val typesWithSetDetector = if (property.isVar) TypesWithSetValueDetector(scope, propertyOwnerType) else null
+
+        val byTypeFilter = object : ByTypeFilter {
+            override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
+                val getValueOperator = typesWithGetDetector.findOperator(descriptorType) ?: return null
+
+                if (typesWithSetDetector != null) {
+                    val setValueOperator = typesWithSetDetector.findOperator(descriptorType) ?: return null
+                    val propertyType = explicitPropertyType ?: getValueOperator.returnType!!
+                    val setParamType = FuzzyType(setValueOperator.valueParameters.last().type, setValueOperator.typeParameters)
+                    if (setParamType.checkIsSuperTypeOf(propertyType) == null) return null
+                }
+
+                return TypeSubstitutor.EMPTY //TODO: substitutor from property type
+            }
+        }
+        return listOf(ExpectedInfo(byTypeFilter, null, null))
+        //TODO: special items for "Delegates...."
     }
 
     private fun getFromBindingContext(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
