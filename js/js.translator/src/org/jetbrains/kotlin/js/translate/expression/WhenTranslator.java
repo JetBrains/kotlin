@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -144,10 +145,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateCondition(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
-        if ((condition instanceof KtWhenConditionIsPattern) || (condition instanceof KtWhenConditionWithExpression)) {
-            return translatePatternCondition(condition, context);
-        }
-        throw new AssertionError("Unsupported when condition " + condition.getClass());
+        return translatePatternCondition(condition, context);
     }
 
     @NotNull
@@ -167,7 +165,10 @@ public final class WhenTranslator extends AbstractTranslator {
         else if (condition instanceof KtWhenConditionWithExpression) {
             return translateExpressionCondition((KtWhenConditionWithExpression) condition, context);
         }
-        throw new AssertionError("Wrong type of JetWhenCondition");
+        else if (condition instanceof KtWhenConditionInRange) {
+            return translateRangeCondition((KtWhenConditionInRange) condition, context);
+        }
+        throw new AssertionError("Unsupported when condition " + condition.getClass());
     }
 
     @NotNull
@@ -193,6 +194,26 @@ public final class WhenTranslator extends AbstractTranslator {
         else {
             return Translation.patternTranslator(context).translateExpressionPattern(expressionToMatch, patternExpression);
         }
+    }
+
+    @NotNull
+    private JsExpression translateRangeCondition(@NotNull KtWhenConditionInRange condition, @NotNull TranslationContext context) {
+        KtExpression patternExpression = condition.getRangeExpression();
+        assert patternExpression != null : "Expression pattern should have an expression.";
+
+        JsExpression expressionToMatch = getExpressionToMatch();
+        assert expressionToMatch != null : "Range pattern is only available for 'when (C) { ... }'  expressions";
+
+        // Obviously, caller function should perform such guard itself, since when may contain several clauses, each requiring
+        // expressionToMatch. However, caller function may implement some optimizations according to the number of
+        // clauses, so we just pe a little paranoid
+        if (!(expressionToMatch instanceof JsNameRef)) {
+            TemporaryConstVariable matchedValueHolder = context.getOrDeclareTemporaryConstVariable(expressionToMatch);
+            expressionToMatch = matchedValueHolder.reference();
+            context.addStatementToCurrentBlock(new JsExpressionStatement(matchedValueHolder.assignmentExpression()));
+        }
+
+        return Translation.patternTranslator(context).translateRangePattern(expressionToMatch, patternExpression);
     }
 
     @Nullable
