@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.projectView
 
 import com.intellij.ide.projectView.SelectableTreeStructureProvider
+import com.intellij.ide.projectView.TreeStructureProvider
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.DumbAware
@@ -33,11 +34,14 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
-class KotlinProjectViewProvider(private val myProject: Project) : SelectableTreeStructureProvider, DumbAware {
+class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
 
-    override fun modify(parent: AbstractTreeNode<Any>,
-                        children: Collection<AbstractTreeNode<Any>>,
-                        settings: ViewSettings): Collection<AbstractTreeNode<out Any>> {
+    // should be called after ClassesTreeStructureProvider
+    override fun modify(
+            parent: AbstractTreeNode<Any>,
+            children: Collection<AbstractTreeNode<Any>>,
+            settings: ViewSettings
+    ): Collection<AbstractTreeNode<out Any>> {
         val result = ArrayList<AbstractTreeNode<out Any>>()
 
         for (child in children) {
@@ -63,14 +67,29 @@ class KotlinProjectViewProvider(private val myProject: Project) : SelectableTree
         return result
     }
 
-    private fun Any.asKtFile(): KtFile? = when(this) {
+    private fun Any.asKtFile(): KtFile? = when (this) {
         is KtFile -> this
         is KtLightClass -> getOrigin()?.containingFile as? KtFile
         else -> null
     }
 
     override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? = null
+}
 
+
+class KotlinSelectInProjectViewProvider(private val project: Project) : SelectableTreeStructureProvider, DumbAware {
+    override fun getData(selected: Collection<AbstractTreeNode<Any>>, dataName: String): Any? = null
+
+    override fun modify(
+            parent: AbstractTreeNode<Any>,
+            children: Collection<AbstractTreeNode<Any>>,
+            settings: ViewSettings
+    ): Collection<AbstractTreeNode<out Any>> {
+        return ArrayList(children)
+    }
+
+
+    // should be called before ClassesTreeStructureProvider
     override fun getTopLevelElement(element: PsiElement): PsiElement? {
         val file = element.containingFile as? KtFile ?: return null
 
@@ -90,7 +109,7 @@ class KotlinProjectViewProvider(private val myProject: Project) : SelectableTree
         return current ?: file
     }
 
-    private fun PsiElement.isSelectable(): Boolean = when(this) {
+    private fun PsiElement.isSelectable(): Boolean = when (this) {
         is KtFile -> true
         is KtDeclaration ->
             parent is KtFile ||
@@ -99,7 +118,7 @@ class KotlinProjectViewProvider(private val myProject: Project) : SelectableTree
     }
 
     private fun fileInRoots(file: VirtualFile?): Boolean {
-        val index = ProjectRootManager.getInstance(myProject).fileIndex
+        val index = ProjectRootManager.getInstance(project).fileIndex
         return file != null && (index.isInSourceContent(file) || index.isInLibraryClasses(file) || index.isInLibrarySource(file))
     }
 }
