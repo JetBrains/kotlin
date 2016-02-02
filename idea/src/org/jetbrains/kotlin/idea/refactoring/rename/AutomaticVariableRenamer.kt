@@ -116,8 +116,8 @@ private fun KotlinType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boo
 }
 
 
-class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is KtClass || element is PsiClass
+open class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
+    override fun isApplicable(element: PsiElement) = element is KtClass
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
             AutomaticVariableRenamer(element as PsiNamedElement, newName, usages)
@@ -126,6 +126,12 @@ class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
 
     override fun getOptionName() = RefactoringBundle.message("rename.variables")
+}
+
+class AutomaticVariableRenamerFactoryForJavaClass : AutomaticVariableRenamerFactory() {
+    override fun isApplicable(element: PsiElement) = element is PsiClass
+
+    override fun getOptionName() = null
 }
 
 class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
@@ -138,5 +144,5 @@ class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
 
-    override fun getOptionName() = RefactoringBundle.message("rename.variables")
+    override fun getOptionName() = null
 }
