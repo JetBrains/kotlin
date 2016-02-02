@@ -191,12 +191,25 @@ object Main {
     fun main(args: Array<String>) {
         try {
             run(args)
-        }
-        catch (e: RunnerException) {
+        } catch (e: RunnerException) {
             System.err.println("error: " + e.message)
             exitProcess(1)
+        } catch (e: Throwable) {
+            for (exception in generateSequence(e, Throwable::cause)) {
+                exception.stackTrace = sanitizeStackTrace(exception.stackTrace)
+            }
+            throw e
         }
     }
+
+    private fun sanitizeStackTrace(trace: Array<StackTraceElement>): Array<StackTraceElement> =
+        trace.dropLastWhile {
+            val name = it.className
+            name.startsWith("org.jetbrains.kotlin.runner.") ||
+                    name.startsWith("java.lang.reflect.") ||
+                    name.startsWith("sun.reflect.") ||
+                    name.startsWith("jdk.internal.reflect.")
+        }.toTypedArray()
 
     private fun printUsageAndExit() {
         println("""kotlin: run Kotlin programs, scripts or REPL.
