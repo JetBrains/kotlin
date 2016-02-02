@@ -114,7 +114,7 @@ public class PropertyCodegen {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
-        if (CodegenContextUtil.isImplClassOwner(context)) {
+        if (isBackingFieldOwner(descriptor)) {
             assert declaration != null : "Declaration is null for different context: " + context;
 
             genBackingFieldAndAnnotations(declaration, descriptor, false);
@@ -126,6 +126,13 @@ public class PropertyCodegen {
         if (isAccessorNeeded(declaration, descriptor, setter)) {
             generateSetter(declaration, descriptor, setter);
         }
+    }
+
+    private boolean isBackingFieldOwner(@NotNull PropertyDescriptor descriptor) {
+        if (descriptor.isConst()) {
+            return !(context instanceof MultifileClassPartContext);
+        }
+        return CodegenContextUtil.isImplClassOwner(context);
     }
 
     private void genBackingFieldAndAnnotations(@NotNull KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter) {
