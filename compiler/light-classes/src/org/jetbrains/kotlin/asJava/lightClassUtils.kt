@@ -41,7 +41,7 @@ fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
             is KtClassOrObject -> toLightClass().singletonOrEmptyList()
             is KtNamedFunction,
             is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
-            is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
+            is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).allDeclarations
             is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
             is KtParameter -> ArrayList<PsiNamedElement>().let { elements ->
                 toPsiParameters().toCollection(elements)
