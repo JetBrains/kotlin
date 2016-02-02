@@ -64,7 +64,8 @@ public fun <T> emptyList(): List<T> = EmptyList
 public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
-public fun <T> listOf(): List<T> = emptyList()
+@kotlin.internal.InlineOnly
+public inline fun <T> listOf(): List<T> = emptyList()
 
 /**
  * Returns an immutable list containing only the specified object [element].
@@ -112,30 +113,36 @@ public val <T> List<T>.lastIndex: Int
     get() = this.size - 1
 
 /** Returns `true` if the collection is not empty. */
-public fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
 /** Returns this Collection if it's not `null` and the empty list otherwise. */
-public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 
 /** Returns this List if it's not `null` and the empty list otherwise. */
-public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
+@kotlin.internal.InlineOnly
+public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 /**
  * Returns a list containing the elements returned by this enumeration
  * in the order they are returned by the enumeration.
  */
 @JvmVersion
-public fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
+@kotlin.internal.InlineOnly
+public inline fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
 
 /**
  * Returns the size of this iterable if it is known, or `null` otherwise.
  */
-public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) this.size else null
+@kotlin.internal.InlineExposed
+internal fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) this.size else null
 
 /**
  * Returns the size of this iterable if it is known, or the specified [default] value otherwise.
  */
-public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
+@kotlin.internal.InlineExposed
+internal fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
 
 /** Returns true when it's safe to convert this collection to a set without changing contains method behavior. */
 private fun <T> Collection<T>.safeToConvertToSet() = size > 2 && this is ArrayList

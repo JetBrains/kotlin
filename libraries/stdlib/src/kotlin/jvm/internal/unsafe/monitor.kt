@@ -16,10 +16,8 @@
 
 package kotlin.jvm.internal.unsafe
 
-/** @suppress */
-@Deprecated("This function supports the standard library infrastructure and is not intended to be used directly from user code.", level = DeprecationLevel.ERROR)
-public fun monitorEnter(monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
+@kotlin.internal.InlineExposed
+internal fun monitorEnter(monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
 
-/** @suppress */
-@Deprecated("This function supports the standard library infrastructure and is not intended to be used directly from user code.", level = DeprecationLevel.ERROR)
-public fun monitorExit(monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
+@kotlin.internal.InlineExposed
+internal fun monitorExit(monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")

@@ -12,7 +12,7 @@ private final class Z {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-private final class Z2 {
+internal final class Z2 {
     public constructor Z2()
     private final val privateProperty: kotlin.Int = 11
     public final val publicProperty: kotlin.Int = 12

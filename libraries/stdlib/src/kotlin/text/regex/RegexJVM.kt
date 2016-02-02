@@ -91,7 +91,9 @@ public data class MatchGroup(public val value: String, public val range: IntRang
  *
  * For pattern syntax reference see [java.util.regex.Pattern]
  */
-public class Regex internal constructor(private val nativePattern: Pattern) {
+public class Regex
+@kotlin.internal.InlineExposed
+internal constructor(private val nativePattern: Pattern) {
 
 
     /** Creates a regular expression from the specified [pattern] string and the default options.  */
@@ -149,7 +151,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      * the given function [transform] that takes [MatchResult] and returns a string to be used as a
      * replacement for that match.
      */
-    public inline fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
+    public fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
         var match: MatchResult? = find(input) ?: return input.toString()
 
         var lastStart = 0

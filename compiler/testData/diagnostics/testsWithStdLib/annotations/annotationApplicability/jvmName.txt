@@ -43,3 +43,10 @@ public final class D : AB {
     @kotlin.jvm.JvmName(name = "D_openFun") public final override /*1*/ fun openFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public interface Intf {
+    public abstract var foo: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

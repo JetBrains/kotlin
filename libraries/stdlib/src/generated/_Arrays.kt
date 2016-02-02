@@ -16,7 +16,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component1(): T {
     return get(0)
 }
@@ -24,7 +24,7 @@ public inline operator fun <T> Array<out T>.component1(): T {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component1(): Boolean {
     return get(0)
 }
@@ -32,7 +32,7 @@ public inline operator fun BooleanArray.component1(): Boolean {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component1(): Byte {
     return get(0)
 }
@@ -40,7 +40,7 @@ public inline operator fun ByteArray.component1(): Byte {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun CharArray.component1(): Char {
     return get(0)
 }
@@ -48,7 +48,7 @@ public inline operator fun CharArray.component1(): Char {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component1(): Double {
     return get(0)
 }
@@ -56,7 +56,7 @@ public inline operator fun DoubleArray.component1(): Double {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component1(): Float {
     return get(0)
 }
@@ -64,7 +64,7 @@ public inline operator fun FloatArray.component1(): Float {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun IntArray.component1(): Int {
     return get(0)
 }
@@ -72,7 +72,7 @@ public inline operator fun IntArray.component1(): Int {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun LongArray.component1(): Long {
     return get(0)
 }
@@ -80,7 +80,7 @@ public inline operator fun LongArray.component1(): Long {
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component1(): Short {
     return get(0)
 }
@@ -88,7 +88,7 @@ public inline operator fun ShortArray.component1(): Short {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component2(): T {
     return get(1)
 }
@@ -96,7 +96,7 @@ public inline operator fun <T> Array<out T>.component2(): T {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component2(): Boolean {
     return get(1)
 }
@@ -104,7 +104,7 @@ public inline operator fun BooleanArray.component2(): Boolean {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component2(): Byte {
     return get(1)
 }
@@ -112,7 +112,7 @@ public inline operator fun ByteArray.component2(): Byte {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun CharArray.component2(): Char {
     return get(1)
 }
@@ -120,7 +120,7 @@ public inline operator fun CharArray.component2(): Char {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component2(): Double {
     return get(1)
 }
@@ -128,7 +128,7 @@ public inline operator fun DoubleArray.component2(): Double {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component2(): Float {
     return get(1)
 }
@@ -136,7 +136,7 @@ public inline operator fun FloatArray.component2(): Float {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun IntArray.component2(): Int {
     return get(1)
 }
@@ -144,7 +144,7 @@ public inline operator fun IntArray.component2(): Int {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun LongArray.component2(): Long {
     return get(1)
 }
@@ -152,7 +152,7 @@ public inline operator fun LongArray.component2(): Long {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component2(): Short {
     return get(1)
 }
@@ -160,7 +160,7 @@ public inline operator fun ShortArray.component2(): Short {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component3(): T {
     return get(2)
 }
@@ -168,7 +168,7 @@ public inline operator fun <T> Array<out T>.component3(): T {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component3(): Boolean {
     return get(2)
 }
@@ -176,7 +176,7 @@ public inline operator fun BooleanArray.component3(): Boolean {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component3(): Byte {
     return get(2)
 }
@@ -184,7 +184,7 @@ public inline operator fun ByteArray.component3(): Byte {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun CharArray.component3(): Char {
     return get(2)
 }
@@ -192,7 +192,7 @@ public inline operator fun CharArray.component3(): Char {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component3(): Double {
     return get(2)
 }
@@ -200,7 +200,7 @@ public inline operator fun DoubleArray.component3(): Double {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component3(): Float {
     return get(2)
 }
@@ -208,7 +208,7 @@ public inline operator fun FloatArray.component3(): Float {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun IntArray.component3(): Int {
     return get(2)
 }
@@ -216,7 +216,7 @@ public inline operator fun IntArray.component3(): Int {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun LongArray.component3(): Long {
     return get(2)
 }
@@ -224,7 +224,7 @@ public inline operator fun LongArray.component3(): Long {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component3(): Short {
     return get(2)
 }
@@ -232,7 +232,7 @@ public inline operator fun ShortArray.component3(): Short {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component4(): T {
     return get(3)
 }
@@ -240,7 +240,7 @@ public inline operator fun <T> Array<out T>.component4(): T {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component4(): Boolean {
     return get(3)
 }
@@ -248,7 +248,7 @@ public inline operator fun BooleanArray.component4(): Boolean {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component4(): Byte {
     return get(3)
 }
@@ -256,7 +256,7 @@ public inline operator fun ByteArray.component4(): Byte {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun CharArray.component4(): Char {
     return get(3)
 }
@@ -264,7 +264,7 @@ public inline operator fun CharArray.component4(): Char {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component4(): Double {
     return get(3)
 }
@@ -272,7 +272,7 @@ public inline operator fun DoubleArray.component4(): Double {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component4(): Float {
     return get(3)
 }
@@ -280,7 +280,7 @@ public inline operator fun FloatArray.component4(): Float {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun IntArray.component4(): Int {
     return get(3)
 }
@@ -288,7 +288,7 @@ public inline operator fun IntArray.component4(): Int {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun LongArray.component4(): Long {
     return get(3)
 }
@@ -296,7 +296,7 @@ public inline operator fun LongArray.component4(): Long {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component4(): Short {
     return get(3)
 }
@@ -304,7 +304,7 @@ public inline operator fun ShortArray.component4(): Short {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component5(): T {
     return get(4)
 }
@@ -312,7 +312,7 @@ public inline operator fun <T> Array<out T>.component5(): T {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component5(): Boolean {
     return get(4)
 }
@@ -320,7 +320,7 @@ public inline operator fun BooleanArray.component5(): Boolean {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component5(): Byte {
     return get(4)
 }
@@ -328,7 +328,7 @@ public inline operator fun ByteArray.component5(): Byte {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun CharArray.component5(): Char {
     return get(4)
 }
@@ -336,7 +336,7 @@ public inline operator fun CharArray.component5(): Char {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component5(): Double {
     return get(4)
 }
@@ -344,7 +344,7 @@ public inline operator fun DoubleArray.component5(): Double {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component5(): Float {
     return get(4)
 }
@@ -352,7 +352,7 @@ public inline operator fun FloatArray.component5(): Float {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun IntArray.component5(): Int {
     return get(4)
 }
@@ -360,7 +360,7 @@ public inline operator fun IntArray.component5(): Int {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun LongArray.component5(): Long {
     return get(4)
 }
@@ -368,7 +368,7 @@ public inline operator fun LongArray.component5(): Long {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component5(): Short {
     return get(4)
 }
@@ -439,69 +439,79 @@ public operator fun ShortArray.contains(element: Short): Boolean {
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun <T> Array<out T>.elementAt(index: Int): T {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.elementAt(index: Int): T {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun BooleanArray.elementAt(index: Int): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.elementAt(index: Int): Boolean {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun ByteArray.elementAt(index: Int): Byte {
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.elementAt(index: Int): Byte {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun CharArray.elementAt(index: Int): Char {
+@kotlin.internal.InlineOnly
+public inline fun CharArray.elementAt(index: Int): Char {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun DoubleArray.elementAt(index: Int): Double {
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.elementAt(index: Int): Double {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun FloatArray.elementAt(index: Int): Float {
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.elementAt(index: Int): Float {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun IntArray.elementAt(index: Int): Int {
+@kotlin.internal.InlineOnly
+public inline fun IntArray.elementAt(index: Int): Int {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun LongArray.elementAt(index: Int): Long {
+@kotlin.internal.InlineOnly
+public inline fun LongArray.elementAt(index: Int): Long {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  */
-public fun ShortArray.elementAt(index: Int): Short {
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.elementAt(index: Int): Short {
     return get(index)
 }
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -509,6 +519,7 @@ public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (In
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -516,6 +527,7 @@ public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -523,6 +535,7 @@ public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> B
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -530,6 +543,7 @@ public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> C
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Double): Double {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -537,6 +551,7 @@ public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) ->
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Float): Float {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -544,6 +559,7 @@ public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Int): Int {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -551,6 +567,7 @@ public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> In
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Long): Long {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -558,6 +575,7 @@ public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> L
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Short): Short {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -565,69 +583,79 @@ public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun <T> Array<out T>.elementAtOrNull(index: Int): T? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.elementAtOrNull(index: Int): T? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun BooleanArray.elementAtOrNull(index: Int): Boolean? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.elementAtOrNull(index: Int): Boolean? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun ByteArray.elementAtOrNull(index: Int): Byte? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.elementAtOrNull(index: Int): Byte? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun CharArray.elementAtOrNull(index: Int): Char? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun CharArray.elementAtOrNull(index: Int): Char? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun DoubleArray.elementAtOrNull(index: Int): Double? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.elementAtOrNull(index: Int): Double? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun FloatArray.elementAtOrNull(index: Int): Float? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.elementAtOrNull(index: Int): Float? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun IntArray.elementAtOrNull(index: Int): Int? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun IntArray.elementAtOrNull(index: Int): Int? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun LongArray.elementAtOrNull(index: Int): Long? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun LongArray.elementAtOrNull(index: Int): Long? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
  */
-public fun ShortArray.elementAtOrNull(index: Int): Short? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.elementAtOrNull(index: Int): Short? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
 }
@@ -635,6 +663,7 @@ public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
     return firstOrNull(predicate)
 }
@@ -642,6 +671,7 @@ public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
     return firstOrNull(predicate)
 }
@@ -649,6 +679,7 @@ public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
     return firstOrNull(predicate)
 }
@@ -656,6 +687,7 @@ public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
     return firstOrNull(predicate)
 }
@@ -663,6 +695,7 @@ public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
     return firstOrNull(predicate)
 }
@@ -670,6 +703,7 @@ public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
     return firstOrNull(predicate)
 }
@@ -677,6 +711,7 @@ public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
     return firstOrNull(predicate)
 }
@@ -684,6 +719,7 @@ public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
     return firstOrNull(predicate)
 }
@@ -691,6 +727,7 @@ public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
     return lastOrNull(predicate)
 }
@@ -698,6 +735,7 @@ public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolean? {
     return lastOrNull(predicate)
 }
@@ -705,6 +743,7 @@ public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolea
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
     return lastOrNull(predicate)
 }
@@ -712,6 +751,7 @@ public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
     return lastOrNull(predicate)
 }
@@ -719,6 +759,7 @@ public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? {
     return lastOrNull(predicate)
 }
@@ -726,6 +767,7 @@ public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
     return lastOrNull(predicate)
 }
@@ -733,6 +775,7 @@ public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
     return lastOrNull(predicate)
 }
@@ -740,6 +783,7 @@ public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
     return lastOrNull(predicate)
 }
@@ -747,6 +791,7 @@ public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short? {
     return lastOrNull(predicate)
 }
@@ -1060,6 +1105,7 @@ public inline fun ShortArray.firstOrNull(predicate: (Short) -> Boolean): Short? 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1067,6 +1113,7 @@ public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1074,6 +1121,7 @@ public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Bool
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1081,6 +1129,7 @@ public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1088,6 +1137,7 @@ public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Double): Double {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1095,6 +1145,7 @@ public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Doubl
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float): Float {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1102,6 +1153,7 @@ public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float)
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): Int {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1109,6 +1161,7 @@ public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): In
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): Long {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -1116,6 +1169,7 @@ public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
  */
+@kotlin.internal.InlineOnly
 public inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short): Short {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -5156,126 +5210,144 @@ public val ShortArray.indices: IntRange
 /**
  * Returns `true` if the array is empty.
  */
-public fun <T> Array<out T>.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun BooleanArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun ByteArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun CharArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun CharArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun DoubleArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun FloatArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun IntArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun IntArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun LongArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun LongArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
-public fun ShortArray.isEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.isEmpty(): Boolean {
     return size == 0
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun <T> Array<out T>.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun BooleanArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun ByteArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun CharArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun CharArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun DoubleArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun FloatArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun IntArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun IntArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun LongArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun LongArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
 /**
  * Returns `true` if the array is not empty.
  */
-public fun ShortArray.isNotEmpty(): Boolean {
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
 
@@ -5419,7 +5491,8 @@ public fun Array<out Short>.toShortArray(): ShortArray {
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5429,7 +5502,8 @@ public inline fun <T, K, V> Array<out T>.associate(transform: (T) -> Pair<K, V>)
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5439,7 +5513,8 @@ public inline fun <K, V> BooleanArray.associate(transform: (Boolean) -> Pair<K, 
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5449,7 +5524,8 @@ public inline fun <K, V> ByteArray.associate(transform: (Byte) -> Pair<K, V>): M
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5459,7 +5535,8 @@ public inline fun <K, V> CharArray.associate(transform: (Char) -> Pair<K, V>): M
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5469,7 +5546,8 @@ public inline fun <K, V> DoubleArray.associate(transform: (Double) -> Pair<K, V>
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5479,7 +5557,8 @@ public inline fun <K, V> FloatArray.associate(transform: (Float) -> Pair<K, V>):
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5489,7 +5568,8 @@ public inline fun <K, V> IntArray.associate(transform: (Int) -> Pair<K, V>): Map
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5499,7 +5579,8 @@ public inline fun <K, V> LongArray.associate(transform: (Long) -> Pair<K, V>): M
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -5509,7 +5590,8 @@ public inline fun <K, V> ShortArray.associate(transform: (Short) -> Pair<K, V>):
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K, T> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
 }
 
@@ -5519,7 +5601,8 @@ public inline fun <T, K> Array<out T>.associateBy(keySelector: (T) -> K): Map<K,
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map<K, Boolean> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Boolean>(capacity), keySelector)
 }
 
@@ -5529,7 +5612,8 @@ public inline fun <K> BooleanArray.associateBy(keySelector: (Boolean) -> K): Map
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, Byte> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Byte>(capacity), keySelector)
 }
 
@@ -5539,7 +5623,8 @@ public inline fun <K> ByteArray.associateBy(keySelector: (Byte) -> K): Map<K, By
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Char> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Char>(capacity), keySelector)
 }
 
@@ -5549,7 +5634,8 @@ public inline fun <K> CharArray.associateBy(keySelector: (Char) -> K): Map<K, Ch
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K, Double> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Double>(capacity), keySelector)
 }
 
@@ -5559,7 +5645,8 @@ public inline fun <K> DoubleArray.associateBy(keySelector: (Double) -> K): Map<K
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, Float> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Float>(capacity), keySelector)
 }
 
@@ -5569,7 +5656,8 @@ public inline fun <K> FloatArray.associateBy(keySelector: (Float) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Int>(capacity), keySelector)
 }
 
@@ -5579,7 +5667,8 @@ public inline fun <K> IntArray.associateBy(keySelector: (Int) -> K): Map<K, Int>
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Long> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Long>(capacity), keySelector)
 }
 
@@ -5589,7 +5678,8 @@ public inline fun <K> LongArray.associateBy(keySelector: (Long) -> K): Map<K, Lo
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, Short> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, Short>(capacity), keySelector)
 }
 
@@ -5598,7 +5688,8 @@ public inline fun <K> ShortArray.associateBy(keySelector: (Short) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5607,7 +5698,8 @@ public inline fun <T, K, V> Array<out T>.associateBy(keySelector: (T) -> K, valu
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5616,7 +5708,8 @@ public inline fun <K, V> BooleanArray.associateBy(keySelector: (Boolean) -> K, v
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTransform: (Byte) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5625,7 +5718,8 @@ public inline fun <K, V> ByteArray.associateBy(keySelector: (Byte) -> K, valueTr
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5634,7 +5728,8 @@ public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTr
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, valueTransform: (Double) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5643,7 +5738,8 @@ public inline fun <K, V> DoubleArray.associateBy(keySelector: (Double) -> K, val
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, valueTransform: (Float) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5652,7 +5748,8 @@ public inline fun <K, V> FloatArray.associateBy(keySelector: (Float) -> K, value
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTransform: (Int) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5661,7 +5758,8 @@ public inline fun <K, V> IntArray.associateBy(keySelector: (Int) -> K, valueTran
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTransform: (Long) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -5670,7 +5768,8 @@ public inline fun <K, V> LongArray.associateBy(keySelector: (Long) -> K, valueTr
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <K, V> ShortArray.associateBy(keySelector: (Short) -> K, valueTransform: (Short) -> V): Map<K, V> {
-    val capacity = ((size/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -8560,63 +8659,72 @@ public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
 /**
  * Returns the number of elements in this array.
  */
-public fun <T> Array<out T>.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun BooleanArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun ByteArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun CharArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun CharArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun DoubleArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun FloatArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun IntArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun IntArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun LongArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun LongArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
-public fun ShortArray.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.count(): Int {
     return size
 }
 
@@ -8783,6 +8891,105 @@ public inline fun <R> ShortArray.fold(initial: R, operation: (R, Short) -> R): R
 }
 
 /**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (Int, R, Boolean) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> ByteArray.foldIndexed(initial: R, operation: (Int, R, Byte) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> CharArray.foldIndexed(initial: R, operation: (Int, R, Char) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (Int, R, Double) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> FloatArray.foldIndexed(initial: R, operation: (Int, R, Float) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> IntArray.foldIndexed(initial: R, operation: (Int, R, Int) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> LongArray.foldIndexed(initial: R, operation: (Int, R, Long) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <R> ShortArray.foldIndexed(initial: R, operation: (Int, R, Short) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) -> R): R {
@@ -8886,6 +9093,132 @@ public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> 
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation: (Int, Boolean, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (Int, Byte, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> CharArray.foldRightIndexed(initial: R, operation: (Int, Char, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation: (Int, Double, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: (Int, Float, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (Int, Int, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (Int, Long, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: (Int, Short, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
     }
     return accumulator
 }
@@ -10053,6 +10386,141 @@ public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (Int, S, T) -> S): S {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun BooleanArray.reduceIndexed(operation: (Int, Boolean, Boolean) -> Boolean): Boolean {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun ByteArray.reduceIndexed(operation: (Int, Byte, Byte) -> Byte): Byte {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun CharArray.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun DoubleArray.reduceIndexed(operation: (Int, Double, Double) -> Double): Double {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun FloatArray.reduceIndexed(operation: (Int, Float, Float) -> Float): Float {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun IntArray.reduceIndexed(operation: (Int, Int, Int) -> Int): Int {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun LongArray.reduceIndexed(operation: (Int, Long, Long) -> Long): Long {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original array.
+ */
+public inline fun ShortArray.reduceIndexed(operation: (Int, Short, Short) -> Short): Short {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, S) -> S): S {
@@ -10165,6 +10633,141 @@ public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Sh
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (Int, T, S) -> S): S {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator: S = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun BooleanArray.reduceRightIndexed(operation: (Int, Boolean, Boolean) -> Boolean): Boolean {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun ByteArray.reduceRightIndexed(operation: (Int, Byte, Byte) -> Byte): Byte {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun CharArray.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun DoubleArray.reduceRightIndexed(operation: (Int, Double, Double) -> Double): Double {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun FloatArray.reduceRightIndexed(operation: (Int, Float, Float) -> Float): Float {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun IntArray.reduceRightIndexed(operation: (Int, Int, Int) -> Int): Int {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun LongArray.reduceRightIndexed(operation: (Int, Long, Long) -> Long): Long {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original array and current accumulator value.
+ */
+public inline fun ShortArray.reduceRightIndexed(operation: (Int, Short, Short) -> Short): Short {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
     }
     return accumulator
 }
@@ -10780,6 +11383,7 @@ public infix fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
  */
 public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10794,6 +11398,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, 
  */
 public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10808,6 +11413,7 @@ public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolea
  */
 public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10822,6 +11428,7 @@ public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) 
  */
 public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10836,6 +11443,7 @@ public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) 
  */
 public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10850,6 +11458,7 @@ public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double,
  */
 public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10864,6 +11473,7 @@ public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R
  */
 public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10878,6 +11488,7 @@ public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) ->
  */
 public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10892,6 +11503,7 @@ public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) 
  */
 public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
     val arraySize = size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -11734,7 +12346,8 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<T>.copyOf(): Array<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(): Array<T> {
     return Arrays.copyOf(this, size)
 }
 
@@ -11742,7 +12355,8 @@ public fun <T> Array<T>.copyOf(): Array<T> {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun BooleanArray.copyOf(): BooleanArray {
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(): BooleanArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11750,7 +12364,8 @@ public fun BooleanArray.copyOf(): BooleanArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun ByteArray.copyOf(): ByteArray {
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(): ByteArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11758,7 +12373,8 @@ public fun ByteArray.copyOf(): ByteArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun CharArray.copyOf(): CharArray {
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(): CharArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11766,7 +12382,8 @@ public fun CharArray.copyOf(): CharArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun DoubleArray.copyOf(): DoubleArray {
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(): DoubleArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11774,7 +12391,8 @@ public fun DoubleArray.copyOf(): DoubleArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun FloatArray.copyOf(): FloatArray {
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(): FloatArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11782,7 +12400,8 @@ public fun FloatArray.copyOf(): FloatArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun IntArray.copyOf(): IntArray {
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(): IntArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11790,7 +12409,8 @@ public fun IntArray.copyOf(): IntArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun LongArray.copyOf(): LongArray {
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(): LongArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11798,7 +12418,8 @@ public fun LongArray.copyOf(): LongArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun ShortArray.copyOf(): ShortArray {
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(): ShortArray {
     return Arrays.copyOf(this, size)
 }
 
@@ -11806,7 +12427,8 @@ public fun ShortArray.copyOf(): ShortArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11814,7 +12436,8 @@ public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11822,7 +12445,8 @@ public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun ByteArray.copyOf(newSize: Int): ByteArray {
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(newSize: Int): ByteArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11830,7 +12454,8 @@ public fun ByteArray.copyOf(newSize: Int): ByteArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun CharArray.copyOf(newSize: Int): CharArray {
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(newSize: Int): CharArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11838,7 +12463,8 @@ public fun CharArray.copyOf(newSize: Int): CharArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun DoubleArray.copyOf(newSize: Int): DoubleArray {
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11846,7 +12472,8 @@ public fun DoubleArray.copyOf(newSize: Int): DoubleArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun FloatArray.copyOf(newSize: Int): FloatArray {
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(newSize: Int): FloatArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11854,7 +12481,8 @@ public fun FloatArray.copyOf(newSize: Int): FloatArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun IntArray.copyOf(newSize: Int): IntArray {
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(newSize: Int): IntArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11862,7 +12490,8 @@ public fun IntArray.copyOf(newSize: Int): IntArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun LongArray.copyOf(newSize: Int): LongArray {
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(newSize: Int): LongArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11870,7 +12499,8 @@ public fun LongArray.copyOf(newSize: Int): LongArray {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun ShortArray.copyOf(newSize: Int): ShortArray {
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(newSize: Int): ShortArray {
     return Arrays.copyOf(this, newSize)
 }
 
@@ -11878,7 +12508,8 @@ public fun ShortArray.copyOf(newSize: Int): ShortArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11886,7 +12517,8 @@ public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11894,7 +12526,8 @@ public fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray 
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11902,7 +12535,8 @@ public fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11910,7 +12544,8 @@ public fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11918,7 +12553,8 @@ public fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11926,7 +12562,8 @@ public fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11934,7 +12571,8 @@ public fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -11942,7 +12580,8 @@ public fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
  * Returns new array which is a copy of range of original array.
  */
 @kotlin.jvm.JvmVersion
-public fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
     return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
@@ -12362,7 +13001,8 @@ public operator fun ShortArray.plus(elements: ShortArray): ShortArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<T>.plusElement(element: T): Array<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.plusElement(element: T): Array<T> {
     return plus(element)
 }
 

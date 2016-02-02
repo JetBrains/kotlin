@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
-private class Z2 {
+internal class Z2 {
     private val privateProperty = 11;
 
     public val publicProperty:Int = 12
@@ -8,7 +8,7 @@ private class Z2 {
 
     public fun publicFun() {}
 
-    private inner class ZInner {
+    internal inner class ZInner {
         public inline fun test() {
             privateProperty
             privateFun()
@@ -21,7 +21,7 @@ private class Z2 {
             Z2().privateFun()
         }
 
-        inline fun testInternal() {
+        internal inline fun testInternal() {
             privateProperty
             privateFun()
             publicFun()

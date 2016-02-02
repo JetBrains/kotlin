@@ -13,6 +13,7 @@ import java.util.*
  * @throws NoSuchElementException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
  */
 @kotlin.jvm.JvmName("getOrImplicitDefaultNullable")
+@kotlin.internal.InlineExposed
 internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)

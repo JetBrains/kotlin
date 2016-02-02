@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -769,7 +768,8 @@ public interface Errors {
     DiagnosticFactory0<KtClass> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
 
     //Inline and inlinable parameters
-    DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_PUBLIC_CALL_FROM_PUBLIC_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> PRIVATE_CLASS_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory3<KtElement, KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, KtNamedDeclaration, DeclarationDescriptor> NOT_YET_SUPPORTED_IN_INLINE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> NOTHING_TO_INLINE = DiagnosticFactory1.create(WARNING);
@@ -785,7 +785,7 @@ public interface Errors {
     ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
             UNRESOLVED_REFERENCE, NAMED_PARAMETER_NOT_FOUND, UNRESOLVED_REFERENCE_WRONG_RECEIVER);
     ImmutableSet<? extends DiagnosticFactory<?>> INVISIBLE_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
-            INVISIBLE_MEMBER, INVISIBLE_MEMBER_FROM_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
+            INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
     ImmutableSet<? extends DiagnosticFactory<?>> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, VARIABLE_WITH_REDUNDANT_INITIALIZER,
             UNUSED_LAMBDA_EXPRESSION, USELESS_CAST, UNUSED_VALUE, USELESS_ELVIS);

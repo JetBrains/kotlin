@@ -87,3 +87,9 @@ class D: AB() {
     @JvmName("D_finalFun")
     fun finalFun() {}
 }
+
+interface Intf {
+    <!INAPPLICABLE_JVM_NAME!>@get:JvmName("getBar")<!> // no error in IDE
+    <!INAPPLICABLE_JVM_NAME!>@set:JvmName("setBar")<!> // no error in IDE
+    var foo: Int
+}

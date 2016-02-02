@@ -1,6 +1,6 @@
 package
 
-private final class Z2 {
+internal final class Z2 {
     public constructor Z2()
     private final val privateProperty: kotlin.Int = 11
     public final val publicProperty: kotlin.Int = 12
@@ -10,7 +10,7 @@ private final class Z2 {
     public final fun publicFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    private final inner class ZInner {
+    internal final inner class ZInner {
         public constructor ZInner()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

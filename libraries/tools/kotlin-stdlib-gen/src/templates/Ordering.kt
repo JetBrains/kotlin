@@ -49,10 +49,14 @@ fun ordering(): List<GenericFunction> {
 
         doc(CharSequences, Strings) { f -> "Returns a ${f.collection} with characters in reversed order." }
         returns(CharSequences, Strings) { "SELF" }
-        body(CharSequences, Strings) { f ->
+        body(CharSequences) { f ->
             """
-            return StringBuilder(this).reverse()${ if (f == Strings) ".toString()" else "" }
+            return StringBuilder(this).reverse()
             """
+        }
+        inline(Strings) { Inline.Only }
+        body(Strings) {
+            "return (this as CharSequence).reversed().toString()"
         }
 
         exclude(Sequences)

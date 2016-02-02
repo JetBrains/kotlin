@@ -1146,6 +1146,8 @@ public class ControlFlowProcessor {
             }
             KtExpression delegate = property.getDelegateExpression();
             if (delegate != null) {
+                // We do not want to have getDeferredValue(delegate) here, because delegate value will be read anyway later
+                visitAssignment(property, getDeferredValue(null), property);
                 generateInstructions(delegate);
                 if (builder.getBoundValue(delegate) != null) {
                     createSyntheticValue(property, MagicKind.VALUE_CONSUMER, delegate);

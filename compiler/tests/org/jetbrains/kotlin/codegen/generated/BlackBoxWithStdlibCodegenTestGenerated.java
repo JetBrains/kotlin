@@ -64,6 +64,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("annotatedObjectLiteral.kt")
+        public void testAnnotatedObjectLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/annotatedObjectLiteral.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("annotationsOnDefault.kt")
         public void testAnnotationsOnDefault() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/annotationsOnDefault.kt");
@@ -1447,6 +1453,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/defaultArguments/kt6382.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("superCallCheck.kt")
+        public void testSuperCallCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/defaultArguments/superCallCheck.kt");
             doTestWithStdlib(fileName);
         }
 

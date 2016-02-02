@@ -207,6 +207,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("annotationsOnUseSiteTargets.kt")
+            public void testAnnotationsOnUseSiteTargets() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/annotationsOnUseSiteTargets.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("illegalPlatformName.kt")
             public void testIllegalPlatformName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/illegalPlatformName.kt");
@@ -821,6 +827,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/resolveWithOnlyInputTypesAnnotation.kt");
                 doTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inline extends AbstractDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inlineOnlySuppressesNothingToInline.kt")
+        public void testInlineOnlySuppressesNothingToInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inline/inlineOnlySuppressesNothingToInline.kt");
+            doTest(fileName);
         }
     }
 

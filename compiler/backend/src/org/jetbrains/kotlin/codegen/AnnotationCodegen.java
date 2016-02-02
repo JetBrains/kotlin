@@ -108,6 +108,16 @@ public abstract class AnnotationCodegen {
                         "Inconsistent target list for lambda annotation: " + applicableTargets + " on " + annotated;
                 continue;
             }
+            if (annotated instanceof ClassDescriptor
+                && !applicableTargets.contains(KotlinTarget.CLASS)
+                && !applicableTargets.contains(KotlinTarget.ANNOTATION_CLASS)) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
+                if (classDescriptor.getVisibility() == Visibilities.LOCAL) {
+                    assert applicableTargets.contains(KotlinTarget.EXPRESSION) :
+                            "Inconsistent target list for object literal annotation: " + applicableTargets + " on " + annotated;
+                    continue;
+                }
+            }
 
             String descriptor = genAnnotation(annotation);
             if (descriptor != null) {

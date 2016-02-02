@@ -10,7 +10,8 @@ import java.util.*
  *
  * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
+@kotlin.internal.InlineOnly
+public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
 
 /**
  * Removes a single instance of the specified element from this
@@ -20,7 +21,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(element
  *
  * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean = (this as MutableCollection<T>).remove(element)
+@kotlin.internal.InlineOnly
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean = (this as MutableCollection<T>).remove(element)
 
 /**
  * Removes all of this collection's elements that are also contained in the specified collection.
@@ -29,7 +31,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(e
  *
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).removeAll(elements)
+@kotlin.internal.InlineOnly
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).removeAll(elements)
 
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
@@ -38,61 +41,70 @@ public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAl
  *
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
-public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).retainAll(elements)
+@kotlin.internal.InlineOnly
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).retainAll(elements)
 
 /**
  * Adds the specified [element] to this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.plusAssign(element: T) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.plusAssign(element: T) {
     this.add(element)
 }
 
 /**
  * Adds all elements of the given [elements] collection to this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.plusAssign(elements: Iterable<T>) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.plusAssign(elements: Iterable<T>) {
     this.addAll(elements)
 }
 
 /**
  * Adds all elements of the given [elements] array to this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.plusAssign(elements: Array<T>) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.plusAssign(elements: Array<T>) {
     this.addAll(elements)
 }
 
 /**
  * Adds all elements of the given [elements] sequence to this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.plusAssign(elements: Sequence<T>) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.plusAssign(elements: Sequence<T>) {
     this.addAll(elements)
 }
 
 /**
  * Removes a single instance of the specified [element] from this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.minusAssign(element: T) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.minusAssign(element: T) {
     this.remove(element)
 }
 
 /**
  * Removes all elements contained in the given [elements] collection from this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.minusAssign(elements: Iterable<T>) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.minusAssign(elements: Iterable<T>) {
     this.removeAll(elements)
 }
 
 /**
  * Removes all elements contained in the given [elements] array from this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.minusAssign(elements: Array<T>) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.minusAssign(elements: Array<T>) {
     this.removeAll(elements)
 }
 
 /**
  * Removes all elements contained in the given [elements] sequence from this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.minusAssign(elements: Sequence<T>) {
+@kotlin.internal.InlineOnly
+public inline operator fun <T> MutableCollection<in T>.minusAssign(elements: Sequence<T>) {
     this.removeAll(elements)
 }
 

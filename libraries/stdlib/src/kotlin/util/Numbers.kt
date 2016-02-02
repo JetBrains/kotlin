@@ -1,35 +1,42 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MathKt")
+@file:kotlin.jvm.JvmVersion
 package kotlin
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-public fun Double.isNaN(): Boolean = this != this
+@kotlin.internal.InlineOnly
+public inline fun Double.isNaN(): Boolean = java.lang.Double.isNaN(this)
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-public fun Float.isNaN(): Boolean = this != this
+@kotlin.internal.InlineOnly
+public inline fun Float.isNaN(): Boolean = java.lang.Float.isNaN(this)
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-public fun Double.isInfinite(): Boolean = this == Double.POSITIVE_INFINITY || this == Double.NEGATIVE_INFINITY
+@kotlin.internal.InlineOnly
+public inline fun Double.isInfinite(): Boolean = java.lang.Double.isInfinite(this)
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-public fun Float.isInfinite(): Boolean = this == Float.POSITIVE_INFINITY || this == Float.NEGATIVE_INFINITY
+@kotlin.internal.InlineOnly
+public inline fun Float.isInfinite(): Boolean = java.lang.Float.isInfinite(this)
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-public fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+@kotlin.internal.InlineOnly
+public inline fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-public fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+@kotlin.internal.InlineOnly
+public inline fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()

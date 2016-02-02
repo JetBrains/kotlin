@@ -2853,6 +2853,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("delegatedPropertyEarlyAccess.kt")
+            public void testDelegatedPropertyEarlyAccess() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedPropertyEarlyAccess.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("initializationInLambda.kt")
             public void testInitializationInLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLambda.kt");
@@ -9147,6 +9153,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("parenthesized.kt")
             public void testParenthesized() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/parenthesized.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateClass.kt")
+            public void testPrivateClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/privateClass.kt");
                 doTest(fileName);
             }
 
@@ -16340,6 +16352,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("flexibleTypes.kt")
                 public void testFlexibleTypes() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/flexibleTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("moreSpecificSetter.kt")
+                public void testMoreSpecificSetter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/moreSpecificSetter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("moreSpecificVisibility.kt")
+                public void testMoreSpecificVisibility() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/moreSpecificVisibility.kt");
                     doTest(fileName);
                 }
 

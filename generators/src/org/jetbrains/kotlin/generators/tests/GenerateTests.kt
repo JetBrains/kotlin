@@ -1065,7 +1065,7 @@ fun main(args: Array<String>) {
     }
 }
 
-private class TestGroup(val testsRoot: String, val testDataRoot: String) {
+internal class TestGroup(val testsRoot: String, val testDataRoot: String) {
     inline fun <reified T: TestCase> testClass(
             suiteTestClass: String = getDefaultSuiteTestClass(T::class.java),
             noinline init: TestClass.() -> Unit

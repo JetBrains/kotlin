@@ -6,6 +6,8 @@ fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plusElement(element: T)") {
+        inline(Inline.Only)
+
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
         doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
@@ -218,6 +220,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("minusElement(element: T)") {
+        inline(Inline.Only)
+
         only(Iterables, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
         doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
@@ -481,6 +485,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
+            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
@@ -491,6 +496,7 @@ fun generators(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             val arraySize = size
+            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in other) {
@@ -516,6 +522,7 @@ fun generators(): List<GenericFunction> {
         body {
             """
             val arraySize = other.size
+            @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
             val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in this) {

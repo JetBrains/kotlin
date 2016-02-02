@@ -542,7 +542,7 @@ fun filtering(): List<GenericFunction> {
 
         doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing ${f.element.pluralize()} of the original ${f.collection} at specified [indices]." }
         returns(CharSequences, Strings) { "SELF" }
-        body(CharSequences, Strings) { f ->
+        body(CharSequences) {
             """
             val size = indices.collectionSizeOrDefault(10)
             if (size == 0) return ""
@@ -550,8 +550,12 @@ fun filtering(): List<GenericFunction> {
             for (i in indices) {
                 result.append(get(i))
             }
-            return result${toResult(f)}
+            return result
             """
+        }
+        inline(Strings) { Inline.Only }
+        body(Strings) {
+            "return (this as CharSequence).slice(indices).toString()"
         }
     }
 

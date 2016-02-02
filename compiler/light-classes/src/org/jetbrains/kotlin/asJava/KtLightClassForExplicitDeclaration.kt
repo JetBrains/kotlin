@@ -284,13 +284,12 @@ open class KtLightClassForExplicitDeclaration(
         }
 
         if (classOrObject.hasModifier(PRIVATE_KEYWORD)) {
-            // Top-level private class has PUBLIC visibility in Java
+            // Top-level private class has PACKAGE_LOCAL visibility in Java
             // Nested private class has PRIVATE visibility
-            psiModifiers.add(if (classOrObject.isTopLevel()) PsiModifier.PUBLIC else PsiModifier.PRIVATE)
+            psiModifiers.add(if (classOrObject.isTopLevel()) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE)
         }
-
-        if (!psiModifiers.contains(PsiModifier.PRIVATE) && !psiModifiers.contains(PsiModifier.PROTECTED)) {
-            psiModifiers.add(PsiModifier.PUBLIC) // For internal (default) visibility
+        else if (!psiModifiers.contains(PsiModifier.PROTECTED)) {
+            psiModifiers.add(PsiModifier.PUBLIC)
         }
 
 

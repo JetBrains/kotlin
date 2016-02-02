@@ -1302,6 +1302,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Private extends AbstractBlackBoxInlineCodegenTest {
+        @TestMetadata("accessorForConst.1.kt")
+        public void testAccessorForConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/accessorForConst.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("accessorStability.1.kt")
         public void testAccessorStability() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/accessorStability.1.kt");
@@ -1333,6 +1339,24 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("kt8095.1.kt")
         public void testKt8095() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/kt8095.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("nestedInPrivateClass.1.kt")
+        public void testNestedInPrivateClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/nestedInPrivateClass.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("privateClass.1.kt")
+        public void testPrivateClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/privateClass.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("privateClassExtensionLambda.1.kt")
+        public void testPrivateClassExtensionLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/privateClassExtensionLambda.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
 

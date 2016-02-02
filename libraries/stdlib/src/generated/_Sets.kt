@@ -57,7 +57,8 @@ public operator fun <T> Set<T>.minus(elements: Sequence<T>): Set<T> {
 /**
  * Returns a set containing all elements of the original set except the given [element].
  */
-public fun <T> Set<T>.minusElement(element: T): Set<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Set<T>.minusElement(element: T): Set<T> {
     return minus(element)
 }
 
@@ -104,7 +105,8 @@ public operator fun <T> Set<T>.plus(elements: Sequence<T>): Set<T> {
 /**
  * Returns a set containing all elements of the original set and then the given [element].
  */
-public fun <T> Set<T>.plusElement(element: T): Set<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Set<T>.plusElement(element: T): Set<T> {
     return plus(element)
 }
 

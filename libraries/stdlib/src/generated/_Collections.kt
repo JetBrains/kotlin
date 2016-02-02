@@ -16,7 +16,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns 1st *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component1(): T {
     return get(0)
 }
@@ -24,7 +24,7 @@ public inline operator fun <T> List<T>.component1(): T {
 /**
  * Returns 2nd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component2(): T {
     return get(1)
 }
@@ -32,7 +32,7 @@ public inline operator fun <T> List<T>.component2(): T {
 /**
  * Returns 3rd *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component3(): T {
     return get(2)
 }
@@ -40,7 +40,7 @@ public inline operator fun <T> List<T>.component3(): T {
 /**
  * Returns 4th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component4(): T {
     return get(3)
 }
@@ -48,7 +48,7 @@ public inline operator fun <T> List<T>.component4(): T {
 /**
  * Returns 5th *element* from the collection.
  */
-@Suppress("NOTHING_TO_INLINE")
+@kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component5(): T {
     return get(4)
 }
@@ -74,7 +74,8 @@ public fun <T> Iterable<T>.elementAt(index: Int): T {
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
  */
-public fun <T> List<T>.elementAt(index: Int): T {
+@kotlin.internal.InlineOnly
+public inline fun <T> List<T>.elementAt(index: Int): T {
     return get(index)
 }
 
@@ -99,6 +100,7 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -124,13 +126,15 @@ public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
-public fun <T> List<T>.elementAtOrNull(index: Int): T? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+@kotlin.internal.InlineOnly
+public inline fun <T> List<T>.elementAtOrNull(index: Int): T? {
+    return this.getOrNull(index)
 }
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
 }
@@ -138,6 +142,7 @@ public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T? {
     return lastOrNull(predicate)
 }
@@ -145,6 +150,7 @@ public inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T? {
     return lastOrNull(predicate)
 }
@@ -227,6 +233,7 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
@@ -919,7 +926,8 @@ public fun Collection<Short>.toShortArray(): ShortArray {
  * If any of two pairs would have the same key the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
-    val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateTo(LinkedHashMap<K, V>(capacity), transform)
 }
 
@@ -929,7 +937,8 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
-    val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
 }
 
@@ -938,7 +947,8 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
-    val capacity = ((collectionSizeOrDefault(10)/.75f) + 1).toInt().coerceAtLeast(16)
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -1158,6 +1168,7 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.gr
  * Returns a list containing the results of applying the given [transform] function
  * to each element in the original collection.
  */
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
@@ -1166,6 +1177,7 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
  * Returns a list containing the results of applying the given [transform] function
  * to each element and its index in the original collection.
  */
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
@@ -1320,7 +1332,8 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
 /**
  * Returns the number of elements in this collection.
  */
-public fun <T> Collection<T>.count(): Int {
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>.count(): Int {
     return size
 }
 
@@ -1352,6 +1365,17 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R
 }
 
 /**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original collection.
+ */
+public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): R {
@@ -1359,6 +1383,20 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from right to left
+ * to each element with its index in the original list and current accumulator value.
+ */
+public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R {
+    var index = lastIndex
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
     }
     return accumulator
 }
@@ -1503,6 +1541,21 @@ public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original collection.
+ */
+public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
@@ -1511,6 +1564,21 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
     var accumulator: S = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with last element and applying [operation] from right to left
+ * to each element with its index in the original list and current accumulator value.
+ */
+public inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (Int, T, S) -> S): S {
+    var index = lastIndex
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var accumulator: S = get(index--)
+    while (index >= 0) {
+        accumulator = operation(index, get(index), accumulator)
+        --index
     }
     return accumulator
 }
@@ -1602,7 +1670,8 @@ public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
-public fun <T> Iterable<T>.minusElement(element: T): List<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
     return minus(element)
 }
 
@@ -1716,14 +1785,16 @@ public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public fun <T> Collection<T>.plusElement(element: T): List<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public fun <T> Iterable<T>.plusElement(element: T): List<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
@@ -1739,6 +1810,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
  */
 public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
     val arraySize = other.size
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in this) {
@@ -1761,6 +1833,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
@@ -1802,7 +1875,8 @@ public fun <T> Iterable<T>.joinToString(separator: CharSequence = ", ", prefix: 
 /**
  * Returns this collection as an [Iterable].
  */
-public fun <T> Iterable<T>.asIterable(): Iterable<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Iterable<T>.asIterable(): Iterable<T> {
     return this
 }
 

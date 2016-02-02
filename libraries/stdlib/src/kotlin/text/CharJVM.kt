@@ -22,44 +22,52 @@ package kotlin.text
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
  */
-public fun Char.isDefined(): Boolean = Character.isDefined(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isDefined(): Boolean = Character.isDefined(this)
 
 /**
  * Returns `true` if this character is a letter.
  */
-public fun Char.isLetter(): Boolean = Character.isLetter(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isLetter(): Boolean = Character.isLetter(this)
 
 /**
  * Returns `true` if this character is a letter or digit.
  */
-public fun Char.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this)
 
 /**
  * Returns `true` if this character (Unicode code point) is a digit.
  */
-public fun Char.isDigit(): Boolean = Character.isDigit(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isDigit(): Boolean = Character.isDigit(this)
 
 
 /**
  * Returns `true` if this character (Unicode code point) should be regarded as an ignorable
  * character in a Java identifier or a Unicode identifier.
  */
-public fun Char.isIdentifierIgnorable(): Boolean = Character.isIdentifierIgnorable(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isIdentifierIgnorable(): Boolean = Character.isIdentifierIgnorable(this)
 
 /**
  * Returns `true` if this character is an ISO control character.
  */
-public fun Char.isISOControl(): Boolean = Character.isISOControl(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isISOControl(): Boolean = Character.isISOControl(this)
 
 /**
  * Returns `true` if this  character (Unicode code point) may be part of a Java identifier as other than the first character.
  */
-public fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentifierPart(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentifierPart(this)
 
 /**
  * Returns `true` if this character is permissible as the first character in a Java identifier.
  */
-public fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
 
 /**
  * Determines whether a character is whitespace according to the Unicode standard.
@@ -70,34 +78,40 @@ public fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) || Charac
 /**
  * Returns `true` if this character is upper case.
  */
-public fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
 
 /**
  * Returns `true` if this character is lower case.
  */
-public fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
 
 /**
  * Converts this character to uppercase.
  */
-public fun Char.toUpperCase(): Char = Character.toUpperCase(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.toUpperCase(): Char = Character.toUpperCase(this)
 
 /**
  * Converts this character to lowercase.
  */
-public fun Char.toLowerCase(): Char = Character.toLowerCase(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.toLowerCase(): Char = Character.toLowerCase(this)
 
 /**
  * Returns `true` if this character is a titlecase character.
  */
-public fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
 
 /**
  * Converts this character to titlecase.
  *
  * @see Character.toTitleCase
  */
-public fun Char.toTitleCase(): Char = Character.toTitleCase(this)
+@kotlin.internal.InlineOnly
+public inline fun Char.toTitleCase(): Char = Character.toTitleCase(this)
 
 /**
  * Returns a value indicating a character's general category.
@@ -108,6 +122,18 @@ public val Char.category: CharCategory get() = CharCategory.valueOf(Character.ge
  * Returns the Unicode directionality property for the given character.
  */
 public val Char.directionality: CharDirectionality get() = CharDirectionality.valueOf(Character.getDirectionality(this).toInt())
+
+/**
+ * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
+ */
+@kotlin.internal.InlineOnly
+public inline fun Char.isHighSurrogate(): Boolean = Character.isHighSurrogate(this)
+
+/**
+ * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
+ */
+@kotlin.internal.InlineOnly
+public inline fun Char.isLowSurrogate(): Boolean = Character.isLowSurrogate(this)
 
 // TODO Provide name for JVM7+
 ///**

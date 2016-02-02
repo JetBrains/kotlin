@@ -64,4 +64,10 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
     public void testScriptException() throws Exception {
         runCompiler("script", "-script", "script.kts");
     }
+
+    public void testCompileScript() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "script.jar";
+
+        runCompiler("script", "script.kts", "-d", jar);
+    }
 }

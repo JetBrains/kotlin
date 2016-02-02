@@ -8,7 +8,8 @@ import java.nio.charset.*
  *
  * @throws UnsupportedCharsetException If the specified named charset is not available.
  */
-public fun charset(charsetName: String): Charset = Charset.forName(charsetName)
+@kotlin.internal.InlineOnly
+public inline fun charset(charsetName: String): Charset = Charset.forName(charsetName)
 
 /**
  * Constant definitions for the standard [charsets](Charset). These
@@ -53,4 +54,41 @@ public object Charsets {
      */
     @JvmField
     public val ISO_8859_1: Charset = Charset.forName("ISO-8859-1")
+
+    /**
+     * 32-bit Unicode (or UCS) Transformation Format, byte order identified by an optional byte-order mark
+     */
+    public val UTF_32: Charset
+        @JvmName("UTF32")
+        get() = utf_32 ?: run {
+            val charset: Charset = Charset.forName("UTF-32")
+            utf_32 = charset
+            charset
+        }
+    private var utf_32: Charset? = null
+
+    /**
+     * 32-bit Unicode (or UCS) Transformation Format, little-endian byte order.
+     */
+    public val UTF_32LE: Charset
+        @JvmName("UTF32_LE")
+        get() = utf_32le ?: run {
+            val charset: Charset = Charset.forName("UTF-32LE")
+            utf_32le = charset
+            charset
+        }
+    private var utf_32le: Charset? = null
+
+    /**
+     * 32-bit Unicode (or UCS) Transformation Format, big-endian byte order.
+     */
+    public val UTF_32BE: Charset
+        @JvmName("UTF32_BE")
+        get() = utf_32be ?: run {
+            val charset: Charset = Charset.forName("UTF-32BE")
+            utf_32be = charset
+            charset
+        }
+    private var utf_32be: Charset? = null
+
 }

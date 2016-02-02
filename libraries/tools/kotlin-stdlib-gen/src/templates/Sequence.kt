@@ -21,6 +21,9 @@ fun sequences(): List<GenericFunction> {
             }
             """
         }
+
+        inline(Iterables, Maps) { Inline.Only }
+
         doc(Iterables) { "Returns this collection as an [Iterable]." }
         body(Iterables) { "return this" }
         body(Maps) { "return entries" }
@@ -59,6 +62,7 @@ fun sequences(): List<GenericFunction> {
         }
 
         doc(Sequences) { "Returns this sequence as a [Sequence]."}
+        inline(Sequences) { Inline.Only }
         body(Sequences) { "return this" }
     }
 

@@ -3,5 +3,5 @@
 package test
 
 fun foo() {
-    <caret>currentThread
+    <caret>asserter
 }

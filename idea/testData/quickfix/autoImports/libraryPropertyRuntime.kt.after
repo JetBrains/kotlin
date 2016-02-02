@@ -2,8 +2,8 @@
 
 package test
 
-import kotlin.concurrent.currentThread
+import kotlin.test.asserter
 
 fun foo() {
-    currentThread
+    asserter
 }

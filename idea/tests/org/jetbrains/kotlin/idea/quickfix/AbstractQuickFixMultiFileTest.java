@@ -143,13 +143,13 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                     }
                 });
 
-        final TestFile afterFile = CollectionsKt.find(subFiles, new Function1<TestFile, Boolean>() {
+        final TestFile afterFile = CollectionsKt.firstOrNull(subFiles, new Function1<TestFile, Boolean>() {
             @Override
             public Boolean invoke(TestFile file) {
                 return file.name.contains(".after");
             }
         });
-        final TestFile beforeFile = CollectionsKt.find(subFiles, new Function1<TestFile, Boolean>() {
+        final TestFile beforeFile = CollectionsKt.firstOrNull(subFiles, new Function1<TestFile, Boolean>() {
             @Override
             public Boolean invoke(TestFile file) {
                 return file.name.contains(".before");

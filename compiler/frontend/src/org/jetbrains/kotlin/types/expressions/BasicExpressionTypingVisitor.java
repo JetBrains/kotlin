@@ -1587,7 +1587,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public KotlinTypeInfo visitAnnotatedExpression(KtAnnotatedExpression expression, ExpressionTypingContext context, boolean isStatement) {
-        components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace);
+        if (!(expression.getBaseExpression() instanceof KtObjectLiteralExpression)) {
+            // annotations on object literals are resolved later inside LazyClassDescriptor
+            components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace);
+        }
 
         KtExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) {

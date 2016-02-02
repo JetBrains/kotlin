@@ -54,12 +54,14 @@ val b by a
 L0:
   1 <START>
     v(val b by a)
-    r(a) -> <v0>
-    magic[VALUE_CONSUMER](val b by a|<v0>) -> <v1>
+    magic[UNRECOGNIZED_WRITE_RHS](val b by a) -> <v0>
+    w(b|<v0>)
+    r(a) -> <v1>
+    magic[VALUE_CONSUMER](val b by a|<v1>) -> <v2>
 L1:
-    <END>                                             NEXT:[<SINK>]
+    <END>                                                NEXT:[<SINK>]
 error:
-    <ERROR>                                           PREV:[]
+    <ERROR>                                              PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>]
+    <SINK>                                               PREV:[<ERROR>, <END>]
 =====================

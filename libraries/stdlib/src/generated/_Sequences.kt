@@ -62,6 +62,7 @@ public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
 }
@@ -69,6 +70,7 @@ public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.findLast(predicate: (T) -> Boolean): T? {
     return lastOrNull(predicate)
 }
@@ -797,6 +799,17 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R
 }
 
 /**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original sequence.
+ */
+public inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
+    var index = 0
+    var accumulator = initial
+    for (element in this) accumulator = operation(index++, accumulator, element)
+    return accumulator
+}
+
+/**
  * Performs the given [action] on each element.
  */
 public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
@@ -935,6 +948,21 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element with its index in the original sequence.
+ */
+public inline fun <S, T: S> Sequence<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    var index = 1
+    var accumulator: S = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+    }
+    return accumulator
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  */
 public inline fun <T> Sequence<T>.sumBy(selector: (T) -> Int): Int {
@@ -1027,7 +1055,8 @@ public operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequence<T> {
 /**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  */
-public fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
     return minus(element)
 }
 
@@ -1086,7 +1115,8 @@ public operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence<T> {
 /**
  * Returns a sequence containing all elements of the original sequence and then the given [element].
  */
-public fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
     return plus(element)
 }
 
@@ -1148,7 +1178,8 @@ public fun <T> Sequence<T>.asIterable(): Iterable<T> {
 /**
  * Returns this sequence as a [Sequence].
  */
-public fun <T> Sequence<T>.asSequence(): Sequence<T> {
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.asSequence(): Sequence<T> {
     return this
 }
 

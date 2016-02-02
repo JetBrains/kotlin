@@ -11,31 +11,36 @@ import java.nio.charset.Charset
 /**
  * Returns a new [FileReader] for reading the content of this file.
  */
-public fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = inputStream().reader(charset)
+@kotlin.internal.InlineOnly
+public inline fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = inputStream().reader(charset)
 
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
  * @param bufferSize necessary size of the buffer.
  */
-public fun File.bufferedReader(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader = reader(charset).buffered(bufferSize)
+@kotlin.internal.InlineOnly
+public inline fun File.bufferedReader(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader = reader(charset).buffered(bufferSize)
 
 /**
  * Returns a new [FileWriter] for writing the content of this file.
  */
-public fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = outputStream().writer(charset)
+@kotlin.internal.InlineOnly
+public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = outputStream().writer(charset)
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
  * @param bufferSize necessary size of the buffer.
  */
-public fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter = writer(charset).buffered(bufferSize)
+@kotlin.internal.InlineOnly
+public inline fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter = writer(charset).buffered(bufferSize)
 
 /**
  * Returns a new [PrintWriter] for writing the content of this file.
  */
-public fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWriter = PrintWriter(bufferedWriter(charset))
+@kotlin.internal.InlineOnly
+public inline fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWriter = PrintWriter(bufferedWriter(charset))
 
 /**
  * Gets the entire content of this file as a byte array.
@@ -127,8 +132,11 @@ public fun File.appendText(text: String, charset: String): Unit = appendBytes(te
  *
  * @param action function to process file blocks.
  */
-public fun File.forEachBlock(action: (ByteArray, Int) -> Unit): Unit = forEachBlock(action, defaultBlockSize)
+public fun File.forEachBlock(action: (ByteArray, Int) -> Unit): Unit = forEachBlock(defaultBlockSize, action)
 
+@Deprecated("Use forEachBlock with blockSize as a first parameter.", ReplaceWith("forEachBlock(blockSize, action)"), level = DeprecationLevel.ERROR)
+public fun File.forEachBlock(action: (ByteArray, Int) -> Unit, blockSize: Int): Unit
+    = forEachBlock(blockSize, action)
 /**
  * Reads file by byte blocks and calls [action] for each block read.
  * This functions passes the byte array and amount of bytes in the array to the [action] function.
@@ -138,7 +146,7 @@ public fun File.forEachBlock(action: (ByteArray, Int) -> Unit): Unit = forEachBl
  * @param action function to process file blocks.
  * @param blockSize size of a block, replaced by 512 if it's less, 4096 by default.
  */
-public fun File.forEachBlock(action: (ByteArray, Int) -> Unit, blockSize: Int): Unit {
+public fun File.forEachBlock(blockSize: Int, action: (ByteArray, Int) -> Unit): Unit {
     val arr = ByteArray(if (blockSize < minimumBlockSize) minimumBlockSize else blockSize)
     val fis = FileInputStream(this)
 
@@ -195,14 +203,16 @@ public fun File.readLines(charset: String): List<String> = readLines(Charset.for
 /**
  * Constructs a new FileInputStream of this file and returns it as a result.
  */
-public fun File.inputStream(): FileInputStream {
+@kotlin.internal.InlineOnly
+public inline fun File.inputStream(): FileInputStream {
     return FileInputStream(this)
 }
 
 /**
  * Constructs a new FileOutputStream of this file and returns it as a result.
  */
-public fun File.outputStream(): FileOutputStream {
+@kotlin.internal.InlineOnly
+public inline fun File.outputStream(): FileOutputStream {
     return FileOutputStream(this)
 }
 
