@@ -87,7 +87,7 @@ internal fun timer(name: String?, daemon: Boolean) = if (name == null) Timer(dae
  */
 @kotlin.internal.InlineOnly
 public inline fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, crossinline action: TimerTask.() -> Unit): Timer {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val timer = timer(name, daemon)
     timer.schedule(initialDelay, period, action)
     return timer
@@ -102,7 +102,7 @@ public inline fun timer(name: String? = null, daemon: Boolean = false, initialDe
  */
 @kotlin.internal.InlineOnly
 public inline fun timer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, crossinline action: TimerTask.() -> Unit): Timer {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val timer = timer(name, daemon)
     timer.schedule(startAt, period, action)
     return timer
@@ -118,7 +118,7 @@ public inline fun timer(name: String? = null, daemon: Boolean = false, startAt: 
  */
 @kotlin.internal.InlineOnly
 public inline fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, crossinline action: TimerTask.() -> Unit): Timer {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val timer = timer(name, daemon)
     timer.scheduleAtFixedRate(initialDelay, period, action)
     return timer
@@ -133,7 +133,7 @@ public inline fun fixedRateTimer(name: String? = null, daemon: Boolean = false, 
  */
 @kotlin.internal.InlineOnly
 public inline fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, crossinline action: TimerTask.() -> Unit): Timer {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     val timer = timer(name, daemon)
     timer.scheduleAtFixedRate(startAt, period, action)
     return timer

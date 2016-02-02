@@ -10,13 +10,13 @@ import kotlin.jvm.internal.unsafe.*
  */
 @kotlin.internal.InlineOnly
 public inline fun <R> synchronized(lock: Any, block: () -> R): R {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     monitorEnter(lock)
     try {
         return block()
     }
     finally {
-        @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
         monitorExit(lock)
     }
 }

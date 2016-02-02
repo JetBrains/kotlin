@@ -7,13 +7,13 @@ internal val internalProperty = 11;
 internal fun internalFun() {}
 
 public inline fun test() {
-    <!INVISIBLE_MEMBER_FROM_INLINE!>privateFun<!>()
-    <!INVISIBLE_MEMBER_FROM_INLINE!>privateProperty<!>
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateFun<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateProperty<!>
 }
 
 public inline fun test2() {
-    <!INVISIBLE_MEMBER_FROM_INLINE!>internalFun<!>()
-    <!INVISIBLE_MEMBER_FROM_INLINE!>internalProperty<!>
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalFun<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalProperty<!>
 }
 
 internal inline fun testInternal() {

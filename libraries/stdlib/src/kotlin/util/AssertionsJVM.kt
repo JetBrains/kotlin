@@ -23,7 +23,7 @@ public inline fun assert(value: Boolean) {
  */
 @kotlin.internal.InlineOnly
 public inline fun assert(value: Boolean, lazyMessage: () -> Any) {
-    @Suppress("INVISIBLE_MEMBER_FROM_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     if (_Assertions.ENABLED) {
         if (!value) {
             val message = lazyMessage()

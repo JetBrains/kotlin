@@ -8,8 +8,8 @@ public class Z {
 }
 
 public inline fun test() {
-    Z().<!INVISIBLE_MEMBER_FROM_INLINE!>privateProperty<!>
-    Z().<!INVISIBLE_MEMBER_FROM_INLINE!>privateFun<!>()
+    Z().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateProperty<!>
+    Z().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateFun<!>()
 }
 
 internal inline fun testInternal() {
@@ -26,8 +26,8 @@ public class Z2 {
     }
 
     public inline fun test() {
-        <!INVISIBLE_MEMBER_FROM_INLINE!>privateProperty<!>
-        <!INVISIBLE_MEMBER_FROM_INLINE!>privateFun<!>()
+        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateProperty<!>
+        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateFun<!>()
     }
 
     internal inline fun testInternal() {

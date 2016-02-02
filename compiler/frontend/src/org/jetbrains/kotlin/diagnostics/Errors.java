@@ -772,7 +772,7 @@ public interface Errors {
     DiagnosticFactory0<KtClass> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
 
     //Inline and inlinable parameters
-    DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_PUBLIC_CALL_FROM_PUBLIC_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> PRIVATE_CLASS_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory1<KtElement, KtElement> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, KtNamedDeclaration, DeclarationDescriptor> NOT_YET_SUPPORTED_IN_INLINE = DiagnosticFactory2.create(ERROR);
@@ -789,7 +789,7 @@ public interface Errors {
     ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
             UNRESOLVED_REFERENCE, NAMED_PARAMETER_NOT_FOUND, UNRESOLVED_REFERENCE_WRONG_RECEIVER);
     ImmutableSet<? extends DiagnosticFactory<?>> INVISIBLE_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
-            INVISIBLE_MEMBER, INVISIBLE_MEMBER_FROM_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
+            INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
     ImmutableSet<? extends DiagnosticFactory<?>> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, VARIABLE_WITH_REDUNDANT_INITIALIZER,
             UNUSED_LAMBDA_EXPRESSION, USELESS_CAST, UNUSED_VALUE, USELESS_ELVIS);

@@ -241,7 +241,7 @@ class InlineChecker implements CallChecker {
     private void checkVisibilityAndAccess(@NotNull CallableDescriptor declarationDescriptor, @NotNull KtElement expression, @NotNull BasicCallResolutionContext context){
         boolean declarationDescriptorIsPublicApi = DescriptorUtilsKt.isEffectivelyPublicApi(declarationDescriptor) || isDefinedInInlineFunction(declarationDescriptor);
         if (isEffectivelyPublicApiFunction && !declarationDescriptorIsPublicApi && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
-            context.trace.report(Errors.INVISIBLE_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
+            context.trace.report(Errors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE.on(expression, declarationDescriptor, descriptor));
         }
         else {
             checkPrivateClassMemberAccess(declarationDescriptor, expression, context);
