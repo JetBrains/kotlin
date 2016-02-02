@@ -3069,6 +3069,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nonLocalReturnUnreachable.kt")
+            public void testNonLocalReturnUnreachable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/nonLocalReturnUnreachable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("propertiesInitWithOtherInstance.kt")
             public void testPropertiesInitWithOtherInstance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesInitWithOtherInstance.kt");
@@ -3108,6 +3114,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("scopeOfAnonymousInitializer.kt")
             public void testScopeOfAnonymousInitializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/scopeOfAnonymousInitializer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("throwInLambda.kt")
+            public void testThrowInLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/throwInLambda.kt");
                 doTest(fileName);
             }
 

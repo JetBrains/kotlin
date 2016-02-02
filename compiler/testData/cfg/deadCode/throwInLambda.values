@@ -1,0 +1,65 @@
+== fn ==
+fun fn() : String? = null
+---------------------
+null   <v0>: {<: String?}   NEW: r(null) -> <v0>
+=====================
+== let ==
+inline fun <T, R> T.let(f: (T) -> R): R = f(this)
+---------------------
+          <v0>: {<: (T) -> R}   NEW: magic[FAKE_INITIALIZER](f: (T) -> R) -> <v0>
+f         <v1>: {<: (T) -> R}   NEW: r(f) -> <v1>
+this      <v2>: {<: T}          COPY
+this      <v2>: {<: T}          NEW: r(this, <this>) -> <v2>
+f(this)   <v3>: {<: R}          NEW: call(f(this), invoke|<v1>, <v2>) -> <v3>
+=====================
+== foo ==
+fun foo(): String {
+    val x = fn()?.let { throw Exception() } ?: "unreachable?"
+    return x
+}
+---------------------
+fn()                                                                     <v0>: String                     NEW: call(fn(), fn) -> <v0>
+{ throw Exception() }                                                    <v1>: {<: (String) -> Nothing}   NEW: r({ throw Exception() }) -> <v1>
+let { throw Exception() }                                                !<v2>: *
+fn()?.let { throw Exception() }                                          !<v2>: *                         COPY
+"unreachable?"                                                           <v3>: String                     NEW: r("unreachable?") -> <v3>
+fn()?.let { throw Exception() } ?: "unreachable?"                        <v4>: String                     NEW: merge(fn()?.let { throw Exception() } ?: "unreachable?"|!<v2>, <v3>) -> <v4>
+x                                                                        <v5>: String                     NEW: r(x) -> <v5>
+return x                                                                 !<v6>: *
+{ val x = fn()?.let { throw Exception() } ?: "unreachable?" return x }   !<v6>: *                         COPY
+=====================
+== anonymous_0 ==
+{ throw Exception() }
+---------------------
+Exception()         <v0>: {<: Throwable}   NEW: call(Exception(), <init>) -> <v0>
+throw Exception()   !<v1>: *
+throw Exception()   !<v1>: *               COPY
+=====================
+== bar ==
+fun bar(): String {
+    val x = fn() ?: return ""
+    val y = x?.let { throw Exception() } ?: "unreachable"
+    return y
+}
+---------------------
+fn()                                                                                           <v0>: AND{Boolean, String}       NEW: call(fn(), fn) -> <v0>
+""                                                                                             <v1>: String                     NEW: r("") -> <v1>
+return ""                                                                                      !<v2>: *
+fn() ?: return ""                                                                              <v3>: String                     NEW: merge(fn() ?: return ""|<v0>, !<v2>) -> <v3>
+x                                                                                              <v4>: String                     NEW: r(x) -> <v4>
+{ throw Exception() }                                                                          <v5>: {<: (String) -> Nothing}   NEW: r({ throw Exception() }) -> <v5>
+let { throw Exception() }                                                                      !<v6>: *
+x?.let { throw Exception() }                                                                   !<v6>: *                         COPY
+"unreachable"                                                                                  <v7>: String                     NEW: r("unreachable") -> <v7>
+x?.let { throw Exception() } ?: "unreachable"                                                  <v8>: String                     NEW: merge(x?.let { throw Exception() } ?: "unreachable"|!<v6>, <v7>) -> <v8>
+y                                                                                              <v9>: String                     NEW: r(y) -> <v9>
+return y                                                                                       !<v10>: *
+{ val x = fn() ?: return "" val y = x?.let { throw Exception() } ?: "unreachable" return y }   !<v10>: *                        COPY
+=====================
+== anonymous_1 ==
+{ throw Exception() }
+---------------------
+Exception()         <v0>: {<: Throwable}   NEW: call(Exception(), <init>) -> <v0>
+throw Exception()   !<v1>: *
+throw Exception()   !<v1>: *               COPY
+=====================

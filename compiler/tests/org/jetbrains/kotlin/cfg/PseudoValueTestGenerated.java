@@ -324,6 +324,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notLocalReturn.kt")
+            public void testNotLocalReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/deadCode/notLocalReturn.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("returnInElvis.kt")
             public void testReturnInElvis() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/deadCode/returnInElvis.kt");
@@ -333,6 +339,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             @TestMetadata("stringTemplate.kt")
             public void testStringTemplate() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/deadCode/stringTemplate.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("throwInLambda.kt")
+            public void testThrowInLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/deadCode/throwInLambda.kt");
                 doTest(fileName);
             }
         }

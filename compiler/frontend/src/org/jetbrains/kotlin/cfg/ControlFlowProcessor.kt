@@ -947,10 +947,19 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             mark(expression)
             val selectorExpression = expression.selectorExpression
             val receiverExpression = expression.receiverExpression
+            val safe = expression is KtSafeQualifiedExpression
 
             // todo: replace with selectorExpresion != null after parser is fixed
             if (selectorExpression is KtCallExpression || selectorExpression is KtSimpleNameExpression) {
-                generateInstructions(selectorExpression)
+                if (!safe) {
+                    generateInstructions(selectorExpression)
+                }
+                else {
+                    val resultLabel = builder.createUnboundLabel("result of call")
+                    builder.jumpOnFalse(resultLabel, expression, null)
+                    generateInstructions(selectorExpression)
+                    builder.bindLabel(resultLabel)
+                }
                 copyValue(selectorExpression, expression)
             }
             else {
