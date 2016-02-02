@@ -159,7 +159,7 @@ public class JetTypeMapper {
         if (file != null) {
             Visibility visibility = descriptor.getVisibility();
             if (!publicFacade ||
-                descriptor instanceof PropertyDescriptor ||
+                isNonConstProperty(descriptor) ||
                 Visibilities.isPrivate(visibility) ||
                 isAccessor/*Cause of KT-9603*/
             ) {
@@ -179,6 +179,12 @@ public class JetTypeMapper {
 
         throw new RuntimeException("Could not find package member for " + descriptor +
                                    " in package fragment " + descriptor.getContainingDeclaration());
+    }
+
+    private static boolean isNonConstProperty(@NotNull CallableMemberDescriptor descriptor) {
+        if (!(descriptor instanceof PropertyDescriptor)) return false;
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+        return !propertyDescriptor.isConst();
     }
 
     public static class ContainingClassesInfo {
