@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -774,6 +773,7 @@ public interface Errors {
 
     //Inline and inlinable parameters
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> PRIVATE_CLASS_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory1<KtElement, KtElement> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, KtNamedDeclaration, DeclarationDescriptor> NOT_YET_SUPPORTED_IN_INLINE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> NOTHING_TO_INLINE = DiagnosticFactory1.create(WARNING);
