@@ -6,4 +6,4 @@ Compiling files:
 src/fun2.kt
 End of files
 COMPILATION FAILED
-'public constructor function()' conflicts with another declaration: public constructor function()
+'public constructor function()' conflicts with another declaration in package 'test'

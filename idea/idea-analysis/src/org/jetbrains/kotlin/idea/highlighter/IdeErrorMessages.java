@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.TypeMismatchDueToTypeProjectionsData;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataHtmlRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -137,8 +138,8 @@ public class IdeErrorMessages {
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
                 RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
-        MAP.put(CONFLICTING_OVERLOADS, "<html>''{0}''<br />conflicts with another declaration: {1}</html>",
-                IdeRenderers.HTML_COMPACT_WITH_MODIFIERS, IdeRenderers.HTML_COMPACT_WITH_MODIFIERS);
+        MAP.put(CONFLICTING_OVERLOADS, "<html>''{0}''<br />conflicts with another declaration in {1}</html>",
+                IdeRenderers.HTML_COMPACT_WITH_MODIFIERS, Renderers.DECLARATION_NAME_WITH_KIND);
 
         MAP.put(RESULT_TYPE_MISMATCH, "<html>Function return type mismatch." +
                                       "<table><tr><td>Expected:</td><td>{1}</td></tr>" +

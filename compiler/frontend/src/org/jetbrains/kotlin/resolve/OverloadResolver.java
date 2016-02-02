@@ -52,7 +52,7 @@ public class OverloadResolver {
         MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = findConstructorsInNestedClasses(c);
 
         for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
+            checkOverloadsInAClass(entry.getValue(), inClasses.get(entry.getValue()));
         }
         checkOverloadsInPackages(c);
     }
@@ -88,27 +88,12 @@ public class OverloadResolver {
                 OverloadUtil.groupModulePackageMembersByFqName(c, overloadFilter);
 
         for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : membersByName.entrySet()) {
-            FqNameUnsafe fqName = e.getKey().parent();
-            checkOverloadsInPackage(e.getValue(), fqName);
+            checkOverloadsInPackage(e.getValue());
         }
-    }
-
-    private static String nameForErrorMessage(ClassDescriptor classDescriptor, KtClassOrObject jetClass) {
-        String name = jetClass.getName();
-        if (name != null) {
-            return name;
-        }
-        if (jetClass instanceof KtObjectDeclaration) {
-            // must be companion object
-            name = classDescriptor.getContainingDeclaration().getName().asString();
-            return "companion object " + name;
-        }
-        // safe
-        return "<unknown>";
     }
 
     private void checkOverloadsInAClass(
-            ClassDescriptorWithResolutionScopes classDescriptor, KtClassOrObject klass,
+            ClassDescriptorWithResolutionScopes classDescriptor,
             Collection<ConstructorDescriptor> nestedClassConstructors
     ) {
         MultiMap<Name, CallableMemberDescriptor> functionsByName = MultiMap.create();
@@ -122,31 +107,24 @@ public class OverloadResolver {
         }
         
         for (Map.Entry<Name, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
-            checkOverloadsInClass(e.getValue(), classDescriptor, klass);
+            checkOverloadsInClass(e.getValue());
         }
     }
     
-    private void checkOverloadsInPackage(
-            @NotNull Collection<CallableMemberDescriptor> members,
-            @NotNull FqNameUnsafe packageFQN
-    ) {
+    private void checkOverloadsInPackage(@NotNull Collection<CallableMemberDescriptor> members) {
         if (members.size() == 1) return;
 
         for (Collection<? extends CallableMemberDescriptor> redeclarationGroup : OverloadUtil.getPossibleRedeclarationGroups(members)) {
             Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = findRedeclarations(redeclarationGroup);
             // TODO: don't render FQ name here, extract this logic to somewhere
-            reportRedeclarations(packageFQN.isRoot() ? "root package" : packageFQN.asString(), redeclarations);
+            reportRedeclarations(redeclarations);
         }
     }
 
-    private void checkOverloadsInClass(
-            @NotNull Collection<CallableMemberDescriptor> members,
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull KtClassOrObject ktClass
-    ) {
+    private void checkOverloadsInClass(@NotNull Collection<CallableMemberDescriptor> members) {
         if (members.size() == 1) return;
 
-        reportRedeclarations(nameForErrorMessage(classDescriptor, ktClass), findRedeclarations(members));
+        reportRedeclarations(findRedeclarations(members));
     }
 
     @NotNull
@@ -164,9 +142,7 @@ public class OverloadResolver {
                     }
 
                     KtDeclaration ktDeclaration = (KtDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
-                    if (ktDeclaration != null) {
-                        redeclarations.add(Pair.create(ktDeclaration, member));
-                    }
+                    redeclarations.add(Pair.create(ktDeclaration, member));
                 }
             }
         }
@@ -196,10 +172,7 @@ public class OverloadResolver {
         return file == null || file2 == null || file != file2;
     }
 
-    private void reportRedeclarations(
-            @NotNull String functionContainer,
-            @NotNull Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations
-    ) {
+    private void reportRedeclarations(@NotNull Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations) {
         if (redeclarations.isEmpty()) return;
 
         Iterator<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarationsIterator = redeclarations.iterator();
@@ -210,6 +183,8 @@ public class OverloadResolver {
 
         for (Pair<KtDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
             KtDeclaration ktDeclaration = redeclaration.getFirst();
+            if (ktDeclaration == null) continue;
+
             CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
 
             CallableMemberDescriptor redeclarationDescriptor;
@@ -227,7 +202,8 @@ public class OverloadResolver {
                 trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.getName().asString()));
             }
             else {
-                trace.report(Errors.CONFLICTING_OVERLOADS.on(ktDeclaration, memberDescriptor, redeclarationDescriptor));
+                trace.report(Errors.CONFLICTING_OVERLOADS.on(ktDeclaration, memberDescriptor,
+                                                             redeclarationDescriptor.getContainingDeclaration()));
             }
         }
     }
