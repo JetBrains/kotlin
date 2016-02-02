@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -26,7 +27,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache;
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager;
 import org.jetbrains.kotlin.idea.debugger.filter.DebuggerFiltersUtilKt;
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil;
@@ -36,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class PluginStartupComponent implements ApplicationComponent {
+    private static final Logger LOG = Logger.getInstance(PluginStartupComponent.class);
+
     private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
 
     public static PluginStartupComponent getInstance() {
@@ -56,7 +58,14 @@ public class PluginStartupComponent implements ApplicationComponent {
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
 
-        UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
+        try {
+            // API added in 15.0.2
+            UpdateChecker.INSTANCE.getExcludedFromUpdateCheckPlugins().add("org.jetbrains.kotlin");
+        }
+        catch (Throwable throwable) {
+            LOG.debug("Excluding Kotlin plugin updates using old API", throwable);
+            UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
+        }
         EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentAdapter() {
             @Override
             public void documentChanged(DocumentEvent e) {
