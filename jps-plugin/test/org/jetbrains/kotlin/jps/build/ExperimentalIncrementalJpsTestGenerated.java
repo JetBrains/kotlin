@@ -204,7 +204,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         @TestMetadata("classInlineFunctionChanged")
-        public void testClassInlineFunctionChanged() throws Exception {
+        public void mutetestClassInlineFunctionChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classInlineFunctionChanged/");
             doTest(fileName);
         }
@@ -294,13 +294,13 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         @TestMetadata("delegatedPropertyInlineExtensionAccessor")
-        public void testDelegatedPropertyInlineExtensionAccessor() throws Exception {
+        public void mutetestDelegatedPropertyInlineExtensionAccessor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/delegatedPropertyInlineExtensionAccessor/");
             doTest(fileName);
         }
 
         @TestMetadata("delegatedPropertyInlineMethodAccessor")
-        public void testDelegatedPropertyInlineMethodAccessor() throws Exception {
+        public void mutetestDelegatedPropertyInlineMethodAccessor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/delegatedPropertyInlineMethodAccessor/");
             doTest(fileName);
         }
@@ -360,7 +360,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         @TestMetadata("inlineFunctionsCircularDependency")
-        public void testInlineFunctionsCircularDependency() throws Exception {
+        public void mutetestInlineFunctionsCircularDependency() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionsCircularDependency/");
             doTest(fileName);
         }
@@ -384,7 +384,7 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         @TestMetadata("inlineTwoFunctionsOneChanged")
-        public void testInlineTwoFunctionsOneChanged() throws Exception {
+        public void mutetestInlineTwoFunctionsOneChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTwoFunctionsOneChanged/");
             doTest(fileName);
         }
@@ -444,13 +444,13 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         @TestMetadata("multifileClassInlineFunction")
-        public void testMultifileClassInlineFunction() throws Exception {
+        public void mutetestMultifileClassInlineFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassInlineFunction/");
             doTest(fileName);
         }
 
         @TestMetadata("multifileClassInlineFunctionAccessingField")
-        public void testMultifileClassInlineFunctionAccessingField() throws Exception {
+        public void mutetestMultifileClassInlineFunctionAccessingField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/multifileClassInlineFunctionAccessingField/");
             doTest(fileName);
         }
@@ -534,13 +534,13 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         }
 
         @TestMetadata("packageInlineFunctionAccessingField")
-        public void testPackageInlineFunctionAccessingField() throws Exception {
+        public void mutetestPackageInlineFunctionAccessingField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageInlineFunctionAccessingField/");
             doTest(fileName);
         }
 
         @TestMetadata("packageInlineFunctionFromOurPackage")
-        public void testPackageInlineFunctionFromOurPackage() throws Exception {
+        public void mutetestPackageInlineFunctionFromOurPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/packageInlineFunctionFromOurPackage/");
             doTest(fileName);
         }
