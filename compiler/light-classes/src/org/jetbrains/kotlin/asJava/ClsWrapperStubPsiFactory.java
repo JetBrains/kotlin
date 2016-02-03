@@ -29,7 +29,7 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class ClsWrapperStubPsiFactory extends StubPsiFactory {
+public class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<LightElementOrigin> ORIGIN = Key.create("ORIGIN");
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
 
