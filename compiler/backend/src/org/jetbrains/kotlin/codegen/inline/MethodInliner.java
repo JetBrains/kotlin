@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.SmartHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClosureCodegen;
@@ -427,7 +428,8 @@ public class MethodInliner {
         catch (AnalyzerException e) {
             throw wrapException(e, node, "couldn't inline method call");
         }
-
+        Set<AbstractInsnNode> toDelete = new SmartHashSet<AbstractInsnNode>();
+        InstructionsAndFrames instructionsAndFrames = new InstructionsAndFrames(sources, node.instructions);
         AbstractInsnNode cur = node.instructions.getFirst();
         int index = 0;
 
@@ -468,7 +470,7 @@ public class MethodInliner {
                             if (insnNode.getOpcode() == Opcodes.SWAP) {
                                 processingInstruction = InlineCodegenUtil.getPrevMeaningful(insnNode);
                             }
-                            lambdaInfo = getLambdaIfExists(processingInstruction);
+                            lambdaInfo = getLambdaIfExistsAndMarkInstructions(processingInstruction, frame, instructionsAndFrames, toDelete);
                             if (lambdaInfo != null) {
                                 //remove inlinable access
                                 assert processingInstruction != null;
@@ -486,7 +488,7 @@ public class MethodInliner {
                             SourceValue sourceValue = frame.getStack(firstParameterIndex + i);
                             if (sourceValue.insns.size() == 1) {
                                 AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                                LambdaInfo lambdaInfo = getLambdaIfExists(insnNode);
+                                LambdaInfo lambdaInfo = getLambdaIfExistsAndMarkInstructions(insnNode, frame, instructionsAndFrames, toDelete);
                                 if (lambdaInfo != null) {
                                     lambdaMapping.put(offset, lambdaInfo);
                                     node.instructions.remove(insnNode);
@@ -533,6 +535,10 @@ public class MethodInliner {
             }
         }
 
+        for (AbstractInsnNode insnNode : toDelete) {
+            node.instructions.remove(insnNode);
+        }
+
         //clean dead try/catch blocks
         List<TryCatchBlockNode> blocks = node.tryCatchBlocks;
         for (Iterator<TryCatchBlockNode> iterator = blocks.iterator(); iterator.hasNext(); ) {
@@ -575,7 +581,41 @@ public class MethodInliner {
     }
 
     @Nullable
-    public LambdaInfo getLambdaIfExists(@Nullable AbstractInsnNode insnNode) {
+    private LambdaInfo getLambdaIfExistsAndMarkInstructions(
+            @Nullable AbstractInsnNode insnNode,
+            @NotNull Frame<SourceValue> localFrame,
+            @NotNull InstructionsAndFrames insAndFrames,
+            @NotNull Set<AbstractInsnNode> toDelete
+    ) {
+        LambdaInfo lambdaInfo = getLambdaIfExists(insnNode);
+
+        if (lambdaInfo == null && insnNode instanceof VarInsnNode && insnNode.getOpcode() == Opcodes.ALOAD) {
+            int varIndex = ((VarInsnNode) insnNode).var;
+            SourceValue local = localFrame.getLocal(varIndex);
+            if (local.insns.size() == 1) {
+                AbstractInsnNode storeIns = local.insns.iterator().next();
+                if (storeIns instanceof VarInsnNode && storeIns.getOpcode() == Opcodes.ASTORE) {
+                    Frame<SourceValue> frame = insAndFrames.get(storeIns);
+                    if (frame != null) {
+                        SourceValue topOfStack = frame.getStack(frame.getStackSize() - 1);
+                        if(topOfStack.insns.size() == 1) {
+                            AbstractInsnNode lambdaAload = topOfStack.insns.iterator().next();
+                            lambdaInfo = getLambdaIfExistsAndMarkInstructions(lambdaAload, frame, insAndFrames, toDelete);
+                            if (lambdaInfo != null) {
+                                toDelete.add(storeIns);
+                                toDelete.add(lambdaAload);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return lambdaInfo;
+    }
+
+    @Nullable
+    private LambdaInfo getLambdaIfExists(@Nullable AbstractInsnNode insnNode) {
         if (insnNode == null) {
             return null;
         }
