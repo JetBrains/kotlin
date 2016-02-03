@@ -41,6 +41,12 @@ public class ForeignAnnotationsTestGenerated extends AbstractForeignAnnotationsT
         doTest(fileName);
     }
 
+    @TestMetadata("aosp.kt")
+    public void testAosp() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/aosp.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("checkerFramework.kt")
     public void testCheckerFramework() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/checkerFramework.kt");
