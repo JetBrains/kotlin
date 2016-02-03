@@ -15,7 +15,7 @@
     <method>
       <option name="Make" enabled="false" />
       <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/build.xml" target="clean_idea_output" />
-      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/update_dependencies.xml" target="update" />
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/update_dependencies.xml" target="update_teamcity" />
       <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/build.xml" target="dist" />
       <option name="MakeProject" enabled="true" />
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="Generate Tests" run_configuration_type="Application" />
