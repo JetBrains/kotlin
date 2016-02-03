@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
@@ -161,5 +163,29 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression translateExpressionForExpressionPattern(@NotNull KtExpression patternExpression) {
         return Translation.translateAsExpression(patternExpression, context());
+    }
+
+    @NotNull
+    // Note that expressionToMatch must be a single variable
+    public JsExpression translateRangePattern(@NotNull JsExpression expressionToMatch, @NotNull KtExpression patternExpression) {
+        if (isRangePattern(patternExpression)) {
+            KtBinaryExpression rangePatternExpression = (KtBinaryExpression) patternExpression;
+            // FIXME: Don't know what to do when one of getLeft() and getRight() is null
+            JsExpression lower = Translation.translateAsExpression(rangePatternExpression.getLeft(), context());
+            JsExpression upper = Translation.translateAsExpression(rangePatternExpression.getRight(), context());
+            return and(greaterThanEq(expressionToMatch, lower), lessThanEq(expressionToMatch, upper));
+        } else {
+            // TODO: figure out if it is possible
+            //JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(patternExpression);
+            throw new UnsupportedOperationException("Don't know how to translate general range in when .. in R expression");
+        }
+    }
+
+    private static boolean isRangePattern(@NotNull KtExpression expression) {
+        if (!(expression instanceof KtBinaryExpression)) {
+            return false;
+        }
+        KtBinaryExpression binary = (KtBinaryExpression) expression;
+        return binary.getOperationToken() == KtTokens.RANGE;
     }
 }
