@@ -21,6 +21,6 @@ internal final class Z2 {
     private final fun privateFun(): kotlin.Unit
     public final fun publicFun(): kotlin.Unit
     public final inline fun test(): kotlin.Unit
-    public final inline fun testInternal(): kotlin.Unit
+    internal final inline fun testInternal(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
