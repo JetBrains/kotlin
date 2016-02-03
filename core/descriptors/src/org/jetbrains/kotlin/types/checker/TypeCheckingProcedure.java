@@ -99,13 +99,13 @@ public class TypeCheckingProcedure {
         }
 
         for (int i = 0; i < type1Arguments.size(); i++) {
-            TypeParameterDescriptor typeParameter1 = constructor1.getParameters().get(i);
             TypeProjection typeProjection1 = type1Arguments.get(i);
-            TypeParameterDescriptor typeParameter2 = constructor2.getParameters().get(i);
             TypeProjection typeProjection2 = type2Arguments.get(i);
             if (typeProjection1.isStarProjection() && typeProjection2.isStarProjection()) {
                 continue;
             }
+            TypeParameterDescriptor typeParameter1 = constructor1.getParameters().get(i);
+            TypeParameterDescriptor typeParameter2 = constructor2.getParameters().get(i);
 
             if (capture(typeProjection1, typeProjection2, typeParameter1)) {
                 continue;
