@@ -210,14 +210,14 @@ val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
 fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
 
 fun CallableMemberDescriptor.firstOverridden(
+        useOriginal: Boolean = false,
         predicate: (CallableMemberDescriptor) -> Boolean
 ): CallableMemberDescriptor? {
     var result: CallableMemberDescriptor? = null
     return DFS.dfs(listOf(this),
-                   object : DFS.Neighbors<CallableMemberDescriptor> {
-                       override fun getNeighbors(current: CallableMemberDescriptor?): Iterable<CallableMemberDescriptor> {
-                           return current?.overriddenDescriptors ?: emptyList()
-                       }
+                   { current ->
+                       val descriptor = if (useOriginal) current?.original else current
+                       descriptor?.overriddenDescriptors ?: emptyList()
                    },
                    object : DFS.AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
                        override fun beforeChildren(current: CallableMemberDescriptor) = result == null

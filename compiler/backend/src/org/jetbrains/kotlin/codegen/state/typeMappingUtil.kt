@@ -77,7 +77,7 @@ fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance):
 val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
     get() {
         if (this !is CallableMemberDescriptor) return false
-        return firstOverridden {
+        return original.firstOverridden(useOriginal = true) {
             METHODS_WITH_DECLARATION_SITE_WILDCARDS.contains(it.propertyIfAccessor.fqNameOrNull())
         } != null
     }

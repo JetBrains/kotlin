@@ -117,7 +117,7 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
             return new SamAdapterInfo(samAdapter, ownerType);
         }
 
-        for (CallableMemberDescriptor overridden : samAdapter.getOverriddenDescriptors()) {
+        for (CallableMemberDescriptor overridden : samAdapter.getOriginal().getOverriddenDescriptors()) {
             ClassDescriptor containingClass = (ClassDescriptor) overridden.getContainingDeclaration();
 
             for (KotlinType immediateSupertype : TypeUtils.getImmediateSupertypes(ownerType)) {
