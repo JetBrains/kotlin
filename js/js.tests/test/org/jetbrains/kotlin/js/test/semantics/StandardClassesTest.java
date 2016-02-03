@@ -74,4 +74,8 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
     public void testHashMapTypeOfElement() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void ignore_testThrowableImpl() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
