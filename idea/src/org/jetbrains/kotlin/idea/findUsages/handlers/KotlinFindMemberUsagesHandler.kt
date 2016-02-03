@@ -31,6 +31,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
@@ -164,8 +165,12 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val callableDescriptor = (target as? KtCallableDeclaration)?.resolveToDescriptorIfAny() as? CallableDescriptor
-        val baseDescriptors = callableDescriptor?.findOriginalTopMostOverriddenDescriptors() ?: emptyList<CallableDescriptor>()
-        val baseDeclarations = baseDescriptors.map { it.source.getPsi() }.filter { it != null && it != target }
+        val descriptorsToHighlight = if (callableDescriptor is ParameterDescriptor)
+            listOf(callableDescriptor)
+        else
+            callableDescriptor?.findOriginalTopMostOverriddenDescriptors() ?: emptyList<CallableDescriptor>()
+
+        val baseDeclarations = descriptorsToHighlight.map { it.source.getPsi() }.filter { it != null && it != target }
 
         return if (baseDeclarations.isNotEmpty()) {
             baseDeclarations.flatMap {
