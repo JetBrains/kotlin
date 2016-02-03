@@ -98,7 +98,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 
     private fun doGetDescriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
-        return descriptorByModule[moduleInfo] ?: return delegateResolver.descriptorForModule(moduleInfo) as ModuleDescriptorImpl
+        return descriptorByModule[moduleInfo] ?: delegateResolver.descriptorForModule(moduleInfo) as ModuleDescriptorImpl
     }
 }
 
@@ -114,7 +114,7 @@ interface ModuleInfo {
         get() = false
     val name: Name
     fun dependencies(): List<ModuleInfo>
-    fun friends(): Collection<ModuleInfo> = listOf()
+    fun modulesWhichInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = emptyMap()
@@ -193,8 +193,8 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             modules.forEach {
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
-                module.friends().forEach {
-                    descriptor.addFriend(resolverForProject.descriptorForModule(it as M))
+                module.modulesWhichInternalsAreVisible().forEach {
+                    resolverForProject.descriptorForModule(it as M).addFriend(descriptor)
                 }
             }
         }
