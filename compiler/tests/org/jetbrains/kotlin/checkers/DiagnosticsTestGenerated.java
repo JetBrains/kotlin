@@ -4463,6 +4463,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("multiDeclarationAssignedUnresolved.kt")
+                public void testMultiDeclarationAssignedUnresolved() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/multiDeclarationAssignedUnresolved.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multiDeclarationMissingInitializer.kt")
+                public void testMultiDeclarationMissingInitializer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/multiDeclarationMissingInitializer.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("RedeclarationInForLoop.kt")
                 public void testRedeclarationInForLoop() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/RedeclarationInForLoop.kt");
