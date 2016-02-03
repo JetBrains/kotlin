@@ -121,4 +121,8 @@ public final class WhenTest extends AbstractExpressionTest {
     public void testWhenWithLongRangeClause() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testWhenWithCustomRangeClause() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
