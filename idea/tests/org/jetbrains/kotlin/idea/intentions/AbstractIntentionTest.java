@@ -154,7 +154,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
             assertEquals("Intention text mismatch.", intentionTextString, intentionAction.getText());
         }
 
-        String shouldFailString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ");
+        String shouldFailString = StringUtil.join(InTextDirectivesUtils.findListWithPrefixes(fileText, "// SHOULD_FAIL_WITH: "), ", ");
 
         try {
             if (isApplicableExpected) {
@@ -171,7 +171,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                         }
                 );
                 // Don't bother checking if it should have failed.
-                if (shouldFailString == null) {
+                if (shouldFailString.isEmpty()) {
                     for (Map.Entry<String, PsiFile> entry: pathToFile.entrySet()) {
                         //noinspection AssignmentToStaticFieldFromInstanceMethod
                         myFile = entry.getValue();
@@ -186,7 +186,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                     }
                 }
             }
-            assertNull("Expected test to fail.", shouldFailString);
+            assertEquals("Expected test to fail.", "", shouldFailString);
         }
         catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
             assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.getMessages(), ", "));
