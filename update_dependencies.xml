@@ -706,7 +706,7 @@
             <!--dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>-->
             <!-- Temporary get jps test artifact built with a newer Kotlin -->
             <get
-                src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/679472:id/jps/jps-build-test-IC-143.SNAPSHOT.jar"
+                src="https://teamcity.jetbrains.com/guestAuth/repository/download/bt410/690172:id/jps/jps-build-test-IC-143.SNAPSHOT.jar"
                 dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
 
             <download_and_unzip
