@@ -113,4 +113,24 @@ public final class WhenTest extends AbstractExpressionTest {
     public void testIfInWhenDanglingElseIssue() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testWhenWithRangeClause() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWhenWithLongRangeClause() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWhenWithCharRangeClause() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWhenWithCustomRangeClause() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWhenStatementWithRangeClause() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
