@@ -67,10 +67,14 @@ class StringJVMTest {
 
     @test fun formatter() {
         assertEquals("12", "%d%d".format(1, 2))
+        assertEquals("12", String.format("%d%d", 1, 2))
 
         assertEquals("1,234,567.890", "%,.3f".format(Locale.ENGLISH, 1234567.890))
-        assertEquals("1.234.567,890", "%,.3f".format(Locale.GERMAN, 1234567.890))
-        assertEquals("1 234 567,890", "%,.3f".format(Locale("fr"), 1234567.890))
+        assertEquals("1.234.567,890", "%,.3f".format(Locale.GERMAN,  1234567.890))
+        assertEquals("1 234 567,890", "%,.3f".format(Locale("fr"),   1234567.890))
+        assertEquals("1,234,567.890", String.format(Locale.ENGLISH, "%,.3f", 1234567.890))
+        assertEquals("1.234.567,890", String.format(Locale.GERMAN,  "%,.3f", 1234567.890))
+        assertEquals("1 234 567,890", String.format(Locale("fr"),   "%,.3f", 1234567.890))
     }
 
     @test fun toByteArrayEncodings() {
