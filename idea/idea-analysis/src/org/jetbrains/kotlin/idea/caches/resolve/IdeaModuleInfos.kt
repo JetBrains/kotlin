@@ -26,13 +26,44 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.alwaysNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import java.lang.reflect.Method
 import java.util.*
 
-val LIBRARY_NAME_PREFIX: String = "library "
+private val LIBRARY_NAME_PREFIX: String = "library "
+
+// TODO used reflection to be compatible with IDEA from both 143 and 144 branches,
+// TODO switch to directly using when "since-build" will be >= 144.3357.4
+private val getRelatedProductionModule: (Module) -> Module? = run {
+    val klass =
+            try {
+                Class.forName("com.intellij.openapi.roots.TestModuleProperties")
+            } catch (e: ClassNotFoundException) {
+                return@run alwaysNull()
+            }
+
+
+    val getInstanceMethod: Method
+    val getProductionModuleMethod: Method
+
+    try {
+        getInstanceMethod = klass.getDeclaredMethod("getInstance", Module::class.java)
+        getProductionModuleMethod = klass.getDeclaredMethod("getProductionModule")
+    }
+    catch (e: NoSuchMethodException) {
+        return@run alwaysNull()
+    }
+
+    return@run { module ->
+        val instance = getInstanceMethod(null, module)
+        getProductionModuleMethod(instance) as Module?
+    }
+}
 
 interface IdeaModuleInfo : ModuleInfo {
     fun contentScope(): GlobalSearchScope
@@ -71,7 +102,7 @@ private fun <T> Module.cached(provider: CachedValueProvider<T>): T {
     return CachedValuesManager.getManager(project).getCachedValue(this, provider)
 }
 
-fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaModuleInfo> {
+private fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaModuleInfo> {
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
@@ -102,8 +133,6 @@ data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourc
                 ideaModelDependencies(module, productionOnly = true),
                 ProjectRootModificationTracker.getInstance(module.project))
     })
-
-    override fun friends() = listOf(module.testSourceInfo())
 }
 
 //TODO: (module refactoring) do not create ModuleTestSourceInfo when there are no test roots for module
@@ -116,6 +145,16 @@ data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo 
         CachedValueProvider.Result(
                 ideaModelDependencies(module, productionOnly = false),
                 ProjectRootModificationTracker.getInstance(module.project))
+    })
+
+    override fun modulesWhichInternalsAreVisible() = module.cached(CachedValueProvider {
+        val list = SmartList<ModuleInfo>(module.productionSourceInfo())
+
+        getRelatedProductionModule(module)?.let {
+            list.add(it.productionSourceInfo())
+        }
+
+        CachedValueProvider.Result(list, ProjectRootModificationTracker.getInstance(module.project))
     })
 }
 
