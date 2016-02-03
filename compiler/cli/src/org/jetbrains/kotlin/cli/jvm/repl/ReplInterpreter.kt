@@ -17,27 +17,23 @@
 package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.google.common.base.Throwables
-import com.google.common.collect.Lists
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava
-import org.jetbrains.kotlin.cli.jvm.repl.di.*
+import org.jetbrains.kotlin.cli.jvm.config.getModuleName
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.di.ReplLastLineScopeProvider
+import org.jetbrains.kotlin.cli.jvm.repl.di.createContainerForReplWithJava
 import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper
@@ -48,7 +44,6 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -65,33 +60,25 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.utils.*
-
-import java.io.File
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.ScriptParameter
+import org.jetbrains.kotlin.script.ScriptPriorities
+import org.jetbrains.kotlin.script.StandardScriptDefinition
 import java.io.PrintWriter
-import java.lang.reflect.Constructor
-import java.lang.reflect.Field
-import java.net.MalformedURLException
-import java.net.URL
 import java.net.URLClassLoader
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.Collections
 
 class ReplInterpreter(
         disposable: Disposable,
         configuration: CompilerConfiguration,
         private val ideMode: Boolean,
-        private val replReader: ReplSystemInWrapper?) {
-
+        private val replReader: ReplSystemInWrapper?
+) {
     private var lineNumber = 0
 
     private var lastLineScope: LexicalScope? = null
-    private val earlierLines = Lists.newArrayList<EarlierLine>()
-    private val previousIncompleteLines = Lists.newArrayList<String>()
+    private val earlierLines = arrayListOf<EarlierLine>()
+    private val previousIncompleteLines = arrayListOf<String>()
     private val classLoader: ReplClassLoader
 
     private val psiFileFactory: PsiFileFactoryImpl
@@ -123,32 +110,27 @@ class ReplInterpreter(
                 ProjectScope.getAllScope(project),
                 object : ReplLastLineScopeProvider {
                     override val lastLineScope: LexicalScope?
-                        get() = lastLineScope
+                        get() = this@ReplInterpreter.lastLineScope
                 },
-                JvmPackagePartProvider(environment))
+                JvmPackagePartProvider(environment)
+        )
 
-        this.topDownAnalysisContext = TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY,
-                                                             container.resolveSession.declarationScopeProvider)
+        this.topDownAnalysisContext = TopDownAnalysisContext(
+                TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY, container.resolveSession.declarationScopeProvider
+        )
         this.topDownAnalyzer = container.lazyTopDownAnalyzerForTopLevel
         this.resolveSession = container.resolveSession
 
         moduleContext.initializeModuleContents(CompositePackageFragmentProvider(
-                Arrays.asList(
+                listOf(
                         container.resolveSession.packageFragmentProvider,
-                        container.javaDescriptorResolver.packageFragmentProvider)))
+                        container.javaDescriptorResolver.packageFragmentProvider
+                )
+        ))
 
-        val classpath = Lists.newArrayList<URL>()
-        for (file in configuration.jvmClasspathRoots) {
-            try {
-                classpath.add(file.toURI().toURL())
-            }
-            catch (e: MalformedURLException) {
-                throw rethrow(e)
-            }
+        val classpath = configuration.jvmClasspathRoots.map { it.toURI().toURL() }
 
-        }
-
-        this.classLoader = ReplClassLoader(URLClassLoader(classpath.toArray<URL>(arrayOfNulls<URL>(classpath.size)), null))
+        this.classLoader = ReplClassLoader(URLClassLoader(classpath.toTypedArray(), null))
     }
 
     enum class LineResultType {
@@ -158,18 +140,17 @@ class ReplInterpreter(
         INCOMPLETE
     }
 
-    class LineResult private constructor(private val value: Any?, private val unit: Boolean, val errorText: String?, val type: LineResultType) {
-
-        private fun checkSuccessful() {
-            if (type != LineResultType.SUCCESS) {
-                throw IllegalStateException("it is error")
+    class LineResult private constructor(
+            private val resultingValue: Any?,
+            private val unit: Boolean,
+            val errorText: String?,
+            val type: LineResultType
+    ) {
+        val value: Any?
+            get() {
+                checkSuccessful()
+                return resultingValue
             }
-        }
-
-        fun getValue(): Any? {
-            checkSuccessful()
-            return value
-        }
 
         val isUnit: Boolean
             get() {
@@ -177,21 +158,24 @@ class ReplInterpreter(
                 return unit
             }
 
+        private fun checkSuccessful() {
+            if (type != LineResultType.SUCCESS) {
+                error("it is error")
+            }
+        }
+
         companion object {
-
             private fun error(errorText: String, errorType: LineResultType): LineResult {
-                var errorText = errorText
-                if (errorText.isEmpty()) {
-                    errorText = "<unknown error>"
-                }
-                else if (!errorText.endsWith("\n")) {
-                    errorText += "\n"
+                val resultingErrorText = when {
+                    errorText.isEmpty() -> "<unknown error>"
+                    !errorText.endsWith("\n") -> errorText + "\n"
+                    else -> errorText
                 }
 
-                return LineResult(null, false, errorText, errorType)
+                return LineResult(null, false, resultingErrorText, errorType)
             }
 
-            fun successful(value: Any, unit: Boolean): LineResult {
+            fun successful(value: Any?, unit: Boolean): LineResult {
                 return LineResult(value, unit, null, LineResultType.SUCCESS)
             }
 
@@ -209,39 +193,35 @@ class ReplInterpreter(
         }
     }
 
-    private fun createDiagnosticHolder(): DiagnosticMessageHolder {
-        return if (ideMode)
-            ReplIdeDiagnosticMessageHolder()
-        else
-            ReplTerminalDiagnosticMessageHolder()
-    }
+    private fun createDiagnosticHolder(): DiagnosticMessageHolder =
+            if (ideMode)
+                ReplIdeDiagnosticMessageHolder()
+            else
+                ReplTerminalDiagnosticMessageHolder()
 
     fun eval(line: String): LineResult {
         ++lineNumber
 
-        val scriptFqName = FqName("Line" + lineNumber)
+        val fullText = (previousIncompleteLines + line).joinToString(separator = "\n")
 
-        val fullText = StringBuilder()
-        for (prevLine in previousIncompleteLines) {
-            fullText.append(prevLine).append("\n")
-        }
-        fullText.append(line)
-
-        val virtualFile = LightVirtualFile("line" + lineNumber + KotlinParserDefinition.STD_SCRIPT_EXT, KotlinLanguage.INSTANCE, fullText.toString())
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
-        val psiFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile? ?: error("Script file not analyzed at line $lineNumber: $fullText")
+        val virtualFile =
+                LightVirtualFile("line$lineNumber${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, fullText).apply {
+                    charset = CharsetToolkit.UTF8_CHARSET
+                }
+        val psiFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
+                      ?: error("Script file not analyzed at line $lineNumber: $fullText")
 
         val errorHolder = createDiagnosticHolder()
 
         val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder)
 
         if (syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof) {
-            if (ideMode) {
-                return LineResult.compileError(errorHolder.renderedDiagnostics)
+            return if (ideMode) {
+                LineResult.compileError(errorHolder.renderedDiagnostics)
             }
             else {
                 previousIncompleteLines.add(line)
-                return LineResult.incomplete()
+                LineResult.incomplete()
             }
         }
 
@@ -254,21 +234,14 @@ class ReplInterpreter(
         prepareForTheNextReplLine(topDownAnalysisContext)
         trace.clearDiagnostics()
 
-        //noinspection ConstantConditions
-        psiFile!!.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, lineNumber)
+        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, lineNumber)
 
-        val scriptDescriptor = doAnalyze(psiFile, errorHolder) ?: return LineResult.compileError(errorHolder.renderedDiagnostics)
+        val scriptDescriptor = doAnalyze(psiFile, errorHolder)
+                               ?: return LineResult.compileError(errorHolder.renderedDiagnostics)
 
-        val earlierScripts = Lists.newArrayList<ScriptDescriptor>()
+        val state = GenerationState(psiFile.project, ClassBuilderFactories.BINARIES, module, trace.bindingContext, listOf(psiFile))
 
-        for (earlierLine in earlierLines) {
-            earlierScripts.add(earlierLine.scriptDescriptor)
-        }
-
-        val state = GenerationState(psiFile.project, ClassBuilderFactories.BINARIES,
-                                    module, trace.bindingContext, listOf(psiFile))
-
-        compileScript(psiFile.script!!, earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION)
+        compileScript(psiFile.script!!, earlierLines.map(EarlierLine::getScriptDescriptor), state, CompilationErrorHandler.THROW_EXCEPTION)
 
         for (outputFile in state.factory.asList()) {
             if (outputFile.relativePath.endsWith(".class")) {
@@ -278,31 +251,24 @@ class ReplInterpreter(
         }
 
         try {
-            val scriptClass = classLoader.loadClass(scriptFqName.asString())
+            val scriptClass = classLoader.loadClass("Line$lineNumber")
 
-            val constructorParams = arrayOfNulls<Class<*>>(earlierLines.size)
-            val constructorArgs = arrayOfNulls<Any>(earlierLines.size)
-
-            for (i in earlierLines.indices) {
-                constructorParams[i] = earlierLines[i].scriptClass
-                constructorArgs[i] = earlierLines[i].scriptInstance
-            }
+            val constructorParams = earlierLines.map(EarlierLine::getScriptClass).toTypedArray()
+            val constructorArgs = earlierLines.map(EarlierLine::getScriptInstance).toTypedArray()
 
             val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
-            val scriptInstance: Any
-            try {
-                setReplScriptExecuting(true)
-                scriptInstance = scriptInstanceConstructor.newInstance(*constructorArgs)
+            val scriptInstance = try {
+                replReader?.isReplScriptExecuting = true
+                scriptInstanceConstructor.newInstance(*constructorArgs)
             }
             catch (e: Throwable) {
                 return LineResult.runtimeError(renderStackTrace(e.cause!!))
             }
             finally {
-                setReplScriptExecuting(false)
+                replReader?.isReplScriptExecuting = false
             }
 
-            val rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME)
-            rvField.isAccessible = true
+            val rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
             val rv = rvField.get(scriptInstance)
 
             earlierLines.add(EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance))
@@ -310,28 +276,17 @@ class ReplInterpreter(
             return LineResult.successful(rv, !state.replSpecific.hasResult)
         }
         catch (e: Throwable) {
-            @SuppressWarnings("UseOfSystemOutOrSystemErr")
             val writer = PrintWriter(System.err)
             classLoader.dumpClasses(writer)
             writer.flush()
-            throw rethrow(e)
-        }
-
-    }
-
-    private fun setReplScriptExecuting(isExecuting: Boolean) {
-        if (replReader != null) {
-            replReader.isReplScriptExecuting = isExecuting
+            throw e
         }
     }
 
     private fun doAnalyze(psiFile: KtFile, errorReporter: DiagnosticMessageReporter): ScriptDescriptor? {
-        scriptDeclarationFactory.setDelegateFactory(
-                FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(psiFile)))
+        scriptDeclarationFactory.setDelegateFactory(FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(psiFile)))
 
-        val context = topDownAnalyzer.analyzeDeclarations(
-                topDownAnalysisContext.topDownAnalysisMode,
-                listOf(psiFile))
+        val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(psiFile))
 
         if (trace.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile) == null) {
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT))
@@ -342,9 +297,9 @@ class ReplInterpreter(
             return null
         }
 
-        val scriptDescriptor = context.scripts[psiFile.script]!!
-        lastLineScope = scriptDescriptor.getScopeForInitializerResolution()
-        return scriptDescriptor
+        return context.scripts[psiFile.script]?.apply {
+            lastLineScope = this.scopeForInitializerResolution
+        }
     }
 
     fun dumpClasses(out: PrintWriter) {
@@ -352,23 +307,23 @@ class ReplInterpreter(
     }
 
     private class ScriptMutableDeclarationProviderFactory : DeclarationProviderFactory {
-        private var delegateFactory: DeclarationProviderFactory? = null
-        private var rootPackageProvider: AdaptablePackageMemberDeclarationProvider? = null
+        private lateinit var delegateFactory: DeclarationProviderFactory
+        private lateinit var rootPackageProvider: AdaptablePackageMemberDeclarationProvider
 
         fun setDelegateFactory(delegateFactory: DeclarationProviderFactory) {
             this.delegateFactory = delegateFactory
 
             val provider = delegateFactory.getPackageMemberDeclarationProvider(FqName.ROOT)!!
-            if (rootPackageProvider == null) {
-                rootPackageProvider = AdaptablePackageMemberDeclarationProvider(provider)
+            try {
+                rootPackageProvider.addDelegateProvider(provider)
             }
-            else {
-                rootPackageProvider!!.addDelegateProvider(provider)
+            catch (e: UninitializedPropertyAccessException) {
+                rootPackageProvider = AdaptablePackageMemberDeclarationProvider(provider)
             }
         }
 
         override fun getClassMemberDeclarationProvider(classLikeInfo: KtClassLikeInfo): ClassMemberDeclarationProvider {
-            return delegateFactory!!.getClassMemberDeclarationProvider(classLikeInfo)
+            return delegateFactory.getClassMemberDeclarationProvider(classLikeInfo)
         }
 
         override fun getPackageMemberDeclarationProvider(packageFqName: FqName): PackageMemberDeclarationProvider? {
@@ -376,17 +331,18 @@ class ReplInterpreter(
                 return rootPackageProvider
             }
 
-            return this.delegateFactory!!.getPackageMemberDeclarationProvider(packageFqName)
+            return delegateFactory.getPackageMemberDeclarationProvider(packageFqName)
         }
 
         override fun diagnoseMissingPackageFragment(file: KtFile) {
-            this.delegateFactory!!.diagnoseMissingPackageFragment(file)
+            delegateFactory.diagnoseMissingPackageFragment(file)
         }
 
-        class AdaptablePackageMemberDeclarationProvider(private var delegateProvider: PackageMemberDeclarationProvider) : DelegatePackageMemberDeclarationProvider(delegateProvider) {
-
+        class AdaptablePackageMemberDeclarationProvider(
+                private var delegateProvider: PackageMemberDeclarationProvider
+        ) : DelegatePackageMemberDeclarationProvider(delegateProvider) {
             fun addDelegateProvider(provider: PackageMemberDeclarationProvider) {
-                delegateProvider = CombinedPackageMemberDeclarationProvider(Lists.newArrayList(provider, delegateProvider))
+                delegateProvider = CombinedPackageMemberDeclarationProvider(listOf(provider, delegateProvider))
 
                 delegate = delegateProvider
             }
@@ -396,17 +352,11 @@ class ReplInterpreter(
     companion object {
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
         private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition {
-            override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> {
-                return emptyList()
-            }
+            override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> = emptyList()
 
-            override fun isScript(file: PsiFile): Boolean {
-                return StandardScriptDefinition.isScript(file)
-            }
+            override fun isScript(file: PsiFile): Boolean = StandardScriptDefinition.isScript(file)
 
-            override fun getScriptName(script: KtScript): Name {
-                return StandardScriptDefinition.getScriptName(script)
-            }
+            override fun getScriptName(script: KtScript): Name = StandardScriptDefinition.getScriptName(script)
         }
 
         private fun prepareForTheNextReplLine(c: TopDownAnalysisContext) {
@@ -414,26 +364,23 @@ class ReplInterpreter(
         }
 
         private fun renderStackTrace(cause: Throwable): String {
-            val oldTrace = cause.stackTrace
-            val newTrace = ArrayList<StackTraceElement>()
+            val newTrace = arrayListOf<StackTraceElement>()
             var skip = true
-            for (i in oldTrace.indices.reversed()) {
-                val element = oldTrace[i]
+            for ((i, element) in cause.stackTrace.withIndex().reversed()) {
                 // All our code happens in the script constructor, and no reflection/native code happens in constructors.
                 // So we ignore everything in the stack trace until the first constructor
-                if (element.getMethodName() == "<init>") {
+                if (element.methodName == "<init>") {
                     skip = false
                 }
                 if (!skip) {
                     newTrace.add(element)
                 }
             }
-            Collections.reverse(newTrace)
 
             // throw away last element which contains Line1.kts<init>(Unknown source)
-            val resultingTrace = newTrace.subList(0, newTrace.size - 1)
+            val resultingTrace = newTrace.reversed().dropLast(1)
 
-            @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+            @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UsePropertyAccessSyntax")
             (cause as java.lang.Throwable).setStackTrace(resultingTrace.toTypedArray())
 
             return Throwables.getStackTraceAsString(cause)
@@ -443,16 +390,18 @@ class ReplInterpreter(
                 script: KtScript,
                 earlierScripts: List<ScriptDescriptor>,
                 state: GenerationState,
-                errorHandler: CompilationErrorHandler) {
+                errorHandler: CompilationErrorHandler
+        ) {
             state.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
-            state.replSpecific.earlierScriptsForReplInterpreter = ArrayList(earlierScripts)
+            state.replSpecific.earlierScriptsForReplInterpreter = earlierScripts.toList()
 
             state.beforeCompile()
             KotlinCodegenFacade.generatePackage(
                     state,
                     script.getContainingKtFile().packageFqName,
                     setOf(script.getContainingKtFile()),
-                    errorHandler)
+                    errorHandler
+            )
         }
     }
 }

@@ -27,7 +27,6 @@ import java.io.File
 import java.io.PrintWriter
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.text.Regex
 
 // Switch this flag to render bytecode after each line in the REPL test. Useful for debugging verify errors or other codegen problems
 private val DUMP_BYTECODE = false
@@ -94,7 +93,7 @@ abstract class AbstractReplInterpreterTest : UsefulTestCase() {
             val actual = when (lineResult.type) {
                 ReplInterpreter.LineResultType.SUCCESS -> if (!lineResult.isUnit) "${lineResult.value}" else ""
                 ReplInterpreter.LineResultType.RUNTIME_ERROR,
-                ReplInterpreter.LineResultType.COMPILE_ERROR -> lineResult.errorText
+                ReplInterpreter.LineResultType.COMPILE_ERROR -> lineResult.errorText!!
                 ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
             }
 
