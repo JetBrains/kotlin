@@ -14,505 +14,445 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.repl;
+package org.jetbrains.kotlin.cli.jvm.repl
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.testFramework.LightVirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
-import org.jetbrains.kotlin.cli.jvm.config.ModuleNameKt;
-import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava;
-import org.jetbrains.kotlin.cli.jvm.repl.di.InjectionKt;
-import org.jetbrains.kotlin.cli.jvm.repl.di.ReplLastLineScopeProvider;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder;
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
-import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
-import org.jetbrains.kotlin.resolve.lazy.declarations.*;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.script.*;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import com.google.common.base.Throwables
+import com.google.common.collect.Lists
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.impl.PsiFileFactoryImpl
+import com.intellij.psi.search.ProjectScope
+import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava
+import org.jetbrains.kotlin.cli.jvm.repl.di.*
+import org.jetbrains.kotlin.cli.jvm.repl.di.ReplLastLineScopeProvider
+import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplIdeDiagnosticMessageHolder
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.context.MutableModuleContext
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.declarations.*
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.utils.*
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.io.File
+import java.io.PrintWriter
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
+import java.net.MalformedURLException
+import java.net.URL
+import java.net.URLClassLoader
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collections
 
-public class ReplInterpreter {
-    private static final String SCRIPT_RESULT_FIELD_NAME = "$$result";
+class ReplInterpreter(
+        disposable: Disposable,
+        configuration: CompilerConfiguration,
+        private val ideMode: Boolean,
+        private val replReader: ReplSystemInWrapper?) {
 
-    private int lineNumber = 0;
+    private var lineNumber = 0
 
-    @Nullable
-    private LexicalScope lastLineScope;
-    private final List<EarlierLine> earlierLines = Lists.newArrayList();
-    private final List<String> previousIncompleteLines = Lists.newArrayList();
-    private final ReplClassLoader classLoader;
+    private var lastLineScope: LexicalScope? = null
+    private val earlierLines = Lists.newArrayList<EarlierLine>()
+    private val previousIncompleteLines = Lists.newArrayList<String>()
+    private val classLoader: ReplClassLoader
 
-    private final PsiFileFactoryImpl psiFileFactory;
-    private final BindingTraceContext trace;
-    private final ModuleDescriptorImpl module;
+    private val psiFileFactory: PsiFileFactoryImpl
+    private val trace: BindingTraceContext
+    private val module: ModuleDescriptorImpl
 
-    private final TopDownAnalysisContext topDownAnalysisContext;
-    private final LazyTopDownAnalyzerForTopLevel topDownAnalyzer;
-    private final ResolveSession resolveSession;
-    private final ScriptMutableDeclarationProviderFactory scriptDeclarationFactory;
+    private val topDownAnalysisContext: TopDownAnalysisContext
+    private val topDownAnalyzer: LazyTopDownAnalyzerForTopLevel
+    private val resolveSession: ResolveSession
+    private val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
 
-    private final boolean ideMode;
-    private final ReplSystemInWrapper replReader;
-    private final static KotlinScriptDefinition REPL_LINE_AS_SCRIPT_DEFINITION = new KotlinScriptDefinition() {
-        @NotNull
-        @Override
-        public List<ScriptParameter> getScriptParameters(@NotNull ScriptDescriptor scriptDescriptor) {
-            return Collections.emptyList();
-        }
+    init {
+        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, REPL_LINE_AS_SCRIPT_DEFINITION)
 
-        @Override
-        public boolean isScript(@NotNull PsiFile file) {
-            return StandardScriptDefinition.INSTANCE.isScript(file);
-        }
+        val environment = KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val project = environment.project
 
-        @NotNull
-        @Override
-        public Name getScriptName(@NotNull KtScript script) {
-            return StandardScriptDefinition.INSTANCE.getScriptName(script);
-        }
-    };
+        this.psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
+        this.trace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, environment.getModuleName())
+        this.module = moduleContext.module
 
-    public ReplInterpreter(
-            @NotNull Disposable disposable,
-            @NotNull CompilerConfiguration configuration,
-            boolean ideMode,
-            @Nullable ReplSystemInWrapper replReader
-    ) {
-        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, REPL_LINE_AS_SCRIPT_DEFINITION);
+        scriptDeclarationFactory = ScriptMutableDeclarationProviderFactory()
 
-        KotlinCoreEnvironment environment =
-                KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-        Project project = environment.getProject();
-
-        this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
-        this.trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, ModuleNameKt
-                .getModuleName(environment));
-        this.module = moduleContext.getModule();
-
-        scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
-
-        ContainerForReplWithJava container = InjectionKt.createContainerForReplWithJava(
+        val container = createContainerForReplWithJava(
                 moduleContext,
                 trace,
                 scriptDeclarationFactory,
                 ProjectScope.getAllScope(project),
-                new ReplLastLineScopeProvider() {
-                    @Nullable
-                    @Override
-                    public LexicalScope getLastLineScope() {
-                        return lastLineScope;
-                    }
+                object : ReplLastLineScopeProvider {
+                    override val lastLineScope: LexicalScope?
+                        get() = lastLineScope
                 },
-                new JvmPackagePartProvider(environment)
-        );
+                JvmPackagePartProvider(environment))
 
-        this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY,
-                                                                 container.getResolveSession().getDeclarationScopeProvider());
-        this.topDownAnalyzer = container.getLazyTopDownAnalyzerForTopLevel();
-        this.resolveSession = container.getResolveSession();
+        this.topDownAnalysisContext = TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfoFactory.EMPTY,
+                                                             container.resolveSession.declarationScopeProvider)
+        this.topDownAnalyzer = container.lazyTopDownAnalyzerForTopLevel
+        this.resolveSession = container.resolveSession
 
-        moduleContext.initializeModuleContents(new CompositePackageFragmentProvider(
+        moduleContext.initializeModuleContents(CompositePackageFragmentProvider(
                 Arrays.asList(
-                        container.getResolveSession().getPackageFragmentProvider(),
-                        container.getJavaDescriptorResolver().getPackageFragmentProvider()
-                )
-        ));
+                        container.resolveSession.packageFragmentProvider,
+                        container.javaDescriptorResolver.packageFragmentProvider)))
 
-        List<URL> classpath = Lists.newArrayList();
-        for (File file : JvmContentRootsKt.getJvmClasspathRoots(configuration)) {
+        val classpath = Lists.newArrayList<URL>()
+        for (file in configuration.jvmClasspathRoots) {
             try {
-                classpath.add(file.toURI().toURL());
+                classpath.add(file.toURI().toURL())
             }
-            catch (MalformedURLException e) {
-                throw ExceptionUtilsKt.rethrow(e);
+            catch (e: MalformedURLException) {
+                throw rethrow(e)
             }
+
         }
 
-        this.classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[classpath.size()]), null));
-
-        this.ideMode = ideMode;
-        this.replReader = replReader;
+        this.classLoader = ReplClassLoader(URLClassLoader(classpath.toArray<URL>(arrayOfNulls<URL>(classpath.size)), null))
     }
 
-    private static void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
-        c.getScripts().clear();
-    }
-
-    public enum LineResultType {
+    enum class LineResultType {
         SUCCESS,
         COMPILE_ERROR,
         RUNTIME_ERROR,
-        INCOMPLETE,
+        INCOMPLETE
     }
 
-    public static class LineResult {
-        private final Object value;
-        private final boolean unit;
-        private final String errorText;
-        private final LineResultType type;
+    class LineResult private constructor(private val value: Any?, private val unit: Boolean, val errorText: String?, val type: LineResultType) {
 
-        private LineResult(Object value, boolean unit, String errorText, @NotNull LineResultType type) {
-            this.value = value;
-            this.unit = unit;
-            this.errorText = errorText;
-            this.type = type;
-        }
-
-        @NotNull
-        public LineResultType getType() {
-            return type;
-        }
-
-        private void checkSuccessful() {
-            if (getType() != LineResultType.SUCCESS) {
-                throw new IllegalStateException("it is error");
+        private fun checkSuccessful() {
+            if (type != LineResultType.SUCCESS) {
+                throw IllegalStateException("it is error")
             }
         }
 
-        public Object getValue() {
-            checkSuccessful();
-            return value;
+        fun getValue(): Any? {
+            checkSuccessful()
+            return value
         }
 
-        public boolean isUnit() {
-            checkSuccessful();
-            return unit;
-        }
-
-        @NotNull
-        public String getErrorText() {
-            return errorText;
-        }
-
-        @NotNull
-        private static LineResult error(@NotNull String errorText, @NotNull LineResultType errorType) {
-            if (errorText.isEmpty()) {
-                errorText = "<unknown error>";
-            }
-            else if (!errorText.endsWith("\n")) {
-                errorText += "\n";
+        val isUnit: Boolean
+            get() {
+                checkSuccessful()
+                return unit
             }
 
-            return new LineResult(null, false, errorText, errorType);
-        }
+        companion object {
 
-        @NotNull
-        public static LineResult successful(Object value, boolean unit) {
-            return new LineResult(value, unit, null, LineResultType.SUCCESS);
-        }
+            private fun error(errorText: String, errorType: LineResultType): LineResult {
+                var errorText = errorText
+                if (errorText.isEmpty()) {
+                    errorText = "<unknown error>"
+                }
+                else if (!errorText.endsWith("\n")) {
+                    errorText += "\n"
+                }
 
-        @NotNull
-        public static LineResult compileError(@NotNull String errorText) {
-            return error(errorText, LineResultType.COMPILE_ERROR);
-        }
+                return LineResult(null, false, errorText, errorType)
+            }
 
-        @NotNull
-        public static LineResult runtimeError(@NotNull String errorText) {
-            return error(errorText, LineResultType.RUNTIME_ERROR);
-        }
+            fun successful(value: Any, unit: Boolean): LineResult {
+                return LineResult(value, unit, null, LineResultType.SUCCESS)
+            }
 
-        public static LineResult incomplete() {
-            return new LineResult(null, false, null, LineResultType.INCOMPLETE);
+            fun compileError(errorText: String): LineResult {
+                return error(errorText, LineResultType.COMPILE_ERROR)
+            }
+
+            fun runtimeError(errorText: String): LineResult {
+                return error(errorText, LineResultType.RUNTIME_ERROR)
+            }
+
+            fun incomplete(): LineResult {
+                return LineResult(null, false, null, LineResultType.INCOMPLETE)
+            }
         }
     }
 
-    @NotNull
-    private DiagnosticMessageHolder createDiagnosticHolder() {
-        return ideMode ? new ReplIdeDiagnosticMessageHolder()
-                       : new ReplTerminalDiagnosticMessageHolder();
+    private fun createDiagnosticHolder(): DiagnosticMessageHolder {
+        return if (ideMode)
+            ReplIdeDiagnosticMessageHolder()
+        else
+            ReplTerminalDiagnosticMessageHolder()
     }
 
-    @NotNull
-    public LineResult eval(@NotNull String line) {
-        ++lineNumber;
+    fun eval(line: String): LineResult {
+        ++lineNumber
 
-        FqName scriptFqName = new FqName("Line" + lineNumber);
+        val scriptFqName = FqName("Line" + lineNumber)
 
-        StringBuilder fullText = new StringBuilder();
-        for (String prevLine : previousIncompleteLines) {
-            fullText.append(prevLine).append("\n");
+        val fullText = StringBuilder()
+        for (prevLine in previousIncompleteLines) {
+            fullText.append(prevLine).append("\n")
         }
-        fullText.append(line);
+        fullText.append(line)
 
-        LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + KotlinParserDefinition.STD_SCRIPT_EXT, KotlinLanguage.INSTANCE, fullText.toString());
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        KtFile psiFile = (KtFile) psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
-        assert psiFile != null : "Script file not analyzed at line " + lineNumber + ": " + fullText;
+        val virtualFile = LightVirtualFile("line" + lineNumber + KotlinParserDefinition.STD_SCRIPT_EXT, KotlinLanguage.INSTANCE, fullText.toString())
+        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
+        val psiFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile? ?: error("Script file not analyzed at line $lineNumber: $fullText")
 
-        DiagnosticMessageHolder errorHolder = createDiagnosticHolder();
+        val errorHolder = createDiagnosticHolder()
 
-        AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport = AnalyzerWithCompilerReport.Companion
-                .reportSyntaxErrors(psiFile, errorHolder);
+        val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder)
 
-        if (syntaxErrorReport.isHasErrors() && syntaxErrorReport.isAllErrorsAtEof()) {
+        if (syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof) {
             if (ideMode) {
-                return LineResult.compileError(errorHolder.getRenderedDiagnostics());
+                return LineResult.compileError(errorHolder.renderedDiagnostics)
             }
             else {
-                previousIncompleteLines.add(line);
-                return LineResult.incomplete();
+                previousIncompleteLines.add(line)
+                return LineResult.incomplete()
             }
         }
 
-        previousIncompleteLines.clear();
+        previousIncompleteLines.clear()
 
-        if (syntaxErrorReport.isHasErrors()) {
-            return LineResult.compileError(errorHolder.getRenderedDiagnostics());
+        if (syntaxErrorReport.isHasErrors) {
+            return LineResult.compileError(errorHolder.renderedDiagnostics)
         }
 
-        prepareForTheNextReplLine(topDownAnalysisContext);
-        trace.clearDiagnostics();
+        prepareForTheNextReplLine(topDownAnalysisContext)
+        trace.clearDiagnostics()
 
         //noinspection ConstantConditions
-        psiFile.getScript().putUserData(ScriptPriorities.PRIORITY_KEY, lineNumber);
+        psiFile!!.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, lineNumber)
 
-        ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorHolder);
-        if (scriptDescriptor == null) {
-            return LineResult.compileError(errorHolder.getRenderedDiagnostics());
+        val scriptDescriptor = doAnalyze(psiFile, errorHolder) ?: return LineResult.compileError(errorHolder.renderedDiagnostics)
+
+        val earlierScripts = Lists.newArrayList<ScriptDescriptor>()
+
+        for (earlierLine in earlierLines) {
+            earlierScripts.add(earlierLine.scriptDescriptor)
         }
 
-        List<ScriptDescriptor> earlierScripts = Lists.newArrayList();
+        val state = GenerationState(psiFile.project, ClassBuilderFactories.BINARIES,
+                                    module, trace.bindingContext, listOf(psiFile))
 
-        for (EarlierLine earlierLine : earlierLines) {
-            earlierScripts.add(earlierLine.getScriptDescriptor());
-        }
+        compileScript(psiFile.script!!, earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION)
 
-        GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
-                                                    module, trace.getBindingContext(), Collections.singletonList(psiFile));
-
-        compileScript(psiFile.getScript(), earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION);
-
-        for (OutputFile outputFile : state.getFactory().asList()) {
-            if(outputFile.getRelativePath().endsWith(".class")) {
-                classLoader.addClass(JvmClassName.byInternalName(outputFile.getRelativePath().replaceFirst("\\.class$", "")),
-                                     outputFile.asByteArray());
+        for (outputFile in state.factory.asList()) {
+            if (outputFile.relativePath.endsWith(".class")) {
+                classLoader.addClass(JvmClassName.byInternalName(outputFile.relativePath.replaceFirst("\\.class$".toRegex(), "")),
+                                     outputFile.asByteArray())
             }
         }
 
         try {
-            Class<?> scriptClass = classLoader.loadClass(scriptFqName.asString());
+            val scriptClass = classLoader.loadClass(scriptFqName.asString())
 
-            Class<?>[] constructorParams = new Class<?>[earlierLines.size()];
-            Object[] constructorArgs = new Object[earlierLines.size()];
+            val constructorParams = arrayOfNulls<Class<*>>(earlierLines.size)
+            val constructorArgs = arrayOfNulls<Any>(earlierLines.size)
 
-            for (int i = 0; i < earlierLines.size(); ++i) {
-                constructorParams[i] = earlierLines.get(i).getScriptClass();
-                constructorArgs[i] = earlierLines.get(i).getScriptInstance();
+            for (i in earlierLines.indices) {
+                constructorParams[i] = earlierLines[i].scriptClass
+                constructorArgs[i] = earlierLines[i].scriptInstance
             }
 
-            Constructor<?> scriptInstanceConstructor = scriptClass.getConstructor(constructorParams);
-            Object scriptInstance;
+            val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
+            val scriptInstance: Any
             try {
-                setReplScriptExecuting(true);
-                scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
+                setReplScriptExecuting(true)
+                scriptInstance = scriptInstanceConstructor.newInstance(*constructorArgs)
             }
-            catch (Throwable e) {
-                return LineResult.runtimeError(renderStackTrace(e.getCause()));
-            } finally {
-                setReplScriptExecuting(false);
+            catch (e: Throwable) {
+                return LineResult.runtimeError(renderStackTrace(e.cause!!))
+            }
+            finally {
+                setReplScriptExecuting(false)
             }
 
-            Field rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME);
-            rvField.setAccessible(true);
-            Object rv = rvField.get(scriptInstance);
+            val rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME)
+            rvField.isAccessible = true
+            val rv = rvField.get(scriptInstance)
 
-            earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance));
+            earlierLines.add(EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance))
 
-            return LineResult.successful(rv, !state.getReplSpecific().getHasResult());
+            return LineResult.successful(rv, !state.replSpecific.hasResult)
         }
-        catch (Throwable e) {
+        catch (e: Throwable) {
             @SuppressWarnings("UseOfSystemOutOrSystemErr")
-            PrintWriter writer = new PrintWriter(System.err);
-            classLoader.dumpClasses(writer);
-            writer.flush();
-            throw ExceptionUtilsKt.rethrow(e);
+            val writer = PrintWriter(System.err)
+            classLoader.dumpClasses(writer)
+            writer.flush()
+            throw rethrow(e)
         }
+
     }
 
-    private void setReplScriptExecuting(boolean isExecuting) {
+    private fun setReplScriptExecuting(isExecuting: Boolean) {
         if (replReader != null) {
-            replReader.setReplScriptExecuting(isExecuting);
+            replReader.isReplScriptExecuting = isExecuting
         }
     }
 
-    @NotNull
-    private static String renderStackTrace(@NotNull Throwable cause) {
-        StackTraceElement[] oldTrace = cause.getStackTrace();
-        List<StackTraceElement> newTrace = new ArrayList<StackTraceElement>();
-        boolean skip = true;
-        for (int i = oldTrace.length - 1; i >= 0; i--) {
-            StackTraceElement element = oldTrace[i];
-            // All our code happens in the script constructor, and no reflection/native code happens in constructors.
-            // So we ignore everything in the stack trace until the first constructor
-            if (element.getMethodName().equals("<init>")) {
-                skip = false;
-            }
-            if (!skip) {
-                newTrace.add(element);
-            }
-        }
-        Collections.reverse(newTrace);
-
-        // throw away last element which contains Line1.kts<init>(Unknown source)
-        List<StackTraceElement> resultingTrace = newTrace.subList(0, newTrace.size() - 1);
-
-        cause.setStackTrace(resultingTrace.toArray(new StackTraceElement[resultingTrace.size()]));
-        return Throwables.getStackTraceAsString(cause);
-    }
-
-    @Nullable
-    private ScriptDescriptor doAnalyze(@NotNull KtFile psiFile, @NotNull DiagnosticMessageReporter errorReporter) {
+    private fun doAnalyze(psiFile: KtFile, errorReporter: DiagnosticMessageReporter): ScriptDescriptor? {
         scriptDeclarationFactory.setDelegateFactory(
-                new FileBasedDeclarationProviderFactory(resolveSession.getStorageManager(), Collections.singletonList(psiFile)));
+                FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(psiFile)))
 
-        TopDownAnalysisContext context = topDownAnalyzer.analyzeDeclarations(
-                topDownAnalysisContext.getTopDownAnalysisMode(),
-                Collections.singletonList(psiFile)
-        );
+        val context = topDownAnalyzer.analyzeDeclarations(
+                topDownAnalysisContext.topDownAnalysisMode,
+                listOf(psiFile))
 
         if (trace.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile) == null) {
-            trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT));
+            trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT))
         }
 
-        boolean hasErrors = AnalyzerWithCompilerReport.Companion
-                .reportDiagnostics(trace.getBindingContext().getDiagnostics(), errorReporter, false);
+        val hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.bindingContext.diagnostics, errorReporter, false)
         if (hasErrors) {
-            return null;
+            return null
         }
 
-        LazyScriptDescriptor scriptDescriptor = context.getScripts().get(psiFile.getScript());
-        lastLineScope = scriptDescriptor.getScopeForInitializerResolution();
-        return scriptDescriptor;
+        val scriptDescriptor = context.scripts[psiFile.script]!!
+        lastLineScope = scriptDescriptor.getScopeForInitializerResolution()
+        return scriptDescriptor
     }
 
-    public void dumpClasses(@NotNull PrintWriter out) {
-        classLoader.dumpClasses(out);
+    fun dumpClasses(out: PrintWriter) {
+        classLoader.dumpClasses(out)
     }
 
-    public static void compileScript(
-            @NotNull KtScript script,
-            @NotNull List<ScriptDescriptor> earlierScripts,
-            @NotNull GenerationState state,
-            @NotNull CompilationErrorHandler errorHandler
-    ) {
-        state.getReplSpecific().setScriptResultFieldName(SCRIPT_RESULT_FIELD_NAME);
-        state.getReplSpecific().setEarlierScriptsForReplInterpreter(new ArrayList<ScriptDescriptor>(earlierScripts));
+    private class ScriptMutableDeclarationProviderFactory : DeclarationProviderFactory {
+        private var delegateFactory: DeclarationProviderFactory? = null
+        private var rootPackageProvider: AdaptablePackageMemberDeclarationProvider? = null
 
-        state.beforeCompile();
-        KotlinCodegenFacade.generatePackage(
-                state,
-                script.getContainingKtFile().getPackageFqName(),
-                Collections.singleton(script.getContainingKtFile()),
-                errorHandler
-        );
-    }
+        fun setDelegateFactory(delegateFactory: DeclarationProviderFactory) {
+            this.delegateFactory = delegateFactory
 
-    private static class ScriptMutableDeclarationProviderFactory implements DeclarationProviderFactory {
-        private DeclarationProviderFactory delegateFactory;
-        private AdaptablePackageMemberDeclarationProvider rootPackageProvider;
-
-        public void setDelegateFactory(DeclarationProviderFactory delegateFactory) {
-            this.delegateFactory = delegateFactory;
-
-            PackageMemberDeclarationProvider provider = delegateFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
+            val provider = delegateFactory.getPackageMemberDeclarationProvider(FqName.ROOT)!!
             if (rootPackageProvider == null) {
-                assert provider != null;
-                rootPackageProvider = new AdaptablePackageMemberDeclarationProvider(provider);
+                rootPackageProvider = AdaptablePackageMemberDeclarationProvider(provider)
             }
             else {
-                rootPackageProvider.addDelegateProvider(provider);
+                rootPackageProvider!!.addDelegateProvider(provider)
             }
         }
 
-        @NotNull
-        @Override
-        public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull KtClassLikeInfo classLikeInfo) {
-            return delegateFactory.getClassMemberDeclarationProvider(classLikeInfo);
+        override fun getClassMemberDeclarationProvider(classLikeInfo: KtClassLikeInfo): ClassMemberDeclarationProvider {
+            return delegateFactory!!.getClassMemberDeclarationProvider(classLikeInfo)
         }
 
-        @Nullable
-        @Override
-        public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-            if (packageFqName.isRoot()) {
-                return rootPackageProvider;
+        override fun getPackageMemberDeclarationProvider(packageFqName: FqName): PackageMemberDeclarationProvider? {
+            if (packageFqName.isRoot) {
+                return rootPackageProvider
             }
 
-            return this.delegateFactory.getPackageMemberDeclarationProvider(packageFqName);
+            return this.delegateFactory!!.getPackageMemberDeclarationProvider(packageFqName)
         }
 
-        @Override
-        public void diagnoseMissingPackageFragment(KtFile file) {
-            this.delegateFactory.diagnoseMissingPackageFragment(file);
+        override fun diagnoseMissingPackageFragment(file: KtFile) {
+            this.delegateFactory!!.diagnoseMissingPackageFragment(file)
         }
 
-        public static class AdaptablePackageMemberDeclarationProvider extends DelegatePackageMemberDeclarationProvider {
-            @NotNull
-            private PackageMemberDeclarationProvider delegateProvider;
+        class AdaptablePackageMemberDeclarationProvider(private var delegateProvider: PackageMemberDeclarationProvider) : DelegatePackageMemberDeclarationProvider(delegateProvider) {
 
-            public AdaptablePackageMemberDeclarationProvider(@NotNull PackageMemberDeclarationProvider delegateProvider) {
-                super(delegateProvider);
-                this.delegateProvider = delegateProvider;
+            fun addDelegateProvider(provider: PackageMemberDeclarationProvider) {
+                delegateProvider = CombinedPackageMemberDeclarationProvider(Lists.newArrayList(provider, delegateProvider))
+
+                delegate = delegateProvider
+            }
+        }
+    }
+
+    companion object {
+        private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
+        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition {
+            override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> {
+                return emptyList()
             }
 
-            public void addDelegateProvider(PackageMemberDeclarationProvider provider) {
-                delegateProvider = new CombinedPackageMemberDeclarationProvider(Lists.newArrayList(provider, delegateProvider));
-
-                setDelegate(delegateProvider);
+            override fun isScript(file: PsiFile): Boolean {
+                return StandardScriptDefinition.isScript(file)
             }
+
+            override fun getScriptName(script: KtScript): Name {
+                return StandardScriptDefinition.getScriptName(script)
+            }
+        }
+
+        private fun prepareForTheNextReplLine(c: TopDownAnalysisContext) {
+            c.scripts.clear()
+        }
+
+        private fun renderStackTrace(cause: Throwable): String {
+            val oldTrace = cause.stackTrace
+            val newTrace = ArrayList<StackTraceElement>()
+            var skip = true
+            for (i in oldTrace.indices.reversed()) {
+                val element = oldTrace[i]
+                // All our code happens in the script constructor, and no reflection/native code happens in constructors.
+                // So we ignore everything in the stack trace until the first constructor
+                if (element.getMethodName() == "<init>") {
+                    skip = false
+                }
+                if (!skip) {
+                    newTrace.add(element)
+                }
+            }
+            Collections.reverse(newTrace)
+
+            // throw away last element which contains Line1.kts<init>(Unknown source)
+            val resultingTrace = newTrace.subList(0, newTrace.size - 1)
+
+            @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+            (cause as java.lang.Throwable).setStackTrace(resultingTrace.toTypedArray())
+
+            return Throwables.getStackTraceAsString(cause)
+        }
+
+        fun compileScript(
+                script: KtScript,
+                earlierScripts: List<ScriptDescriptor>,
+                state: GenerationState,
+                errorHandler: CompilationErrorHandler) {
+            state.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
+            state.replSpecific.earlierScriptsForReplInterpreter = ArrayList(earlierScripts)
+
+            state.beforeCompile()
+            KotlinCodegenFacade.generatePackage(
+                    state,
+                    script.getContainingKtFile().packageFqName,
+                    setOf(script.getContainingKtFile()),
+                    errorHandler)
         }
     }
 }
