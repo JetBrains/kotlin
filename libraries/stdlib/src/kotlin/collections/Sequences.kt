@@ -5,17 +5,20 @@ package kotlin.sequences
 
 import java.util.*
 
-
+/**
+ * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
+ * provided by that function.
+ * The values are evaluated lazily, and the sequence is potentially infinite.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence(crossinline iterator: () -> Iterator<T>): Sequence<T> = object : Sequence<T> {
+    override fun iterator(): Iterator<T> = iterator()
+}
 
 /**
  * Creates a sequence that returns all elements from this iterator. The sequence is constrained to be iterated only once.
  */
-public fun <T> Iterator<T>.asSequence(): Sequence<T> {
-    val iteratorSequence = object : Sequence<T> {
-        override fun iterator(): Iterator<T> = this@asSequence
-    }
-    return iteratorSequence.constrainOnce()
-}
+public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constrainOnce()
 
 /**
  * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.

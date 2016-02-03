@@ -37,7 +37,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        return ProjectStructureUtil.isJavaKotlinModule(module);
+        return ProjectStructureUtil.hasKotlinRuntimeInScope(module);
     }
 
     @NotNull

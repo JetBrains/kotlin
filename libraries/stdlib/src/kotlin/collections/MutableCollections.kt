@@ -6,14 +6,6 @@ package kotlin.collections
 import java.util.*
 
 /**
- * Checks if all elements in the specified collection are contained in this collection.
- *
- * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
- */
-@kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
-
-/**
  * Removes a single instance of the specified element from this
  * collection, if it is present.
  *

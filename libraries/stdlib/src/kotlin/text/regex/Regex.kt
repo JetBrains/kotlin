@@ -13,111 +13,259 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:JvmVersion
 package kotlin.text
 
+import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+private interface FlagEnum {
+    public val value: Int
+    public val mask: Int
+}
+private fun Iterable<FlagEnum>.toInt(): Int =
+        this.fold(0, { value, option -> value or option.value })
+private inline fun <reified T> fromInt(value: Int): Set<T> where T : FlagEnum, T: Enum<T> =
+        Collections.unmodifiableSet(EnumSet.allOf(T::class.java).apply {
+            retainAll { value and it.mask == it.value }
+        })
+
 /**
- * Represents a collection of captured groups in a single match of a regular expression.
- *
- * This collection has size of `groupCount + 1` where `groupCount` is the count of groups in the regular expression.
- * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
- *
- * An element of the collection at the particular index can be `null`,
- * if the corresponding group in the regular expression is optional and
- * there was not match captured by that group.
+ * Provides enumeration values to use to set regular expression options.
  */
-public interface MatchGroupCollection : Collection<MatchGroup?> {
+public enum class RegexOption(override val value: Int, override val mask: Int = value) : FlagEnum {
+    // common
 
-    /** Returns a group with the specified [index].
+    /** Enables case-insensitive matching. Case comparison is Unicode-aware. */
+    IGNORE_CASE(Pattern.CASE_INSENSITIVE),
+
+    /** Enables multiline mode.
      *
-     * @return An instance of [MatchGroup] if the group with the specified [index] was matched or `null` otherwise.
+     * In multiline mode the expressions `^` and `$` match just after or just before,
+     * respectively, a line terminator or the end of the input sequence. */
+    MULTILINE(Pattern.MULTILINE),
+
+    //jvm-specific
+
+    /** Enables literal parsing of the pattern.
      *
-     * Groups are indexed from 1 to the count of groups in the regular expression. A group with the index 0
-     * corresponds to the entire match.
+     * Metacharacters or escape sequences in the input sequence will be given no special meaning.
      */
-    public operator fun get(index: Int): MatchGroup?
+    LITERAL(Pattern.LITERAL),
 
-    // TODO: Provide get(name: String) on JVM 7+
+//    // Unicode case is enabled by default with the IGNORE_CASE
+//    /** Enables Unicode-aware case folding. */
+//    UNICODE_CASE(Pattern.UNICODE_CASE)
+
+    /** Enables Unix lines mode.
+     * In this mode, only the `'\n'` is recognized as a line terminator.
+     */
+    UNIX_LINES(Pattern.UNIX_LINES), // TODO: Remove this
+
+    /** Permits whitespace and comments in pattern. */
+    COMMENTS(Pattern.COMMENTS),
+
+    /** Enables the mode, when the expression `.` matches any character,
+     * including a line terminator.
+     */
+    DOT_MATCHES_ALL(Pattern.DOTALL),
+
+    /** Enables equivalence by canonical decomposition. */
+    CANON_EQ(Pattern.CANON_EQ)
 }
 
+
 /**
- * Represents the results from a single regular expression match.
+ * Represents the results from a single capturing group within a [MatchResult] of [Regex].
+ *
+ * @param value The value of captured group.
+ * @param range The range of indices in the input string where group was captured.
+ *
+ * The [range] property is available on JVM only.
  */
-public interface MatchResult {
-    /** The range of indices in the original string where match was captured. */
-    public val range: IntRange
-    /** The substring from the input string captured by this match. */
-    public val value: String
-    /**
-     * A collection of groups matched by the regular expression.
-     *
-     * This collection has size of `groupCount + 1` where `groupCount` is the count of groups in the regular expression.
-     * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
-     */
-    public val groups: MatchGroupCollection
-    /**
-     * A list of matched indexed group values.
-     *
-     * This list has size of `groupCount + 1` where `groupCount` is the count of groups in the regular expression.
-     * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
-     *
-     * If the group in the regular expression is optional and there were no match captured by that group,
-     * corresponding item in [groupValues] is an empty string.
-     */
-    public val groupValues: List<String>
+public data class MatchGroup(public val value: String, public val range: IntRange)
+
+/**
+ * Represents an immutable regular expression.
+ *
+ * For pattern syntax reference see [java.util.regex.Pattern]
+ */
+public class Regex
+@kotlin.internal.InlineExposed
+internal constructor(private val nativePattern: Pattern) {
+
+
+    /** Creates a regular expression from the specified [pattern] string and the default options.  */
+    public constructor(pattern: String): this(Pattern.compile(pattern))
+
+    /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
+    public constructor(pattern: String, option: RegexOption): this(Pattern.compile(pattern, ensureUnicodeCase(option.value)))
+
+    /** Creates a regular expression from the specified [pattern] string and the specified set of [options].  */
+    public constructor(pattern: String, options: Set<RegexOption>): this(Pattern.compile(pattern, ensureUnicodeCase(options.toInt())))
+
+
+    /** The pattern string of this regular expression. */
+    public val pattern: String
+        get() = nativePattern.pattern()
+
+    /** The set of options that were used to create this regular expression.  */
+    public val options: Set<RegexOption> = fromInt(nativePattern.flags())
+
+    /** Indicates whether the regular expression matches the entire [input]. */
+    public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
+
+    /** Indicates whether the regular expression can find at least one match in the specified [input]. */
+    public fun containsMatchIn(input: CharSequence): Boolean = nativePattern.matcher(input).find()
 
     /**
-     * An instance of [MatchResult.Destructured] wrapper providing components for destructuring assignment of group values.
+     * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
      *
-     * component1 corresponds to the value of the first group, component2 — of the second, and so on.
-     *
-     * @sample:
-     * ```
-     * val (name, phone) = Regex("(\\w+) (\\d+)").match(inputString)!!.destructured
-     * ```
+     * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
+     * @return An instance of [MatchResult] if match was found or `null` otherwise.
      */
-    public val destructured: Destructured get() = Destructured(this)
-
-    /** Returns a new [MatchResult] with the results for the next match, starting at the position
-     *  at which the last match ended (at the character after the last matched character).
-     */
-    public fun next(): MatchResult?
+    public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
 
     /**
-     * Provides components for destructuring assignment of group values.
-     *
-     * [component1] corresponds to the value of the first group, [component2] — of the second, and so on.
-     *
-     * If the group in the regular expression is optional and there were no match captured by that group,
-     * corresponding component value is an empty string.
+     * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
-    @Suppress("NOTHING_TO_INLINE")
-    @kotlin.jvm.JvmVersion
-    public class Destructured internal constructor(public val match: MatchResult) {
-        @kotlin.internal.InlineOnly
-        public operator inline fun component1():  String = match.groupValues[1]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component2():  String = match.groupValues[2]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component3():  String = match.groupValues[3]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component4():  String = match.groupValues[4]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component5():  String = match.groupValues[5]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component6():  String = match.groupValues[6]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component7():  String = match.groupValues[7]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component8():  String = match.groupValues[8]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component9():  String = match.groupValues[9]
-        @kotlin.internal.InlineOnly
-        public operator inline fun component10(): String = match.groupValues[10]
-        /**
-         *  Returns destructured group values as a list of strings.
-         *  First value in the returned list corresponds to the value of the first group, and so on.
-         */
-        public fun toList(): List<String> = match.groupValues.subList(1, match.groupValues.size)
+    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
+
+    /**
+     * Attempts to match the entire [input] CharSequence against the pattern.
+     *
+     * @return An instance of [MatchResult] if the entire input matches or `null` otherwise.
+     */
+    public fun matchEntire(input: CharSequence): MatchResult? = nativePattern.matcher(input).matchEntire(input)
+
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     */
+    public fun replace(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceAll(replacement)
+
+    /**
+     * Replaces all occurrences of this regular expression in the specified [input] string with the result of
+     * the given function [transform] that takes [MatchResult] and returns a string to be used as a
+     * replacement for that match.
+     */
+    public fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
+        var match: MatchResult? = find(input) ?: return input.toString()
+
+        var lastStart = 0
+        val length = input.length
+        val sb = StringBuilder(length)
+        do {
+            val foundMatch = match!!
+            sb.append(input, lastStart, foundMatch.range.start)
+            sb.append(transform(foundMatch))
+            lastStart = foundMatch.range.endInclusive + 1
+            match = foundMatch.next()
+        } while (lastStart < length && match != null)
+
+        if (lastStart < length) {
+            sb.append(input, lastStart, length)
+        }
+
+        return sb.toString()
+    }
+
+    /**
+     * Replaces the first occurrence of this regular expression in the specified [input] string with specified [replacement] expression.
+     *
+     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     */
+    public fun replaceFirst(input: CharSequence, replacement: String): String = nativePattern.matcher(input).replaceFirst(replacement)
+
+
+    /**
+     * Splits the [input] CharSequence around matches of this regular expression.
+     *
+     * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
+     * Zero by default means no limit is set.
+     */
+    public fun split(input: CharSequence, limit: Int = 0): List<String> {
+        require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+        return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
+    }
+
+    /** Returns the string representation of this regular expression, namely the [pattern] of this regular expression. */
+    public override fun toString(): String = nativePattern.toString()
+
+    /**
+     * Returns an instance of [Pattern] with the same pattern string and options as this instance of [Regex] has.
+     *
+     * Provides the way to use [Regex] where [Pattern] is required.
+     */
+    public fun toPattern(): Pattern = nativePattern
+
+    companion object {
+        /** Returns a literal regex for the specified [literal] string. */
+        public fun fromLiteral(literal: String): Regex = literal.toRegex(RegexOption.LITERAL)
+        /** Returns a literal pattern for the specified [literal] string. */
+        public fun escape(literal: String): String = Pattern.quote(literal)
+        /** Returns a literal replacement expression for the specified [literal] string. */
+        public fun escapeReplacement(literal: String): String = Matcher.quoteReplacement(literal)
+
+        private fun ensureUnicodeCase(flags: Int) = if (flags and Pattern.CASE_INSENSITIVE != 0) flags or Pattern.UNICODE_CASE else flags
+    }
+
+}
+
+// implementation
+
+private fun Matcher.findNext(from: Int, input: CharSequence): MatchResult? {
+    return if (!find(from)) null else MatcherMatchResult(this, input)
+}
+
+private fun Matcher.matchEntire(input: CharSequence): MatchResult? {
+    return if (!matches()) null else MatcherMatchResult(this, input)
+}
+
+private class MatcherMatchResult(private val matcher: Matcher, private val input: CharSequence) : MatchResult {
+    private val matchResult = matcher.toMatchResult()
+    override val range: IntRange
+        get() = matchResult.range()
+    override val value: String
+        get() = matchResult.group()
+
+    override val groups: MatchGroupCollection = object : MatchGroupCollection {
+        override val size: Int get() = matchResult.groupCount() + 1
+        override fun isEmpty(): Boolean = false
+        override fun contains(o: MatchGroup?): Boolean = this.any({ it == o })
+        override fun containsAll(c: Collection<MatchGroup?>): Boolean = c.all({contains(it)})
+
+        override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
+        override fun get(index: Int): MatchGroup? {
+            val range = matchResult.range(index)
+            return if (range.start >= 0)
+                MatchGroup(matchResult.group(index), range)
+            else
+                null
+        }
+    }
+
+    private var groupValues_: List<String>? = null
+
+    override val groupValues: List<String>
+        get() {
+            if (groupValues_ == null) {
+                groupValues_ = object : AbstractList<String>() {
+                    override val size: Int get() = matchResult.groupCount() + 1
+                    override fun get(index: Int): String = matchResult.group(index) ?: ""
+                }
+            }
+            return groupValues_!!
+        }
+
+    override fun next(): MatchResult? {
+        val nextIndex = matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0
+        return if (nextIndex <= input.length) matcher.findNext(nextIndex, input) else null
     }
 }
+
+
+private fun java.util.regex.MatchResult.range(): IntRange = start()..end()-1
+private fun java.util.regex.MatchResult.range(groupIndex: Int): IntRange = start(groupIndex)..end(groupIndex)-1

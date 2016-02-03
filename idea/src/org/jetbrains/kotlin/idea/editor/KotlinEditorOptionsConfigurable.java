@@ -18,11 +18,21 @@ package org.jetbrains.kotlin.idea.editor;
 
 import com.intellij.openapi.options.BeanConfigurable;
 import com.intellij.openapi.options.UnnamedConfigurable;
+import com.intellij.ui.IdeBorderFactory;
+
+import javax.swing.*;
 
 public class KotlinEditorOptionsConfigurable extends BeanConfigurable<KotlinEditorOptions> implements UnnamedConfigurable {
     public KotlinEditorOptionsConfigurable() {
         super(KotlinEditorOptions.getInstance());
-        checkBox("enableJavaToKotlinConversion", "Enable Java To Kotlin Conversion");
-        checkBox("donTShowConversionDialog", "Don't show Java to Kotlin conversion dialog");
+        checkBox("enableJavaToKotlinConversion", "Convert pasted Java code to Kotlin");
+        checkBox("donTShowConversionDialog", "Don't show Java to Kotlin conversion dialog on paste");
+    }
+
+    @Override
+    public JComponent createComponent() {
+        JComponent component = super.createComponent();
+        component.setBorder(IdeBorderFactory.createTitledBorder("Kotlin"));
+        return component;
     }
 }

@@ -392,13 +392,6 @@ public infix fun Short.downTo(to: Short): IntProgression {
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public fun CharProgression.reversed(): CharProgression {
-    return CharProgression.fromClosedRange(last, first, -step)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
 public fun IntProgression.reversed(): IntProgression {
     return IntProgression.fromClosedRange(last, first, -step)
 }
@@ -411,11 +404,10 @@ public fun LongProgression.reversed(): LongProgression {
 }
 
 /**
- * Returns a progression that goes over the same range with the given step.
+ * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public infix fun CharProgression.step(step: Int): CharProgression {
-    checkStepIsPositive(step > 0, step)
-    return CharProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
+public fun CharProgression.reversed(): CharProgression {
+    return CharProgression.fromClosedRange(last, first, -step)
 }
 
 /**
@@ -432,6 +424,14 @@ public infix fun IntProgression.step(step: Int): IntProgression {
 public infix fun LongProgression.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
     return LongProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
+}
+
+/**
+ * Returns a progression that goes over the same range with the given step.
+ */
+public infix fun CharProgression.step(step: Int): CharProgression {
+    checkStepIsPositive(step > 0, step)
+    return CharProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
 }
 
 /**
@@ -597,15 +597,7 @@ public fun Byte.coerceAtLeast(minimumValue: Byte): Byte {
  * Ensures that this value is not less than the specified [minimumValue].
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public fun Double.coerceAtLeast(minimumValue: Double): Double {
-    return if (this < minimumValue) minimumValue else this
-}
-
-/**
- * Ensures that this value is not less than the specified [minimumValue].
- * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
- */
-public fun Float.coerceAtLeast(minimumValue: Float): Float {
+public fun Short.coerceAtLeast(minimumValue: Short): Short {
     return if (this < minimumValue) minimumValue else this
 }
 
@@ -629,7 +621,15 @@ public fun Long.coerceAtLeast(minimumValue: Long): Long {
  * Ensures that this value is not less than the specified [minimumValue].
  * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
  */
-public fun Short.coerceAtLeast(minimumValue: Short): Short {
+public fun Float.coerceAtLeast(minimumValue: Float): Float {
+    return if (this < minimumValue) minimumValue else this
+}
+
+/**
+ * Ensures that this value is not less than the specified [minimumValue].
+ * @return this value if it's greater than or equal to the [minimumValue] or the [minimumValue] otherwise.
+ */
+public fun Double.coerceAtLeast(minimumValue: Double): Double {
     return if (this < minimumValue) minimumValue else this
 }
 
@@ -653,15 +653,7 @@ public fun Byte.coerceAtMost(maximumValue: Byte): Byte {
  * Ensures that this value is not greater than the specified [maximumValue].
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public fun Double.coerceAtMost(maximumValue: Double): Double {
-    return if (this > maximumValue) maximumValue else this
-}
-
-/**
- * Ensures that this value is not greater than the specified [maximumValue].
- * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
- */
-public fun Float.coerceAtMost(maximumValue: Float): Float {
+public fun Short.coerceAtMost(maximumValue: Short): Short {
     return if (this > maximumValue) maximumValue else this
 }
 
@@ -685,7 +677,15 @@ public fun Long.coerceAtMost(maximumValue: Long): Long {
  * Ensures that this value is not greater than the specified [maximumValue].
  * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
  */
-public fun Short.coerceAtMost(maximumValue: Short): Short {
+public fun Float.coerceAtMost(maximumValue: Float): Float {
+    return if (this > maximumValue) maximumValue else this
+}
+
+/**
+ * Ensures that this value is not greater than the specified [maximumValue].
+ * @return this value if it's less than or equal to the [maximumValue] or the [maximumValue] otherwise.
+ */
+public fun Double.coerceAtMost(maximumValue: Double): Double {
     return if (this > maximumValue) maximumValue else this
 }
 
@@ -721,18 +721,7 @@ public fun Byte.coerceIn(minimumValue: Byte, maximumValue: Byte): Byte {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
-    if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
-    if (this < minimumValue) return minimumValue
-    if (this > maximumValue) return maximumValue
-    return this
-}
-
-/**
- * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
- * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
- */
-public fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float {
+public fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
     if (this < minimumValue) return minimumValue
     if (this > maximumValue) return maximumValue
@@ -765,7 +754,18 @@ public fun Long.coerceIn(minimumValue: Long, maximumValue: Long): Long {
  * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
  * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
  */
-public fun Short.coerceIn(minimumValue: Short, maximumValue: Short): Short {
+public fun Float.coerceIn(minimumValue: Float, maximumValue: Float): Float {
+    if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
+    if (this < minimumValue) return minimumValue
+    if (this > maximumValue) return maximumValue
+    return this
+}
+
+/**
+ * Ensures that this value lies in the specified range [minimumValue]..[maximumValue].
+ * @return this value if it's in the range, or [minimumValue] if this value is less than [minimumValue], or [maximumValue] if this value is greater than [maximumValue].
+ */
+public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
     if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
     if (this < minimumValue) return minimumValue
     if (this > maximumValue) return maximumValue

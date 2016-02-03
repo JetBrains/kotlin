@@ -994,18 +994,18 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(
  * Returns an [ArrayList] of all elements.
  */
 @Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
-public fun <T> Collection<T>.toArrayList(): ArrayList<T> {
-    return ArrayList(this)
+public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
+    if (this is Collection<T>)
+        return ArrayList(this)
+    return toCollection(ArrayList<T>())
 }
 
 /**
  * Returns an [ArrayList] of all elements.
  */
 @Deprecated("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", ReplaceWith("toCollection(arrayListOf())"), level = DeprecationLevel.ERROR)
-public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
-    if (this is Collection<T>)
-        return ArrayList(this)
-    return toCollection(ArrayList<T>())
+public fun <T> Collection<T>.toArrayList(): ArrayList<T> {
+    return ArrayList(this)
 }
 
 /**
@@ -1060,17 +1060,17 @@ public inline fun <T, K, V> Iterable<T>.toMapBy(selector: (T) -> K, transform: (
 /**
  * Returns a [MutableList] filled with all elements of this collection.
  */
-public fun <T> Collection<T>.toMutableList(): MutableList<T> {
-    return ArrayList(this)
+public fun <T> Iterable<T>.toMutableList(): MutableList<T> {
+    if (this is Collection<T>)
+        return this.toMutableList()
+    return toCollection(ArrayList<T>())
 }
 
 /**
  * Returns a [MutableList] filled with all elements of this collection.
  */
-public fun <T> Iterable<T>.toMutableList(): MutableList<T> {
-    if (this is Collection<T>)
-        return this.toMutableList()
-    return toCollection(ArrayList<T>())
+public fun <T> Collection<T>.toMutableList(): MutableList<T> {
+    return ArrayList(this)
 }
 
 /**
@@ -1332,18 +1332,18 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
 /**
  * Returns the number of elements in this collection.
  */
-@kotlin.internal.InlineOnly
-public inline fun <T> Collection<T>.count(): Int {
-    return size
+public fun <T> Iterable<T>.count(): Int {
+    var count = 0
+    for (element in this) count++
+    return count
 }
 
 /**
  * Returns the number of elements in this collection.
  */
-public fun <T> Iterable<T>.count(): Int {
-    var count = 0
-    for (element in this) count++
-    return count
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>.count(): Int {
+    return size
 }
 
 /**
@@ -1696,8 +1696,9 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public operator fun <T> Collection<T>.plus(element: T): List<T> {
-    val result = ArrayList<T>(size + 1)
+public operator fun <T> Iterable<T>.plus(element: T): List<T> {
+    if (this is Collection) return this.plus(element)
+    val result = ArrayList<T>()
     result.addAll(this)
     result.add(element)
     return result
@@ -1706,11 +1707,21 @@ public operator fun <T> Collection<T>.plus(element: T): List<T> {
 /**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
-public operator fun <T> Iterable<T>.plus(element: T): List<T> {
-    if (this is Collection) return this.plus(element)
-    val result = ArrayList<T>()
+public operator fun <T> Collection<T>.plus(element: T): List<T> {
+    val result = ArrayList<T>(size + 1)
     result.addAll(this)
     result.add(element)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
+ */
+public operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T> {
+    if (this is Collection) return this.plus(elements)
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(elements)
     return result
 }
 
@@ -1725,9 +1736,9 @@ public operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
  */
-public operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T> {
+public operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
     if (this is Collection) return this.plus(elements)
     val result = ArrayList<T>()
     result.addAll(this)
@@ -1752,10 +1763,9 @@ public operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
  */
-public operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
-    if (this is Collection) return this.plus(elements)
+public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
     val result = ArrayList<T>()
     result.addAll(this)
     result.addAll(elements)
@@ -1773,20 +1783,10 @@ public operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
- */
-public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
-    val result = ArrayList<T>()
-    result.addAll(this)
-    result.addAll(elements)
-    return result
-}
-
-/**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 @kotlin.internal.InlineOnly
-public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
+public inline fun <T> Iterable<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
@@ -1794,7 +1794,7 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 @kotlin.internal.InlineOnly
-public inline fun <T> Iterable<T>.plusElement(element: T): List<T> {
+public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
     return plus(element)
 }
 
@@ -1884,11 +1884,7 @@ public inline fun <T> Iterable<T>.asIterable(): Iterable<T> {
  * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
  */
 public fun <T> Iterable<T>.asSequence(): Sequence<T> {
-    return object : Sequence<T> {
-        override fun iterator(): Iterator<T> {
-            return this@asSequence.iterator()
-        }
-    }
+    return Sequence { this.iterator() }
 }
 
 /**
@@ -1943,23 +1939,8 @@ public fun Iterable<Byte>.average(): Double {
 /**
  * Returns an average value of elements in the collection.
  */
-@kotlin.jvm.JvmName("averageOfDouble")
-public fun Iterable<Double>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-/**
- * Returns an average value of elements in the collection.
- */
-@kotlin.jvm.JvmName("averageOfFloat")
-public fun Iterable<Float>.average(): Double {
+@kotlin.jvm.JvmName("averageOfShort")
+public fun Iterable<Short>.average(): Double {
     val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
@@ -2003,8 +1984,23 @@ public fun Iterable<Long>.average(): Double {
 /**
  * Returns an average value of elements in the collection.
  */
-@kotlin.jvm.JvmName("averageOfShort")
-public fun Iterable<Short>.average(): Double {
+@kotlin.jvm.JvmName("averageOfFloat")
+public fun Iterable<Float>.average(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
+    var count: Int = 0
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+        count += 1
+    }
+    return if (count == 0) 0.0 else sum / count
+}
+
+/**
+ * Returns an average value of elements in the collection.
+ */
+@kotlin.jvm.JvmName("averageOfDouble")
+public fun Iterable<Double>.average(): Double {
     val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
@@ -2031,23 +2027,10 @@ public fun Iterable<Byte>.sum(): Int {
 /**
  * Returns the sum of all elements in the collection.
  */
-@kotlin.jvm.JvmName("sumOfDouble")
-public fun Iterable<Double>.sum(): Double {
+@kotlin.jvm.JvmName("sumOfShort")
+public fun Iterable<Short>.sum(): Int {
     val iterator = iterator()
-    var sum: Double = 0.0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
-/**
- * Returns the sum of all elements in the collection.
- */
-@kotlin.jvm.JvmName("sumOfFloat")
-public fun Iterable<Float>.sum(): Float {
-    val iterator = iterator()
-    var sum: Float = 0.0f
+    var sum: Int = 0
     while (iterator.hasNext()) {
         sum += iterator.next()
     }
@@ -2083,10 +2066,23 @@ public fun Iterable<Long>.sum(): Long {
 /**
  * Returns the sum of all elements in the collection.
  */
-@kotlin.jvm.JvmName("sumOfShort")
-public fun Iterable<Short>.sum(): Int {
+@kotlin.jvm.JvmName("sumOfFloat")
+public fun Iterable<Float>.sum(): Float {
     val iterator = iterator()
-    var sum: Int = 0
+    var sum: Float = 0.0f
+    while (iterator.hasNext()) {
+        sum += iterator.next()
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("sumOfDouble")
+public fun Iterable<Double>.sum(): Double {
+    val iterator = iterator()
+    var sum: Double = 0.0
     while (iterator.hasNext()) {
         sum += iterator.next()
     }

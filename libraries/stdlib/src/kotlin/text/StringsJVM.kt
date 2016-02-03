@@ -1,5 +1,6 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 
 package kotlin.text
 
@@ -122,11 +123,25 @@ public inline fun String.toCharArray(destination: CharArray, destinationOffset: 
 public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
 /**
+ * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * using the default locale.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.Companion.format(format: String, vararg args: Any?): String = java.lang.String.format(format, *args)
+
+/**
  * Uses this string as a format string and returns a string obtained by substituting the specified arguments, using
  * the specified locale.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
+
+/**
+ * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * using the default locale.
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.Companion.format(locale: Locale, format: String, vararg args: Any?): String = java.lang.String.format(locale, format, *args)
 
 /**
  * Splits this char sequence around matches of the given regular expression.

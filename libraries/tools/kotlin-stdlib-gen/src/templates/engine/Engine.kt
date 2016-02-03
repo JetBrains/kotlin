@@ -6,22 +6,22 @@ import java.io.StringReader
 import java.util.*
 
 enum class Family {
-    Sequences,
     Iterables,
     Collections,
     Lists,
-    Maps,
     Sets,
+    Maps,
     InvariantArraysOfObjects,
     ArraysOfObjects,
     ArraysOfPrimitives,
+    Sequences,
     CharSequences,
     Strings,
     Ranges,
     RangesOfPrimitives,
     ProgressionsOfPrimitives,
-    Primitives,
-    Generic;
+    Generic,
+    Primitives;
 
     val isPrimitiveSpecialization: Boolean by lazy { this in primitiveSpecializations }
 
@@ -32,14 +32,14 @@ enum class Family {
 }
 
 enum class PrimitiveType {
-    Boolean,
     Byte,
-    Char,
     Short,
     Int,
     Long,
     Float,
-    Double;
+    Double,
+    Boolean,
+    Char;
 
     companion object {
         val defaultPrimitives = PrimitiveType.values().toSet()
@@ -199,7 +199,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 
     fun instantiate(vararg families: Family = Family.values()): List<ConcreteFunction> {
         return families
-                .sortedBy { if (it == InvariantArraysOfObjects) "ArraysOfObjectsInvariant" else it.name }
+                .sortedBy { it.ordinal }
                 .filter { buildFamilies.contains(it) }
                 .flatMap { family -> instantiate(family) }
     }
@@ -208,7 +208,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         val onlyPrimitives = buildFamilyPrimitives[f]
 
         if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
-            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.name }
+            return (onlyPrimitives ?: buildPrimitives).sortedBy { it.ordinal }
                     .map { primitive -> ConcreteFunction( { build(it, f, primitive) }, sourceFileFor(f) ) }
         } else {
             return listOf(ConcreteFunction( { build(it, f, null) }, sourceFileFor(f) ))
