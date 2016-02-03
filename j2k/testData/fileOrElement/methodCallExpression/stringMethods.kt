@@ -101,8 +101,8 @@ internal class A {
         3.14.toString()
         Object().toString()
 
-        "Je ne mange pas %d jours".format(Locale.FRENCH, 6)
-        "Operation completed with %s".format("success")
+        String.format(Locale.FRENCH, "Je ne mange pas %d jours", 6)
+        String.format("Operation completed with %s", "success")
 
         val chars = charArrayOf('a', 'b', 'c')
         String(chars)

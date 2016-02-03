@@ -355,31 +355,6 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), "toCharArray", codeConverter.convertExpressions(arguments.slice(listOf(2, 3, 0, 1))))
     },
 
-    STRING_FORMAT_WITH_LOCALE(JAVA_LANG_STRING, "format", null) {
-        override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
-                = super.matches(method, superMethodsSearcher) &&
-                  method.parameterList.parametersCount == 3 &&
-                  method.parameterList.parameters.let { it.first().type.canonicalText == "java.util.Locale" && it.last().isVarArgs }
-
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
-            if (arguments.size < 2) return null // incorrect call
-            return MethodCallExpression.build(codeConverter.convertExpression(arguments[1], true), "format", codeConverter.convertExpressions(listOf(arguments[0]) + arguments.drop(2)), emptyList(), false)
-        }
-    },
-
-    STRING_FORMAT(JAVA_LANG_STRING, "format", null) {
-        override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean {
-            return super.matches(method, superMethodsSearcher) &&
-                   method.parameterList.parametersCount == 2 &&
-                   method.parameterList.parameters.last().isVarArgs
-        }
-
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
-            if (arguments.isEmpty()) return null // incorrect call
-            return MethodCallExpression.build(codeConverter.convertExpression(arguments.first(), true), "format", codeConverter.convertExpressions(arguments.drop(1)), emptyList(), false)
-        }
-    },
-
     STRING_VALUE_OF_CHAR_ARRAY(JAVA_LANG_STRING, "valueOf", null) {
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean {
             return super.matches(method, superMethodsSearcher)
