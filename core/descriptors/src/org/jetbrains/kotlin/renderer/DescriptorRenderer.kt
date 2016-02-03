@@ -200,6 +200,8 @@ object ExcludedTypeAnnotations {
             FqName("org.jetbrains.annotations.Nullable"),
             FqName("android.support.annotation.Nullable"),
             FqName("android.support.annotation.NonNull"),
+            FqName("com.android.annotations.Nullable"),
+            FqName("com.android.annotations.NonNull"),
             FqName("org.eclipse.jdt.annotation.Nullable"),
             FqName("org.eclipse.jdt.annotation.NonNull"),
             FqName("org.checkerframework.checker.nullness.qual.Nullable"),
