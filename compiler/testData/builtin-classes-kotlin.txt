@@ -674,10 +674,10 @@ public open class Throwable {
     public constructor Throwable(/*0*/ message: kotlin.String?)
     /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String?, /*1*/ cause: kotlin.Throwable?)
     public constructor Throwable(/*0*/ cause: kotlin.Throwable?)
-    public final val cause: kotlin.Throwable?
-        public final fun <get-cause>(): kotlin.Throwable?
-    public final val message: kotlin.String?
-        public final fun <get-message>(): kotlin.String?
+    public open val cause: kotlin.Throwable?
+        public open fun <get-cause>(): kotlin.Throwable?
+    public open val message: kotlin.String?
+        public open fun <get-message>(): kotlin.String?
 }
 
 public object Unit {
