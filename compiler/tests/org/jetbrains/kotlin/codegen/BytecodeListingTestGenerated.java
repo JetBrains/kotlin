@@ -47,6 +47,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("InlineOnlyMultifile.kt")
+    public void testInlineOnlyMultifile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/InlineOnlyMultifile.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
