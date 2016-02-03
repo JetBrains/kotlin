@@ -56,7 +56,7 @@ public class ProjectStructureUtil {
         return module != null && isJsKotlinModule(module);
     }
 
-    public static boolean isJavaKotlinModule(@NotNull Module module) {
+    public static boolean hasKotlinRuntimeInScope(@NotNull Module module) {
         GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(
                 hasKotlinFilesOnlyInTests(module));
         return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(module.getProject(), scope) != null;
@@ -89,7 +89,7 @@ public class ProjectStructureUtil {
                     boolean hasJvmKotlinModules = false;
 
                     for (Module module : ModuleManager.getInstance(project).getModules()) {
-                        if (isJavaKotlinModule(module)) {
+                        if (hasKotlinRuntimeInScope(module)) {
                             hasJvmKotlinModules = true;
                             break;
                         }
@@ -117,7 +117,7 @@ public class ProjectStructureUtil {
                     ModuleUtilCore.collectModulesDependsOn(module, dependentModules);
 
                     for (Module module : dependentModules) {
-                        if (isJavaKotlinModule(module)) {
+                        if (hasKotlinRuntimeInScope(module)) {
                             usedInKotlinModule = true;
                             break;
                         }

@@ -35,7 +35,7 @@ public class KotlinJavaMavenConfigurator extends KotlinMavenConfigurator {
 
     @Override
     protected boolean isKotlinModule(@NotNull Module module) {
-        return ProjectStructureUtil.isJavaKotlinModule(module);
+        return ProjectStructureUtil.hasKotlinRuntimeInScope(module);
     }
 
     @Override
