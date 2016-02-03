@@ -14,151 +14,129 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build;
+package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
-import kotlin.io.FilesKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.ModuleChunk;
-import org.jetbrains.jps.builders.BuildTargetType;
-import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
-import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
-import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
-import org.jetbrains.jps.incremental.CompileContext;
-import org.jetbrains.jps.incremental.ModuleBuildTarget;
-import org.jetbrains.jps.incremental.ProjectBuildException;
-import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.kotlin.build.JvmSourceRoot;
-import org.jetbrains.kotlin.config.IncrementalCompilation;
-import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder;
+import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.jps.ModuleChunk
+import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
+import org.jetbrains.jps.incremental.CompileContext
+import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.incremental.ProjectBuildException
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.kotlin.build.JvmSourceRoot
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies
+import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import java.io.File
+import java.io.IOException
+import java.util.*
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+object KotlinBuilderModuleScriptGenerator {
 
-import static org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies;
+    @Throws(IOException::class, ProjectBuildException::class)
+    fun generateModuleDescription(
+            context: CompileContext,
+            chunk: ModuleChunk,
+            sourceFiles: MultiMap<ModuleBuildTarget, File>, // ignored for non-incremental compilation
+            hasRemovedFiles: Boolean): File? {
+        val builder = KotlinModuleXmlBuilder()
 
-public class KotlinBuilderModuleScriptGenerator {
+        var noSources = true
 
-    @Nullable
-    public static File generateModuleDescription(
-            CompileContext context,
-            ModuleChunk chunk,
-            MultiMap<ModuleBuildTarget, File> sourceFiles, // ignored for non-incremental compilation
-            boolean hasRemovedFiles
-    ) throws IOException, ProjectBuildException {
-        KotlinModuleXmlBuilder builder = new KotlinModuleXmlBuilder();
-
-        boolean noSources = true;
-
-        Set<File> outputDirs = new HashSet<File>();
-        for (ModuleBuildTarget target : chunk.getTargets()) {
-            outputDirs.add(getOutputDirSafe(target));
+        val outputDirs = HashSet<File>()
+        for (target in chunk.targets) {
+            outputDirs.add(getOutputDirSafe(target))
         }
-        ProjectBuilderLogger logger = context.getLoggingManager().getProjectBuilderLogger();
-        for (ModuleBuildTarget target : chunk.getTargets()) {
-            File outputDir = getOutputDirSafe(target);
-            List<File> friendDirs = new ArrayList<File>();
-            File friendDir = getFriendDirSafe(target);
+        val logger = context.loggingManager.projectBuilderLogger
+        for (target in chunk.targets) {
+            val outputDir = getOutputDirSafe(target)
+            val friendDirs = ArrayList<File>()
+            val friendDir = getFriendDirSafe(target)
             if (friendDir != null) {
-                friendDirs.add(friendDir);
+                friendDirs.add(friendDir)
             }
 
-            List<File> moduleSources = new ArrayList<File>(
-                    IncrementalCompilation.isEnabled()
-                    ? sourceFiles.get(target)
-                    : KotlinSourceFileCollector.getAllKotlinSourceFiles(target));
+            val moduleSources = ArrayList(
+                    if (IncrementalCompilation.isEnabled())
+                        sourceFiles.get(target)
+                    else
+                        KotlinSourceFileCollector.getAllKotlinSourceFiles(target))
 
-            if (moduleSources.size() > 0 || hasRemovedFiles) {
-                noSources = false;
+            if (moduleSources.size > 0 || hasRemovedFiles) {
+                noSources = false
 
-                if (logger.isEnabled()) {
-                    logger.logCompiledFiles(moduleSources, KotlinBuilder.KOTLIN_BUILDER_NAME, "Compiling files:");
+                if (logger.isEnabled) {
+                    logger.logCompiledFiles(moduleSources, KotlinBuilder.KOTLIN_BUILDER_NAME, "Compiling files:")
                 }
             }
 
-            BuildTargetType<?> targetType = target.getTargetType();
-            assert targetType instanceof JavaModuleBuildTargetType;
+            val targetType = target.targetType
+            assert(targetType is JavaModuleBuildTargetType)
             builder.addModule(
-                    target.getId(),
-                    outputDir.getAbsolutePath(),
+                    target.id,
+                    outputDir.absolutePath,
                     moduleSources,
                     findSourceRoots(context, target),
                     findClassPathRoots(target),
-                    ((JavaModuleBuildTargetType) targetType).getTypeId(),
-                    ((JavaModuleBuildTargetType) targetType).isTests(),
+                    (targetType as JavaModuleBuildTargetType).typeId,
+                    targetType.isTests,
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs,
-                    friendDirs
-            );
+                    friendDirs)
         }
 
-        if (noSources) return null;
+        if (noSources) return null
 
-        File scriptFile = File.createTempFile("kjps", StringUtil.sanitizeJavaIdentifier(chunk.getName()) + ".script.xml");
+        val scriptFile = File.createTempFile("kjps", StringUtil.sanitizeJavaIdentifier(chunk.name) + ".script.xml")
 
-        FileUtil.writeToFile(scriptFile, builder.asText().toString());
+        FileUtil.writeToFile(scriptFile, builder.asText().toString())
 
-        return scriptFile;
+        return scriptFile
     }
 
-    @NotNull
-    public static File getOutputDirSafe(@NotNull ModuleBuildTarget target) throws ProjectBuildException {
-        File outputDir = target.getOutputDir();
-        if (outputDir == null) {
-            throw new ProjectBuildException("No output directory found for " + target);
-        }
-        return outputDir;
+    @Throws(ProjectBuildException::class)
+    fun getOutputDirSafe(target: ModuleBuildTarget): File {
+        val outputDir = target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
+        return outputDir
     }
 
-    @Nullable
-    private static File getFriendDirSafe(@NotNull ModuleBuildTarget target) throws ProjectBuildException {
-        if (!target.isTests()) return null;
+    @Throws(ProjectBuildException::class)
+    private fun getFriendDirSafe(target: ModuleBuildTarget): File? {
+        if (!target.isTests) return null
 
-        File outputDirForProduction = JpsJavaExtensionService.getInstance().getOutputDirectory(target.getModule(), false);
-        if (outputDirForProduction == null) {
-            return null;
-        }
-        return outputDirForProduction;
+        val outputDirForProduction = JpsJavaExtensionService.getInstance().getOutputDirectory(target.module, false) ?: return null
+        return outputDirForProduction
     }
 
-    @NotNull
-    private static Collection<File> findClassPathRoots(@NotNull ModuleBuildTarget target) {
-        return ContainerUtil.filter(getAllDependencies(target).classes().getRoots(), new Condition<File>() {
-            @Override
-            public boolean value(File file) {
-                if (!file.exists()) {
-                    String extension = FilesKt.getExtension(file);
+    private fun findClassPathRoots(target: ModuleBuildTarget): Collection<File> {
+        return ContainerUtil.filter(getAllDependencies(target).classes().roots, Condition<java.io.File> { file ->
+            if (!file.exists()) {
+                val extension = file.extension
 
-                    // Don't filter out files, we want to report warnings about absence through the common place
-                    if (!(extension.equals("class") || extension.equals("jar"))) {
-                        return false;
-                    }
+                // Don't filter out files, we want to report warnings about absence through the common place
+                if (!(extension == "class" || extension == "jar")) {
+                    return@Condition false
                 }
-
-                return true;
             }
-        });
+
+            true
+        })
     }
 
-    @NotNull
-    private static List<JvmSourceRoot> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
-        List<JavaSourceRootDescriptor> roots = context.getProjectDescriptor().getBuildRootIndex().getTargetRoots(target, context);
-        List<JvmSourceRoot> result = ContainerUtil.newArrayList();
-        for (JavaSourceRootDescriptor root : roots) {
-            File file = root.getRootFile();
-            String prefix = root.getPackagePrefix();
+    private fun findSourceRoots(context: CompileContext, target: ModuleBuildTarget): List<JvmSourceRoot> {
+        val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(target, context)
+        val result = ContainerUtil.newArrayList<JvmSourceRoot>()
+        for (root in roots) {
+            val file = root.rootFile
+            val prefix = root.packagePrefix
             if (file.exists()) {
-                result.add(new JvmSourceRoot(file, prefix.isEmpty() ? null : prefix));
+                result.add(JvmSourceRoot(file, if (prefix.isEmpty()) null else prefix))
             }
         }
-        return result;
+        return result
     }
-
-    private KotlinBuilderModuleScriptGenerator() {}
 }
