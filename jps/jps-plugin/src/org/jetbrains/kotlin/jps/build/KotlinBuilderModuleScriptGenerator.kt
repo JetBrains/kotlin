@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jps.ModuleChunk
@@ -26,14 +27,46 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.ProjectBuildException
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.alwaysNull
 import java.io.File
+import java.lang.reflect.Method
 import java.util.*
 
 object KotlinBuilderModuleScriptGenerator {
+
+    // TODO used reflection to be compatible with IDEA from both 143 and 144 branches,
+    // TODO switch to directly using when "since-build" will be >= 144.3357.4
+    private val getRelatedProductionModule: (JpsModule) -> JpsModule? = run {
+        val klass =
+                try {
+                    Class.forName("org.jetbrains.jps.model.module.JpsTestModuleProperties")
+                } catch (e: ClassNotFoundException) {
+                    return@run alwaysNull()
+                }
+
+
+        val getTestModulePropertiesMethod: Method
+        val getProductionModuleMethod: Method
+
+        try {
+            getTestModulePropertiesMethod = JpsJavaExtensionService::class.java.getDeclaredMethod("getTestModuleProperties", JpsModule::class.java)
+            getProductionModuleMethod = klass.getDeclaredMethod("getProductionModule")
+        }
+        catch (e: NoSuchMethodException) {
+            return@run alwaysNull()
+        }
+
+        return@run { module ->
+            val instance = getTestModulePropertiesMethod(JpsJavaExtensionService.getInstance(), module)
+            getProductionModuleMethod(instance) as JpsModule?
+        }
+    }
 
     fun generateModuleDescription(
             context: CompileContext,
@@ -53,11 +86,7 @@ object KotlinBuilderModuleScriptGenerator {
         val logger = context.loggingManager.projectBuilderLogger
         for (target in chunk.targets) {
             val outputDir = getOutputDirSafe(target)
-            val friendDirs = ArrayList<File>()
-            val friendDir = getFriendDirSafe(target)
-            if (friendDir != null) {
-                friendDirs.add(friendDir)
-            }
+            val friendDirs = getAdditionalOutputDirsWhereInternalsAreVisible(target)
 
             val moduleSources = ArrayList(
                     if (IncrementalCompilation.isEnabled())
@@ -100,11 +129,18 @@ object KotlinBuilderModuleScriptGenerator {
     fun getOutputDirSafe(target: ModuleBuildTarget): File =
             target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
 
-    private fun getFriendDirSafe(target: ModuleBuildTarget): File? {
-        if (!target.isTests) return null
+    private fun getAdditionalOutputDirsWhereInternalsAreVisible(target: ModuleBuildTarget): List<File> {
+        if (!target.isTests) return emptyList()
 
-        val outputDirForProduction = JpsJavaExtensionService.getInstance().getOutputDirectory(target.module, false) ?: return null
-        return outputDirForProduction
+        val result = SmartList<File>()
+
+        result.addIfNotNull(JpsJavaExtensionService.getInstance().getOutputDirectory(target.module, false))
+
+        getRelatedProductionModule(target.module)?.let {
+            result.addIfNotNull(JpsJavaExtensionService.getInstance().getOutputDirectory(it, false))
+        }
+
+        return result
     }
 
     private fun findClassPathRoots(target: ModuleBuildTarget): Collection<File> {
