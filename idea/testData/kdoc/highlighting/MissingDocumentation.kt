@@ -40,7 +40,11 @@ private class Properties {
 
     private val privateUndocumentedProperty: Int = 0
     internal val internalUndocumentedProperty: Int = 0
+
+
     protected val protectedUndocumentedProperty: Int = 0
+    protected class protectedUndocumentedClass {}
+    protected fun protectedUndocumentedFun() {}
 }
 
 // NO_CHECK_INFOS
