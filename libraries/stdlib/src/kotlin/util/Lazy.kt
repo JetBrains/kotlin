@@ -78,7 +78,8 @@ public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLaz
  * This extension allows to use instances of Lazy for property delegation:
  * `val property: String by lazy { initializer }`
  */
-public operator fun <T> Lazy<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
+@kotlin.internal.InlineOnly
+public inline operator fun <T> Lazy<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
 
 /**
  * Specifies how a [Lazy] instance synchronizes access among multiple threads.
