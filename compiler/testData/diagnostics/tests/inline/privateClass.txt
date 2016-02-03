@@ -1,7 +1,8 @@
 package
 
 private fun test(): S
-private inline fun x(/*0*/ s: S, /*1*/ z: () -> kotlin.Unit): kotlin.Unit
+internal inline fun x(/*0*/ s: S, /*1*/ z: () -> kotlin.Unit): kotlin.Unit
+private inline fun x2(/*0*/ s: S, /*1*/ z: () -> kotlin.Unit): kotlin.Unit
 
 private final class S {
     public constructor S()
