@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -37,7 +38,9 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
+import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.ClassFileFactory;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -54,6 +57,7 @@ import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.N
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 public class CompileEnvironmentUtil {
+    private static Logger LOG = Logger.getInstance(CompileEnvironmentUtil.class);
 
     @NotNull
     public static ModuleScriptData loadModuleDescriptions(String moduleDefinitionFile, MessageCollector messageCollector) {
@@ -141,8 +145,9 @@ public class CompileEnvironmentUtil {
     public static List<KtFile> getKtFiles(
             @NotNull final Project project,
             @NotNull Collection<String> sourceRoots,
+            @NotNull CompilerConfiguration configuration,
             @NotNull Function1<String, Unit> reportError
-    ) {
+    ) throws IOException {
         final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
 
         final Set<VirtualFile> processedFiles = Sets.newHashSet();
@@ -155,7 +160,17 @@ public class CompileEnvironmentUtil {
 
             VirtualFile vFile = localFileSystem.findFileByPath(sourceRootPath);
             if (vFile == null) {
-                reportError.invoke("Source file or directory not found: " + sourceRootPath);
+                String message = "Source file or directory not found: " + sourceRootPath;
+
+                String moduleFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE_PATH);
+                if (moduleFilePath != null) {
+                    String moduleFileContent = FileUtil.loadFile(new File(moduleFilePath));
+                    LOG.warn(message +
+                              "\n\nmodule file path: " + moduleFilePath +
+                              "\ncontent:\n" + moduleFileContent);
+                }
+
+                reportError.invoke(message);
                 continue;
             }
             if (!vFile.isDirectory() && vFile.getFileType() != KotlinFileType.INSTANCE) {
