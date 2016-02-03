@@ -327,11 +327,11 @@
     <refactoring.moveHandler
         id="kotlin.moveFilesOrDirectories"
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.KotlinMoveFilesOrDirectoriesHandler"
-        order="before moveJavaFileOrDir"/>
+        order="first"/>
     <refactoring.moveHandler
         id="kotlin.moveTopLevelDeclarations"
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler"
-        order="before kotlin.moveFilesOrDirectories"/>
+        order="first,before kotlin.moveFilesOrDirectories"/>
     <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
     <refactoring.moveDirectoryWithClassesHelper
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.KotlinMoveDirectoryWithClassesHelper"
