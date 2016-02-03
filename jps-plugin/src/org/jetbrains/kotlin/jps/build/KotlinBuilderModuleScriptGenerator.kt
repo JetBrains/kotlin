@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.ContainerUtil
@@ -32,17 +31,16 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import java.io.File
-import java.io.IOException
 import java.util.*
 
 object KotlinBuilderModuleScriptGenerator {
 
-    @Throws(IOException::class, ProjectBuildException::class)
     fun generateModuleDescription(
             context: CompileContext,
             chunk: ModuleChunk,
             sourceFiles: MultiMap<ModuleBuildTarget, File>, // ignored for non-incremental compilation
-            hasRemovedFiles: Boolean): File? {
+            hasRemovedFiles: Boolean
+    ): File? {
         val builder = KotlinModuleXmlBuilder()
 
         var noSources = true
@@ -51,6 +49,7 @@ object KotlinBuilderModuleScriptGenerator {
         for (target in chunk.targets) {
             outputDirs.add(getOutputDirSafe(target))
         }
+
         val logger = context.loggingManager.projectBuilderLogger
         for (target in chunk.targets) {
             val outputDir = getOutputDirSafe(target)
@@ -98,13 +97,9 @@ object KotlinBuilderModuleScriptGenerator {
         return scriptFile
     }
 
-    @Throws(ProjectBuildException::class)
-    fun getOutputDirSafe(target: ModuleBuildTarget): File {
-        val outputDir = target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
-        return outputDir
-    }
+    fun getOutputDirSafe(target: ModuleBuildTarget): File =
+            target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
 
-    @Throws(ProjectBuildException::class)
     private fun getFriendDirSafe(target: ModuleBuildTarget): File? {
         if (!target.isTests) return null
 
@@ -113,18 +108,18 @@ object KotlinBuilderModuleScriptGenerator {
     }
 
     private fun findClassPathRoots(target: ModuleBuildTarget): Collection<File> {
-        return ContainerUtil.filter(getAllDependencies(target).classes().roots, Condition<java.io.File> { file ->
+        return getAllDependencies(target).classes().roots.filter { file ->
             if (!file.exists()) {
                 val extension = file.extension
 
                 // Don't filter out files, we want to report warnings about absence through the common place
                 if (!(extension == "class" || extension == "jar")) {
-                    return@Condition false
+                    return@filter false
                 }
             }
 
             true
-        })
+        }
     }
 
     private fun findSourceRoots(context: CompileContext, target: ModuleBuildTarget): List<JvmSourceRoot> {
