@@ -1,0 +1,12 @@
+@kotlin.Metadata
+@kotlin.jvm.internal.KotlinMultifileClass
+public final class test/Foo {
+    public final static method foo(): void
+}
+
+@kotlin.Metadata
+@kotlin.jvm.internal.KotlinMultifileClassPart
+synthetic final class test/Foo__InlineOnlyMultifileKt {
+    public final static method foo(): void
+    private final static method inlineOnly(): void
+}

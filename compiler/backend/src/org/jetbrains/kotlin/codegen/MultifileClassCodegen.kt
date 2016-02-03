@@ -213,7 +213,8 @@ class MultifileClassCodegen(
             if (declaration is KtNamedFunction || declaration is KtProperty) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 assert(descriptor is CallableMemberDescriptor) { "Expected callable member, was " + descriptor + " for " + declaration.text }
-                if (!Visibilities.isPrivate((descriptor as CallableMemberDescriptor).visibility)) {
+                if (!Visibilities.isPrivate((descriptor as CallableMemberDescriptor).visibility)
+                        && AsmUtil.getVisibilityAccessFlag(descriptor) != Opcodes.ACC_PRIVATE) {
                     generateCallableMemberTasks.put(descriptor, { memberCodegen.genFunctionOrProperty(declaration) })
                 }
             }
