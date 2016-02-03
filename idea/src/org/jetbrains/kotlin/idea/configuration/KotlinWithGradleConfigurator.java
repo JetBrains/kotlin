@@ -67,7 +67,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        if (ProjectStructureUtil.isJavaKotlinModule(module)) {
+        if (ProjectStructureUtil.hasKotlinRuntimeInScope(module)) {
             return true;
         }
 
