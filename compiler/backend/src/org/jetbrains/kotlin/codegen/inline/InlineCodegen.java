@@ -213,7 +213,7 @@ public class InlineCodegen extends CallGenerator {
             }
 
             nodeAndSMAP = InlineCodegenUtil.getMethodNode(
-                    file.contentsToByteArray(), asmMethod.getName(), asmMethod.getDescriptor(), containingClasses.getFacadeClassId()
+                    file.contentsToByteArray(), asmMethod.getName(), asmMethod.getDescriptor(), containerId
             );
 
             if (nodeAndSMAP == null) {
@@ -241,7 +241,7 @@ public class InlineCodegen extends CallGenerator {
 
             SMAP smap;
             if (callDefault) {
-                Type implementationOwner = typeMapper.mapOwner(functionDescriptor);
+                Type implementationOwner = typeMapper.mapImplementationOwner(functionDescriptor);
                 FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
                                                                         (FieldOwnerContext) methodContext.getParentContext(),
                                                                         implementationOwner.getInternalName());
@@ -366,7 +366,7 @@ public class InlineCodegen extends CallGenerator {
                 new FakeMemberCodegen(codegen.getParentCodegen(), expression,
                                       (FieldOwnerContext) context.getParentContext(),
                                       isLambda ? codegen.getParentCodegen().getClassName()
-                                               : typeMapper.mapOwner(descriptor).getInternalName());
+                                               : typeMapper.mapImplementationOwner(descriptor).getInternalName());
 
         FunctionGenerationStrategy strategy =
                 expression instanceof KtCallableReferenceExpression ?
