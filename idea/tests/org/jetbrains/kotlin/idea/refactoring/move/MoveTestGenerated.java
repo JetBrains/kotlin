@@ -551,6 +551,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/movePrivatePropertyWithDefaultAccessors/movePrivatePropertyWithDefaultAccessors.test")
+    public void testKotlin_moveTopLevelDeclarations_movePrivatePropertyWithDefaultAccessors_MovePrivatePropertyWithDefaultAccessors() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePrivatePropertyWithDefaultAccessors/movePrivatePropertyWithDefaultAccessors.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/movePropertyToFile/movePropertyToFile.test")
     public void testKotlin_moveTopLevelDeclarations_movePropertyToFile_MovePropertyToFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePropertyToFile/movePropertyToFile.test");
