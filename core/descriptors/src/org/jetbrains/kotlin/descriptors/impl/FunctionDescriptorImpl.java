@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -48,6 +49,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
     private Collection<? extends FunctionDescriptor> overriddenFunctions = null;
+    private volatile Function0<Set<FunctionDescriptor>> lazyOverriddenFunctionsTask = null;
     private final FunctionDescriptor original;
     private final Kind kind;
     @Nullable
@@ -162,7 +164,20 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @NotNull
     @Override
     public Collection<? extends FunctionDescriptor> getOverriddenDescriptors() {
+        performOverriddenLazyCalculationIfNeeded();
         return overriddenFunctions != null ? overriddenFunctions : Collections.<FunctionDescriptor>emptyList();
+    }
+
+    private void performOverriddenLazyCalculationIfNeeded() {
+        Function0<Set<FunctionDescriptor>> overriddenTask = lazyOverriddenFunctionsTask;
+        if (overriddenTask != null) {
+            overriddenFunctions = overriddenTask.invoke();
+            // Here it's important that this assignment is strictly after previous one
+            // `lazyOverriddenFunctionsTask` is volatile, so when someone will see that it's null,
+            // he can read consistent collection from `overriddenFunctions`,
+            // because it's assignment happens-before of "lazyOverriddenFunctionsTask = null"
+            lazyOverriddenFunctionsTask = null;
+        }
     }
 
     @NotNull
@@ -443,7 +458,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 configuration.preserveSourceElement);
 
         List<TypeParameterDescriptor> substitutedTypeParameters;
-        TypeSubstitutor substitutor;
+        final TypeSubstitutor substitutor;
 
         if (configuration.newTypeParameters == null) {
             List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
@@ -520,16 +535,27 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             substitutedDescriptor.setInitialSignatureDescriptor(initialSignatureSubstituted);
         }
 
-        if (configuration.copyOverrides && !getOverriddenDescriptors().isEmpty()) {
+        if (configuration.copyOverrides && !getOriginal().getOverriddenDescriptors().isEmpty()) {
             if (configuration.originalSubstitutor.isEmpty()) {
-                substitutedDescriptor.setOverriddenDescriptors(getOverriddenDescriptors());
+                Function0<Set<FunctionDescriptor>> overriddenFunctionsTask = lazyOverriddenFunctionsTask;
+                if (overriddenFunctionsTask != null) {
+                    substitutedDescriptor.lazyOverriddenFunctionsTask = overriddenFunctionsTask;
+                }
+                else {
+                    substitutedDescriptor.setOverriddenDescriptors(getOverriddenDescriptors());
+                }
             }
             else {
-                Collection<CallableMemberDescriptor> substitutedOverridden = SmartSet.create();
-                for (FunctionDescriptor overriddenFunction : getOverriddenDescriptors()) {
-                    substitutedOverridden.add(overriddenFunction.substitute(substitutor));
-                }
-                substitutedDescriptor.setOverriddenDescriptors(substitutedOverridden);
+                substitutedDescriptor.lazyOverriddenFunctionsTask = new Function0<Set<FunctionDescriptor>>() {
+                    @Override
+                    public Set<FunctionDescriptor> invoke() {
+                        SmartSet<FunctionDescriptor> result = SmartSet.create();
+                        for (FunctionDescriptor overriddenFunction : getOverriddenDescriptors()) {
+                            result.add(overriddenFunction.substitute(substitutor));
+                        }
+                        return result;
+                    }
+                };
             }
         }
 
