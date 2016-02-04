@@ -60,7 +60,7 @@ public class ExperimentalIncrementalLazyCachesTestGenerated extends AbstractExpe
     }
 
     @TestMetadata("inlineFunctionWithUsage")
-    public void testInlineFunctionWithUsage() throws Exception {
+    public void mutetestInlineFunctionWithUsage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage/");
         doTest(fileName);
     }
