@@ -248,16 +248,18 @@ class KotlinCompletionContributor : CompletionContributor() {
         val toFromOriginalFileMapper = ToFromOriginalFileMapper(originalFile, positionFile, parameters.offset)
 
         if (position.node.elementType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
-            val expression = (position.parent as KtBlockStringTemplateEntry).expression as KtDotQualifiedExpression
-            val correctedPosition = (expression.selectorExpression as KtNameReferenceExpression).firstChild
-            val context = position.getUserData(CompletionContext.COMPLETION_CONTEXT_KEY)!!
-            val correctedOffset = context.offsetMap.getOffset(STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET)
-            val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
-            performCompletionWithOutOfBlockTracking(position) {
-                doComplete(correctedParameters, toFromOriginalFileMapper, result,
-                           lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
+            val expression = (position.parent as KtBlockStringTemplateEntry).expression
+            if (expression is KtDotQualifiedExpression) {
+                val correctedPosition = (expression.selectorExpression as KtNameReferenceExpression).firstChild
+                val context = position.getUserData(CompletionContext.COMPLETION_CONTEXT_KEY)!!
+                val correctedOffset = context.offsetMap.getOffset(STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET)
+                val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
+                performCompletionWithOutOfBlockTracking(position) {
+                    doComplete(correctedParameters, toFromOriginalFileMapper, result,
+                               lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
+                }
+                return
             }
-            return
         }
 
         performCompletionWithOutOfBlockTracking(position) {
