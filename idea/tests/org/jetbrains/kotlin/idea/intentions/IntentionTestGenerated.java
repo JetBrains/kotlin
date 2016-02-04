@@ -4675,6 +4675,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("numberLiterals.kt")
+        public void testNumberLiterals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/numberLiterals.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onlyForConcat.kt")
         public void testOnlyForConcat() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/onlyForConcat.kt");

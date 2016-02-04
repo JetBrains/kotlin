@@ -85,11 +85,20 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
         if (expr == null) return ""
         val expression = KtPsiUtil.safeDeparenthesize(expr)
         val expressionText = expression.text
-        return when (expression) {
+        when (expression) {
             is KtConstantExpression -> {
                 val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
+                val type = bindingContext.getType(expression)!!
+
+                if (KotlinBuiltIns.isChar(type)) {
+                    return expressionText.removePrefix("'").removeSuffix("'")
+                }
+
                 val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
-                StringUtil.escapeStringCharacters(constant?.getValue(bindingContext.getType(expression)!!).toString())
+                val stringValue = constant?.getValue(type).toString()
+                if (stringValue == expressionText) {
+                    return StringUtil.escapeStringCharacters(stringValue)
+                }
             }
 
             is KtStringTemplateExpression -> {
@@ -101,17 +110,17 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
                     StringUtil.unquoteString(expressionText)
                 }
                 if (forceBraces && base.endsWith('$')) {
-                    base.dropLast(1) + "\\$"
+                    return base.dropLast(1) + "\\$"
                 }
                 else {
-                    base
+                    return base
                 }
             }
 
             is KtNameReferenceExpression ->
-                "$" + (if (forceBraces) "{$expressionText}" else expressionText)
-
-            else -> "\${" + expressionText.replace("\n+".toRegex(), " ") + "}"
+                return "$" + (if (forceBraces) "{$expressionText}" else expressionText)
         }
+
+        return "\${" + expressionText.replace("\n+".toRegex(), " ") + "}"
     }
 }
