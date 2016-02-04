@@ -21,13 +21,11 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 
 public class KotlinActionGroup extends DefaultActionGroup {
-
     @Override
     public void update(AnActionEvent event) {
         Presentation p = event.getPresentation();
         boolean hasProject = event.getData(CommonDataKeys.PROJECT) != null;
 
         p.setVisible(hasProject);
-        p.setEnabled(hasProject);
     }
 }
