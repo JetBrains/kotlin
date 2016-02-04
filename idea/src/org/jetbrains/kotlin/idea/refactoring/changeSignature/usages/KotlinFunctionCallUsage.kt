@@ -298,6 +298,12 @@ class KotlinFunctionCallUsage(
         }
     }
 
+    private fun ExpressionReceiver.wrapInvalidated(element: KtCallElement): ExpressionReceiver {
+        return object: ExpressionReceiver by this {
+            override val expression = element.getQualifiedExpressionForSelector()!!.receiverExpression
+        }
+    }
+
     private fun updateArgumentsAndReceiver(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>) {
         if (isPropertyJavaUsage) return updateJavaPropertyCall(changeInfo, element)
 
@@ -321,7 +327,12 @@ class KotlinFunctionCallUsage(
             val (index, param) = it
             val oldIndex = param.oldIndex
             val resolvedArgument = if (oldIndex >= 0) getResolvedValueArgument(oldIndex) else null
-            val receiverValue = if (param == originalReceiverInfo) extensionReceiver else null
+            var receiverValue = if (param == originalReceiverInfo) extensionReceiver else null
+            // Workaround for recursive calls where implicit extension receiver is transformed into ordinary value argument
+            // Receiver expression retained in the original resolved call is no longer valid at this point
+            if (receiverValue is ExpressionReceiver && !receiverValue.expression.isValid) {
+                receiverValue = receiverValue.wrapInvalidated(element)
+            }
             ArgumentInfo(param, index, resolvedArgument, receiverValue as? ReceiverValue)
         }
 
