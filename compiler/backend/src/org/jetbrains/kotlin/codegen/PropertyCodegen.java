@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +68,9 @@ import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJ
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PropertyCodegen {
+
+    private static Logger LOG = Logger.getInstance(PropertyCodegen.class);
+
     private final GenerationState state;
     private final ClassBuilder v;
     private final FunctionCodegen functionCodegen;
@@ -94,7 +98,11 @@ public class PropertyCodegen {
 
     public void gen(@NotNull KtProperty property) {
         VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
-        assert variableDescriptor instanceof PropertyDescriptor : "Property " + property.getText() + " should have a property descriptor: " + variableDescriptor;
+        if (!(variableDescriptor instanceof PropertyDescriptor)) {
+            String problem = "Property " + property.getName() + " should have a property descriptor: " + variableDescriptor;
+            LOG.error(problem, PsiUtilsKt.getElementTextWithContext(property));
+            throw new AssertionError(problem);
+        }
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
         gen(property, propertyDescriptor, property.getGetter(), property.getSetter());
