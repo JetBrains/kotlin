@@ -220,7 +220,7 @@ class ExpectedInfos(
     private fun calculateForArgument(call: Call, callExpectedType: KotlinType, argument: ValueArgument): Collection<ExpectedInfo> {
         val argumentIndex = call.valueArguments.indexOf(argument)
         assert(argumentIndex >= 0) {
-            "Could not find argument '$argument(${argument.asElement().text})' among arguments of call: $call"
+            "Could not find argument '$argument(${argument.asElement().text})' among arguments of call: $call. Call element text: '${call.callElement.text}'"
         }
 
         // leave only arguments before the current one
