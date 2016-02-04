@@ -1,0 +1,9 @@
+@kotlin.Metadata
+@kotlin.jvm.internal.KotlinMultifileClass
+public final class test/Foo
+
+@kotlin.Metadata
+@kotlin.jvm.internal.KotlinMultifileClassPart
+synthetic final class test/Foo__EmptyMultifileFacadeKt {
+    private final static method privateOnly(): void
+}
