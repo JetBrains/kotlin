@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
+import org.jetbrains.kotlin.utils.ifEmpty
 
 class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
@@ -64,7 +65,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
             return type ?: ErrorUtils.createErrorType("null type")
         }
 
-        fun createTypeExpressionForTemplate(exprType: KotlinType, contextElement: KtElement): Expression {
+        fun createTypeExpressionForTemplate(exprType: KotlinType, contextElement: KtElement): Expression? {
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
@@ -92,6 +93,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
                             override fun getArguments() = newArguments
                         }
                     }
+                    .ifEmpty { return null }
             return object : ChooseValueExpression<KotlinType>(types, types.first()) {
                 override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
                 override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
@@ -122,7 +124,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
             assert(!exprType.isError) { "Unexpected error type, should have been checked before: " + declaration.getElementTextWithContext() + ", type = " + exprType }
 
             val project = declaration.project
-            val expression = createTypeExpressionForTemplate(exprType, declaration)
+            val expression = createTypeExpressionForTemplate(exprType, declaration) ?: return
 
             declaration.setType(KotlinBuiltIns.FQ_NAMES.any.asString())
 
