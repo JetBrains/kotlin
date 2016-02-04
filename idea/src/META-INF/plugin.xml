@@ -1176,28 +1176,28 @@
     </intentionAction>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
-                     displayName="Convert object literal to lambda"
+                     displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyAssertNotNullInspection"
-                     displayName="‘assert’ calls that can be replaced with ‘!!’ or ‘?:'"
+                     displayName="‘assert’ call can be replaced with ‘!!’ or ‘?:'"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
-                     displayName="Add 'replaceWith' argument to 'deprecated' annotation"
+                     displayName="@Deprecated annotation without 'replaceWith' argument"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateInspection"
-                     displayName="Convert string concatenation to string template"
+                     displayName="String concatenation that can be converted to string template"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
@@ -1232,56 +1232,56 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsInspection"
-                     displayName="Type arguments are unnecessary"
+                     displayName="Unnecessary type argument"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierInspection"
-                     displayName="Supertype qualification is unnecessary"
+                     displayName="Unnecessary supertype qualification"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionInspection"
-                     displayName="Simplify negated binary expression"
+                     displayName="Negated boolean expression that can be simplified"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignmentInspection"
-                     displayName="Replace with operator-assignment"
+                     displayName="Assignment that can be replaced with operator assignment"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IntroduceWhenSubjectInspection"
-                     displayName="Introduce argument to 'when'"
+                     displayName="'when' that can be simplified by introducing an argument"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateInspection"
-                     displayName="Remove redundant curly braces in string template"
+                     displayName="Redundant curly braces in string template"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsInspection"
-                     displayName="Simplify boolean expression with constants"
+                     displayName="Boolean expression that can be simplified"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
-                     displayName="Use property access syntax"
+                     displayName="Accessor call that can be replaced with property access syntax"
                      groupName="Kotlin"
                      cleanupTool="true"
                      enabledByDefault="true"
@@ -1347,14 +1347,14 @@
                      level="WARNING"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesInspection"
-                     displayName="Index is unused"
+                     displayName="Unused loop index"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="WARNING"
     />
 
       <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
-                       displayName="Extension property conflicts with synthetic one"
+                       displayName="Extension property conflicting with synthetic one"
                        groupName="Kotlin"
                        enabledByDefault="true"
                        level="WARNING"
@@ -1374,7 +1374,7 @@
                      level="WARNING"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyForInspection"
-                     displayName="Simplify 'for' using destructing declaration"
+                     displayName="'for' that can be simplified using destructing declaration"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="false"
