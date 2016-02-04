@@ -217,6 +217,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("kt10808.kt")
+        public void testKt10808() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/kt10808.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("LoopRange.kt")
         public void testLoopRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/LoopRange.kt");
