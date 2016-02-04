@@ -113,7 +113,7 @@ class MultifileClassCodegen(
 
         generateDelegatesToPreviouslyCompiledParts(generateCallableMemberTasks, partFqNames)
 
-        if (!generateCallableMemberTasks.isEmpty()) {
+        if (!partFqNames.isEmpty()) {
             generateMultifileFacadeClass(generateCallableMemberTasks, partFqNames)
         }
     }
