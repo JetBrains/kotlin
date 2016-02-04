@@ -167,7 +167,7 @@ sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : CallType<TR
 
                         is KtUnaryExpression -> CallTypeAndReceiver.OPERATOR(receiverExpression)
 
-                        else -> error("Unknown parent for JetOperationReferenceExpression: $parent")
+                        else -> error("Unknown parent for JetOperationReferenceExpression: $parent with text '${parent.text}'")
                     }
                 }
 
