@@ -24,7 +24,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -160,7 +160,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     val nameString = parameter.name.asString()
                     val existingParameter = oldParameters.firstOrNull { it.name == nameString }
                     if (existingParameter != null) {
-                        val type = (existingParameter.resolveToDescriptor() as ValueParameterDescriptor).type
+                        val type = (existingParameter.resolveToDescriptor() as VariableDescriptor).type
                         if (type.isSubtypeOf(parameter.type)) continue // use existing parameter
                     }
 
