@@ -334,6 +334,7 @@ class SmartCompletion(
             if (matchedExpectedInfos.isEmpty()) return null
 
             var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false, parametersAndTypeGrayed = true)
+                                ?: return null
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = "::" + delegate.lookupString
                 override fun getAllLookupStrings() = setOf(lookupString)
