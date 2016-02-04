@@ -20,10 +20,10 @@ fun foo() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>z<!> = 2
     val r = {  // type fun(): Any is inferred
         if (true) {
-            <!IMPLICIT_CAST_TO_ANY!>2<!>
+            2
         }
         else {
-            <!IMPLICIT_CAST_TO_ANY!>z = 34<!>
+            z = 34
         }
     }
     val <!UNUSED_VARIABLE!>f<!>: ()-> Int = <!TYPE_MISMATCH!>r<!>
@@ -74,9 +74,9 @@ fun testCoercionToUnit() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 43
     val checkType = {
         if (true) {
-            <!IMPLICIT_CAST_TO_ANY!>x = 4<!>
+            x = 4
         } else {
-            <!IMPLICIT_CAST_TO_ANY!>45<!>
+            45
         }
     }
     val <!UNUSED_VARIABLE!>f<!> : () -> String = <!TYPE_MISMATCH!>checkType<!>

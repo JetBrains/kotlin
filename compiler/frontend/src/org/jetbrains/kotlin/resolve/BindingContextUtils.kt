@@ -55,6 +55,7 @@ fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDec
 }
 
 fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this]!!
+fun KtExpression.isUsedAsResultOfLambda(context: BindingContext): Boolean = context[BindingContext.USED_AS_RESULT_OF_LAMBDA, this]!!
 fun KtExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
 
 

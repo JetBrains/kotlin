@@ -3390,6 +3390,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifToAnyDiscriminatingUsages.kt")
+            public void testIfToAnyDiscriminatingUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifToAnyDiscriminatingUsages.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ifWhenToAnyComplexExpressions.kt")
+            public void testIfWhenToAnyComplexExpressions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifWhenToAnyComplexExpressions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifWhenWithoutElse.kt")
             public void testIfWhenWithoutElse() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifWhenWithoutElse.kt");
@@ -3501,6 +3513,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("whenInResultOfLambda.kt")
             public void testWhenInResultOfLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/whenInResultOfLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenToAnyDiscriminatingUsages.kt")
+            public void testWhenToAnyDiscriminatingUsages() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/whenToAnyDiscriminatingUsages.kt");
                 doTest(fileName);
             }
 
