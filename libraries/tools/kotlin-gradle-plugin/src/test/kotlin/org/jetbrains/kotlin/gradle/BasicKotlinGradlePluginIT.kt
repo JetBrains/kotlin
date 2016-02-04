@@ -1,9 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.junit.Test
-import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 import org.gradle.api.logging.LogLevel
-import org.junit.Ignore
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 

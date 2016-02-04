@@ -7,11 +7,7 @@ import org.junit.AfterClass
 import org.junit.Before
 import java.io.File
 import java.io.InputStream
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.fail
+import kotlin.test.*
 
 private val SYSTEM_LINE_SEPARATOR = System.getProperty("line.separator")
 
