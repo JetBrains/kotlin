@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpression>(
         ConvertToStringTemplateIntention(),
@@ -86,9 +87,9 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
         val expressionText = expression.text
         return when (expression) {
             is KtConstantExpression -> {
-                val bindingContext = expression.analyze()
+                val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                 val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
-                constant?.getValue(bindingContext.getType(expression)!!).toString()
+                StringUtil.escapeStringCharacters(constant?.getValue(bindingContext.getType(expression)!!).toString())
             }
 
             is KtStringTemplateExpression -> {
