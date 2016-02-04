@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,16 +130,23 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
 
         try {
-            AnsiConsole.systemInstall();
+            if (PlainTextMessageRenderer.COLOR_ENABLED) {
+                AnsiConsole.systemInstall();
+            }
+
             errStream.print(messageRenderer.renderPreamble());
             return exec(collector, services, arguments);
         }
         finally {
             errStream.print(messageRenderer.renderConclusion());
-            AnsiConsole.systemUninstall();
+
+            if (PlainTextMessageRenderer.COLOR_ENABLED) {
+                AnsiConsole.systemUninstall();
+            }
         }
     }
 
+    @SuppressWarnings("WeakerAccess") // Used in maven (see KotlinCompileMojoBase.java)
     @NotNull
     public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
         printVersionIfNeeded(messageCollector, arguments);
@@ -213,7 +220,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull Disposable rootDisposable
     );
 
-    protected void printVersionIfNeeded(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
+    private void printVersionIfNeeded(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
         if (!arguments.version) return;
 
         messageCollector.report(CompilerMessageSeverity.INFO,
@@ -234,6 +241,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         }
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     @NotNull
     public static ExitCode doMainNoExit(@NotNull CLICompiler compiler, @NotNull String[] args) {
         try {
