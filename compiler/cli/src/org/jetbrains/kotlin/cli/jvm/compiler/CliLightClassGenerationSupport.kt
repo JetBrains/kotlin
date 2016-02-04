@@ -76,10 +76,6 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         trace.setKotlinCodeAnalyzer(codeAnalyzer)
     }
 
-    override fun getContextForPackage(files: Collection<KtFile>): LightClassConstructionContext {
-        return LightClassConstructionContext(bindingContext, module)
-    }
-
     override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
         //force resolve companion for light class generation
         bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor

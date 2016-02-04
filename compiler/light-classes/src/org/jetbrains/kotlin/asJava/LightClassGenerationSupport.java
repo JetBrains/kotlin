@@ -37,9 +37,6 @@ public abstract class LightClassGenerationSupport {
     }
 
     @NotNull
-    public abstract LightClassConstructionContext getContextForPackage(@NotNull Collection<KtFile> files);
-
-    @NotNull
     public abstract LightClassConstructionContext getContextForClassOrObject(@NotNull KtClassOrObject classOrObject);
 
     @NotNull

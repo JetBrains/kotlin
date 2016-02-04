@@ -54,20 +54,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
-    override fun getContextForPackage(files: Collection<KtFile>): LightClassConstructionContext {
-        assert(!files.isEmpty()) { "No files in package" }
-
-        return getContextForFiles(files)
-    }
-
-    private fun getContextForFiles(files: Collection<KtFile>): LightClassConstructionContext {
-        val sortedFiles = files.sortedWith(scopeFileComparator)
-        val file = sortedFiles.first()
-        val resolveSession = file.getResolutionFacade().getFrontendService(ResolveSession::class.java)
-        forceResolvePackageDeclarations(files, resolveSession)
-        return LightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor)
-    }
-
     override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
         if (classOrObject.isLocal()) {
             return getContextForLocalClassOrObject(classOrObject)
@@ -111,7 +97,11 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     override fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
         assert(!files.isEmpty()) { "No files in facade" }
 
-        return getContextForFiles(files)
+        val sortedFiles = files.sortedWith(scopeFileComparator)
+        val file = sortedFiles.first()
+        val resolveSession = file.getResolutionFacade().getFrontendService(ResolveSession::class.java)
+        forceResolvePackageDeclarations(files, resolveSession)
+        return LightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor)
     }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {

@@ -50,10 +50,6 @@ object PackagePartClassUtils {
                 "_$str"
 
     @TestOnly
-    @JvmStatic fun getDefaultFileClassFqName(packageFqName: FqName, file: VirtualFile): FqName =
-            getPackagePartFqName(packageFqName, file.name)
-
-    @TestOnly
     @JvmStatic fun getDefaultPartFqName(facadeClassFqName: FqName, file: VirtualFile): FqName =
             getPackagePartFqName(facadeClassFqName.parent(), file.name)
 
