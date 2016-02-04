@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.ArrayList
 
@@ -209,11 +211,33 @@ object ConstructorCallCase : FunctionCallCase() {
         val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        if(constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
+        if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
             return JsNew(functionRef, argumentsInfo.translateArguments)
         }
         else {
             return JsInvocation(functionRef, argumentsInfo.translateArguments)
+        }
+    }
+
+    override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
+        val fqName = context.getQualifiedReference(callableDescriptor)
+        val functionRef = context.aliasOrValue(callableDescriptor) { fqName }
+
+        val constructorDescriptor = callableDescriptor as ConstructorDescriptor
+        val receiver = this.resolvedCall.dispatchReceiver
+        var allArguments = when (receiver) {
+            is ExpressionReceiver -> {
+                val jsReceiver = Translation.translateAsExpression(receiver.expression, context)
+                (sequenceOf(jsReceiver) + argumentsInfo.translateArguments).toList()
+            }
+            else -> argumentsInfo.translateArguments
+        }
+
+        if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
+            return JsNew(functionRef, allArguments)
+        }
+        else {
+            return JsInvocation(functionRef, allArguments)
         }
     }
 }

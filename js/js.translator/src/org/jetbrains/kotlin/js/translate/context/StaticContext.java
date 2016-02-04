@@ -541,6 +541,27 @@ public final class StaticContext {
                     return null;
                 }
             };
+            Rule<JsExpression> nestedClassesHaveContainerQualifier = new Rule<JsExpression>() {
+                @Nullable
+                @Override
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (isNativeObject(descriptor) || isBuiltin(descriptor)) {
+                        return null;
+                    }
+                    if (!(descriptor instanceof ClassDescriptor)) {
+                        return null;
+                    }
+                    ClassDescriptor cls = (ClassDescriptor) descriptor;
+                    if (cls.getKind() == ClassKind.ENUM_ENTRY || cls.getKind() == ClassKind.OBJECT) {
+                        return null;
+                    }
+                    DeclarationDescriptor container = descriptor.getContainingDeclaration();
+                    if (container == null) {
+                        return null;
+                    }
+                    return getQualifiedReference(container);
+                }
+            };
 
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorOrCompanionObjectHasTheSameQualifierAsTheClass);
@@ -548,6 +569,7 @@ public final class StaticContext {
             addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
             addRule(nativeObjectsHaveNativePartOfFullQualifier);
             addRule(staticMembersHaveContainerQualifier);
+            addRule(nestedClassesHaveContainerQualifier);
         }
     }
 

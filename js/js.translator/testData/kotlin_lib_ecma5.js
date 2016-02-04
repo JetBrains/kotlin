@@ -91,19 +91,22 @@ var Kotlin = {};
         }
     }
 
-    function computeMetadata(bases, properties) {
+    function computeMetadata(bases, properties, staticProperties) {
         var metadata = {};
+        var p, property;
 
         metadata.baseClasses = toArray(bases);
         metadata.baseClass = getClass(metadata.baseClasses);
         metadata.classIndex = Kotlin.newClassIndex();
         metadata.functions = {};
         metadata.properties = {};
+        metadata.types = {};
+        metadata.staticMembers = {};
 
         if (!(properties == null)) {
-            for (var p in properties) {
+            for (p in properties) {
                 if (properties.hasOwnProperty(p)) {
-                    var property = properties[p];
+                    property = properties[p];
                     property.$classIndex$ = metadata.classIndex;
                     if (typeof property === "function") {
                         metadata.functions[p] = property;
@@ -111,6 +114,19 @@ var Kotlin = {};
                     else {
                         metadata.properties[p] = property;
                     }
+                }
+            }
+        }
+        if (typeof staticProperties !== 'undefined') {
+            for (p in staticProperties) {
+                if (!staticProperties.hasOwnProperty(p)) {
+                    continue;
+                }
+                property = staticProperties[p];
+                if (typeof property === "function" && typeof property.type !== "undefined" && property.type === Kotlin.TYPE.INIT_FUN) {
+                    metadata.types[p] = property;
+                } else {
+                    metadata.staticMembers[p] = property;
                 }
             }
         }
@@ -146,10 +162,10 @@ var Kotlin = {};
         if (constructor == null) {
             constructor = emptyFunction();
         }
-        copyProperties(constructor, staticProperties);
 
-        var metadata = computeMetadata(bases, properties);
+        var metadata = computeMetadata(bases, properties, staticProperties);
         metadata.type = Kotlin.TYPE.CLASS;
+        copyProperties(constructor, metadata.staticMembers);
 
         var prototypeObj;
         if (metadata.baseClass !== null) {
@@ -161,6 +177,14 @@ var Kotlin = {};
         Object.defineProperties(prototypeObj, metadata.properties);
         copyProperties(prototypeObj, metadata.functions);
         prototypeObj.constructor = constructor;
+        for (var innerType in metadata.types) {
+            if (metadata.types.hasOwnProperty(innerType)) {
+                Object.defineProperty(constructor, innerType, {
+                    get: metadata.types[innerType],
+                    configurable: true
+                });
+            }
+        }
 
         if (metadata.baseClass != null) {
             constructor.baseInitializer = metadata.baseClass;
@@ -181,15 +205,25 @@ var Kotlin = {};
 
     Kotlin.createTraitNow = function (bases, properties, staticProperties) {
         var obj = function () {};
-        copyProperties(obj, staticProperties);
 
-        obj.$metadata$ = computeMetadata(bases, properties);
+        obj.$metadata$ = computeMetadata(bases, properties, staticProperties);
         obj.$metadata$.type = Kotlin.TYPE.TRAIT;
+        copyProperties(obj, obj.$metadata$.staticMembers);
 
         obj.prototype = {};
         Object.defineProperties(obj.prototype, obj.$metadata$.properties);
         copyProperties(obj.prototype, obj.$metadata$.functions);
         Object.defineProperty(obj, "object", {get: class_object, configurable: true});
+
+        for (var innerType in obj.$metadata$.types) {
+            if (obj.$metadata$.types.hasOwnProperty(innerType)) {
+                Object.defineProperty(constructor, innerType, {
+                    get: obj.$metadata$.types[innerType],
+                    configurable: true
+                });
+            }
+        }
+
         return obj;
     };
 

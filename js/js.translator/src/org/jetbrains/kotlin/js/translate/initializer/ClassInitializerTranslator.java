@@ -84,6 +84,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
     public JsFunction generateInitializeMethod(DelegationTranslator delegationTranslator) {
         ClassDescriptor classDescriptor = getClassDescriptor(bindingContext(), classDeclaration);
+        addOuterClassReference(classDescriptor);
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
         if (primaryConstructor != null) {
@@ -111,6 +112,22 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         }
 
         return initFunction;
+    }
+
+    private void addOuterClassReference(ClassDescriptor classDescriptor) {
+        DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
+        if (!(container instanceof ClassDescriptor) || !classDescriptor.isInner()) {
+            return;
+        }
+
+        // TODO: avoid name clashing
+        JsName outerName = initFunction.getScope().declareName("$outer");
+        initFunction.getParameters().add(0, new JsParameter(outerName));
+
+        JsExpression target = new JsNameRef(outerName, JsLiteral.THIS);
+        JsExpression paramRef = new JsNameRef(outerName);
+        JsExpression assignment = new JsBinaryOperation(JsBinaryOperator.ASG, target, paramRef);
+        initFunction.getBody().getStatements().add(new JsExpressionStatement(assignment));
     }
 
     @NotNull

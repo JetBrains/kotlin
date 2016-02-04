@@ -50,8 +50,8 @@ class FileDeclarationVisitor(
         }
     }
 
-    override fun visitClass(expression: KtClass, context: TranslationContext?): Void? {
-        result.addAll(ClassTranslator.translate(expression, context!!))
+    override fun visitClass(declaration: KtClass, context: TranslationContext?): Void? {
+        result.addAll(ClassTranslator.translate(declaration, context!!))
         return null
     }
 

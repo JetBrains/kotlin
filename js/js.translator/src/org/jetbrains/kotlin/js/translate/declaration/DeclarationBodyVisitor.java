@@ -67,7 +67,8 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitClass(@NotNull KtClass expression, TranslationContext context) {
+    public Void visitClass(@NotNull KtClass declaration, TranslationContext context) {
+        staticResult.addAll(ClassTranslator.Companion.translate(declaration, context));
         return null;
     }
 
