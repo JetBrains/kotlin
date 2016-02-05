@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.jvm.bindingContextSlices.RUNTIME_ASSERTION_INFO
+import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
@@ -74,9 +75,6 @@ class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: Strin
             else
                 null
         }
-
-        private fun KotlinType.hasEnhancedNullability()
-                = annotations.findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
     }
 }
 

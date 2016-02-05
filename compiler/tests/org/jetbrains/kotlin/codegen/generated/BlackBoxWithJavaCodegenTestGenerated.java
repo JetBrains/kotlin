@@ -77,6 +77,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("enhancedPrimitives")
+    public void testEnhancedPrimitives() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/enhancedPrimitives/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("inline")
     public void testInline() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/inline/");

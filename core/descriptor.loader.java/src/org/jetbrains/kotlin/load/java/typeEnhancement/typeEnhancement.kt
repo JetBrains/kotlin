@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
 fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = this.enhancePossiblyFlexible(qualifiers, 0).typeIfChanged
 
+fun KotlinType.hasEnhancedNullability()
+        = annotations.findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
 
 private enum class TypeComponentPosition {
     FLEXIBLE_LOWER,
