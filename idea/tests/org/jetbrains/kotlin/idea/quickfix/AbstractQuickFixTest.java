@@ -92,6 +92,11 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private static QuickFixTestCase myWrapper;
 
+    @Override
+    protected boolean shouldBeAvailableAfterExecution() {
+        return InTextDirectivesUtils.isDirectiveDefined(myWrapper.getFile().getText(), "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION");
+    }
+
     @NotNull
     @Override
     protected LocalInspectionTool[] configureLocalInspectionTools() {

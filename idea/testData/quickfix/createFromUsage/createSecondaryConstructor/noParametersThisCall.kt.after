@@ -1,7 +1,7 @@
 // "Create secondary constructor" "true"
-// ERROR: Primary constructor call expected
+// ERROR: There's a cycle in the delegation calls chain
 class Creation(val f: Int) {
-    constructor()
+    constructor() : this(<caret>)
 }
 
 val v = Creation()

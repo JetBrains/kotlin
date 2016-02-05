@@ -2601,9 +2601,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("noParameters.kt")
-            public void testNoParameters() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noParameters.kt");
+            @TestMetadata("noParametersImplicitSuperCall.kt")
+            public void testNoParametersImplicitSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noParametersImplicitSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noParametersSuperCall.kt")
+            public void testNoParametersSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noParametersSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noParametersThisCall.kt")
+            public void testNoParametersThisCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noParametersThisCall.kt");
                 doTest(fileName);
             }
 

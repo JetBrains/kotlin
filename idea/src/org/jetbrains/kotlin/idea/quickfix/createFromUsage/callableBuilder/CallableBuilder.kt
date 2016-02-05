@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
@@ -593,6 +594,16 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
                 }
 
+                if (declarationInPlace is KtSecondaryConstructor) {
+                    val containingClass = declarationInPlace.containingClassOrObject!!
+                    if (containingClass.getPrimaryConstructorParameters().isNotEmpty()) {
+                        declarationInPlace.replaceImplicitDelegationCallWithExplicit(true)
+                    }
+                    else if ((receiverClassDescriptor as ClassDescriptor).getSuperClassOrAny().constructors.all { it.valueParameters.isNotEmpty() }) {
+                        declarationInPlace.replaceImplicitDelegationCallWithExplicit(false)
+                    }
+                }
+
                 return declarationInPlace
             }
         }
@@ -924,6 +935,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val range = initializer.textRange
                 containingFileEditor.selectionModel.setSelection(range.startOffset, range.endOffset)
                 containingFileEditor.caretModel.moveToOffset(range.endOffset)
+                return
+            }
+            if (declaration is KtSecondaryConstructor && !declaration.hasImplicitDelegationCall()) {
+                containingFileEditor.caretModel.moveToOffset(declaration.getDelegationCall().valueArgumentList!!.startOffset + 1)
                 return
             }
             setupEditorSelection(containingFileEditor, declaration)
