@@ -1,0 +1,19 @@
+package
+
+public fun testDerived(/*0*/ base: Base, /*1*/ derived: Derived): kotlin.Unit
+
+public interface Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun </*0*/ T : kotlin.Any!> foo(/*0*/ a: T!): kotlin.String!
+    public abstract fun </*0*/ T : kotlin.Any!> foo(/*0*/ a: T!, /*1*/ vararg args: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Derived : Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> foo(/*0*/ a: T!): kotlin.String!
+    public abstract override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> foo(/*0*/ a: T!, /*1*/ vararg args: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

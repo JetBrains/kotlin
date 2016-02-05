@@ -307,9 +307,6 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
     private fun getVarargElementTypeOrType(parameterDescriptor: ValueParameterDescriptor): KotlinType =
             parameterDescriptor.varargElementType ?: parameterDescriptor.type
 
-    private val CallableDescriptor.hasVarargs: Boolean get() =
-            this.valueParameters.any { it.varargElementType != null }
-
     private fun typeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
         val isSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(specific, general) || numericTypeMoreSpecific(specific, general)
 

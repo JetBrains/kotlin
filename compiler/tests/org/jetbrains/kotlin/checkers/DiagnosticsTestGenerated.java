@@ -11547,6 +11547,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt10939.kt")
+            public void testKt10939() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/kt10939.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1998.kt")
             public void testKt1998() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/kt1998.kt");
@@ -11598,6 +11604,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("TypeParameterMultipleBounds.kt")
             public void testTypeParameterMultipleBounds() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/TypeParameterMultipleBounds.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("UnsubstitutedJavaGenetics.kt")
+            public void testUnsubstitutedJavaGenetics() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/UnsubstitutedJavaGenetics.kt");
                 doTest(fileName);
             }
         }
