@@ -35,12 +35,6 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -
 
 }
 
-@Deprecated("Use getOrPut instead", ReplaceWith("getOrPut(key, defaultValue)"), level = DeprecationLevel.ERROR)
-public inline fun <K, V: Any> ConcurrentMap<K, V>.concurrentGetOrPut(key: K, defaultValue: () -> V): V {
-    // Do not use computeIfAbsent on JVM8 as it would change locking behavior
-    return this.get(key) ?:
-            defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
-}
 
 /**
  * Converts this [Map] to a [SortedMap] so iteration order will be in key order.

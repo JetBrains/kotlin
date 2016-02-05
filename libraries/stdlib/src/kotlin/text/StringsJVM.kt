@@ -206,29 +206,10 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
  * @param bytes the source array for the conversion.
  * @param offset the offset in the array of the data to be converted.
  * @param length the number of bytes to be converted.
- * @param charsetName the name of the character set to use.
- */
-@Deprecated("Use String(bytes, offset, length, Charset) instead.", ReplaceWith("String(bytes, offset, length, charset(charsetName))"), level = DeprecationLevel.ERROR)
-public fun String(bytes: ByteArray, offset: Int, length: Int, charsetName: String): String = java.lang.String(bytes, offset, length, charsetName) as String
-
-/**
- * Converts the data from a portion of the specified array of bytes to characters using the specified character set
- * and returns the conversion result as a string.
- *
- * @param bytes the source array for the conversion.
- * @param offset the offset in the array of the data to be converted.
- * @param length the number of bytes to be converted.
  * @param charset the character set to use.
  */
 @kotlin.internal.InlineOnly
 public inline fun String(bytes: ByteArray, offset: Int, length: Int, charset: Charset): String = java.lang.String(bytes, offset, length, charset) as String
-
-/**
- * Converts the data from the specified array of bytes to characters using the specified character set
- * and returns the conversion result as a string.
- */
-@Deprecated("Use String(bytes, Charset) instead.", ReplaceWith("String(bytes, charset(charsetName))"), level = DeprecationLevel.ERROR)
-public fun String(bytes: ByteArray, charsetName: String): String = java.lang.String(bytes, charsetName) as String
 
 /**
  * Converts the data from the specified array of bytes to characters using the specified character set
@@ -312,12 +293,6 @@ public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
     else
         return (this as java.lang.String).compareTo(other)
 }
-
-/**
- * Returns a new string obtained by concatenating this string and the specified string.
- */
-@Deprecated("Use this + other, eventually it will be optimized as concat.", ReplaceWith("this + other"), level = DeprecationLevel.ERROR)
-public fun String.concat(other: String): String = (this as java.lang.String).concat(other)
 
 /**
  * Returns `true` if this string is equal to the contents of the specified CharSequence.
@@ -438,12 +413,6 @@ public inline fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 /**
  * Encodes the contents of this string using the specified character set and returns the resulting byte array.
  */
-@Deprecated("Use String.toByteArray(Charset) instead.", ReplaceWith("this.toByteArray(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
-
-/**
- * Encodes the contents of this string using the specified character set and returns the resulting byte array.
- */
 @kotlin.internal.InlineOnly
 public inline fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
@@ -493,33 +462,6 @@ public fun CharSequence.repeat(n: Int): String {
         sb.append(this)
     }
     return sb.toString()
-}
-
-/**
- * Appends the contents of this char sequence, excluding the first characters that satisfy the given [predicate],
- * to the given Appendable.
- */
-@Deprecated("This function will be removed soon.", ReplaceWith("result.append(this.dropWhile(predicate))"), level = DeprecationLevel.ERROR)
-public inline fun <T : Appendable> CharSequence.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
-    var start = true
-    for (element in this) {
-        if (start && predicate(element)) {
-            // ignore
-        } else {
-            start = false
-            result.append(element)
-        }
-    }
-    return result
-}
-
-/**
- * Appends the first characters from this char sequence that satisfy the given [predicate] to the given Appendable.
- */
-@Deprecated("This function will be removed soon.", ReplaceWith("result.append(this.takeWhile(predicate))"), level = DeprecationLevel.ERROR)
-public inline fun <T : Appendable> CharSequence.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
-    for (c in this) if (predicate(c)) result.append(c) else break
-    return result
 }
 
 

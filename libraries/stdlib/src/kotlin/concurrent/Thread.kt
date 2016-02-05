@@ -3,13 +3,6 @@
 package kotlin.concurrent
 
 /**
- * Returns the current thread.
- */
-@Deprecated("Use Thread.currentThread()", ReplaceWith("Thread.currentThread()"), level = DeprecationLevel.ERROR)
-public val currentThread: Thread
-    get() = Thread.currentThread()
-
-/**
  * Creates a thread that runs the specified [block] of code.
  *
  * @param start if `true`, the thread is immediately started.

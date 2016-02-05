@@ -19,9 +19,3 @@ public inline fun measureNanoTime(block: () -> Unit) : Long {
     block()
     return System.nanoTime() - start
 }
-
-/**
- * Executes the given block and returns elapsed time in nanoseconds.
- */
-@Deprecated("Use measureNanoTime.", ReplaceWith("measureNanoTime(block)"), level = DeprecationLevel.ERROR)
-public inline fun measureTimeNano(block: () -> Unit) : Long = measureNanoTime(block)

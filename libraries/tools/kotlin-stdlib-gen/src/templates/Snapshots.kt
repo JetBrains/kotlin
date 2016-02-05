@@ -60,30 +60,6 @@ fun snapshots(): List<GenericFunction> {
         body { "return toCollection(TreeSet<T>(comparator))" }
     }
 
-    templates add f("toArrayList()") {
-        doc { f -> "Returns an [ArrayList] of all ${f.element.pluralize()}." }
-        returns("ArrayList<T>")
-        body { "return toCollection(ArrayList<T>())" }
-        body(Iterables) {
-            """
-            if (this is Collection<T>)
-                return ArrayList(this)
-            return toCollection(ArrayList<T>())
-            """
-        }
-        body(Collections) { "return ArrayList(this)" }
-        body(CharSequences) { "return toCollection(ArrayList<T>(length))" }
-        body(ArraysOfObjects) { "return ArrayList(this.asCollection())" }
-        body(ArraysOfPrimitives) {
-            """
-            val list = ArrayList<T>(size)
-            for (item in this) list.add(item)
-            return list
-            """
-        }
-        deprecate(Deprecation("Use toMutableList instead or toCollection(ArrayList()) if you need ArrayList's ensureCapacity and trimToSize.", "toCollection(arrayListOf())", level = DeprecationLevel.ERROR))
-    }
-
     templates add f("toMutableList()") {
         doc { f -> "Returns a [MutableList] filled with all ${f.element.pluralize()} of this ${f.collection}." }
         returns("MutableList<T>")
@@ -126,16 +102,6 @@ fun snapshots(): List<GenericFunction> {
         doc { f -> "Returns a [List] containing all ${f.element.pluralize()}." }
         returns("List<T>")
         body { "return this.toMutableList()" }
-    }
-
-    templates add f("toMap(transform: (T) -> Pair<K, V>)") {
-        inline(true)
-        include(CharSequences)
-        typeParam("K")
-        typeParam("V")
-        returns("Map<K, V>")
-        annotations("""@kotlin.jvm.JvmName("toMapOfPairs")""")
-        deprecate(Deprecation("Use associate instead.", replaceWith = "associate(transform)", level = DeprecationLevel.ERROR))
     }
 
     templates add f("associate(transform: (T) -> Pair<K, V>)") {
@@ -201,14 +167,6 @@ fun snapshots(): List<GenericFunction> {
             return destination
             """
         }
-    }
-
-    templates add f("toMapBy(selector: (T) -> K)") {
-        inline(true)
-        typeParam("K")
-        returns("Map<K, T>")
-        include(CharSequences)
-        deprecate(Deprecation("Use associateBy instead.", replaceWith = "associateBy(selector)", level = DeprecationLevel.ERROR))
     }
 
     templates add f("associateBy(keySelector: (T) -> K)") {
@@ -279,30 +237,6 @@ fun snapshots(): List<GenericFunction> {
             return destination
             """
         }
-    }
-
-    templates add f("toMap(selector: (T) -> K, transform: (T) -> V)") {
-        inline(true)
-        include(CharSequences)
-        typeParam("K")
-        typeParam("V")
-        doc { f ->
-            """
-            Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
-            If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
-            """
-        }
-        returns("Map<K, V>")
-        deprecate(Deprecation("Use associateBy instead.", "associateBy(selector, transform)", level = DeprecationLevel.ERROR))
-    }
-
-    templates add f("toMapBy(selector: (T) -> K, transform: (T) -> V)") {
-        inline(true)
-        typeParam("K")
-        typeParam("V")
-        include(CharSequences)
-        returns("Map<K, V>")
-        deprecate(Deprecation("Use associateBy instead.", replaceWith = "associateBy(selector, transform)", level = DeprecationLevel.ERROR))
     }
 
     templates add f("associateBy(keySelector: (T) -> K, valueTransform: (T) -> V)") {

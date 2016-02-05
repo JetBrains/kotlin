@@ -492,9 +492,6 @@ public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
     return GeneratorSequence(nextFunction, { nextFunction() }).constrainOnce()
 }
 
-@Deprecated("Use generateSequence instead.", ReplaceWith("generateSequence(nextFunction)"), level = DeprecationLevel.ERROR)
-public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> = generateSequence(nextFunction)
-
 /**
  * Returns a sequence which invokes the function to calculate the next value based on the previous one on each iteration
  * until the function returns `null`. The sequence starts with the specified [seed].
@@ -508,10 +505,6 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
     else
         GeneratorSequence({ seed }, nextFunction)
 
-@Deprecated("Use generateSequence instead.", ReplaceWith("generateSequence(initialValue, nextFunction)"), level = DeprecationLevel.ERROR)
-@kotlin.internal.LowPriorityInOverloadResolution
-public fun <T : Any> sequence(initialValue: T?, nextFunction: (T) -> T?): Sequence<T> = generateSequence(initialValue, nextFunction)
-
 /**
  * Returns a sequence which invokes the function [seedFunction] to get the first item and then
  * [nextFunction] to calculate the next value based on the previous one on each iteration
@@ -520,6 +513,3 @@ public fun <T : Any> sequence(initialValue: T?, nextFunction: (T) -> T?): Sequen
 public fun <T: Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
         GeneratorSequence(seedFunction, nextFunction)
 
-
-@Deprecated("Use generateSequence instead.", ReplaceWith("generateSequence(initialValueFunction, nextFunction)"), level = DeprecationLevel.ERROR)
-public fun <T: Any> sequence(initialValueFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> = generateSequence(initialValueFunction, nextFunction)
