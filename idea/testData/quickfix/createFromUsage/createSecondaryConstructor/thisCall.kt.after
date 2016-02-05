@@ -5,7 +5,5 @@ class A {
 
     }
 
-    constructor(i: Int) {
-        //To change body of created constructors use File | Settings | File Templates.
-    }
+    constructor(i: Int)
 }

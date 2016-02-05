@@ -462,6 +462,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     CallableKind.FUNCTION, CallableKind.SECONDARY_CONSTRUCTOR -> {
                         val body = when {
                             containingElement is KtClass && containingElement.isInterface() && !config.isExtension -> ""
+                            callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR -> ""
                             else -> "{}"
                         }
                         @Suppress("USELESS_CAST") // KT-10755
