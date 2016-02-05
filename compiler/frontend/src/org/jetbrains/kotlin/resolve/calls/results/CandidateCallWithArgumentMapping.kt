@@ -69,6 +69,7 @@ class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constr
             val argumentsToParameters = hashMapOf<K, ValueParameterDescriptor>()
             var parametersWithDefaultValuesCount = 0
 
+            val unsubstitutedValueParameters = call.candidateDescriptor.original.valueParameters
             for ((valueParameterDescriptor, resolvedValueArgument) in call.unsubstitutedValueArguments.entries) {
                 if (resolvedValueArgument is DefaultValueArgument) {
                     parametersWithDefaultValuesCount++
@@ -76,7 +77,10 @@ class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constr
                 else {
                     val keys = resolvedArgumentToKeys(resolvedValueArgument)
                     for (argumentKey in keys) {
-                        argumentsToParameters[argumentKey] = valueParameterDescriptor.original
+                        // TODO fix 'original' for value parameters of Java generic descriptors.
+                        // Should be able to use just 'valueParameterDescriptor' below.
+                        // Doesn't work for Java generic descriptors. See also KT-10939.
+                        argumentsToParameters[argumentKey] = unsubstitutedValueParameters[valueParameterDescriptor.index]
                     }
                 }
             }
