@@ -569,8 +569,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 parentDeclaration = PsiTreeUtil.getParentOfType(parentDeclaration, KtDeclaration.class);
             }
 
-            assert parentDeclaration != null : "Can't find parent declaration for " + expression.getText();
+            // Parent declaration can be null in code fragments or in some bad error expressions
             DeclarationDescriptor declarationDescriptor = context.trace.get(DECLARATION_TO_DESCRIPTOR, parentDeclaration);
+
             Pair<FunctionDescriptor, PsiElement> containingFunInfo =
                     BindingContextUtils.getContainingFunctionSkipFunctionLiterals(declarationDescriptor, false);
             FunctionDescriptor containingFunctionDescriptor = containingFunInfo.getFirst();

@@ -151,6 +151,12 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             doTest(fileName);
         }
 
+        @TestMetadata("startingFromReturn.kt")
+        public void testStartingFromReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/startingFromReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("withoutBodyFunction.kt")
         public void testWithoutBodyFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/withoutBodyFunction.kt");
