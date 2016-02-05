@@ -288,9 +288,9 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             } else listOf())
         }
 
-        fun dirtyKotlinSourcesFromGradle(): List<File> {
+        fun dirtyKotlinSourcesFromGradle(): Set<File> {
             // TODO: handle classpath changes similarly - compare with cashed version (likely a big change, may be costly, some heuristics could be considered)
-            val modifiedKotlinFiles = modified.filter { it.isKotlinFile() }
+            val modifiedKotlinFiles = modified.filter { it.isKotlinFile() }.toMutableSet()
             val lookupSymbols =
                     dirtyLookupSymbolsFromModifiedJavaFiles() +
                     dirtyLookupSymbolsFromRemovedKotlinFiles()
@@ -298,13 +298,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             if (lookupSymbols.any()) {
                 val kotlinModifiedFilesSet = modifiedKotlinFiles.toHashSet()
-                return modifiedKotlinFiles +
-                        lookupSymbols.files(
+                val dirtyFilesFromLookups = lookupSymbols.files(
                                 filesFilter = { it !in kotlinModifiedFilesSet },
                                 logAction = { lookup, files ->
                                     logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
                                 })
+                modifiedKotlinFiles.addAll(dirtyFilesFromLookups)
             }
+
             return modifiedKotlinFiles
         }
 
@@ -317,7 +318,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
         fun allCachesVersions() = allCachesVersions(cachesBaseDir, listOf(cachesBaseDir))
 
-        fun calculateSourcesToCompile(): Pair<List<File>, Boolean> {
+        fun calculateSourcesToCompile(): Pair<Set<File>, Boolean> {
 
             if (!experimentalIncremental ||
                     !isIncrementalRequested ||
@@ -329,7 +330,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 logger.kotlinInfo(if (!isIncrementalRequested) "clean caches on rebuild" else "classpath changed, rebuilding all kotlin files")
                 targets.forEach { getIncrementalCache(it).clean() }
                 lookupStorage.clean()
-                return Pair(sources, false)
+                return Pair(sources.toSet(), false)
             }
             val actions = if (isIncrementalRequested) allCachesVersions().map { it.checkVersion() }
                           else listOf(CacheVersion.Action.REBUILD_ALL_KOTLIN)
@@ -343,7 +344,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                         logger.kotlinInfo("Kotlin global lookup map format changed, rebuilding all kotlin files")
                         targets.forEach { getIncrementalCache(it).clean() }
                         lookupStorage.clean()
-                        return Pair(sources, false)
+                        return Pair(sources.toSet(), false)
                     }
                     CacheVersion.Action.REBUILD_CHUNK -> {
                         logger.kotlinInfo("Clearing caches for " + targets.joinToString { it.name })
@@ -367,7 +368,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     }
                 }
             }
-            val dirtyFiles = dirtyKotlinSourcesFromGradle().distinct()
+            val dirtyFiles = dirtyKotlinSourcesFromGradle().toSet()
             // first dirty files should be found and only then caches cleared
             val removedKotlinFiles = removed.filter { it.isKotlinFile() }
             targets.forEach { getIncrementalCache(it).let {
@@ -447,12 +448,13 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             compiledSourcesSet.addAll(sourcesToCompile)
 
             val dirtyLookups = changes.dirtyLookups<TargetId>(caches.values.asSequence())
-            val dirty = dirtyLookups.files(
+            val newDirtyFiles = dirtyLookups.files(
                     filesFilter = { it !in compiledSourcesSet },
                     logAction = { lookup, files ->
                         logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
                     })
-            sourcesToCompile = dirty.filter { it in sources }.toList()
+            sourcesToCompile = newDirtyFiles.filter { it in sources }.toSet()
+
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
             }
@@ -469,7 +471,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     private fun compileChanged(
             targets: List<TargetId>,
-            sourcesToCompile: List<File>,
+            sourcesToCompile: Set<File>,
             outputDir: File,
             args: K2JVMCompilerArguments,
             getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
