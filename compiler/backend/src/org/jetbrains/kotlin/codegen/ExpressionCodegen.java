@@ -1246,6 +1246,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (compileTimeValue == null) {
             return null;
         }
+
+        if (compileTimeValue.getUsesNonConstValAsConstant()) return null;
+
         KotlinType expectedType = bindingContext.getType(expression);
         return compileTimeValue.toConstantValue(expectedType);
     }
