@@ -41,9 +41,21 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("emptyMultifileFacade.kt")
+    public void testEmptyMultifileFacade() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineOnly.kt")
     public void testInlineOnly() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/inlineOnly.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InlineOnlyMultifile.kt")
+    public void testInlineOnlyMultifile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/InlineOnlyMultifile.kt");
         doTest(fileName);
     }
 

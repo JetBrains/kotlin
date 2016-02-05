@@ -1578,6 +1578,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/inStringLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("EA76497.kt")
+            public void testEA76497() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/EA76497.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("StringTemplate1.kt")
             public void testStringTemplate1() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplate1.kt");

@@ -4669,6 +4669,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("numberLiterals.kt")
+        public void testNumberLiterals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/numberLiterals.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onlyForConcat.kt")
         public void testOnlyForConcat() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/onlyForConcat.kt");
@@ -4684,6 +4690,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("requiresPlusOperator.kt")
         public void testRequiresPlusOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/requiresPlusOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("specialCharsInCharLiteral.kt")
+        public void testSpecialCharsInCharLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/specialCharsInCharLiteral.kt");
             doTest(fileName);
         }
 
