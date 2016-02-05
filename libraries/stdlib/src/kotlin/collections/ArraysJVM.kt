@@ -5,11 +5,6 @@ package kotlin.collections
 
 import java.nio.charset.Charset
 
-/**
- * Converts the contents of this byte array to a string using the specified [charset].
- */
-@Deprecated("Use ByteArray.toString(Charset) instead.", ReplaceWith("this.toString(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun ByteArray.toString(charset: String): String = String(this, charset(charset))
 
 /**
  * Converts the contents of this byte array to a string using the specified [charset].

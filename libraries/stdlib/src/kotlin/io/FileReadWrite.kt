@@ -67,17 +67,6 @@ public fun File.writeBytes(array: ByteArray): Unit = FileOutputStream(this).use 
 public fun File.appendBytes(array: ByteArray): Unit = FileOutputStream(this, true).use { it.write(array) }
 
 /**
- * Gets the entire content of this file as a String using specified [charset].
- *
- * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
- *
- * @param charset character set to use.
- * @return the entire content of this file as a String.
- */
-@Deprecated("Use File.readText(Charset) instead.", ReplaceWith("this.readText(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun File.readText(charset: String): String = readBytes().toString(charset(charset))
-
-/**
  * Gets the entire content of this file as a String using UTF-8 or specified [charset].
  *
  * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
@@ -86,16 +75,6 @@ public fun File.readText(charset: String): String = readBytes().toString(charset
  * @return the entire content of this file as a String.
  */
 public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes().toString(charset)
-
-/**
- * Sets the content of this file as [text] encoded using the specified [charset].
- * If this file exists, it becomes overwritten.
- *
- * @param text text to write into file.
- * @param charset character set to use.
- */
-@Deprecated("Use File.writeText(String, Charset) instead.", ReplaceWith("this.writeText(text, charset(charset))"), level = DeprecationLevel.ERROR)
-public fun File.writeText(text: String, charset: String): Unit = writeBytes(text.toByteArray(charset(charset)))
 
 /**
  * Sets the content of this file as [text] encoded using UTF-8 or specified [charset].
@@ -115,15 +94,6 @@ public fun File.writeText(text: String, charset: Charset = Charsets.UTF_8): Unit
 public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Unit = appendBytes(text.toByteArray(charset))
 
 /**
- * Appends [text] to the content of the file using the specified [charset].
- *
- * @param text text to append to file.
- * @param charset character set to use.
- */
-@Deprecated("Use File.appendText(String, Charset) instead.", ReplaceWith("this.appendText(text, charset(charset))"), level = DeprecationLevel.ERROR)
-public fun File.appendText(text: String, charset: String): Unit = appendBytes(text.toByteArray(charset(charset)))
-
-/**
  * Reads file by byte blocks and calls [action] for each block read.
  * Block has default size which is implementation-dependent.
  * This functions passes the byte array and amount of bytes in the array to the [action] function.
@@ -134,9 +104,6 @@ public fun File.appendText(text: String, charset: String): Unit = appendBytes(te
  */
 public fun File.forEachBlock(action: (ByteArray, Int) -> Unit): Unit = forEachBlock(defaultBlockSize, action)
 
-@Deprecated("Use forEachBlock with blockSize as a first parameter.", ReplaceWith("forEachBlock(blockSize, action)"), level = DeprecationLevel.ERROR)
-public fun File.forEachBlock(action: (ByteArray, Int) -> Unit, blockSize: Int): Unit
-    = forEachBlock(blockSize, action)
 /**
  * Reads file by byte blocks and calls [action] for each block read.
  * This functions passes the byte array and amount of bytes in the array to the [action] function.
@@ -177,28 +144,6 @@ public fun File.forEachLine(charset: Charset = Charsets.UTF_8, action: (line: St
     // Note: close is called at forEachLine
     BufferedReader(InputStreamReader(FileInputStream(this), charset)).forEachLine(action)
 }
-
-/**
- * Reads this file line by line using the specified [charset] and calls [operation] for each line.
- *
- * You may use this function on huge files.
- *
- * @param charset character set to use.
- * @param operation function to process file lines.
- */
-@Deprecated("Use File.forEachLine(Charset, operation) instead.", ReplaceWith("this.forEachLine(charset(charset), operation)"), level = DeprecationLevel.ERROR)
-public fun File.forEachLine(charset: String, operation: (line: String) -> Unit): Unit = forEachLine(Charset.forName(charset), operation)
-
-/**
- * Reads the file content as a list of lines, using the specified [charset].
- *
- * Do not use this function for huge files.
- *
- * @param charset character set to use.
- * @return list of file lines.
- */
-@Deprecated("Use File.readLines(Charset) instead.", ReplaceWith("this.readLines(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun File.readLines(charset: String): List<String> = readLines(Charset.forName(charset))
 
 /**
  * Constructs a new FileInputStream of this file and returns it as a result.

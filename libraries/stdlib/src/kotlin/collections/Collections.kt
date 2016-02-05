@@ -74,16 +74,6 @@ public inline fun <T> listOf(): List<T> = emptyList()
 @JvmVersion
 public fun <T> listOf(element: T): List<T> = Collections.singletonList(element)
 
-/** Returns a new [LinkedList] with the given elements. */
-@JvmVersion
-@Deprecated("Use LinkedList constructor.", ReplaceWith("LinkedList(listOf(*elements))", "java.util.LinkedList"), level = DeprecationLevel.ERROR)
-public fun <T> linkedListOf(vararg elements: T): LinkedList<T>
-        = if (elements.size == 0) LinkedList() else LinkedList(ArrayAsCollection(elements))
-
-@Deprecated("Use LinkedList constructor.", ReplaceWith("LinkedList<T>()", "java.util.LinkedList"), level = DeprecationLevel.ERROR)
-public fun <T> linkedListOf() = LinkedList<T>()
-
-
 /** Returns a new [MutableList] with the given elements. */
 public fun <T> mutableListOf(vararg elements: T): MutableList<T>
         = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements))

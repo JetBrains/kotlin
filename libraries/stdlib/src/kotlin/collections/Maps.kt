@@ -399,12 +399,6 @@ public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destina
         = destination.apply { putAll(this@toMap) }
 
 /**
- * Converts this [Map] to a [LinkedHashMap], maintaining the insertion order of elements added to that map afterwards.
- */
-@Deprecated("It may be too late to convert map this map to linked map, if you care about the order use the ordered map from the beginning.", ReplaceWith("LinkedHashMap(this)", "java.util.LinkedHashMap"), level = DeprecationLevel.ERROR)
-public fun <K, V> Map<K, V>.toLinkedMap(): MutableMap<K, V> = LinkedHashMap(this)
-
-/**
  * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair].
  */
 public operator fun <K, V> Map<K, V>.plus(pair: Pair<K, V>): Map<K, V>
@@ -473,64 +467,4 @@ public inline operator fun <K, V> MutableMap<in K, in V>.plusAssign(pairs: Seque
 @kotlin.internal.InlineOnly
 public inline operator fun <K, V> MutableMap<in K, in V>.plusAssign(map: Map<K, V>) {
     putAll(map)
-}
-
-/**
- * Creates a new read-only map by removing a [key] from this map.
- */
-@Deprecated("This operation is going to be removed. Copy this map to mutable map and then do result.keys -= key.", level = DeprecationLevel.ERROR)
-public operator fun <K, V> Map<K, V>.minus(key: K): Map<K, V>
-        = LinkedHashMap(this).apply { keys.remove(key) }
-
-/**
- * Creates a new read-only map by removing a collection of [keys] from this map.
- */
-@Deprecated("This operation is going to be removed. Copy this map to mutable map and then do result.keys -= keys.", level = DeprecationLevel.ERROR)
-public operator fun <K, V> Map<K, V>.minus(keys: Iterable<K>): Map<K, V>
-        = LinkedHashMap(this).apply { for (key in keys) remove(key) }
-
-/**
- * Creates a new read-only map by removing a array of [keys] from this map.
- */
-@Deprecated("This operation is going to be removed. Copy this map to mutable map and then do result.keys -= keys.", level = DeprecationLevel.ERROR)
-public operator fun <K, V> Map<K, V>.minus(keys: Array<K>): Map<K, V>
-        = LinkedHashMap(this).apply { for (key in keys) remove(key) }
-
-/**
- * Creates a new read-only map by removing a sequence of [keys] from this map.
- */
-@Deprecated("This operation is going to be removed. Copy this map to mutable map and then do result.keys -= keys.", level = DeprecationLevel.ERROR)
-public operator fun <K, V> Map<K, V>.minus(keys: Sequence<K>): Map<K, V>
-        = LinkedHashMap(this).apply { for (key in keys) remove(key) }
-
-/**
- * Removes the given [key] from this mutable map.
- */
-@Deprecated("This operation will be removed soon, use remove(key) instead.", ReplaceWith("this.keys -= key"), level = DeprecationLevel.ERROR)
-public operator fun <K, V> MutableMap<K, V>.minusAssign(key: K) {
-    remove(key)
-}
-
-/**
- * Removes all the given [keys] from this mutable map.
- */
-@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"), level = DeprecationLevel.ERROR)
-public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Iterable<K>) {
-    for (key in keys) remove(key)
-}
-
-/**
- * Removes all the given [keys] from this mutable map.
- */
-@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"), level = DeprecationLevel.ERROR)
-public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Array<K>) {
-    for (key in keys) remove(key)
-}
-
-/**
- * Removes all the given [keys] from this mutable map.
- */
-@Deprecated("This operation will be removed soon.", ReplaceWith("this.keys -= keys"), level = DeprecationLevel.ERROR)
-public operator fun <K, V> MutableMap<K, V>.minusAssign(keys: Sequence<K>) {
-    for (key in keys) remove(key)
 }

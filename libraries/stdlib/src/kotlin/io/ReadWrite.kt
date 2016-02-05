@@ -123,17 +123,6 @@ public fun Reader.copyTo(out: Writer, bufferSize: Int = DEFAULT_BUFFER_SIZE): Lo
 }
 
 /**
- * Reads the entire content of this URL as a String using the specified [charset].
- *
- * This method is not recommended on huge files.
- *
- * @param charset a character set to use.
- * @return a string with this URL entire content.
- */
-@Deprecated("Use URL.readText(Charset) instead.", ReplaceWith("this.readText(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun URL.readText(charset: String): String = readBytes().toString(charset(charset))
-
-/**
  * Reads the entire content of this URL as a String using UTF-8 or the specified [charset].
  *
  * This method is not recommended on huge files.
