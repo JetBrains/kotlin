@@ -42,7 +42,6 @@ class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
                         .filter { it.isDirectory && isJpsTestProject(it) }
                         .map { arrayOf(it.toRelativeString(jpsResourcesPath)) }
                         .toList()
-//                        .take(30)
 
         @Synchronized
         fun checkRecycleDaemon() {
