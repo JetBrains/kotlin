@@ -64,6 +64,9 @@ dependencies {
     compile  'org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT'
 }
             """)
+
+            File(projectDir, "gradle.properties").writeText("""
+org.gradle.jvmargs=-Xmx2048m -XX:MaxPermSize=512m""")
         }
     }
 
