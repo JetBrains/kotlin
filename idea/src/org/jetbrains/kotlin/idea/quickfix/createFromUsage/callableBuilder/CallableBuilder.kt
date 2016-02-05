@@ -436,7 +436,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 fun renderParamList(): String {
                     val prefix = if (classKind == ClassKind.ANNOTATION_CLASS) "val " else ""
                     val list = callableInfo.parameterInfos.indices.map { i -> "${prefix}p$i: Any" }.joinToString(", ")
-                    return if (callableInfo.parameterInfos.isNotEmpty() || callableInfo.kind == CallableKind.FUNCTION) "($list)" else list
+                    return if (callableInfo.parameterInfos.isNotEmpty()
+                               || callableInfo.kind == CallableKind.FUNCTION
+                               || callableInfo.kind == CallableKind.SECONDARY_CONSTRUCTOR) "($list)" else list
                 }
 
                 val paramList = when (callableInfo.kind) {

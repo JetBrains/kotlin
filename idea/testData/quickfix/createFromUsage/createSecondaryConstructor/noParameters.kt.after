@@ -1,0 +1,9 @@
+// "Create secondary constructor" "true"
+// ERROR: Primary constructor call expected
+class Creation(val f: Int) {
+    constructor() {
+        //To change body of created constructors use File | Settings | File Templates.
+    }
+}
+
+val v = Creation()
