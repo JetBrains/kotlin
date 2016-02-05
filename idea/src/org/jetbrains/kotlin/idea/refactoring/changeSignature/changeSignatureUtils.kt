@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.changeSignature.CallerUsageInfo
 import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.DeferredJavaMethodKotlinCallerUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JavaMethodKotlinUsageWithDelegate
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
@@ -27,10 +28,9 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCaller
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
     return when {
@@ -77,4 +77,19 @@ fun KotlinType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, default
     val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
     val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS else IdeDescriptorRenderers.SOURCE_CODE
     return renderer.renderType(newType)
+}
+
+// This method is used to create full copies of functions (including copies of all types)
+// It's needed to prevent accesses to PSI (e.g. using LazyJavaClassifierType properties) when Change signature invalidates it
+// See KotlinChangeSignatureTest.testSAMChangeMethodReturnType
+fun FunctionDescriptor.createDeepCopy() = substitute(TypeSubstitutor.create(ForceTypeCopySubstitution))
+
+private object ForceTypeCopySubstitution : TypeSubstitution() {
+    override fun get(key: KotlinType) =
+            with(key) {
+                KotlinTypeImpl.create(
+                        annotations, constructor, isMarkedNullable, arguments, substitution, memberScope, capabilities).asTypeProjection()
+            }
+
+    override fun isEmpty() = false
 }
