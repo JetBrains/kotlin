@@ -1,0 +1,5 @@
+var foo: Int
+    set(value: Int) {
+        val value1 = value
+
+    }

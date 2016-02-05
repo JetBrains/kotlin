@@ -1,0 +1,4 @@
+fun foo(n: Int): Int {
+    val n1 = n
+    return 1
+}

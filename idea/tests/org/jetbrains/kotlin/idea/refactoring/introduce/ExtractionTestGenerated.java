@@ -658,6 +658,45 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @TestMetadata("idea/testData/refactoring/introduceVariable/parameter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Parameter extends AbstractExtractionTest {
+            public void testAllFilesPresentInParameter() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceVariable/parameter"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            }
+
+            @TestMetadata("expressionBody.kt")
+            public void testExpressionBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/parameter/expressionBody.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("nonEmptyBody.kt")
+            public void testNonEmptyBody() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/parameter/nonEmptyBody.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("parameterName.kt")
+            public void testParameterName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/parameter/parameterName.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("parameterSelected.kt")
+            public void testParameterSelected() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/parameter/parameterSelected.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("propertySetter.kt")
+            public void testPropertySetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/parameter/propertySetter.kt");
+                doIntroduceVariableTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/refactoring/introduceVariable/script")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

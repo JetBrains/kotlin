@@ -1,0 +1,1 @@
+fun foo(<caret>n: Int) = 1
