@@ -399,18 +399,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             }
         }
 
-        fun outputRelativePath(f: File) = f.toRelativeString(outputDir)
-
-
         if (!experimentalIncremental) {
             anyClassesCompiled = true
             processCompilerExitCode(compileNotIncremental(sources, outputDir, args))
             return
         }
+
         logger.warn("Using experimental kotlin incremental compilation")
-
         anyClassesCompiled = false
-
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
         var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile()
 
