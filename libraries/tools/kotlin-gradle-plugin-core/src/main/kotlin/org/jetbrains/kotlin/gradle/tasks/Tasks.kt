@@ -401,18 +401,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             }
         }
 
-        fun outputRelativePath(f: File) = f.toRelativeString(outputDir)
-
-
         if (!experimentalIncremental) {
             anyClassesCompiled = true
             processCompilerExitCode(compileNotIncremental(sources, outputDir, args))
             return
         }
+
         logger.warn("Using experimental kotlin incremental compilation")
-
         anyClassesCompiled = false
-
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
         var (sourcesToCompile, isIncrementalDecided) = calculateSourcesToCompile()
 
@@ -424,20 +420,17 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         while (sourcesToCompile.any()) {
             logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString{ projectRelativePath(it) }}")
 
-            val (exitCode, generatedFiles) = compileChanged(
-                    targets = targets,
-                    sourcesToCompile = sourcesToCompile,
-                    outputDir = outputDir,
-                    args = args,
-                    getIncrementalCache = ::getIncrementalCache,
-                    lookupTracker = lookupTracker)
+            val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
+            if (nonExistingSource.any()) {
+                logger.warn("Kotlin incremental compilation tried to compile removed files: $nonExistingSource")
+            }
+
+            val (exitCode, generatedFiles) = compileChanged(targets, existingSource.toSet(), outputDir, args, ::getIncrementalCache, lookupTracker)
 
             allGeneratedFiles.addAll(generatedFiles)
-            val changes = updateIncrementalCaches(
-                    targets = targets,
-                    generatedFiles = generatedFiles,
-                    compiledWithErrors = exitCode != ExitCode.OK,
-                    getIncrementalCache = { caches[it]!! })
+            val changes = updateIncrementalCaches(targets, generatedFiles,
+                                                  compiledWithErrors = exitCode != ExitCode.OK,
+                                                  getIncrementalCache = { caches[it]!! })
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
             allCachesVersions().forEach { it.saveIfNeeded() }
