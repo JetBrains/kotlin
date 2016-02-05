@@ -43,14 +43,14 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
         if (declaration is KtEnumEntry) {
             val comma = KtPsiFactory(klass).createComma()
 
-            declaration.nextSiblingOfSameType()?.let { nextEntry ->
-                if (declaration.containsToken(KtTokens.COMMA)) return@let
+            val nextEntry = declaration.nextSiblingOfSameType()
+            if (nextEntry != null && !declaration.containsToken(KtTokens.COMMA)) {
                 classBody.addAfter(comma, declaration)
                 delta += comma.textLength
             }
 
-            declaration.prevSiblingOfSameType()?.let { prevEntry ->
-                if (prevEntry.containsToken(KtTokens.COMMA)) return@let
+            val prevEntry = declaration.prevSiblingOfSameType()
+            if (prevEntry != null && !prevEntry.containsToken(KtTokens.COMMA)) {
                 classBody.addAfter(comma, prevEntry)
                 delta += comma.textLength
             }
