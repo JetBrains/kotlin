@@ -949,4 +949,6 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         receiverParameterInfo = null
         newParameters[0].name = "a"
     }
+
+    fun testReceiverInSafeCall() = doTestConflict { receiverParameterInfo = null }
 }
