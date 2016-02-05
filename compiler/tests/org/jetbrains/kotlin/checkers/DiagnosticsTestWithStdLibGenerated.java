@@ -65,9 +65,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("elvisOnJavaList.kt")
+    public void testElvisOnJavaList() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/elvisOnJavaList.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("elvisOnUnitInLet.kt")
     public void testElvisOnUnitInLet() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/elvisOnUnitInLet.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ifElseJavaList.kt")
+    public void testIfElseJavaList() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/ifElseJavaList.kt");
         doTest(fileName);
     }
 
