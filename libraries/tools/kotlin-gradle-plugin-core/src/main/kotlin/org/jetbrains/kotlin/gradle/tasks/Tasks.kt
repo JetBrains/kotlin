@@ -467,57 +467,58 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     private data class CompileChangedResults(val exitCode: ExitCode, val generatedFiles: List<GeneratedFile<TargetId>>)
 
-    private fun compileChanged(targets: List<TargetId>,
-                               sourcesToCompile: List<File>,
-                               outputDir: File,
-                               args: K2JVMCompilerArguments,
-                               getIncrementalCache: (TargetId) -> GradleIncrementalCacheImpl,
-                               lookupTracker: LookupTracker)
-            : CompileChangedResults
-    {
-        // show kotlin compiler where to look for java source files
-        args.freeArgs = (sourcesToCompile.map { it.absolutePath } + getJavaSourceRoots().map { it.absolutePath }).distinct()
-        args.destination = outputDir.absolutePath
-
-        logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
-
+    private fun compileChanged(
+            targets: List<TargetId>,
+            sourcesToCompile: List<File>,
+            outputDir: File,
+            args: K2JVMCompilerArguments,
+            getIncrementalCache: (TargetId)->GradleIncrementalCacheImpl,
+            lookupTracker: LookupTracker
+    ): CompileChangedResults {
+        val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
+        args.module = moduleFile.absolutePath
         val outputItemCollector = OutputItemsCollectorImpl()
-
         val messageCollector = GradleMessageCollector(logger, outputItemCollector)
 
-        val incrementalCaches = makeIncrementalCachesMap(targets, { listOf<TargetId>() }, getIncrementalCache, { this })
+        try {
+            val incrementalCaches = makeIncrementalCachesMap(targets, { listOf<TargetId>() }, getIncrementalCache, { this })
+            val compilationCanceledStatus = object : CompilationCanceledStatus {
+                override fun checkCanceled() {
+                }
+            }
 
-        val compilationCanceledStatus = object : CompilationCanceledStatus {
-            override fun checkCanceled() {}
+            logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
+            val exitCode = compiler.exec(messageCollector, makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus), args)
+            return CompileChangedResults(
+                    exitCode,
+                    outputItemCollector.generatedFiles(
+                            targets = targets,
+                            representativeTarget = targets.first(),
+                            getSources = { sourcesToCompile },
+                            getOutputDir = { outputDir }))
         }
-
-        logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
-
-        val exitCode = compiler.exec(messageCollector, makeCompileServices(incrementalCaches, lookupTracker, compilationCanceledStatus), args)
-
-        return CompileChangedResults(
-                exitCode,
-                outputItemCollector.generatedFiles(
-                        targets = targets,
-                        representativeTarget = targets.first(),
-                        getSources = { sourcesToCompile },
-                        getOutputDir = { outputDir }))
+        finally {
+            moduleFile.delete()
+        }
     }
 
-    private fun compileNotIncremental(sourcesToCompile: List<File>,
-                                      outputDir: File,
-                                      args: K2JVMCompilerArguments)
-            : ExitCode
-    {
-        // show kotlin compiler where to look for java source files
-        args.freeArgs = (sourcesToCompile.map { it.absolutePath } + getJavaSourceRoots().map { it.absolutePath }).distinct()
-        args.destination = outputDir.absolutePath
+    private fun compileNotIncremental(
+            sourcesToCompile: List<File>,
+            outputDir: File,
+            args: K2JVMCompilerArguments
+    ): ExitCode {
+        val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
+        args.module = moduleFile.absolutePath
+        val messageCollector = GradleMessageCollector(logger)
 
-        logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
-
-        return compiler.exec(GradleMessageCollector(logger), Services.EMPTY, args)
+        try {
+            logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
+            return compiler.exec(messageCollector, Services.EMPTY, args)
+        }
+        finally {
+            moduleFile.delete()
+        }
     }
-
 
     private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
         val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")

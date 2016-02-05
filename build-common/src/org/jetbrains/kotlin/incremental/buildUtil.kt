@@ -46,6 +46,26 @@ fun Iterable<File>.javaSourceRoots(roots: Iterable<File>): Iterable<File> =
                 .map { findSrcDirRoot(it, roots) }
                 .filterNotNull()
 
+fun makeModuleFile(name: String, isTest: Boolean, outputDir: File, sourcesToCompile: List<File>, javaSourceRoots: Iterable<File>, classpath: Iterable<File>, friendDirs: Iterable<File>): File {
+    val builder = KotlinModuleXmlBuilder()
+    builder.addModule(
+            name,
+            outputDir.absolutePath,
+            sourcesToCompile,
+            javaSourceRoots.map { JvmSourceRoot(it) },
+            classpath,
+            "java-production",
+            isTest,
+            // this excludes the output directories from the class path, to be removed for true incremental compilation
+            setOf(outputDir),
+            friendDirs
+    )
+
+    val scriptFile = File.createTempFile("kjps", StringUtil.sanitizeJavaIdentifier(name) + ".script.xml")
+    FileUtil.writeToFile(scriptFile, builder.asText().toString())
+    return scriptFile
+}
+
 fun makeCompileServices(
         incrementalCaches: Map<TargetId, IncrementalCache>,
         lookupTracker: LookupTracker,
