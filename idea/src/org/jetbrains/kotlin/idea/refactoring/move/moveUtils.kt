@@ -71,8 +71,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-val UNKNOWN_PACKAGE_FQ_NAME = FqNameUnsafe("org.jetbrains.kotlin.idea.refactoring.move.<unknown-package>")
-
 sealed class ContainerInfo() {
     abstract val fqName: FqName?
     abstract fun matches(descriptor: DeclarationDescriptor): Boolean
