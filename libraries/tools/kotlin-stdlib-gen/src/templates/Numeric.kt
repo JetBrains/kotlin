@@ -13,10 +13,9 @@ fun numeric(): List<GenericFunction> {
         platformName("sumOf<T>")
         body {
             """
-            val iterator = iterator()
             var sum: SUM = ZERO
-            while (iterator.hasNext()) {
-                sum += iterator.next()
+            for (element in this) {
+                sum += element
             }
             return sum
             """
@@ -31,11 +30,10 @@ fun numeric(): List<GenericFunction> {
         platformName("averageOf<T>")
         body {
             """
-            val iterator = iterator()
             var sum: Double = 0.0
             var count: Int = 0
-            while (iterator.hasNext()) {
-                sum += iterator.next()
+            for (element in this) {
+                sum += element
                 count += 1
             }
             return if (count == 0) 0.0 else sum / count
