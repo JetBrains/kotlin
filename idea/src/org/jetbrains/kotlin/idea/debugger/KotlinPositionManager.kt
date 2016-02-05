@@ -53,6 +53,8 @@ import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Companion.getOrComputeClassNames
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.CachedClassNames
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.NonCachedClassNames
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
@@ -150,8 +152,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     private fun getLambdaOrFunIfInside(location: Location, file: KtFile, lineNumber: Int): KtFunction? {
-        val currentLocationFqName = location.declaringType().name()
-        if (currentLocationFqName == null) return null
+        val currentLocationFqName = location.declaringType().name() ?: return null
 
         val start = CodeInsightUtils.getStartLineOffset(file, lineNumber)
         val end = CodeInsightUtils.getEndLineOffset(file, lineNumber)
@@ -172,7 +173,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                 continue
             }
 
-            val internalClassNames = classNamesForPosition(literal.firstChild)
+            val internalClassNames = classNamesForPosition(literal.firstChild, true)
             if (internalClassNames.any { it == currentLocationClassName }) {
                 return literal
             }
@@ -229,7 +230,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
             if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return result
 
-            val names = classNamesForPosition(sourcePosition)
+            val names = classNamesForPosition(sourcePosition, true)
             for (name in names) {
                 result.addAll(myDebugProcess.virtualMachineProxy.classesByName(name))
             }
@@ -249,12 +250,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     fun originalClassNameForPosition(sourcePosition: SourcePosition): String? {
-        return classNamesForPosition(sourcePosition).firstOrNull()
+        return classNamesForPosition(sourcePosition, false).firstOrNull()
     }
 
-    private fun classNamesForPosition(sourcePosition: SourcePosition): List<String> {
+    private fun classNamesForPosition(sourcePosition: SourcePosition, withInlines: Boolean): List<String> {
         val element = runReadAction { sourcePosition.elementAt } ?: return emptyList()
-        val names = classNamesForPosition(element)
+        val names = classNamesForPosition(element, withInlines)
 
         val lambdas = findLambdas(sourcePosition)
         if (lambdas.isEmpty()) {
@@ -264,7 +265,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return names + lambdas
     }
 
-    private fun classNamesForPosition(element: PsiElement): List<String> {
+    private fun classNamesForPosition(element: PsiElement, withInlines: Boolean): List<String> {
         return runReadAction {
             if (DumbService.getInstance(element.project).isDumb) {
                 emptyList()
@@ -277,7 +278,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
                     val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
 
-                    getInternalClassNameForElement(element, typeMapper, file, isInLibrary)
+                    getInternalClassNameForElement(element, typeMapper, file, isInLibrary, withInlines)
                 }
             }
         }
@@ -285,7 +286,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
     private fun findLambdas(sourcePosition: SourcePosition): Collection<String> {
         val lambdas = runReadAction { getLambdasAtLineIfAny(sourcePosition) }
-        return lambdas.flatMap { classNamesForPosition(it) }
+        return lambdas.flatMap { classNamesForPosition(it, true) }
     }
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {
@@ -316,63 +317,64 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        return classNamesForPosition(position).mapNotNull {
-            className -> myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
+        return classNamesForPosition(position, true).mapNotNull {
+            className ->
+            myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
         }
     }
 
-    // The order is used in ExtraSteppingFilter: original className should be the first
     private fun getInternalClassNameForElement(
             element: KtElement,
             typeMapper: JetTypeMapper,
             file: KtFile,
-            isInLibrary: Boolean
-    ): List<String> {
+            isInLibrary: Boolean,
+            withInlines: Boolean
+    ): KotlinDebuggerCaches.ComputedClassNames {
         when (element) {
-            is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toList()
+            is KtClassOrObject -> return CachedClassNames(getClassNameForClass(element, typeMapper))
             is KtFunction -> {
                 val descriptor = InlineUtil.getInlineArgumentDescriptor(element, typeMapper.bindingContext)
                 if (descriptor != null) {
-                    val classNamesForParent = classNamesForPosition(element.parent)
+                    val classNamesForParent = classNamesForPosition(element.parent, withInlines)
                     if (descriptor.isCrossinline) {
-                        return classNamesForParent + findCrossInlineArguments(element, descriptor, typeMapper.bindingContext)
+                        return CachedClassNames(classNamesForParent + findCrossInlineArguments(element, descriptor, typeMapper.bindingContext))
                     }
-                    return classNamesForParent
+                    return CachedClassNames(classNamesForParent)
                 }
             }
         }
 
         val crossInlineParameterUsages = element.containsCrossInlineParameterUsages(typeMapper.bindingContext)
         if (crossInlineParameterUsages.isNotEmpty()) {
-            return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext).toList()
+            return CachedClassNames(classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext).toList())
         }
 
         when {
             element is KtFunctionLiteral -> {
                 val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                return asmType.internalName.toList()
+                return CachedClassNames(asmType.internalName)
             }
             element is KtAnonymousInitializer -> {
                 val parent = getElementToCalculateClassName(element.parent)
                 // Class-object initializer
                 if (parent is KtObjectDeclaration && parent.isCompanion()) {
-                    return classNamesForPosition(parent.parent)
+                    return CachedClassNames(classNamesForPosition(parent.parent, withInlines))
                 }
-                return classNamesForPosition(element.parent)
+                return CachedClassNames(classNamesForPosition(element.parent, withInlines))
             }
             element is KtPropertyAccessor && (!element.property.isTopLevel || !isInLibrary)-> {
                 val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
                 if (classOrObject != null) {
-                    return getJvmInternalNameForImpl(typeMapper, classOrObject).toList()
+                    return CachedClassNames(getClassNameForClass(classOrObject, typeMapper))
                 }
             }
             element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
                 val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
                 if (descriptor !is PropertyDescriptor) {
-                    return classNamesForPosition(element.parent)
+                    return CachedClassNames(classNamesForPosition(element.parent, withInlines))
                 }
 
-                return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toList()
+                return CachedClassNames(getJvmInternalNameForPropertyOwner(typeMapper, descriptor))
             }
             element is KtNamedFunction -> {
                 val parent = getElementToCalculateClassName(element.parent)
@@ -387,20 +389,27 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     NoResolveFileClassesProvider.getFileClassInternalName(file)
                 }
 
+                if (!withInlines) return NonCachedClassNames(parentInternalName)
+
                 val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
-                return parentInternalName.toList() + inlinedCalls
+                if (parentInternalName == null) return CachedClassNames(inlinedCalls)
+
+                return CachedClassNames(listOf(parentInternalName) + inlinedCalls)
+
             }
         }
 
-        return NoResolveFileClassesProvider.getFileClassInternalName(file).toList()
+        return CachedClassNames(NoResolveFileClassesProvider.getFileClassInternalName(file))
     }
+
+    private fun getClassNameForClass(klass: KtClassOrObject, typeMapper: JetTypeMapper) = getJvmInternalNameForImpl(typeMapper, klass)
 
     private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out KtElement>> =
             arrayOf(KtClassOrObject::class.java,
                     KtFunctionLiteral::class.java,
                     KtNamedFunction::class.java,
-                    KtProperty::class.java,
                     KtPropertyAccessor::class.java,
+                    KtProperty::class.java,
                     KtAnonymousInitializer::class.java)
 
     private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
@@ -425,24 +434,26 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return typeMapper.mapClass(classDescriptor).internalName
     }
 
-    private fun findInlinedCalls(function: KtNamedFunction, context: BindingContext): Set<String> {
-        return runReadAction {
-            val result = hashSetOf<String>()
+    private fun findInlinedCalls(function: KtNamedFunction, context: BindingContext): List<String> {
+        if (!InlineUtil.isInline(context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function))) {
+            return emptyList()
+        }
+        else {
+            return runReadAction {
+                val result = hashSetOf<String>()
 
-            if (InlineUtil.isInline(context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function))) {
-                ReferencesSearch.search(function).forEach {
+                ReferencesSearch.search(function, myDebugProcess.searchScope).forEach {
                     if (!it.isImportUsage()) {
                         val usage = it.element
                         if (usage is KtElement) {
                             //TODO recursive search
-                            val names = classNamesForPosition(usage)
+                            val names = classNamesForPosition(usage, true)
                             result.addAll(names)
                         }
                     }
-                    true
                 }
+                result.toList()
             }
-            result
         }
     }
 
@@ -492,7 +503,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val result = hashSetOf<String>()
         val inlineFunction = parameter.containingDeclaration.source.getPsi() as? KtNamedFunction ?: return emptySet()
 
-        ReferencesSearch.search(inlineFunction).forEach {
+        ReferencesSearch.search(inlineFunction, myDebugProcess.searchScope).forEach {
             if (!it.isImportUsage()) {
                 val call = (it.element as? KtExpression)?.let { KtPsiUtil.getParentCallIfPresent(it) }
                 if (call != null) {
@@ -506,7 +517,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     }
                 }
             }
-            true
         }
 
         return result
@@ -525,6 +535,4 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     }
 
     private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
-
-    private fun String?.toList() = if (this == null) emptyList() else listOf(this)
 }

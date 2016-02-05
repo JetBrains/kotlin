@@ -94,7 +94,7 @@ class KotlinDebuggerCaches(private val project: Project) {
             }
         }
 
-        fun <T: PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> List<String>): List<String> {
+        fun <T: PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> ComputedClassNames): List<String> {
             val cache = getInstance(psiElement.project)
             synchronized(cache.cachedClassNames) {
                 val classNamesCache = cache.cachedClassNames.value
@@ -102,10 +102,12 @@ class KotlinDebuggerCaches(private val project: Project) {
                 val cachedValue = classNamesCache[psiElement]
                 if (cachedValue != null) return cachedValue
 
-                val newValue = create(psiElement)
+                val computedClassNames = create(psiElement)
 
-                classNamesCache[psiElement] = newValue
-                return newValue
+                if (computedClassNames.shouldBeCached) {
+                    classNamesCache[psiElement] = computedClassNames.classNames
+                }
+                return computedClassNames.classNames
             }
         }
 
@@ -205,4 +207,16 @@ class KotlinDebuggerCaches(private val project: Project) {
     }
 
     data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null)
+
+    sealed class ComputedClassNames(val classNames: List<String>, val shouldBeCached: Boolean) {
+        class CachedClassNames(classNames: List<String>): ComputedClassNames(classNames, true) {
+            constructor(className: String?): this(className.toList())
+        }
+
+        class NonCachedClassNames(classNames: List<String>): ComputedClassNames(classNames, false) {
+            constructor(className: String?): this(className.toList())
+        }
+    }
 }
+
+private fun String?.toList() = if (this == null) emptyList() else listOf(this)
