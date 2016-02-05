@@ -432,44 +432,21 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     lookupTracker = lookupTracker)
 
             allGeneratedFiles.addAll(generatedFiles)
-            // save versions?
-
             val changes = updateIncrementalCaches(
                     targets = targets,
                     generatedFiles = generatedFiles,
                     compiledWithErrors = exitCode != ExitCode.OK,
                     getIncrementalCache = { caches[it]!! })
 
-//            lookupTracker.lookups.entrySet().forEach {
-//                logger.kotlinDebug("lookups to ${it.key.name}:${it.key.scope} from ${it.value.joinToString { projectRelativePath(it) }}")
-//            }
-
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
-
             allCachesVersions().forEach { it.saveIfNeeded() }
-
             processCompilerExitCode(exitCode)
 
             if (!isIncrementalDecided) break;
 
-//            logger.kotlinDebug("generated ${generatedFiles.joinToString { outputRelativePath(it.outputFile) }}")
-//            logger.kotlinDebug("changes: ${changes.changes.joinToString { "${it.fqName}: ${it.javaClass.simpleName}" }}")
-//
-//            logger.kotlinLazyDebug({
-//                "known lookups:\n${lookupStorage.dump(changes.changes.flatMap {
-//                    change ->
-//                        if (change is ChangeInfo.MembersChanged)
-//                            change.names.asSequence().map { LookupSymbol(it, change.fqName.asString()) }
-//                        else
-//                            sequenceOf<LookupSymbol>()
-//                }.toSet(), project.projectDir)}" })
-
             compiledSourcesSet.addAll(sourcesToCompile)
 
             val dirtyLookups = changes.dirtyLookups<TargetId>(caches.values.asSequence())
-
-//            logger.kotlinDebug("dirty lookups: ${dirtyLookups.joinToString { "${it.name}:${it.scope}" }}")
-
             val dirty = dirtyLookups.files(
                     filesFilter = { it !in compiledSourcesSet },
                     logAction = { lookup, files ->
@@ -479,8 +456,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
             }
-//            logger.kotlinDebug("dirty: ${dirty.joinToString { projectRelativePath(it) }}")
-//            logger.kotlinDebug("to compile: ${sourcesToCompile.joinToString { projectRelativePath(it) }}")
         }
         lookupStorage.flush(false)
         lookupStorage.close()
