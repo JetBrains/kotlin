@@ -27,24 +27,43 @@ internal class internalUndocumentedClass() {}
 
 
 
-private class Properties {
+private open class Properties {
 
-    public val <warning descr="Missing Documentation">publicUndocumentedProperty</warning>: Int = 0
-    val <warning descr="Missing Documentation">defaultUndocumentedProperty</warning>: Int = 0
-
-    /** Some documentation */
-    public val publicDocumentedProperty: Int = 0
+    public open val <warning descr="Missing Documentation">publicUndocumentedProperty</warning>: Int = 0
+    open val <warning descr="Missing Documentation">defaultUndocumentedProperty</warning>: Int = 0
 
     /** Some documentation */
-    val defaultDocumentedProperty: Int = 0
+    public open val publicDocumentedProperty: Int = 0
+
+    /** Some documentation */
+    open val defaultDocumentedProperty: Int = 0
 
     private val privateUndocumentedProperty: Int = 0
-    internal val internalUndocumentedProperty: Int = 0
+    internal open val internalUndocumentedProperty: Int = 0
 
 
-    protected val protectedUndocumentedProperty: Int = 0
+    protected open val protectedUndocumentedProperty: Int = 0
     protected class protectedUndocumentedClass {}
     protected fun protectedUndocumentedFun() {}
+
+    /** Some documentation */
+    protected open val protectedDocumentedProperty: Int = 0
+}
+
+private open class ChildClass : Properties() {
+    override val <warning descr="Missing Documentation">publicUndocumentedProperty</warning>: Int = 4
+    override val <warning descr="Missing Documentation">defaultUndocumentedProperty</warning>: Int = 4
+    override val publicDocumentedProperty: Int = 4
+    override val defaultDocumentedProperty: Int = 4
+
+    /** Some documentation */
+    override public val internalUndocumentedProperty: Int = 4
+    override public val <warning descr="Missing Documentation">protectedUndocumentedProperty</warning>: Int = 4
+    override public val protectedDocumentedProperty: Int = 4
+}
+
+private class GrandChildClass : ChildClass() {
+    override public val internalUndocumentedProperty: Int = 6
 }
 
 // NO_CHECK_INFOS
