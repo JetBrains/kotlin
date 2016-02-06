@@ -119,7 +119,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         generateSyntheticParts();
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generateKotlinAnnotation();
+            generateKotlinMetadataAnnotation();
         }
 
         done();
@@ -132,7 +132,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     protected void generateSyntheticParts() {
     }
 
-    protected abstract void generateKotlinAnnotation();
+    protected abstract void generateKotlinMetadataAnnotation();
 
     @Nullable
     protected ClassDescriptor classForInnerClassRecord() {

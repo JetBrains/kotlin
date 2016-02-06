@@ -40,11 +40,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private static final Map<ClassId, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<ClassId, KotlinClassHeader.Kind>();
 
     static {
-        HEADER_KINDS.put(ClassId.topLevel(KOTLIN_CLASS), CLASS);
-        HEADER_KINDS.put(ClassId.topLevel(KOTLIN_FILE_FACADE), FILE_FACADE);
-        HEADER_KINDS.put(ClassId.topLevel(KOTLIN_MULTIFILE_CLASS), MULTIFILE_CLASS);
-        HEADER_KINDS.put(ClassId.topLevel(KOTLIN_MULTIFILE_CLASS_PART), MULTIFILE_CLASS_PART);
-        HEADER_KINDS.put(ClassId.topLevel(KOTLIN_SYNTHETIC_CLASS), SYNTHETIC_CLASS);
+        // TODO: delete this at some point
+        HEADER_KINDS.put(ClassId.topLevel(new FqName("kotlin.jvm.internal.KotlinClass")), CLASS);
+        HEADER_KINDS.put(ClassId.topLevel(new FqName("kotlin.jvm.internal.KotlinFileFacade")), FILE_FACADE);
+        HEADER_KINDS.put(ClassId.topLevel(new FqName("kotlin.jvm.internal.KotlinMultifileClass")), MULTIFILE_CLASS);
+        HEADER_KINDS.put(ClassId.topLevel(new FqName("kotlin.jvm.internal.KotlinMultifileClassPart")), MULTIFILE_CLASS_PART);
+        HEADER_KINDS.put(ClassId.topLevel(new FqName("kotlin.jvm.internal.KotlinSyntheticClass")), SYNTHETIC_CLASS);
     }
 
     private JvmMetadataVersion metadataVersion = null;
@@ -89,7 +90,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source) {
         FqName fqName = classId.asSingleFqName();
-        if (fqName.equals(METADATA)) {
+        if (fqName.equals(METADATA_FQ_NAME)) {
             return new KotlinMetadataArgumentVisitor();
         }
 
@@ -103,7 +104,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         KotlinClassHeader.Kind newKind = HEADER_KINDS.get(classId);
         if (newKind != null) {
             headerKind = newKind;
-            return new HeaderAnnotationArgumentVisitor();
+            return new OldDeprecatedAnnotationArgumentVisitor();
         }
 
         return null;
@@ -191,13 +192,13 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
     }
 
-    private class HeaderAnnotationArgumentVisitor implements AnnotationArgumentVisitor {
+    private class OldDeprecatedAnnotationArgumentVisitor implements AnnotationArgumentVisitor {
         @Override
         public void visit(@Nullable Name name, @Nullable Object value) {
             if (name == null) return;
 
             String string = name.asString();
-            if (VERSION_FIELD_NAME.equals(string)) {
+            if ("version".equals(string)) {
                 if (value instanceof int[]) {
                     metadataVersion = new JvmMetadataVersion((int[]) value);
 
@@ -207,7 +208,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     }
                 }
             }
-            else if (MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
+            else if ("multifileClassName".equals(string)) {
                 multifileClassName = value instanceof String ? (String) value : null;
             }
         }
@@ -216,10 +217,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
             String string = name.asString();
-            if (DATA_FIELD_NAME.equals(string) || FILE_PART_CLASS_NAMES_FIELD_NAME.equals(string)) {
+            if ("data".equals(string) || "filePartClassNames".equals(string)) {
                 return dataArrayVisitor();
             }
-            else if (STRINGS_FIELD_NAME.equals(string)) {
+            else if ("strings".equals(string)) {
                 return stringsArrayVisitor();
             }
             else {

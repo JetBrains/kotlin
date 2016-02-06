@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.*
 import java.util.*
-import kotlin.jvm.internal.KotlinFileFacade
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KTypeImpl
@@ -104,20 +103,18 @@ val Field.kotlinProperty: KProperty<*>?
 
 private fun Member.getKPackage(): KDeclarationContainer? {
     // TODO: support multifile classes
-    return if (declaringClass.getAnnotation(KotlinFileFacade::class.java) != null) {
-        val header = ReflectKotlinClass.create(declaringClass)?.classHeader
-        if (header != null && header.kind == KotlinClassHeader.Kind.FILE_FACADE && header.metadataVersion.isCompatible()) {
-            // TODO: avoid reading and parsing metadata twice (here and later in KPackageImpl#descriptor)
-            val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(header.data!!, header.strings!!)
-            val moduleName =
-                    if (proto.hasExtension(JvmProtoBuf.packageModuleName))
-                        nameResolver.getString(proto.getExtension(JvmProtoBuf.packageModuleName))
-                    else JvmAbi.DEFAULT_MODULE_NAME
-            Reflection.getOrCreateKotlinPackage(declaringClass, moduleName)
-        }
-        else null
+    val header = ReflectKotlinClass.create(declaringClass)?.classHeader
+    if (header != null && header.kind == KotlinClassHeader.Kind.FILE_FACADE && header.metadataVersion.isCompatible()) {
+        // TODO: avoid reading and parsing metadata twice (here and later in KPackageImpl#descriptor)
+        val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(header.data!!, header.strings!!)
+        val moduleName =
+                if (proto.hasExtension(JvmProtoBuf.packageModuleName))
+                    nameResolver.getString(proto.getExtension(JvmProtoBuf.packageModuleName))
+                else JvmAbi.DEFAULT_MODULE_NAME
+        return Reflection.getOrCreateKotlinPackage(declaringClass, moduleName)
     }
-    else null
+
+    return null
 }
 
 /**

@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -274,31 +273,20 @@ class MultifileClassCodegen(
         if (state.classBuilderMode != ClassBuilderMode.FULL) return
         if (files.any { it.isScript }) return
 
-        val partInternalNames = partFqNames.map(AsmUtil::internalNameByFqNameWithoutInnerClasses).sorted()
-
-        fun writePartNames(av: AnnotationVisitor, fieldName: String) {
-            val arv = av.visitArray(fieldName)
-            for (internalName in partInternalNames) {
+        writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS) { av ->
+            val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
+            for (internalName in partFqNames.map(AsmUtil::internalNameByFqNameWithoutInnerClasses).sorted()) {
                 arv.visit(null, internalName)
             }
             arv.visitEnd()
         }
-
-        writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS) { av ->
-            writePartNames(av, JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
-        }
-
-        val av = classBuilder.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS), true)
-        JvmCodegenUtil.writeAbiVersion(av)
-        writePartNames(av, JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)
-        av.visitEnd()
     }
 
     private fun createCodegenForPartOfMultifileFacade(facadeContext: FieldOwnerContext<*>): MemberCodegen<KtFile> =
             object : MemberCodegen<KtFile>(state, null, facadeContext, null, classBuilder) {
                 override fun generateDeclaration() = throw UnsupportedOperationException()
                 override fun generateBody() = throw UnsupportedOperationException()
-                override fun generateKotlinAnnotation() = throw UnsupportedOperationException()
+                override fun generateKotlinMetadataAnnotation() = throw UnsupportedOperationException()
             }
 
     fun done() {

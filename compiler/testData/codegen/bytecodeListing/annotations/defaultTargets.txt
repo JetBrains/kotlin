@@ -1,5 +1,4 @@
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public final class A {
     private final @AnnField @AnnParameterField @AnnTypeField field a: int
     private final @AnnField @AnnTypeField field x: int
@@ -14,53 +13,45 @@ public final class A {
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnField
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnFieldProperty
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnParameterField
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnParameterProperty
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnProperty
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnTypeField
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class Anno
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFileFacade
 public final class DefaultTargetsKt {
     private final static @Anno field p2: int
     static method <clinit>(): void

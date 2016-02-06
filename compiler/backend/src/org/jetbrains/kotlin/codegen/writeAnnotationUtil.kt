@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 
 fun writeKotlinMetadata(cb: ClassBuilder, kind: KotlinClassHeader.Kind, action: (AnnotationVisitor) -> Unit) {
-    val av = cb.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.METADATA), true)
+    val av = cb.newAnnotation(JvmAnnotationNames.METADATA_DESC, true)
     av.visit(JvmAnnotationNames.METADATA_VERSION_FIELD_NAME, JvmMetadataVersion.INSTANCE.toArray())
     av.visit(JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME, JvmBytecodeBinaryVersion.INSTANCE.toArray())
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)

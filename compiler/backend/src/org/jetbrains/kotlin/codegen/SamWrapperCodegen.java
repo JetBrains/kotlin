@@ -39,7 +39,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
+import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -93,8 +94,6 @@ public class SamWrapperCodegen {
                        new String[]{ typeMapper.mapType(samType.getType()).getInternalName() }
         );
         cv.visitSource(file.getName(), null);
-
-        writeKotlinSyntheticClassAnnotation(cv, state);
 
         WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv);
 
