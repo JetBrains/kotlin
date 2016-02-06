@@ -1,5 +1,9 @@
-// ERROR: Using 'String(ByteArray, String): String' is an error. Use String(bytes, Charset) instead.
-// ERROR: Using 'String(ByteArray, Int, Int, String): String' is an error. Use String(bytes, offset, length, Charset) instead.
+// ERROR: Too many arguments for public constructor String() defined in kotlin.String
+// ERROR: Too many arguments for public constructor String() defined in kotlin.String
+// ERROR: Too many arguments for public constructor String() defined in kotlin.String
+// ERROR: Too many arguments for public constructor String() defined in kotlin.String
+// ERROR: Too many arguments for public constructor String() defined in kotlin.String
+// ERROR: Too many arguments for public constructor String() defined in kotlin.String
 import java.nio.charset.Charset
 import java.util.*
 
