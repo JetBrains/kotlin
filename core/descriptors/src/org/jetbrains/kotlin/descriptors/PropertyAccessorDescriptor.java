@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public interface PropertyAccessorDescriptor extends FunctionDescriptor {
+public interface PropertyAccessorDescriptor extends VariableAccessorDescriptor {
     boolean isDefault();
 
     @NotNull

@@ -202,7 +202,7 @@ private fun bindFunctionReference(expression: KtCallableReferenceExpression, typ
 
 private fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
     val localVariable = LocalVariableDescriptor(context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"),
-                                                referenceType, /* mutable = */ false, expression.toSourceElement())
+                                                referenceType, /* mutable = */ false, false, expression.toSourceElement())
 
     context.trace.record(BindingContext.VARIABLE, expression, localVariable)
 }

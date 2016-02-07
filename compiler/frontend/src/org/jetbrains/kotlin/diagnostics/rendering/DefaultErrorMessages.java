@@ -214,7 +214,7 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_DELEGATED_PROPERTY, "Delegated property cannot be abstract");
         MAP.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations");
         MAP.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces");
-        MAP.put(LOCAL_VARIABLE_WITH_DELEGATE, "Local variables are not allowed to have delegates");
+        MAP.put(SCRIPT_TOP_LEVEL_LOCAL_VARIABLE_WITH_DELEGATE, "Top-level local variables in scripts are not allowed to have delegates");
 
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", STRING);
 

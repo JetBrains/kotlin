@@ -24,16 +24,33 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-public class LocalVariableDescriptor extends VariableDescriptorWithInitializerImpl {
+public class LocalVariableDescriptor extends VariableDescriptorWithInitializerImpl implements VariableDescriptorWithAccessors {
+    private final boolean withAccessors;
+    private VariableAccessorDescriptor getter;
+    private VariableAccessorDescriptor setter;
+
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name,
             @Nullable KotlinType type,
             boolean mutable,
+            boolean withAccessors,
             @NotNull SourceElement source
     ) {
         super(containingDeclaration, annotations, name, type, mutable, source);
+        this.withAccessors = withAccessors;
+    }
+
+    @Override
+    public void setOutType(KotlinType outType) {
+        super.setOutType(outType);
+        if (withAccessors) {
+            this.getter = new LocalVariableAccessorDescriptor.Getter(this);
+            if (isVar()) {
+                this.setter = new LocalVariableAccessorDescriptor.Setter(this);
+            }
+        }
     }
 
     @NotNull
@@ -52,5 +69,17 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
     @Override
     public Visibility getVisibility() {
         return Visibilities.LOCAL;
+    }
+
+    @Nullable
+    @Override
+    public VariableAccessorDescriptor getGetter() {
+        return getter;
+    }
+
+    @Nullable
+    @Override
+    public VariableAccessorDescriptor getSetter() {
+        return setter;
     }
 }
