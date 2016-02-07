@@ -60,7 +60,7 @@ public class ExpressionTypingComponents {
     /*package*/ DeclarationsCheckerBuilder declarationsCheckerBuilder;
     /*package*/ LocalVariableResolver localVariableResolver;
     /*package*/ LookupTracker lookupTracker;
-
+    /*package*/ DelegatedPropertyResolver delegatedPropertyResolver;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -200,5 +200,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setLookupTracker(@NotNull LookupTracker lookupTracker) {
         this.lookupTracker = lookupTracker;
+    }
+
+    @Inject
+    public void setDelegatedPropertyResolver(DelegatedPropertyResolver delegatedPropertyResolver) {
+        this.delegatedPropertyResolver = delegatedPropertyResolver;
     }
 }
