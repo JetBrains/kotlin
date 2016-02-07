@@ -20,10 +20,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.utils.Printer;
 
 public final class ScopeUtils {
@@ -69,10 +66,10 @@ public final class ScopeUtils {
     @NotNull
     public static LexicalScope makeScopeForDelegateConventionFunctions(
             @NotNull LexicalScope parent,
-            @NotNull PropertyDescriptor propertyDescriptor
+            @NotNull VariableDescriptorWithAccessors variableDescriptor
     ) {
         // todo: very strange scope!
-        return new LexicalScopeImpl(parent, propertyDescriptor, true, propertyDescriptor.getExtensionReceiverParameter(),
+        return new LexicalScopeImpl(parent, variableDescriptor, true, variableDescriptor.getExtensionReceiverParameter(),
                                     LexicalScopeKind.PROPERTY_DELEGATE_METHOD
         );
     }

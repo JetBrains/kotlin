@@ -476,6 +476,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("localDelegatedVal.kt")
+                public void testLocalDelegatedVal() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/localDelegatedVal.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localFunction.kt")
                 public void testLocalFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/declarations/local/localFunction.kt");

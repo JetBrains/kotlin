@@ -1055,6 +1055,9 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 // We do not want to have getDeferredValue(delegate) here, because delegate value will be read anyway later
                 visitAssignment(property, getDeferredValue(null), property)
                 generateInstructions(delegate)
+                if (property.isLocal) {
+                    generateInitializer(property, createSyntheticValue(property, MagicKind.FAKE_INITIALIZER));
+                }
                 if (builder.getBoundValue(delegate) != null) {
                     createSyntheticValue(property, MagicKind.VALUE_CONSUMER, delegate)
                 }

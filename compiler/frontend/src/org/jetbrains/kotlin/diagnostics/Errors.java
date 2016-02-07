@@ -385,7 +385,7 @@ public interface Errors {
     DiagnosticFactory0<KtPropertyDelegate> ABSTRACT_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtPropertyAccessor> ACCESSOR_FOR_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtPropertyDelegate> DELEGATED_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtPropertyDelegate> LOCAL_VARIABLE_WITH_DELEGATE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtPropertyDelegate> SCRIPT_TOP_LEVEL_LOCAL_VARIABLE_WITH_DELEGATE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
