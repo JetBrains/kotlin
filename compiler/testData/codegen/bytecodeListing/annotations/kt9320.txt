@@ -1,26 +1,21 @@
 @java.lang.annotation.Retention
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class Ann
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public abstract class AnnExpr
 
 @Ann
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public final class Kt9320Kt$foo$v$1 {
     inner class Kt9320Kt$foo$v$1
     method <init>(): void
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFunction
 final class Kt9320Kt$foo$w$1 {
     public final static field INSTANCE: Kt9320Kt$foo$w$1
     inner class Kt9320Kt$foo$w$1
@@ -31,7 +26,6 @@ final class Kt9320Kt$foo$w$1 {
 }
 
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinFileFacade
 public final class Kt9320Kt {
     inner class Kt9320Kt$foo$v$1
     inner class Kt9320Kt$foo$w$1
@@ -40,7 +34,6 @@ public final class Kt9320Kt {
 
 @Ann
 @kotlin.Metadata
-@kotlin.jvm.internal.KotlinClass
 public class My {
     public method <init>(): void
 }
