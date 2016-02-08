@@ -1,5 +1,6 @@
 package numbers
 
+import java.math.BigDecimal
 import org.junit.Test as test
 import kotlin.test.*
 
@@ -37,5 +38,16 @@ class NumbersJVMTest {
         assertEquals(java.lang.Float.MAX_VALUE, Float.MAX_VALUE)
         assertEquals(java.lang.Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
         assertEquals(java.lang.Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY)
+    }
+
+    @test fun bigDecimalDivRounding() {
+        val (d1, d2, d3, d4, d5) = (1..5).map { BigDecimal(it.toString()) }
+        val d7 = BigDecimal("7")
+
+        assertEquals(d1, d2 / d3)
+        assertEquals(d2, d3 / d2)
+        assertEquals(d2, d5 / d2)
+        assertEquals(d4, d7 / d2)
+        assertEquals(d1, d7 / d5)
     }
 }
