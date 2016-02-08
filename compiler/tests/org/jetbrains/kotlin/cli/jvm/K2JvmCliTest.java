@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm;
 
 import org.jetbrains.kotlin.cli.CliBaseTest;
-import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.File;
 
 public class K2JvmCliTest extends CliBaseTest {
     @Test
@@ -36,8 +33,6 @@ public class K2JvmCliTest extends CliBaseTest {
     @Test
     public void nonExistingClassPathAndAnnotationsPath() throws Exception {
         executeCompilerCompareOutputJVM();
-
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), "SimpleKt.class").isFile());
     }
 
     @Test

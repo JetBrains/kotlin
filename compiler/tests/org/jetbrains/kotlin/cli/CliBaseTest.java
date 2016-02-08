@@ -30,10 +30,13 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
+import org.jetbrains.kotlin.utils.StringsKt;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
@@ -41,6 +44,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CliBaseTest {
@@ -93,12 +97,47 @@ public class CliBaseTest {
 
     private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
         System.setProperty("java.awt.headless", "true");
+        String testMethodName = testName.getMethodName();
         Pair<String, ExitCode> outputAndExitCode =
-                executeCompilerGrabOutput(compiler, readArgs(testDataDir + "/" + testName.getMethodName() + ".args", testDataDir,
+                executeCompilerGrabOutput(compiler, readArgs(testDataDir + "/" + testMethodName + ".args", testDataDir,
                                                              tmpdir.getTmpDir().getPath()));
         String actual = getNormalizedCompilerOutput(outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), testDataDir);
 
-        KotlinTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testName.getMethodName() + ".out"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testMethodName + ".out"), actual);
+
+        File additionalTestConfig = new File(testDataDir + "/" + testMethodName + ".test");
+        if (additionalTestConfig.exists()) {
+            doTestAdditionalChecks(additionalTestConfig);
+        }
+    }
+
+    private void doTestAdditionalChecks(@NotNull File testConfigFile) throws IOException {
+        List<String> diagnostics = new ArrayList<String>(0);
+        String content = FilesKt.readText(testConfigFile, Charsets.UTF_8);
+
+        List<String> existsList = InTextDirectivesUtils.findListWithPrefixes(content, "// EXISTS: ");
+        for (String fileName : existsList) {
+            File file = new File(tmpdir.getTmpDir(), fileName);
+            if (!file.exists()) {
+                diagnostics.add("File does not exist, but should: " + fileName);
+            }
+            else if (!file.isFile()) {
+                diagnostics.add("File is a directory, but should be a normal file: " + fileName);
+            }
+        }
+
+        List<String> absentList = InTextDirectivesUtils.findListWithPrefixes(content, "// ABSENT: ");
+        for (String fileName : absentList) {
+            File file = new File(tmpdir.getTmpDir(), fileName);
+            if (file.exists() && file.isFile()) {
+                diagnostics.add("File exists, but shouldn't: " + fileName);
+            }
+        }
+
+        if (!diagnostics.isEmpty()) {
+            diagnostics.add(0, diagnostics.size() + " problem(s) found:");
+            Assert.fail(StringsKt.join(diagnostics, "\n"));
+        }
     }
 
     @NotNull

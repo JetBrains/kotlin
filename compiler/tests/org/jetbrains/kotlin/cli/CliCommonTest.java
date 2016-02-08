@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.cli;
 
-import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.File;
 
 public class CliCommonTest extends CliBaseTest {
     @Test
@@ -35,15 +32,11 @@ public class CliCommonTest extends CliBaseTest {
     @Test
     public void simple() throws Exception {
         executeCompilerCompareOutputJVM();
-
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), "SimpleKt.class").isFile());
     }
 
     @Test
     public void duplicateSources() throws Exception {
         executeCompilerCompareOutputJVM();
-
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), "SimpleKt.class").isFile());
     }
 
     @Test
