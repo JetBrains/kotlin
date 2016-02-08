@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
@@ -168,13 +169,13 @@ class KotlinFunctionCallUsage(
     ): KtExpression {
         if (referenceMap.isEmpty() || resolvedCall == null) return expression
 
-        val newExpression = expression.copy() as KtExpression
+        var newExpression = expression.copy() as KtExpression
 
         val nameCounterpartMap = createNameCounterpartMap(expression, newExpression)
 
         val valueArguments = resolvedCall.valueArguments
 
-        val replacements = ArrayList<Pair<KtElement, KtElement>>()
+        val replacements = ArrayList<Pair<KtExpression, KtExpression>>()
         loop@ for ((ref, descriptor) in referenceMap.entries) {
             var argumentExpression: KtExpression?
             val addReceiver: Boolean
@@ -235,7 +236,10 @@ class KotlinFunctionCallUsage(
         // Sort by descending offset so that call arguments are replaced before call itself
         ContainerUtil.sort(replacements, REVERSED_TEXT_OFFSET_COMPARATOR)
         for ((expressionToReplace, replacingExpression) in replacements) {
-            expressionToReplace.replace(replacingExpression)
+            val replaced = expressionToReplace.replaced(replacingExpression)
+            if (expressionToReplace == newExpression) {
+                newExpression = replaced
+            }
         }
 
         return newExpression

@@ -3457,6 +3457,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
+        @TestMetadata("simpleNameWithDefaultValueSubstitution.kt")
+        public void testSimpleNameWithDefaultValueSubstitution() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/simpleNameWithDefaultValueSubstitution.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
         @TestMetadata("substituteBinaryExpressions.kt")
         public void testSubstituteBinaryExpressions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/substituteBinaryExpressions.kt");
