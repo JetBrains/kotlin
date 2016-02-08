@@ -237,7 +237,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         var currentRemoved = removed
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
-        val compiledSourcesSet = hashSetOf<File>()
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
 
         fun getOrCreateIncrementalCache(target: TargetId): GradleIncrementalCacheImpl {
@@ -426,9 +425,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             if (!isIncrementalDecided) break;
 
-            compiledSourcesSet.addAll(sourcesToCompile)
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(caches.values, logAction)
-            sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, excludes = compiledSourcesSet)
+            sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, excludes = sourcesToCompile)
 
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
