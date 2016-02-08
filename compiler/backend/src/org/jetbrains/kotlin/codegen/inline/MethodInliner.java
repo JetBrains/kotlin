@@ -431,13 +431,12 @@ public class MethodInliner {
         Set<AbstractInsnNode> toDelete = SmartSet.create();
         InsnList instructions = node.instructions;
         AbstractInsnNode cur = instructions.getFirst();
-        int index = 0;
 
         boolean awaitClassReification = false;
         int currentFinallyDeep = 0;
 
         while (cur != null) {
-            Frame<SourceValue> frame = sources[index];
+            Frame<SourceValue> frame = sources[instructions.indexOf(cur)];
 
             if (frame != null) {
                 if (ReifiedTypeInliner.isNeedClassReificationMarker(cur)) {
@@ -460,17 +459,11 @@ public class MethodInliner {
                     if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
                         SourceValue sourceValue = frame.getStack(firstParameterIndex);
 
-                        LambdaInfo lambdaInfo = null;
-                        int varIndex = -1;
+                        LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
+                                this, MethodInlinerUtilKt.singleOrNullInsn(sourceValue), true, instructions, sources, toDelete
+                        );
 
-                        AbstractInsnNode insnNode = MethodInlinerUtilKt.singleOrNullInsn(sourceValue);
-                        if (insnNode != null) {
-                            lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
-                                    this, insnNode, frame, true, instructions, sources, toDelete
-                            );
-                        }
-
-                        invokeCalls.add(new InvokeCall(varIndex, lambdaInfo, currentFinallyDeep));
+                        invokeCalls.add(new InvokeCall(lambdaInfo, currentFinallyDeep));
                     }
                     else if (isAnonymousConstructorCall(owner, name)) {
                         Map<Integer, LambdaInfo> lambdaMapping = new HashMap<Integer, LambdaInfo>();
@@ -478,15 +471,13 @@ public class MethodInliner {
                         int offset = 0;
                         for (int i = 0; i < paramCount; i++) {
                             SourceValue sourceValue = frame.getStack(firstParameterIndex + i);
-                            AbstractInsnNode insnNode = MethodInlinerUtilKt.singleOrNullInsn(sourceValue);
-                            if (insnNode != null) {
-                                LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
-                                        this, insnNode, frame, false, instructions, sources, toDelete
-                                );
-                                if (lambdaInfo != null) {
-                                    lambdaMapping.put(offset, lambdaInfo);
-                                }
+                            LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
+                                    this, MethodInlinerUtilKt.singleOrNullInsn(sourceValue), false, instructions, sources, toDelete
+                            );
+                            if (lambdaInfo != null) {
+                                lambdaMapping.put(offset, lambdaInfo);
                             }
+
                             offset += i == 0 ? 1 : argTypes[i - 1].getSize();
                         }
 
@@ -513,7 +504,6 @@ public class MethodInliner {
             }
             AbstractInsnNode prevNode = cur;
             cur = cur.getNext();
-            index++;
 
             //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
             if (frame == null) {

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
@@ -26,46 +27,46 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
 
 fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
-        insnNode: AbstractInsnNode,
-        localFrame: Frame<SourceValue>,
+        insnNode: AbstractInsnNode?,
         processSwap: Boolean,
         insnList: InsnList,
         frames: Array<Frame<SourceValue>?>,
         toDelete: MutableSet<AbstractInsnNode>
 ): LambdaInfo? {
+    if (insnNode == null) return null
 
-    val processingInsnNode = if (processSwap && insnNode.opcode == Opcodes.SWAP) InlineCodegenUtil.getPrevMeaningful(insnNode) else insnNode
+    getLambdaIfExists(insnNode)?.let {
+        //delete lambda aload instruction
+        toDelete.add(insnNode)
+        return it
+    }
 
-    var lambdaInfo = getLambdaIfExists(processingInsnNode)
-
-    if (lambdaInfo == null && processingInsnNode is VarInsnNode && processingInsnNode.opcode == Opcodes.ALOAD) {
-        val varIndex = processingInsnNode.`var`
-        val local = localFrame.getLocal(varIndex)
-        val storeIns = local.singleOrNullInsn()
+    if (insnNode is VarInsnNode && insnNode.opcode == Opcodes.ALOAD) {
+        val varIndex = insnNode.`var`
+        val localFrame = frames[insnList.indexOf(insnNode)] ?: return null
+        val storeIns = localFrame.getLocal(varIndex).singleOrNullInsn()
         if (storeIns is VarInsnNode && storeIns.getOpcode() == Opcodes.ASTORE) {
-            val frame = frames[insnList.indexOf(storeIns)]
-            if (frame != null) {
-                val topOfStack = frame.getStack(frame.stackSize - 1)
-                val lambdaAload = topOfStack.singleOrNullInsn()
-                if (lambdaAload != null) {
-                    lambdaInfo = getLambdaIfExistsAndMarkInstructions(lambdaAload, frame, processSwap, insnList, frames, toDelete)
-                    if (lambdaInfo != null) {
-                        toDelete.add(storeIns)
-                        toDelete.add(lambdaAload)
-                    }
-                }
+            val frame = frames[insnList.indexOf(storeIns)] ?: return null
+            val topOfStack = frame.top()!!.singleOrNullInsn()
+            getLambdaIfExistsAndMarkInstructions(topOfStack, processSwap, insnList, frames, toDelete)?.let {
+                //remove intermediate lambda astore, aload instruction: see 'complexStack/simple.1.kt' test
+                toDelete.add(storeIns)
+                toDelete.add(insnNode)
+                return it
             }
         }
     }
-
-    if (lambdaInfo != null) {
-        InsnSequence(processingInsnNode!!, insnNode).forEach { toDelete.add(it) }
-        toDelete.add(insnNode)
+    else if (processSwap && insnNode.opcode == Opcodes.SWAP) {
+        val swapFrame = frames[insnList.indexOf(insnNode)] ?: return null
+        val dispatchReceiver = swapFrame.top()!!.singleOrNullInsn()
+        getLambdaIfExistsAndMarkInstructions(dispatchReceiver, false, insnList, frames, toDelete).let {
+            //remove swap instruction (dispatch receiver would be deleted on recursion call): see 'complexStack/simpleExtension.1.kt' test
+            toDelete.add(insnNode)
+            return it
+        }
     }
 
-    return lambdaInfo
+    return null
 }
 
-fun SourceValue.singleOrNullInsn(): AbstractInsnNode? {
-    return insns.singleOrNull()
-}
+fun SourceValue.singleOrNullInsn() = insns.singleOrNull()

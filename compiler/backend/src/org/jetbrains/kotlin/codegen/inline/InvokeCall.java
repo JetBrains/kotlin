@@ -19,12 +19,10 @@ package org.jetbrains.kotlin.codegen.inline;
 import org.jetbrains.annotations.Nullable;
 
 class InvokeCall {
-    private final int index;
     public final LambdaInfo lambdaInfo;
     public final int finallyDepthShift;
 
-    InvokeCall(int index, @Nullable LambdaInfo lambdaInfo, int finallyDepthShift) {
-        this.index = index;
+    InvokeCall(@Nullable LambdaInfo lambdaInfo, int finallyDepthShift) {
         this.lambdaInfo = lambdaInfo;
         this.finallyDepthShift = finallyDepthShift;
     }
