@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.OverridingStrategy;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 
@@ -48,7 +49,7 @@ public final class DescriptorResolverUtils {
 
         OverridingUtil.generateOverridesInFunctionGroup(
                 name, membersFromSupertypes, membersFromCurrent, classDescriptor,
-                new OverridingUtil.DescriptorSink() {
+                new OverridingStrategy() {
                     @Override
                     @SuppressWarnings("unchecked")
                     public void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride) {

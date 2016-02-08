@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
@@ -274,24 +274,24 @@ public class OverridingUtil {
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromSupertypes,
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromCurrent,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         Collection<CallableMemberDescriptor> notOverridden = new LinkedHashSet<CallableMemberDescriptor>(membersFromSupertypes);
 
         for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
             Collection<CallableMemberDescriptor> bound =
-                    extractAndBindOverridesForMember(fromCurrent, membersFromSupertypes, current, sink);
+                    extractAndBindOverridesForMember(fromCurrent, membersFromSupertypes, current, strategy);
             notOverridden.removeAll(bound);
         }
 
-        createAndBindFakeOverrides(current, notOverridden, sink);
+        createAndBindFakeOverrides(current, notOverridden, strategy);
     }
 
     private static Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
             @NotNull CallableMemberDescriptor fromCurrent,
             @NotNull Collection<? extends CallableMemberDescriptor> descriptorsFromSuper,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
         Collection<CallableMemberDescriptor> overridden = SmartSet.create();
@@ -308,7 +308,7 @@ public class OverridingUtil {
                     break;
                 case CONFLICT:
                     if (isVisible) {
-                        sink.conflict(fromSupertype, fromCurrent);
+                        strategy.conflict(fromSupertype, fromCurrent);
                     }
                     bound.add(fromSupertype);
                     break;
@@ -337,13 +337,13 @@ public class OverridingUtil {
     private static void createAndBindFakeOverrides(
             @NotNull ClassDescriptor current,
             @NotNull Collection<CallableMemberDescriptor> notOverridden,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         // Optimization: If all notOverridden descriptors have the same containing declaration,
         // then we can just create fake overrides for them, because they should be matched correctly in their containing declaration
         if (allHasSameContainingDeclaration(notOverridden)) {
             for (CallableMemberDescriptor descriptor : notOverridden) {
-                createAndBindFakeOverride(Collections.singleton(descriptor), current, sink);
+                createAndBindFakeOverride(Collections.singleton(descriptor), current, strategy);
             }
             return;
         }
@@ -352,8 +352,8 @@ public class OverridingUtil {
         while (!fromSuperQueue.isEmpty()) {
             CallableMemberDescriptor notOverriddenFromSuper = VisibilityUtilKt.findMemberWithMaxVisibility(fromSuperQueue);
             Collection<CallableMemberDescriptor> overridables =
-                    extractMembersOverridableInBothWays(notOverriddenFromSuper, fromSuperQueue, sink);
-            createAndBindFakeOverride(overridables, current, sink);
+                    extractMembersOverridableInBothWays(notOverriddenFromSuper, fromSuperQueue, strategy);
+            createAndBindFakeOverride(overridables, current, strategy);
         }
     }
 
@@ -476,7 +476,7 @@ public class OverridingUtil {
     private static void createAndBindFakeOverride(
             @NotNull Collection<CallableMemberDescriptor> overridables,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         Collection<CallableMemberDescriptor> visibleOverridables = filterVisibleFakeOverrides(current, overridables);
         boolean allInvisible = visibleOverridables.isEmpty();
@@ -502,7 +502,7 @@ public class OverridingUtil {
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
         fakeOverride.setOverriddenDescriptors(effectiveOverridden);
-        sink.addFakeOverride(fakeOverride);
+        strategy.addFakeOverride(fakeOverride);
     }
 
     @NotNull
@@ -584,7 +584,7 @@ public class OverridingUtil {
     private static Collection<CallableMemberDescriptor> extractMembersOverridableInBothWays(
             @NotNull final CallableMemberDescriptor overrider,
             @NotNull Queue<CallableMemberDescriptor> extractFrom,
-            @NotNull final DescriptorSink sink
+            @NotNull final OverridingStrategy strategy
     ) {
         return extractMembersOverridableInBothWays(overrider, extractFrom,
                 // ID
@@ -597,7 +597,7 @@ public class OverridingUtil {
                 new Function1<CallableMemberDescriptor, Unit>() {
                     @Override
                     public Unit invoke(CallableMemberDescriptor descriptor) {
-                        sink.conflict(overrider, descriptor);
+                        strategy.conflict(overrider, descriptor);
                         return Unit.INSTANCE;
                     }
                 });
@@ -696,12 +696,6 @@ public class OverridingUtil {
             }
         }
         return maxVisibility;
-    }
-
-    public interface DescriptorSink {
-        void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride);
-
-        void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
     }
 
     public static class OverrideCompatibilityInfo {
