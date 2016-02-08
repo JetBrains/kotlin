@@ -3372,6 +3372,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifElseIntersection.kt")
+            public void testIfElseIntersection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifElseIntersection.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ifInResultOfLambda.kt")
             public void testIfInResultOfLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifInResultOfLambda.kt");
