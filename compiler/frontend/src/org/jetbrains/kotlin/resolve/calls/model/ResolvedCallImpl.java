@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
@@ -213,9 +210,11 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             valueArguments.put(substitutedVersion, entry.getValue());
         }
 
-        Map<ValueArgument, ArgumentMatchImpl> originalArgumentToParameterMap = Maps.newLinkedHashMap(argumentToParameterMap);
+        Collection<Map.Entry<ValueArgument, ArgumentMatchImpl>> unsubstitutedArgumentMappings =
+                new SmartList<Map.Entry<ValueArgument, ArgumentMatchImpl>>(argumentToParameterMap.entrySet());
+
         argumentToParameterMap.clear();
-        for (Map.Entry<ValueArgument, ArgumentMatchImpl> entry : originalArgumentToParameterMap.entrySet()) {
+        for (Map.Entry<ValueArgument, ArgumentMatchImpl> entry : unsubstitutedArgumentMappings) {
             ArgumentMatchImpl argumentMatch = entry.getValue();
             ValueParameterDescriptor valueParameterDescriptor = argumentMatch.getValueParameter();
             ValueParameterDescriptor substitutedVersion = substitutedParametersMap.get(valueParameterDescriptor.getOriginal());
