@@ -40,6 +40,7 @@ import com.intellij.util.indexing.ScalarIndexExtension
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
+import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
@@ -73,14 +74,16 @@ fun updateLibraries(
         val kJsConfigurator = getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator? ?:
                               error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
 
+        val collector = createConfigureKotlinNotificationCollector(project)
+
         for (library in libraries) {
             if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
                 updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
                 updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
                 updateJar(project, JavaRuntimePresentationProvider.getTestJar(library), LibraryJarDescriptor.TEST_JAR)
 
-                if (kJvmConfigurator.changeOldSourcesPathIfNeeded(project, library)) {
-                    kJvmConfigurator.copySourcesToPathFromLibrary(project, library)
+                if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
+                    kJvmConfigurator.copySourcesToPathFromLibrary(library, collector)
                 }
                 else {
                     updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
@@ -89,14 +92,16 @@ fun updateLibraries(
             else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
                 updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
 
-                if (kJsConfigurator.changeOldSourcesPathIfNeeded(project, library)) {
-                    kJsConfigurator.copySourcesToPathFromLibrary(project, library)
+                if (kJsConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
+                    kJsConfigurator.copySourcesToPathFromLibrary(library, collector)
                 }
                 else {
                     updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
                 }
             }
         }
+
+        collector.showNotification()
     }
 }
 
@@ -123,10 +128,7 @@ private fun updateJar(
         return
     }
 
-    val localJar = getLocalJar(fileToReplace)
-    assert(localJar != null)
-
-    replaceFile(jarPath, localJar!!)
+    replaceFile(jarPath, getLocalJar(fileToReplace)!!)
 }
 
 fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {

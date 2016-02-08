@@ -117,16 +117,18 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         dialog.show();
         if (!dialog.isOK()) return;
 
+        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
         for (Module module : dialog.getModulesToConfigure()) {
             PsiFile file = findModulePomFile(module);
             if (file != null && canConfigureFile(file)) {
-                changePomFile(module, file, dialog.getKotlinVersion());
+                changePomFile(module, file, dialog.getKotlinVersion(), collector);
                 OpenFileAction.openFile(file.getVirtualFile(), project);
             }
             else {
                 showErrorMessage(project, "Cannot find pom.xml for module " + module.getName());
             }
         }
+        collector.showNotification();
     }
 
     protected abstract boolean isKotlinModule(@NotNull Module module);
@@ -143,7 +145,12 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         return isTest ? TEST_COMPILE_EXECUTION_ID : COMPILE_EXECUTION_ID;
     }
 
-    protected void changePomFile(@NotNull final Module module, final @NotNull PsiFile file, @NotNull final String version) {
+    protected void changePomFile(
+            @NotNull final Module module,
+            final @NotNull PsiFile file,
+            @NotNull final String version,
+            @NotNull NotificationMessageCollector collector
+    ) {
         final VirtualFile virtualFile = file.getVirtualFile();
         assert virtualFile != null : "Virtual file should exists for psi file " + file.getName();
         final MavenDomProjectModel domModel = MavenDomUtil.getMavenDomProjectModel(module.getProject(), virtualFile);
@@ -168,7 +175,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             }
         }.execute();
 
-        ConfigureKotlinInProjectUtilsKt.showInfoNotification(module.getProject(), virtualFile.getPath() + " was modified");
+        collector.addMessage(virtualFile.getPath() + " was modified");
     }
 
     protected void createExecution(

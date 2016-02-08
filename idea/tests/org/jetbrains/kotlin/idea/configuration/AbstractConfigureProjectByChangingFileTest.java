@@ -52,12 +52,14 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
         String versionFromFile = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "// VERSION:");
         String version = versionFromFile != null ? versionFromFile : DEFAULT_VERSION;
 
+        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(getProject());
         if (configurator instanceof KotlinWithGradleConfigurator) {
-            ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), version);
+            ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), version, collector);
         }
         else if (configurator instanceof KotlinMavenConfigurator) {
-            ((KotlinMavenConfigurator) configurator).changePomFile(getModule(), getFile(), version);
+            ((KotlinMavenConfigurator) configurator).changePomFile(getModule(), getFile(), version, collector);
         }
+        collector.showNotification();
 
         KotlinTestUtils.assertEqualsToFile(new File(afterFile), getFile().getText().replace(version, "$VERSION$"));
     }

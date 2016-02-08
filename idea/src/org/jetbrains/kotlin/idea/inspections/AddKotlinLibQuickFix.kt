@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
-import org.jetbrains.kotlin.idea.configuration.showInfoNotification
+import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -156,6 +156,8 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
         val configurator = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
                                    .firstIsInstanceOrNull<KotlinJavaModuleConfigurator>() ?: return
 
+        val collector = createConfigureKotlinNotificationCollector(project)
+
         for (library in findAllUsedLibraries(project).keySet()) {
             val runtimeJar = JavaRuntimePresentationProvider.getRuntimeJar(library) ?: continue
             if (hasLibJarInLibrary(library)) continue
@@ -169,15 +171,14 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(libIoFile), OrderRootType.CLASSES)
             }
             else {
-                val copied = configurator.copyFileToDir(project, libFile, libFilesDir)!!
+                val copied = configurator.copyFileToDir(libFile, libFilesDir, collector)!!
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(copied), OrderRootType.CLASSES)
             }
 
             model.commit()
-
-            showInfoNotification(
-                    project, "${libraryPath()} was added to the library ${library.name}")
         }
+
+        collector.showNotification()
     }
 
     companion object {

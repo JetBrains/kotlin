@@ -215,10 +215,13 @@ public class ConfigureKotlinTest extends PlatformTestCase {
             @NotNull String jarFromDist,
             @NotNull String jarFromTemp
     ) {
+        Project project = modules.iterator().next().getProject();
+        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
         for (Module module : modules) {
             String pathToJar = getPathToJar(runtimeState, jarFromDist, jarFromTemp);
-            configurator.configureModuleWithLibraryClasses(module, libraryState, runtimeState, pathToJar);
+            configurator.configureModuleWithLibraryClasses(module, libraryState, runtimeState, pathToJar, collector);
         }
+        collector.showNotification();
     }
 
     @NotNull
@@ -288,7 +291,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
     }
 
     @Override
-    protected Project doCreateProject(File projectFile) throws Exception {
+    protected Project doCreateProject(@NotNull File projectFile) throws Exception {
         return myProjectManager.loadProject(projectFile.getPath());
     }
 
