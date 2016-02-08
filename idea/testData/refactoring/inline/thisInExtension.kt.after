@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun Int.foo(a: Int, b: Int): Int {
+    return with(a + b) { this@foo * 2 + this }
+}

@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
-import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
-import org.jetbrains.kotlin.idea.refactoring.move.lazilyProcessInternalReferencesToUpdateOnPackageNameChange
-import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
+import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -178,13 +175,24 @@ class KotlinInlineValHandler : InlineActionHandler() {
             }
         }
 
-        fun performRefactoring() {
+        val conflicts = MultiMap<PsiElement, String>()
+
+        if (foreignUsages.isNotEmpty()) {
+            conflicts.putValue(null, "Property '$name' has non-Kotlin usages. They won't be processed by the Inline refactoring.")
+            foreignUsages.forEach { conflicts.putValue(it, it.text) }
+        }
+
+        val outerInstanceReferences =
+                collectOuterInstanceReferences(initializer)
+                .filterNot { it.reportConflictIfAny(conflicts, false) }
+
+        project.checkConflictsInteractively(conflicts) {
             if (!showDialog(project, name, declaration, referenceExpressions)) {
                 if (isHighlighting) {
                     val statusBar = WindowManager.getInstance().getStatusBar(project)
                     statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
                 }
-                return
+                return@checkConflictsInteractively
             }
 
             project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
@@ -230,17 +238,6 @@ class KotlinInlineValHandler : InlineActionHandler() {
                 }
                 performDelayedShortening(project)
             }
-        }
-
-        if (foreignUsages.isNotEmpty()) {
-            val conflicts = MultiMap<PsiElement, String>().apply {
-                putValue(null, "Property '$name' has non-Kotlin usages. They won't be processed by the Inline refactoring.")
-                foreignUsages.forEach { putValue(it, it.text) }
-            }
-            project.checkConflictsInteractively(conflicts) { performRefactoring() }
-        }
-        else {
-            performRefactoring()
         }
     }
 

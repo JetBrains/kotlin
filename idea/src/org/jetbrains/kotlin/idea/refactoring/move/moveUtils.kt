@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -451,12 +450,13 @@ sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, val isIndirect
 }
 
 @JvmOverloads
-fun traverseOuterInstanceReferences(member: KtNamedDeclaration, stopAtFirst: Boolean, body: (OuterInstanceReferenceUsageInfo) -> Unit = {}): Boolean {
+fun traverseOuterInstanceReferences(element: KtElement, stopAtFirst: Boolean, body: (OuterInstanceReferenceUsageInfo) -> Unit = {}): Boolean {
+    val member = element.getNonStrictParentOfType<KtNamedDeclaration>() ?: return false
     if (member is KtObjectDeclaration || member is KtClass && !member.isInner()) return false
 
     val context = member.analyzeFully()
-    val containingClassOrObject = member.containingClassOrObject ?: return false
-    val outerClassDescriptor = containingClassOrObject.resolveToDescriptor() as ClassDescriptor
+    val memberDescriptor = member.resolveToDescriptor()
+    val containingDescriptor = memberDescriptor.containingDeclaration ?: return false
     var found = false
     member.accept(
             object : PsiRecursiveElementWalkingVisitor() {
@@ -465,8 +465,8 @@ fun traverseOuterInstanceReferences(member: KtNamedDeclaration, stopAtFirst: Boo
                         is KtThisExpression -> {
                             val descriptor = context[BindingContext.REFERENCE_TARGET, element.instanceReference]
                             val isIndirect = when {
-                                descriptor == outerClassDescriptor -> false
-                                DescriptorUtils.isAncestor(descriptor, outerClassDescriptor, true) -> true
+                                descriptor == containingDescriptor -> false
+                                DescriptorUtils.isAncestor(descriptor, containingDescriptor, true) -> true
                                 else -> return null
                             }
                             OuterInstanceReferenceUsageInfo.ExplicitThis(element, isIndirect)
@@ -476,15 +476,15 @@ fun traverseOuterInstanceReferences(member: KtNamedDeclaration, stopAtFirst: Boo
                             val dispatchReceiver = resolvedCall.dispatchReceiver as? ImplicitReceiver
                             val extensionReceiver = resolvedCall.extensionReceiver as? ImplicitReceiver
                             var isIndirect = false
-                            val isDoubleReceiver = when {
-                                dispatchReceiver?.declarationDescriptor == outerClassDescriptor -> extensionReceiver != null
-                                extensionReceiver?.declarationDescriptor == outerClassDescriptor -> dispatchReceiver != null
+                            val isDoubleReceiver = when (containingDescriptor) {
+                                dispatchReceiver?.declarationDescriptor -> extensionReceiver != null
+                                extensionReceiver?.declarationDescriptor -> dispatchReceiver != null
                                 else -> {
                                     isIndirect = true
                                     when {
-                                        DescriptorUtils.isAncestor(dispatchReceiver?.declarationDescriptor, outerClassDescriptor, true) ->
+                                        DescriptorUtils.isAncestor(dispatchReceiver?.declarationDescriptor, containingDescriptor, true) ->
                                             extensionReceiver != null
-                                        DescriptorUtils.isAncestor(extensionReceiver?.declarationDescriptor, outerClassDescriptor, true) ->
+                                        DescriptorUtils.isAncestor(extensionReceiver?.declarationDescriptor, containingDescriptor, true) ->
                                             dispatchReceiver != null
                                         else -> return null
                                     }
@@ -510,14 +510,17 @@ fun traverseOuterInstanceReferences(member: KtNamedDeclaration, stopAtFirst: Boo
     return found
 }
 
-fun collectOuterInstanceReferences(member: KtNamedDeclaration): List<OuterInstanceReferenceUsageInfo> {
-    return SmartList<OuterInstanceReferenceUsageInfo>().apply { traverseOuterInstanceReferences(member, false) { add(it) } }
+fun collectOuterInstanceReferences(element: KtElement): List<OuterInstanceReferenceUsageInfo> {
+    return SmartList<OuterInstanceReferenceUsageInfo>().apply { traverseOuterInstanceReferences(element, false) { add(it) } }
 }
 
-fun OuterInstanceReferenceUsageInfo.reportConflictIfAny(conflicts: MultiMap<PsiElement, String>): Boolean {
+fun OuterInstanceReferenceUsageInfo.reportConflictIfAny(
+        conflicts: MultiMap<PsiElement, String>,
+        reportIndirectReferences: Boolean = true
+): Boolean {
     val element = element ?: return false
 
-    if (isIndirectOuter) {
+    if (isIndirectOuter && reportIndirectReferences) {
         conflicts.putValue(element, "Indirect outer instances won't be extracted: ${element.text}")
         return true
     }
