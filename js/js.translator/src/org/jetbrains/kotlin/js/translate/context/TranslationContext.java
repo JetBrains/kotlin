@@ -349,7 +349,7 @@ public class TranslationContext {
                 return alias;
             }
         }
-        if (cls == classDescriptor || parent == null) {
+        if (DescriptorUtils.isSubclass(classDescriptor, cls) || parent == null) {
             return JsLiteral.THIS;
         }
         ClassDescriptor parentDescriptor = parent.classDescriptor;

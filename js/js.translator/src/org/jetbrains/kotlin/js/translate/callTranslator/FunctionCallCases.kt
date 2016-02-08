@@ -28,12 +28,15 @@ import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.ArrayList
 
@@ -227,8 +230,21 @@ object ConstructorCallCase : FunctionCallCase() {
         val receiver = this.resolvedCall.dispatchReceiver
         var allArguments = when (receiver) {
             is ExpressionReceiver -> {
-                val jsReceiver = Translation.translateAsExpression(receiver.expression, context)
-                (sequenceOf(jsReceiver) + argumentsInfo.translateArguments).toList()
+                val expr = receiver.expression
+                when (expr) {
+                    is KtSuperExpression -> {
+                        val superDescriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, expr.instanceReference)
+                        val jsReceiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(superDescriptor))
+                        (sequenceOf(jsReceiver) + argumentsInfo.translateArguments).toList()
+                    }
+                    else -> {
+                        val jsReceiver = Translation.translateAsExpression(receiver.expression, context)
+                        (sequenceOf(jsReceiver) + argumentsInfo.translateArguments).toList()
+                    }
+                }
+            }
+            is ThisClassReceiver -> {
+                (sequenceOf(JsLiteral.THIS) + argumentsInfo.translateArguments).toList()
             }
             else -> argumentsInfo.translateArguments
         }
