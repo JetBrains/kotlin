@@ -114,7 +114,7 @@ interface ModuleInfo {
         get() = false
     val name: Name
     fun dependencies(): List<ModuleInfo>
-    fun modulesWhichInternalsAreVisible(): Collection<ModuleInfo> = listOf()
+    fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = emptyMap()
@@ -193,7 +193,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             modules.forEach {
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
-                module.modulesWhichInternalsAreVisible().forEach {
+                module.modulesWhoseInternalsAreVisible().forEach {
                     resolverForProject.descriptorForModule(it as M).addFriend(descriptor)
                 }
             }
