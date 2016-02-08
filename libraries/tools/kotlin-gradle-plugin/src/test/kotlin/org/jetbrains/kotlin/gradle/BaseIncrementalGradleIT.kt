@@ -25,45 +25,7 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
                     .filter { it.isFile && (it.name.endsWith(".kt") || it.name.endsWith(".java")) }
                     .forEach { Files.copy(it, File(srcDir, it.name)) }
             copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
-            File(projectDir, "build.gradle").writeText("""
-buildscript {
-  repositories {
-    maven {
-        url 'file://' + pathToKotlinPlugin
-    }
-  }
-  dependencies {
-    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
-  }
-}
-
-apply plugin: "kotlin"
-
-sourceSets {
-  main {
-     kotlin {
-        srcDir 'src'
-     }
-     java {
-        srcDir 'src'
-     }
-  }
-}
-
-compileKotlin {
-  experimentalIncremental = true
-}
-
-repositories {
-  maven {
-     url 'file://' + pathToKotlinPlugin
-  }
-}
-
-dependencies {
-    compile  'org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT'
-}
-            """)
+            copyDirRecursively(File(resourcesRootFile, "incrementalGradleProject"), projectDir)
         }
     }
 
