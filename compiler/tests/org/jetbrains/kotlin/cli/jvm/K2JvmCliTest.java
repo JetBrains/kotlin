@@ -17,111 +17,89 @@
 package org.jetbrains.kotlin.cli.jvm;
 
 import org.jetbrains.kotlin.cli.CliBaseTest;
-import org.junit.Test;
 
 public class K2JvmCliTest extends CliBaseTest {
-    @Test
-    public void wrongAbiVersion() throws Exception {
+    public void testWrongAbiVersion() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void wrongAbiVersionNoErrors() throws Exception {
+    public void testWrongAbiVersionNoErrors() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void nonExistingClassPathAndAnnotationsPath() throws Exception {
+    public void testNonExistingClassPathAndAnnotationsPath() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void nonExistingSourcePath() throws Exception {
+    public void testNonExistingSourcePath() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void emptySources() throws Exception {
+    public void testEmptySources() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void classpath() throws Exception {
+    public void testClasspath() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void signatureClash() throws Exception {
+    public void testSignatureClash() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void conflictingOverloads() throws Exception {
+    public void testConflictingOverloads() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void warningsInDummy() throws Exception {
+    public void testWarningsInDummy() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void help() throws Exception {
+    public void testHelp() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void wrongArgument() throws Exception {
+    public void testWrongArgument() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void simple() throws Exception {
+    public void testSimple() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void duplicateSources() throws Exception {
+    public void testDuplicateSources() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void duplicateSourcesInModule() throws Exception {
+    public void testDuplicateSourcesInModule() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void nonexistentPathInModule() throws Exception {
+    public void testNonexistentPathInModule() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void nonexistentScript() throws Exception {
+    public void testNonexistentScript() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void diagnosticsOrder() throws Exception {
+    public void testDiagnosticsOrder() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void multipleTextRangesInDiagnosticsOrder() throws Exception {
+    public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void suppressAllWarningsJvm() throws Exception {
+    public void testSuppressAllWarningsJvm() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void pluginSimple() throws Exception {
+    public void testPluginSimple() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 
-    @Test
-    public void pluginSimpleUsage() throws Exception {
+    public void testPluginSimpleUsage() throws Exception {
         executeCompilerCompareOutputJVM();
     }
 }

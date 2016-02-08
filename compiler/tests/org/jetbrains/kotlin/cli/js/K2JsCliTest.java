@@ -17,81 +17,65 @@
 package org.jetbrains.kotlin.cli.js;
 
 import org.jetbrains.kotlin.cli.CliBaseTest;
-import org.junit.Test;
 
 public class K2JsCliTest extends CliBaseTest {
-    @Test
-    public void simple2js() throws Exception {
+    public void testSimple2js() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void outputIsDirectory() throws Exception {
+    public void testOutputIsDirectory() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void nonExistingSourcePath() throws Exception {
+    public void testNonExistingSourcePath() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void emptySources() throws Exception {
+    public void testEmptySources() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void outputPrefixFileNotFound() throws Exception {
+    public void testOutputPrefixFileNotFound() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void outputPostfixFileNotFound() throws Exception {
+    public void testOutputPostfixFileNotFound() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void wrongAbiVersion() throws Exception {
+    public void testWrongAbiVersion() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void jsHelp() throws Exception {
+    public void testJsHelp() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void withLib() throws Exception {
+    public void testWithLib() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void withFolderAsLib() throws Exception {
+    public void testWithFolderAsLib() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void createMetadata() throws Exception {
+    public void testCreateMetadata() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void createKjsm() throws Exception {
+    public void testCreateKjsm() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void libraryDirNotFound() throws Exception {
+    public void testLibraryDirNotFound() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void notValidLibraryDir() throws Exception {
+    public void testNotValidLibraryDir() throws Exception {
         executeCompilerCompareOutputJS();
     }
 
-    @Test
-    public void suppressAllWarningsJS() throws Exception {
+    public void testSuppressAllWarningsJS() throws Exception {
         executeCompilerCompareOutputJS();
     }
 }

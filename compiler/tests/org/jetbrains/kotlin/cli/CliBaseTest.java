@@ -32,13 +32,11 @@ import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.Tmpdir;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.rules.TestName;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -47,14 +45,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CliBaseTest {
+public abstract class CliBaseTest extends TestCaseWithTmpdir {
     static final String JS_TEST_DATA = "compiler/testData/cli/js";
     static final String JVM_TEST_DATA = "compiler/testData/cli/jvm";
-
-    @Rule
-    public final Tmpdir tmpdir = new Tmpdir();
-    @Rule
-    public final TestName testName = new TestName();
 
     @NotNull
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull List<String> args) {
@@ -97,10 +90,10 @@ public class CliBaseTest {
 
     private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
         System.setProperty("java.awt.headless", "true");
-        String testMethodName = testName.getMethodName();
+        String testMethodName = getTestName(true);
         Pair<String, ExitCode> outputAndExitCode =
                 executeCompilerGrabOutput(compiler, readArgs(testDataDir + "/" + testMethodName + ".args", testDataDir,
-                                                             tmpdir.getTmpDir().getPath()));
+                                                             tmpdir.getPath()));
         String actual = getNormalizedCompilerOutput(outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), testDataDir);
 
         KotlinTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testMethodName + ".out"), actual);
@@ -117,7 +110,7 @@ public class CliBaseTest {
 
         List<String> existsList = InTextDirectivesUtils.findListWithPrefixes(content, "// EXISTS: ");
         for (String fileName : existsList) {
-            File file = new File(tmpdir.getTmpDir(), fileName);
+            File file = new File(tmpdir, fileName);
             if (!file.exists()) {
                 diagnostics.add("File does not exist, but should: " + fileName);
             }
@@ -128,7 +121,7 @@ public class CliBaseTest {
 
         List<String> absentList = InTextDirectivesUtils.findListWithPrefixes(content, "// ABSENT: ");
         for (String fileName : absentList) {
-            File file = new File(tmpdir.getTmpDir(), fileName);
+            File file = new File(tmpdir, fileName);
             if (file.exists() && file.isFile()) {
                 diagnostics.add("File exists, but shouldn't: " + fileName);
             }
