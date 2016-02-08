@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.resolve.findMemberWithMaxVisibility
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -129,7 +130,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                             CallableMemberDescriptor.Kind.DELEGATION,
                             /* copyOverrides = */ true),
                     newParameters)
-            newFunction.addOverriddenDescriptor(superFunction)
+            newFunction.setSingleOverridden(superFunction)
 
             return Signature(newFunction)
         }

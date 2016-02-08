@@ -195,7 +195,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                                 erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
                                 Modality.OPEN, erasedInterfaceFunction.getVisibility());
 
-            descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
+            DescriptorUtilsKt.setSingleOverridden(descriptorForBridges, erasedInterfaceFunction);
             functionCodegen.generateBridges(descriptorForBridges);
         }
 

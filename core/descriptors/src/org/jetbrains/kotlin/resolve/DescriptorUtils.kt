@@ -230,3 +230,7 @@ fun CallableMemberDescriptor.firstOverridden(
                    }
     )
 }
+
+fun CallableMemberDescriptor.setSingleOverridden(overridden: CallableMemberDescriptor) {
+    overriddenDescriptors = listOf(overridden)
+}

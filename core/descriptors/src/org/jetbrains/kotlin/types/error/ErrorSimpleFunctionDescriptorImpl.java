@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.ErrorUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorImpl {
@@ -80,7 +81,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     }
 
     @Override
-    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
+    public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
         // nop
     }
 }

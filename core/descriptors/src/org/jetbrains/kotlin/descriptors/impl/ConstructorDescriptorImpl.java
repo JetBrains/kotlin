@@ -123,8 +123,8 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     @Override
-    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
-        throw new UnsupportedOperationException("Constructors cannot override anything");
+    public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
+        assert overriddenDescriptors.isEmpty() : "Constructors cannot override anything";
     }
 
     @NotNull

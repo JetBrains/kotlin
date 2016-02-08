@@ -184,8 +184,8 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     }
 
     @Override
-    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overridden) {
-        throw new IllegalStateException();
+    public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
+        assert overriddenDescriptors.isEmpty() : "Overridden accessors should be empty";
     }
 
     @NotNull

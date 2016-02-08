@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 
 interface OverrideMemberChooserObject : ClassMember {
     enum class BodyType {
@@ -108,7 +109,7 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
 private fun generateProperty(project: Project, descriptor: PropertyDescriptor, bodyType: OverrideMemberChooserObject.BodyType): KtProperty {
     val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                         descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
-    newDescriptor.addOverriddenDescriptor(descriptor)
+    newDescriptor.setSingleOverridden(descriptor)
 
     val body = buildString {
         append("\nget()")
@@ -124,14 +125,14 @@ private fun generateProperty(project: Project, descriptor: PropertyDescriptor, b
 private fun generateConstructorParameter(project: Project, descriptor: PropertyDescriptor): KtParameter {
     val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                         descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
-    newDescriptor.addOverriddenDescriptor(descriptor)
+    newDescriptor.setSingleOverridden(descriptor)
     return KtPsiFactory(project).createParameter(OVERRIDE_RENDERER.render(newDescriptor))
 }
 
 private fun generateFunction(project: Project, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): KtNamedFunction {
     val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                         descriptor.kind, /* copyOverrides = */ true)
-    newDescriptor.addOverriddenDescriptor(descriptor)
+    newDescriptor.setSingleOverridden(descriptor)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
 
@@ -293,6 +294,7 @@ public class OverridingUtil {
             @NotNull DescriptorSink sink
     ) {
         Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
+        Collection<CallableMemberDescriptor> overridden = SmartSet.create();
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
@@ -300,7 +302,7 @@ public class OverridingUtil {
             switch (result) {
                 case OVERRIDABLE:
                     if (isVisible) {
-                        fromCurrent.addOverriddenDescriptor(fromSupertype);
+                        overridden.add(fromSupertype);
                     }
                     bound.add(fromSupertype);
                     break;
@@ -314,6 +316,9 @@ public class OverridingUtil {
                     break;
             }
         }
+
+        fromCurrent.setOverriddenDescriptors(overridden);
+
         return bound;
     }
 
@@ -496,9 +501,7 @@ public class OverridingUtil {
                                          });
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-        for (CallableMemberDescriptor descriptor : effectiveOverridden) {
-            fakeOverride.addOverriddenDescriptor(descriptor);
-        }
+        fakeOverride.setOverriddenDescriptors(effectiveOverridden);
         sink.addFakeOverride(fakeOverride);
     }
 

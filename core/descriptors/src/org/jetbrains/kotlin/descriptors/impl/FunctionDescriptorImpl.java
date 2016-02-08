@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.utils.CollectionsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
     private List<TypeParameterDescriptor> typeParameters;
@@ -50,7 +47,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isHidden = false;
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
-    private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
+    private Collection<? extends FunctionDescriptor> overriddenFunctions = null;
     private final FunctionDescriptor original;
     private final Kind kind;
     @Nullable
@@ -165,7 +162,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @NotNull
     @Override
     public Collection<? extends FunctionDescriptor> getOverriddenDescriptors() {
-        return overriddenFunctions;
+        return overriddenFunctions != null ? overriddenFunctions : Collections.<FunctionDescriptor>emptyList();
     }
 
     @NotNull
@@ -184,7 +181,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public boolean isOperator() {
         if (isOperator) return true;
 
-        for (FunctionDescriptor descriptor : overriddenFunctions) {
+        for (FunctionDescriptor descriptor : getOverriddenDescriptors()) {
             if (descriptor.isOperator()) return true;
         }
 
@@ -195,7 +192,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public boolean isInfix() {
         if (isInfix) return true;
 
-        for (FunctionDescriptor descriptor : overriddenFunctions) {
+        for (FunctionDescriptor descriptor : getOverriddenDescriptors()) {
             if (descriptor.isInfix()) return true;
         }
 
@@ -223,8 +220,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
-    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
-        overriddenFunctions.add((FunctionDescriptor) overriddenFunction);
+    public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
+        //noinspection unchecked
+        overriddenFunctions = (Collection<? extends FunctionDescriptor>) overriddenDescriptors;
     }
 
     @Override
@@ -522,14 +520,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             substitutedDescriptor.setInitialSignatureDescriptor(initialSignatureSubstituted);
         }
 
-        if (configuration.copyOverrides) {
-            for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                if (configuration.originalSubstitutor.isEmpty()) {
-                    substitutedDescriptor.addOverriddenDescriptor(overriddenFunction);
+        if (configuration.copyOverrides && !getOverriddenDescriptors().isEmpty()) {
+            if (configuration.originalSubstitutor.isEmpty()) {
+                substitutedDescriptor.setOverriddenDescriptors(getOverriddenDescriptors());
+            }
+            else {
+                Collection<CallableMemberDescriptor> substitutedOverridden = SmartSet.create();
+                for (FunctionDescriptor overriddenFunction : getOverriddenDescriptors()) {
+                    substitutedOverridden.add(overriddenFunction.substitute(substitutor));
                 }
-                else {
-                    substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
-                }
+                substitutedDescriptor.setOverriddenDescriptors(substitutedOverridden);
             }
         }
 
