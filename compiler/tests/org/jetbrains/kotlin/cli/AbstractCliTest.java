@@ -45,7 +45,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CliBaseTest extends TestCaseWithTmpdir {
+public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     static final String JS_TEST_DATA = "compiler/testData/cli/js";
     static final String JVM_TEST_DATA = "compiler/testData/cli/jvm";
 

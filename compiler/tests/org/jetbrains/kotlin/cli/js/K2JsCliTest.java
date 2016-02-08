@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.js;
 
-import org.jetbrains.kotlin.cli.CliBaseTest;
+import org.jetbrains.kotlin.cli.AbstractCliTest;
 
-public class K2JsCliTest extends CliBaseTest {
+public class K2JsCliTest extends AbstractCliTest {
     public void testSimple2js() throws Exception {
         executeCompilerCompareOutputJS();
     }

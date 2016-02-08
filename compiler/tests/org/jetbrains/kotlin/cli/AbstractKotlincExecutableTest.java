@@ -34,7 +34,7 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
         File kotlincFile = new File(PathUtil.getKotlinPathsForDistDirectory().getHomePath(), "bin/" + executableFileName);
         assertTrue("kotlinc executable not found, probably you need to invoke 'dist' Ant target: " + kotlincFile.getAbsolutePath(), kotlincFile.exists());
 
-        List<String> args = CliBaseTest.readArgs(argsFilePath, testDataDir, tmpdir.getAbsolutePath());
+        List<String> args = AbstractCliTest.readArgs(argsFilePath, testDataDir, tmpdir.getAbsolutePath());
         args.add(0, kotlincFile.getAbsolutePath());
         ProcessOutput processOutput = ExecUtil.execAndGetOutput(args, null);
 
@@ -42,7 +42,7 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
         String stderr = processOutput.getStderr();
         int exitCode = processOutput.getExitCode();
 
-        String normalizedOutput = CliBaseTest.getNormalizedCompilerOutput(stderr, ExitCode.values()[exitCode], testDataDir);
+        String normalizedOutput = AbstractCliTest.getNormalizedCompilerOutput(stderr, ExitCode.values()[exitCode], testDataDir);
         File outFile = new File(argsFilePath.replace(".args", ".out"));
 
         try {
@@ -58,10 +58,10 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
     }
 
     protected void doJvmTest(@NotNull String argsFilePath) throws Exception {
-        doTest(argsFilePath, "kotlinc-jvm", CliBaseTest.JVM_TEST_DATA);
+        doTest(argsFilePath, "kotlinc-jvm", AbstractCliTest.JVM_TEST_DATA);
     }
 
     protected void doJsTest(@NotNull String argsFilePath) throws Exception {
-        doTest(argsFilePath, "kotlinc-js", CliBaseTest.JS_TEST_DATA);
+        doTest(argsFilePath, "kotlinc-js", AbstractCliTest.JS_TEST_DATA);
     }
 }

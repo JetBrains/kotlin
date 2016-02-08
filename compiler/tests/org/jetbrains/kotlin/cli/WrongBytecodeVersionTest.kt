@@ -45,7 +45,7 @@ class WrongBytecodeVersionTest : UsefulTestCase() {
             changeVersionInBytecode(classFile)
         }
 
-        val (output, exitCode) = CliBaseTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
+        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
                 usageSource.path,
                 "-classpath", tmpdir.path,
                 "-d", tmpdir.path
@@ -53,7 +53,7 @@ class WrongBytecodeVersionTest : UsefulTestCase() {
 
         assertEquals("Compilation error expected", ExitCode.COMPILATION_ERROR, exitCode)
 
-        val normalized = CliBaseTest.getNormalizedCompilerOutput(output, exitCode, tmpdir.path, JvmBytecodeBinaryVersion.INSTANCE)
+        val normalized = AbstractCliTest.getNormalizedCompilerOutput(output, exitCode, tmpdir.path, JvmBytecodeBinaryVersion.INSTANCE)
 
         KotlinTestUtils.assertEqualsToFile(File(directory, "output.txt"), normalized)
     }

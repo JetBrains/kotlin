@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm;
 
-import org.jetbrains.kotlin.cli.CliBaseTest;
+import org.jetbrains.kotlin.cli.AbstractCliTest;
 
-public class K2JvmCliTest extends CliBaseTest {
+public class K2JvmCliTest extends AbstractCliTest {
     public void testWrongAbiVersion() throws Exception {
         executeCompilerCompareOutputJVM();
     }
