@@ -463,19 +463,11 @@ public class MethodInliner {
                         LambdaInfo lambdaInfo = null;
                         int varIndex = -1;
 
-                        if (sourceValue.insns.size() == 1) {
-                            AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                            AbstractInsnNode processingInstruction = insnNode;
-
-                            if (insnNode.getOpcode() == Opcodes.SWAP) {
-                                processingInstruction = InlineCodegenUtil.getPrevMeaningful(insnNode);
-                            }
-                            lambdaInfo = getLambdaIfExistsAndMarkInstructions(processingInstruction, frame, instructionsAndFrames, toDelete);
-                            if (lambdaInfo != null) {
-                                //remove inlinable access
-                                assert processingInstruction != null;
-                                InlineCodegenUtil.removeInterval(node, processingInstruction, insnNode);
-                            }
+                        AbstractInsnNode insnNode = MethodInlinerUtilKt.singleOrNullInsn(sourceValue);
+                        if (insnNode != null) {
+                            lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
+                                    this, insnNode, frame, instructionsAndFrames, toDelete, true
+                            );
                         }
 
                         invokeCalls.add(new InvokeCall(varIndex, lambdaInfo, currentFinallyDeep));
@@ -486,12 +478,13 @@ public class MethodInliner {
                         int offset = 0;
                         for (int i = 0; i < paramCount; i++) {
                             SourceValue sourceValue = frame.getStack(firstParameterIndex + i);
-                            if (sourceValue.insns.size() == 1) {
-                                AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                                LambdaInfo lambdaInfo = getLambdaIfExistsAndMarkInstructions(insnNode, frame, instructionsAndFrames, toDelete);
+                            AbstractInsnNode insnNode = MethodInlinerUtilKt.singleOrNullInsn(sourceValue);
+                            if (insnNode != null) {
+                                LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
+                                        this, insnNode, frame, instructionsAndFrames, toDelete, false
+                                );
                                 if (lambdaInfo != null) {
                                     lambdaMapping.put(offset, lambdaInfo);
-                                    node.instructions.remove(insnNode);
                                 }
                             }
                             offset += i == 0 ? 1 : argTypes[i - 1].getSize();
@@ -581,41 +574,7 @@ public class MethodInliner {
     }
 
     @Nullable
-    private LambdaInfo getLambdaIfExistsAndMarkInstructions(
-            @Nullable AbstractInsnNode insnNode,
-            @NotNull Frame<SourceValue> localFrame,
-            @NotNull InstructionsAndFrames insAndFrames,
-            @NotNull Set<AbstractInsnNode> toDelete
-    ) {
-        LambdaInfo lambdaInfo = getLambdaIfExists(insnNode);
-
-        if (lambdaInfo == null && insnNode instanceof VarInsnNode && insnNode.getOpcode() == Opcodes.ALOAD) {
-            int varIndex = ((VarInsnNode) insnNode).var;
-            SourceValue local = localFrame.getLocal(varIndex);
-            if (local.insns.size() == 1) {
-                AbstractInsnNode storeIns = local.insns.iterator().next();
-                if (storeIns instanceof VarInsnNode && storeIns.getOpcode() == Opcodes.ASTORE) {
-                    Frame<SourceValue> frame = insAndFrames.get(storeIns);
-                    if (frame != null) {
-                        SourceValue topOfStack = frame.getStack(frame.getStackSize() - 1);
-                        if(topOfStack.insns.size() == 1) {
-                            AbstractInsnNode lambdaAload = topOfStack.insns.iterator().next();
-                            lambdaInfo = getLambdaIfExistsAndMarkInstructions(lambdaAload, frame, insAndFrames, toDelete);
-                            if (lambdaInfo != null) {
-                                toDelete.add(storeIns);
-                                toDelete.add(lambdaAload);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return lambdaInfo;
-    }
-
-    @Nullable
-    private LambdaInfo getLambdaIfExists(@Nullable AbstractInsnNode insnNode) {
+    LambdaInfo getLambdaIfExists(@Nullable AbstractInsnNode insnNode) {
         if (insnNode == null) {
             return null;
         }

@@ -591,6 +591,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/compexStack/simple4.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
+
+        @TestMetadata("simpleExtension.1.kt")
+        public void testSimpleExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/compexStack/simpleExtension.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/complex")
