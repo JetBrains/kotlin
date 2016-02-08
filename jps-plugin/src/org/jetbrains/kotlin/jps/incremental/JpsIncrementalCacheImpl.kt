@@ -60,7 +60,7 @@ class JpsIncrementalCacheImpl(
         for ((className, functions) in dirtyInlineFunctionsMap.getEntries()) {
             val classFilePath = getClassFilePath(className.internalName)
 
-            for (cache in dependentsWithThis) {
+            for (cache in thisWithDependentCaches) {
                 val targetFiles = functions.flatMap { (cache as JpsIncrementalCacheImpl).inlinedTo[classFilePath, it] }
                 result.addAll(targetFiles)
             }

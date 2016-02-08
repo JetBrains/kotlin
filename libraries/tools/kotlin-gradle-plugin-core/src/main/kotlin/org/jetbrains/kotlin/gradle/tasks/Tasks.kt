@@ -236,6 +236,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         var currentRemoved = removed
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val compiledSourcesSet = hashSetOf<File>()
+        val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
 
         fun getOrCreateIncrementalCache(target: TargetId): GradleIncrementalCacheImpl {
             val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
@@ -252,15 +253,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     fields.map { LookupSymbol(it.name.orEmpty(), fqn) } +
                     innerClasses.flatMap { it.findLookupSymbols() }
         }
-
-        fun Iterable<LookupSymbol>.files(filesFilter: (File) -> Boolean = { true }, logAction: (LookupSymbol, Iterable<File>) -> Unit = { l,fs -> }): Iterable<File> =
-            flatMap { lookup ->
-                val files = lookupStorage.get(lookup).map(::File).filter(filesFilter)
-                if (files.any()) {
-                    logAction(lookup, files)
-                }
-                files
-            }
 
         fun dirtyLookupSymbolsFromRemovedKotlinFiles(): List<LookupSymbol> {
             val removedKotlinFiles = removed.filter { it.isKotlinFile() }
@@ -296,11 +288,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             if (lookupSymbols.any()) {
                 val kotlinModifiedFilesSet = modifiedKotlinFiles.toHashSet()
-                val dirtyFilesFromLookups = lookupSymbols.files(
-                                filesFilter = { it !in kotlinModifiedFilesSet },
-                                logAction = { lookup, files ->
-                                    logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
-                                })
+                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(lookupStorage, lookupSymbols, logAction, excludes = kotlinModifiedFilesSet)
                 modifiedKotlinFiles.addAll(dirtyFilesFromLookups)
             }
 
@@ -426,9 +414,9 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             val (exitCode, generatedFiles) = compileChanged(targets, existingSource.toSet(), outputDir, args, ::getIncrementalCache, lookupTracker)
 
             allGeneratedFiles.addAll(generatedFiles)
-            val changes = updateIncrementalCaches(targets, generatedFiles,
-                                                  compiledWithErrors = exitCode != ExitCode.OK,
-                                                  getIncrementalCache = { caches[it]!! })
+            val compilationResult = updateIncrementalCaches(targets, generatedFiles,
+                                                            compiledWithErrors = exitCode != ExitCode.OK,
+                                                            getIncrementalCache = { caches[it]!! })
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
             allCachesVersions().forEach { it.saveIfNeeded() }
@@ -437,14 +425,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             if (!isIncrementalDecided) break;
 
             compiledSourcesSet.addAll(sourcesToCompile)
-
-            val dirtyLookups = changes.dirtyLookups<TargetId>(caches.values.asSequence())
-            val newDirtyFiles = dirtyLookups.files(
-                    filesFilter = { it !in compiledSourcesSet },
-                    logAction = { lookup, files ->
-                        logger.kotlinInfo("changes in ${lookup.name} (${lookup.scope}) causes recompilation of ${files.joinToString { projectRelativePath(it) }}")
-                    })
-            sourcesToCompile = newDirtyFiles.filter { it in sources }.toSet()
+            val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(caches.values, logAction)
+            sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, excludes = compiledSourcesSet)
 
             if (currentRemoved.any()) {
                 currentRemoved = listOf()

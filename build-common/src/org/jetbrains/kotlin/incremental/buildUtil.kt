@@ -174,36 +174,94 @@ fun<Target> OutputItemsCollectorImpl.generatedFiles(
     }
 }
 
-fun<Target> CompilationResult.dirtyLookups(
-        caches: Sequence<IncrementalCacheImpl<TargetId>>
-): Iterable<LookupSymbol> =
-        changes.asIterable().flatMap { change ->
-            when (change) {
-                is ChangeInfo.SignatureChanged -> {
-                    val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
-                    fqNames.map {
-                        val scope = it.parent().asString()
-                        val name = it.shortName().identifier
-                        LookupSymbol(name, scope)
-                    }
-                }
-                is ChangeInfo.MembersChanged -> {
-                    val scopes = withSubtypes(change.fqName, caches).map { it.asString() }
-                    change.names.flatMap { name -> scopes.map { scope -> LookupSymbol(name, scope) } }
-                }
-                else -> listOf<LookupSymbol>()
+data class DirtyData(
+        val dirtyLookupSymbols: Iterable<LookupSymbol>,
+        val dirtyClassesFqNames: Iterable<FqName>
+)
+
+fun <Target> CompilationResult.getDirtyData(
+        caches: Iterable<IncrementalCacheImpl<Target>>,
+        log: (String)->Unit
+): DirtyData {
+    val dirtyLookupSymbols = HashSet<LookupSymbol>()
+    val dirtyClassesFqNames = HashSet<FqName>()
+
+    for (change in changes) {
+        log("Process $change")
+
+        if (change is ChangeInfo.SignatureChanged) {
+            val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
+
+            for (classFqName in fqNames) {
+                assert(!classFqName.isRoot) { "classFqName is root when processing $change" }
+
+                val scope = classFqName.parent().asString()
+                val name = classFqName.shortName().identifier
+                dirtyLookupSymbols.add(LookupSymbol(name, scope))
             }
         }
+        else if (change is ChangeInfo.MembersChanged) {
+            val fqNames = withSubtypes(change.fqName, caches)
+            // need to recompile subtypes because changed member might break override
+            dirtyClassesFqNames.addAll(fqNames)
 
+            for (name in change.names) {
+                for (fqName in fqNames) {
+                    dirtyLookupSymbols.add(LookupSymbol(name, fqName.asString()))
+                }
+            }
+        }
+    }
+
+    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames)
+}
+
+fun mapLookupSymbolsToFiles(
+        lookupStorage: LookupStorage,
+        lookupSymbols: Iterable<LookupSymbol>,
+        log: (String)->Unit,
+        excludes: Set<File> = emptySet()
+): Set<File> {
+    val dirtyFiles = HashSet<File>()
+
+    for (lookup in lookupSymbols) {
+        val affectedFiles = lookupStorage.get(lookup).map(::File).filter { it !in excludes }
+        log("${lookup.scope}#${lookup.name} caused recompilation of: $affectedFiles")
+        dirtyFiles.addAll(affectedFiles)
+    }
+
+    return dirtyFiles
+}
+
+fun <Target> mapClassesFqNamesToFiles(
+        caches: Iterable<IncrementalCacheImpl<Target>>,
+        classesFqNames: Iterable<FqName>,
+        log: (String)->Unit,
+        excludes: Set<File> = emptySet()
+): Set<File> {
+    val dirtyFiles = HashSet<File>()
+
+    for (cache in caches) {
+        for (dirtyClassFqName in classesFqNames) {
+            val srcFile = cache.getSourceFileIfClass(dirtyClassFqName)
+            if (srcFile == null || srcFile in excludes) continue
+
+            log("Class $dirtyClassFqName caused recompilation of: $srcFile")
+            dirtyFiles.add(srcFile)
+        }
+    }
+
+    return dirtyFiles
+}
 
 private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
 
 private fun findSrcDirRoot(file: File, roots: Iterable<File>): File? =
         roots.firstOrNull { FileUtil.isAncestor(it, file, false) }
 
-private fun<TargetId> withSubtypes(
+private fun <Target> withSubtypes(
         typeFqName: FqName,
-        caches: Sequence<IncrementalCacheImpl<TargetId>>
+        caches: Iterable<IncrementalCacheImpl<Target>>
 ): Set<FqName> {
     val types = LinkedList(listOf(typeFqName))
     val subtypes = hashSetOf<FqName>()
@@ -211,9 +269,10 @@ private fun<TargetId> withSubtypes(
     while (types.isNotEmpty()) {
         val unprocessedType = types.pollFirst()
 
-        caches.flatMap { it.getSubtypesOf(unprocessedType) }
-                .filter { it !in subtypes }
-                .forEach { types.addLast(it) }
+        caches.asSequence()
+              .flatMap { it.getSubtypesOf(unprocessedType) }
+              .filter { it !in subtypes }
+              .forEach { types.addLast(it) }
 
         subtypes.add(unprocessedType)
     }
