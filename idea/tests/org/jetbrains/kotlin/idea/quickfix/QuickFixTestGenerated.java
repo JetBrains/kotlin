@@ -810,6 +810,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameter.kt");
             doTest(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/checkArguments")

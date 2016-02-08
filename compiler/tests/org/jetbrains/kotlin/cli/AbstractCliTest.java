@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.cli;
 
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
+import kotlin.jvm.functions.Function1;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -46,9 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
-    static final String JS_TEST_DATA = "compiler/testData/cli/js";
-    static final String JVM_TEST_DATA = "compiler/testData/cli/jvm";
-
     @NotNull
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull List<String> args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -88,17 +85,16 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         return normalizedOutputWithoutExitCode + exitCode;
     }
 
-    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
+    private void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) throws Exception {
         System.setProperty("java.awt.headless", "true");
-        String testMethodName = getTestName(true);
-        Pair<String, ExitCode> outputAndExitCode =
-                executeCompilerGrabOutput(compiler, readArgs(testDataDir + "/" + testMethodName + ".args", testDataDir,
-                                                             tmpdir.getPath()));
-        String actual = getNormalizedCompilerOutput(outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), testDataDir);
+        Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
+        String actual =
+                getNormalizedCompilerOutput(outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent());
 
-        KotlinTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testMethodName + ".out"), actual);
+        File outFile = new File(fileName.replaceFirst("\\.args$", ".out"));
+        KotlinTestUtils.assertEqualsToFile(outFile, actual);
 
-        File additionalTestConfig = new File(testDataDir + "/" + testMethodName + ".test");
+        File additionalTestConfig = new File(fileName.replaceFirst("\\.args$", ".test"));
         if (additionalTestConfig.exists()) {
             doTestAdditionalChecks(additionalTestConfig);
         }
@@ -134,20 +130,17 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    static List<String> readArgs(
-            @NotNull String argsFilePath,
-            @NotNull final String testDataDir,
-            @NotNull final String tempDir
-    ) throws IOException {
+    static List<String> readArgs(@NotNull final String argsFilePath, @NotNull final String tempDir) throws IOException {
         List<String> lines = FilesKt.readLines(new File(argsFilePath), Charsets.UTF_8);
 
-        return ContainerUtil.mapNotNull(lines, new Function<String, String>() {
+        return CollectionsKt.mapNotNull(lines, new Function1<String, String>() {
             @Override
-            public String fun(String arg) {
+            public String invoke(String arg) {
                 if (arg.isEmpty()) {
                     return null;
                 }
-                // Do not replace : after \ (used in compiler plugin tests)
+
+                // Do not replace ':' after '\' (used in compiler plugin tests)
                 String argsWithColonsReplaced = arg
                         .replace("\\:", "$COLON$")
                         .replace(":", File.pathSeparator)
@@ -155,16 +148,16 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
                 return argsWithColonsReplaced
                         .replace("$TEMP_DIR$", tempDir)
-                        .replace("$TESTDATA_DIR$", testDataDir);
+                        .replace("$TESTDATA_DIR$", new File(argsFilePath).getParent());
             }
         });
     }
 
-    protected void executeCompilerCompareOutputJVM() throws Exception {
-        executeCompilerCompareOutput(new K2JVMCompiler(), JVM_TEST_DATA);
+    protected void doJvmTest(@NotNull String fileName) throws Exception {
+        doTest(fileName, new K2JVMCompiler());
     }
 
-    protected void executeCompilerCompareOutputJS() throws Exception {
-        executeCompilerCompareOutput(new K2JSCompiler(), JS_TEST_DATA);
+    protected void doJsTest(@NotNull String fileName) throws Exception {
+        doTest(fileName, new K2JSCompiler());
     }
 }

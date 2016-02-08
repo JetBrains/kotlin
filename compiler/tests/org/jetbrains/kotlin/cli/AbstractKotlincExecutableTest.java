@@ -29,12 +29,12 @@ import java.io.File;
 import java.util.List;
 
 public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
-    private void doTest(@NotNull String argsFilePath, @NotNull String executableName, @NotNull String testDataDir) throws Exception {
+    private void doTest(@NotNull String argsFilePath, @NotNull String executableName) throws Exception {
         String executableFileName = SystemInfo.isWindows ? executableName + ".bat" : executableName;
         File kotlincFile = new File(PathUtil.getKotlinPathsForDistDirectory().getHomePath(), "bin/" + executableFileName);
         assertTrue("kotlinc executable not found, probably you need to invoke 'dist' Ant target: " + kotlincFile.getAbsolutePath(), kotlincFile.exists());
 
-        List<String> args = AbstractCliTest.readArgs(argsFilePath, testDataDir, tmpdir.getAbsolutePath());
+        List<String> args = AbstractCliTest.readArgs(argsFilePath, tmpdir.getAbsolutePath());
         args.add(0, kotlincFile.getAbsolutePath());
         ProcessOutput processOutput = ExecUtil.execAndGetOutput(args, null);
 
@@ -42,7 +42,8 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
         String stderr = processOutput.getStderr();
         int exitCode = processOutput.getExitCode();
 
-        String normalizedOutput = AbstractCliTest.getNormalizedCompilerOutput(stderr, ExitCode.values()[exitCode], testDataDir);
+        String normalizedOutput =
+                AbstractCliTest.getNormalizedCompilerOutput(stderr, ExitCode.values()[exitCode], new File(argsFilePath).getParent());
         File outFile = new File(argsFilePath.replace(".args", ".out"));
 
         try {
@@ -58,10 +59,10 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
     }
 
     protected void doJvmTest(@NotNull String argsFilePath) throws Exception {
-        doTest(argsFilePath, "kotlinc-jvm", AbstractCliTest.JVM_TEST_DATA);
+        doTest(argsFilePath, "kotlinc-jvm");
     }
 
     protected void doJsTest(@NotNull String argsFilePath) throws Exception {
-        doTest(argsFilePath, "kotlinc-js", AbstractCliTest.JS_TEST_DATA);
+        doTest(argsFilePath, "kotlinc-js");
     }
 }
