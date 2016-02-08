@@ -89,4 +89,9 @@ public class K2JsCliTest extends CliBaseTest {
     public void notValidLibraryDir() throws Exception {
         executeCompilerCompareOutputJS();
     }
+
+    @Test
+    public void suppressAllWarningsJS() throws Exception {
+        executeCompilerCompareOutputJS();
+    }
 }

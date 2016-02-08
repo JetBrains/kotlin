@@ -64,4 +64,64 @@ public class K2JvmCliTest extends CliBaseTest {
     public void warningsInDummy() throws Exception {
         executeCompilerCompareOutputJVM();
     }
+
+    @Test
+    public void help() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void wrongArgument() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void simple() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void duplicateSources() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void duplicateSourcesInModule() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void nonexistentPathInModule() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void nonexistentScript() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void diagnosticsOrder() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void multipleTextRangesInDiagnosticsOrder() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void suppressAllWarningsJvm() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void pluginSimple() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void pluginSimpleUsage() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
 }
