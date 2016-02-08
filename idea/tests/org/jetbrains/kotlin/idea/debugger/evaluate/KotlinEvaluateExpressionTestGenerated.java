@@ -772,9 +772,9 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
-        @TestMetadata("remappedParameterInInline.kt")
-        public void testRemappedParameterInInline() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/remappedParameterInInline.kt");
+        @TestMetadata("privateMembersPriority.kt")
+        public void testPrivateMembersPriority() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/privateMembersPriority.kt");
             doMultipleBreakpointsTest(fileName);
         }
 

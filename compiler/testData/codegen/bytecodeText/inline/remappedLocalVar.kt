@@ -7,5 +7,6 @@ fun main(args: Array<String>) {
     watch(local) { it.length }
 }
 
-// 2 LOCALVARIABLE p
-// 1 LOCALVARIABLE p\$iv
+/*fix rollbacked cause of robovm problem*/
+// 1 LOCALVARIABLE p
+// 0 LOCALVARIABLE p\$iv
