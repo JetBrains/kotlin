@@ -418,7 +418,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             if (!isIncrementalDecided) break;
 
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(caches.values, logAction)
-            sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, excludes = sourcesToCompile)
+            sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, excludes = sourcesToCompile) +
+                               mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction)
 
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
