@@ -67,7 +67,7 @@ class FunctionClassScope(
                         /* membersFromSupertypes = */ descriptors,
                         /* membersFromCurrent = */ if (isFunction && name == invoke?.name) listOf(invoke) else listOf(),
                         functionClass,
-                        object : OverridingStrategy {
+                        object : OverridingStrategy() {
                             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                                 OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
                                 result.add(fakeOverride)

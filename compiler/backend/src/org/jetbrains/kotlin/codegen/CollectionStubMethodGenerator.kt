@@ -191,7 +191,7 @@ class CollectionStubMethodGenerator(
     ): List<FunctionDescriptor> {
         val result = ArrayList<FunctionDescriptor>()
 
-        OverrideResolver.generateOverridesInAClass(klass, listOf(), object : OverridingStrategy {
+        OverrideResolver.generateOverridesInAClass(klass, listOf(), object : OverridingStrategy() {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 if (fakeOverride !is FunctionDescriptor) return
                 if (fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass)?.kind == DECLARATION) {

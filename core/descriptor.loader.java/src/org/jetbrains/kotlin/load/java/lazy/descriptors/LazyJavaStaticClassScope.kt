@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForStaticMembers
 import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -76,7 +76,7 @@ class LazyJavaStaticClassScope(
         }?.let { result.add(it) }
 
         val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
-        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
+        result.addAll(resolveOverridesForStaticMembers(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
 
         if (jClass.isEnum) {
             when (name) {
@@ -91,13 +91,13 @@ class LazyJavaStaticClassScope(
 
         val actualProperties =
                 if (!result.isEmpty()) {
-                    DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, ownerDescriptor, c.components.errorReporter)
+                    resolveOverridesForStaticMembers(name, propertiesFromSupertypes, result, ownerDescriptor, c.components.errorReporter)
                 }
                 else {
                     propertiesFromSupertypes.groupBy {
                         it.realOriginal
                     }.flatMap {
-                        DescriptorResolverUtils.resolveOverrides(name, it.value, result, ownerDescriptor, c.components.errorReporter)
+                        resolveOverridesForStaticMembers(name, it.value, result, ownerDescriptor, c.components.errorReporter)
                     }
                 }
 

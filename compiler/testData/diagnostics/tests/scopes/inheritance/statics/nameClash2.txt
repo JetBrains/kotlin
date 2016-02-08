@@ -67,7 +67,7 @@ public open class EO : E {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final override /*2*/ var field: kotlin.Double
+    public final var field: kotlin.Double
 }
 
 public open class O : C, D {
@@ -77,7 +77,7 @@ public open class O : C, D {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final override /*2*/ var field: kotlin.Double
+    public final var field: kotlin.Double
 }
 
 public open class OO : O {

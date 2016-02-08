@@ -5124,6 +5124,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaDeprecatedInheritance.kt")
+            public void testJavaDeprecatedInheritance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/javaDeprecatedInheritance.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaDocDeprecated.kt")
             public void testJavaDocDeprecated() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/javaDocDeprecated.kt");
@@ -10176,6 +10182,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("serializable.kt")
             public void testSerializable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/serializable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("shadowingPrimitiveStaticField.kt")
+            public void testShadowingPrimitiveStaticField() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/shadowingPrimitiveStaticField.kt");
                 doTest(fileName);
             }
 

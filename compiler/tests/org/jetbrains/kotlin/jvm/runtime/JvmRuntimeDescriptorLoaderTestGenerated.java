@@ -4101,6 +4101,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("StaticMembersFromParentClassVisibility.java")
+            public void testStaticMembersFromParentClassVisibility() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClassVisibility.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("StaticMembersFromParentInterface.java")
             public void testStaticMembersFromParentInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentInterface.java");

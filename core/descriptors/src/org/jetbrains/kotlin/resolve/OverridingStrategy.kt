@@ -18,8 +18,12 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
-interface OverridingStrategy {
-    fun addFakeOverride(fakeOverride: CallableMemberDescriptor)
+abstract class OverridingStrategy {
+    abstract fun addFakeOverride(fakeOverride: CallableMemberDescriptor)
 
-    fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor)
+    abstract fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor)
+
+    open fun setOverriddenDescriptors(member: CallableMemberDescriptor, overridden: Collection<CallableMemberDescriptor>) {
+        member.overriddenDescriptors = overridden
+    }
 }

@@ -317,7 +317,7 @@ public class OverridingUtil {
             }
         }
 
-        fromCurrent.setOverriddenDescriptors(overridden);
+        strategy.setOverriddenDescriptors(fromCurrent, overridden);
 
         return bound;
     }
@@ -501,7 +501,9 @@ public class OverridingUtil {
                                          });
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-        fakeOverride.setOverriddenDescriptors(effectiveOverridden);
+        strategy.setOverriddenDescriptors(fakeOverride, effectiveOverridden);
+        assert !fakeOverride.getOverriddenDescriptors().isEmpty()
+                : "Overridden descriptors should be set for " + CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         strategy.addFakeOverride(fakeOverride);
     }
 

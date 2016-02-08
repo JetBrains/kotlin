@@ -1,0 +1,21 @@
+package test
+
+public/*package*/ open class Child : test.Parent {
+    public/*package*/ constructor Child()
+
+    // Static members
+    public/*package*/ final override /*1*/ /*fake_override*/ var packagePrivate_: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var private_: kotlin.Int
+    protected/*protected static*/ final override /*1*/ /*fake_override*/ var protected_: kotlin.Int
+    public final override /*1*/ /*fake_override*/ var public_: kotlin.Int
+}
+
+public/*package*/ open class Parent {
+    public/*package*/ constructor Parent()
+
+    // Static members
+    public/*package*/ final var packagePrivate_: kotlin.Int
+    private final var private_: kotlin.Int
+    protected/*protected static*/ final var protected_: kotlin.Int
+    public final var public_: kotlin.Int
+}
