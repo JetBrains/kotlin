@@ -370,7 +370,9 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         val targetDescriptor = implicitReceiver.declarationDescriptor
                         if (compareDescriptors(callElement.project, targetDescriptor, callableDescriptor)) {
                             assert(originalReceiverInfo != null) { "No original receiver info provided: " + functionUsageInfo.declaration.text }
-                            result.add(KotlinImplicitThisToParameterUsage(callElement, originalReceiverInfo!!, functionUsageInfo))
+                            if (originalReceiverInfo in changeInfo.getNonReceiverParameters()) {
+                                result.add(KotlinImplicitThisToParameterUsage(callElement, originalReceiverInfo!!, functionUsageInfo))
+                            }
                         }
                         else {
                             result.add(KotlinImplicitThisUsage(callElement, targetDescriptor))
