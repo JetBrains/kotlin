@@ -44,7 +44,7 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
             return null
         }
 
-        return element.funKeyword!!.textRange
+        return element.funKeyword?.textRange
     }
 
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {
