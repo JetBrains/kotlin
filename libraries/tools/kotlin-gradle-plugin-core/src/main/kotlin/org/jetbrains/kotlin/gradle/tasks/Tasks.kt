@@ -253,13 +253,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     innerClasses.flatMap { it.findLookupSymbols() }
         }
 
-        fun dirtyLookupSymbolsFromRemovedKotlinFiles(): List<LookupSymbol> {
-            val removedKotlinFiles = removed.filter { it.isKotlinFile() }
-            return if (removedKotlinFiles.isNotEmpty())
-                targets.flatMap { getIncrementalCache(it).classesBySources(removedKotlinFiles).map { LookupSymbol(it.fqNameForClassNameWithoutDollars.shortName().toString(), it.packageFqName.toString()) } }
-            else listOf()
-        }
-
         fun dirtyLookupSymbolsFromModifiedJavaFiles(): List<LookupSymbol> {
             val modifiedJavaFiles = modified.filter { it.isJavaFile() }
             return (if (modifiedJavaFiles.any()) {
@@ -280,9 +273,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         fun dirtyKotlinSourcesFromGradle(): Set<File> {
             // TODO: handle classpath changes similarly - compare with cashed version (likely a big change, may be costly, some heuristics could be considered)
             val modifiedKotlinFiles = modified.filter { it.isKotlinFile() }.toMutableSet()
-            val lookupSymbols =
-                    dirtyLookupSymbolsFromModifiedJavaFiles() +
-                    dirtyLookupSymbolsFromRemovedKotlinFiles()
+            val lookupSymbols = dirtyLookupSymbolsFromModifiedJavaFiles()
                     // TODO: add dirty lookups from modified kotlin files to reduce number of steps needed
 
             if (lookupSymbols.any()) {
@@ -356,10 +347,10 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             val dirtyFiles = dirtyKotlinSourcesFromGradle().toSet()
             // first dirty files should be found and only then caches cleared
             val removedKotlinFiles = removed.filter { it.isKotlinFile() }
-            targets.forEach { getIncrementalCache(it).let {
-                it.markOutputClassesDirty(removedKotlinFiles)
-                it.removeClassfilesBySources(removedKotlinFiles)
-            }}
+            targets.forEach { target ->
+                getIncrementalCache(target).markOutputClassesDirty(removedKotlinFiles)
+            }
+
             return Pair(dirtyFiles, true)
         }
 
