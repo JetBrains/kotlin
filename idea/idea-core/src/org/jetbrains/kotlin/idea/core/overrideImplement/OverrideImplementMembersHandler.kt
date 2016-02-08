@@ -64,7 +64,7 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
     fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
-        val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>()!!
+        val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>() ?: return
 
         val members = collectMembersToGenerate(classOrObject)
         if (members.isEmpty() && !implementAll) {
