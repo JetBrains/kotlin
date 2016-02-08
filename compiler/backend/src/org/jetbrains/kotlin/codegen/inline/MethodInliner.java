@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.SmartHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClosureCodegen;
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.utils.SmartSet;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -428,9 +428,9 @@ public class MethodInliner {
         catch (AnalyzerException e) {
             throw wrapException(e, node, "couldn't inline method call");
         }
-        Set<AbstractInsnNode> toDelete = new SmartHashSet<AbstractInsnNode>();
-        InstructionsAndFrames instructionsAndFrames = new InstructionsAndFrames(sources, node.instructions);
-        AbstractInsnNode cur = node.instructions.getFirst();
+        Set<AbstractInsnNode> toDelete = SmartSet.create();
+        InsnList instructions = node.instructions;
+        AbstractInsnNode cur = instructions.getFirst();
         int index = 0;
 
         boolean awaitClassReification = false;
@@ -466,7 +466,7 @@ public class MethodInliner {
                         AbstractInsnNode insnNode = MethodInlinerUtilKt.singleOrNullInsn(sourceValue);
                         if (insnNode != null) {
                             lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
-                                    this, insnNode, frame, instructionsAndFrames, toDelete, true
+                                    this, insnNode, frame, true, instructions, sources, toDelete
                             );
                         }
 
@@ -481,7 +481,7 @@ public class MethodInliner {
                             AbstractInsnNode insnNode = MethodInlinerUtilKt.singleOrNullInsn(sourceValue);
                             if (insnNode != null) {
                                 LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
-                                        this, insnNode, frame, instructionsAndFrames, toDelete, false
+                                        this, insnNode, frame, false, instructions, sources, toDelete
                                 );
                                 if (lambdaInfo != null) {
                                     lambdaMapping.put(offset, lambdaInfo);
@@ -523,13 +523,13 @@ public class MethodInliner {
                     //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
                     //but as result all this labels will be merged into one (see KT-5863)
                 } else {
-                    node.instructions.remove(prevNode);
+                    toDelete.add(prevNode);
                 }
             }
         }
 
         for (AbstractInsnNode insnNode : toDelete) {
-            node.instructions.remove(insnNode);
+            instructions.remove(insnNode);
         }
 
         //clean dead try/catch blocks

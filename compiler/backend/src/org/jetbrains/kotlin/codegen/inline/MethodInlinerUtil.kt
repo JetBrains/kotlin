@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
@@ -27,9 +28,11 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
         insnNode: AbstractInsnNode,
         localFrame: Frame<SourceValue>,
-        insAndFrames: InstructionsAndFrames,
-        toDelete: MutableSet<AbstractInsnNode>,
-        processSwap: Boolean): LambdaInfo? {
+        processSwap: Boolean,
+        insnList: InsnList,
+        frames: Array<Frame<SourceValue>?>,
+        toDelete: MutableSet<AbstractInsnNode>
+): LambdaInfo? {
 
     val processingInsnNode = if (processSwap && insnNode.opcode == Opcodes.SWAP) InlineCodegenUtil.getPrevMeaningful(insnNode) else insnNode
 
@@ -40,12 +43,12 @@ fun MethodInliner.getLambdaIfExistsAndMarkInstructions(
         val local = localFrame.getLocal(varIndex)
         val storeIns = local.singleOrNullInsn()
         if (storeIns is VarInsnNode && storeIns.getOpcode() == Opcodes.ASTORE) {
-            val frame = insAndFrames[storeIns]
+            val frame = frames[insnList.indexOf(storeIns)]
             if (frame != null) {
                 val topOfStack = frame.getStack(frame.stackSize - 1)
                 val lambdaAload = topOfStack.singleOrNullInsn()
                 if (lambdaAload != null) {
-                    lambdaInfo = getLambdaIfExistsAndMarkInstructions(lambdaAload, frame, insAndFrames, toDelete, processSwap)
+                    lambdaInfo = getLambdaIfExistsAndMarkInstructions(lambdaAload, frame, processSwap, insnList, frames, toDelete)
                     if (lambdaInfo != null) {
                         toDelete.add(storeIns)
                         toDelete.add(lambdaAload)
