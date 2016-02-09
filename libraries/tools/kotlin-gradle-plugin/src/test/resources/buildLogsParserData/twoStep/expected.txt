@@ -1,0 +1,14 @@
+Step #1
+Compiled java files:
+Compiled kotlin files:
+    src/UsageVal.kt
+    src/UsageVar.kt
+    src/inlineGet.kt
+Compile errors:
+
+Step #2
+Compiled java files:
+Compiled kotlin files:
+    src/UsageVar.kt
+    src/inlineSet.kt
+Compile errors:
