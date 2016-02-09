@@ -14,196 +14,160 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.containers.MultiMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.MainFunctionDetector;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+class OverloadResolver(
+        private val trace: BindingTrace,
+        private val overloadFilter: OverloadFilter) {
 
-public class OverloadResolver {
-    @NotNull private final BindingTrace trace;
-    @NotNull private final OverloadFilter overloadFilter;
-
-    public OverloadResolver(
-            @NotNull BindingTrace trace,
-            @NotNull OverloadFilter overloadFilter
-    ) {
-        this.trace = trace;
-        this.overloadFilter = overloadFilter;
+    fun process(c: BodiesResolveContext) {
+        checkOverloads(c)
     }
 
-    public void process(@NotNull BodiesResolveContext c) {
-        checkOverloads(c);
-    }
+    private fun checkOverloads(c: BodiesResolveContext) {
+        val inClasses = findConstructorsInNestedClasses(c)
 
-    private void checkOverloads(@NotNull BodiesResolveContext c) {
-        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = findConstructorsInNestedClasses(c);
-
-        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            checkOverloadsInAClass(entry.getValue(), inClasses.get(entry.getValue()));
+        for (entry in c.declaredClasses.entries) {
+            checkOverloadsInClass(entry.value, inClasses.get(entry.value))
         }
-        checkOverloadsInPackages(c);
+        checkOverloadsInPackages(c)
     }
 
-    private static MultiMap<ClassDescriptor, ConstructorDescriptor> findConstructorsInNestedClasses(@NotNull BodiesResolveContext c) {
-        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
+    private fun findConstructorsInNestedClasses(c: BodiesResolveContext): MultiMap<ClassDescriptor, ConstructorDescriptor> {
+        val constructorsInNestedClasses = MultiMap.create<ClassDescriptor, ConstructorDescriptor>()
 
-        for (ClassDescriptorWithResolutionScopes klass : c.getDeclaredClasses().values()) {
-            if (klass.getKind().isSingleton() || klass.getName().isSpecial()) {
+        for (klass in c.declaredClasses.values) {
+            if (klass.kind.isSingleton || klass.name.isSpecial) {
                 // Constructors of singletons or anonymous object aren't callable from the code, so they shouldn't participate in overload name checking
-                continue;
+                continue
             }
-            DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
-            if (containingDeclaration instanceof ScriptDescriptor) {
+            val containingDeclaration = klass.containingDeclaration
+            if (containingDeclaration is ScriptDescriptor) {
                 // TODO: check overload conflicts of functions with constructors in scripts
             }
-            else if (containingDeclaration instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-                inClasses.putValues(classDescriptor, klass.getConstructors());
+            else if (containingDeclaration is ClassDescriptor) {
+                constructorsInNestedClasses.putValues(containingDeclaration, klass.constructors)
             }
-            else if (!(containingDeclaration instanceof FunctionDescriptor ||
-                       containingDeclaration instanceof PropertyDescriptor ||
-                       containingDeclaration instanceof PackageFragmentDescriptor)) {
-                throw new IllegalStateException("Illegal class container: " + containingDeclaration);
+            else if (!(containingDeclaration is FunctionDescriptor ||
+                       containingDeclaration is PropertyDescriptor ||
+                       containingDeclaration is PackageFragmentDescriptor)) {
+                throw IllegalStateException("Illegal class container: " + containingDeclaration)
             }
         }
 
-        return inClasses;
+        return constructorsInNestedClasses
     }
 
-    private void checkOverloadsInPackages(@NotNull BodiesResolveContext c) {
-        MultiMap<FqNameUnsafe, CallableMemberDescriptor> membersByName =
-                OverloadUtil.groupModulePackageMembersByFqName(c, overloadFilter);
+    private fun checkOverloadsInPackages(c: BodiesResolveContext) {
+        val membersByName = OverloadUtil.groupModulePackageMembersByFqName(c, overloadFilter)
 
-        for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : membersByName.entrySet()) {
-            checkOverloadsInPackage(e.getValue());
+        for (e in membersByName.entrySet()) {
+            checkOverloadsInPackage(e.value)
         }
     }
 
-    private void checkOverloadsInAClass(
-            ClassDescriptorWithResolutionScopes classDescriptor,
-            Collection<ConstructorDescriptor> nestedClassConstructors
+    private fun checkOverloadsInClass(
+            classDescriptor: ClassDescriptorWithResolutionScopes,
+            nestedClassConstructors: Collection<ConstructorDescriptor>
     ) {
-        MultiMap<Name, CallableMemberDescriptor> functionsByName = MultiMap.create();
-        
-        for (CallableMemberDescriptor function : classDescriptor.getDeclaredCallableMembers()) {
-            functionsByName.putValue(function.getName(), function);
-        }
-        
-        for (ConstructorDescriptor nestedClassConstructor : nestedClassConstructors) {
-            functionsByName.putValue(nestedClassConstructor.getContainingDeclaration().getName(), nestedClassConstructor);
-        }
-        
-        for (Map.Entry<Name, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
-            checkOverloadsInClass(e.getValue());
-        }
-    }
-    
-    private void checkOverloadsInPackage(@NotNull Collection<CallableMemberDescriptor> members) {
-        if (members.size() == 1) return;
+        val functionsByName = MultiMap.create<Name, CallableMemberDescriptor>()
 
-        for (Collection<? extends CallableMemberDescriptor> redeclarationGroup : OverloadUtil.getPossibleRedeclarationGroups(members)) {
-            Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = findRedeclarations(redeclarationGroup);
-            // TODO: don't render FQ name here, extract this logic to somewhere
-            reportRedeclarations(redeclarations);
+        for (function in classDescriptor.declaredCallableMembers) {
+            functionsByName.putValue(function.name, function)
+        }
+
+        for (nestedClassConstructor in nestedClassConstructors) {
+            functionsByName.putValue(nestedClassConstructor.containingDeclaration.name, nestedClassConstructor)
+        }
+
+        for (e in functionsByName.entrySet()) {
+            checkOverloadsInClass(e.value)
         }
     }
 
-    private void checkOverloadsInClass(@NotNull Collection<CallableMemberDescriptor> members) {
-        if (members.size() == 1) return;
-
-        reportRedeclarations(findRedeclarations(members));
+    private fun checkOverloadsInPackage(members: Collection<CallableMemberDescriptor>) {
+        if (members.size == 1) return
+        for (redeclarationGroup in OverloadUtil.getPossibleRedeclarationGroups(members)) {
+            reportRedeclarations(findRedeclarations(redeclarationGroup))
+        }
     }
 
-    @NotNull
-    private static Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<? extends CallableMemberDescriptor> members) {
-        Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
-        for (CallableMemberDescriptor member : members) {
-            for (CallableMemberDescriptor member2 : members) {
-                if (member == member2 || isConstructorsOfDifferentRedeclaredClasses(member, member2)) {
-                    continue;
-                }
+    private fun checkOverloadsInClass(members: Collection<CallableMemberDescriptor>) {
+        if (members.size == 1) return
+        reportRedeclarations(findRedeclarations(members))
+    }
 
-                if (!OverloadUtil.isOverloadable(member, member2) && member.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
-                    if (isTopLevelMainInDifferentFiles(member, member2)) {
-                        continue;
-                    }
+    private fun findRedeclarations(members: Collection<CallableMemberDescriptor>): Set<Pair<KtDeclaration?, CallableMemberDescriptor>> {
+        val redeclarations = linkedSetOf<Pair<KtDeclaration?, CallableMemberDescriptor>>()
+        for (member1 in members) {
+            if (member1.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) continue
 
-                    KtDeclaration ktDeclaration = (KtDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
-                    redeclarations.add(Pair.create(ktDeclaration, member));
+            for (member2 in members) {
+                if (member1 == member2) continue
+                if (isConstructorsOfDifferentRedeclaredClasses(member1, member2)) continue
+                if (isTopLevelMainInDifferentFiles(member1, member2)) continue
+
+                if (!OverloadUtil.isOverloadable(member1, member2)) {
+                    val ktDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(member1) as KtDeclaration?
+                    redeclarations.add(ktDeclaration to member1)
                 }
             }
         }
-        return redeclarations;
+        return redeclarations
     }
 
-    private static boolean isConstructorsOfDifferentRedeclaredClasses(
-            @NotNull CallableMemberDescriptor member, @NotNull CallableMemberDescriptor member2
-    ) {
-        if (!(member instanceof ConstructorDescriptor) || !(member2 instanceof ConstructorDescriptor)) return false;
+    private fun isConstructorsOfDifferentRedeclaredClasses(member1: CallableMemberDescriptor, member2: CallableMemberDescriptor): Boolean {
+        if (member1 !is ConstructorDescriptor || member2 !is ConstructorDescriptor) return false
         // ignore conflicting overloads for constructors of different classes because their redeclarations will be reported
         // but don't ignore if there's possibility that classes redeclarations will not be reported
         // (e.g. they're declared in different packages)
-        assert member.getContainingDeclaration().getContainingDeclaration() != null : "Grandparent of constructor should not be null";
-        return member.getContainingDeclaration() != member2.getContainingDeclaration() &&
-               member.getContainingDeclaration().getContainingDeclaration().equals(member2.getContainingDeclaration().getContainingDeclaration());
+        val parent1 = member1.containingDeclaration
+        val parent2 = member2.containingDeclaration
+        return parent1 !== parent2 && parent1.containingDeclaration == parent2.containingDeclaration
     }
 
-    private static boolean isTopLevelMainInDifferentFiles(@NotNull CallableMemberDescriptor member, @NotNull CallableMemberDescriptor member2) {
-        if (!MainFunctionDetector.isMain(member) ||
-            !MainFunctionDetector.isMain(member2)) {
-            return false;
+    private fun isTopLevelMainInDifferentFiles(member1: CallableMemberDescriptor, member2: CallableMemberDescriptor): Boolean {
+        if (!MainFunctionDetector.isMain(member1) || !MainFunctionDetector.isMain(member2)) {
+            return false
         }
 
-        KtFile file = DescriptorToSourceUtils.getContainingFile(member);
-        KtFile file2 = DescriptorToSourceUtils.getContainingFile(member2);
-        return file == null || file2 == null || file != file2;
+        val file1 = DescriptorToSourceUtils.getContainingFile(member1)
+        val file2 = DescriptorToSourceUtils.getContainingFile(member2)
+        return file1 == null || file2 == null || file1 !== file2
     }
 
-    private void reportRedeclarations(@NotNull Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations) {
-        if (redeclarations.isEmpty()) return;
+    private fun reportRedeclarations(redeclarations: Set<Pair<KtDeclaration?, CallableMemberDescriptor>>) {
+        if (redeclarations.isEmpty()) return
 
-        Iterator<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarationsIterator = redeclarations.iterator();
-        CallableMemberDescriptor firstRedeclarationDescriptor = redeclarationsIterator.next().getSecond();
-        CallableMemberDescriptor otherRedeclarationDescriptor = redeclarationsIterator.hasNext()
-                                                                ? redeclarationsIterator.next().getSecond()
-                                                                : null;
+        val redeclarationsIterator = redeclarations.iterator()
+        val firstRedeclarationDescriptor = redeclarationsIterator.next().second
+        val otherRedeclarationDescriptor = redeclarationsIterator.check { it.hasNext() }?.next()?.second
 
-        for (Pair<KtDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
-            KtDeclaration ktDeclaration = redeclaration.getFirst();
-            if (ktDeclaration == null) continue;
+        for ((ktDeclaration, memberDescriptor) in redeclarations) {
+            if (ktDeclaration == null) continue
 
-            CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
-
-            CallableMemberDescriptor redeclarationDescriptor;
-            if (otherRedeclarationDescriptor == null) {
-                redeclarationDescriptor = firstRedeclarationDescriptor;
-            }
-            else if (firstRedeclarationDescriptor == memberDescriptor) {
-                redeclarationDescriptor = otherRedeclarationDescriptor;
+            if (memberDescriptor is PropertyDescriptor) {
+                trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.getName().asString()))
             }
             else {
-                redeclarationDescriptor = firstRedeclarationDescriptor;
-            }
+                val redeclarationDescriptor =
+                        if (otherRedeclarationDescriptor == null)
+                            firstRedeclarationDescriptor
+                        else if (memberDescriptor == firstRedeclarationDescriptor)
+                            otherRedeclarationDescriptor
+                        else
+                            firstRedeclarationDescriptor
 
-            if (memberDescriptor instanceof PropertyDescriptor) {
-                trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.getName().asString()));
-            }
-            else {
                 trace.report(Errors.CONFLICTING_OVERLOADS.on(ktDeclaration, memberDescriptor,
-                                                             redeclarationDescriptor.getContainingDeclaration()));
+                                                             redeclarationDescriptor.containingDeclaration))
             }
         }
     }
