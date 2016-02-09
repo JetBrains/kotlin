@@ -299,7 +299,6 @@ fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
 
     val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, context)
     return enclosingPseudocode.getPseudocodeByElement(pseudocodeDeclaration)
-           ?: throw AssertionError("Can't find nested pseudocode for element: ${pseudocodeDeclaration.getElementTextWithContext()}")
 }
 
 fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {

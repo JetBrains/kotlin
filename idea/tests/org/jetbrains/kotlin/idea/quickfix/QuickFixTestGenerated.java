@@ -1988,6 +1988,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt10983.kt")
+                public void testKt10983() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/kt10983.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localFunNoReceiver.kt")
                 public void testLocalFunNoReceiver() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/localFunNoReceiver.kt");
