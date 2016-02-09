@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementType
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtWhenEntry
@@ -73,11 +74,16 @@ class KotlinParserDefinition : ParserDefinition {
 
     override fun spaceExistanceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements {
         val rightTokenType = right.elementType
+
         // get/set from a new line
         if (rightTokenType == KtTokens.GET_KEYWORD || rightTokenType == KtTokens.SET_KEYWORD) {
             return MUST_LINE_BREAK
         }
+
         val leftTokenType = left.elementType
+
+        if (leftTokenType is KtKeywordToken && rightTokenType is KtKeywordToken) return MUST
+
         // When entry from a new line
         val rightWhenEntry = right.psi.getNonStrictParentOfType<KtWhenEntry>()
         if (rightWhenEntry != null) {
@@ -86,6 +92,7 @@ class KotlinParserDefinition : ParserDefinition {
                 return MUST_LINE_BREAK
             }
         }
+
         // Default
         return MAY
     }
