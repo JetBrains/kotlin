@@ -207,7 +207,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     private fun isConventionalName(namedDeclaration: KtNamedDeclaration): Boolean {
         val name = namedDeclaration.nameAsName
-        return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorNameConventions.INVOKE
+        return name!!.getOperationSymbolsToSearch().first.isNotEmpty() || name == OperatorNameConventions.INVOKE
     }
 
     private fun hasNonTrivialUsages(declaration: KtNamedDeclaration): Boolean {

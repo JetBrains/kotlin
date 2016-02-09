@@ -62,18 +62,20 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
         val unwrappedElement = element.namedUnwrappedElement ?: return
 
+        val specialSymbols = runReadAction { unwrappedElement.getSpecialNamesToSearch() }
         val words = runReadAction {
             val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
-            unwrappedElement.getSpecialNamesToSearch() +
-                (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
+            specialSymbols.first +
+            (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
         }
 
         val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
 
-        val refFilter: (PsiReference) -> Boolean = if (unwrappedElement is KtParameter)
-            ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
-        else
-            ({true})
+        val refFilter: (PsiReference) -> Boolean = when {
+            unwrappedElement is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
+            specialSymbols.second != null -> { ref -> ref.javaClass == specialSymbols.second }
+            else -> ({true})
+        }
 
 
         val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
