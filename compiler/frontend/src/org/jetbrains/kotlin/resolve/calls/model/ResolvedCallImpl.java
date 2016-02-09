@@ -194,10 +194,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             }
         }
 
-        Map<ValueParameterDescriptor, ValueParameterDescriptor> substitutedParametersMap = Maps.newHashMap();
-        for (ValueParameterDescriptor valueParameterDescriptor : resultingDescriptor.getValueParameters()) {
-            substitutedParametersMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
-        }
+        List<ValueParameterDescriptor> substitutedParameters = resultingDescriptor.getValueParameters();
 
         Collection<Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>> valueArgumentsBeforeSubstitution =
                 new SmartList<Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>>(valueArguments.entrySet());
@@ -205,7 +202,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         valueArguments.clear();
 
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : valueArgumentsBeforeSubstitution) {
-            ValueParameterDescriptor substitutedVersion = substitutedParametersMap.get(entry.getKey().getOriginal());
+            ValueParameterDescriptor substitutedVersion = substitutedParameters.get(entry.getKey().getIndex());
             assert substitutedVersion != null : entry.getKey();
             valueArguments.put(substitutedVersion, entry.getValue());
         }
@@ -217,7 +214,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         for (Map.Entry<ValueArgument, ArgumentMatchImpl> entry : unsubstitutedArgumentMappings) {
             ArgumentMatchImpl argumentMatch = entry.getValue();
             ValueParameterDescriptor valueParameterDescriptor = argumentMatch.getValueParameter();
-            ValueParameterDescriptor substitutedVersion = substitutedParametersMap.get(valueParameterDescriptor.getOriginal());
+            ValueParameterDescriptor substitutedVersion = substitutedParameters.get(valueParameterDescriptor.getIndex());
             assert substitutedVersion != null : valueParameterDescriptor;
             argumentToParameterMap.put(entry.getKey(), argumentMatch.replaceValueParameter(substitutedVersion));
         }
