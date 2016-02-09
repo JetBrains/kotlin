@@ -121,17 +121,25 @@ private fun <Signature> needGenerateSpecialBridge(
         signatureByDescriptor: (FunctionDescriptor) -> Signature,
         overriddenBuiltinSignature: Signature
 ): Boolean {
+    // We do not generate special bridge unless it has different JVM descriptor
+    // e.g. `containsAll(Collection<E> c)` in ListImpl<E> has the same signature as `containsAll(Collection<?> c)`
+    // or `contains(E e)` has the same signature as `contains(Object e)`.
+    // While `contains(String e)` in StringList : List<String> has different JVM descriptor from `contains(Object e)`
+    // and there should be special bridge in latter case.
     if (signatureByDescriptor(functionDescriptor) == overriddenBuiltinSignature) return false
+
     if (specialCallableDescriptor.modality == Modality.FINAL) return false
 
     // Is there Kotlin superclass that already has generated special bridge
     if (functionDescriptor.firstOverridden { overridden ->
-        val originalOverridden = overridden.original
-        if (overridden === functionDescriptor
-            || originalOverridden !is FunctionDescriptor
-            || originalOverridden.containingDeclaration is JavaClassDescriptor
-            || DescriptorUtils.isInterface(originalOverridden.containingDeclaration)) return@firstOverridden false
+        // Ignore itself and non-functions (the latter may be assertion)
+        if (overridden === functionDescriptor || overridden !is FunctionDescriptor) return@firstOverridden false
 
+        // is not Kotlin class
+        if (overridden.containingDeclaration is JavaClassDescriptor
+            || DescriptorUtils.isInterface(overridden.containingDeclaration)) return@firstOverridden false
+
+        val originalOverridden = overridden.original
         val overriddenSpecial = originalOverridden.getOverriddenBuiltinReflectingJvmDescriptor()?.original ?: return@firstOverridden false
 
         signatureByDescriptor(originalOverridden) != signatureByDescriptor(overriddenSpecial)
