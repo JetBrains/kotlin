@@ -193,6 +193,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("RecursiveDeprecated.kt")
+        public void testRecursiveDeprecated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/RecursiveDeprecated.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Synchronized.kt")
         public void testSynchronized() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/Synchronized.kt");
