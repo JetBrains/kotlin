@@ -64,11 +64,6 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @NotNull ExitCode exitCode, @NotNull String testDataDir) {
-        return getNormalizedCompilerOutput(pureOutput, exitCode, testDataDir, JvmMetadataVersion.INSTANCE);
-    }
-
-    @NotNull
     public static String getNormalizedCompilerOutput(
             @NotNull String pureOutput,
             @NotNull ExitCode exitCode,
@@ -88,8 +83,9 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) throws Exception {
         System.setProperty("java.awt.headless", "true");
         Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
-        String actual =
-                getNormalizedCompilerOutput(outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent());
+        String actual = getNormalizedCompilerOutput(
+                outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent(), JvmMetadataVersion.INSTANCE
+        );
 
         File outFile = new File(fileName.replaceFirst("\\.args$", ".out"));
         KotlinTestUtils.assertEqualsToFile(outFile, actual);

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
@@ -305,11 +304,6 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCliTest>() {
-            model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
-            model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
-        }
-
-        testClass<AbstractKotlincExecutableTest>() {
             model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
             model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
         }
