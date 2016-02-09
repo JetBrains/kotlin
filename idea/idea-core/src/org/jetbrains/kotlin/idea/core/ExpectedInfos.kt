@@ -422,23 +422,29 @@ class ExpectedInfos(
 
     private fun calculateForIf(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
         val ifExpression = (expressionWithType.parent as? KtContainerNode)?.parent as? KtIfExpression ?: return null
-        return when (expressionWithType) {
-            ifExpression.condition -> listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, Tail.RPARENTH, additionalData = IfConditionAdditionalData))
+        when (expressionWithType) {
+            ifExpression.condition -> return listOf(ExpectedInfo(resolutionFacade.moduleDescriptor.builtIns.booleanType, null, Tail.RPARENTH, additionalData = IfConditionAdditionalData))
 
-            ifExpression.then -> calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
+            ifExpression.then -> return calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
 
             ifExpression.`else` -> {
-                val ifExpectedInfo = calculate(ifExpression)
+                val ifExpectedInfos = calculate(ifExpression)
                 val thenType = ifExpression.then?.let { bindingContext.getType(it) }
-                val filteredInfo = if (thenType != null && !thenType.isError)
-                    ifExpectedInfo.filter { it.matchingSubstitutor(thenType) != null }
-                else
-                    ifExpectedInfo
-                return filteredInfo.copyWithNoAdditionalData()
-            }
 
-            else -> return null
+                if (ifExpectedInfos.any { it.fuzzyType != null }) {
+                    val filteredInfo = if (thenType != null && !thenType.isError)
+                        ifExpectedInfos.filter { it.matchingSubstitutor(thenType) != null }
+                    else
+                        ifExpectedInfos
+                    return filteredInfo.copyWithNoAdditionalData()
+                }
+                else if (thenType != null) {
+                    return listOf(ExpectedInfo(thenType, null, null))
+                }
+            }
         }
+
+        return null
     }
 
     private fun calculateForElvis(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
@@ -450,7 +456,7 @@ class ExpectedInfos(
                 val leftType = bindingContext.getType(leftExpression)
                 val leftTypeNotNullable = leftType?.makeNotNullable()
                 val expectedInfos = calculate(binaryExpression)
-                if (expectedInfos.isNotEmpty()) {
+                if (expectedInfos.any { it.fuzzyType != null }) {
                     val filteredInfo = if (leftTypeNotNullable != null)
                         expectedInfos.filter { it.matchingSubstitutor(leftTypeNotNullable) != null }
                     else
