@@ -60,7 +60,7 @@ object BuiltinSpecialBridgesUtil {
         val overriddenBuiltinSignature = signatureByDescriptor(overriddenBuiltin)
 
         val needGenerateSpecialBridge = needGenerateSpecialBridge(
-                function, reachableDeclarations, overriddenBuiltin, signatureByDescriptor, overriddenBuiltinSignature)
+                function, reachableDeclarations, signatureByDescriptor, overriddenBuiltinSignature)
 
         val specialBridge = if (needGenerateSpecialBridge)
             BridgeForBuiltinSpecial(overriddenBuiltinSignature, methodItself, isSpecial = true)
@@ -117,7 +117,6 @@ private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor)
 private fun <Signature> needGenerateSpecialBridge(
         functionDescriptor: FunctionDescriptor,
         reachableDeclarations: Collection<FunctionDescriptor>,
-        specialCallableDescriptor: CallableMemberDescriptor,
         signatureByDescriptor: (FunctionDescriptor) -> Signature,
         overriddenBuiltinSignature: Signature
 ): Boolean {
@@ -127,8 +126,6 @@ private fun <Signature> needGenerateSpecialBridge(
     // While `contains(String e)` in StringList : List<String> has different JVM descriptor from `contains(Object e)`
     // and there should be special bridge in latter case.
     if (signatureByDescriptor(functionDescriptor) == overriddenBuiltinSignature) return false
-
-    if (specialCallableDescriptor.modality == Modality.FINAL) return false
 
     // Is there Kotlin superclass that already has generated special bridge
     if (functionDescriptor.firstOverridden { overridden ->
