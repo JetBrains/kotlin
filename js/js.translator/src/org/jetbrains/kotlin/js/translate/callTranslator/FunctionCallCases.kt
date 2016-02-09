@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -233,7 +232,7 @@ object ConstructorCallCase : FunctionCallCase() {
                 val expr = receiver.expression
                 when (expr) {
                     is KtSuperExpression -> {
-                        val superDescriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, expr.instanceReference)
+                        val superDescriptor = context.getSuperTarget(expr);
                         val jsReceiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(superDescriptor))
                         (sequenceOf(jsReceiver) + argumentsInfo.translateArguments).toList()
                     }

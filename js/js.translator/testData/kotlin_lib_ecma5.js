@@ -177,14 +177,7 @@ var Kotlin = {};
         Object.defineProperties(prototypeObj, metadata.properties);
         copyProperties(prototypeObj, metadata.functions);
         prototypeObj.constructor = constructor;
-        for (var innerType in metadata.types) {
-            if (metadata.types.hasOwnProperty(innerType)) {
-                Object.defineProperty(constructor, innerType, {
-                    get: metadata.types[innerType],
-                    configurable: true
-                });
-            }
-        }
+        Kotlin.defineInnerTypes(constructor, metadata.types);
 
         if (metadata.baseClass != null) {
             constructor.baseInitializer = metadata.baseClass;
@@ -194,6 +187,19 @@ var Kotlin = {};
         constructor.prototype = prototypeObj;
         Object.defineProperty(constructor, "object", {get: class_object, configurable: true});
         return constructor;
+    };
+
+    Kotlin.defineInnerTypes = function(constructor, types) {
+        for (var innerTypeName in types) {
+            if (types.hasOwnProperty(innerTypeName)) {
+                var innerType = types[innerTypeName];
+                innerType.className = innerTypeName;
+                Object.defineProperty(constructor, innerTypeName, {
+                    get: innerType,
+                    configurable: true
+                });
+            }
+        }
     };
 
     Kotlin.createObjectNow = function (bases, constructor, functions) {
@@ -215,15 +221,7 @@ var Kotlin = {};
         copyProperties(obj.prototype, obj.$metadata$.functions);
         Object.defineProperty(obj, "object", {get: class_object, configurable: true});
 
-        for (var innerType in obj.$metadata$.types) {
-            if (obj.$metadata$.types.hasOwnProperty(innerType)) {
-                Object.defineProperty(constructor, innerType, {
-                    get: obj.$metadata$.types[innerType],
-                    configurable: true
-                });
-            }
-        }
-
+        Kotlin.defineInnerTypes(constructor, obj.$metadata$.types);
         return obj;
     };
 
