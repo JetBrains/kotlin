@@ -60,8 +60,9 @@ private val getRelatedProductionModule: (Module) -> Module? = run {
     }
 
     return@run { module ->
-        val instance = getInstanceMethod(null, module)
-        getProductionModuleMethod(instance) as Module?
+        getInstanceMethod(null, module)?.let {
+            getProductionModuleMethod(it) as Module?
+        }
     }
 }
 
