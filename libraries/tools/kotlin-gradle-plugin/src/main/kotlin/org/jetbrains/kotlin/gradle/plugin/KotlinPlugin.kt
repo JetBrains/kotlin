@@ -1,40 +1,42 @@
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSet
-import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetImpl
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.internal.HasConvention
-import org.jetbrains.kotlin.gradle.internal.KotlinSourceSet
-import java.io.File
-import org.gradle.api.Action
-import org.gradle.api.tasks.compile.AbstractCompile
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
-import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.initialization.dsl.ScriptHandler
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
-import javax.inject.Inject
-import org.gradle.api.file.SourceDirectorySet
-import kotlin.properties.Delegates
-import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
+import org.gradle.api.Action
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import java.util.ServiceLoader
-import org.gradle.api.logging.*
-import org.gradle.api.plugins.*
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.initialization.dsl.ScriptHandler
+import org.gradle.api.internal.HasConvention
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
+import org.jetbrains.kotlin.gradle.internal.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetImpl
 import org.jetbrains.kotlin.gradle.internal.initKapt
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import java.io.File
 import java.net.URL
+import java.util.*
 import java.util.jar.Manifest
+import javax.inject.Inject
 
 val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
 
@@ -552,7 +554,10 @@ fun AbstractCompile.storeKaptAnnotationsFile(kapt: AnnotationProcessingManager) 
 }
 
 private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, File> {
-    val aptOutputDir = File(buildDir, "generated/source/kapt")
+    val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
+    val generatedFilesBaseDir = kaptExtension.getGeneratedFilesBaseDir(this)
+
+    val aptOutputDir = generatedFilesBaseDir ?: File(buildDir, "generated/source/kapt")
     val aptOutputDirForVariant = File(aptOutputDir, sourceSetName)
 
     val aptWorkingDir = File(buildDir, "tmp/kapt")

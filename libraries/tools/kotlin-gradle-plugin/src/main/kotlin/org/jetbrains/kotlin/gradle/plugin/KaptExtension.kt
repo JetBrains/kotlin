@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
 import org.gradle.api.Project
+import java.io.File
 
 public open class KaptExtension {
 
@@ -25,11 +26,32 @@ public open class KaptExtension {
 
     public open var inheritedAnnotations: Boolean = true
 
+    private var generatedFilesBaseDirLambda: ((Project) -> File)? = null
+
     private var closure: Closure<*>? = null
 
     public open fun arguments(closure: Closure<*>) {
         this.closure = closure
     }
+
+    public fun generatedFilesBaseDir(path: String) {
+        generatedFilesBaseDirLambda = { File(path) }
+    }
+
+    public fun generatedFilesBaseDir(path: File) {
+        generatedFilesBaseDirLambda = { path }
+    }
+
+    public fun generatedFilesBaseDir(closure: Closure<File>) {
+        generatedFilesBaseDirLambda = { project ->
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure.delegate = project
+            closure.call()
+        }
+    }
+
+    fun getGeneratedFilesBaseDir(project: Project): File? =
+        generatedFilesBaseDirLambda?.invoke(project)
 
     fun getAdditionalArguments(project: Project, variant: Any?, android: Any?): List<String> {
         val closureToExecute = closure ?: return emptyList()

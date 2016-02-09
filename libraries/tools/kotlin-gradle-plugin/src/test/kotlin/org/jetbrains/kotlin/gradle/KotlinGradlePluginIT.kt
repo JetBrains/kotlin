@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 import org.junit.Test
 
 class KotlinGradleIT: BaseGradleIT() {
@@ -194,6 +193,20 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/tmp/kapt/main/kotlinGenerated/TestClass.kt")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassCustomized.class")
+        }
+    }
+
+    @Test
+    fun testKaptGeneratedFilesBaseDir() {
+        Project("kaptGeneratedFilesBaseDir", "1.12").build("build") {
+            assertSuccessful()
+
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
+            assertFileExists("generated/main/TestClassGenerated.java")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
         }
     }
 
