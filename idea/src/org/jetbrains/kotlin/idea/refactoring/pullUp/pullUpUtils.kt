@@ -70,12 +70,6 @@ fun doAddCallableMember(
 }
 
 // TODO: Formatting rules don't apply here for some reason
-fun KtNamedDeclaration.addModifierWithSpace(modifier: KtModifierKeywordToken) {
-    addModifier(modifier)
-    addAfter(KtPsiFactory(this).createWhiteSpace(), modifierList)
-}
-
-// TODO: Formatting rules don't apply here for some reason
 fun KtNamedDeclaration.addAnnotationWithSpace(annotationEntry: KtAnnotationEntry): KtAnnotationEntry {
     val result = addAnnotationEntry(annotationEntry)
     addAfter(KtPsiFactory(this).createWhiteSpace(), modifierList)
@@ -84,7 +78,7 @@ fun KtNamedDeclaration.addAnnotationWithSpace(annotationEntry: KtAnnotationEntry
 
 fun KtClass.makeAbstract() {
     if (!isInterface()) {
-        addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
+        addModifier(KtTokens.ABSTRACT_KEYWORD)
     }
 }
 
@@ -105,7 +99,7 @@ fun makeAbstract(member: KtCallableDeclaration,
                  substitutor: TypeSubstitutor,
                  targetClass: KtClass) {
     if (!targetClass.isInterface()) {
-        member.addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
+        member.addModifier(KtTokens.ABSTRACT_KEYWORD)
     }
 
     val builtIns = originalMemberDescriptor.builtIns

@@ -272,7 +272,7 @@ class KotlinPullUpHelper(
 
     private fun liftToProtected(declaration: KtNamedDeclaration, ignoreUsages: Boolean = false) {
         if (!declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return
-        if (ignoreUsages || willBeUsedInSourceClass(declaration)) declaration.addModifierWithSpace(KtTokens.PROTECTED_KEYWORD)
+        if (ignoreUsages || willBeUsedInSourceClass(declaration)) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
     }
 
     override fun setCorrectVisibility(info: MemberInfoBase<PsiMember>) {
@@ -358,7 +358,7 @@ class KotlinPullUpHelper(
             member.delete()
         }
         else {
-            member.addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
+            member.addModifier(KtTokens.OVERRIDE_KEYWORD)
             (member as? KtNamedFunction)?.valueParameters?.forEach { it.dropDefaultValue() }
         }
     }

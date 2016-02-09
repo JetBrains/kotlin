@@ -139,25 +139,25 @@ class KotlinPushDownProcessor(
                     val targetMember = targetMemberDescriptor?.source?.getPsi() as? KtCallableDeclaration
                     targetMember?.apply {
                         if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
-                            addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
+                            addModifier(KtTokens.OVERRIDE_KEYWORD)
                         }
                         else if (memberDescriptor.overriddenDescriptors.isEmpty()) {
                             removeModifier(KtTokens.OVERRIDE_KEYWORD)
                         }
                         else {
-                            addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
+                            addModifier(KtTokens.OVERRIDE_KEYWORD)
                         }
                     } ?: addMemberToTarget(member, targetClass).apply {
                         if (this@KotlinPushDownProcessor.context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
                             if (targetClassDescriptor.kind != ClassKind.INTERFACE && memberDescriptor.modality == Modality.ABSTRACT) {
-                                addModifierWithSpace(KtTokens.ABSTRACT_KEYWORD)
+                                addModifier(KtTokens.ABSTRACT_KEYWORD)
                             }
                         }
                         if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
                             if (hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-                                addModifierWithSpace(KtTokens.PROTECTED_KEYWORD)
+                                addModifier(KtTokens.PROTECTED_KEYWORD)
                             }
-                            addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
+                            addModifier(KtTokens.OVERRIDE_KEYWORD)
                         }
                     }
                 }
@@ -194,7 +194,7 @@ class KotlinPushDownProcessor(
 
                     if (memberDescriptor.modality != Modality.ABSTRACT && memberInfo.isToAbstract) {
                         if (member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-                            member.addModifierWithSpace(KtTokens.PROTECTED_KEYWORD)
+                            member.addModifier(KtTokens.PROTECTED_KEYWORD)
                         }
                         makeAbstract(member, memberDescriptor, TypeSubstitutor.EMPTY, context.sourceClass)
                         member.typeReference?.addToShorteningWaitSet()

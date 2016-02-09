@@ -223,6 +223,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("spaceAfterModifier.kt")
+        public void testSpaceAfterModifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/spaceAfterModifier.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("superToThis.kt")
         public void testSuperToThis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/superToThis.kt");
