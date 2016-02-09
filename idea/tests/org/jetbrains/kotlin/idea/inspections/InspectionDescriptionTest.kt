@@ -26,7 +26,6 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 
@@ -36,7 +35,6 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
         val shortNames = THashMap<String, InspectionToolWrapper<InspectionProfileEntry, InspectionEP>>()
 
         val inspectionTools = loadKotlinInspections()
-        val tools = inspectionTools.size
         val errors = StringBuilder()
         for (toolWrapper in inspectionTools) {
             val description = toolWrapper.loadDescription()
@@ -46,15 +44,14 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
             }
 
             val shortName = toolWrapper.shortName
-            val tool1 = shortNames[shortName]
-            if (tool1 != null) {
+            val tool = shortNames[shortName]
+            if (tool != null) {
                 errors.append("Short names must be unique: " + shortName + "\n" +
-                              "inspection: '" + desc(tool1) + "\n" +
+                              "inspection: '" + desc(tool) + "\n" +
                               "        and '" + desc(toolWrapper))
             }
             shortNames.put(shortName, toolWrapper)
         }
-        println("$tools inspection tools total")
 
         UsefulTestCase.assertEmpty(errors.toString())
     }
@@ -71,7 +68,7 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
             }
 
     private fun desc(tool: InspectionToolWrapper<InspectionProfileEntry, InspectionEP>): String {
-        return tool.toString() + " ('" + tool.getDescriptionContextClass() + "') " +
+        return tool.toString() + " ('" + tool.descriptionContextClass + "') " +
                "in " + if (tool.extension == null) null else tool.extension.pluginDescriptor
     }
 
@@ -96,32 +93,18 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
         UsefulTestCase.assertEmpty(errors.toString())
     }
 
-    fun testShortNameConvention() {
-        val tools = loadKotlinInspections()
-        var count = 0
-        for (tool in tools) {
-            val name = tool.shortName
-            val nameByClass = InspectionProfileEntry.getShortName(tool.tool.javaClass.simpleName)
-            if (name != nameByClass) {
-                println(name + " vs " + nameByClass)
-                count++
-            }
-        }
-        println("$count from ${tools.size} violates convention")
-    }
-
     fun testInspectionMappings() {
-        val tools = loadKotlinInspections()
+        val toolWrappers = loadKotlinInspections()
         val errors = StringBuilder()
-        tools.filter({ tool -> tool.extension == null }).forEach { tool ->
-            errors.append("Please add XML mapping for ").append(tool.getTool().javaClass)
+        toolWrappers.filter({ toolWrapper -> toolWrapper.extension == null }).forEach { toolWrapper ->
+            errors.append("Please add XML mapping for ").append(toolWrapper.tool.javaClass)
         }
 
         UsefulTestCase.assertEmpty(errors.toString())
     }
 
     fun testMismatchedIds() {
-        val failMessages = ContainerUtil.newLinkedList<String>()
+        val failMessages = mutableListOf<String>()
         for (ep in loadKotlinInspectionExtensions()) {
             val toolName = ep.implementationClass
             val tool = ep.instantiateTool()
@@ -135,14 +118,14 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
     }
 
     fun testNotEmptyToolNames() {
-        val failMessages = ContainerUtil.newLinkedList<String>()
+        val failMessages = mutableListOf<String>()
         for (ep in LocalInspectionEP.LOCAL_INSPECTION.extensions) {
             val toolName = ep.implementationClass
-            if (StringUtil.isEmpty(ep.getDisplayName())) {
+            if (ep.getDisplayName().isNullOrEmpty()) {
                 failMessages.add(toolName + ": toolName is not set, tool won't be available in `run inspection` action")
             }
         }
-        UsefulTestCase.assertEmpty(StringUtil.join(failMessages, "\n"), failMessages)
+        UsefulTestCase.assertEmpty(failMessages.joinToString("\n"), failMessages)
     }
 
     private fun checkValue(failMessages: MutableCollection<String>,
