@@ -2,12 +2,13 @@ package org.jetbrains.kotlin.gradle
 
 import com.google.common.io.Files
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.incremental.BuildStep
+import org.jetbrains.kotlin.gradle.incremental.parseTestBuildLog
 import org.junit.Assume
 import java.io.File
 import java.util.*
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-
 
 abstract class BaseIncrementalGradleIT : BaseGradleIT() {
 
@@ -69,37 +70,6 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
         modificationStage = actualStage + 1
     }
 
-    class StageResults(val stage: Int, val compiledKotlinFiles: HashSet<String> = hashSetOf(), val compiledJavaFiles: HashSet<String> = hashSetOf(), var compileSucceeded: Boolean = true)
-
-    fun parseTestBuildLog(file: File): List<StageResults> {
-        class StagedLines(val stage: Int, val line: String)
-
-        return file.readLines()
-                .map { if (it.startsWith("========== Step")) "" else it }
-                .fold(arrayListOf<StagedLines>()) { slines, line ->
-                    val (curStage, prevWasBlank) = slines.lastOrNull()?.let{ Pair(it.stage, it.line.isBlank()) } ?: Pair(0, false)
-                    slines.add(StagedLines(curStage + if (line.isBlank() && prevWasBlank) 1 else 0, line))
-                    slines
-                }
-                .fold(arrayListOf<StageResults>()) { res, sline ->
-                    // for lazy creation of the node
-                    fun curStageResults(): StageResults {
-                        if (res.isEmpty() || sline.stage > res.last().stage) {
-                            res.add(StageResults(sline.stage))
-                        }
-                        return res.last()
-                    }
-
-                    when {
-                        sline.line.endsWith(".java", ignoreCase = true) -> curStageResults().compiledJavaFiles.add(sline.line)
-                        sline.line.endsWith(".kt", ignoreCase = true) -> curStageResults().compiledKotlinFiles.add(sline.line)
-                        sline.line.equals("COMPILATION FAILED", ignoreCase = true) -> curStageResults().compileSucceeded = false
-                    }
-                    res
-                }
-    }
-
-
     fun IncrementalTestProject.performAndAssertBuildStages(options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
 
         val checkKnown = testIsKnownJpsTestProject(resourcesRoot)
@@ -133,7 +103,7 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
         }
     }
 
-    fun IncrementalTestProject.buildAndAssertStageResults(expected: StageResults, options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
+    fun IncrementalTestProject.buildAndAssertStageResults(expected: BuildStep, options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
         build("build", options = options) {
             if (expected.compileSucceeded) {
                 assertSuccessful()
