@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter.renderersUtil
 
+import com.google.common.html.HtmlEscapers
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -98,7 +99,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
     if (receiverParameter != null) {
         append(htmlRenderer.renderType(receiverParameter.type)).append(".")
     }
-    append(resultingDescriptor.name).append("(")
+    append(HtmlEscapers.htmlEscaper().escape(resultingDescriptor.name.asString())).append("(")
     append(resultingDescriptor.valueParameters.map { parameter -> renderParameter(parameter) }.joinToString())
     append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
