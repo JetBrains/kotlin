@@ -85,7 +85,7 @@ fun notifyOutdatedKotlinRuntime(project: Project, outdatedLibraries: Collection<
         "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>"
     }
     else {
-        val libraryNames = outdatedLibraries.joinToString { it.library.name!! }
+        val libraryNames = outdatedLibraries.joinToString { it.library.name ?: "unknown library" }
 
         "<p>Version of Kotlin runtime is outdated in several libraries ($libraryNames). Plugin version is $pluginVersion.</p>" +
         "<p>Runtime libraries should be updated to avoid compatibility problems.</p>" +
