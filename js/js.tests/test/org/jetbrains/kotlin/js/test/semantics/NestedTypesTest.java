@@ -35,19 +35,11 @@ public class NestedTypesTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    public void testInstantiateInDerived() throws Exception {
+    public void testOuterCompanion() throws Exception {
         checkFooBoxIsOk();
     }
 
-    public void testInstantiateInDerivedLabeled() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testInstantiateInSameClass() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testProperOuter() throws Exception {
+    public void testOuterObject() throws Exception {
         checkFooBoxIsOk();
     }
 }

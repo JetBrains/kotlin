@@ -51,3 +51,5 @@ abstract class AbstractInlineMultiModuleTest : MultipleModulesTranslationTest("i
 abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWords/")
 
 abstract class AbstractSecondaryConstructorTest : AbstractBlackBoxTest("secondaryConstructors/")
+
+abstract class AbstractNestedTypesTest : AbstractBlackBoxTest("nestedTypes/")

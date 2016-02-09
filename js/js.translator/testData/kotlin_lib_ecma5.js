@@ -150,20 +150,11 @@ var Kotlin = {};
         return object;
     }
 
-    /**
-     * @param {(Array|Object|null)=} bases
-     * @param {(function(new: T, ?, ?, ?, ?, ?, ?, ?): T)|null=} constructor
-     * @param {Object=} properties
-     * @param {Object=} staticProperties
-     * @returns {function(new: T): T}
-     * @template T
-     */
-    Kotlin.createClassNow = function (bases, constructor, properties, staticProperties) {
+    Kotlin.doCreateClass = function (metadata, constructor) {
         if (constructor == null) {
             constructor = emptyFunction();
         }
 
-        var metadata = computeMetadata(bases, properties, staticProperties);
         metadata.type = Kotlin.TYPE.CLASS;
         copyProperties(constructor, metadata.staticMembers);
 
@@ -189,6 +180,19 @@ var Kotlin = {};
         return constructor;
     };
 
+    /**
+     * @param {(Array|Object|null)=} bases
+     * @param {(function(new: T, ?, ?, ?, ?, ?, ?, ?): T)|null=} constructor
+     * @param {Object=} properties
+     * @param {Object=} staticProperties
+     * @returns {function(new: T): T}
+     * @template T
+     */
+    Kotlin.createClassNow = function (bases, constructor, properties, staticProperties) {
+        var metadata = computeMetadata(bases, properties, staticProperties);
+        return Kotlin.doCreateClass(metadata, constructor);
+    };
+
     Kotlin.defineInnerTypes = function(constructor, types) {
         for (var innerTypeName in types) {
             if (types.hasOwnProperty(innerTypeName)) {
@@ -202,11 +206,20 @@ var Kotlin = {};
         }
     };
 
-    Kotlin.createObjectNow = function (bases, constructor, functions) {
-        var noNameClass = Kotlin.createClassNow(bases, constructor, functions);
+    Kotlin.createObjectNow = function (bases, constructor, functions, staticProperties) {
+        var metadata = computeMetadata(bases, functions, staticProperties);
+        var noNameClass = Kotlin.doCreateClass(metadata, constructor);
         var obj = new noNameClass();
         noNameClass.$metadata$.type = Kotlin.TYPE.OBJECT;
-        return  obj;
+        for (var innerTypeName in metadata.types) {
+            if (metadata.types.hasOwnProperty(innerTypeName)) {
+                Object.defineProperty(obj, innerTypeName, {
+                    get : metadata.types[innerTypeName],
+                    configurable: true
+                });
+            }
+        }
+        return obj;
     };
 
     Kotlin.createTraitNow = function (bases, properties, staticProperties) {
@@ -243,7 +256,8 @@ var Kotlin = {};
      */
     Kotlin.createClass = function (basesFun, constructor, properties, staticProperties) {
         function $o() {
-            var klass = Kotlin.createClassNow(getBases(basesFun), constructor, properties, staticProperties);
+            var metadata = computeMetadata(getBases(basesFun), properties, staticProperties);
+            var klass = Kotlin.doCreateClass(metadata, constructor);
             Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
@@ -313,11 +327,12 @@ var Kotlin = {};
      * @param {function()|null} basesFun
      * @param {(function(new: T): T)|null=} constructor
      * @param {Object=} functions
+     * @param {Object=} staticProperties
      * @returns {Object}
      * @template T
      */
-    Kotlin.createObject = function (basesFun, constructor, functions) {
-        return Kotlin.createObjectNow(getBases(basesFun), constructor, functions);
+    Kotlin.createObject = function (basesFun, constructor, functions, staticProperties) {
+        return Kotlin.createObjectNow(getBases(basesFun), constructor, functions, staticProperties);
     };
 
     Kotlin.callGetter = function (thisObject, klass, propertyName) {
