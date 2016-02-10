@@ -235,7 +235,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         val caches = hashMapOf<TargetId, GradleIncrementalCacheImpl>()
         val lookupStorage = LookupStorage(File(cachesBaseDir, "lookups"))
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
-        var currentRemoved = removed
+        var currentRemoved = removed.filter { it.isKotlinFile() }
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
 
@@ -396,7 +396,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             args.classpath = args.classpath + File.pathSeparator + outputDir.absolutePath
         }
 
-        while (sourcesToCompile.any()) {
+        while (sourcesToCompile.any() || currentRemoved.any()) {
             logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString{ projectRelativePath(it) }}")
 
             val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
