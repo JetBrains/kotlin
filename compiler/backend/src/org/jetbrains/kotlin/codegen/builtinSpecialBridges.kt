@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
-class BridgeForBuiltinSpecial<Signature>(
+class BridgeForBuiltinSpecial<Signature : Any>(
         val from: Signature, val to: Signature,
         val isSpecial: Boolean = false,
         val isDelegateToSuper: Boolean = false
 )
 
 object BuiltinSpecialBridgesUtil {
-    @JvmStatic fun <Signature> generateBridgesForBuiltinSpecial(
+    @JvmStatic fun <Signature : Any> generateBridgesForBuiltinSpecial(
             function: FunctionDescriptor,
             signatureByDescriptor: (FunctionDescriptor) -> Signature
     ): Set<BridgeForBuiltinSpecial<Signature>> {
@@ -92,7 +92,7 @@ object BuiltinSpecialBridgesUtil {
         return bridges
     }
 
-    @JvmStatic fun <Signature> FunctionDescriptor.shouldHaveTypeSafeBarrier(
+    @JvmStatic fun <Signature : Any> FunctionDescriptor.shouldHaveTypeSafeBarrier(
             signatureByDescriptor: (FunctionDescriptor) -> Signature
     ): Boolean {
         if (BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(this) == null) return false
@@ -114,7 +114,7 @@ private fun findSuperImplementationForStubDelegation(function: FunctionDescripto
 private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor): MutableSet<FunctionDescriptor> =
         findAllReachableDeclarations(DescriptorBasedFunctionHandle(functionDescriptor)).map { it.descriptor }.toMutableSet()
 
-private fun <Signature> needGenerateSpecialBridge(
+private fun <Signature : Any> needGenerateSpecialBridge(
         functionDescriptor: FunctionDescriptor,
         reachableDeclarations: Collection<FunctionDescriptor>,
         signatureByDescriptor: (FunctionDescriptor) -> Signature,
