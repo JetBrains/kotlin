@@ -1003,7 +1003,14 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
  * Returns a [List] containing all elements.
  */
 public fun <T> Iterable<T>.toList(): List<T> {
-    return this.toMutableList()
+    if (this is Collection) {
+        return when (size) {
+            0 -> emptyList()
+            1 -> listOf(if (this is List) get(0) else iterator().next())
+            else -> this.toMutableList()
+        }
+    }
+    return this.toMutableList().optimizeReadOnlyList()
 }
 
 /**
@@ -1026,7 +1033,14 @@ public fun <T> Collection<T>.toMutableList(): MutableList<T> {
  * Returns a [Set] of all elements.
  */
 public fun <T> Iterable<T>.toSet(): Set<T> {
-    return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))
+    if (this is Collection) {
+        return when (size) {
+            0 -> emptySet()
+            1 -> setOf(if (this is List) this[0] else iterator().next())
+            else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
+        }
+    }
+    return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
 }
 
 /**

@@ -17,9 +17,19 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a [List] containing all key-value pairs.
  */
 public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
+    if (size == 0)
+        return emptyList()
+    val iterator = entries.iterator()
+    if (!iterator.hasNext())
+        return emptyList()
+    val first = iterator.next()
+    if (!iterator.hasNext())
+        return listOf(first.toPair())
     val result = ArrayList<Pair<K, V>>(size)
-    for (item in this)
-        result.add(item.key to item.value)
+    result.add(first.toPair())
+    do {
+        result.add(iterator.next().toPair())
+    } while (iterator.hasNext())
     return result
 }
 
