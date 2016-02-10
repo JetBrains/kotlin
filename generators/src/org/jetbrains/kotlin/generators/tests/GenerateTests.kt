@@ -1066,6 +1066,26 @@ fun main(args: Array<String>) {
         testClass<AbstractNestedTypesTest>() {
             model("codegen/box/classes/inner", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractClassesTest>() {
+            model("codegen/box/classes/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractClosuresTest>() {
+            model("codegen/box/closures/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractInnerNestedTest>() {
+            model("codegen/box/innerNested/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractObjectsTest>() {
+            model("codegen/box/objects/", targetBackend = TargetBackend.JS)
+        }
+
+        testClass<AbstractSuperTest>() {
+            model("codegen/box/super/", targetBackend = TargetBackend.JS)
+        }
     }
 }
 

@@ -61,9 +61,14 @@ public final class ReferenceTranslator {
         }
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor entryClass = (ClassDescriptor) descriptor;
-            if (entryClass.getKind() == ClassKind.ENUM_ENTRY && !AnnotationsUtils.isNativeObject(entryClass)) {
-                DeclarationDescriptor enumClass = entryClass.getContainingDeclaration();
-                qualifier = Namer.getCompanionObjectAccessor(translateAsFQReference(enumClass, context));
+            if (entryClass.getKind() == ClassKind.ENUM_ENTRY) {
+                if (!AnnotationsUtils.isNativeObject(entryClass)) {
+                    DeclarationDescriptor enumClass = entryClass.getContainingDeclaration();
+                    qualifier = Namer.getCompanionObjectAccessor(translateAsFQReference(enumClass, context));
+                }
+            }
+            else if (entryClass.getKind() == ClassKind.CLASS || entryClass.getKind() == ClassKind.ENUM_CLASS) {
+                qualifier = null;
             }
         }
 
