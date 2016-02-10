@@ -33,8 +33,8 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Cannot access 'A': it is 'private' in file
-Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'private'
-Function effective visibility 'public' should be the same or less permissive than its return type effective visibility 'private'
+'public' subclass exposes its 'private' supertype A
+'public' function exposes its 'private' return type A
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
