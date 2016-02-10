@@ -328,31 +328,6 @@ class KotlinChangeSignatureDialog(
     }
 
     override fun validateAndCommitData(): String? {
-        if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
-            myReturnTypeCodeFragment.getTypeInfo(true, false).type == null) {
-            if (Messages.showOkCancelDialog(
-                    myProject,
-                    "Return type '${myReturnTypeCodeFragment!!.text}' cannot be resolved.\nContinue?",
-                    RefactoringBundle.message("changeSignature.refactoring.name"),
-                    Messages.getWarningIcon()
-            ) != Messages.OK) {
-                return ChangeSignatureDialogBase.EXIT_SILENTLY
-            }
-        }
-
-        for (item in parametersTableModel.items) {
-            if (item.typeCodeFragment.getTypeInfo(true, false).type == null) {
-                val paramText = if (item.parameter != parametersTableModel.receiver) "parameter '${item.parameter.name}'" else "receiver"
-                if (Messages.showOkCancelDialog(
-                        myProject,
-                        "Type '${item.typeCodeFragment.text}' for $paramText cannot be resolved.\nContinue?",
-                        RefactoringBundle.message("changeSignature.refactoring.name"),
-                        Messages.getWarningIcon()
-                ) != Messages.OK) {
-                    return ChangeSignatureDialogBase.EXIT_SILENTLY
-                }
-            }
-        }
         return null
     }
 
