@@ -571,4 +571,73 @@ println(42)
             expectedStdout = "",
         )
     }
+
+    fun testKotlinSimple() {
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        runProcess(
+            "kotlin",
+            "-cp", tmpdir.path,
+            "test.HelloWorldKt",
+            expectedStdout = "Hello!\n"
+        )
+    }
+
+    fun testKotlinFromJar() {
+        val jarFile = File(tmpdir, "out.jar").path
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", jarFile)
+        runProcess(
+            "kotlin",
+            "-cp", jarFile,
+            "test.HelloWorldKt",
+            expectedStdout = "Hello!\n"
+        )
+    }
+
+    fun testPassSystemProperties() {
+        runProcess("kotlinc", "$testDataDirectory/systemProperties.kt", "-d", tmpdir.path)
+        runProcess(
+            "kotlin",
+            "-cp", tmpdir.path,
+            "-Dfoo.name=foo.value",
+            "-J-Dbar.name=bar.value",
+            "test.SystemPropertiesKt",
+            expectedStdout = "foo.name=foo.value\nbar.name=bar.value\n"
+        )
+    }
+
+    fun testSanitizedStackTrace() {
+        runProcess("kotlinc", "$testDataDirectory/throwException.kt", "-d", tmpdir.path)
+        runProcess(
+            "kotlin",
+            "-cp", tmpdir.path,
+            "test.ThrowExceptionKt",
+            expectedExitCode = 1,
+            expectedStderr = """
+Exception in thread "main" java.lang.RuntimeException: RE
+	at test.ThrowExceptionKt.f7(throwException.kt:40)
+	at test.ThrowExceptionKt.f8(throwException.kt:45)
+	at test.ThrowExceptionKt.f9(throwException.kt:49)
+	at test.ThrowExceptionKt.main(throwException.kt:53)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.jetbrains.kotlin.runner.AbstractRunner.run(runners.kt:70)
+	at org.jetbrains.kotlin.runner.Main.run(Main.kt:183)
+	at org.jetbrains.kotlin.runner.Main.main(Main.kt:193)
+Caused by: java.lang.IllegalStateException: ISE
+	at test.ThrowExceptionKt.f4(throwException.kt:23)
+	at test.ThrowExceptionKt.f5(throwException.kt:28)
+	at test.ThrowExceptionKt.f6(throwException.kt:32)
+	at test.ThrowExceptionKt.f7(throwException.kt:37)
+	... 10 more
+Caused by: java.lang.AssertionError: assert
+	at test.ThrowExceptionKt.f1(throwException.kt:7)
+	at test.ThrowExceptionKt.f2(throwException.kt:11)
+	at test.ThrowExceptionKt.f3(throwException.kt:15)
+	at test.ThrowExceptionKt.f4(throwException.kt:20)
+	... 13 more
+""".trimStart()
+        )
+    }
 }
