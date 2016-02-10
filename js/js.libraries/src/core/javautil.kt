@@ -32,6 +32,9 @@ public inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Compara
 }
 
 @library
+public interface RandomAccess
+
+@library
 public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun isEmpty(): Boolean = noImpl
     override fun contains(o: E): Boolean = noImpl
@@ -79,7 +82,7 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
 }
 
 @library
-public open class ArrayList<E>(capacity: Int = 0) : AbstractList<E>() {
+public open class ArrayList<E>(capacity: Int = 0) : AbstractList<E>(), RandomAccess {
     override fun get(index: Int): E = noImpl
     override val size: Int get() = noImpl
 }
