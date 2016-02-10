@@ -13275,6 +13275,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("TopLevelPropertyVsClassifier.kt")
+            public void testTopLevelPropertyVsClassifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/TopLevelPropertyVsClassifier.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeParameterWithTwoBounds.kt")
             public void testTypeParameterWithTwoBounds() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/typeParameterWithTwoBounds.kt");

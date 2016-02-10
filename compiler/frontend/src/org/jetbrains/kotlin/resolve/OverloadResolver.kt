@@ -28,11 +28,7 @@ class OverloadResolver(
         private val trace: BindingTrace,
         private val overloadFilter: OverloadFilter) {
 
-    fun process(c: BodiesResolveContext) {
-        checkOverloads(c)
-    }
-
-    private fun checkOverloads(c: BodiesResolveContext) {
+    fun checkOverloads(c: BodiesResolveContext) {
         val inClasses = findConstructorsInNestedClasses(c)
 
         for (entry in c.declaredClasses.entries) {
@@ -93,7 +89,7 @@ class OverloadResolver(
         }
     }
 
-    private fun checkOverloadsInPackage(members: Collection<CallableMemberDescriptor>) {
+    private fun checkOverloadsInPackage(members: Collection<DeclarationDescriptorNonRoot>) {
         if (members.size == 1) return
         for (redeclarationGroup in OverloadUtil.getPossibleRedeclarationGroups(members)) {
             reportRedeclarations(findRedeclarations(redeclarationGroup))
@@ -105,10 +101,13 @@ class OverloadResolver(
         reportRedeclarations(findRedeclarations(members))
     }
 
-    private fun findRedeclarations(members: Collection<CallableMemberDescriptor>): Set<Pair<KtDeclaration?, CallableMemberDescriptor>> {
-        val redeclarations = linkedSetOf<Pair<KtDeclaration?, CallableMemberDescriptor>>()
+    private fun DeclarationDescriptor.isSynthesized() =
+            this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+
+    private fun findRedeclarations(members: Collection<DeclarationDescriptorNonRoot>): Set<Pair<KtDeclaration?, DeclarationDescriptorNonRoot>> {
+        val redeclarations = linkedSetOf<Pair<KtDeclaration?, DeclarationDescriptorNonRoot>>()
         for (member1 in members) {
-            if (member1.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) continue
+            if (member1.isSynthesized()) continue
 
             for (member2 in members) {
                 if (member1 == member2) continue
@@ -124,7 +123,7 @@ class OverloadResolver(
         return redeclarations
     }
 
-    private fun isConstructorsOfDifferentRedeclaredClasses(member1: CallableMemberDescriptor, member2: CallableMemberDescriptor): Boolean {
+    private fun isConstructorsOfDifferentRedeclaredClasses(member1: DeclarationDescriptor, member2: DeclarationDescriptor): Boolean {
         if (member1 !is ConstructorDescriptor || member2 !is ConstructorDescriptor) return false
         // ignore conflicting overloads for constructors of different classes because their redeclarations will be reported
         // but don't ignore if there's possibility that classes redeclarations will not be reported
@@ -134,7 +133,7 @@ class OverloadResolver(
         return parent1 !== parent2 && parent1.containingDeclaration == parent2.containingDeclaration
     }
 
-    private fun isTopLevelMainInDifferentFiles(member1: CallableMemberDescriptor, member2: CallableMemberDescriptor): Boolean {
+    private fun isTopLevelMainInDifferentFiles(member1: DeclarationDescriptor, member2: DeclarationDescriptor): Boolean {
         if (!MainFunctionDetector.isMain(member1) || !MainFunctionDetector.isMain(member2)) {
             return false
         }
@@ -144,7 +143,7 @@ class OverloadResolver(
         return file1 == null || file2 == null || file1 !== file2
     }
 
-    private fun reportRedeclarations(redeclarations: Set<Pair<KtDeclaration?, CallableMemberDescriptor>>) {
+    private fun reportRedeclarations(redeclarations: Set<Pair<KtDeclaration?, DeclarationDescriptorNonRoot>>) {
         if (redeclarations.isEmpty()) return
 
         val redeclarationsIterator = redeclarations.iterator()
@@ -154,20 +153,23 @@ class OverloadResolver(
         for ((ktDeclaration, memberDescriptor) in redeclarations) {
             if (ktDeclaration == null) continue
 
-            if (memberDescriptor is PropertyDescriptor) {
-                trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.getName().asString()))
-            }
-            else {
-                val redeclarationDescriptor =
-                        if (otherRedeclarationDescriptor == null)
-                            firstRedeclarationDescriptor
-                        else if (memberDescriptor == firstRedeclarationDescriptor)
-                            otherRedeclarationDescriptor
-                        else
-                            firstRedeclarationDescriptor
+            when (memberDescriptor) {
+                is PropertyDescriptor,
+                is ClassifierDescriptor -> {
+                    trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.name.asString()))
+                }
+                is FunctionDescriptor -> {
+                    val redeclarationDescriptor =
+                            if (otherRedeclarationDescriptor == null)
+                                firstRedeclarationDescriptor
+                            else if (memberDescriptor == firstRedeclarationDescriptor)
+                                otherRedeclarationDescriptor
+                            else
+                                firstRedeclarationDescriptor
 
-                trace.report(Errors.CONFLICTING_OVERLOADS.on(ktDeclaration, memberDescriptor,
-                                                             redeclarationDescriptor.containingDeclaration))
+                    trace.report(Errors.CONFLICTING_OVERLOADS.on(ktDeclaration, memberDescriptor,
+                                                                 redeclarationDescriptor.containingDeclaration))
+                }
             }
         }
     }

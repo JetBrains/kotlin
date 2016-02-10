@@ -7,11 +7,11 @@
 
 }
 
-val<!SYNTAX!><!> : Int = 1
+<!REDECLARATION!>val<!SYNTAX!><!> : Int = 1<!>
 
-class<!SYNTAX!><!> {
+<!REDECLARATION!>class<!SYNTAX!><!> {
 
-}
+}<!>
 
 object<!SYNTAX!><!> {
 

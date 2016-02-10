@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
@@ -30,8 +31,8 @@ import java.util.*
 
 
 object JvmOverloadFilter : OverloadFilter {
-    override fun filterPackageMemberOverloads(overloads: Collection<CallableMemberDescriptor>): Collection<CallableMemberDescriptor> {
-        val result = ArrayList<CallableMemberDescriptor>()
+    override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> {
+        val result = ArrayList<DeclarationDescriptorNonRoot>()
 
         val sourceClassesFQNs = HashSet<FqName>()
         for (overload in overloads) {

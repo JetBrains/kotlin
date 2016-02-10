@@ -187,7 +187,7 @@ class LazyTopDownAnalyzer(
 
         declarationResolver.resolveAnnotationsOnFiles(c, fileScopeProvider)
 
-        overloadResolver.process(c)
+        overloadResolver.checkOverloads(c)
 
         bodyResolver.resolveBodies(c)
 

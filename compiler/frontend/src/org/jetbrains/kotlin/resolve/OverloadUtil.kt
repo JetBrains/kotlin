@@ -27,24 +27,21 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.oneMoreSpecificThanAnother
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 object OverloadUtil {
 
     /**
      * Does not check names.
      */
-    @JvmStatic fun isOverloadable(a: CallableDescriptor, b: CallableDescriptor): Boolean {
-        val abc = braceCount(a)
-        val bbc = braceCount(b)
+    @JvmStatic fun isOverloadable(a: DeclarationDescriptor, b: DeclarationDescriptor): Boolean {
+        val aCategory = getDeclarationCategory(a)
+        val bCategory = getDeclarationCategory(b)
 
-        if (abc != bbc) {
-            return true
-        }
+        if (aCategory != bCategory) return true
+        if (a !is CallableDescriptor || b !is CallableDescriptor) return false
 
-        val receiverAndParameterResult = OverridingUtil.checkReceiverAndParameterCount(a, b)
-        if (receiverAndParameterResult != null) {
-            return receiverAndParameterResult.result == INCOMPATIBLE
-        }
+        OverridingUtil.checkReceiverAndParameterCount(a, b)?.let { return it.result == INCOMPATIBLE }
 
         val aValueParameters = OverridingUtil.compiledValueParameters(a)
         val bValueParameters = OverridingUtil.compiledValueParameters(b)
@@ -62,12 +59,30 @@ object OverloadUtil {
         return false
     }
 
-    private fun braceCount(a: CallableDescriptor): Int =
+    private enum class DeclarationCategory {
+        TYPE_OR_VALUE,
+        FUNCTION,
+        EXTENSION_PROPERTY
+    }
+
+    private fun DeclarationDescriptor.isExtensionProperty() =
+            this is PropertyDescriptor &&
+            extensionReceiverParameter != null
+
+    private fun getDeclarationCategory(a: DeclarationDescriptor): DeclarationCategory =
             when (a) {
-                is PropertyDescriptor -> 0
-                is SimpleFunctionDescriptor -> 1
-                is ConstructorDescriptor -> 1
-                else -> throw IllegalStateException()
+                is PropertyDescriptor ->
+                    if (a.isExtensionProperty())
+                        DeclarationCategory.EXTENSION_PROPERTY
+                    else
+                        DeclarationCategory.TYPE_OR_VALUE
+                is ConstructorDescriptor,
+                is SimpleFunctionDescriptor ->
+                    DeclarationCategory.FUNCTION
+                is ClassifierDescriptor ->
+                    DeclarationCategory.TYPE_OR_VALUE
+                else ->
+                    error("Unexpected declaration kind: $a")
             }
 
     private val KotlinType.upperBound: KotlinType
@@ -83,8 +98,8 @@ object OverloadUtil {
     @JvmStatic fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,
             overloadFilter: OverloadFilter
-    ): MultiMap<FqNameUnsafe, CallableMemberDescriptor> {
-        val packageMembersByName = MultiMap<FqNameUnsafe, CallableMemberDescriptor>()
+    ): MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot> {
+        val packageMembersByName = MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>()
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values + c.declaredClasses.values, overloadFilter) {
             scope, name ->
@@ -98,17 +113,19 @@ object OverloadUtil {
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) {
             scope, name ->
-            scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filterIsInstance<CallableMemberDescriptor>()
+            val variables = scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            variables + classifier.singletonOrEmptyList()
         }
 
         return packageMembersByName
     }
 
     private inline fun collectModulePackageMembersWithSameName(
-            packageMembersByName: MultiMap<FqNameUnsafe, CallableMemberDescriptor>,
+            packageMembersByName: MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>,
             interestingDescriptors: Collection<DeclarationDescriptor>,
             overloadFilter: OverloadFilter,
-            getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
+            getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
     ) {
         val observedFQNs = hashSetOf<FqNameUnsafe>()
         for (descriptor in interestingDescriptors) {
@@ -126,8 +143,8 @@ object OverloadUtil {
     private inline fun getModulePackageMembersWithSameName(
             descriptor: DeclarationDescriptor,
             overloadFilter: OverloadFilter,
-            getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
-    ): Collection<CallableMemberDescriptor> {
+            getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
+    ): Collection<DeclarationDescriptorNonRoot> {
         val containingPackage = descriptor.containingDeclaration
         if (containingPackage !is PackageFragmentDescriptor) {
             throw AssertionError("$descriptor is not a top-level package member")
@@ -150,17 +167,21 @@ object OverloadUtil {
         return overloadFilter.filterPackageMemberOverloads(possibleOverloads)
     }
 
-    private fun MemberDescriptor.isPrivate() = Visibilities.isPrivate(this.visibility)
+    private fun DeclarationDescriptor.isPrivate() =
+            this is DeclarationDescriptorWithVisibility &&
+            Visibilities.isPrivate(this.visibility)
 
-    @JvmStatic fun getPossibleRedeclarationGroups(members: Collection<CallableMemberDescriptor>): Collection<Collection<CallableMemberDescriptor>> {
-        val result = arrayListOf<Collection<CallableMemberDescriptor>>()
+    @JvmStatic fun getPossibleRedeclarationGroups(
+            members: Collection<DeclarationDescriptorNonRoot>
+    ): Collection<Collection<DeclarationDescriptorNonRoot>> {
+        val result = arrayListOf<Collection<DeclarationDescriptorNonRoot>>()
 
         val nonPrivates = members.filter { !it.isPrivate() }
         if (nonPrivates.size > 1) {
             result.add(nonPrivates)
         }
 
-        val bySourceFile = MultiMap.createSmart<SourceFile, CallableMemberDescriptor>()
+        val bySourceFile = MultiMap.createSmart<SourceFile, DeclarationDescriptorNonRoot>()
         for (member in members) {
             val sourceFile = DescriptorUtils.getContainingSourceFile(member)
             if (sourceFile != SourceFile.NO_SOURCE_FILE) {

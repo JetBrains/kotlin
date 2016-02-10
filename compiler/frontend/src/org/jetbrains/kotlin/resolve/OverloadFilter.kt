@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 
 
 interface OverloadFilter {
-    fun filterPackageMemberOverloads(overloads: Collection<CallableMemberDescriptor>): Collection<CallableMemberDescriptor>
+    fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot>
 
     object DEFAULT : OverloadFilter {
-        override fun filterPackageMemberOverloads(overloads: Collection<CallableMemberDescriptor>): Collection<CallableMemberDescriptor> =
+        override fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot> =
                 overloads
     }
 }
