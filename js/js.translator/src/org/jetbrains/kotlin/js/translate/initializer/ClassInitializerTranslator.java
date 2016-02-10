@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -94,7 +96,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             // for properties declared as constructor parameters
             initFunction.getParameters().addAll(translatePrimaryConstructorParameters());
 
-            mayBeAddCallToSuperMethod(initFunction);
+            mayBeAddCallToSuperMethod(initFunction, classDescriptor);
         }
 
         delegationTranslator.addInitCode(initializerStatements);
@@ -143,7 +145,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         return CallTranslator.translate(context(), superCall);
     }
 
-    private void mayBeAddCallToSuperMethod(JsFunction initializer) {
+    private void mayBeAddCallToSuperMethod(JsFunction initializer, @NotNull ClassDescriptor descriptor) {
         if (classDeclaration.hasModifier(KtTokens.ENUM_KEYWORD)) {
             addCallToSuperMethod(Collections.<JsExpression>emptyList(), initializer);
             return;
@@ -159,6 +161,13 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             }
             else {
                 List<JsExpression> arguments = CallArgumentTranslator.translate(superCall, null, context()).getTranslateArguments();
+                ClassDescriptor superDescriptor = DescriptorUtils.getSuperClassDescriptor(descriptor);
+                assert superDescriptor != null : "This class is expected to have super class: "
+                                                 + PsiUtilsKt.getTextWithLocation(classDeclaration);
+                if (superDescriptor.isInner() && descriptor.isInner()) {
+                    arguments = new ArrayList<JsExpression>(arguments);
+                    arguments.add(0, new JsNameRef("$outer", JsLiteral.THIS));
+                }
                 addCallToSuperMethod(arguments, initializer);
             }
         }
