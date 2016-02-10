@@ -64,3 +64,10 @@ public fun <T> sortedSetOf(vararg elements: T): TreeSet<T> = elements.toCollecti
  */
 @JvmVersion
 public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): TreeSet<T> = elements.toCollection(TreeSet<T>(comparator))
+
+
+internal fun <T> Set<T>.optimizeReadOnlySet() = when (size) {
+    0 -> emptySet()
+    1 -> setOf(iterator().next())
+    else -> this
+}
