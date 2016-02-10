@@ -95,7 +95,7 @@ class KotlinDebuggerCaches(private val project: Project) {
         }
 
         fun <T: PsiElement> getOrComputeClassNames(psiElement: T, create: (T) -> ComputedClassNames): List<String> {
-            val cache = getInstance(psiElement.project)
+            val cache = getInstance(runReadAction { psiElement.project })
             synchronized(cache.cachedClassNames) {
                 val classNamesCache = cache.cachedClassNames.value
 
@@ -112,11 +112,11 @@ class KotlinDebuggerCaches(private val project: Project) {
         }
 
         fun getOrCreateTypeMapper(psiElement: PsiElement): JetTypeMapper {
-            val cache = getInstance(psiElement.project)
+            val cache = getInstance(runReadAction { psiElement.project })
             synchronized(cache.cachedTypeMappers) {
                 val typeMappersCache = cache.cachedTypeMappers.value
 
-                val file = psiElement.containingFile as KtFile
+                val file = runReadAction { psiElement.containingFile as KtFile }
                 val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
 
                 if (!isInLibrary) {
@@ -142,33 +142,37 @@ class KotlinDebuggerCaches(private val project: Project) {
         }
 
         private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): JetTypeMapper {
-            val analysisResult = element.analyzeAndGetResult()
+            return runReadAction {
+                val analysisResult = element.analyzeAndGetResult()
 
-            val state = GenerationState(
-                    file.project,
-                    ClassBuilderFactories.THROW_EXCEPTION,
-                    analysisResult.moduleDescriptor,
-                    analysisResult.bindingContext,
-                    listOf(file))
-            state.beforeCompile()
-            return state.typeMapper
+                val state = GenerationState(
+                        file.project,
+                        ClassBuilderFactories.THROW_EXCEPTION,
+                        analysisResult.moduleDescriptor,
+                        analysisResult.bindingContext,
+                        listOf(file))
+                state.beforeCompile()
+                state.typeMapper
+            }
         }
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
-                if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!!
+                runReadAction { if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
         private fun createTypeMapperForSourceFile(file: KtFile): JetTypeMapper {
-            val analysisResult = file.analyzeFullyAndGetResult()
-            analysisResult.throwIfError()
+            return runReadAction {
+                val analysisResult = file.analyzeFullyAndGetResult()
+                analysisResult.throwIfError()
 
-            val state = GenerationState(
-                    file.project,
-                    ClassBuilderFactories.THROW_EXCEPTION,
-                    analysisResult.moduleDescriptor,
-                    analysisResult.bindingContext,
-                    listOf(file))
-            state.beforeCompile()
-            return state.typeMapper
+                val state = GenerationState(
+                        file.project,
+                        ClassBuilderFactories.THROW_EXCEPTION,
+                        analysisResult.moduleDescriptor,
+                        analysisResult.bindingContext,
+                        listOf(file))
+                state.beforeCompile()
+                state.typeMapper
+            }
         }
 
         @TestOnly fun addTypeMapper(file: KtFile, typeMapper: JetTypeMapper) {
