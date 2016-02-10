@@ -57,33 +57,33 @@ object BuiltinSpecialBridgesUtil {
         // e.g. `getSize()I`
         val methodItself = signatureByDescriptor(function)
         // e.g. `size()I`
-        val overriddenBuiltinSignature = signatureByDescriptor(overriddenBuiltin)
+        val specialBridgeSignature = signatureByDescriptor(overriddenBuiltin)
 
         val needGenerateSpecialBridge = needGenerateSpecialBridge(
-                function, reachableDeclarations, signatureByDescriptor, overriddenBuiltinSignature)
+                function, reachableDeclarations, signatureByDescriptor, specialBridgeSignature)
 
         val specialBridge = if (needGenerateSpecialBridge)
-            BridgeForBuiltinSpecial(overriddenBuiltinSignature, methodItself, isSpecial = true)
+            BridgeForBuiltinSpecial(specialBridgeSignature, methodItself, isSpecial = true)
         else null
 
-        val bridgesToGenerate = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
-        bridgesToGenerate.remove(overriddenBuiltinSignature)
+        val commonBridges = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
+        commonBridges.remove(specialBridgeSignature)
 
         val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake)
         if (superImplementationDescriptor != null || !fake) {
-            bridgesToGenerate.remove(methodItself)
+            commonBridges.remove(methodItself)
         }
 
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
                 if (!DescriptorBasedFunctionHandle(overridden).isAbstract) {
-                    bridgesToGenerate.removeAll(findAllReachableDeclarations(overridden).map(signatureByDescriptor))
+                    commonBridges.removeAll(findAllReachableDeclarations(overridden).map(signatureByDescriptor))
                 }
             }
         }
 
         val bridges: MutableSet<BridgeForBuiltinSpecial<Signature>> =
-                (bridgesToGenerate.map { BridgeForBuiltinSpecial(it, overriddenBuiltinSignature) } + specialBridge.singletonOrEmptyList()).toMutableSet()
+                (commonBridges.map { BridgeForBuiltinSpecial(it, specialBridgeSignature) } + specialBridge.singletonOrEmptyList()).toMutableSet()
 
         if (superImplementationDescriptor != null) {
             bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(superImplementationDescriptor), isDelegateToSuper = true))
