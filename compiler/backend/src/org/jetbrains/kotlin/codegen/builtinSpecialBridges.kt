@@ -128,22 +128,33 @@ private fun <Signature> needGenerateSpecialBridge(
     if (signatureByDescriptor(functionDescriptor) == overriddenBuiltinSignature) return false
 
     // Is there Kotlin superclass that already has generated special bridge
-    if (functionDescriptor.firstOverridden { overridden ->
-        // Ignore itself and non-functions (the latter may be assertion)
-        if (overridden === functionDescriptor || overridden !is FunctionDescriptor) return@firstOverridden false
-
-        // is not Kotlin class
-        if (overridden.containingDeclaration is JavaClassDescriptor
-            || DescriptorUtils.isInterface(overridden.containingDeclaration)) return@firstOverridden false
-
-        val originalOverridden = overridden.original
-        val overriddenSpecial = originalOverridden.getOverriddenBuiltinReflectingJvmDescriptor()?.original ?: return@firstOverridden false
-
-        signatureByDescriptor(originalOverridden) != signatureByDescriptor(overriddenSpecial)
+    if (functionDescriptor.firstOverridden {
+        overridden ->
+        overridden !== functionDescriptor && overridden.getSpecialBridgeSignatureIfExists(signatureByDescriptor) != null
     } != null) return false
 
     return reachableDeclarations.none { it.modality == Modality.FINAL
                                         && signatureByDescriptor(it) == overriddenBuiltinSignature }
+}
+
+private fun <Signature> CallableMemberDescriptor.getSpecialBridgeSignatureIfExists(
+        signatureByDescriptor: (FunctionDescriptor) -> Signature
+): Signature? {
+    // Ignore itself and non-functions (may be assertion)
+    if (this !is FunctionDescriptor) return null
+
+    // Only Kotlin classes can have special bridges
+    if (containingDeclaration is JavaClassDescriptor || DescriptorUtils.isInterface(containingDeclaration)) return null
+
+    // Getting original is necessary here, because we want to determine JVM signature of descriptor as it was declared in containing class
+    val originalOverridden = original
+    val overriddenSpecial = originalOverridden.getOverriddenBuiltinReflectingJvmDescriptor()?.original ?: return null
+    val specialBridgeSignature = signatureByDescriptor(overriddenSpecial)
+
+    // Does special bridge has different signature
+    if (signatureByDescriptor(originalOverridden) == specialBridgeSignature) return null
+
+    return specialBridgeSignature
 }
 
 fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
