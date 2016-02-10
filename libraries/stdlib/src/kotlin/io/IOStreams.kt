@@ -74,14 +74,6 @@ public inline fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputSt
 @kotlin.internal.InlineOnly
 public inline fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8): BufferedReader = reader(charset).buffered()
 
-/** Creates a reader on this input stream using the specified [charset]. */
-@Deprecated("Use InputStream.reader(Charset) instead.", ReplaceWith("this.reader(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun InputStream.reader(charset: String): InputStreamReader = InputStreamReader(this, charset)
-
-/** Creates a buffered reader on this input stream using the specified [charset]. */
-@Deprecated("Use InputStream.bufferedReader(Charset) instead.", ReplaceWith("this.bufferedReader(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun InputStream.bufferedReader(charset: String): BufferedReader = reader(charset(charset)).buffered()
-
 /**
  * Creates a buffered output stream wrapping this stream.
  * @param bufferSize the buffer size to use.
@@ -97,14 +89,6 @@ public inline fun OutputStream.writer(charset: Charset = Charsets.UTF_8): Output
 /** Creates a buffered writer on this output stream using UTF-8 or the specified [charset]. */
 @kotlin.internal.InlineOnly
 public inline fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
-
-/** Creates a writer on this output stream using the specified [charset]. */
-@Deprecated("Use OutputStream.writer(Charset) instead.", ReplaceWith("this.writer(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun OutputStream.writer(charset: String): OutputStreamWriter = OutputStreamWriter(this, charset)
-
-/** Creates a buffered writer on this output stream using the specified [charset]. */
-@Deprecated("Use OutputStream.bufferedWriter(Charset) instead.", ReplaceWith("this.bufferedWriter(charset(charset))"), level = DeprecationLevel.ERROR)
-public fun OutputStream.bufferedWriter(charset: String): BufferedWriter = writer(charset(charset)).buffered()
 
 /**
  * Copies this stream to the given output stream, returning the number of bytes copied

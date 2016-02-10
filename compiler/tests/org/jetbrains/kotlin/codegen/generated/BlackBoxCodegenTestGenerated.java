@@ -6970,6 +6970,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt10934.kt")
+        public void testKt10934() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt10934.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3107.kt")
         public void testKt3107() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3107.kt");
@@ -7483,6 +7489,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("throwable.kt")
         public void testThrowable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/throwable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("throwableImpl.kt")
+        public void testThrowableImpl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/throwableImpl.kt");
             doTest(fileName);
         }
 
@@ -8047,6 +8059,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("asInLoop.kt")
         public void testAsInLoop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/asInLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifOrWhenSpecialCall.kt")
+        public void testIfOrWhenSpecialCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typeInfo/ifOrWhenSpecialCall.kt");
             doTest(fileName);
         }
 

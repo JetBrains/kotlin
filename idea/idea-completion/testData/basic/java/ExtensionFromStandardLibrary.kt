@@ -4,9 +4,10 @@ import java.util.HashMap
 
 fun firstFun() {
   val a = HashMap<Int, String>()
-  a.toLinke<caret>
+  a.toSort<caret>
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: { lookupString:"toLinkedMap", itemText:"toLinkedMap", tailText:"() for Map<K, V> in kotlin.collections" }
+// EXIST: { lookupString:"toSortedMap", itemText:"toSortedMap", tailText:"() for Map<K, V> in kotlin.collections" }
+// EXIST: { lookupString:"toSortedMap", itemText:"toSortedMap", tailText:"(comparator: Comparator<in Int>) for Map<K, V> in kotlin.collections" }
 // NOTHING_ELSE

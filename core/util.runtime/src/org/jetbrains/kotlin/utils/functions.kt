@@ -25,6 +25,10 @@ private val ALWAYS_TRUE: (Any?) -> Boolean = { true }
 
 fun <T> alwaysTrue(): (T) -> Boolean = ALWAYS_TRUE
 
+private val ALWAYS_NULL: (Any?) -> Any? = { null }
+
+@Suppress("UNCHECKED_CAST")
+fun <T, R: Any> alwaysNull(): (T) -> R? = ALWAYS_NULL as (T) -> R?
 
 val DO_NOTHING: (Any?) -> Unit = { }
 

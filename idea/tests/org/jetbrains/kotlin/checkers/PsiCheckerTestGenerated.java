@@ -630,6 +630,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/recovery/namelessToplevelDeclarations.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("returnInFileAnnotation.kt")
+        public void testReturnInFileAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/recovery/returnInFileAnnotation.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/checker/rendering")

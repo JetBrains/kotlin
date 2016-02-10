@@ -87,10 +87,6 @@ public fun File.toRelativeString(base: File): String
  */
 public fun File.relativeTo(base: File): File = File(this.toRelativeString(base))
 
-@Deprecated("Use relativeTo instead.", ReplaceWith("this.relativeTo(base)"), level = DeprecationLevel.ERROR)
-public fun File.relativeToFile(base: File): File = File(this.toRelativeString(base))
-
-
 /**
  * Calculates the relative path for this file from [base] file.
  * Note that the [base] file is treated as a directory.

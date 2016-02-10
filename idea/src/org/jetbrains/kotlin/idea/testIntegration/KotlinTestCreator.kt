@@ -20,13 +20,25 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.testIntegration.TestCreator
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class KotlinTestCreator : TestCreator {
+    private fun getTarget(editor: Editor, file: PsiFile): KtNamedDeclaration? {
+        return file.findElementAt(editor.caretModel.offset)
+                ?.parents
+                ?.firstOrNull { it is KtClassOrObject || it is KtNamedDeclaration && it.parent is KtFile } as? KtNamedDeclaration
+    }
+
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-        return KotlinCreateTestIntention().isAvailable(project, editor, file)
+        val declaration = getTarget(editor, file) ?: return false
+        return KotlinCreateTestIntention().applicabilityRange(declaration) != null
     }
 
     override fun createTest(project: Project, editor: Editor, file: PsiFile) {
-        KotlinCreateTestIntention().invoke(project, editor, file)
+        val declaration = getTarget(editor, file) ?: return
+        KotlinCreateTestIntention().applyTo(declaration, editor)
     }
 }

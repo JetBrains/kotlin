@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable;
 
+import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.TemplateBuilderImpl;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
@@ -353,11 +354,9 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
 
     protected void addTypeReferenceVariable(TemplateBuilderImpl builder) {
         KtTypeReference typeReference = myDeclaration.getTypeReference();
-        if (typeReference != null) {
-            builder.replaceElement(typeReference,
-                                   TYPE_REFERENCE_VARIABLE_NAME,
-                                   SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType, myDeclaration),
-                                   false);
+        Expression expression = SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType, myDeclaration);
+        if (typeReference != null && expression != null) {
+            builder.replaceElement(typeReference, TYPE_REFERENCE_VARIABLE_NAME, expression, false);
         }
     }
 

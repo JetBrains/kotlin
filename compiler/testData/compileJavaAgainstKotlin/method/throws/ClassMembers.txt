@@ -2,14 +2,14 @@ package test
 
 public final class E1 : java.lang.Exception {
     public constructor E1()
-    public final /*fake_override*/ val cause: kotlin.Throwable?
-    public final /*fake_override*/ val message: kotlin.String?
+    public open /*fake_override*/ val cause: kotlin.Throwable?
+    public open /*fake_override*/ val message: kotlin.String?
 }
 
 public final class E2 : java.lang.Exception {
     public constructor E2()
-    public final /*fake_override*/ val cause: kotlin.Throwable?
-    public final /*fake_override*/ val message: kotlin.String?
+    public open /*fake_override*/ val cause: kotlin.Throwable?
+    public open /*fake_override*/ val message: kotlin.String?
 }
 
 public/*package*/ open class JavaClass {

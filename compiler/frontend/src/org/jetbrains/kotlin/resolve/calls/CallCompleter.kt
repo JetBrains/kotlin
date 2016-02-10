@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
@@ -285,7 +283,7 @@ class CallCompleter(
             updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression) ?: updatedType
         }
 
-        updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context.trace)
+        updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context.statementFilter, context.trace)
 
         // While the expected type is not known, the function literal arguments are not analyzed (to analyze function literal bodies once),
         // but they should be analyzed when the expected type is known (during the call completion).
@@ -320,6 +318,7 @@ class CallCompleter(
             updatedType: KotlinType?,
             recordedType: KotlinType?,
             argumentExpression: KtExpression,
+            statementFilter: StatementFilter,
             trace: BindingTrace
     ): KotlinType? {
         //workaround for KT-8218
@@ -328,6 +327,11 @@ class CallCompleter(
         fun deparenthesizeOrGetSelector(expression: KtExpression?): KtExpression? {
             val deparenthesized = KtPsiUtil.deparenthesizeOnce(expression)
             if (deparenthesized != expression) return deparenthesized
+
+            // see KtPsiUtil.getLastElementDeparenthesized
+            if (expression is KtBlockExpression) {
+                return statementFilter.getLastStatementInABlock(expression)
+            }
 
             return (expression as? KtQualifiedExpression)?.selectorExpression
         }

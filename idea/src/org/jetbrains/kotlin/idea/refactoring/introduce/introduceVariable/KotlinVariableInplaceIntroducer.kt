@@ -107,10 +107,8 @@ class KotlinVariableInplaceIntroducer(
 
     override fun addAdditionalVariables(builder: TemplateBuilderImpl) {
         addedVariable.typeReference?.let {
-            builder.replaceElement(it,
-                                   "TypeReferenceVariable",
-                                   SpecifyTypeExplicitlyIntention.createTypeExpressionForTemplate(expressionType!!, addedVariable),
-                                   false)
+            val expression = SpecifyTypeExplicitlyIntention.createTypeExpressionForTemplate(expressionType!!, addedVariable) ?: return@let
+            builder.replaceElement(it, "TypeReferenceVariable", expression, false)
         }
     }
 
