@@ -114,7 +114,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public final FrameMap myFrameMap;
     private final MethodContext context;
     private final Type returnType;
-    private final ReferenceExpressionChecker referenceExpressionChecker;
 
     private final CodegenStatementVisitor statementVisitor = new CodegenStatementVisitor(this);
     private final MemberCodegen<?> parentCodegen;
@@ -150,7 +149,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.returnType = returnType;
         this.parentCodegen = parentCodegen;
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
-        this.referenceExpressionChecker = new ReferenceExpressionChecker();
     }
 
     static class BlockStackElement {
@@ -2895,11 +2893,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                               expression.getRight(), reference);
         }
         else {
-            ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext);
-
-            if (compileTimeConstant != null && !this.referenceExpressionChecker.containsReferenceExpression(expression)) {
-                return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
-            }
+            StackValue constant = getCompileTimeConstant(expression);
+            if (constant != null) return constant;
 
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
             FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
@@ -3173,11 +3168,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitPrefixExpression(@NotNull KtPrefixExpression expression, @NotNull StackValue receiver) {
-        ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext);
-
-        if (compileTimeConstant != null && !this.referenceExpressionChecker.containsReferenceExpression(expression)) {
-            return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
-        }
+        StackValue constant = getCompileTimeConstant(expression);
+        if (constant != null) return constant;
 
         DeclarationDescriptor originalOperation = bindingContext.get(REFERENCE_TARGET, expression.getOperationReference());
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
@@ -3988,5 +3980,20 @@ The "returned" value of try expression with no finally is either the last expres
             returnType = type;
             labelName = name;
         }
+    }
+
+    private StackValue getCompileTimeConstant(@NotNull KtExpression expression) {
+        CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext);
+        if (compileTimeValue == null || compileTimeValue.getUsesNonConstValAsConstant() || !compileTimeValue.getParameters().isPure()) {
+            return null;
+        }
+
+        KotlinType expectedType = bindingContext.getType(expression);
+        if (expectedType == null) {
+            return null;
+        }
+
+        ConstantValue<?> constantValue = compileTimeValue.toConstantValue(expectedType);
+        return StackValue.constant(constantValue.getValue(), expressionType(expression));
     }
 }

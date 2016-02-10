@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.org.objectweb.asm.Type
 
 abstract class CallGenerator {
