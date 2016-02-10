@@ -117,5 +117,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/contains.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("removeAtTwoSpecialBridges.kt")
+        public void testRemoveAtTwoSpecialBridges() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/removeAtTwoSpecialBridges.kt");
+            doTest(fileName);
+        }
     }
 }

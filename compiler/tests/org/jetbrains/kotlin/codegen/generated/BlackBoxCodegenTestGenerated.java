@@ -7492,6 +7492,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeAtTwoSpecialBridges.kt")
+        public void testRemoveAtTwoSpecialBridges() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/removeAtTwoSpecialBridges.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("throwable.kt")
         public void testThrowable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/throwable.kt");

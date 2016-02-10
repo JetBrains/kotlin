@@ -234,3 +234,8 @@ fun CallableMemberDescriptor.firstOverridden(
 fun CallableMemberDescriptor.setSingleOverridden(overridden: CallableMemberDescriptor) {
     overriddenDescriptors = listOf(overridden)
 }
+
+fun CallableMemberDescriptor.overriddenTreeAsSequence(useOriginal: Boolean): Sequence<CallableMemberDescriptor> =
+    with(if (useOriginal) original else this) {
+        sequenceOf(this) + overriddenDescriptors.asSequence().flatMap { it.overriddenTreeAsSequence(useOriginal) }
+    }
