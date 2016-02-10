@@ -25,7 +25,7 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Cannot access 'A': it is 'private' in file
-Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'private'
+'public' subclass exposes its 'private' supertype A
 
 ================ Step #2 =================
 

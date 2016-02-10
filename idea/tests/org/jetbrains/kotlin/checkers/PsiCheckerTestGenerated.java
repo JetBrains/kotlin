@@ -127,6 +127,18 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExposedContainerType.kt")
+        public void testExposedContainerType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/ExposedContainerType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExposedInferredType.kt")
+        public void testExposedInferredType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/ExposedInferredType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtensionFunctions.kt")
         public void testExtensionFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/ExtensionFunctions.kt");

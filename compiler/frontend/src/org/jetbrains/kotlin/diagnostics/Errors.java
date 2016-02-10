@@ -74,13 +74,13 @@ public interface Errors {
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
 
     // Exposed visibility group
-    DiagnosticFactory2<PsiElement, EffectiveVisibility, EffectiveVisibility> EXPOSED_PROPERTY_TYPE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<PsiElement, EffectiveVisibility, EffectiveVisibility> EXPOSED_FUNCTION_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtParameter, EffectiveVisibility, EffectiveVisibility> EXPOSED_PARAMETER_TYPE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtTypeReference, EffectiveVisibility, EffectiveVisibility> EXPOSED_RECEIVER_TYPE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtTypeParameter, EffectiveVisibility, EffectiveVisibility> EXPOSED_TYPE_PARAMETER_BOUND = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_CLASS = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_INTERFACE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory3<PsiElement, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility> EXPOSED_PROPERTY_TYPE = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<PsiElement, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility> EXPOSED_FUNCTION_RETURN_TYPE = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtParameter, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility> EXPOSED_PARAMETER_TYPE = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtTypeReference, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility> EXPOSED_RECEIVER_TYPE = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtTypeParameter, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility> EXPOSED_TYPE_PARAMETER_BOUND = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtSuperTypeListEntry, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility> EXPOSED_SUPER_CLASS = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtSuperTypeListEntry, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility> EXPOSED_SUPER_INTERFACE = DiagnosticFactory3.create(ERROR);
 
     DiagnosticFactory2<KtExpression, KotlinType, Collection<KotlinType>> INACCESSIBLE_TYPE = DiagnosticFactory2.create(ERROR);
 
