@@ -1564,6 +1564,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifWhen/whenToIf"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
+                @TestMetadata("comment.kt")
+                public void testComment() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/comment.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("whenWithDotQualifiedExpression.kt")
                 public void testWhenWithDotQualifiedExpression() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithDotQualifiedExpression.kt");

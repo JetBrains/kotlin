@@ -21,7 +21,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.combineWhenConditions
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.buildExpression
 
 class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Replace 'when' with 'if'"), LowPriorityAction {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
@@ -33,6 +36,8 @@ class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenEx
     }
 
     override fun applyTo(element: KtWhenExpression, editor: Editor?) {
+        val commentSaver = CommentSaver(element)
+
         val factory = KtPsiFactory(element)
         val ifExpression = factory.buildExpression {
             val entries = element.entries
@@ -57,6 +62,7 @@ class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenEx
             }
         }
 
-        element.replace(ifExpression)
+        val result = element.replace(ifExpression)
+        commentSaver.restore(result)
     }
 }
