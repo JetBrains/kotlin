@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,15 +156,6 @@ private abstract class DifferenceCalculator() {
 }
 
 private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: ProtoMapValue) : DifferenceCalculator() {
-    companion object {
-        private val CLASS_SIGNATURE_ENUMS = EnumSet.of(
-                ProtoBufClassKind.FLAGS,
-                ProtoBufClassKind.FQ_NAME,
-                ProtoBufClassKind.TYPE_PARAMETER_LIST,
-                ProtoBufClassKind.SUPERTYPE_LIST
-        )
-    }
-
     val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData.bytes, oldData.strings)
     val newClassData = JvmProtoBufUtil.readClassDataFrom(newData.bytes, newData.strings)
 
@@ -223,11 +214,17 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
-                in CLASS_SIGNATURE_ENUMS -> {
+                ProtoBufClassKind.FLAGS,
+                ProtoBufClassKind.FQ_NAME,
+                ProtoBufClassKind.TYPE_PARAMETER_LIST,
+                ProtoBufClassKind.SUPERTYPE_LIST,
+                ProtoBufClassKind.SUPERTYPE_ID_LIST-> {
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
-                else -> throw IllegalArgumentException("Unsupported kind: $kind")
+                ProtoBufClassKind.CLASS_MODULE_NAME -> {
+                    // TODO
+                }
             }
         }
 
@@ -262,7 +259,8 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getFunctionList))
                 ProtoBufPackageKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
-                ProtoBufPackageKind.TYPE_TABLE -> {
+                ProtoBufPackageKind.TYPE_TABLE,
+                ProtoBufPackageKind.PACKAGE_MODULE_NAME -> {
                     // TODO
                 }
                 else -> throw IllegalArgumentException("Unsupported kind: $kind")
