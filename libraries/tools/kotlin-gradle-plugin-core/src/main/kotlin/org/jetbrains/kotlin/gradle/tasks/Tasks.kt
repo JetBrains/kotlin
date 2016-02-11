@@ -104,12 +104,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
 
-    protected fun File.isKotlinFile(): Boolean {
-        return when (FilenameUtils.getExtension(name).toLowerCase()) {
-            "kt", "kts" -> true
-            else -> false
-        }
-    }
+    protected fun File.isKotlinFile(): Boolean =
+            FilenameUtils.isExtension(name.toLowerCase(), listOf("kt", "kts"))
 
     private fun populateSources(args:T, sources: List<File>) {
         args.freeArgs = sources.map { it.absolutePath }
