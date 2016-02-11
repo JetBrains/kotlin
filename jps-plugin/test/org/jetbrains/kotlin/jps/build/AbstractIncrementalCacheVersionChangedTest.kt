@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.Modification
-import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.ModifyContent
+import org.jetbrains.kotlin.incremental.testingUtils.Modification
+import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {

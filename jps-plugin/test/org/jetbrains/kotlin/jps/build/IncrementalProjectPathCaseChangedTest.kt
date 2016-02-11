@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.SystemInfoRt
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.Modification
+import org.jetbrains.kotlin.incremental.testingUtils.Modification
 
 class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(checkDumpsCaseInsensitively = true) {
     fun testProjectPathCaseChanged() {
