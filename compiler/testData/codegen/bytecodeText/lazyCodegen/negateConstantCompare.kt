@@ -1,5 +1,8 @@
+const val one = 1
+const val two = 2
+
 fun test1() {
-    if (!(1 < 2)) {
+    if (!(one < two)) {
         val p = 1
     }
 }

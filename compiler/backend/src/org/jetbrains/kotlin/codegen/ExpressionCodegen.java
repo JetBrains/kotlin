@@ -1242,12 +1242,21 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     public static ConstantValue<?> getCompileTimeConstant(@NotNull KtExpression expression, @NotNull BindingContext bindingContext) {
+        return getCompileTimeConstant(expression, bindingContext, false);
+    }
+
+    @Nullable
+    public static ConstantValue<?> getCompileTimeConstant(
+            @NotNull KtExpression expression,
+            @NotNull BindingContext bindingContext,
+            boolean checkPure
+    ) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext);
         if (compileTimeValue == null) {
             return null;
         }
 
-        if (compileTimeValue.getUsesNonConstValAsConstant()) return null;
+        if (compileTimeValue.getUsesNonConstValAsConstant() || (checkPure && !compileTimeValue.getParameters().isPure())) return null;
 
         KotlinType expectedType = bindingContext.getType(expression);
         return compileTimeValue.toConstantValue(expectedType);
@@ -2893,8 +2902,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                               expression.getRight(), reference);
         }
         else {
-            StackValue constant = getCompileTimeConstant(expression);
-            if (constant != null) return constant;
+            ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+            if (compileTimeConstant != null) {
+                return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
+            }
 
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
             FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
@@ -3168,8 +3179,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitPrefixExpression(@NotNull KtPrefixExpression expression, @NotNull StackValue receiver) {
-        StackValue constant = getCompileTimeConstant(expression);
-        if (constant != null) return constant;
+        ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+        if (compileTimeConstant != null) {
+            return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
+        }
 
         DeclarationDescriptor originalOperation = bindingContext.get(REFERENCE_TARGET, expression.getOperationReference());
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
@@ -3980,20 +3993,5 @@ The "returned" value of try expression with no finally is either the last expres
             returnType = type;
             labelName = name;
         }
-    }
-
-    private StackValue getCompileTimeConstant(@NotNull KtExpression expression) {
-        CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext);
-        if (compileTimeValue == null || compileTimeValue.getUsesNonConstValAsConstant() || !compileTimeValue.getParameters().isPure()) {
-            return null;
-        }
-
-        KotlinType expectedType = bindingContext.getType(expression);
-        if (expectedType == null) {
-            return null;
-        }
-
-        ConstantValue<?> constantValue = compileTimeValue.toConstantValue(expectedType);
-        return StackValue.constant(constantValue.getValue(), expressionType(expression));
     }
 }
