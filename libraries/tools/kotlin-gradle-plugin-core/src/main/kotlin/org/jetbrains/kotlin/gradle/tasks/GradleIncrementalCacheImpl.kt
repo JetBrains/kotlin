@@ -38,9 +38,6 @@ class GradleIncrementalCacheImpl(targetDataRoot: File, targetOutputDir: File?, t
 
     private val sourceToClassfilesMap = registerMap(SourceToClassfilesMap(SOURCES_TO_CLASSFILES.storageFile))
 
-    fun classfilesBySources(sources: Iterable<File>): Iterable<File> =
-        sources.flatMap { sourceToClassfilesMap[it] }
-
     fun removeClassfilesBySources(sources: Iterable<File>): Unit =
             sources.forEach { sourceToClassfilesMap.remove(it) }
 

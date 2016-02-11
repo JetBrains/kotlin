@@ -206,15 +206,11 @@ abstract class BaseGradleIT {
             else
                 assertSameFiles(sources, compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ:\n  ")
 
-    fun CompiledProject.assertCompiledKotlinSources(vararg sources: String, weakTesting: Boolean = false): CompiledProject = assertCompiledKotlinSources(sources.asIterable(), weakTesting)
-
     fun CompiledProject.assertCompiledJavaSources(sources: Iterable<String>, weakTesting: Boolean = false): CompiledProject =
             if (weakTesting)
                 assertContainFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
             else
                 assertSameFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
-
-    fun CompiledProject.assertCompiledJavaSources(vararg sources: String, weakTesting: Boolean = false): CompiledProject = assertCompiledJavaSources(sources.asIterable(), weakTesting)
 
     private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> =
             createGradleCommand(createGradleTailParameters(options, params))
