@@ -125,7 +125,8 @@ var Kotlin = {};
                 property = staticProperties[p];
                 if (typeof property === "function" && typeof property.type !== "undefined" && property.type === Kotlin.TYPE.INIT_FUN) {
                     metadata.types[p] = property;
-                } else {
+                }
+                else {
                     metadata.staticMembers[p] = property;
                 }
             }

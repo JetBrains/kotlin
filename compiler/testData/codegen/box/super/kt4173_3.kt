@@ -1,3 +1,6 @@
+// Local classes are still unsupported
+// TARGET_BACKEND: JVM
+
 open class C(s: Int) {
     fun test() {
 

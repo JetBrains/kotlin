@@ -23,21 +23,17 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.util.ArrayList
+import java.util.*
 
 fun CallArgumentTranslator.ArgumentsInfo.argsWithReceiver(receiver: JsExpression): List<JsExpression> {
     val allArguments = ArrayList<JsExpression>(1 + reifiedArguments.size + valueArguments.size)
@@ -226,26 +222,10 @@ object ConstructorCallCase : FunctionCallCase() {
         val functionRef = context.aliasOrValue(callableDescriptor) { fqName }
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        val receiver = this.resolvedCall.dispatchReceiver
+        val receiver = this.superCallReceiver
         var allArguments = when (receiver) {
-            is ExpressionReceiver -> {
-                val expr = receiver.expression
-                when (expr) {
-                    is KtSuperExpression -> {
-                        val superDescriptor = context.getSuperTarget(expr);
-                        val jsReceiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(superDescriptor))
-                        (sequenceOf(jsReceiver) + argumentsInfo.translateArguments).toList()
-                    }
-                    else -> {
-                        val jsReceiver = Translation.translateAsExpression(receiver.expression, context)
-                        (sequenceOf(jsReceiver) + argumentsInfo.translateArguments).toList()
-                    }
-                }
-            }
-            is ThisClassReceiver -> {
-                (sequenceOf(JsLiteral.THIS) + argumentsInfo.translateArguments).toList()
-            }
-            else -> argumentsInfo.translateArguments
+            null -> argumentsInfo.translateArguments
+            else -> (sequenceOf(receiver) + argumentsInfo.translateArguments).toList()
         }
 
         if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
@@ -266,7 +246,9 @@ object SuperCallCase : FunctionCallCase() {
         // TODO: spread operator
         val prototypeClass = JsNameRef(Namer.getPrototypeName(), dispatchReceiver!!)
         val functionRef = Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
-        return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(JsLiteral.THIS))
+        val superReceiver = this.superCallReceiver
+        val receiver = if (superReceiver != null) superReceiver else JsLiteral.THIS;
+        return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(receiver))
     }
 }
 

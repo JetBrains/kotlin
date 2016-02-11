@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class SuperTestGenerated extends AbstractSuperTest {
+    @TestMetadata("kt4173_3.kt")
+    public void ignoredKt4173_3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt4173_3.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInSuper() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/super"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -122,12 +128,6 @@ public class SuperTestGenerated extends AbstractSuperTest {
     @TestMetadata("kt4173_2.kt")
     public void testKt4173_2() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt4173_2.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt4173_3.kt")
-    public void testKt4173_3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt4173_3.kt");
         doTest(fileName);
     }
 

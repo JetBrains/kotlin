@@ -31,6 +31,11 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsConditional
 import com.google.dart.compiler.backend.js.ast.JsBlock
+import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.psi.KtSuperExpression
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 
 interface CallInfo {
     val context: TranslationContext
@@ -54,6 +59,31 @@ abstract class AbstractCallInfo : CallInfo {
 class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null) : AbstractCallInfo(), CallInfo by callInfo
 
 class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : AbstractCallInfo(), CallInfo by callInfo
+
+val CallInfo.superCallReceiver : JsExpression?
+    get() {
+        val receiver = this.resolvedCall.dispatchReceiver
+        return when (receiver) {
+            is ExpressionReceiver -> {
+                val expr = receiver.expression
+                when (expr) {
+                    is KtSuperExpression -> {
+                        val superDescriptor = context.getSuperTarget(expr);
+                        context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(superDescriptor))
+                    }
+                    else -> {
+                        Translation.translateAsExpression(receiver.expression, context)
+                    }
+                }
+            }
+            is ThisClassReceiver -> {
+                JsLiteral.THIS
+            }
+            else -> {
+                null
+            }
+        }
+    }
 
 /**
  * no receivers - extensionOrDispatchReceiver = null,     extensionReceiver = null
