@@ -105,13 +105,13 @@ class AndroidGradleWrapper {
   }
 
   static def List<File> getGeneratedSourceDirs(BaseVariantData variantData) {
+    def result = new ArrayList<File>()
+
     def getJavaSourcesMethod = variantData.getMetaClass().getMetaMethod("getJavaSources")
     if (getJavaSourcesMethod.returnType.metaClass == Object[].metaClass) {
-      return variantData.getJavaSources().findAll { it instanceof File }
+      result.addAll(variantData.getJavaSources().findAll { it instanceof File })
     }
     else {
-      def result = new ArrayList<File>()
-
       if (variantData.scope.getGenerateRClassTask() != null) {
         result.add(variantData.scope.getRClassSourceOutputDir());
       }
@@ -132,8 +132,16 @@ class AndroidGradleWrapper {
               && variantData.scope.getRenderscriptCompileTask() != null) {
         result.add(variantData.scope.getRenderscriptSourceOutputDir());
       }
-
-      return result
     }
+
+    def getExtraSourcesMethod = variantData.getMetaClass().getMetaMethod("getExtraGeneratedSourceFolders")
+    if (getExtraSourcesMethod.returnType.metaClass == List.metaClass) {
+      def folders = variantData.getExtraGeneratedSourceFolders()
+      if (folders != null) {
+        result.addAll(folders)
+      }
+    }
+
+    return result
   }
 }
