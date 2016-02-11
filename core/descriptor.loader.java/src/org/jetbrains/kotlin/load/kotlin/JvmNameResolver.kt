@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.DESC_TO_CLASS_ID
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.INTERNAL_TO_CLASS_ID
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.NONE
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.*
 import java.util.*
 
 class JvmNameResolver(
@@ -85,7 +83,7 @@ class JvmNameResolver(
         return string
     }
 
-    override fun getName(index: Int) = Name.guess(getString(index))
+    override fun getName(index: Int) = Name.guessByFirstCharacter(getString(index))
 
     override fun getClassId(index: Int): ClassId {
         val string = getString(index)

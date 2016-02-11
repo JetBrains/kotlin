@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBody
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.createNameCounterpartMap
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -47,8 +47,8 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.sure
@@ -289,7 +289,7 @@ class KotlinFunctionCallUsage(
             defaultValueForCall != null -> substituteReferences(defaultValueForCall, parameter.defaultValueParameterReferences, psiFactory)
             else -> null
         }
-        val argName = (if (isInsideOfCallerBody) null else name)?.let { Name.guess(it) }
+        val argName = (if (isInsideOfCallerBody) null else name)?.let { Name.identifier(it) }
         return psiFactory.createArgument(argValue ?: psiFactory.createExpression("0"), argName).apply {
             generatedArgumentValue = true
             if (argValue == null) {
@@ -357,7 +357,7 @@ class KotlinFunctionCallUsage(
             for (argInfo in newArgumentInfos) {
                 if (argInfo.shouldSkip()) continue
 
-                val name = argInfo.name?.let { Name.guess(it) }
+                val name = argInfo.name?.let { Name.identifier(it) }
 
                 if (argInfo.receiverValue != null) {
                     val receiverExpression = getReceiverExpression(argInfo.receiverValue, psiFactory) ?: continue

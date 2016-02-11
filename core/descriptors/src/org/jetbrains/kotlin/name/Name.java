@@ -67,9 +67,8 @@ public final class Name implements Comparable<Name> {
         return new Name(name, true);
     }
 
-    // TODO: wrong
     @NotNull
-    public static Name guess(@NotNull String name) {
+    public static Name guessByFirstCharacter(@NotNull String name) {
         if (name.startsWith("<")) {
             return special(name);
         }

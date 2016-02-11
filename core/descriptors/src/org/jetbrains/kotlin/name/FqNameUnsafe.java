@@ -62,11 +62,11 @@ public final class FqNameUnsafe {
     private void compute() {
         int lastDot = fqName.lastIndexOf('.');
         if (lastDot >= 0) {
-            shortName = Name.guess(fqName.substring(lastDot + 1));
+            shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1));
             parent = new FqNameUnsafe(fqName.substring(0, lastDot));
         }
         else {
-            shortName = Name.guess(fqName);
+            shortName = Name.guessByFirstCharacter(fqName);
             parent = FqName.ROOT.toUnsafe();
         }
     }
@@ -151,7 +151,7 @@ public final class FqNameUnsafe {
                ArraysKt.map(fqName.split("\\."), new Function1<String, Name>() {
                    @Override
                    public Name invoke(String name) {
-                       return Name.guess(name);
+                       return Name.guessByFirstCharacter(name);
                    }
                });
     }

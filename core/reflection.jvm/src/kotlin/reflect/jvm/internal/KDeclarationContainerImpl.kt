@@ -102,7 +102,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
-        val properties = getProperties(Name.guess(name))
+        val properties = getProperties(Name.identifier(name))
                 .filter { descriptor ->
                     descriptor is PropertyDescriptor &&
                     RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
@@ -120,7 +120,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
-        val functions = (if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.guess(name)))
+        val functions = (if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.identifier(name)))
                 .filter { descriptor ->
                     RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
                 }

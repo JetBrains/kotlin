@@ -49,7 +49,7 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                     .restrictToKotlinSources()
             if (searchScope === GlobalSearchScope.EMPTY_SCOPE) return@runReadActionInSmartMode
 
-            for (name in getPropertyNamesCandidatesByAccessorName(Name.guess(method.name))) {
+            for (name in getPropertyNamesCandidatesByAccessorName(Name.identifier(method.name))) {
                 p.optimizer.searchWord(
                         name.asString(),
                         searchScope,

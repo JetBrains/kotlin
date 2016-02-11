@@ -31,7 +31,7 @@ class NameResolverImpl(
 
     override fun getString(index: Int) = strings.getString(index)
 
-    override fun getName(index: Int) = Name.guess(strings.getString(index))
+    override fun getName(index: Int) = Name.guessByFirstCharacter(strings.getString(index))
 
     override fun getClassId(index: Int): ClassId {
         val (packageFqNameSegments, relativeClassNameSegments, isLocal) = traverseIds(index)

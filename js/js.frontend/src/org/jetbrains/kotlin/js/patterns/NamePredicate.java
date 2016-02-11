@@ -77,7 +77,7 @@ public final class NamePredicate implements Predicate<Name> {
 
     public NamePredicate(@NotNull List<String> validNames) {
         for (String validName : validNames) {
-            this.validNames.add(Name.guess(validName));
+            this.validNames.add(Name.guessByFirstCharacter(validName));
         }
     }
 

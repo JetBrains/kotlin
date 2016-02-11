@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.Name.guess
 
 class ReflectJavaValueParameter(
         private val returnType: ReflectJavaType,
@@ -33,7 +32,7 @@ class ReflectJavaValueParameter(
 
     override fun isDeprecatedInJavaDoc() = false
 
-    override fun getName() = name?.let(Name::guess)
+    override fun getName() = name?.let(Name::guessByFirstCharacter)
     override fun getType() = returnType
     override fun isVararg() = isVararg
 

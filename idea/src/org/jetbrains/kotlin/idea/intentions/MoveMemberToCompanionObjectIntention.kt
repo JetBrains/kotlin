@@ -89,7 +89,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         val companionDescriptor = containingClassDescriptor.companionObjectDescriptor
         val companionMemberScope = (companionDescriptor ?: containingClassDescriptor).scopeForMemberDeclarationResolution
         val validator = CollectingNameValidator(element.getValueParameters().mapNotNull { it.name }) {
-            companionMemberScope.getContributedVariables(Name.guess(it), NoLookupLocation.FROM_IDE).isEmpty()
+            companionMemberScope.getContributedVariables(Name.identifier(it), NoLookupLocation.FROM_IDE).isEmpty()
         }
         return KotlinNameSuggester.suggestNamesByType(containingClassDescriptor.defaultType, validator, "receiver")
     }

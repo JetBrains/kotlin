@@ -168,7 +168,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitArray(String name) {
-                final AnnotationArrayArgumentVisitor arv = v.visitArray(Name.guess(name));
+                final AnnotationArrayArgumentVisitor arv = v.visitArray(Name.identifier(name));
                 return arv == null ? null : new org.jetbrains.org.objectweb.asm.AnnotationVisitor(ASM5) {
                     @Override
                     public void visit(String name, @NotNull Object value) {
@@ -189,7 +189,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String name, @NotNull String desc) {
-                AnnotationArgumentVisitor arv = v.visitAnnotation(Name.guess(name), resolveNameByDesc(desc, innerClasses));
+                AnnotationArgumentVisitor arv = v.visitAnnotation(Name.identifier(name), resolveNameByDesc(desc, innerClasses));
                 return arv == null ? null : convertAnnotationVisitor(arv, innerClasses);
             }
 
@@ -210,7 +210,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         new ClassReader(getFileContents()).accept(new ClassVisitor(ASM5) {
             @Override
             public FieldVisitor visitField(int access, @NotNull String name, @NotNull String desc, String signature, Object value) {
-                final AnnotationVisitor v = memberVisitor.visitField(Name.guess(name), desc, value);
+                final AnnotationVisitor v = memberVisitor.visitField(Name.identifier(name), desc, value);
                 if (v == null) return null;
 
                 return new FieldVisitor(ASM5) {
@@ -228,7 +228,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-                final MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.guess(name), desc);
+                final MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.identifier(name), desc);
                 if (v == null) return null;
 
                 return new MethodVisitor(ASM5) {
