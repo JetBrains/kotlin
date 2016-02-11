@@ -63,7 +63,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
     @Override
     public Name getNameAsName() {
         String name = getName();
-        return name != null ? Name.guess(name) : null;
+        return name != null ? Name.identifier(name) : null;
     }
 
     @Override
