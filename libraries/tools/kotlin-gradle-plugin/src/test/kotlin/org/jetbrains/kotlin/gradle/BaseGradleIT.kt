@@ -114,14 +114,6 @@ abstract class BaseGradleIT {
         runAndCheck(cmd, check)
     }
 
-
-    fun Project.stopDaemon(check: CompiledProject.() -> Unit) {
-        val cmd = createGradleCommand(arrayListOf("-stop"))
-        println("<=== Stop daemon: $cmd ===>")
-
-        runAndCheck(cmd, check)
-    }
-
     private fun Project.runAndCheck(cmd: List<String>, check: CompiledProject.() -> Unit) {
         val projectDir = File(workingDir, projectName)
         if (!projectDir.exists())
