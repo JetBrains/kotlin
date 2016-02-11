@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.Modification
+import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.ModifyContent
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
-    override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
+    override fun performAdditionalModifications(modifications: List<Modification>) {
         val modifiedFiles = modifications.filterIsInstance<ModifyContent>().map { it.path }
         val paths = projectDescriptor.dataManager.dataPaths
         val targets = projectDescriptor.allModuleTargets
