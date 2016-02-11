@@ -25,6 +25,10 @@ import java.util.Collections
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
+import org.jetbrains.kotlin.psi.KtSuperExpression
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 
 object NativeVariableAccessCase : VariableAccessCase() {
@@ -110,10 +114,28 @@ object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
 object SuperPropertyAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val variableName = context.program().getStringLiteral(this.variableName.ident)
+        val receiver = this.resolvedCall.dispatchReceiver
+        var propertyOwner = when (receiver) {
+            is ExpressionReceiver -> {
+                val expr = receiver.expression
+                when (expr) {
+                    is KtSuperExpression -> {
+                        val superDescriptor = context.getSuperTarget(expr);
+                        context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(superDescriptor))
+                    }
+                    else -> {
+                        Translation.translateAsExpression(receiver.expression, context)
+                    }
+                }
+            }
+            else -> {
+                JsLiteral.THIS
+            }
+        }
         return if (isGetAccess())
-            JsInvocation(context.namer().callGetProperty, JsLiteral.THIS, dispatchReceiver!!, variableName)
+            JsInvocation(context.namer().callGetProperty, propertyOwner, dispatchReceiver!!, variableName)
         else
-            JsInvocation(context.namer().callSetProperty, JsLiteral.THIS, dispatchReceiver!!, variableName, value!!)
+            JsInvocation(context.namer().callSetProperty, propertyOwner, dispatchReceiver!!, variableName, value!!)
     }
 }
 
