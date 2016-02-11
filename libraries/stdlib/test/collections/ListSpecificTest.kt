@@ -55,6 +55,13 @@ class ListSpecificTest {
     }
 
     @Test
+    fun indexOfLast() {
+        expect(-1) { data.indexOfLast { it.contains("p") } }
+        expect(1) { data.indexOfLast { it.length == 3 } }
+        expect(-1) { empty.indexOfLast { it.startsWith('f') } }
+    }
+
+    @Test
     fun mutableList() {
         val items = listOf("beverage", "location", "name")
 
