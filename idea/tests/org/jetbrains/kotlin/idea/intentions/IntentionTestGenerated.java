@@ -1495,6 +1495,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifWhen/ifToWhen"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
+                @TestMetadata("comment.kt")
+                public void testComment() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/comment.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ifWithEqualityTests.kt")
                 public void testIfWithEqualityTests() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithEqualityTests.kt");

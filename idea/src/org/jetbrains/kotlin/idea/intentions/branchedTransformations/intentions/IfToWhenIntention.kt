@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.*
@@ -32,6 +33,8 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
+        val commentSaver = CommentSaver(element)
+
         var whenExpression = KtPsiFactory(element).buildExpression {
             appendFixedText("when {\n")
 
@@ -71,7 +74,8 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
             whenExpression = whenExpression.introduceSubject()
         }
 
-        element.replace(whenExpression)
+        val result = element.replace(whenExpression)
+        commentSaver.restore(result)
     }
 
     private fun MutableList<KtExpression>.addOrBranches(expression: KtExpression): List<KtExpression> {
