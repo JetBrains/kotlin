@@ -296,7 +296,7 @@ public interface Errors {
 
     // Members
 
-    DiagnosticFactory2<KtDeclaration, CallableMemberDescriptor, DeclarationDescriptor> CONFLICTING_OVERLOADS =
+    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> CONFLICTING_OVERLOADS =
             DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     DiagnosticFactory0<KtNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory0.create(WARNING, modifierSetPosition(

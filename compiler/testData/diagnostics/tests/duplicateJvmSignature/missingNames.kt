@@ -58,10 +58,10 @@ class Outer {
 }
 
 fun outerFun() {
-    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
+    <!FUNCTION_DECLARATION_WITH_NO_NAME, CONFLICTING_OVERLOADS!>fun ()<!> {
 
     }
-    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
+    <!FUNCTION_DECLARATION_WITH_NO_NAME, CONFLICTING_OVERLOADS!>fun ()<!> {
 
     }
 }

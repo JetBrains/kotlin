@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
@@ -24,6 +25,10 @@ public interface RedeclarationHandler {
     RedeclarationHandler DO_NOTHING = new RedeclarationHandler() {
         @Override
         public void handleRedeclaration(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
+        }
+
+        @Override
+        public void handleConflictingOverloads(@NotNull CallableMemberDescriptor first, @NotNull CallableMemberDescriptor second) {
         }
     };
     RedeclarationHandler THROW_EXCEPTION = new RedeclarationHandler() {
@@ -34,7 +39,17 @@ public interface RedeclarationHandler {
                                   DescriptorUtils.getFqName(second), second)
             );
         }
+
+        @Override
+        public void handleConflictingOverloads(@NotNull CallableMemberDescriptor first, @NotNull CallableMemberDescriptor second) {
+            throw new IllegalStateException(
+                    String.format("Conflicting overloads: %s (%s) and %s (%s) (no line info available)",
+                                  DescriptorUtils.getFqName(first), first,
+                                  DescriptorUtils.getFqName(second), second)
+            );
+        }
     };
 
     void handleRedeclaration(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second);
+    void handleConflictingOverloads(@NotNull CallableMemberDescriptor first, @NotNull CallableMemberDescriptor second);
 }

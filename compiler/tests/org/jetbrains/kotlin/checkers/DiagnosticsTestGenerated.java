@@ -11781,6 +11781,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("LocalFunctions.kt")
+            public void testLocalFunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/LocalFunctions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OverloadFunRegularAndExt.kt")
             public void testOverloadFunRegularAndExt() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/OverloadFunRegularAndExt.kt");
