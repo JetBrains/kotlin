@@ -36,11 +36,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
 import org.jetbrains.kotlin.idea.refactoring.j2k
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
@@ -518,10 +520,13 @@ val KotlinChangeInfo.oldName: String?
 
 fun KotlinChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
 
-fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: KotlinMethodDescriptor): KotlinChangeInfo {
+fun ChangeInfo.toJetChangeInfo(
+        originalChangeSignatureDescriptor: KotlinMethodDescriptor,
+        resolutionFacade: ResolutionFacade? = null
+): KotlinChangeInfo {
     val method = method as PsiMethod
 
-    val functionDescriptor = method.getJavaMethodDescriptor()!!
+    val functionDescriptor = method.getJavaOrKotlinMemberDescriptor(resolutionFacade) as CallableDescriptor
     val parameterDescriptors = functionDescriptor.valueParameters
 
     //noinspection ConstantConditions
