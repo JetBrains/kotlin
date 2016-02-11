@@ -12,7 +12,7 @@ import kotlin.test.assertNotNull
 
 abstract class BaseIncrementalGradleIT : BaseGradleIT() {
 
-    inner class JpsTestProject(val resourcesBase: File, val relPath: String, wrapperVersion: String = "1.6", minLogLevel: LogLevel = LogLevel.DEBUG) : Project(File(relPath).name, wrapperVersion, minLogLevel) {
+    inner class JpsTestProject(val resourcesBase: File, val relPath: String, wrapperVersion: String = "2.10", minLogLevel: LogLevel = LogLevel.DEBUG) : Project(File(relPath).name, wrapperVersion, minLogLevel) {
         override val resourcesRoot = File(resourcesBase, relPath)
         val mapWorkingToOriginalFile = hashMapOf<File, File>()
 
