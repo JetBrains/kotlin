@@ -21,9 +21,11 @@ import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.CacheVersion
-import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
-import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
+import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
+import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.Modification
+import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.ModifyContent
+import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -40,11 +42,11 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         UsefulTestCase.assertSameLinesWithFile(expectedFile.canonicalPath, actual)
     }
 
-    override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
+    override fun performAdditionalModifications(modifications: List<Modification>) {
         super.performAdditionalModifications(modifications)
 
         for (modification in modifications) {
-            if (modification !is AbstractIncrementalJpsTest.ModifyContent) continue
+            if (modification !is ModifyContent) continue
 
             val name = File(modification.path).name
 

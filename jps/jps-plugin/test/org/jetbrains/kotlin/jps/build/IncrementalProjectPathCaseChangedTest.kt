@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.SystemInfoRt
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.Modification
 
 class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(checkDumpsCaseInsensitively = true) {
     fun testProjectPathCaseChanged() {
@@ -36,7 +37,7 @@ class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(checkDu
         super.doTest(testDataPath)
     }
 
-    override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
+    override fun performAdditionalModifications(modifications: List<Modification>) {
         val module = myProject.modules[0]
         val sourceRoot = module.sourceRoots[0].url
         assert(sourceRoot.endsWith("/src"))
