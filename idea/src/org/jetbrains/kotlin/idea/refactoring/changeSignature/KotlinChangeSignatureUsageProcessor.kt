@@ -38,20 +38,15 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.refactoring.createTempCopy
-import org.jetbrains.kotlin.idea.refactoring.isTrueJavaMethod
+import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*
-import org.jetbrains.kotlin.idea.refactoring.getBodyScope
-import org.jetbrains.kotlin.idea.refactoring.getContainingScope
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
@@ -435,10 +430,9 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     }
 
     private fun findKotlinOverrides(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
-        val method = changeInfo.method
-        if (!method.isTrueJavaMethod()) return
+        val method = changeInfo.method as? PsiMethod ?: return
 
-        for (overridingMethod in OverridingMethodsSearch.search(method as PsiMethod)) {
+        for (overridingMethod in OverridingMethodsSearch.search(method)) {
             val unwrappedElement = overridingMethod.namedUnwrappedElement as? KtNamedFunction ?: continue
             val functionDescriptor = unwrappedElement.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
             result.add(DeferredJavaMethodOverrideOrSAMUsage(unwrappedElement, functionDescriptor, null))
@@ -856,8 +850,12 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
             if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true
 
-            val methodDescriptor = method.getJavaMethodDescriptor()?.createDeepCopy() ?: return false
-            descriptorWrapper.originalJavaMethodDescriptor = KotlinChangeSignatureData(methodDescriptor, method, listOf(methodDescriptor))
+            val baseDeclaration = method.unwrapped ?: return false
+            val baseDeclarationDescriptor = method.getJavaOrKotlinMemberDescriptor()?.createDeepCopy() as CallableDescriptor?
+                                            ?: return false
+            descriptorWrapper.originalJavaMethodDescriptor = KotlinChangeSignatureData(baseDeclarationDescriptor,
+                                                                                       baseDeclaration,
+                                                                                       listOf(baseDeclarationDescriptor))
 
             // This change info is used as a placeholder before primary method update
             // It gets replaced with real change info afterwards
@@ -910,12 +908,37 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     }
 
     override fun processPrimaryMethod(changeInfo: ChangeInfo): Boolean {
-        if (changeInfo !is KotlinChangeInfo) return false
+        val ktChangeInfo = when (changeInfo) {
+            is KotlinChangeInfo -> changeInfo
+            is JavaChangeInfo -> {
+                val method = changeInfo.method as? KtLightMethod ?: return false
+                var baseFunction = method.getOrigin() ?: return false
+                if (baseFunction is KtClass) {
+                    baseFunction = baseFunction.createPrimaryConstructorIfAbsent()
+                }
+                val resolutionFacade = baseFunction.getResolutionFacade()
+                val baseFunctionDescriptor = resolutionFacade.resolveToDescriptor(baseFunction) as FunctionDescriptor
+                val methodDescriptor = KotlinChangeSignatureData(baseFunctionDescriptor, baseFunction, listOf(baseFunctionDescriptor))
 
-        for (primaryFunction in changeInfo.methodDescriptor.primaryCallables) {
-            primaryFunction.processUsage(changeInfo, primaryFunction.declaration, UsageInfo.EMPTY_ARRAY)
+                val dummyClass = JavaPsiFacade.getElementFactory(method.project).createClass("Dummy")
+                val dummyMethod = createJavaMethod(method, dummyClass)
+                dummyMethod.containingFile.moduleInfo = baseFunction.getModuleInfo()
+                try {
+                    changeInfo.updateMethod(dummyMethod)
+                    JavaChangeSignatureUsageProcessor().processPrimaryMethod(changeInfo)
+                    changeInfo.toJetChangeInfo(methodDescriptor, resolutionFacade)
+                }
+                finally {
+                    changeInfo.updateMethod(method)
+                }
+            }
+            else -> return false
         }
-        changeInfo.primaryMethodUpdated()
+
+        for (primaryFunction in ktChangeInfo.methodDescriptor.primaryCallables) {
+            primaryFunction.processUsage(ktChangeInfo, primaryFunction.declaration, UsageInfo.EMPTY_ARRAY)
+        }
+        ktChangeInfo.primaryMethodUpdated()
         return true
     }
 

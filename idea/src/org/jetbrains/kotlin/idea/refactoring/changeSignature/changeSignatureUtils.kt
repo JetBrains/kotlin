@@ -20,12 +20,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.changeSignature.CallerUsageInfo
 import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.DeferredJavaMethodKotlinCallerUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JavaMethodKotlinUsageWithDelegate
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.*
@@ -82,7 +83,7 @@ fun KotlinType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, default
 // This method is used to create full copies of functions (including copies of all types)
 // It's needed to prevent accesses to PSI (e.g. using LazyJavaClassifierType properties) when Change signature invalidates it
 // See KotlinChangeSignatureTest.testSAMChangeMethodReturnType
-fun FunctionDescriptor.createDeepCopy() = substitute(TypeSubstitutor.create(ForceTypeCopySubstitution))
+fun DeclarationDescriptor.createDeepCopy() = (this as? JavaMethodDescriptor)?.substitute(TypeSubstitutor.create(ForceTypeCopySubstitution)) ?: this
 
 private object ForceTypeCopySubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) =

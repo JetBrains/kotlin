@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -63,6 +65,19 @@ fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade? = null
         is PsiClass -> getJavaClassDescriptor(resolutionFacade)
         is PsiMethod -> getJavaMethodDescriptor(resolutionFacade)
         is PsiField -> getJavaFieldDescriptor(resolutionFacade)
+        else -> null
+    }
+}
+
+@JvmOverloads
+fun PsiMember.getJavaOrKotlinMemberDescriptor(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor? {
+    val callable = unwrapped
+    return when (callable) {
+        is PsiMember -> getJavaMemberDescriptor(resolutionFacade)
+        is KtDeclaration -> {
+            val descriptor = resolutionFacade?.resolveToDescriptor(callable) ?: callable.resolveToDescriptor()
+            if (descriptor is ClassDescriptor && this is PsiMethod) descriptor.unsubstitutedPrimaryConstructor else descriptor
+        }
         else -> null
     }
 }

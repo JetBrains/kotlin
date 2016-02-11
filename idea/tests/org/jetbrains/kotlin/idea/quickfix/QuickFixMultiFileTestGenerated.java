@@ -463,6 +463,75 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeJavaMethodParameter.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
+
+        @TestMetadata("idea/testData/quickfix/changeSignature/jk")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Jk extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInJk() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature/jk"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+            }
+
+            @TestMetadata("jkAddFunctionParameter.before.Main.java")
+            public void testJkAddFunctionParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkAddFunctionParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkAddImplicitPrimaryConstructorParameter.before.Main.java")
+            public void testJkAddImplicitPrimaryConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkAddImplicitPrimaryConstructorParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkAddPrimaryConstructorParameter.before.Main.java")
+            public void testJkAddPrimaryConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkAddPrimaryConstructorParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkAddSecondaryConstructorParameter.before.Main.java")
+            public void testJkAddSecondaryConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkAddSecondaryConstructorParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkChangeFunctionParameter.before.Main.java")
+            public void testJkChangeFunctionParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkChangeFunctionParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkChangePrimaryConstructorParameter.before.Main.java")
+            public void testJkChangePrimaryConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkChangePrimaryConstructorParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkChangeSecondaryConstructorParameter.before.Main.java")
+            public void testJkChangeSecondaryConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkChangeSecondaryConstructorParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkRemoveFunctionParameter.before.Main.java")
+            public void testJkRemoveFunctionParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkRemoveFunctionParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkRemovePrimaryConstructorParameter.before.Main.java")
+            public void testJkRemovePrimaryConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkRemovePrimaryConstructorParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("jkRemoveSecondaryConstructorParameter.before.Main.java")
+            public void testJkRemoveSecondaryConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/jk/jkRemoveSecondaryConstructorParameter.before.Main.java");
+                doTestWithExtraFile(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/checkArguments")
