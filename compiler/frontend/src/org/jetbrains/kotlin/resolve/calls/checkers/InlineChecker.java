@@ -52,12 +52,13 @@ class InlineChecker implements CallChecker {
     private final SimpleFunctionDescriptor descriptor;
     private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<CallableDescriptor>();
     private final boolean isEffectivelyPublicApiFunction;
+    private final boolean isEffectivelyPrivateApiFunction;
 
     public InlineChecker(@NotNull SimpleFunctionDescriptor descriptor) {
         assert InlineUtil.isInline(descriptor) : "This extension should be created only for inline functions: " + descriptor;
         this.descriptor = descriptor;
         this.isEffectivelyPublicApiFunction = DescriptorUtilsKt.isEffectivelyPublicApi(descriptor);
-
+        this.isEffectivelyPrivateApiFunction = DescriptorUtilsKt.isEffectivelyPrivateApi(descriptor);
         for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
             if (isInlinableParameter(param)) {
                 inlinableParameters.add(param);
@@ -253,7 +254,7 @@ class InlineChecker implements CallChecker {
             @NotNull KtElement expression,
             @NotNull BasicCallResolutionContext context
     ) {
-        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
+        if (!isEffectivelyPrivateApiFunction) {
             if (DescriptorUtilsKt.isInsidePrivateClass(declarationDescriptor)) {
                 context.trace.report(Errors.PRIVATE_CLASS_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
             }
