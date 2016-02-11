@@ -33,6 +33,7 @@ open class NotificationMessageCollector(private val project: Project,
     }
 
     fun showNotification() {
+        if (messages.isEmpty()) return
         Notifications.Bus.notify(Notification(groupDisplayId, title, resultMessage, NotificationType.INFORMATION), project)
     }
 
