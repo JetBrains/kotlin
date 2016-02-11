@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build.incrementalModificationUtils
+package org.jetbrains.kotlin.incremental.testingUtils
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jps.builders.JpsBuildTestCase
 import java.io.File
 import java.util.*
 
@@ -82,18 +81,18 @@ fun getModificationsToPerform(
         return modifications
     }
 
-    val haveFilesWithoutNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }?.isNotEmpty() ?: false
-    val haveFilesWithNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
+    val haveFilesWithoutNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.(${COMMANDS_AS_REGEX_PART})$".toRegex()) }?.isNotEmpty() ?: false
+    val haveFilesWithNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.(${COMMANDS_AS_REGEX_PART})\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
 
     if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
-        JpsBuildTestCase.fail("Bad test data format: files ending with both unnumbered and numbered $COMMANDS_AS_MESSAGE_PART were found")
+        throw IllegalStateException("Bad test data format: files ending with both unnumbered and numbered ${COMMANDS_AS_MESSAGE_PART} were found")
     }
     if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
         if (allowNoFilesWithSuffixInTestData) {
             return listOf(listOf())
         }
         else {
-            JpsBuildTestCase.fail("Bad test data format: no files ending with $COMMANDS_AS_MESSAGE_PART found")
+            throw IllegalStateException("Bad test data format: no files ending with ${COMMANDS_AS_MESSAGE_PART} found")
         }
     }
 
