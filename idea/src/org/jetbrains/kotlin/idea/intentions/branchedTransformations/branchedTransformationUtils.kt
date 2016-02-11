@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -100,6 +101,8 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? {
 fun KtWhenExpression.introduceSubject(): KtWhenExpression {
     val subject = getSubjectToIntroduce()!!
 
+    val commentSaver = CommentSaver(this, saveLineBreaks = true)
+
     val whenExpression = KtPsiFactory(this).buildExpression {
         appendFixedText("when(").appendExpression(subject).appendFixedText("){\n")
 
@@ -126,7 +129,9 @@ fun KtWhenExpression.introduceSubject(): KtWhenExpression {
         appendFixedText("}")
     } as KtWhenExpression
 
-    return replaced(whenExpression)
+    val result = replaced(whenExpression)
+    commentSaver.restore(result)
+    return result
 }
 
 private fun BuilderByPattern<KtExpression>.appendConditionWithSubjectRemoved(conditionExpression: KtExpression?, subject: KtExpression) {

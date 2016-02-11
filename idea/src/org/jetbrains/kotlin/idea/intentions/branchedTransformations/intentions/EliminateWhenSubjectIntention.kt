@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtWhenExpression
@@ -35,6 +36,8 @@ class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(K
 
     override fun applyTo(element: KtWhenExpression, editor: Editor?) {
         val subject = element.subjectExpression!!
+
+        val commentSaver = CommentSaver(element, saveLineBreaks = true)
 
         val whenExpression = KtPsiFactory(element).buildExpression {
             appendFixedText("when {\n")
@@ -57,6 +60,7 @@ class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(K
             appendFixedText("}")
         }
 
-        element.replace(whenExpression)
+        val result = element.replace(whenExpression)
+        commentSaver.restore(result)
     }
 }
