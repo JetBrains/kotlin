@@ -46,11 +46,11 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.testingUtils.Modification
+import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
+import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
+import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
 import org.jetbrains.kotlin.jps.build.classFilesComparison.assertEqualDirectories
-import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.Modification
-import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.TouchPolicy
-import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.copyTestSources
-import org.jetbrains.kotlin.jps.build.incrementalModificationUtils.getModificationsToPerform
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
