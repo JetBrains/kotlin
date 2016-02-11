@@ -104,13 +104,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
 
-    protected fun File.isClassFile(): Boolean {
-        return when (FilenameUtils.getExtension(name).toLowerCase()) {
-            "class" -> true
-            else -> false
-        }
-    }
-
     protected fun File.isKotlinFile(): Boolean {
         return when (FilenameUtils.getExtension(name).toLowerCase()) {
             "kt", "kts" -> true
@@ -160,7 +153,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             )
 
     fun projectRelativePath(f: File) = f.toRelativeString(project.projectDir)
-    fun projectRelativePath(p: String) = File(p).toRelativeString(project.projectDir)
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
@@ -693,9 +685,4 @@ internal fun Logger.kotlinInfo(message: String) {
 
 internal fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
-}
-
-internal fun Logger.kotlinLazyDebug(makeMessage: () -> String) {
-    if (this.isInfoEnabled)
-        kotlinDebug(makeMessage())
 }
