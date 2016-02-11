@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
-import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -177,7 +179,10 @@ open class FileScopeProviderImpl(
             override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
                 // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
                 if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-                return scope.getContributedDescriptors(kindFilter, { name -> name !in excludedNames && nameFilter(name) })
+                return scope.getContributedDescriptors(
+                        kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK),
+                        { name -> name !in excludedNames && nameFilter(name) }
+                ).filter { it !is PackageViewDescriptor } // subpackages of the current package not accessible by the short name
             }
 
             override fun toString() = "Scope for current package (${filteringKind.name})"

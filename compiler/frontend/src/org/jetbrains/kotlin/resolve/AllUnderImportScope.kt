@@ -56,7 +56,10 @@ class AllUnderImportScope(
             { it !in excludedNames && nameFilter(it) }
         }
 
-        return scopes.flatMap { it.getContributedDescriptors(kindFilter, nameFilterToUse) }
+        val noPackagesKindFilter = kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
+        return scopes
+                .flatMap { it.getContributedDescriptors(noPackagesKindFilter, nameFilterToUse) }
+                .filter { it !is PackageViewDescriptor } // subpackages are not imported
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
