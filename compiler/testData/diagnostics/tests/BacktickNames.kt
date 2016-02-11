@@ -34,16 +34,12 @@ val <!INVALID_CHARACTERS!>`val\X`<!> = 10
 val <!INVALID_CHARACTERS!>`;`<!> = 1
 val <!INVALID_CHARACTERS!>`[`<!> = 2
 val <!INVALID_CHARACTERS!>`]`<!> = 3
-// org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException: Descriptor wasn't found for declaration PROPERTY
-// Names which start with '<' are treated as "special": see Name.java
-//val `<` = 4
+val <!INVALID_CHARACTERS!>`<`<!> = 4
 
 val <!INVALID_CHARACTERS!>`>`<!> = 5
 val <!INVALID_CHARACTERS!>`:`<!> = 6
 val <!INVALID_CHARACTERS!>`\`<!> = 7
-// org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException: Descriptor wasn't found for declaration PROPERTY
-// Names which start with '<' are treated as "special": see Name.java
-//val `<>` = 8
+val <!INVALID_CHARACTERS!>`<>`<!> = 8
 
 val <!INVALID_CHARACTERS!>`[]`<!> = 9
 val <!INVALID_CHARACTERS!>`[;]`<!> = 10

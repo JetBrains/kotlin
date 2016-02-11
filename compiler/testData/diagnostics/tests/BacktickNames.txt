@@ -2,6 +2,8 @@ package
 
 public val `:`: kotlin.Int = 6
 public val `;`: kotlin.Int = 1
+public val `<`: kotlin.Int = 4
+public val `<>`: kotlin.Int = 8
 public val `>`: kotlin.Int = 5
 public val `[`: kotlin.Int = 2
 public val `[;]`: kotlin.Int = 10
