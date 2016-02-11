@@ -559,7 +559,11 @@ public final class StaticContext {
                     if (container == null) {
                         return null;
                     }
-                    return getQualifiedReference(container);
+                    JsExpression result = getQualifiedReference(container);
+                    if (DescriptorUtils.isCompanionObject(container)) {
+                        result = Namer.getCompanionObjectAccessor(result);
+                    }
+                    return result;
                 }
             };
 
