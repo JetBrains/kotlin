@@ -272,18 +272,20 @@ class BasicCompletionSession(
                 }
             }
 
-            val classKindFilter: ((ClassKind) -> Boolean)?
-            when (callTypeAndReceiver) {
-                is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
-                is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> classKindFilter = { it != ClassKind.ENUM_ENTRY }
-                else -> classKindFilter = null
-            }
-            if (classKindFilter != null) {
-                if (configuration.completeNonImportedClasses) {
-                    addClassesFromIndex(classKindFilter)
+            if (callTypeAndReceiver.receiver == null) {
+                val classKindFilter: ((ClassKind) -> Boolean)?
+                when (callTypeAndReceiver) {
+                    is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
+                    is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> classKindFilter = { it != ClassKind.ENUM_ENTRY }
+                    else -> classKindFilter = null
                 }
-                else {
-                    collector.advertiseSecondCompletion()
+                if (classKindFilter != null) {
+                    if (configuration.completeNonImportedClasses) {
+                        addClassesFromIndex(classKindFilter)
+                    }
+                    else {
+                        collector.advertiseSecondCompletion()
+                    }
                 }
             }
         }
