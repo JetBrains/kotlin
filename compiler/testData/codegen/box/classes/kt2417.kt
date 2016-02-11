@@ -1,3 +1,5 @@
+// Enable when bug with when ... !in expression gets fixed
+// TARGET_BACKEND: JVM
 import java.util.HashSet
 
 fun box() : String{

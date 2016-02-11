@@ -58,8 +58,4 @@ abstract class AbstractInnerNestedTest : AbstractBlackBoxTest("innerNested/")
 
 abstract class AbstractClassesTest : AbstractBlackBoxTest("classes/")
 
-abstract class AbstractClosuresTest : AbstractBlackBoxTest("closures/")
-
-abstract class AbstractObjectsTest : AbstractBlackBoxTest("objects/")
-
 abstract class AbstractSuperTest : AbstractBlackBoxTest("super/")

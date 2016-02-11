@@ -1,3 +1,7 @@
+// Won't ever work with JS backend. Consider rewriting this test without using threads, since the issue
+// is not about threads at all.
+// TARGET_BACKEND: JVM
+
 object RefreshQueue {
     val any = Any()
     val workerThread: Thread = Thread(object : Runnable {

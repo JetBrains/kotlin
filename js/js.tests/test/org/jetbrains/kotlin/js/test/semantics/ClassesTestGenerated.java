@@ -31,6 +31,102 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClassesTestGenerated extends AbstractClassesTest {
+    @TestMetadata("classObjectAsStaticInitializer.kt")
+    public void ignoredClassObjectAsStaticInitializer() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("classObjectToString.kt")
+    public void ignoredClassObjectToString() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectToString.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("delegationJava.kt")
+    public void ignoredDelegationJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/delegationJava.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt1120.kt")
+    public void ignoredKt1120() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1120.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt1134.kt")
+    public void ignoredKt1134() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1134.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt1535.kt")
+    public void ignoredKt1535() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1535.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt1759.kt")
+    public void ignoredKt1759() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1759.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt2288.kt")
+    public void ignoredKt2288() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2288.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt2395.kt")
+    public void ignoredKt2395() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2395.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt2417.kt")
+    public void ignoredKt2417() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2417.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt2607.kt")
+    public void ignoredKt2607() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2607.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt496.kt")
+    public void ignoredKt496() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt496.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt504.kt")
+    public void ignoredKt504() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt504.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt5347.kt")
+    public void ignoredKt5347() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt5347.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt707.kt")
+    public void ignoredKt707() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt707.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt8011a.kt")
+    public void ignoredKt8011a() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt8011a.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInClasses() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classes"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -59,12 +155,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("classObjectAsStaticInitializer.kt")
-    public void testClassObjectAsStaticInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("classObjectField.kt")
     public void testClassObjectField() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectField.kt");
@@ -80,12 +170,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("classObjectNotOfEnum.kt")
     public void testClassObjectNotOfEnum() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectNotOfEnum.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("classObjectToString.kt")
-    public void testClassObjectToString() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectToString.kt");
         doTest(fileName);
     }
 
@@ -140,12 +224,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("delegationGenericLongArg.kt")
     public void testDelegationGenericLongArg() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/delegationGenericLongArg.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("delegationJava.kt")
-    public void testDelegationJava() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/delegationJava.kt");
         doTest(fileName);
     }
 
@@ -221,18 +299,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("kt1120.kt")
-    public void testKt1120() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1120.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt1134.kt")
-    public void testKt1134() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1134.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("kt1157.kt")
     public void testKt1157() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1157.kt");
@@ -254,12 +320,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("kt1439.kt")
     public void testKt1439() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1439.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt1535.kt")
-    public void testKt1535() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1535.kt");
         doTest(fileName);
     }
 
@@ -293,12 +353,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("kt1759.kt")
-    public void testKt1759() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1759.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("kt1891.kt")
     public void testKt1891() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt1891.kt");
@@ -329,12 +383,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("kt2288.kt")
-    public void testKt2288() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2288.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("kt2384.kt")
     public void testKt2384() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2384.kt");
@@ -350,18 +398,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("kt2391.kt")
     public void testKt2391() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2391.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt2395.kt")
-    public void testKt2395() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2395.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt2417.kt")
-    public void testKt2417() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2417.kt");
         doTest(fileName);
     }
 
@@ -410,12 +446,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("kt2566_2.kt")
     public void testKt2566_2() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2566_2.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt2607.kt")
-    public void testKt2607() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt2607.kt");
         doTest(fileName);
     }
 
@@ -485,12 +515,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("kt496.kt")
-    public void testKt496() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt496.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("kt500.kt")
     public void testKt500() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt500.kt");
@@ -503,21 +527,9 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("kt504.kt")
-    public void testKt504() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt504.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("kt508.kt")
     public void testKt508() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt508.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt5347.kt")
-    public void testKt5347() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt5347.kt");
         doTest(fileName);
     }
 
@@ -533,12 +545,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
-    @TestMetadata("kt707.kt")
-    public void testKt707() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt707.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("kt723.kt")
     public void testKt723() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt723.kt");
@@ -548,12 +554,6 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("kt725.kt")
     public void testKt725() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt725.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("kt8011a.kt")
-    public void testKt8011a() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt8011a.kt");
         doTest(fileName);
     }
 

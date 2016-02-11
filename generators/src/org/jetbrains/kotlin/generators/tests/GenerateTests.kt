@@ -1071,16 +1071,8 @@ fun main(args: Array<String>) {
             model("codegen/box/classes/", targetBackend = TargetBackend.JS)
         }
 
-        testClass<AbstractClosuresTest>() {
-            model("codegen/box/closures/", targetBackend = TargetBackend.JS)
-        }
-
         testClass<AbstractInnerNestedTest>() {
             model("codegen/box/innerNested/", targetBackend = TargetBackend.JS)
-        }
-
-        testClass<AbstractObjectsTest>() {
-            model("codegen/box/objects/", targetBackend = TargetBackend.JS)
         }
 
         testClass<AbstractSuperTest>() {

@@ -1,3 +1,5 @@
+// Enable for JS when it supports initializer of companion objects.
+// TARGET_BACKEND: JVM
 var global = 0;
 
 class C {

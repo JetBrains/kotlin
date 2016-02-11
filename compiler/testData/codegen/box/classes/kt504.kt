@@ -1,3 +1,6 @@
+// Enable for JS when it supports Java class library.
+// TARGET_BACKEND: JVM
+// BTW, this test does not seem relevant to real descsription of issue #KT-504
 import java.util.HashMap
 import java.io.*
 

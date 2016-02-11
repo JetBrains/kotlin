@@ -1,3 +1,5 @@
+// Enable for JS when it supports Java class library.
+// TARGET_BACKEND: JVM
 fun test1() : Boolean {
     try {
         return true
