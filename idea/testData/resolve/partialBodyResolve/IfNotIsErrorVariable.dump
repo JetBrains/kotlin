@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p: kotlin.Any
+Resolve target: value-parameter p: kotlin.Any
 ----------------------------------------------
 val error = "error"
 fun foo(p: Any) {

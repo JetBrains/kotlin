@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // PARAM_TYPES: kotlin.String
-// PARAM_DESCRIPTOR: value-parameter val l: kotlin.String defined in Foo.test
+// PARAM_DESCRIPTOR: value-parameter l: kotlin.String defined in Foo.test
 
 import java.util.*
 

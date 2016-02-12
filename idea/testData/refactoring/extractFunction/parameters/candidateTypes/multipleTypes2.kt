@@ -1,6 +1,6 @@
 // SUGGESTED_NAMES: i, getX
 // PARAM_TYPES: kotlin.Any
-// PARAM_DESCRIPTOR: value-parameter val o: kotlin.Any defined in foo
+// PARAM_DESCRIPTOR: value-parameter o: kotlin.Any defined in foo
 
 open class A {
     val a = 1

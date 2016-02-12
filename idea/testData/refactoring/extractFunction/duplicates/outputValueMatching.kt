@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in test
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in test
 
 // SIBLING:
 fun test(a: Int): Int {

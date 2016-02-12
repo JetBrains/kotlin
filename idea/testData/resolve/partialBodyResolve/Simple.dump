@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p: kotlin.Int
+Resolve target: value-parameter p: kotlin.Int
 ----------------------------------------------
 fun foo(p: Int) {
     /* STATEMENT DELETED: x() */

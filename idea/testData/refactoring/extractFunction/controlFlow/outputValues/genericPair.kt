@@ -3,7 +3,7 @@
 // PARAM_TYPES: B, A
 // PARAM_TYPES: kotlin.Int
 // PARAM_DESCRIPTOR: var a: A? defined in foo
-// PARAM_DESCRIPTOR: value-parameter val b: B defined in foo
+// PARAM_DESCRIPTOR: value-parameter b: B defined in foo
 // PARAM_DESCRIPTOR: var c: kotlin.Int defined in foo
 // SIBLING:
 fun <A: Any, B: A> foo(b: B): Int {

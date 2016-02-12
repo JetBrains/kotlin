@@ -1,4 +1,4 @@
-// PARAM_DESCRIPTOR: value-parameter val a: kotlin.String defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.String defined in foo
 // PARAM_TYPES: kotlin.String
 
 fun String.invoke() {

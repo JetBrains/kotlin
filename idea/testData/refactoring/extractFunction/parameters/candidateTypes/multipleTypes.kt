@@ -1,5 +1,5 @@
 // PARAM_TYPES: kotlin.String
-// PARAM_DESCRIPTOR: value-parameter val p: kotlin.Any defined in foo
+// PARAM_DESCRIPTOR: value-parameter p: kotlin.Any defined in foo
 
 fun foo(p: Any) {
     if (p is String) {

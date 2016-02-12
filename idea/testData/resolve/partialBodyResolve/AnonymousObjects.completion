@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p: kotlin.String?
+Resolve target: value-parameter p: kotlin.String?
 ----------------------------------------------
 open class C(p: Int) {
     open fun f(){}

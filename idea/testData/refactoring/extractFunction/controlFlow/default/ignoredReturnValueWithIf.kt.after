@@ -1,6 +1,6 @@
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int, Number, Comparable<Int>, java.io.Serializable, Any
-// PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: val b: kotlin.Int defined in foo
 fun bar(a: Int): Int {
     println(a)

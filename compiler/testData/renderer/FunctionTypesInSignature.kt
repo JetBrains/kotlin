@@ -27,13 +27,13 @@ fun <T> (T.(Int) -> Unit).f8() {
 val Function0<(() -> Unit) -> (() -> Unit)>.p: Unit = Unit
 //package test
 //public fun (() -> kotlin.Unit).f1(f: () -> kotlin.Unit): () -> kotlin.Int defined in test
-//value-parameter val f: () -> kotlin.Unit defined in test.f1
+//value-parameter f: () -> kotlin.Unit defined in test.f1
 //public fun (() -> kotlin.Unit).f2(f: () -> kotlin.Unit): () -> kotlin.Int defined in test
-//value-parameter val f: () -> kotlin.Unit defined in test.f2
+//value-parameter f: () -> kotlin.Unit defined in test.f2
 //public fun ((() -> kotlin.Unit) -> kotlin.Unit).f3(f: () -> () -> kotlin.Unit): () -> () -> kotlin.Int defined in test
-//value-parameter val f: () -> () -> kotlin.Unit defined in test.f3
+//value-parameter f: () -> () -> kotlin.Unit defined in test.f3
 //public fun (() -> () -> kotlin.Unit).f4(f: (() -> kotlin.Unit, () -> kotlin.Unit) -> kotlin.Unit): (() -> kotlin.Unit) -> () -> kotlin.Unit defined in test
-//value-parameter val f: (() -> kotlin.Unit, () -> kotlin.Unit) -> kotlin.Unit defined in test.f4
+//value-parameter f: (() -> kotlin.Unit, () -> kotlin.Unit) -> kotlin.Unit defined in test.f4
 //public fun (() -> (() -> kotlin.Unit) -> () -> kotlin.Unit).f5(): kotlin.Unit defined in test
 //public fun (() -> (() -> kotlin.Unit) -> () -> kotlin.Unit)?.f6(): kotlin.Unit defined in test
 //public fun ((kotlin.Int) -> kotlin.Unit)?.f7(): kotlin.Unit defined in test

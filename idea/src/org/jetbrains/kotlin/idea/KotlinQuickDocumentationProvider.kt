@@ -25,6 +25,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -115,11 +116,18 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
         private fun renderKotlinDeclaration(declaration: KtDeclaration, quickNavigation: Boolean): String {
             val context = declaration.analyze(BodyResolveMode.PARTIAL)
-            val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+            var declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 
             if (declarationDescriptor == null) {
                 LOG.info("Failed to find descriptor for declaration " + declaration.getElementTextWithContext())
                 return "No documentation available"
+            }
+
+            if (declarationDescriptor is ValueParameterDescriptor) {
+                val property = context[BindingContext.VALUE_PARAMETER_AS_PROPERTY, declarationDescriptor]
+                if (property != null) {
+                    declarationDescriptor = property
+                }
             }
 
             var renderedDecl = DESCRIPTOR_RENDERER.render(declarationDescriptor)

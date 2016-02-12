@@ -1,4 +1,4 @@
-Resolve target: value-parameter val x: kotlin.Any?
+Resolve target: value-parameter x: kotlin.Any?
 ----------------------------------------------
 fun foo(x: Any?, p: Int) {
     if (p > 0) {

@@ -1,5 +1,5 @@
 // PARAM_TYPES: Data<T>
-// PARAM_DESCRIPTOR: value-parameter val d: Data<T> defined in A.foo
+// PARAM_DESCRIPTOR: value-parameter d: Data<T> defined in A.foo
 class Data<T>(val t: Int)
 
 // SIBLING:

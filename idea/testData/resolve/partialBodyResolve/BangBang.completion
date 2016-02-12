@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p: kotlin.String? smart-cast to kotlin.String
+Resolve target: value-parameter p: kotlin.String? smart-cast to kotlin.String
 ----------------------------------------------
 fun foo(p: String?, p1: Any?) {
     x(e.f!!)

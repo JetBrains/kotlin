@@ -1,4 +1,4 @@
-// PARAM_DESCRIPTOR: value-parameter val a: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_TYPES: kotlin.Int, Number, Comparable<Int>, java.io.Serializable, Any
 fun foo(a: Int): String {
     val x = "-$a"

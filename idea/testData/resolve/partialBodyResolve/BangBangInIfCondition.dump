@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p: kotlin.Boolean? smart-cast to kotlin.Boolean
+Resolve target: value-parameter p: kotlin.Boolean? smart-cast to kotlin.Boolean
 ----------------------------------------------
 fun foo(p: Boolean?, p1: Any?) {
     if (p!!) {

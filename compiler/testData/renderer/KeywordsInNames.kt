@@ -24,14 +24,14 @@ val NOT_IS = 3
 //public final class `class`<`in`> defined in root package
 //<`in`> defined in `class`
 //public constructor `class`<`in`>(p: `in`?) defined in `class`
-//value-parameter val p: `in`? defined in `class`.<init>
+//value-parameter p: `in`? defined in `class`.<init>
 //public final inner class `class` defined in `class`
 //public constructor `class`() defined in `class`.`class`
 //public val `is`: `class`<`interface`>.`class` defined in root package
 //public val `in`: `class`<`interface`> defined in root package
 //public fun <`in` : `interface`> `interface`.`fun`(`false`: `interface`): `interface` where `in` : kotlin.Number defined in root package
 //<`in` : `interface` & kotlin.Number> defined in `fun`
-//value-parameter val `false`: `interface` defined in `fun`
+//value-parameter `false`: `interface` defined in `fun`
 //public val AS_SAFE: kotlin.Int defined in root package
 //public val NOT_IN: kotlin.Int defined in root package
 //public val NOT_IS: kotlin.Int defined in root package

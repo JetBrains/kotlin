@@ -1,5 +1,5 @@
 //PARAM_TYPES: C, AImpl, A
-//PARAM_DESCRIPTOR: value-parameter val c: C defined in foo
+//PARAM_DESCRIPTOR: value-parameter c: C defined in foo
 interface A {
     fun doA()
 }

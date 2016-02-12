@@ -1,5 +1,5 @@
 // PARAM_TYPES: T
-// PARAM_DESCRIPTOR: value-parameter val t: T defined in B.<init>
+// PARAM_DESCRIPTOR: value-parameter t: T defined in B.<init>
 interface T
 
 class A(a: Int, b: Int): T

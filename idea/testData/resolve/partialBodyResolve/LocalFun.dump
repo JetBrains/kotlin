@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p: kotlin.String?
+Resolve target: value-parameter p: kotlin.String?
 ----------------------------------------------
 fun foo(p: String?) {
     /* STATEMENT DELETED: fun local(): String? { if (p == null) return null print(p.size) return "" } */

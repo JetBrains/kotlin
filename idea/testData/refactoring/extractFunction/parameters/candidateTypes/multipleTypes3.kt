@@ -1,5 +1,5 @@
 // PARAM_TYPES: A
-// PARAM_DESCRIPTOR: value-parameter val o: kotlin.Any defined in foo
+// PARAM_DESCRIPTOR: value-parameter o: kotlin.Any defined in foo
 
 open class A {
     val a = 1

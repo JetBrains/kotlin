@@ -1,4 +1,4 @@
-// PARAM_DESCRIPTOR: value-parameter val n: kotlin.Int defined in E.A.foo
+// PARAM_DESCRIPTOR: value-parameter n: kotlin.Int defined in E.A.foo
 // PARAM_TYPES: kotlin.Int
 enum class E {
     // SIBLING:

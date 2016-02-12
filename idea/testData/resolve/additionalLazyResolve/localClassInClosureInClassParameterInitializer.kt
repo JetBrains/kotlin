@@ -17,6 +17,6 @@ class MyClass(
 //public constructor A() defined in test.A
 //public final class MyClass defined in test
 //public constructor MyClass(a: test.A = ...) defined in test.MyClass
-//value-parameter val a: test.A = ... defined in test.MyClass.<init>
+//value-parameter a: test.A = ... defined in test.MyClass.<init>
 //local final class B : test.A defined in test.MyClass.<init>.<anonymous>
 //public constructor B() defined in test.MyClass.<init>.<anonymous>.B

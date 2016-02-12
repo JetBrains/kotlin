@@ -3,7 +3,7 @@
 // PARAM_TYPES: V, Data
 // PARAM_DESCRIPTOR: public final class A<T : Data> where T : DataEx defined in root package
 // PARAM_DESCRIPTOR: public final inner class B<U : Data> where U : DataExEx defined in A
-// PARAM_DESCRIPTOR: value-parameter val v: V defined in A.B.foo
+// PARAM_DESCRIPTOR: value-parameter v: V defined in A.B.foo
 open class Data(val x: Int)
 interface DataEx
 interface DataExEx

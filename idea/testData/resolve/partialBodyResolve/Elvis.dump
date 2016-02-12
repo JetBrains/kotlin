@@ -1,4 +1,4 @@
-Resolve target: value-parameter val p1: kotlin.Any?
+Resolve target: value-parameter p1: kotlin.Any?
 ----------------------------------------------
 fun foo(p1: Any?, p2: Any) {
     /* STATEMENT DELETED: print(p1 ?: p2) */

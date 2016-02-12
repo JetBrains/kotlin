@@ -739,7 +739,9 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderValVarPrefix(variable: VariableDescriptor, builder: StringBuilder) {
-        builder.append(renderKeyword(if (variable.isVar) "var" else "val")).append(" ")
+        if (variable !is ValueParameterDescriptor) {
+            builder.append(renderKeyword(if (variable.isVar) "var" else "val")).append(" ")
+        }
     }
 
     private fun renderVariable(variable: VariableDescriptor, includeName: Boolean, builder: StringBuilder, topLevel: Boolean) {

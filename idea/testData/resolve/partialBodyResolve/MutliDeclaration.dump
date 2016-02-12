@@ -1,4 +1,4 @@
-Resolve target: value-parameter val b: kotlin.String?
+Resolve target: value-parameter b: kotlin.String?
 ----------------------------------------------
 data class TestData(val first: Int, val second: String?)
 

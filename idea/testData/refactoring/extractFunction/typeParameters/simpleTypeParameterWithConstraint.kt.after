@@ -1,5 +1,5 @@
 // PARAM_TYPES: V
-// PARAM_DESCRIPTOR: value-parameter val v: V defined in foo
+// PARAM_DESCRIPTOR: value-parameter v: V defined in foo
 open class Data(val x: Int)
 interface DataEx
 
