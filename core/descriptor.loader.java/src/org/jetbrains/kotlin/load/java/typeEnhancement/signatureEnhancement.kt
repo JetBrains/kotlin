@@ -33,6 +33,9 @@ private fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
 
     if (this !is JavaCallableMemberDescriptor) return this
 
+    // Fake overrides with one overridden has been enhanced before
+    if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE && original.overriddenDescriptors.size == 1) return this
+
     val receiverTypeEnhancement =
             if (extensionReceiverParameter != null)
                 parts(isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
