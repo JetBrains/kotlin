@@ -275,6 +275,26 @@ class CallExpressionResolver(
         return noTypeInfo(context)
     }
 
+    private fun KtQualifiedExpression.elementChain(context: ExpressionTypingContext) =
+            qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(this, context) {
+                nameExpression ->
+                val temporaryForVariable = TemporaryTraceAndCache.create(
+                        context, "trace to resolve as local variable or property", nameExpression)
+                val call = CallMaker.makePropertyCall(null, null, nameExpression)
+                val contextForVariable = BasicCallResolutionContext.create(
+                        context.replaceTraceAndCache(temporaryForVariable),
+                        call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS)
+                val resolutionResult = callResolver.resolveSimpleProperty(contextForVariable)
+
+                if (resolutionResult.isSingleResult && resolutionResult.resultingDescriptor is FakeCallableDescriptorForObject) {
+                    false
+                }
+                else when (resolutionResult.resultCode) {
+                    NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
+                    else -> true
+                }
+            }
+
     /**
      * Visits a qualified expression like x.y or x?.z controlling data flow information changes.
 
@@ -284,27 +304,8 @@ class CallExpressionResolver(
         val currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT)
         val trace = currentContext.trace
 
-        val elementChain = qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(expression, context) {
-            nameExpression ->
-            val temporaryForVariable = TemporaryTraceAndCache.create(
-                    context, "trace to resolve as local variable or property", nameExpression)
-            val call = CallMaker.makePropertyCall(null, null, nameExpression)
-            val contextForVariable = BasicCallResolutionContext.create(
-                    context.replaceTraceAndCache(temporaryForVariable),
-                    call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS)
-            val resolutionResult = callResolver.resolveSimpleProperty(contextForVariable)
-
-            if (resolutionResult.isSingleResult && resolutionResult.resultingDescriptor is FakeCallableDescriptorForObject) {
-                false
-            }
-            else when (resolutionResult.resultCode) {
-                NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
-                else -> true
-            }
-        }
-
-        val firstElement = elementChain.first()
-        val firstReceiver = firstElement.receiver
+        val elementChain = expression.elementChain(context)
+        val firstReceiver = elementChain.first().receiver
 
         var receiverTypeInfo = when (trace.get(BindingContext.QUALIFIER, firstReceiver)) {
             null -> expressionTypingServices.getTypeInfo(firstReceiver, currentContext)
