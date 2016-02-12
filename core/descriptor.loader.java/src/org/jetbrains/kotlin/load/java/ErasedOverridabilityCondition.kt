@@ -43,4 +43,6 @@ class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
             else ->  Result.UNKNOWN
         }
     }
+
+    override fun getContract() = ExternalOverridabilityCondition.Contract.SUCCESS_ONLY
 }

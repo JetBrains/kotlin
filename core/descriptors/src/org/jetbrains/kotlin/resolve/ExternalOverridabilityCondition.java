@@ -26,10 +26,17 @@ public interface ExternalOverridabilityCondition {
         OVERRIDABLE, CONFLICT, INCOMPATIBLE, UNKNOWN
     }
 
+    enum Contract {
+        CONFLICTS_ONLY, SUCCESS_ONLY, BOTH
+    }
+
     @NotNull
     Result isOverridable(
             @NotNull CallableDescriptor superDescriptor,
             @NotNull CallableDescriptor subDescriptor,
             @Nullable ClassDescriptor subClassDescriptor
     );
+
+    @NotNull
+    Contract getContract();
 }
