@@ -799,6 +799,7 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
     if (this is Collection) {
         if (size <= 1) return this.toMutableList()
+        @Suppress("CAST_NEVER_SUCCEEDS")
         return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
     }
     return toMutableList().apply { sort() }
@@ -831,6 +832,7 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
     if (this is Collection) {
        if (size <= 1) return this.toMutableList()
+       @Suppress("CAST_NEVER_SUCCEEDS")
        return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
     }
     return toMutableList().apply { sortWith(comparator) }
@@ -1593,6 +1595,7 @@ public fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T> {
             throw IllegalArgumentException("null element found in $this.")
         }
     }
+    @Suppress("UNCHECKED_CAST")
     return this as Iterable<T>
 }
 
@@ -1605,6 +1608,7 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
             throw IllegalArgumentException("null element found in $this.")
         }
     }
+    @Suppress("UNCHECKED_CAST")
     return this as List<T>
 }
 
@@ -1896,6 +1900,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
  */
 @kotlin.jvm.JvmVersion
 public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }

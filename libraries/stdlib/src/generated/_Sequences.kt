@@ -343,6 +343,7 @@ public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
  * Returns a sequence containing all elements that are not `null`.
  */
 public fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T> {
+    @Suppress("UNCHECKED_CAST")
     return filterNot { it == null } as Sequence<T>
 }
 
@@ -1179,6 +1180,7 @@ public inline fun <T> Sequence<T>.asSequence(): Sequence<T> {
  */
 @kotlin.jvm.JvmVersion
 public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
+    @Suppress("UNCHECKED_CAST")
     return filter { it is R } as Sequence<R>
 }
 
@@ -1187,6 +1189,7 @@ public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.i
  */
 @kotlin.jvm.JvmVersion
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
+    @Suppress("UNCHECKED_CAST")
     return filter { klass.isInstance(it) } as Sequence<R>
 }
 
@@ -1204,6 +1207,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsI
  */
 @kotlin.jvm.JvmVersion
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }

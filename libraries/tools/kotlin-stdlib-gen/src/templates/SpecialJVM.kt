@@ -202,6 +202,7 @@ fun specialJVM(): List<GenericFunction> {
         exclude(ArraysOfPrimitives, Strings)
         body {
             """
+            @Suppress("UNCHECKED_CAST")
             for (element in this) if (klass.isInstance(element)) destination.add(element as R)
             return destination
             """
@@ -224,6 +225,7 @@ fun specialJVM(): List<GenericFunction> {
         returns(Sequences) { "Sequence<R>" }
         body(Sequences) {
             """
+            @Suppress("UNCHECKED_CAST")
             return filter { klass.isInstance(it) } as Sequence<R>
             """
         }
@@ -264,6 +266,7 @@ fun specialJVM(): List<GenericFunction> {
         receiverAsterisk(true)
         body(Sequences) {
             """
+            @Suppress("UNCHECKED_CAST")
             return filter { it is R } as Sequence<R>
             """
         }
@@ -307,6 +310,7 @@ fun specialJVM(): List<GenericFunction> {
             val result = arrayOfNulls<T>(size)
             for (index in indices)
                 result[index] = this[index]
+            @Suppress("CAST_NEVER_SUCCEEDS")
             return result as Array<T>
             """
         }

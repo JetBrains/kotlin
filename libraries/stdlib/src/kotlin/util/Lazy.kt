@@ -118,13 +118,14 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
         get() {
             val _v1 = _value
             if (_v1 !== UNINITIALIZED_VALUE) {
+                @Suppress("UNCHECKED_CAST")
                 return _v1 as T
             }
 
             return synchronized(lock) {
                 val _v2 = _value
                 if (_v2 !== UNINITIALIZED_VALUE) {
-                     _v2 as T
+                    @Suppress("UNCHECKED_CAST") (_v2 as T)
                 }
                 else {
                     val typedValue = initializer!!()
@@ -153,6 +154,7 @@ internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializab
                 _value = initializer!!()
                 initializer = null
             }
+            @Suppress("UNCHECKED_CAST")
             return _value as T
         }
 
@@ -190,6 +192,7 @@ private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Se
                     }
                 }
             }
+            @Suppress("UNCHECKED_CAST")
             return _value as T
         }
 

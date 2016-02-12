@@ -13,13 +13,14 @@ fun guards(): List<GenericFunction> {
         typeParam("T : Any")
         toNullableT = true
         returns("SELF")
-        body {
+        body { f ->
             """
             for (element in this) {
                 if (element == null) {
                     throw IllegalArgumentException("null element found in $THIS.")
                 }
             }
+            @Suppress("${if (f == InvariantArraysOfObjects) "CAST_NEVER_SUCCEEDS" else "UNCHECKED_CAST"}")
             return this as SELF
             """
         }

@@ -25,7 +25,7 @@ private object EmptyMap : Map<Any?, Nothing>, Serializable {
 }
 
 /** Returns an empty read-only map of specified type. The returned map is serializable (JVM). */
-public fun <K, V> emptyMap(): Map<K, V> = EmptyMap as Map<K, V>
+public fun <K, V> emptyMap(): Map<K, V> = @Suppress("CAST_NEVER_SUCCEEDS") (EmptyMap as Map<K, V>)
 
 /**
  * Returns a new read-only map with the specified contents, given as a list of pairs
@@ -115,7 +115,8 @@ public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.
  * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
  */
 @kotlin.internal.InlineOnly
-public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get(key: K): V? = (this as Map<K, V>).get(key)
+public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get(key: K): V?
+        = @Suppress("UNCHECKED_CAST") (this as Map<K, V>).get(key)
 
 /**
  * Returns `true` if the map contains the specified [key].
@@ -123,7 +124,8 @@ public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.
  * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `K`.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(key: K): Boolean = (this as Map<K, *>).containsKey(key)
+public inline fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(key: K): Boolean
+        = @Suppress("UNCHECKED_CAST") (this as Map<K, *>).containsKey(key)
 
 /**
  * Returns `true` if the map maps one or more keys to the specified [value].
@@ -142,7 +144,8 @@ public inline fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue
  * Allows to overcome type-safety restriction of `remove` that requires to pass a key of type `K`.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes K, V> MutableMap<out K, V>.remove(key: K): V? = (this as MutableMap<K, V>).remove(key)
+public inline fun <@kotlin.internal.OnlyInputTypes K, V> MutableMap<out K, V>.remove(key: K): V?
+        = @Suppress("UNCHECKED_CAST") (this as MutableMap<K, V>).remove(key)
 
 /**
  * Returns the key component of the map entry.
