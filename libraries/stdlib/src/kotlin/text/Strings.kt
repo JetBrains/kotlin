@@ -380,7 +380,7 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
  */
 public fun CharSequence.replaceRange(startIndex: Int, endIndex: Int, replacement: CharSequence): CharSequence {
     if (endIndex < startIndex)
-        throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex)")
+        throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
     val sb = StringBuilder()
     sb.append(this, 0, startIndex)
     sb.append(replacement)
@@ -425,7 +425,7 @@ public inline fun String.replaceRange(range: IntRange, replacement: CharSequence
  */
 public fun CharSequence.removeRange(startIndex: Int, endIndex: Int): CharSequence {
     if (endIndex < startIndex)
-        throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex)")
+        throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
 
     if (endIndex == startIndex)
         return this.subSequence(0, length)
@@ -1068,7 +1068,7 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
  * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
  */
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit" })
+    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
 
     return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
 }
@@ -1089,7 +1089,7 @@ private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: In
  * that matches this string at that position.
  */
 private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+    require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
     val delimitersList = delimiters.asList()
 
     return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimitersList, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })

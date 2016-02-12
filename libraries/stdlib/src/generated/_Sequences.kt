@@ -92,7 +92,7 @@ public fun <T> Sequence<T>.first(): T {
  */
 public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found.")
+    throw NoSuchElementException("Sequence contains no element matching the predicate.")
 }
 
 /**
@@ -180,7 +180,7 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+    if (!found) throw NoSuchElementException("Sequence contains no element matching the predicate.")
     return last as T
 }
 
@@ -245,12 +245,12 @@ public inline fun <T> Sequence<T>.single(predicate: (T) -> Boolean): T {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
+            if (found) throw IllegalArgumentException("Sequence contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
+    if (!found) throw NoSuchElementException("Sequence contains no element matching the predicate.")
     return single as T
 }
 
@@ -288,7 +288,7 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
  * Returns a sequence containing all elements except first [n] elements.
  */
 public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     return when {
         n == 0 -> this
         this is DropTakeSequence -> this.drop(n)
@@ -375,7 +375,7 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
  * Returns a sequence containing first [n] elements.
  */
 public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     return when {
         n == 0 -> emptySequence()
         this is DropTakeSequence -> this.take(n)
@@ -931,7 +931,7 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
  */
 public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty sequence can't be reduced.")
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -947,7 +947,7 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
  */
 public inline fun <S, T: S> Sequence<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty sequence can't be reduced.")
     var index = 1
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {

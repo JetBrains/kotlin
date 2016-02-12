@@ -29,7 +29,7 @@ public fun String.trimMargin(marginPrefix: String = "|"): String =
  * Detects indent by [marginPrefix] as it does [trimMargin] and replace it with [newIndent].
  */
 public fun String.replaceIndentByMargin(newIndent: String = "", marginPrefix: String = "|"): String {
-    require(marginPrefix.isNotBlank()) { "marginPrefix must be non blank string." }
+    require(marginPrefix.isNotBlank()) { "marginPrefix must be non-blank string." }
     val lines = lines()
 
     return lines.reindent(length + newIndent.length * lines.size, getIndentFunction(newIndent), { line ->

@@ -316,7 +316,7 @@ internal class TakeSequence<T> (
 ) : Sequence<T>, DropTakeSequence<T> {
 
     init {
-        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
+        require (count >= 0) { throw IllegalArgumentException("count must be non-negative, but was $count.") }
     }
 
     override fun drop(n: Int): Sequence<T> = if (n >= count) emptySequence() else SubSequence(sequence, n, count)
@@ -394,7 +394,7 @@ internal class DropSequence<T> (
         private val count: Int
 ) : Sequence<T>, DropTakeSequence<T> {
     init {
-        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
+        require (count >= 0) { throw IllegalArgumentException("count must be non-negative, but was $count.") }
     }
 
     override fun drop(n: Int): Sequence<T> = DropSequence(sequence, count + n)

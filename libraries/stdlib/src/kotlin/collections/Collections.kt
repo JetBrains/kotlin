@@ -26,7 +26,7 @@ internal object EmptyList : List<Nothing>, Serializable {
     override fun contains(element: Nothing): Boolean = false
     override fun containsAll(elements: Collection<Nothing>): Boolean = elements.isEmpty()
 
-    override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Index $index is out of bound of empty list.")
+    override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Empty list doesn't contain element at index $index.")
     override fun indexOf(element: Nothing): Int = -1
     override fun lastIndexOf(element: Nothing): Int = -1
 
@@ -274,7 +274,7 @@ public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, com
  */
 private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
     when {
-        fromIndex > toIndex -> throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex)")
+        fromIndex > toIndex -> throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex).")
         fromIndex < 0 -> throw IndexOutOfBoundsException("fromIndex ($fromIndex) is less than zero.")
         toIndex > size -> throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
     }

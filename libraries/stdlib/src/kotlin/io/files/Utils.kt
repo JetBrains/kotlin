@@ -24,7 +24,7 @@ public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directo
     if (dir.mkdir()) {
         return dir
     } else {
-        throw IOException("Unable to create temporary directory $dir")
+        throw IOException("Unable to create temporary directory $dir.")
     }
 }
 
@@ -73,7 +73,7 @@ public val File.nameWithoutExtension: String
  * @throws IllegalArgumentException if this and base paths have different roots.
  */
 public fun File.toRelativeString(base: File): String
-        = toRelativeStringOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base")
+        = toRelativeStringOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base.")
 
 /**
  * Calculates the relative path for this file from [base] file.
@@ -173,7 +173,7 @@ private fun File.toRelativeStringOrNull(base: File): String? {
  */
 public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File {
     if (!this.exists()) {
-        throw NoSuchFileException(file = this, reason = "The source file doesn't exist")
+        throw NoSuchFileException(file = this, reason = "The source file doesn't exist.")
     }
 
     if (target.exists()) {
@@ -182,13 +182,13 @@ public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int
         if (stillExists) {
             throw FileAlreadyExistsException(file = this,
                     other = target,
-                    reason = "The destination file already exists")
+                    reason = "The destination file already exists.")
         }
     }
 
     if (this.isDirectory) {
         if (!target.mkdirs())
-            throw FileSystemException(file = this, other = target, reason = "Failed to create target directory")
+            throw FileSystemException(file = this, other = target, reason = "Failed to create target directory.")
     } else {
         target.parentFile?.mkdirs()
 
@@ -242,14 +242,14 @@ public fun File.copyRecursively(target: File,
                                 { file, exception -> throw exception }
 ): Boolean {
     if (!exists()) {
-        return onError(this, NoSuchFileException(file = this, reason = "The source file doesn't exist")) !=
+        return onError(this, NoSuchFileException(file = this, reason = "The source file doesn't exist.")) !=
                 OnErrorAction.TERMINATE
     }
     try {
         // We cannot break for loop from inside a lambda, so we have to use an exception here
         for (src in walkTopDown().onFail { f, e -> if (onError(f, e) == OnErrorAction.TERMINATE) throw TerminateException(f) }) {
             if (!src.exists()) {
-                if (onError(src, NoSuchFileException(file = src, reason = "The source file doesn't exist")) ==
+                if (onError(src, NoSuchFileException(file = src, reason = "The source file doesn't exist.")) ==
                         OnErrorAction.TERMINATE)
                     return false
             } else {
@@ -266,7 +266,7 @@ public fun File.copyRecursively(target: File,
                     if (stillExists) {
                         if (onError(dstFile, FileAlreadyExistsException(file = src,
                                     other = dstFile,
-                                    reason = "The destination file already exists")) == OnErrorAction.TERMINATE)
+                                    reason = "The destination file already exists.")) == OnErrorAction.TERMINATE)
                                 return false
 
                         continue
@@ -277,7 +277,7 @@ public fun File.copyRecursively(target: File,
                     dstFile.mkdirs()
                 } else {
                     if (src.copyTo(dstFile, overwrite).length() != src.length()) {
-                        if (onError(src, IOException("src.length() != dst.length()")) == OnErrorAction.TERMINATE)
+                        if (onError(src, IOException("Source file wasn't copied completely, length of destination file differs.")) == OnErrorAction.TERMINATE)
                             return false
                     }
                 }

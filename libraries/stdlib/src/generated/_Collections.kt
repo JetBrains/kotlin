@@ -161,12 +161,7 @@ public inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T? {
  */
 public fun <T> Iterable<T>.first(): T {
     when (this) {
-        is List -> {
-            if (isEmpty())
-                throw NoSuchElementException("Collection is empty.")
-            else
-                return this[0]
-        }
+        is List -> return this.first()
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -182,7 +177,7 @@ public fun <T> Iterable<T>.first(): T {
  */
 public fun <T> List<T>.first(): T {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty.")
+        throw NoSuchElementException("List is empty.")
     return this[0]
 }
 
@@ -192,7 +187,7 @@ public fun <T> List<T>.first(): T {
  */
 public inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found.")
+    throw NoSuchElementException("Collection contains no element matching the predicate.")
 }
 
 /**
@@ -323,12 +318,7 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
  */
 public fun <T> Iterable<T>.last(): T {
     when (this) {
-        is List -> {
-            if (isEmpty())
-                throw NoSuchElementException("Collection is empty.")
-            else
-                return this[this.lastIndex]
-        }
+        is List -> return this.last()
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -347,7 +337,7 @@ public fun <T> Iterable<T>.last(): T {
  */
 public fun <T> List<T>.last(): T {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty.")
+        throw NoSuchElementException("List is empty.")
     return this[lastIndex]
 }
 
@@ -366,7 +356,7 @@ public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+    if (!found) throw NoSuchElementException("Collection contains no element matching the predicate.")
     return last as T
 }
 
@@ -379,7 +369,7 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
         val element = this[index]
         if (predicate(element)) return element
     }
-    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+    throw NoSuchElementException("List contains no element matching the predicate.")
 }
 
 /**
@@ -460,11 +450,7 @@ public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
  */
 public fun <T> Iterable<T>.single(): T {
     when (this) {
-        is List -> return when (size) {
-            0 -> throw NoSuchElementException("Collection is empty.")
-            1 -> this[0]
-            else -> throw IllegalArgumentException("Collection has more than one element.")
-        }
+        is List -> return this.single()
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -482,9 +468,9 @@ public fun <T> Iterable<T>.single(): T {
  */
 public fun <T> List<T>.single(): T {
     return when (size) {
-        0 -> throw NoSuchElementException("Collection is empty.")
+        0 -> throw NoSuchElementException("List is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element.")
+        else -> throw IllegalArgumentException("List has more than one element.")
     }
 }
 
@@ -501,7 +487,7 @@ public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
+    if (!found) throw NoSuchElementException("Collection contains no element matching the predicate.")
     return single as T
 }
 
@@ -551,7 +537,7 @@ public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
  * Returns a list containing all elements except first [n] elements.
  */
 public fun <T> Iterable<T>.drop(n: Int): List<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return toList()
     val list: ArrayList<T>
     if (this is Collection<*>) {
@@ -580,7 +566,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
  * Returns a list containing all elements except last [n] elements.
  */
 public fun <T> List<T>.dropLast(n: Int): List<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     return take((size - n).coerceAtLeast(0))
 }
 
@@ -703,7 +689,7 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
  * Returns a list containing first [n] elements.
  */
 public fun <T> Iterable<T>.take(n: Int): List<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     if (this is Collection<T> && n >= size) return toList()
     var count = 0
@@ -720,7 +706,7 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
  * Returns a list containing last [n] elements.
  */
 public fun <T> List<T>.takeLast(n: Int): List<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
     val size = size
     if (n >= size) return toList()
@@ -1509,7 +1495,7 @@ public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
  */
 public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -1525,7 +1511,7 @@ public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
  */
 public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var index = 1
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
@@ -1539,7 +1525,7 @@ public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> 
  */
 public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty list can't be reduced.")
     var accumulator: S = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)

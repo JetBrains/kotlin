@@ -480,10 +480,10 @@ fun aggregates(): List<GenericFunction> {
         typeParam("S")
         typeParam("T: S")
         returns("S")
-        body {
+        body { f ->
             """
             val iterator = this.iterator()
-            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty ${f.doc.collection} can't be reduced.")
 
             var index = 1
             var accumulator: S = iterator.next()
@@ -595,10 +595,10 @@ fun aggregates(): List<GenericFunction> {
         typeParam("S")
         typeParam("T: S")
         returns("S")
-        body {
+        body { f ->
             """
             val iterator = this.iterator()
-            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty ${f.doc.collection} can't be reduced.")
 
             var accumulator: S = iterator.next()
             while (iterator.hasNext()) {
@@ -627,10 +627,10 @@ fun aggregates(): List<GenericFunction> {
         only(CharSequences, ArraysOfPrimitives)
         doc { f -> "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
         returns("T")
-        body {
+        body { f ->
             """
             var index = lastIndex
-            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+            if (index < 0) throw UnsupportedOperationException("Empty ${f.doc.collection} can't be reduced.")
 
             var accumulator = get(index--)
             while (index >= 0) {
@@ -650,10 +650,10 @@ fun aggregates(): List<GenericFunction> {
         typeParam("S")
         typeParam("T: S")
         returns("S")
-        body {
+        body { f ->
             """
             var index = lastIndex
-            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+            if (index < 0) throw UnsupportedOperationException("Empty ${f.doc.collection} can't be reduced.")
 
             var accumulator: S = get(index--)
             while (index >= 0) {

@@ -187,7 +187,7 @@ internal constructor(private val nativePattern: Pattern) {
      * Zero by default means no limit is set.
      */
     public fun split(input: CharSequence, limit: Int = 0): List<String> {
-        require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+        require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
         return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
     }
 
