@@ -143,24 +143,8 @@ public class OverridingUtil {
             @NotNull CallableDescriptor subDescriptor,
             boolean checkReturnType
     ) {
-        if (superDescriptor instanceof FunctionDescriptor && !(subDescriptor instanceof FunctionDescriptor) ||
-            superDescriptor instanceof PropertyDescriptor && !(subDescriptor instanceof PropertyDescriptor)) {
-            return OverrideCompatibilityInfo.incompatible("Member kind mismatch");
-        }
-
-        if (!(superDescriptor instanceof FunctionDescriptor) && !(superDescriptor instanceof PropertyDescriptor)) {
-            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
-        }
-
-        // TODO: check outside of this method
-        if (!superDescriptor.getName().equals(subDescriptor.getName())) {
-            return OverrideCompatibilityInfo.incompatible("Name mismatch");
-        }
-
-        OverrideCompatibilityInfo receiverAndParameterResult = checkReceiverAndParameterCount(superDescriptor, subDescriptor);
-        if (receiverAndParameterResult != null) {
-            return receiverAndParameterResult;
-        }
+        OverrideCompatibilityInfo basicOverridability = getBasicOverridabilityProblem(superDescriptor, subDescriptor);
+        if (basicOverridability != null) return basicOverridability;
 
         List<KotlinType> superValueParameters = compiledValueParameters(superDescriptor);
         List<KotlinType> subValueParameters = compiledValueParameters(subDescriptor);
@@ -205,6 +189,33 @@ public class OverridingUtil {
         }
 
         return OverrideCompatibilityInfo.success();
+    }
+
+    @Nullable
+    public static OverrideCompatibilityInfo getBasicOverridabilityProblem(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor
+    ) {
+        if (superDescriptor instanceof FunctionDescriptor && !(subDescriptor instanceof FunctionDescriptor) ||
+            superDescriptor instanceof PropertyDescriptor && !(subDescriptor instanceof PropertyDescriptor)) {
+            return OverrideCompatibilityInfo.incompatible("Member kind mismatch");
+        }
+
+        if (!(superDescriptor instanceof FunctionDescriptor) && !(superDescriptor instanceof PropertyDescriptor)) {
+            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
+        }
+
+        // TODO: check outside of this method
+        if (!superDescriptor.getName().equals(subDescriptor.getName())) {
+            return OverrideCompatibilityInfo.incompatible("Name mismatch");
+        }
+
+        OverrideCompatibilityInfo receiverAndParameterResult = checkReceiverAndParameterCount(superDescriptor, subDescriptor);
+        if (receiverAndParameterResult != null) {
+            return receiverAndParameterResult;
+        }
+
+        return null;
     }
 
     @NotNull
