@@ -1,0 +1,31 @@
+package
+
+public fun </*0*/ T1> test1(/*0*/ x: kotlin.collections.List<T1>): kotlin.collections.List<T1>
+public fun </*0*/ T2> test1(/*0*/ x: kotlin.collections.List<T2>): kotlin.collections.List<T2>
+public fun </*0*/ T> test2(/*0*/ x: kotlin.collections.List<T>): kotlin.collections.List<T>
+public fun test2(/*0*/ x: kotlin.collections.List<kotlin.String>): kotlin.collections.List<kotlin.String>
+public fun </*0*/ T : kotlin.Any> test3(/*0*/ x: kotlin.collections.List<T>): kotlin.collections.List<T>
+public fun test3(/*0*/ x: kotlin.collections.List<kotlin.Any>): kotlin.collections.List<kotlin.Any>
+public fun </*0*/ K, /*1*/ V> test4(/*0*/ x: kotlin.collections.Map<K, V>): kotlin.collections.Map<K, V>
+public fun </*0*/ T> test4(/*0*/ x: kotlin.collections.Map<T, T>): kotlin.collections.Map<T, T>
+public fun </*0*/ T> test5(/*0*/ x: Inv<T>): Inv<T>
+public fun </*0*/ T> test5(/*0*/ x: Inv<out T>): Inv<out T>
+public fun </*0*/ T> test6(/*0*/ x: kotlin.Array<T>): kotlin.Array<T>
+public fun test6(/*0*/ x: kotlin.Array<kotlin.String>): kotlin.Array<kotlin.String>
+public fun </*0*/ T> test7(/*0*/ x: Inv<T>): Inv<T>
+public fun </*0*/ T1> kotlin.collections.List<T1>.test1a(): kotlin.Unit
+public fun </*0*/ T2> kotlin.collections.List<T2>.test1a(): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.List<T>.test2a(): kotlin.Unit
+public fun kotlin.collections.List<kotlin.String>.test2a(): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> kotlin.collections.List<T>.test3a(): kotlin.Unit
+public fun kotlin.collections.List<kotlin.Any>.test3a(): kotlin.Unit
+public fun </*0*/ K, /*1*/ V> kotlin.collections.Map<K, V>.test4a(): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.Map<T, T>.test4a(): kotlin.Unit
+public fun </*0*/ T> Inv<T>.test7(): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

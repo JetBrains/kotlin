@@ -22,15 +22,17 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE
+import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeIntersector
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.oneMoreSpecificThanAnother
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 object OverloadUtil {
-
     /**
      * Does not check names.
      */
@@ -41,22 +43,55 @@ object OverloadUtil {
         if (aCategory != bCategory) return true
         if (a !is CallableDescriptor || b !is CallableDescriptor) return false
 
+        return checkOverloadability(a, b)
+    }
+
+    private fun checkOverloadability(a: CallableDescriptor, b: CallableDescriptor): Boolean {
+        if (a.hasLowPriorityInOverloadResolution() != b.hasLowPriorityInOverloadResolution()) return true
+        if (a.typeParameters.isEmpty() != b.typeParameters.isEmpty()) return true
+
         OverridingUtil.checkReceiverAndParameterCount(a, b)?.let { return it.result == INCOMPATIBLE }
 
         val aValueParameters = OverridingUtil.compiledValueParameters(a)
         val bValueParameters = OverridingUtil.compiledValueParameters(b)
 
+        val aTypeParameters = a.typeParameters
+        val bTypeParameters = b.typeParameters
+
+        val avsbConstraintsBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
+        val avsbTypeSubstitutor = avsbConstraintsBuilder.registerTypeVariables(CallHandle.NONE, aTypeParameters)
+        val bvsaConstraintsBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
+        val bvsaTypeSubstitutor = bvsaConstraintsBuilder.registerTypeVariables(CallHandle.NONE, bTypeParameters)
+
+        var constraintIndex = 0
+
         for ((aType, bType) in aValueParameters.zip(bValueParameters)) {
-            // TODO: check type parameters, create a substitution and compare parameter types according to it, like in OverridingUtil
-            val superValueParameterType = aType.upperBound
-            val subValueParameterType = bType.upperBound
-            if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType) ||
-                oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
+            if (aType.isError || bType.isError) return true
+
+            if (oneMoreSpecificThanAnother(bType, aType)) return true
+
+            if (!TypeUtils.dependsOnTypeParameters(aType, aTypeParameters)
+                && !TypeUtils.dependsOnTypeParameters(bType, bTypeParameters)
+                && !KotlinTypeChecker.DEFAULT.equalTypes(aType, bType)) {
                 return true
             }
+
+            constraintIndex++
+            val aTypeSubstituted = avsbTypeSubstitutor.safeSubstitute(aType, Variance.INVARIANT)
+            val bTypeSubstituted = bvsaTypeSubstitutor.safeSubstitute(bType, Variance.INVARIANT)
+            avsbConstraintsBuilder.addSubtypeConstraint(bType, aTypeSubstituted,
+                                                        VALUE_PARAMETER_POSITION.position(constraintIndex))
+            bvsaConstraintsBuilder.addSubtypeConstraint(aType, bTypeSubstituted,
+                                                        VALUE_PARAMETER_POSITION.position(constraintIndex))
         }
 
-        return false
+        if (constraintIndex == 0) return false
+
+        avsbConstraintsBuilder.fixVariables()
+        bvsaConstraintsBuilder.fixVariables()
+
+        return avsbConstraintsBuilder.build().status.hasContradiction()
+               || bvsaConstraintsBuilder.build().status.hasContradiction()
     }
 
     private enum class DeclarationCategory {
@@ -84,16 +119,6 @@ object OverloadUtil {
                 else ->
                     error("Unexpected declaration kind: $a")
             }
-
-    private val KotlinType.upperBound: KotlinType
-        get() {
-            val classifier = constructor.declarationDescriptor
-            return when (classifier) {
-                is ClassDescriptor -> this
-                is TypeParameterDescriptor -> TypeIntersector.getUpperBoundsAsType(classifier)
-                else -> error("Unknown type constructor: $this")
-            }
-        }
 
     @JvmStatic fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,

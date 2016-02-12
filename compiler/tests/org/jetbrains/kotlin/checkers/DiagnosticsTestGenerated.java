@@ -11697,6 +11697,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/overload"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("ConflictingOlverloadsGenericFunctions.kt")
+            public void testConflictingOlverloadsGenericFunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/ConflictingOlverloadsGenericFunctions.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ConflictingOverloadsFunsDifferentReturnInClass.kt")
             public void testConflictingOverloadsFunsDifferentReturnInClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/ConflictingOverloadsFunsDifferentReturnInClass.kt");

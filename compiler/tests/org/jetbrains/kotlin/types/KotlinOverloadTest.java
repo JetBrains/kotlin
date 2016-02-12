@@ -96,18 +96,15 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
                 "fun a(a : Int?) : Int",
                 "fun a(a : Int) : Int");
 
-        assertNotOverloadable(
+        assertOverloadable(
                 "fun <T> a(a : Int) : Int",
                 "fun a(a : Int) : Int");
 
-        // TODO
-        /*
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : T1> a(a : T1) : T1",
                 "fun <T, Y> a(a : T) : T");
-        */
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : T1> a(a : T1) : T1",
                 "fun <T, Y : T> a(a : Y) : T");
 
@@ -115,30 +112,27 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
                 "fun <T1, X : T1> a(a : T1) : X",
                 "fun <T, Y : T> a(a : T) : T");
 
-        // TODO
-        /*
         assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
-        */
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<in T>> a(a : Array<in T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<*>> a(a : Array<in T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<out T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<*>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
 
