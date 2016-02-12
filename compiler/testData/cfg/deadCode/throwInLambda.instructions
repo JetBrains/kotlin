@@ -53,9 +53,8 @@ L3 [after local declaration]:
     r({ throw Exception() }) -> <v1>                                                PREV:[jmp?(L3)]
     mark(let { throw Exception() })
     call(let { throw Exception() }, let|<v0>, <v1>)
-    jmp(error)                                                                      NEXT:[<ERROR>]
 L2 [result of call]:
-    mark(fn()?.let { throw Exception() } ?: "unreachable?")                         PREV:[jf(L2)]
+    mark(fn()?.let { throw Exception() } ?: "unreachable?")                         PREV:[jf(L2), call(let { throw Exception() }, let|<v0>, <v1>)]
     jt(L6|!<v2>)                                                                    NEXT:[mark("unreachable?"), merge(fn()?.let { throw Exception() } ?: "unreachable?"|!<v2>, <v3>) -> <v4>]
     mark("unreachable?")
     r("unreachable?") -> <v3>
@@ -67,7 +66,7 @@ L6 [after elvis operator]:
 L1:
   1 <END>                                                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                                                         PREV:[jmp(error)]
+    <ERROR>                                                                         PREV:[]
 sink:
     <SINK>                                                                          PREV:[<ERROR>, <END>, d({ throw Exception() })]
 =====================

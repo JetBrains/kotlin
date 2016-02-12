@@ -1,0 +1,13 @@
+package
+
+public val kotlin.String.copy: kotlin.String
+public fun foo(): kotlin.Unit
+
+public final class My {
+    public constructor My()
+    public final val kotlin.String.copy2: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.filterConstraintsOut
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -274,7 +275,10 @@ class CallCompleter(
         val results = completeCallForArgument(deparenthesized, context)
         if (results != null && results.isSingleResult) {
             val resolvedCall = results.resultingCall
-            updatedType = if (resolvedCall.hasInferredReturnType()) resolvedCall.resultingDescriptor?.returnType else null
+            updatedType = if (resolvedCall.hasInferredReturnType()) {
+                resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor?.returnType, context)
+            }
+            else null
         }
 
         // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),

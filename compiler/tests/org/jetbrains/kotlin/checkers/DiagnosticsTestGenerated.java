@@ -17252,6 +17252,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("insideIfExpr.kt")
+                public void testInsideIfExpr() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/insideIfExpr.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("longChain.kt")
                 public void testLongChain() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/longChain.kt");
