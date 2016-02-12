@@ -14,540 +14,462 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.calls;
+package org.jetbrains.kotlin.resolve.calls
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
-import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.scopes.receivers.*;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
+import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.*
 
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
+import javax.inject.Inject
 
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.NAME_NOT_FOUND
+import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 
-public class CallExpressionResolver {
+class CallExpressionResolver(
+        private val callResolver: CallResolver,
+        private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val dataFlowAnalyzer: DataFlowAnalyzer,
+        private val builtIns: KotlinBuiltIns,
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val symbolUsageValidator: SymbolUsageValidator
+) {
 
-    @NotNull private final CallResolver callResolver;
-    @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
-    @NotNull private final DataFlowAnalyzer dataFlowAnalyzer;
-    @NotNull private final KotlinBuiltIns builtIns;
-    @NotNull private final QualifiedExpressionResolver qualifiedExpressionResolver;
-    @NotNull private final SymbolUsageValidator symbolUsageValidator;
-
-    public CallExpressionResolver(
-            @NotNull CallResolver callResolver,
-            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
-            @NotNull DataFlowAnalyzer dataFlowAnalyzer,
-            @NotNull KotlinBuiltIns builtIns,
-            @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
-            @NotNull SymbolUsageValidator symbolUsageValidator
-    ) {
-        this.callResolver = callResolver;
-        this.constantExpressionEvaluator = constantExpressionEvaluator;
-        this.dataFlowAnalyzer = dataFlowAnalyzer;
-        this.builtIns = builtIns;
-        this.qualifiedExpressionResolver = qualifiedExpressionResolver;
-        this.symbolUsageValidator = symbolUsageValidator;
-    }
-
-    private ExpressionTypingServices expressionTypingServices;
+    private lateinit var expressionTypingServices: ExpressionTypingServices
 
     // component dependency cycle
     @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
+    fun setExpressionTypingServices(expressionTypingServices: ExpressionTypingServices) {
+        this.expressionTypingServices = expressionTypingServices
     }
 
-    @Nullable
-    private ResolvedCall<FunctionDescriptor> getResolvedCallForFunction(
-            @NotNull Call call,
-            @NotNull ResolutionContext context, @NotNull CheckArgumentTypesMode checkArguments,
-            @NotNull boolean[] result,
-            @NotNull DataFlowInfo initialDataFlowInfoForArguments
-    ) {
-        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
-                BasicCallResolutionContext.create(context, call, checkArguments,
-                                                  new DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call)));
-        if (!results.isNothing()) {
-            result[0] = true;
-            return OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency);
-        }
-        result[0] = false;
-        return null;
+    private fun getResolvedCallForFunction(
+            call: Call,
+            context: ResolutionContext<*>,
+            checkArguments: CheckArgumentTypesMode,
+            initialDataFlowInfoForArguments: DataFlowInfo
+    ): Pair<Boolean, ResolvedCall<FunctionDescriptor>?> {
+        val results = callResolver.resolveFunctionCall(BasicCallResolutionContext.create(
+                context, call, checkArguments, DataFlowInfoForArgumentsImpl(initialDataFlowInfoForArguments, call)))
+        return if (!results.isNothing) Pair(true, OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency))
+        else Pair(false, null)
     }
 
-    @Nullable
-    private KotlinType getVariableType(
-            @NotNull KtSimpleNameExpression nameExpression, @Nullable Receiver receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result
-    ) {
-        TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
-                context, "trace to resolve as local variable or property", nameExpression);
-        Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
-        BasicCallResolutionContext contextForVariable = BasicCallResolutionContext.create(
+    private fun getVariableType(
+            nameExpression: KtSimpleNameExpression, receiver: Receiver?,
+            callOperationNode: ASTNode?, context: ExpressionTypingContext
+    ): Pair<Boolean, KotlinType?> {
+        val temporaryForVariable = TemporaryTraceAndCache.create(
+                context, "trace to resolve as local variable or property", nameExpression)
+        val call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression)
+        val contextForVariable = BasicCallResolutionContext.create(
                 context.replaceTraceAndCache(temporaryForVariable),
-                call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
-        OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
+                call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS)
+        val resolutionResult = callResolver.resolveSimpleProperty(contextForVariable)
 
         // if the expression is a receiver in a qualified expression, it should be resolved after the selector is resolved
-        boolean isLHSOfDot = KtPsiUtil.isLHSOfDot(nameExpression);
-        if (!resolutionResult.isNothing() && resolutionResult.getResultCode() != OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER) {
-            boolean isQualifier = isLHSOfDot &&
-                                  resolutionResult.isSingleResult() &&
-                                  resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject;
+        val isLHSOfDot = KtPsiUtil.isLHSOfDot(nameExpression)
+        if (!resolutionResult.isNothing && resolutionResult.resultCode != CANDIDATES_WITH_WRONG_RECEIVER) {
+            val isQualifier = isLHSOfDot &&
+                              resolutionResult.isSingleResult &&
+                              resolutionResult.resultingDescriptor is FakeCallableDescriptorForObject
             if (!isQualifier) {
-                result[0] = true;
-                temporaryForVariable.commit();
-                return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
+                temporaryForVariable.commit()
+                return Pair(true, if (resolutionResult.isSingleResult) resolutionResult.resultingDescriptor.returnType else null)
             }
         }
 
-        temporaryForVariable.commit();
-        result[0] = !resolutionResult.isNothing();
-        return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
+        temporaryForVariable.commit()
+        return Pair(!resolutionResult.isNothing,
+                    if (resolutionResult.isSingleResult) resolutionResult.resultingDescriptor.returnType else null)
     }
 
-    @NotNull
-    public KotlinTypeInfo getSimpleNameExpressionTypeInfo(
-            @NotNull KtSimpleNameExpression nameExpression, @Nullable Receiver receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
-    ) {
-        return getSimpleNameExpressionTypeInfo(nameExpression, receiver, callOperationNode, context, context.dataFlowInfo);
-    }
+    fun getSimpleNameExpressionTypeInfo(
+            nameExpression: KtSimpleNameExpression, receiver: Receiver?,
+            callOperationNode: ASTNode?, context: ExpressionTypingContext
+    ) = getSimpleNameExpressionTypeInfo(nameExpression, receiver, callOperationNode, context, context.dataFlowInfo)
 
-    @NotNull
-    private KotlinTypeInfo getSimpleNameExpressionTypeInfo(
-            @NotNull KtSimpleNameExpression nameExpression, @Nullable Receiver receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context,
-            @NotNull DataFlowInfo initialDataFlowInfoForArguments
-    ) {
-        boolean[] result = new boolean[1];
+    private fun getSimpleNameExpressionTypeInfo(
+            nameExpression: KtSimpleNameExpression, receiver: Receiver?,
+            callOperationNode: ASTNode?, context: ExpressionTypingContext,
+            initialDataFlowInfoForArguments: DataFlowInfo
+    ): KotlinTypeInfo {
 
-        TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
-                context, "trace to resolve as variable", nameExpression);
-        KotlinType type =
-                getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
+        val temporaryForVariable = TemporaryTraceAndCache.create(
+                context, "trace to resolve as variable", nameExpression)
+        val (notNothing, type) = getVariableType(nameExpression, receiver, callOperationNode,
+                                                 context.replaceTraceAndCache(temporaryForVariable))
 
-        if (result[0]) {
-            temporaryForVariable.commit();
-            return TypeInfoFactoryKt.createTypeInfo(type, initialDataFlowInfoForArguments);
+        if (notNothing) {
+            temporaryForVariable.commit()
+            return createTypeInfo(type, initialDataFlowInfoForArguments)
         }
 
-        Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
-        TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
-                context, "trace to resolve as function", nameExpression);
-        ResolutionContext newContext = context.replaceTraceAndCache(temporaryForFunction);
-        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
-                call, newContext, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, result, initialDataFlowInfoForArguments);
-        if (result[0]) {
-            FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            if (!(functionDescriptor instanceof ConstructorDescriptor)) {
-                temporaryForFunction.commit();
-                boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
-                context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
-                type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
-                return TypeInfoFactoryKt.createTypeInfo(type, context);
+        val call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, emptyList())
+        val temporaryForFunction = TemporaryTraceAndCache.create(
+                context, "trace to resolve as function", nameExpression)
+        val newContext = context.replaceTraceAndCache(temporaryForFunction)
+        val (resolveResult, resolvedCall) = getResolvedCallForFunction(
+                call, newContext, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, initialDataFlowInfoForArguments)
+        if (resolveResult) {
+            val functionDescriptor = resolvedCall?.resultingDescriptor
+            if (functionDescriptor !is ConstructorDescriptor) {
+                temporaryForFunction.commit()
+                val hasValueParameters = functionDescriptor == null || functionDescriptor.valueParameters.size > 0
+                context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters))
+                return createTypeInfo(functionDescriptor?.returnType, context)
             }
         }
 
-        TemporaryTraceAndCache temporaryForQualifier = TemporaryTraceAndCache.create(context, "trace to resolve as qualifier", nameExpression);
-        ExpressionTypingContext contextForQualifier = context.replaceTraceAndCache(temporaryForQualifier);
-        Qualifier qualifier = qualifiedExpressionResolver.resolveNameExpressionAsQualifierForDiagnostics(nameExpression, receiver, contextForQualifier);
-        if (qualifier != null) {
-            QualifiedExpressionResolveUtilKt.resolveQualifierAsStandaloneExpression(qualifier, contextForQualifier, symbolUsageValidator);
-            temporaryForQualifier.commit();
-            return TypeInfoFactoryKt.noTypeInfo(context);
-        }
-
-        temporaryForVariable.commit();
-        return TypeInfoFactoryKt.noTypeInfo(context);
+        val temporaryForQualifier = TemporaryTraceAndCache.create(context, "trace to resolve as qualifier", nameExpression)
+        val contextForQualifier = context.replaceTraceAndCache(temporaryForQualifier)
+        qualifiedExpressionResolver.resolveNameExpressionAsQualifierForDiagnostics(nameExpression, receiver, contextForQualifier)?.let {
+            resolveQualifierAsStandaloneExpression(it, contextForQualifier, symbolUsageValidator)
+            temporaryForQualifier.commit()
+        } ?: temporaryForVariable.commit()
+        return noTypeInfo(context)
     }
 
-    @NotNull
-    public KotlinTypeInfo getCallExpressionTypeInfo(
-            @NotNull KtCallExpression callExpression, @Nullable ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
-    ) {
-        KotlinTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
-                callExpression, receiver, callOperationNode, context, context.dataFlowInfo);
+    fun getCallExpressionTypeInfo(
+            callExpression: KtCallExpression, receiver: ReceiverValue?,
+            callOperationNode: ASTNode?, context: ExpressionTypingContext
+    ): KotlinTypeInfo {
+        val typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
+                callExpression, receiver, callOperationNode, context, context.dataFlowInfo)
         if (context.contextDependency == INDEPENDENT) {
-            dataFlowAnalyzer.checkType(typeInfo.getType(), callExpression, context);
+            dataFlowAnalyzer.checkType(typeInfo.type, callExpression, context)
         }
-        return typeInfo;
+        return typeInfo
     }
 
     /**
      * Visits a call expression and its arguments.
      * Determines the result type and data flow information after the call.
      */
-    @NotNull
-    private KotlinTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            @NotNull KtCallExpression callExpression, @Nullable Receiver receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context,
-            @NotNull DataFlowInfo initialDataFlowInfoForArguments
-    ) {
-        boolean[] result = new boolean[1];
-        Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
+    private fun getCallExpressionTypeInfoWithoutFinalTypeCheck(
+            callExpression: KtCallExpression, receiver: Receiver?,
+            callOperationNode: ASTNode?, context: ExpressionTypingContext,
+            initialDataFlowInfoForArguments: DataFlowInfo
+    ): KotlinTypeInfo {
+        val call = CallMaker.makeCall(receiver, callOperationNode, callExpression)
 
-        TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
-                context, "trace to resolve as function call", callExpression);
-        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
+        val temporaryForFunction = TemporaryTraceAndCache.create(
+                context, "trace to resolve as function call", callExpression)
+        val (resolveResult, resolvedCall) = getResolvedCallForFunction(
                 call,
                 context.replaceTraceAndCache(temporaryForFunction),
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                result,
-                initialDataFlowInfoForArguments);
-        if (result[0]) {
-            FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            temporaryForFunction.commit();
-            if (callExpression.getValueArgumentList() == null && callExpression.getLambdaArguments().isEmpty()) {
+                initialDataFlowInfoForArguments)
+        if (resolveResult) {
+            val functionDescriptor = resolvedCall?.resultingDescriptor
+            temporaryForFunction.commit()
+            if (callExpression.valueArgumentList == null && callExpression.lambdaArguments.isEmpty()) {
                 // there are only type arguments
-                boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
-                context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
+                val hasValueParameters = functionDescriptor == null || functionDescriptor.valueParameters.size > 0
+                context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters))
             }
             if (functionDescriptor == null) {
-                return TypeInfoFactoryKt.noTypeInfo(context);
+                return noTypeInfo(context)
             }
-            if (functionDescriptor instanceof ConstructorDescriptor) {
-                DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
-                if (DescriptorUtils.isAnnotationClass(containingDescriptor)
-                    && !canInstantiateAnnotationClass(callExpression, context.trace)) {
-                    context.trace.report(ANNOTATION_CLASS_CONSTRUCTOR_CALL.on(callExpression));
+            if (functionDescriptor is ConstructorDescriptor) {
+                val containingDescriptor = functionDescriptor.containingDeclaration
+                if (DescriptorUtils.isAnnotationClass(containingDescriptor) && !canInstantiateAnnotationClass(callExpression, context.trace)) {
+                    context.trace.report(ANNOTATION_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
                 if (DescriptorUtils.isEnumClass(containingDescriptor)) {
-                    context.trace.report(ENUM_CLASS_CONSTRUCTOR_CALL.on(callExpression));
+                    context.trace.report(ENUM_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
-                if (containingDescriptor instanceof ClassDescriptor
-                    && ((ClassDescriptor) containingDescriptor).getModality() == Modality.SEALED) {
-                    context.trace.report(SEALED_CLASS_CONSTRUCTOR_CALL.on(callExpression));
+                if (containingDescriptor is ClassDescriptor && containingDescriptor.modality === Modality.SEALED) {
+                    context.trace.report(SEALED_CLASS_CONSTRUCTOR_CALL.on(callExpression))
                 }
             }
 
-            KotlinType type = functionDescriptor.getReturnType();
+            val type = functionDescriptor.returnType
             // Extracting jump out possible and jump point flow info from arguments, if any
-            List<? extends ValueArgument> arguments = callExpression.getValueArguments();
-            DataFlowInfo resultFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
-            DataFlowInfo jumpFlowInfo = resultFlowInfo;
-            boolean jumpOutPossible = false;
-            for (ValueArgument argument: arguments) {
-                KotlinTypeInfo argTypeInfo = context.trace.get(BindingContext.EXPRESSION_TYPE_INFO, argument.getArgumentExpression());
-                if (argTypeInfo != null && argTypeInfo.getJumpOutPossible()) {
-                    jumpOutPossible = true;
-                    jumpFlowInfo = argTypeInfo.getJumpFlowInfo();
-                    break;
+            val arguments = callExpression.valueArguments
+            val resultFlowInfo = resolvedCall!!.dataFlowInfoForArguments.resultInfo
+            var jumpFlowInfo = resultFlowInfo
+            var jumpOutPossible = false
+            for (argument in arguments) {
+                val argTypeInfo = context.trace.get(BindingContext.EXPRESSION_TYPE_INFO, argument.getArgumentExpression())
+                if (argTypeInfo != null && argTypeInfo.jumpOutPossible) {
+                    jumpOutPossible = true
+                    jumpFlowInfo = argTypeInfo.jumpFlowInfo
+                    break
                 }
             }
-            return TypeInfoFactoryKt.createTypeInfo(type, resultFlowInfo, jumpOutPossible, jumpFlowInfo);
+            return createTypeInfo(type, resultFlowInfo, jumpOutPossible, jumpFlowInfo)
         }
 
-        KtExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression instanceof KtSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
-            TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
-                    context, "trace to resolve as variable with 'invoke' call", callExpression);
-            KotlinType type = getVariableType((KtSimpleNameExpression) calleeExpression, receiver, callOperationNode,
-                                              context.replaceTraceAndCache(temporaryForVariable), result);
-            Qualifier qualifier = temporaryForVariable.trace.get(BindingContext.QUALIFIER, calleeExpression);
-            if (result[0] && (qualifier == null || !(qualifier instanceof PackageQualifier))) {
-                temporaryForVariable.commit();
+        val calleeExpression = callExpression.calleeExpression
+        if (calleeExpression is KtSimpleNameExpression && callExpression.typeArgumentList == null) {
+            val temporaryForVariable = TemporaryTraceAndCache.create(
+                    context, "trace to resolve as variable with 'invoke' call", callExpression)
+            val (notNothing, type) = getVariableType(calleeExpression, receiver, callOperationNode,
+                                                     context.replaceTraceAndCache(temporaryForVariable))
+            val qualifier = temporaryForVariable.trace.get(BindingContext.QUALIFIER, calleeExpression)
+            if (notNothing && (qualifier == null || qualifier !is PackageQualifier)) {
+                temporaryForVariable.commit()
                 context.trace.report(FUNCTION_EXPECTED.on(calleeExpression, calleeExpression,
-                                                          type != null ? type : ErrorUtils.createErrorType("")));
-                return TypeInfoFactoryKt.noTypeInfo(context);
+                                                          type ?: ErrorUtils.createErrorType("")))
+                return noTypeInfo(context)
             }
         }
-        temporaryForFunction.commit();
-        return TypeInfoFactoryKt.noTypeInfo(context);
+        temporaryForFunction.commit()
+        return noTypeInfo(context)
     }
 
-    private static boolean canInstantiateAnnotationClass(@NotNull KtCallExpression expression, @NotNull BindingTrace trace) {
-        //noinspection unchecked
-        PsiElement parent = PsiTreeUtil.getParentOfType(expression, KtValueArgument.class, KtParameter.class);
-        if (parent instanceof KtValueArgument) {
-            if (PsiTreeUtil.getParentOfType(parent, KtAnnotationEntry.class) != null) {
-                return true;
+    private fun getSelectorReturnTypeInfo(
+            receiver: Receiver,
+            callOperationNode: ASTNode?,
+            selectorExpression: KtExpression?,
+            context: ExpressionTypingContext,
+            initialDataFlowInfoForArguments: DataFlowInfo
+    ): KotlinTypeInfo {
+        when (selectorExpression) {
+            is KtCallExpression -> {
+                return getCallExpressionTypeInfoWithoutFinalTypeCheck(selectorExpression, receiver,
+                                                                      callOperationNode, context, initialDataFlowInfoForArguments)
             }
-            parent = PsiTreeUtil.getParentOfType(parent, KtParameter.class);
-            if (parent != null) {
-                return isUnderAnnotationClassDeclaration(trace, parent);
+            is KtSimpleNameExpression -> {
+                return getSimpleNameExpressionTypeInfo(
+                        selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments)
+            }
+            is KtExpression -> {
+                expressionTypingServices.getTypeInfo(selectorExpression, context)
+                context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.text))
             }
         }
-        else if (parent instanceof KtParameter) {
-            return isUnderAnnotationClassDeclaration(trace, parent);
-        }
-        return false;
-    }
-
-    private static boolean isUnderAnnotationClassDeclaration(@NotNull BindingTrace trace, PsiElement parent) {
-        KtClass ktClass = PsiTreeUtil.getParentOfType(parent, KtClass.class);
-        if (ktClass != null) {
-            DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ktClass);
-            return DescriptorUtils.isAnnotationClass(descriptor);
-        }
-        return false;
-    }
-
-    @NotNull
-    private KotlinTypeInfo getSelectorReturnTypeInfo(
-            @NotNull Receiver receiver,
-            @Nullable ASTNode callOperationNode,
-            @Nullable KtExpression selectorExpression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull DataFlowInfo initialDataFlowInfoForArguments
-    ) {
-        if (selectorExpression instanceof KtCallExpression) {
-            return getCallExpressionTypeInfoWithoutFinalTypeCheck((KtCallExpression) selectorExpression, receiver,
-                                                                  callOperationNode, context, initialDataFlowInfoForArguments);
-        }
-        else if (selectorExpression instanceof KtSimpleNameExpression) {
-            return getSimpleNameExpressionTypeInfo(
-                    (KtSimpleNameExpression) selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments);
-        }
-        else if (selectorExpression != null) {
-            expressionTypingServices.getTypeInfo(selectorExpression, context);
-            context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
-        }
-        return TypeInfoFactoryKt.noTypeInfo(context);
-    }
-
-    public static void reportUnnecessarySafeCall(
-            @NotNull BindingTrace trace, @NotNull KotlinType type,
-            @NotNull ASTNode callOperationNode, @Nullable Receiver explicitReceiver
-    ) {
-        if (explicitReceiver instanceof ExpressionReceiver &&
-            ((ExpressionReceiver) explicitReceiver).getExpression() instanceof KtSuperExpression) {
-            trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.getPsi()));
-        }
-        else {
-            trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
-        }
+        return noTypeInfo(context)
     }
 
     /**
      * Visits a qualified expression like x.y or x?.z controlling data flow information changes.
-     *
+
      * @return qualified expression type together with data flow information
      */
-    @NotNull
-    public KotlinTypeInfo getQualifiedExpressionTypeInfo(
-            @NotNull KtQualifiedExpression expression, @NotNull final ExpressionTypingContext context
-    ) {
-        ExpressionTypingContext currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
-        BindingTrace trace = currentContext.trace;
+    fun getQualifiedExpressionTypeInfo(expression: KtQualifiedExpression, context: ExpressionTypingContext): KotlinTypeInfo {
+        val currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT)
+        val trace = currentContext.trace
 
-        Function1<KtSimpleNameExpression, Boolean> isValueFunction = new Function1<KtSimpleNameExpression, Boolean>() {
-            @Override
-            public Boolean invoke(KtSimpleNameExpression nameExpression) {
-                TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
-                        context, "trace to resolve as local variable or property", nameExpression);
-                Call call = CallMaker.makePropertyCall(null, null, nameExpression);
-                BasicCallResolutionContext contextForVariable = BasicCallResolutionContext.create(
-                        context.replaceTraceAndCache(temporaryForVariable),
-                        call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
-                OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
+        val elementChain = qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(expression, context) {
+            nameExpression ->
+            val temporaryForVariable = TemporaryTraceAndCache.create(
+                    context, "trace to resolve as local variable or property", nameExpression)
+            val call = CallMaker.makePropertyCall(null, null, nameExpression)
+            val contextForVariable = BasicCallResolutionContext.create(
+                    context.replaceTraceAndCache(temporaryForVariable),
+                    call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS)
+            val resolutionResult = callResolver.resolveSimpleProperty(contextForVariable)
 
-                if (resolutionResult.isSingleResult() &&
-                    resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject) {
-                    return false;
-                }
-
-                OverloadResolutionResults.Code resultCode = resolutionResult.getResultCode();
-                return resultCode != OverloadResolutionResults.Code.NAME_NOT_FOUND &&
-                       resultCode != OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER;
+            if (resolutionResult.isSingleResult && resolutionResult.resultingDescriptor is FakeCallableDescriptorForObject) {
+                false
             }
-        };
-        List<CallExpressionElement> elementChain =
-                qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(expression, context, isValueFunction);
-
-        KotlinTypeInfo receiverTypeInfo;
-        KotlinType receiverType;
-        DataFlowInfo receiverDataFlowInfo;
-
-        CallExpressionElement firstElement = elementChain.iterator().next();
-        KtExpression firstReceiver = firstElement.getReceiver();
-        Qualifier firstQualifier = trace.get(BindingContext.QUALIFIER, firstReceiver);
-        if (firstQualifier == null) {
-            receiverTypeInfo = expressionTypingServices.getTypeInfo(firstReceiver, currentContext);
-            receiverType = receiverTypeInfo.getType();
-            receiverDataFlowInfo = receiverTypeInfo.getDataFlowInfo();
-        }
-        else {
-            receiverType = null;
-            receiverDataFlowInfo = currentContext.dataFlowInfo;
-            //noinspection ConstantConditions
-            receiverTypeInfo = new KotlinTypeInfo(receiverType, receiverDataFlowInfo);
+            else when (resolutionResult.resultCode) {
+                NAME_NOT_FOUND, CANDIDATES_WITH_WRONG_RECEIVER -> false
+                else -> true
+            }
         }
 
-        KotlinTypeInfo resultTypeInfo = receiverTypeInfo;
+        val firstElement = elementChain.first()
+        val firstReceiver = firstElement.receiver
 
-        boolean unconditional = true;
-        DataFlowInfo unconditionalDataFlowInfo = receiverDataFlowInfo;
+        var receiverTypeInfo = when (trace.get(BindingContext.QUALIFIER, firstReceiver)) {
+            null -> expressionTypingServices.getTypeInfo(firstReceiver, currentContext)
+            else -> KotlinTypeInfo(null, currentContext.dataFlowInfo)
+        }
 
-        for (CallExpressionElement element : elementChain) {
-            if (receiverType == null) {
-                receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
-            }
-            QualifierReceiver qualifierReceiver = (QualifierReceiver) trace.get(BindingContext.QUALIFIER, element.getReceiver());
+        var resultTypeInfo = receiverTypeInfo
 
-            Receiver receiver = qualifierReceiver == null
-                                ? ExpressionReceiver.Companion.create(element.getReceiver(), receiverType, trace.getBindingContext())
-                                : qualifierReceiver;
+        var unconditional = true
+        var unconditionalDataFlowInfo = receiverTypeInfo.dataFlowInfo
 
-            boolean lastStage = element.getQualified() == expression;
+        for (element in elementChain) {
+            val receiverType = receiverTypeInfo.type ?: ErrorUtils.createErrorType("Type for " + expression.text)
+            val qualifierReceiver = trace.get(BindingContext.QUALIFIER, element.receiver) as QualifierReceiver?
+
+            val receiver = qualifierReceiver ?: ExpressionReceiver.create(element.receiver, receiverType, trace.bindingContext)
+
+            val lastStage = element.qualified === expression
             // Drop NO_EXPECTED_TYPE / INDEPENDENT at last stage
-            ExpressionTypingContext contextForSelector = lastStage ? context : currentContext;
-            if (TypeUtils.isNullableType(receiverType) && !element.getSafe()) {
-                // Call with nullable receiver: take unconditional data flow info
-                contextForSelector = contextForSelector.replaceDataFlowInfo(unconditionalDataFlowInfo);
-            }
-            else {
-                // Take data flow info from the current receiver
-                contextForSelector = contextForSelector.replaceDataFlowInfo(receiverDataFlowInfo);
-            }
-
-            DataFlowInfo initialDataFlowInfoForArguments = contextForSelector.dataFlowInfo;
-            DataFlowValue receiverDataFlowValue = null;
-            if (receiver instanceof ReceiverValue) {
-                receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
-                // Additional "receiver != null" information
-                // Should be applied if we consider a safe call
-                if (element.getSafe()) {
-                    if (initialDataFlowInfoForArguments.getPredictableNullability(receiverDataFlowValue).canBeNull()) {
-                        initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
-                                receiverDataFlowValue, DataFlowValue.nullValue(builtIns));
+            val contextForSelector = (if (lastStage) context else currentContext).replaceDataFlowInfo(
+                    if (TypeUtils.isNullableType(receiverType) && !element.safe) {
+                        // Call with nullable receiver: take unconditional data flow info
+                        unconditionalDataFlowInfo
                     }
                     else {
-                        reportUnnecessarySafeCall(trace, receiverType, element.getNode(), receiver);
+                        // Take data flow info from the current receiver
+                        receiverTypeInfo.dataFlowInfo
                     }
+            )
+
+            var initialDataFlowInfoForArguments = contextForSelector.dataFlowInfo
+            val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
+            if (receiverDataFlowValue != null && element.safe) {
+                // Additional "receiver != null" information should be applied if we consider a safe call
+                if (initialDataFlowInfoForArguments.getPredictableNullability(receiverDataFlowValue).canBeNull()) {
+                    initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
+                            receiverDataFlowValue, DataFlowValue.nullValue(builtIns))
+                }
+                else {
+                    reportUnnecessarySafeCall(trace, receiverType, element.node, receiver)
                 }
             }
 
-            KtExpression selectorExpression = element.getSelector();
-            KotlinTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
-                    receiver, element.getNode(), selectorExpression, contextForSelector, initialDataFlowInfoForArguments);
-            KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
+            val selectorExpression = element.selector
+            var selectorReturnTypeInfo = getSelectorReturnTypeInfo(
+                    receiver, element.node, selectorExpression, contextForSelector, initialDataFlowInfoForArguments)
+            var selectorReturnType = selectorReturnTypeInfo.type
 
             if (qualifierReceiver != null) {
-                resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), contextForSelector);
+                resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.qualified, contextForSelector)
             }
-            checkNestedClassAccess(element.getQualified(), contextForSelector);
+            checkNestedClassAccess(element.qualified, contextForSelector)
 
-            boolean safeCall = element.getSafe();
+            val safeCall = element.safe
             if (safeCall && selectorReturnType != null && receiverDataFlowValue != null &&
                 contextForSelector.dataFlowInfo.getPredictableNullability(receiverDataFlowValue).canBeNull()) {
-                selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
-                selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType);
+                selectorReturnType = TypeUtils.makeNullable(selectorReturnType)
+                selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType)
             }
 
             // TODO : this is suspicious: remove this code?
             if (selectorExpression != null && selectorReturnType != null) {
-                trace.recordType(selectorExpression, selectorReturnType);
+                trace.recordType(selectorExpression, selectorReturnType)
             }
-            resultTypeInfo = selectorReturnTypeInfo;
-            CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(
-                    element.getQualified(), trace, contextForSelector.expectedType);
-            if (value != null && value.isPure()) {
-                resultTypeInfo =  dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, element.getQualified(), contextForSelector);
-                if (lastStage) return resultTypeInfo;
+            resultTypeInfo = selectorReturnTypeInfo
+            val value = constantExpressionEvaluator.evaluateExpression(element.qualified, trace, contextForSelector.expectedType)
+            if (value != null && value.isPure) {
+                resultTypeInfo = dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, element.qualified, contextForSelector)
+                if (lastStage) return resultTypeInfo
             }
             if (contextForSelector.contextDependency == INDEPENDENT) {
-                dataFlowAnalyzer.checkType(resultTypeInfo.getType(), element.getQualified(), contextForSelector);
+                dataFlowAnalyzer.checkType(resultTypeInfo.type, element.qualified, contextForSelector)
             }
             // For the next stage, if any, current stage selector is the receiver!
-            receiverTypeInfo = selectorReturnTypeInfo;
-            receiverType = selectorReturnType;
-            receiverDataFlowInfo = receiverTypeInfo.getDataFlowInfo();
+            receiverTypeInfo = selectorReturnTypeInfo
             // if we have only dots and not ?. move unconditional data flow info further
             if (safeCall) {
-                unconditional = false;
+                unconditional = false
             }
             else if (unconditional) {
-                unconditionalDataFlowInfo = receiverDataFlowInfo;
+                unconditionalDataFlowInfo = receiverTypeInfo.dataFlowInfo
             }
             //noinspection ConstantConditions
-            if (!lastStage && !trace.get(BindingContext.PROCESSED, element.getQualified())) {
+            if (!lastStage && trace.get(BindingContext.PROCESSED, element.qualified) != true) {
                 // Store type information (to prevent problems in call completer)
-                trace.record(BindingContext.PROCESSED, element.getQualified());
-                trace.record(BindingContext.EXPRESSION_TYPE_INFO, element.getQualified(),
-                                            resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo));
+                trace.record(BindingContext.PROCESSED, element.qualified)
+                trace.record(BindingContext.EXPRESSION_TYPE_INFO, element.qualified,
+                             resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo))
                 // save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
-                BindingContextUtilsKt.recordScope(trace, contextForSelector.scope, element.getQualified());
-                BindingContextUtilsKt.recordDataFlowInfo(contextForSelector.replaceDataFlowInfo(unconditionalDataFlowInfo),
-                                                         element.getQualified());
+                trace.recordScope(contextForSelector.scope, element.qualified)
+                contextForSelector.replaceDataFlowInfo(unconditionalDataFlowInfo).recordDataFlowInfo(element.qualified)
             }
         }
         // if we are at last stage, we should just take result type info and set unconditional data flow info
-        return resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo);
+        return resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo)
     }
 
-    private void resolveDeferredReceiverInQualifiedExpression(
-            @NotNull QualifierReceiver qualifierReceiver,
-            @NotNull KtQualifiedExpression qualifiedExpression,
-            @NotNull ExpressionTypingContext context
+    private fun resolveDeferredReceiverInQualifiedExpression(
+            qualifierReceiver: QualifierReceiver,
+            qualifiedExpression: KtQualifiedExpression,
+            context: ExpressionTypingContext
     ) {
-        KtExpression calleeExpression =
-                KtPsiUtil.deparenthesize(CallUtilKt.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()));
-        DeclarationDescriptor selectorDescriptor =
-                calleeExpression instanceof KtReferenceExpression
-                ? context.trace.get(BindingContext.REFERENCE_TARGET, (KtReferenceExpression) calleeExpression) : null;
+        val calleeExpression = KtPsiUtil.deparenthesize(qualifiedExpression.selectorExpression.getCalleeExpressionIfAny())
+        val selectorDescriptor = (calleeExpression as? KtReferenceExpression)?.let {
+            context.trace.get(BindingContext.REFERENCE_TARGET, it)
+        }
 
-        QualifiedExpressionResolveUtilKt.resolveQualifierAsReceiverInExpression(qualifierReceiver, selectorDescriptor, context, symbolUsageValidator);
+        resolveQualifierAsReceiverInExpression(qualifierReceiver, selectorDescriptor, context, symbolUsageValidator)
     }
 
-    private static void checkNestedClassAccess(
-            @NotNull KtQualifiedExpression expression,
-            @NotNull ExpressionTypingContext context
-    ) {
-        KtExpression selectorExpression = expression.getSelectorExpression();
-        if (selectorExpression == null) return;
+    companion object {
 
-        // A.B - if B is a nested class accessed by outer class, 'A' and 'A.B' were marked as qualifiers
-        // a.B - if B is a nested class accessed by instance reference, 'a.B' was marked as a qualifier, but 'a' was not (it's an expression)
+        private fun canInstantiateAnnotationClass(expression: KtCallExpression, trace: BindingTrace): Boolean {
+            //noinspection unchecked
+            var parent: PsiElement? = PsiTreeUtil.getParentOfType(expression, KtValueArgument::class.java, KtParameter::class.java)
+            if (parent is KtValueArgument) {
+                if (parent.getParentOfType<KtAnnotationEntry>(true) != null) {
+                    return true
+                }
+                parent = parent.getParentOfType<KtParameter>(true)
+                if (parent != null) {
+                    return isUnderAnnotationClassDeclaration(trace, parent)
+                }
+            }
+            else if (parent is KtParameter) {
+                return isUnderAnnotationClassDeclaration(trace, parent)
+            }
+            return false
+        }
 
-        Qualifier expressionQualifier = context.trace.get(BindingContext.QUALIFIER, expression);
-        Qualifier receiverQualifier = context.trace.get(BindingContext.QUALIFIER, expression.getReceiverExpression());
+        private fun isUnderAnnotationClassDeclaration(trace: BindingTrace, parent: PsiElement) =
+                parent.getParentOfType<KtClass>(true)?.let {
+                    DescriptorUtils.isAnnotationClass(trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, it))
+                } ?: false
 
-        if (receiverQualifier == null && expressionQualifier != null) {
-            assert expressionQualifier instanceof ClassQualifier :
-                    "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier;
-            context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(
-                    selectorExpression,
-                    ((ClassQualifier) expressionQualifier).getClassifier()));
+        fun reportUnnecessarySafeCall(
+                trace: BindingTrace, type: KotlinType,
+                callOperationNode: ASTNode, explicitReceiver: Receiver?
+        ) = trace.report(
+            if (explicitReceiver is ExpressionReceiver && explicitReceiver.expression is KtSuperExpression) {
+                UNEXPECTED_SAFE_CALL.on(callOperationNode.psi)
+            }
+            else {
+                UNNECESSARY_SAFE_CALL.on(callOperationNode.psi, type)
+            }
+        )
+
+        private fun checkNestedClassAccess(
+                expression: KtQualifiedExpression,
+                context: ExpressionTypingContext
+        ) {
+            val selectorExpression = expression.selectorExpression ?: return
+
+            // A.B - if B is a nested class accessed by outer class, 'A' and 'A.B' were marked as qualifiers
+            // a.B - if B is a nested class accessed by instance reference, 'a.B' was marked as a qualifier, but 'a' was not (it's an expression)
+
+            val expressionQualifier = context.trace.get(BindingContext.QUALIFIER, expression)
+            val receiverQualifier = context.trace.get(BindingContext.QUALIFIER, expression.receiverExpression)
+
+            if (receiverQualifier == null && expressionQualifier != null) {
+                assert(expressionQualifier is ClassQualifier) { "Only class can (package cannot) be accessed by instance reference: " + expressionQualifier }
+                context.trace.report(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.on(
+                        selectorExpression,
+                        (expressionQualifier as ClassQualifier).classifier))
+            }
         }
     }
 }
