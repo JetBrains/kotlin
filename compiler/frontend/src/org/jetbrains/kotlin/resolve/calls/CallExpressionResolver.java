@@ -441,8 +441,9 @@ public class CallExpressionResolver {
             }
 
             DataFlowInfo initialDataFlowInfoForArguments = contextForSelector.dataFlowInfo;
+            DataFlowValue receiverDataFlowValue = null;
             if (receiver instanceof ReceiverValue) {
-                DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
+                receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
                 // Additional "receiver != null" information
                 // Should be applied if we consider a safe call
                 if (element.getSafe()) {
@@ -467,7 +468,8 @@ public class CallExpressionResolver {
             checkNestedClassAccess(element.getQualified(), contextForSelector);
 
             boolean safeCall = element.getSafe();
-            if (safeCall && selectorReturnType != null && TypeUtils.isNullableType(receiverType)) {
+            if (safeCall && selectorReturnType != null && receiverDataFlowValue != null &&
+                contextForSelector.dataFlowInfo.getPredictableNullability(receiverDataFlowValue).canBeNull()) {
                 selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
                 selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType);
             }

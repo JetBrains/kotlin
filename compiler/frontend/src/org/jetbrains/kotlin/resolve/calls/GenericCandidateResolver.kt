@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
@@ -174,13 +174,8 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
 
         val freshVariables = returnType.getNestedTypeParameters().mapNotNull { conversion[it] }
         builder.registerTypeVariables(nestedCall.call.toHandle(), freshVariables, external = true)
-        // Looks not too nice, but safe call result must be nullable if receiver is nullable
-        val argumentExpressionType = candidateWithFreshVariables.returnType?.let {
-            if (nestedCall.isSafeCall && nestedCall.getExplicitReceiverValue()?.type?.let {TypeUtils.isNullableType(it) } ?: true ) {
-                TypeUtils.makeNullable(it)
-            }
-            else it
-        }
+        // Safe call result must be nullable if receiver is nullable
+        val argumentExpressionType = nestedCall.makeNullableTypeIfSafeReceiver(candidateWithFreshVariables.returnType, context)
 
         builder.addSubtypeConstraint(
                 argumentExpressionType,
