@@ -570,11 +570,5 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures/localClassifier.kt");
             doTest(fileName);
         }
-
-        @TestMetadata("nestedInnerClassifier.kt")
-        public void testNestedInnerClassifier() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/unsupportedFeatures/nestedInnerClassifier.kt");
-            doTest(fileName);
-        }
     }
 }

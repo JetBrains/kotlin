@@ -545,20 +545,22 @@ public final class StaticContext {
                 @Nullable
                 @Override
                 public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (isNativeObject(descriptor) || isBuiltin(descriptor)) {
-                        return null;
-                    }
                     if (!(descriptor instanceof ClassDescriptor)) {
-                        return null;
-                    }
-                    ClassDescriptor cls = (ClassDescriptor) descriptor;
-                    if (cls.getKind() == ClassKind.ENUM_ENTRY || cls.getKind() == ClassKind.OBJECT) {
                         return null;
                     }
                     DeclarationDescriptor container = descriptor.getContainingDeclaration();
                     if (container == null) {
                         return null;
                     }
+
+                    if (isNativeObject(descriptor) || isBuiltin(descriptor)) {
+                        return null;
+                    }
+                    ClassDescriptor cls = (ClassDescriptor) descriptor;
+                    if (cls.getKind() == ClassKind.ENUM_ENTRY || cls.getKind() == ClassKind.OBJECT) {
+                        return null;
+                    }
+
                     JsExpression result = getQualifiedReference(container);
                     if (DescriptorUtils.isCompanionObject(container)) {
                         result = Namer.getCompanionObjectAccessor(result);

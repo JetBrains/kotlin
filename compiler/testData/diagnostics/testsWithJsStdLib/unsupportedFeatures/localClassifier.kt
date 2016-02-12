@@ -9,4 +9,8 @@ fun foo() {
 
     <!LOCAL_INTERFACE_NOT_ALLOWED, NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
     }
+
+    object {
+        inner <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!>
+    }
 }

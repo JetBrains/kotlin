@@ -119,14 +119,14 @@ var Kotlin = {};
         }
         if (typeof staticProperties !== 'undefined') {
             for (p in staticProperties) {
-                if (!staticProperties.hasOwnProperty(p)) {
-                    continue;
-                }
+                //noinspection JSUnfilteredForInLoop
                 property = staticProperties[p];
-                if (typeof property === "function" && typeof property.type !== "undefined" && property.type === Kotlin.TYPE.INIT_FUN) {
+                if (typeof property === "function" && property.type === Kotlin.TYPE.INIT_FUN) {
+                    //noinspection JSUnfilteredForInLoop
                     metadata.types[p] = property;
                 }
                 else {
+                    //noinspection JSUnfilteredForInLoop
                     metadata.staticMembers[p] = property;
                 }
             }
@@ -196,14 +196,15 @@ var Kotlin = {};
 
     Kotlin.defineInnerTypes = function(constructor, types) {
         for (var innerTypeName in types) {
-            if (types.hasOwnProperty(innerTypeName)) {
-                var innerType = types[innerTypeName];
-                innerType.className = innerTypeName;
-                Object.defineProperty(constructor, innerTypeName, {
-                    get: innerType,
-                    configurable: true
-                });
-            }
+            // since types object does not inherit from anything, it's just a map
+            //noinspection JSUnfilteredForInLoop
+            var innerType = types[innerTypeName];
+            innerType.className = innerTypeName;
+            //noinspection JSUnfilteredForInLoop
+            Object.defineProperty(constructor, innerTypeName, {
+                get: innerType,
+                configurable: true
+            });
         }
     };
 
@@ -213,12 +214,12 @@ var Kotlin = {};
         var obj = new noNameClass();
         noNameClass.$metadata$.type = Kotlin.TYPE.OBJECT;
         for (var innerTypeName in metadata.types) {
-            if (metadata.types.hasOwnProperty(innerTypeName)) {
-                Object.defineProperty(obj, innerTypeName, {
-                    get : metadata.types[innerTypeName],
-                    configurable: true
-                });
-            }
+            // since types object does not inherit from anything, it's just a map
+            //noinspection JSUnfilteredForInLoop
+            Object.defineProperty(obj, innerTypeName, {
+                get : metadata.types[innerTypeName],
+                configurable: true
+            });
         }
         return obj;
     };
