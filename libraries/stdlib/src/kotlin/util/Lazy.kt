@@ -15,12 +15,12 @@ public interface Lazy<out T> {
      * Gets the lazily initialized value of the current Lazy instance.
      * Once the value was initialized it must not change during the rest of lifetime of this Lazy instance.
      */
-    public abstract val value: T
+    public val value: T
     /**
      * Returns `true` if a value for this Lazy instance has been already initialized, and `false` otherwise.
      * Once this function has returned `true` it stays `true` for the rest of lifetime of this Lazy instance.
      */
-    public abstract fun isInitialized(): Boolean
+    public fun isInitialized(): Boolean
 }
 
 /**

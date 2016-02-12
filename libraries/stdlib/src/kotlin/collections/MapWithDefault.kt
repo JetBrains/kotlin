@@ -93,7 +93,7 @@ private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMa
 
     override fun put(key: K, value: V): V? = map.put(key, value)
     override fun remove(key: K): V? = map.remove(key)
-    override fun putAll(m: Map<out K, V>) = map.putAll(m)
+    override fun putAll(from: Map<out K, V>) = map.putAll(from)
     override fun clear() = map.clear()
 
     override fun getOrImplicitDefault(key: K): V = map.getOrElseNullable(key, { default(key) })

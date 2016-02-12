@@ -114,7 +114,7 @@ private inline fun List<String>.reindent(resultSizeEstimate: Int, indentAddFunct
             if ((index == 0 || index == lastIndex) && value.isBlank())
                 null
             else
-                indentCutFunction(value)?.let { cutted -> indentAddFunction(cutted) } ?: value
+                indentCutFunction(value)?.let(indentAddFunction) ?: value
         }
         .joinTo(StringBuilder(resultSizeEstimate), "\n")
         .toString()
