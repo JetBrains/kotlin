@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test.collections
 
 import org.junit.Test as test
@@ -111,13 +127,39 @@ public class SequenceTest {
     }
 
     @test fun drop() {
+        assertEquals(emptyList(), emptySequence<Int>().drop(1).toList())
+        listOf(2, 3, 4, 5).let { assertEquals(it, it.asSequence().drop(0).toList()) }
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
+        assertTrue(assertFails { fibonacci().drop(-1) } is IllegalArgumentException)
     }
 
     @test fun take() {
+        assertEquals(emptyList(), emptySequence<Int>().take(1).toList())
+        assertEquals(emptyList(), fibonacci().take(0).toList())
+
         assertEquals("0, 1, 1, 2, 3, 5, 8", fibonacci().take(7).joinToString())
-        assertEquals("2, 3, 5, 8", fibonacci().drop(3).take(4).joinToString())
+        assertEquals("0, 1, 1, 2", fibonacci().take(7).take(4).joinToString())
+        assertEquals("0, 1, 1, 2", fibonacci().take(4).take(5).joinToString())
+
+        assertEquals(emptyList(), fibonacci().take(1).drop(1).toList())
+        assertEquals(emptyList(), fibonacci().take(1).drop(2).toList())
+
+        assertTrue(assertFails { fibonacci().take(-1) } is IllegalArgumentException)
+    }
+
+    @test fun subSequence() {
+        assertEquals(listOf(2, 3, 5, 8), fibonacci().drop(3).take(4).toList())
+        assertEquals(listOf(2, 3, 5, 8), fibonacci().take(7).drop(3).toList())
+
+        val seq = fibonacci().drop(3).take(4)
+
+        assertEquals(listOf(2, 3, 5, 8), seq.take(5).toList())
+        assertEquals(listOf(2, 3, 5), seq.take(3).toList())
+
+        assertEquals(emptyList(), seq.drop(5).toList())
+        assertEquals(listOf(8), seq.drop(3).toList())
+
     }
 
     @test fun dropWhile() {
