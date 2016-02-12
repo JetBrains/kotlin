@@ -16,26 +16,9 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-
-fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String {
-    val nameString = descriptor.name.render()
-    if (descriptor is TypeParameterDescriptor) {
-        return nameString
-    }
-    val qualifier = qualifierName(descriptor.containingDeclaration)
-    return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
-}
-
-private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (descriptor) {
-    is ClassDescriptor -> qualifiedNameForSourceCode(descriptor)
-    is PackageFragmentDescriptor -> descriptor.fqName.toUnsafe().render()
-    else -> null
-}
-
 
 fun Name.render(): String {
     return if (this.shouldBeEscaped()) '`' + asString() + '`' else asString()

@@ -226,12 +226,6 @@ enum class RenderingFormat {
     HTML
 }
 
-enum class NameShortness {
-    SHORT,
-    FULLY_QUALIFIED,
-    SOURCE_CODE_QUALIFIED // for local declarations qualified up to function scope
-}
-
 enum class OverrideRenderingPolicy {
     RENDER_OVERRIDE,
     RENDER_OPEN,

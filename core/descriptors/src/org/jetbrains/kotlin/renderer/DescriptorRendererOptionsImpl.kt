@@ -63,7 +63,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
         }
     }
 
-    override var nameShortness by property(NameShortness.SOURCE_CODE_QUALIFIED)
+    override var nameShortness: NameShortness by property(NameShortness.SOURCE_CODE_QUALIFIED)
     override var withDefinedIn by property(true)
     override var modifiers: Set<DescriptorRendererModifier> by property(DescriptorRendererModifier.DEFAULTS)
     override var startFromName by property(false)

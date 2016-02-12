@@ -61,7 +61,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setVerbose(true);
-                    options.setNameShortness(NameShortness.SHORT);
+                    options.setNameShortness(NameShortness.SHORT.INSTANCE);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;
                 }

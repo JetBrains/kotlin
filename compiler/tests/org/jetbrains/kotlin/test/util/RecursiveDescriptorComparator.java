@@ -54,7 +54,7 @@ public class RecursiveDescriptorComparator {
                     options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
                     options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                     options.setIncludePropertyConstant(true);
-                    options.setNameShortness(NameShortness.FULLY_QUALIFIED);
+                    options.setNameShortness(NameShortness.FULLY_QUALIFIED.INSTANCE);
                     options.setVerbose(true);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;

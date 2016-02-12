@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
 internal class DescriptorRendererImpl(
@@ -122,27 +123,7 @@ internal class DescriptorRendererImpl(
         if (ErrorUtils.isError(klass)) {
             return klass.typeConstructor.toString()
         }
-        when (nameShortness) {
-            NameShortness.SHORT -> {
-                val qualifiedNameElements = ArrayList<Name>()
-
-                // for nested classes qualified name should be used
-                var current: DeclarationDescriptor? = klass
-                do {
-                    qualifiedNameElements.add(current!!.name)
-                    current = current.containingDeclaration
-                }
-                while (current is ClassDescriptor)
-
-                return renderFqName(qualifiedNameElements.asReversed())
-            }
-
-            NameShortness.FULLY_QUALIFIED -> return renderFqName(DescriptorUtils.getFqName(klass))
-
-            NameShortness.SOURCE_CODE_QUALIFIED -> return qualifiedNameForSourceCode(klass)
-
-            else -> throw IllegalArgumentException()
-        }
+        return nameShortness.renderClassifier(klass, this)
     }
 
     /* TYPES RENDERING */
@@ -221,7 +202,8 @@ internal class DescriptorRendererImpl(
             return lowerRendered + "!"
         }
 
-        val kotlinCollectionsPrefix = if (nameShortness != NameShortness.SHORT) "kotlin.collections." else ""
+
+        val kotlinCollectionsPrefix = nameShortness.renderClassifier(type.builtIns.collection, this).substringBefore("Collection")
         val mutablePrefix = "Mutable"
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
         val simpleCollection = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + mutablePrefix, upperRendered, kotlinCollectionsPrefix, kotlinCollectionsPrefix + "(" + mutablePrefix + ")")
@@ -230,7 +212,7 @@ internal class DescriptorRendererImpl(
         val mutableEntry = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + "MutableMap.MutableEntry", upperRendered, kotlinCollectionsPrefix + "Map.Entry", kotlinCollectionsPrefix + "(Mutable)Map.(Mutable)Entry")
         if (mutableEntry != null) return mutableEntry
 
-        val kotlinPrefix = if (nameShortness != NameShortness.SHORT) "kotlin." else ""
+        val kotlinPrefix = nameShortness.renderClassifier(type.builtIns.array, this).substringBefore("Array")
         // Foo[] -> Array<(out) Foo!>!
         val array = replacePrefixes(lowerRendered, kotlinPrefix + escape("Array<"), upperRendered, kotlinPrefix + escape("Array<out "), kotlinPrefix + escape("Array<(out) "))
         if (array != null) return array
@@ -297,8 +279,7 @@ internal class DescriptorRendererImpl(
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
         val cd = typeConstructor.declarationDescriptor
         return when (cd) {
-            is TypeParameterDescriptor -> renderName(cd.getName())
-            is ClassDescriptor -> renderClassifierName(cd)
+            is TypeParameterDescriptor, is ClassDescriptor -> renderClassifierName(cd)
             null -> typeConstructor.toString()
             else -> error("Unexpected classifier: " + cd.javaClass)
         }
