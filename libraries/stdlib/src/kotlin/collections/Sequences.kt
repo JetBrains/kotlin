@@ -36,8 +36,10 @@ public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpt
  */
 public fun <T> emptySequence(): Sequence<T> = EmptySequence
 
-private object EmptySequence : Sequence<Nothing> {
+private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
     override fun iterator(): Iterator<Nothing> = EmptyIterator
+    override fun drop(n: Int) = EmptySequence
+    override fun take(n: Int) = EmptySequence
 }
 
 /**
@@ -248,16 +250,77 @@ internal class FlatteningSequence<T, R, E>
 }
 
 /**
+ * A sequence that supports drop(n) and take(n) operations
+ */
+internal interface DropTakeSequence<T> : Sequence<T> {
+    fun drop(n: Int): Sequence<T>
+    fun take(n: Int): Sequence<T>
+}
+
+/**
+ * A sequence that skips [startIndex] values from the underlying [sequence]
+ * and stops returning values right before [endIndex], i.e. stops at `endIndex - 1`
+ */
+internal class SubSequence<T> (
+        private val sequence: Sequence<T>,
+        private val startIndex: Int,
+        private val endIndex: Int
+): Sequence<T>, DropTakeSequence<T> {
+
+    init {
+        require(startIndex >= 0) { "startIndex should be non-negative, but is $startIndex" }
+        require(endIndex >= 0) { "endIndex should be non-negative, but is $endIndex" }
+        require(endIndex >= startIndex) { "endIndex should be not less than startIndex, but was $endIndex < $startIndex"}
+    }
+
+    private val count: Int get() = endIndex - startIndex
+
+    override fun drop(n: Int): Sequence<T> = if (n >= count) emptySequence() else SubSequence(sequence, startIndex + n, endIndex)
+    override fun take(n: Int): Sequence<T> = if (n >= count) this else SubSequence(sequence, startIndex, startIndex + n)
+
+    override fun iterator() = object : Iterator<T> {
+
+        val iterator = sequence.iterator()
+        var position = 0
+
+        // Shouldn't be called from constructor to avoid premature iteration
+        private fun drop() {
+            while(position < startIndex && iterator.hasNext()) {
+                iterator.next()
+                position++
+            }
+        }
+
+        override fun hasNext(): Boolean {
+            drop()
+            return (position < endIndex) && iterator.hasNext()
+        }
+
+        override fun next(): T {
+            drop()
+            if (position >= endIndex)
+                throw NoSuchElementException()
+            position++
+            return iterator.next()
+        }
+    }
+}
+
+/**
  * A sequence that returns at most [count] values from the underlying [sequence], and stops returning values
  * as soon as that count is reached.
  */
-internal class TakeSequence<T>
-                            constructor(private val sequence: Sequence<T>,
-                             private val count: Int
-                            ) : Sequence<T> {
+internal class TakeSequence<T> (
+    private val sequence: Sequence<T>,
+    private val count: Int
+) : Sequence<T>, DropTakeSequence<T> {
+
     init {
         require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
     }
+
+    override fun drop(n: Int): Sequence<T> = if (n >= count) emptySequence() else SubSequence(sequence, n, count)
+    override fun take(n: Int): Sequence<T> = if (n >= count) this else TakeSequence(sequence, n)
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         var left = count
@@ -326,13 +389,16 @@ internal class TakeWhileSequence<T>
  * A sequence that skips the specified number of values from the underlying [sequence] and returns
  * all values after that.
  */
-internal class DropSequence<T>
-                            constructor(private val sequence: Sequence<T>,
-                             private val count: Int
-                            ) : Sequence<T> {
+internal class DropSequence<T> (
+        private val sequence: Sequence<T>,
+        private val count: Int
+) : Sequence<T>, DropTakeSequence<T> {
     init {
         require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
     }
+
+    override fun drop(n: Int): Sequence<T> = DropSequence(sequence, count + n)
+    override fun take(n: Int): Sequence<T> = SubSequence(sequence, count, count + n)
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator();

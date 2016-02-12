@@ -111,13 +111,39 @@ public class SequenceTest {
     }
 
     @test fun drop() {
+        assertEquals(emptyList(), emptySequence<Int>().drop(1).toList())
+        listOf(2, 3, 4, 5).let { assertEquals(it, it.asSequence().drop(0).toList()) }
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
+        assertTrue(assertFails { fibonacci().drop(-1) } is IllegalArgumentException)
     }
 
     @test fun take() {
+        assertEquals(emptyList(), emptySequence<Int>().take(1).toList())
+        assertEquals(emptyList(), fibonacci().take(0).toList())
+
         assertEquals("0, 1, 1, 2, 3, 5, 8", fibonacci().take(7).joinToString())
-        assertEquals("2, 3, 5, 8", fibonacci().drop(3).take(4).joinToString())
+        assertEquals("0, 1, 1, 2", fibonacci().take(7).take(4).joinToString())
+        assertEquals("0, 1, 1, 2", fibonacci().take(4).take(5).joinToString())
+
+        assertEquals(emptyList(), fibonacci().take(1).drop(1).toList())
+        assertEquals(emptyList(), fibonacci().take(1).drop(2).toList())
+
+        assertTrue(assertFails { fibonacci().take(-1) } is IllegalArgumentException)
+    }
+
+    @test fun subSequence() {
+        assertEquals(listOf(2, 3, 5, 8), fibonacci().drop(3).take(4).toList())
+        assertEquals(listOf(2, 3, 5, 8), fibonacci().take(7).drop(3).toList())
+
+        val seq = fibonacci().drop(3).take(4)
+
+        assertEquals(listOf(2, 3, 5, 8), seq.take(5).toList())
+        assertEquals(listOf(2, 3, 5), seq.take(3).toList())
+
+        assertEquals(emptyList(), seq.drop(5).toList())
+        assertEquals(listOf(8), seq.drop(3).toList())
+
     }
 
     @test fun dropWhile() {
