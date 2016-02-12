@@ -2,6 +2,19 @@ package templates
 
 import templates.Family.*
 
+val Family.DocExtension.collection: String
+    get() = with(DocExtensions) { family.collection }
+
+val Family.DocExtension.element: String
+    get() = with(DocExtensions) { family.element }
+
+val Family.CodeExtension.size: String
+    get() = when (family) {
+        Iterables, Collections, Lists, Sets, Maps, InvariantArraysOfObjects, ArraysOfObjects, ArraysOfPrimitives -> "size"
+        CharSequences, Strings -> "length"
+        else -> error("size property isn't supported for $family")
+    }
+
 object DocExtensions {
 
     val Family.element: String

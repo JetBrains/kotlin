@@ -25,6 +25,11 @@ enum class Family {
 
     val isPrimitiveSpecialization: Boolean by lazy { this in primitiveSpecializations }
 
+    class DocExtension(val family: Family)
+    class CodeExtension(val family: Family)
+    val doc = DocExtension(this)
+    val code = CodeExtension(this)
+
     companion object {
         val primitiveSpecializations = setOf(ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives)
         val defaultFamilies = setOf(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
