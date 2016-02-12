@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.DelegationTranslator;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -127,8 +128,8 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
         JsExpression target = new JsNameRef(outerName, JsLiteral.THIS);
-        JsExpression paramRef = new JsNameRef(outerName);
-        JsExpression assignment = new JsBinaryOperation(JsBinaryOperator.ASG, target, paramRef);
+        JsExpression paramRef = outerName.makeRef();
+        JsExpression assignment = JsAstUtils.assignment(target, paramRef);
         initFunction.getBody().getStatements().add(new JsExpressionStatement(assignment));
     }
 

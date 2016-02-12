@@ -222,7 +222,7 @@ object ConstructorCallCase : FunctionCallCase() {
         val functionRef = context.aliasOrValue(callableDescriptor) { fqName }
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        val receiver = this.superCallReceiver
+        val receiver = superCallReceiver
         var allArguments = when (receiver) {
             null -> argumentsInfo.translateArguments
             else -> (sequenceOf(receiver) + argumentsInfo.translateArguments).toList()
@@ -246,8 +246,7 @@ object SuperCallCase : FunctionCallCase() {
         // TODO: spread operator
         val prototypeClass = JsNameRef(Namer.getPrototypeName(), dispatchReceiver!!)
         val functionRef = Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
-        val superReceiver = this.superCallReceiver
-        val receiver = if (superReceiver != null) superReceiver else JsLiteral.THIS;
+        val receiver = superCallReceiver ?: JsLiteral.THIS;
         return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(receiver))
     }
 }

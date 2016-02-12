@@ -110,7 +110,7 @@ object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
 object SuperPropertyAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val variableName = context.program().getStringLiteral(this.variableName.ident)
-        val jsReceiver = this.superCallReceiver
+        val jsReceiver = superCallReceiver
         var propertyOwner = when (jsReceiver) {
             null -> JsLiteral.THIS
             else -> jsReceiver

@@ -18,24 +18,19 @@ package org.jetbrains.kotlin.js.translate.reference
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable
-import org.jetbrains.kotlin.js.translate.context.TemporaryVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.*
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
-
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 
 class CallArgumentTranslator private constructor(
         private val resolvedCall: ResolvedCall<*>,
@@ -102,13 +97,8 @@ class CallArgumentTranslator private constructor(
                 val arguments = actualArgument.getArguments()
 
                 val size = arguments.size
-                var i = 0
-                while (i != size) {
-                    if (arguments.get(i).getSpreadElement() != null) {
-                        hasSpreadOperator = true
-                        break
-                    }
-                    ++i
+                if (!hasSpreadOperator) {
+                    hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
                 if (hasSpreadOperator) {

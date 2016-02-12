@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.rendering.renderKind
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
@@ -32,7 +33,7 @@ class LocalClassChecker : DeclarationChecker {
         if (descriptor !is ClassDescriptor || declaration !is KtNamedDeclaration) {
             return;
         }
-        if (isAnonymousObject(descriptor) || isObject(descriptor)) {
+        if (isAnonymousObject(descriptor) || isObject(descriptor) || AnnotationsUtils.isNativeObject(descriptor)) {
             return
         }
 
