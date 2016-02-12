@@ -248,31 +248,45 @@ internal class FlatteningSequence<T, R, E>
 }
 
 /**
- * A sequence that returns at most [count] values from the underlying [sequence], and stops returning values
- * as soon as that count is reached.
+ * A sequence that skips [startIndex] values from the underlying [sequence] and stops returning values after [endIndex].
  */
-internal class TakeSequence<T>
-                            constructor(private val sequence: Sequence<T>,
-                             private val count: Int
-                            ) : Sequence<T> {
+class SubSequence<T>(
+        val sequence: Sequence<T>,
+        val startIndex: Int = 0,
+        val endIndex: Int? = null
+): Sequence<T> {
+
     init {
-        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
+        require(startIndex >= 0) { "startIndex should be non-negative, but is $startIndex" }
+        require(endIndex == null || endIndex >= 0) { "endIndex should be null or non-negative, but is $endIndex" }
     }
 
-    override fun iterator(): Iterator<T> = object : Iterator<T> {
-        var left = count
-        val iterator = sequence.iterator();
+    override fun iterator() = object : Iterator<T> {
 
-        override fun next(): T {
-            if (left == 0)
-                throw NoSuchElementException()
-            left--
-            return iterator.next()
+        val iterator = sequence.iterator();
+        var position = 0
+
+        // Shouldn't be called from constructor to avoid premature iteration
+        private fun drop() {
+            while(position < startIndex && iterator.hasNext()) {
+                iterator.next()
+                position++
+            }
         }
 
         override fun hasNext(): Boolean {
-            return left > 0 && iterator.hasNext()
+            drop()
+            return (endIndex == null || position < endIndex) && iterator.hasNext()
         }
+
+        override fun next(): T {
+            drop()
+            if (endIndex != null && position >= endIndex)
+                throw NoSuchElementException()
+            position++
+            return iterator.next()
+        }
+
     }
 }
 
@@ -318,42 +332,6 @@ internal class TakeWhileSequence<T>
             if (nextState == -1)
                 calcNext() // will change nextState
             return nextState == 1
-        }
-    }
-}
-
-/**
- * A sequence that skips the specified number of values from the underlying [sequence] and returns
- * all values after that.
- */
-internal class DropSequence<T>
-                            constructor(private val sequence: Sequence<T>,
-                             private val count: Int
-                            ) : Sequence<T> {
-    init {
-        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
-    }
-
-    override fun iterator(): Iterator<T> = object : Iterator<T> {
-        val iterator = sequence.iterator();
-        var left = count
-
-        // Shouldn't be called from constructor to avoid premature iteration
-        private fun drop() {
-            while (left > 0 && iterator.hasNext()) {
-                iterator.next()
-                left--
-            }
-        }
-
-        override fun next(): T {
-            drop()
-            return iterator.next()
-        }
-
-        override fun hasNext(): Boolean {
-            drop()
-            return iterator.hasNext()
         }
     }
 }

@@ -55,7 +55,11 @@ fun filtering(): List<GenericFunction> {
         body(Sequences) {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
-            return if (n == 0) this else DropSequence(this, n)
+            return when {
+                n == 0 -> this
+                this is SubSequence -> SubSequence(this.sequence, this.startIndex + n, this.endIndex)
+                else -> SubSequence(this, startIndex = n)
+            }
             """
         }
 
@@ -121,7 +125,11 @@ fun filtering(): List<GenericFunction> {
         body(Sequences) {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
-            return if (n == 0) emptySequence() else TakeSequence(this, n)
+            return when {
+                n == 0 -> emptySequence()
+                this is SubSequence -> SubSequence(this.sequence, this.startIndex, this.startIndex + n)
+                else -> SubSequence(this, endIndex = n)
+            }
             """
         }
 

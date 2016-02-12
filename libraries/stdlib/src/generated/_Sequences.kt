@@ -289,7 +289,11 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
  */
 public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return if (n == 0) this else DropSequence(this, n)
+    return when {
+        n == 0 -> this
+        this is SubSequence -> SubSequence(this.sequence, this.startIndex + n, this.endIndex)
+        else -> SubSequence(this, startIndex = n)
+    }
 }
 
 /**
@@ -367,7 +371,11 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
  */
 public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return if (n == 0) emptySequence() else TakeSequence(this, n)
+    return when {
+        n == 0 -> emptySequence()
+        this is SubSequence -> SubSequence(this.sequence, this.startIndex, this.startIndex + n)
+        else -> SubSequence(this, endIndex = n)
+    }
 }
 
 /**
