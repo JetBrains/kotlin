@@ -94,30 +94,10 @@ val ClassDescriptor.classValueType: KotlinType?
     get() = classValueTypeDescriptor?.defaultType
 
 val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
-    get() {
-        var parent: DeclarationDescriptorWithVisibility? = this
-
-        while (parent != null) {
-            if (!parent.visibility.isPublicAPI) return false
-
-            parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility::class.java)
-        }
-
-        return true
-    }
+    get() = effectiveVisibility().publicApi
 
 val DeclarationDescriptorWithVisibility.isEffectivelyPrivateApi: Boolean
-    get() {
-        var parent: DeclarationDescriptorWithVisibility? = this
-
-        while (parent != null) {
-            if (Visibilities.isPrivate(parent.visibility)) return true
-
-            parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility::class.java)
-        }
-
-        return false
-    }
+    get() = effectiveVisibility().privateApi
 
 
 val DeclarationDescriptor.isInsidePrivateClass: Boolean

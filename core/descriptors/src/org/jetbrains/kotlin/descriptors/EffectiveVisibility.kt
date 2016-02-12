@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.*
 
-sealed class EffectiveVisibility(val name: String) {
+sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = false, val privateApi: Boolean = false) {
 
     override fun toString() = name
 
@@ -38,7 +38,7 @@ sealed class EffectiveVisibility(val name: String) {
     //                           Private = Local
 
 
-    object Private : EffectiveVisibility("private") {
+    object Private : EffectiveVisibility("private", privateApi = true) {
         override fun relation(other: EffectiveVisibility) =
                 if (this == other || Local == other) Permissiveness.SAME else Permissiveness.LESS
     }
@@ -49,7 +49,7 @@ sealed class EffectiveVisibility(val name: String) {
                 if (this == other || Private == other) Permissiveness.SAME else Permissiveness.LESS
     }
 
-    object Public : EffectiveVisibility("public") {
+    object Public : EffectiveVisibility("public", publicApi = true) {
         override fun relation(other: EffectiveVisibility) =
                 if (this == other) Permissiveness.SAME else Permissiveness.MORE
     }
@@ -76,7 +76,7 @@ sealed class EffectiveVisibility(val name: String) {
 
     object PackagePrivate : InternalOrPackage(false)
 
-    class Protected(val container: ClassDescriptor?) : EffectiveVisibility("protected") {
+    class Protected(val container: ClassDescriptor?) : EffectiveVisibility("protected", publicApi = true) {
 
         override fun equals(other: Any?) = (other is Protected && container == other.container)
 
@@ -113,7 +113,7 @@ sealed class EffectiveVisibility(val name: String) {
     }
 
     // Lower bound for all protected visibilities
-    object ProtectedBound : EffectiveVisibility("protected (in different classes)") {
+    object ProtectedBound : EffectiveVisibility("protected (in different classes)", publicApi = true) {
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public, is Protected -> Permissiveness.LESS
             Private, Local, InternalProtectedBound -> Permissiveness.MORE
@@ -247,7 +247,7 @@ private fun KotlinType.effectiveVisibility(types: Set<KotlinType>): EffectiveVis
 private fun TypeConstructor.effectiveVisibility() =
         this.declarationDescriptor?.effectiveVisibility() ?: Public
 
-fun MemberDescriptor.effectiveVisibility(): EffectiveVisibility =
+fun DeclarationDescriptorWithVisibility.effectiveVisibility(): EffectiveVisibility =
         lowerBound(visibility.effectiveVisibility(this.containingDeclaration as? ClassDescriptor),
                    (this.containingDeclaration as? ClassDescriptor)?.effectiveVisibility() ?: Public)
 
