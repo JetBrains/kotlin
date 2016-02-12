@@ -444,4 +444,15 @@ public class TranslationContext {
         assert descriptor != null : "Missing declaration descriptor: " + PsiUtilsKt.getTextWithLocation(expression);
         return descriptor;
     }
+
+    public boolean hasEnclosingFunction() {
+        DeclarationDescriptor descriptor = declarationDescriptor;
+        while (descriptor != null) {
+            if (descriptor instanceof FunctionDescriptor) {
+                return true;
+            }
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return false;
+    }
 }

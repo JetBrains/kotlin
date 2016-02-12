@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.DefinitionPlace
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.KotlinType
@@ -77,6 +79,11 @@ class ClassTranslator private constructor(
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
 
     private fun getClassCreateInvocationArguments(declarationContext: TranslationContext): List<JsExpression> {
+        if (!DescriptorUtils.isAnonymousObject(descriptor) && !DescriptorUtils.isObject(descriptor) &&
+            declarationContext.hasEnclosingFunction()) {
+            declarationContext.bindingTrace().report(ErrorsJs.NOT_SUPPORTED.on(classDeclaration, classDeclaration))
+            return emptyList()
+        }
         var context = declarationContext
         val invocationArguments = ArrayList<JsExpression>()
 
