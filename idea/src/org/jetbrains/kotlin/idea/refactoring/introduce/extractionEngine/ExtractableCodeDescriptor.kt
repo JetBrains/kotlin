@@ -505,6 +505,7 @@ class AnalysisResult (
     enum class ErrorMessage {
         NO_EXPRESSION,
         NO_CONTAINER,
+        SYNTAX_ERRORS,
         SUPER_CALL,
         DENOTABLE_TYPES,
         ERROR_TYPES,
@@ -526,6 +527,7 @@ class AnalysisResult (
                     when (this) {
                         NO_EXPRESSION -> "cannot.refactor.no.expression"
                         NO_CONTAINER -> "cannot.refactor.no.container"
+                        SYNTAX_ERRORS -> "cannot.refactor.syntax.errors"
                         SUPER_CALL -> "cannot.extract.super.call"
                         DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
                         ERROR_TYPES -> "error.types.in.generated.function"

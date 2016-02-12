@@ -3124,6 +3124,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroducePropertyTest(fileName);
         }
 
+        @TestMetadata("syntaxErrors.kt")
+        public void testSyntaxErrors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/syntaxErrors.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
         @TestMetadata("typeParameterNotResolvableInTargetScope.kt")
         public void testTypeParameterNotResolvableInTargetScope() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/typeParameterNotResolvableInTargetScope.kt");

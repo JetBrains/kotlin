@@ -624,7 +624,9 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val bindingContext = bindingContext ?: return noContainerError
 
-    val pseudocode = commonParent.getContainingPseudocode(bindingContext) ?: return noContainerError
+    val declaration = commonParent.containingDeclarationForPseudocode ?: return noContainerError
+    val pseudocode = declaration.getContainingPseudocode(bindingContext)
+                     ?: return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.SYNTAX_ERRORS))
     val localInstructions = getLocalInstructions(pseudocode)
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)

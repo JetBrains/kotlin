@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInst
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -287,19 +286,20 @@ fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue
     return results
 }
 
-fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
-    val pseudocodeDeclaration =
-            PsiTreeUtil.getParentOfType(this, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtScript::class.java)
-            ?: getNonStrictParentOfType<KtProperty>()
-            ?: return null
+val KtElement.containingDeclarationForPseudocode: KtDeclaration?
+        get() = PsiTreeUtil.getParentOfType(this, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtScript::class.java)
+                ?: getNonStrictParentOfType<KtProperty>()
 
-    val enclosingPseudocodeDeclaration = (pseudocodeDeclaration as? KtFunctionLiteral)?.let {
+fun KtDeclaration.getContainingPseudocode(context: BindingContext): Pseudocode? {
+    val enclosingPseudocodeDeclaration = (this as? KtFunctionLiteral)?.let {
         it.parents.firstOrNull { it is KtDeclaration && it !is KtFunctionLiteral } as? KtDeclaration
-    } ?: pseudocodeDeclaration
+    } ?: this
 
     val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, context)
-    return enclosingPseudocode.getPseudocodeByElement(pseudocodeDeclaration)
+    return enclosingPseudocode.getPseudocodeByElement(this)
 }
+
+fun KtElement.getContainingPseudocode(context: BindingContext) = containingDeclarationForPseudocode?.getContainingPseudocode(context)
 
 fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
     if (correspondingElement == element) return this
