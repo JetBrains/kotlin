@@ -1,5 +1,5 @@
-val a: Byte? = -1
-val b: Short? = -1
+val a: Byte? = -10
+val b: Short? = -300
 
-// 1 I2B
-// 1 I2S
+// 1 BIPUSH -10
+// 1 SIPUSH -300

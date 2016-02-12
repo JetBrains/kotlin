@@ -4,7 +4,7 @@ public class JClass {
     public final static int PrimitiveInt = 9000;
     public final static int BigPrimitiveInt = 59000;
     public final static long PrimitiveLong = 100000;
-    public final static short PrimitiveShort = 900;
+    public final static short PrimitiveShort = 901;
     public final static boolean PrimitiveBool = false;
     public final static float PrimitiveFloat = 36.6;
     public final static double PrimitiveDouble = 42.4242;
