@@ -152,7 +152,7 @@ public class SamWrapperCodegen {
         FunctionDescriptor invokeFunction =
                 functionJetType.getMemberScope().getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next().getOriginal();
         StackValue functionField = StackValue.field(functionType, ownerType, FUNCTION_FIELD_NAME, false, StackValue.none());
-        codegen.genDelegate(erasedInterfaceFunction, invokeFunction, functionField);
+        codegen.genSamDelegate(erasedInterfaceFunction, invokeFunction, functionField);
 
         // generate sam bridges
         // TODO: erasedInterfaceFunction is actually not an interface function, but function in generated class

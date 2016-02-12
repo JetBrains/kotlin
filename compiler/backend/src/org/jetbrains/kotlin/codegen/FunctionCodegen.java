@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -155,6 +156,11 @@ public class FunctionCodegen {
         Method asmMethod = jvmSignature.getAsmMethod();
 
         int flags = getMethodAsmFlags(functionDescriptor, contextKind);
+
+        if (origin.getOriginKind() == JvmDeclarationOriginKind.SAM_DELEGATION) {
+            flags |= ACC_SYNTHETIC;
+        }
+
         boolean isNative = NativeKt.hasNativeAnnotation(functionDescriptor);
 
         if (isNative && owner instanceof MultifileClassFacadeContext) {
@@ -923,19 +929,42 @@ public class FunctionCodegen {
         iv.visitLabel(afterBarrier);
     }
 
+    public void genSamDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
+        FunctionDescriptor delegatedTo = overriddenDescriptor.getOriginal();
+        JvmDeclarationOrigin declarationOrigin =
+                JvmDeclarationOriginKt.SamDelegation(functionDescriptor);
+        genDelegate(
+                functionDescriptor, delegatedTo,
+                declarationOrigin,
+                (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(),
+                field);
+    }
+
     public void genDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
         genDelegate(functionDescriptor, overriddenDescriptor.getOriginal(),
                     (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field);
     }
 
     public void genDelegate(
+            @NotNull FunctionDescriptor delegateFunction,
+            FunctionDescriptor delegatedTo,
+            ClassDescriptor toClass,
+            StackValue field
+    ) {
+        JvmDeclarationOrigin declarationOrigin =
+                JvmDeclarationOriginKt.Delegation(DescriptorToSourceUtils.descriptorToDeclaration(delegatedTo), delegateFunction);
+        genDelegate(delegateFunction, delegatedTo, declarationOrigin, toClass, field);
+    }
+
+    private void genDelegate(
             @NotNull final FunctionDescriptor delegateFunction,
             final FunctionDescriptor delegatedTo,
+            @NotNull JvmDeclarationOrigin declarationOrigin,
             final ClassDescriptor toClass,
             final StackValue field
     ) {
         generateMethod(
-                JvmDeclarationOriginKt.Delegation(DescriptorToSourceUtils.descriptorToDeclaration(delegatedTo), delegateFunction), delegateFunction,
+                declarationOrigin, delegateFunction,
                 new FunctionGenerationStrategy() {
                     @Override
                     public void generateBody(

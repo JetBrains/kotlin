@@ -15,4 +15,8 @@ public class MyJavaClass {
     public static int staticFun(Object s) {
         return 1;
     }
+
+    public static <T> T runReadAction(@NotNull Computable<T> computation) {
+        return computation.compute();
+    }
 }

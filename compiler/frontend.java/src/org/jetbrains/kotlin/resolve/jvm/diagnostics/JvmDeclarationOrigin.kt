@@ -34,6 +34,7 @@ enum class JvmDeclarationOriginKind {
     INTERFACE_DEFAULT_IMPL,
     DELEGATION_TO_DEFAULT_IMPLS,
     DELEGATION,
+    SAM_DELEGATION,
     BRIDGE,
     MULTIFILE_CLASS,
     MULTIFILE_CLASS_PART,
@@ -77,5 +78,7 @@ fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor):
         JvmDeclarationOrigin(DELEGATION_TO_DEFAULT_IMPLS, element, descriptor)
 
 fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)
+
+fun SamDelegation(descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SAM_DELEGATION, null, descriptor)
 
 fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SYNTHETIC, element, descriptor)
