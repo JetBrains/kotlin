@@ -88,6 +88,8 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
     // if function is or overrides declaration, returns null; otherwise, return original of sam adapter with substituted type parameters
     @Nullable
     private static SimpleFunctionDescriptor getOriginalOfSamAdapterFunction(@NotNull SimpleFunctionDescriptor callable) {
+        if (callable.getDispatchReceiverParameter() != null) return null;
+
         DeclarationDescriptor containingDeclaration = callable.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return null;
