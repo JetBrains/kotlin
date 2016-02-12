@@ -20,7 +20,6 @@ import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.codeInsight.template.*
 import com.intellij.codeInsight.template.impl.TemplateImpl
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.application.ApplicationManager
@@ -33,6 +32,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.util.DialogWithEditor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -273,20 +273,11 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 dialogWithEditor = null
             } else {
-                val dialog = object: DialogWithEditor(project, "Create from usage", "") {
-                    override fun doOKAction() {
-                        project.executeWriteCommand("Premature end of template") {
-                            TemplateManagerImpl.getTemplateState(editor)?.gotoEnd(false)
-                        }
-                        super.doOKAction()
-                    }
+                val dialog = DialogWithTemplateEditor(project, config.currentEditor!!, "Create from usage") {
+                    LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, "")
                 }
                 containingFileEditor = dialog.editor
-                with(containingFileEditor.settings) {
-                    additionalColumnsCount = config.currentEditor!!.settings.getRightMargin(project)
-                    additionalLinesCount = 5
-                }
-                jetFileToEdit = PsiDocumentManager.getInstance(project).getPsiFile(containingFileEditor.document) as KtFile
+                jetFileToEdit = dialog.psiFile as KtFile
                 jetFileToEdit.analysisContext = config.currentFile
                 dialogWithEditor = dialog
             }

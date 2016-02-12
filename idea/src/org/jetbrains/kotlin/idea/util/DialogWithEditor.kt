@@ -27,13 +27,14 @@ import org.jetbrains.kotlin.idea.*
 import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.editor.ex.*
 import com.intellij.openapi.editor.colors.*
+import com.intellij.openapi.vfs.VirtualFile
 import java.awt.event.*
 import com.intellij.psi.*
 
 open class DialogWithEditor(
         val project: Project,
         title: String,
-        val initialText: String
+        private val createFile: () -> VirtualFile
 ) : DialogWrapper(project, true) {
     val editor: Editor = createEditor()
 
@@ -44,7 +45,7 @@ open class DialogWithEditor(
 
     private fun createEditor(): Editor {
         val editorFactory = EditorFactory.getInstance()!!
-        val virtualFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, initialText)
+        val virtualFile = createFile()
         val document = FileDocumentManager.getInstance().getDocument(virtualFile)!!
 
         val editor = editorFactory.createEditor(document, project, KotlinFileType.INSTANCE, false)
@@ -79,4 +80,7 @@ open class DialogWithEditor(
         super.dispose()
         EditorFactory.getInstance()!!.releaseEditor(editor)
     }
+
+    val psiFile: PsiFile?
+        get() = PsiDocumentManager.getInstance(project).getPsiFile(editor.document)
 }

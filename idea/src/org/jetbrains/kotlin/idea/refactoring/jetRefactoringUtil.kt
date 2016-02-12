@@ -537,13 +537,13 @@ fun createJavaField(property: KtProperty, targetClass: PsiClass): PsiField {
     return field
 }
 
-fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
+fun createJavaClass(klass: KtClassOrObject, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
     val kind = if (forcePlainClass) ClassKind.CLASS else (klass.resolveToDescriptor() as ClassDescriptor).kind
 
     val factory = PsiElementFactory.SERVICE.getInstance(klass.project)
     val className = klass.name!!
     val javaClassToAdd = when (kind) {
-        ClassKind.CLASS -> factory.createClass(className)
+        ClassKind.CLASS, ClassKind.OBJECT -> factory.createClass(className)
         ClassKind.INTERFACE -> factory.createInterface(className)
         ClassKind.ANNOTATION_CLASS -> factory.createAnnotationType(className)
         ClassKind.ENUM_CLASS -> factory.createEnum(className)

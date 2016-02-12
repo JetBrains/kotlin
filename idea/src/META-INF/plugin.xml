@@ -628,6 +628,10 @@
         order="first"
         implementationClass="org.jetbrains.kotlin.idea.refactoring.pullUp.JavaToKotlinPullUpHelperFactory"/>
 
+    <psi.jvmElementMutatorFactory
+        language="kotlin"
+        implementationClass="org.jetbrains.kotlin.idea.KotlinJVMElementMutatorFactory"/>
+
     <problemFileHighlightFilter implementation="org.jetbrains.kotlin.idea.projectView.KotlinProblemFileHighlightFilter"/>
 
     <codeInsight.typeInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinExpressionTypeProvider"/>
