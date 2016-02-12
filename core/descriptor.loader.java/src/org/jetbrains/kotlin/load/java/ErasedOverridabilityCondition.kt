@@ -21,13 +21,25 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
+import org.jetbrains.kotlin.load.java.lazy.types.RawTypeTag
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.types.getCapability
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor, subClassDescriptor: ClassDescriptor?): Result {
-        if (subDescriptor !is JavaMethodDescriptor) return Result.UNKNOWN
+        if (subDescriptor !is JavaMethodDescriptor || subDescriptor.typeParameters.isNotEmpty()) return Result.UNKNOWN
+
+        val basicOverridability = OverridingUtil.getBasicOverridabilityProblem(superDescriptor, subDescriptor)?.result
+        if (basicOverridability != null) return Result.UNKNOWN
+
+        val signatureTypes = subDescriptor.valueParameters.asSequence().map { it.type } +
+                             subDescriptor.returnType!! +
+                             subDescriptor.extensionReceiverParameter?.type.singletonOrEmptyList()
+
+        if (signatureTypes.any { it.arguments.isNotEmpty() && it.getCapability<RawTypeTag>() == null }) return Result.UNKNOWN
 
         var erasedSuper = superDescriptor.substitute(RawSubstitution.buildSubstitutor()) ?: return Result.UNKNOWN
 
