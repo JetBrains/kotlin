@@ -335,13 +335,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 }
             }
             val dirtyFiles = dirtyKotlinSourcesFromGradle().toSet()
-            // first dirty files should be found and only then caches cleared
-            val removedKotlinFiles = removed.filter { it.isKotlinFile() }
-            targets.forEach { getIncrementalCache(it).let {
-                it.markOutputClassesDirty(removedKotlinFiles)
-                it.removeClassfilesBySources(removedKotlinFiles)
-            }}
-
             return Pair(dirtyFiles, true)
         }
 
@@ -385,6 +378,12 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
 
         while (sourcesToCompile.any() || currentRemoved.any()) {
+            val removedAndModified = (sourcesToCompile + currentRemoved).toList()
+            targets.forEach { getIncrementalCache(it).let {
+                it.markOutputClassesDirty(removedAndModified)
+                it.removeClassfilesBySources(removedAndModified)
+            }}
+
             logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString{ projectRelativePath(it) }}")
 
             val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
