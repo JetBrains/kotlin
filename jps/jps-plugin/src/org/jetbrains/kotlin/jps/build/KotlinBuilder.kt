@@ -689,8 +689,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     }
 
     class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
+        private var hasErrors = false
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
+            hasErrors = hasErrors or severity.isError
             var prefix = ""
             if (severity == EXCEPTION) {
                 prefix = INTERNAL_ERROR_PREFIX
@@ -704,6 +706,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     location.line.toLong(), location.column.toLong()
             ))
         }
+
+        override fun hasErrors(): Boolean = hasErrors
 
         private fun renderLocationIfNeeded(location: CompilerMessageLocation): String {
             if (location == CompilerMessageLocation.NO_LOCATION) return ""
