@@ -48,17 +48,16 @@ import java.util.concurrent.TimeUnit
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
-        val messageSeverityCollector = MessageSeverityCollector(messageCollector)
         val paths = if (arguments.kotlinHome != null)
             KotlinPathsFromHomeDir(File(arguments.kotlinHome))
         else
             PathUtil.getKotlinPathsForCompiler()
 
-        messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.homePath, CompilerMessageLocation.NO_LOCATION)
-        PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf);
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.homePath, CompilerMessageLocation.NO_LOCATION)
+        PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
 
         val configuration = CompilerConfiguration()
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector)
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
 
         if (IncrementalCompilation.isEnabled()) {
             val incrementalCompilationComponents = services.get(IncrementalCompilationComponents::class.java)
@@ -74,32 +73,32 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
         catch (t: Throwable) {
-            MessageCollectorUtil.reportException(messageSeverityCollector, t)
+            MessageCollectorUtil.reportException(messageCollector, t)
             return INTERNAL_ERROR
         }
-
 
         try {
             PluginCliParser.loadPlugins(arguments, configuration)
         }
         catch (e: PluginCliOptionProcessingException) {
             val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
-            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION)
             return INTERNAL_ERROR
         }
         catch (e: CliOptionProcessingException) {
-            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, e.message!!, CompilerMessageLocation.NO_LOCATION)
+            messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!, CompilerMessageLocation.NO_LOCATION)
             return INTERNAL_ERROR
         }
         catch (t: Throwable) {
-            MessageCollectorUtil.reportException(messageSeverityCollector, t)
+            MessageCollectorUtil.reportException(messageCollector, t)
             return INTERNAL_ERROR
         }
 
-
         if (arguments.script) {
             if (arguments.freeArgs.isEmpty()) {
-                messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "Specify script source path to evaluate", CompilerMessageLocation.NO_LOCATION)
+                messageCollector.report(
+                        CompilerMessageSeverity.ERROR, "Specify script source path to evaluate", CompilerMessageLocation.NO_LOCATION
+                )
                 return COMPILATION_ERROR
             }
             configuration.addKotlinSourceRoot(arguments.freeArgs.get(0))
@@ -131,7 +130,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         putAdvancedOptions(configuration, arguments)
 
-        messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION)
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION)
         try {
             val destination = arguments.destination
 
@@ -151,11 +150,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val friendPaths = arguments.friendPaths?.toList() ?: emptyList<String>()
 
             if (arguments.module != null) {
-                val sanitizedCollector = FilteringMessageCollector(messageSeverityCollector, `in`(CompilerMessageSeverity.VERBOSE))
+                val sanitizedCollector = FilteringMessageCollector(messageCollector, `in`(CompilerMessageSeverity.VERBOSE))
                 val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector)
 
                 if (outputDir != null) {
-                    messageSeverityCollector.report(CompilerMessageSeverity.WARNING, "The '-d' option with a directory destination is ignored because '-module' is specified", CompilerMessageLocation.NO_LOCATION)
+                    messageCollector.report(CompilerMessageSeverity.WARNING, "The '-d' option with a directory destination is ignored because '-module' is specified", CompilerMessageLocation.NO_LOCATION)
                 }
 
                 val directory = File(arguments.module).absoluteFile.parentFile
@@ -165,7 +164,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 environment = createCoreEnvironment(rootDisposable, compilerConfiguration)
 
-                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
+                if (messageCollector.hasErrors()) return COMPILATION_ERROR
 
                 KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.modules, directory, jar, friendPaths, arguments.includeRuntime)
             }
@@ -173,20 +172,20 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
                 environment = createCoreEnvironment(rootDisposable, configuration)
 
-                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
+                if (messageCollector.hasErrors()) return COMPILATION_ERROR
 
                 return KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs)
             }
             else {
                 environment = createCoreEnvironment(rootDisposable, configuration)
 
-                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
+                if (messageCollector.hasErrors()) return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
                     if (arguments.version) {
                         return OK
                     }
-                    messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION)
+                    messageCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION)
                     return COMPILATION_ERROR
                 }
 
@@ -201,7 +200,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return OK
         }
         catch (e: CompilationException) {
-            messageSeverityCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
+            messageCollector.report(
+                    CompilerMessageSeverity.EXCEPTION,
+                    OutputMessageUtil.renderException(e),
+                    MessageUtil.psiElementToMessageLocation(e.element)
+            )
             return INTERNAL_ERROR
         }
 

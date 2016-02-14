@@ -47,19 +47,23 @@ public class GroupingMessageCollector implements MessageCollector {
         }
     }
 
-    public void flush() {
-        boolean hasError = false;
-
-        Collection<String> keys = sortedKeys();
-        for (String path : keys) {
-            for (Message message : groupedMessages.get(path)) {
-                hasError |= CompilerMessageSeverity.ERRORS.contains(message.severity);
+    @Override
+    public boolean hasErrors() {
+        for (Map.Entry<String, Message> entry : groupedMessages.entries()) {
+            if (entry.getValue().severity.isError()) {
+                return true;
             }
         }
 
-        for (String path : keys) {
+        return false;
+    }
+
+    public void flush() {
+        boolean hasErrors = hasErrors();
+
+        for (String path : sortedKeys()) {
             for (Message message : groupedMessages.get(path)) {
-                if (!hasError || CompilerMessageSeverity.ERRORS.contains(message.severity)) {
+                if (!hasErrors || message.severity.isError()) {
                     delegate.report(message.severity, message.message, message.location);
                 }
             }
