@@ -21,12 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.PrintStream;
 
 public class PrintingMessageCollector implements MessageCollector {
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static final MessageCollector PLAIN_TEXT_TO_SYSTEM_ERR =
             new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false);
 
     private final boolean verbose;
     private final PrintStream errStream;
     private final MessageRenderer messageRenderer;
+    private boolean hasErrors = false;
 
     public PrintingMessageCollector(@NotNull PrintStream errStream, @NotNull MessageRenderer messageRenderer, boolean verbose) {
         this.verbose = verbose;
@@ -42,6 +44,13 @@ public class PrintingMessageCollector implements MessageCollector {
     ) {
         if (!verbose && CompilerMessageSeverity.VERBOSE.contains(severity)) return;
 
+        hasErrors |= severity.isError();
+
         errStream.println(messageRenderer.render(severity, message, location));
+    }
+
+    @Override
+    public boolean hasErrors() {
+        return hasErrors;
     }
 }

@@ -19,17 +19,19 @@ package org.jetbrains.kotlin.cli.common.messages;
 import org.jetbrains.annotations.NotNull;
 
 public interface MessageCollector {
-
     MessageCollector NONE = new MessageCollector() {
         @Override
-        public void report(
-                @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
-        ) {
+        public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
             // Do nothing
+        }
+
+        @Override
+        public boolean hasErrors() {
+            return false;
         }
     };
 
     void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
 
+    boolean hasErrors();
 }
-

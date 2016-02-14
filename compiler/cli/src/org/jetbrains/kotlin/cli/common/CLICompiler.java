@@ -187,9 +187,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 }
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
-                    MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
-                    ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
-                    exitCode = severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
+                    ExitCode code = doExecute(arguments, services, groupingCollector, rootDisposable);
+                    exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
                 }
                 catch (CompilationCanceledException e) {
                     messageCollector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", CompilerMessageLocation.NO_LOCATION);

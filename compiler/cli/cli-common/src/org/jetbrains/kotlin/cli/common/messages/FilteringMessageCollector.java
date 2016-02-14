@@ -36,4 +36,9 @@ public class FilteringMessageCollector implements MessageCollector {
             messageCollector.report(severity, message, location);
         }
     }
+
+    @Override
+    public boolean hasErrors() {
+        return messageCollector.hasErrors();
+    }
 }
