@@ -35,7 +35,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.cli.common.messages.MessageSeverityCollector;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -158,7 +157,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
             CompilerConfiguration configuration = new CompilerConfiguration();
 
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageSeverityCollector(messageCollector));
+            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
             List<File> deps = new ArrayList<File>();
 

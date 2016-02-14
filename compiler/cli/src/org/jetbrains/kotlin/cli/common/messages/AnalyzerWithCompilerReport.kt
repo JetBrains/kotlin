@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.util.*
 
-
-class AnalyzerWithCompilerReport(collector: MessageCollector) {
-    private val messageCollector: MessageSeverityCollector = MessageSeverityCollector(collector)
-
+class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector) {
     lateinit var analysisResult: AnalysisResult
 
     private fun reportIncompleteHierarchies() {
@@ -115,7 +112,7 @@ class AnalyzerWithCompilerReport(collector: MessageCollector) {
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
 
     fun hasErrors(): Boolean {
-        return messageCollector.anyReported(CompilerMessageSeverity.ERROR)
+        return messageCollector.hasErrors()
     }
 
     interface Analyzer {

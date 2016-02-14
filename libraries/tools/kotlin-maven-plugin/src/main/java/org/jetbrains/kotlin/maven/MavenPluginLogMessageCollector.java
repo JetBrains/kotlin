@@ -24,9 +24,15 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 
 public class MavenPluginLogMessageCollector implements MessageCollector {
     private final Log log;
+    private boolean hasErrors = false;
 
     public MavenPluginLogMessageCollector(Log log) {
         this.log = log;
+    }
+
+    @Override
+    public boolean hasErrors() {
+        return hasErrors;
     }
 
     @Override
@@ -39,6 +45,7 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
         if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
             log.debug(text);
         } else if (CompilerMessageSeverity.ERRORS.contains(severity)) {
+            hasErrors = true;
             log.error(text);
         } else if (severity == CompilerMessageSeverity.INFO) {
             log.info(text);
