@@ -174,5 +174,5 @@ private val OUTDATED_RUNTIME_GROUP_DISPLAY_ID = "Outdated Kotlin Runtime"
 
 fun isRuntimeOutdated(libraryVersion: String?, runtimeVersion: String): Boolean {
     return libraryVersion == null || libraryVersion.startsWith("internal-") != runtimeVersion.startsWith("internal-") ||
-           VersionComparatorUtil.compare(runtimeVersion, libraryVersion) > 0
+           VersionComparatorUtil.compare(runtimeVersion.substringBefore("-release-"), libraryVersion) > 0
 }
