@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
@@ -208,8 +209,9 @@ public final class WhenTranslator extends AbstractTranslator {
         Map<KtExpression, JsExpression> subjectAliases = new HashMap<KtExpression, JsExpression>();
         subjectAliases.put(whenExpression.getSubjectExpression(), expressionToMatch);
         TranslationContext callContext = context.innerContextWithAliasesForExpressions(subjectAliases);
-        return new InOperationTranslator(callContext, expressionToMatch, condition.getRangeExpression(), condition.getOperationReference())
-                .translate();
+        boolean negated = condition.getOperationReference().getReferencedNameElementType() == KtTokens.NOT_IN;
+        return new InOperationTranslator(callContext, expressionToMatch, condition.getRangeExpression(), condition.getOperationReference(),
+                                         negated).translate();
     }
 
     @Nullable
