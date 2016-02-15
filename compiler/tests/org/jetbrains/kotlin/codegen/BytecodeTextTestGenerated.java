@@ -625,6 +625,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("partialString.kt")
+        public void testPartialString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/partialString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("short.kt")
         public void testShort() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/short.kt");

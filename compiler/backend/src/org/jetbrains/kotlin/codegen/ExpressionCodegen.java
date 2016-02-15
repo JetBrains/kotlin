@@ -3184,7 +3184,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     public void invokeAppend(KtExpression expr) {
-        if (expr instanceof KtBinaryExpression) {
+        ConstantValue<?> compileTimeConstant = getPrimitiveOrStringCompileTimeConstant(expr, bindingContext);
+
+        if (compileTimeConstant == null && expr instanceof KtBinaryExpression) {
             KtBinaryExpression binaryExpression = (KtBinaryExpression) expr;
             if (binaryExpression.getOperationToken() == KtTokens.PLUS) {
                 KtExpression left = binaryExpression.getLeft();
@@ -3198,8 +3200,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
         }
+
         Type exprType = expressionType(expr);
-        gen(expr, exprType);
+        if (compileTimeConstant != null) {
+            StackValue.constant(compileTimeConstant.getValue(), exprType).put(exprType, v);
+        } else {
+            gen(expr, exprType);
+        }
         genInvokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
     }
 
