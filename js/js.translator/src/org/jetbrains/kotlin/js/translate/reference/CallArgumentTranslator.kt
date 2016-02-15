@@ -237,6 +237,9 @@ class CallArgumentTranslator private constructor(
                 val concatExpression = concatArgumentsIfNeeded(concatArguments)
                 result.add(concatExpression)
             }
+            else if (result.size == 1) {
+                result[0] = JsAstUtils.invokeMethod(result[0], "slice")
+            }
 
             return resultKind
         }

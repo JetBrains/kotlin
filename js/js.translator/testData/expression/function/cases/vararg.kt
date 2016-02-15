@@ -103,5 +103,8 @@ fun box(): String {
     assertEquals(3, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6))).size)
     assertEquals(6, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6)), arrayOf(7), *arrayOf(arrayOf(8, 9), arrayOf(10, 11))).size)
 
+    val c = arrayOf(*a)
+    assertFalse(a === c, "Spread operator should copy its argument")
+
     return "OK"
 }
