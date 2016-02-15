@@ -251,30 +251,6 @@ class CallExpressionResolver(
         return noTypeInfo(context)
     }
 
-    private fun getSelectorReturnTypeInfo(
-            receiver: Receiver,
-            callOperationNode: ASTNode?,
-            selectorExpression: KtExpression?,
-            context: ExpressionTypingContext,
-            initialDataFlowInfoForArguments: DataFlowInfo
-    ): KotlinTypeInfo {
-        when (selectorExpression) {
-            is KtCallExpression -> {
-                return getCallExpressionTypeInfoWithoutFinalTypeCheck(selectorExpression, receiver,
-                                                                      callOperationNode, context, initialDataFlowInfoForArguments)
-            }
-            is KtSimpleNameExpression -> {
-                return getSimpleNameExpressionTypeInfo(
-                        selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments)
-            }
-            is KtExpression -> {
-                expressionTypingServices.getTypeInfo(selectorExpression, context)
-                context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.text))
-            }
-        }
-        return noTypeInfo(context)
-    }
-
     private fun KtQualifiedExpression.elementChain(context: ExpressionTypingContext) =
             qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(this, context) {
                 nameExpression ->
@@ -295,6 +271,89 @@ class CallExpressionResolver(
                 }
             }
 
+    private fun getUnsafeSelectorTypeInfo(
+            receiver: Receiver,
+            callOperationNode: ASTNode?,
+            selectorExpression: KtExpression?,
+            context: ExpressionTypingContext,
+            initialDataFlowInfoForArguments: DataFlowInfo
+    ): KotlinTypeInfo = when (selectorExpression) {
+        is KtCallExpression -> getCallExpressionTypeInfoWithoutFinalTypeCheck(
+                selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments)
+        is KtSimpleNameExpression -> getSimpleNameExpressionTypeInfo(
+                selectorExpression, receiver, callOperationNode, context, initialDataFlowInfoForArguments)
+        is KtExpression -> {
+            expressionTypingServices.getTypeInfo(selectorExpression, context)
+            context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.text))
+            noTypeInfo(context)
+        }
+        else /*null*/ -> noTypeInfo(context)
+    }
+
+    private fun getSafeOrUnsafeSelectorTypeInfo(receiver: Receiver, element: CallExpressionElement, context: ExpressionTypingContext):
+            KotlinTypeInfo {
+        var initialDataFlowInfoForArguments = context.dataFlowInfo
+        val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
+        val receiverCanBeNull = receiverDataFlowValue != null &&
+                                initialDataFlowInfoForArguments.getPredictableNullability(receiverDataFlowValue).canBeNull()
+        if (receiverDataFlowValue != null && element.safe) {
+            // Additional "receiver != null" information should be applied if we consider a safe call
+            if (receiverCanBeNull) {
+                initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
+                        receiverDataFlowValue, DataFlowValue.nullValue(builtIns))
+            }
+            else if (receiver is ReceiverValue) {
+                reportUnnecessarySafeCall(context.trace, receiver.type, element.node, receiver)
+            }
+        }
+
+        val selector = element.selector
+        var selectorTypeInfo = getUnsafeSelectorTypeInfo(receiver, element.node, selector, context, initialDataFlowInfoForArguments)
+
+        if (receiver is QualifierReceiver) {
+            resolveDeferredReceiverInQualifiedExpression(receiver, selector, context)
+        }
+
+        val selectorType = selectorTypeInfo.type
+        if (selectorType != null) {
+            if (element.safe && receiverCanBeNull) {
+                selectorTypeInfo = selectorTypeInfo.replaceType(TypeUtils.makeNullable(selectorType))
+            }
+            // TODO : this is suspicious: remove this code?
+            if (selector != null) {
+                context.trace.recordType(selector, selectorTypeInfo.type)
+            }
+        }
+        return selectorTypeInfo
+    }
+
+    private fun checkSelectorTypeInfo(qualified: KtQualifiedExpression, selectorTypeInfo: KotlinTypeInfo, context: ExpressionTypingContext):
+            KotlinTypeInfo {
+        checkNestedClassAccess(qualified, context)
+        val value = constantExpressionEvaluator.evaluateExpression(qualified, context.trace, context.expectedType)
+        return if (value != null && value.isPure) {
+            dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, qualified, context)
+        }
+        else {
+            if (context.contextDependency == INDEPENDENT) {
+                dataFlowAnalyzer.checkType(selectorTypeInfo.type, qualified, context)
+            }
+            selectorTypeInfo
+        }
+    }
+
+    private fun recordResultTypeInfo(qualified: KtQualifiedExpression, resultTypeInfo: KotlinTypeInfo, context: ExpressionTypingContext) {
+        val trace = context.trace
+        if (trace.get(BindingContext.PROCESSED, qualified) != true) {
+            // Store type information (to prevent problems in call completer)
+            trace.record(BindingContext.PROCESSED, qualified)
+            trace.record(BindingContext.EXPRESSION_TYPE_INFO, qualified, resultTypeInfo)
+            // save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
+            trace.recordScope(context.scope, qualified)
+            context.replaceDataFlowInfo(resultTypeInfo.dataFlowInfo).recordDataFlowInfo(qualified)
+        }
+    }
+
     /**
      * Visits a qualified expression like x.y or x?.z controlling data flow information changes.
 
@@ -314,21 +373,23 @@ class CallExpressionResolver(
 
         var resultTypeInfo = receiverTypeInfo
 
-        var unconditional = true
-        var unconditionalDataFlowInfo = receiverTypeInfo.dataFlowInfo
+        var allUnsafe = true
+        // Branch point: right before first safe call
+        var branchPointDataFlowInfo = receiverTypeInfo.dataFlowInfo
 
         for (element in elementChain) {
-            val receiverType = receiverTypeInfo.type ?: ErrorUtils.createErrorType("Type for " + expression.text)
-            val qualifierReceiver = trace.get(BindingContext.QUALIFIER, element.receiver) as QualifierReceiver?
+            val receiverType = receiverTypeInfo.type ?: ErrorUtils.createErrorType("Type for " + element.receiver.text)
 
-            val receiver = qualifierReceiver ?: ExpressionReceiver.create(element.receiver, receiverType, trace.bindingContext)
+            val receiver = trace.get(BindingContext.QUALIFIER, element.receiver) as QualifierReceiver?
+                           ?: ExpressionReceiver.create(element.receiver, receiverType, trace.bindingContext)
 
-            val lastStage = element.qualified === expression
+            val qualifiedExpression = element.qualified
+            val lastStage = qualifiedExpression === expression
             // Drop NO_EXPECTED_TYPE / INDEPENDENT at last stage
             val contextForSelector = (if (lastStage) context else currentContext).replaceDataFlowInfo(
-                    if (TypeUtils.isNullableType(receiverType) && !element.safe) {
-                        // Call with nullable receiver: take unconditional data flow info
-                        unconditionalDataFlowInfo
+                    if (receiver is ReceiverValue && TypeUtils.isNullableType(receiver.type) && !element.safe) {
+                        // Call with nullable receiver: take data flow info from branch point
+                        branchPointDataFlowInfo
                     }
                     else {
                         // Take data flow info from the current receiver
@@ -336,79 +397,30 @@ class CallExpressionResolver(
                     }
             )
 
-            var initialDataFlowInfoForArguments = contextForSelector.dataFlowInfo
-            val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
-            if (receiverDataFlowValue != null && element.safe) {
-                // Additional "receiver != null" information should be applied if we consider a safe call
-                if (initialDataFlowInfoForArguments.getPredictableNullability(receiverDataFlowValue).canBeNull()) {
-                    initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
-                            receiverDataFlowValue, DataFlowValue.nullValue(builtIns))
-                }
-                else {
-                    reportUnnecessarySafeCall(trace, receiverType, element.node, receiver)
-                }
+            val selectorTypeInfo = getSafeOrUnsafeSelectorTypeInfo(receiver, element, contextForSelector)
+            // if we have only dots and not ?. move branch point further
+            allUnsafe = allUnsafe && !element.safe
+            if (allUnsafe) {
+                branchPointDataFlowInfo = selectorTypeInfo.dataFlowInfo
             }
 
-            val selectorExpression = element.selector
-            var selectorReturnTypeInfo = getSelectorReturnTypeInfo(
-                    receiver, element.node, selectorExpression, contextForSelector, initialDataFlowInfoForArguments)
-            var selectorReturnType = selectorReturnTypeInfo.type
-
-            if (qualifierReceiver != null) {
-                resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.qualified, contextForSelector)
-            }
-            checkNestedClassAccess(element.qualified, contextForSelector)
-
-            val safeCall = element.safe
-            if (safeCall && selectorReturnType != null && receiverDataFlowValue != null &&
-                contextForSelector.dataFlowInfo.getPredictableNullability(receiverDataFlowValue).canBeNull()) {
-                selectorReturnType = TypeUtils.makeNullable(selectorReturnType)
-                selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType)
-            }
-
-            // TODO : this is suspicious: remove this code?
-            if (selectorExpression != null && selectorReturnType != null) {
-                trace.recordType(selectorExpression, selectorReturnType)
-            }
-            resultTypeInfo = selectorReturnTypeInfo
-            val value = constantExpressionEvaluator.evaluateExpression(element.qualified, trace, contextForSelector.expectedType)
-            if (value != null && value.isPure) {
-                resultTypeInfo = dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, element.qualified, contextForSelector)
-                if (lastStage) return resultTypeInfo
-            }
-            if (contextForSelector.contextDependency == INDEPENDENT) {
-                dataFlowAnalyzer.checkType(resultTypeInfo.type, element.qualified, contextForSelector)
+            resultTypeInfo = checkSelectorTypeInfo(qualifiedExpression, selectorTypeInfo, contextForSelector).
+                             replaceDataFlowInfo(branchPointDataFlowInfo)
+            if (!lastStage) {
+                recordResultTypeInfo(qualifiedExpression, resultTypeInfo, contextForSelector)
             }
             // For the next stage, if any, current stage selector is the receiver!
-            receiverTypeInfo = selectorReturnTypeInfo
-            // if we have only dots and not ?. move unconditional data flow info further
-            if (safeCall) {
-                unconditional = false
-            }
-            else if (unconditional) {
-                unconditionalDataFlowInfo = receiverTypeInfo.dataFlowInfo
-            }
-            //noinspection ConstantConditions
-            if (!lastStage && trace.get(BindingContext.PROCESSED, element.qualified) != true) {
-                // Store type information (to prevent problems in call completer)
-                trace.record(BindingContext.PROCESSED, element.qualified)
-                trace.record(BindingContext.EXPRESSION_TYPE_INFO, element.qualified,
-                             resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo))
-                // save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
-                trace.recordScope(contextForSelector.scope, element.qualified)
-                contextForSelector.replaceDataFlowInfo(unconditionalDataFlowInfo).recordDataFlowInfo(element.qualified)
-            }
+            receiverTypeInfo = selectorTypeInfo
         }
-        // if we are at last stage, we should just take result type info and set unconditional data flow info
-        return resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo)
+        return resultTypeInfo
     }
 
     private fun resolveDeferredReceiverInQualifiedExpression(
             qualifierReceiver: QualifierReceiver,
-            qualifiedExpression: KtQualifiedExpression,
+            selectorExpression: KtExpression?,
             context: ExpressionTypingContext
     ) {
-        val calleeExpression = KtPsiUtil.deparenthesize(qualifiedExpression.selectorExpression.getCalleeExpressionIfAny())
+        val calleeExpression = KtPsiUtil.deparenthesize(selectorExpression.getCalleeExpressionIfAny())
         val selectorDescriptor = (calleeExpression as? KtReferenceExpression)?.let {
             context.trace.get(BindingContext.REFERENCE_TARGET, it)
         }
