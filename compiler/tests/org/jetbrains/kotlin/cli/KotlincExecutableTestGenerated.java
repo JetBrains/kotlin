@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -301,12 +301,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("diagnosticForClassLiteral.args")
         public void testDiagnosticForClassLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticForClassLiteral.args");
-            doJsTest(fileName);
-        }
-
-        @TestMetadata("diagnosticForUnhandledElements.args")
-        public void testDiagnosticForUnhandledElements() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticForUnhandledElements.args");
             doJsTest(fileName);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,12 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -495,5 +499,27 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsName name = context.getNameForDescriptor(descriptor);
         JsExpression value = ClassTranslator.generateClassCreation(expression, context);
         return newVar(name, value).source(expression);
+    }
+
+    @Override
+    public JsNode visitAnnotatedExpression(@NotNull KtAnnotatedExpression expression, TranslationContext context) {
+        for (KtAnnotationEntry entry : expression.getAnnotationEntries()) {
+            AnnotationDescriptor descriptor = context.bindingContext().get(BindingContext.ANNOTATION, entry);
+            if (descriptor == null) continue;
+
+            ClassifierDescriptor classifierDescriptor = descriptor.getType().getConstructor().getDeclarationDescriptor();
+            if (classifierDescriptor == null) continue;
+
+            KotlinRetention retention = DescriptorUtilsKt.getAnnotationRetention(classifierDescriptor);
+
+            if (retention == KotlinRetention.SOURCE) {
+                KtExpression baseExpression = expression.getBaseExpression();
+                if (baseExpression == null) continue;
+
+                return baseExpression.accept(this, context);
+            }
+        }
+
+        return super.visitAnnotatedExpression(expression, context);
     }
 }
