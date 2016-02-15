@@ -16,7 +16,14 @@
 
 package org.jetbrains.kotlin.js.test.semantics;
 
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.JavaScript;
+import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest;
+
+import java.io.File;
+import java.util.List;
 
 public class NestedTypesTest extends SingleFileTranslationTest {
     public NestedTypesTest() {
@@ -41,5 +48,23 @@ public class NestedTypesTest extends SingleFileTranslationTest {
 
     public void testOuterObject() throws Exception {
         checkFooBoxIsOk();
+    }
+
+    public void testNestedNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    @NotNull
+    @Override
+    protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
+        List<String> result = Lists.newArrayList(super.additionalJsFiles(ecmaVersion));
+
+        String jsFilePath = pathToTestDir() + "native/" + getTestName(true) + JavaScript.DOT_EXTENSION;
+        File jsFile = new File(jsFilePath);
+        if (jsFile.exists() && jsFile.isFile()) {
+            result.add(jsFilePath);
+        }
+
+        return result;
     }
 }
