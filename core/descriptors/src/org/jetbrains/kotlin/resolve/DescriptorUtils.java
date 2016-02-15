@@ -61,10 +61,6 @@ public class DescriptorUtils {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
             return classDescriptor.getThisAsReceiverParameter();
         }
-        else if (containingDeclaration instanceof ScriptDescriptor) {
-            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) containingDeclaration;
-            return scriptDescriptor.getThisAsReceiverParameter();
-        }
         return null;
     }
 

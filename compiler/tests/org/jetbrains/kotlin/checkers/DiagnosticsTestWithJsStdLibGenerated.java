@@ -490,6 +490,21 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nested")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Nested extends AbstractDiagnosticsTestWithJsStdLib {
+            public void testAllFilesPresentInNested() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nested"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("nativeNestedClassProhibited.kt")
+            public void testNativeNestedClassProhibited() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nested/nativeNestedClassProhibited.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/optionlBody")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

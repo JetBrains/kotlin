@@ -19,30 +19,19 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.rendering.renderKind
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
-import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class LocalClassChecker : DeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
-        if (descriptor !is ClassDescriptor || declaration !is KtNamedDeclaration) {
-            return;
-        }
-        if (isAnonymousObject(descriptor) || isObject(descriptor) || AnnotationsUtils.isNativeObject(descriptor)) {
-            return
-        }
+class NativeInnerClassChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
+                       bindingContext: BindingContext) {
+        if (descriptor !is ClassDescriptor || !AnnotationsUtils.isNativeObject(descriptor)) return
 
-        if (isLocal(descriptor)) {
-            diagnosticHolder.report(ErrorsJs.NON_TOPLEVEL_CLASS_DECLARATION.on(declaration, descriptor.renderKind()))
+        if (descriptor.isInner && !AnnotationsUtils.isNativeObject(DescriptorUtils.getContainingClass(descriptor)!!)) {
+            diagnosticHolder.report(ErrorsJs.NATIVE_INNER_CLASS_PROHIBITED.on(declaration))
         }
     }
 }

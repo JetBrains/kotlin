@@ -124,7 +124,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         }
 
         // TODO: avoid name clashing
-        JsName outerName = initFunction.getScope().declareName("$outer");
+        JsName outerName = initFunction.getScope().declareName(Namer.OUTER_FIELD_NAME);
         initFunction.getParameters().add(0, new JsParameter(outerName));
 
         JsExpression target = new JsNameRef(outerName, JsLiteral.THIS);

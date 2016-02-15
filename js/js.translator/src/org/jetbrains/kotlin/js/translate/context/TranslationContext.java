@@ -421,14 +421,15 @@ public class TranslationContext {
     }
 
     @Nullable
-    private static ClassDescriptor getNearestClass(@Nullable DeclarationDescriptor declaration) {
-        while (declaration != null) {
-            if (declaration instanceof ClassDescriptor) {
-                if (!DescriptorUtils.isAnonymousObject(declaration) && !DescriptorUtils.isObject(declaration)) {
-                    return (ClassDescriptor) declaration;
+    private static ClassDescriptor getNearestClass(@NotNull DeclarationDescriptor declaration) {
+        DeclarationDescriptor decl = declaration;
+        while (decl != null) {
+            if (decl instanceof ClassDescriptor) {
+                if (!DescriptorUtils.isAnonymousObject(decl) && !DescriptorUtils.isObject(decl)) {
+                    return (ClassDescriptor) decl;
                 }
             }
-            declaration = declaration.getContainingDeclaration();
+            decl = decl.getContainingDeclaration();
         }
         return null;
     }
@@ -445,14 +446,8 @@ public class TranslationContext {
         return descriptor;
     }
 
-    public boolean hasEnclosingFunction() {
+    public boolean isLocal() {
         DeclarationDescriptor descriptor = declarationDescriptor;
-        while (descriptor != null) {
-            if (descriptor instanceof FunctionDescriptor) {
-                return true;
-            }
-            descriptor = descriptor.getContainingDeclaration();
-        }
-        return false;
+        return descriptor != null && DescriptorUtils.isLocal(descriptor);
     }
 }

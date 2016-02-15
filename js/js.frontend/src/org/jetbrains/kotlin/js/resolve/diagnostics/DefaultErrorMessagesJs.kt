@@ -37,6 +37,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED, "Callable references for builtin members are not supported yet: ''{0}''", RenderFirstLineOfElementText)
         put(ErrorsJs.NON_TOPLEVEL_CLASS_DECLARATION, "Non-toplevel {0} declarations not supported yet", Renderers.STRING)
         put(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED, "Argument must be non-empty JavaScript code")
+        put(ErrorsJs.NATIVE_INNER_CLASS_PROHIBITED, "Native inner classes are prohibited")
 
         this
     }

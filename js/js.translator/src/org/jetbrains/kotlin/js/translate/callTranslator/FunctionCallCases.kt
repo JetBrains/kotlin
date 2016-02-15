@@ -204,35 +204,27 @@ object ConstructorCallCase : FunctionCallCase() {
     }
 
     override fun FunctionCallInfo.noReceivers(): JsExpression {
-        val fqName = context.getQualifiedReference(callableDescriptor)
-
-        val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
-
-        val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
-            return JsNew(functionRef, argumentsInfo.translateArguments)
-        }
-        else {
-            return JsInvocation(functionRef, argumentsInfo.translateArguments)
-        }
+        return receiver { it }
     }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
+        return receiver {
+            val receiver = superCallReceiver
+            if (receiver != null) (sequenceOf(receiver) + it).toList() else it
+        }
+    }
+
+    private inline fun FunctionCallInfo.receiver(argumentTranslator: (List<JsExpression>) -> List<JsExpression>): JsExpression {
         val fqName = context.getQualifiedReference(callableDescriptor)
-        val functionRef = context.aliasOrValue(callableDescriptor) { fqName }
+        val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
+        val arguments = argumentTranslator(argumentsInfo.translateArguments)
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
-        val receiver = superCallReceiver
-        var allArguments = when (receiver) {
-            null -> argumentsInfo.translateArguments
-            else -> (sequenceOf(receiver) + argumentsInfo.translateArguments).toList()
-        }
-
         if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
-            return JsNew(functionRef, allArguments)
+            return JsNew(functionRef, arguments)
         }
         else {
-            return JsInvocation(functionRef, allArguments)
+            return JsInvocation(functionRef, arguments)
         }
     }
 }

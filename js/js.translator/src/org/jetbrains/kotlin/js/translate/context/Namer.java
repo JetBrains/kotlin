@@ -65,6 +65,8 @@ public final class Namer {
     public static final String CALL_FUNCTION = "call";
     private static final String APPLY_FUNCTION = "apply";
 
+    public static final String OUTER_FIELD_NAME = "$outer";
+
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String ENUM_CLASS_OBJECT_NAME = "createEnumClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
