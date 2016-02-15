@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
@@ -269,11 +270,6 @@ class LookupElementFactory(
         if (receiverTypes == null) return null
         if (descriptor !is CallableDescriptor) return null
 
-        val overridden = descriptor.overriddenDescriptors
-        if (overridden.isNotEmpty()) {
-            return overridden.map { callableWeight(it)!! }.min()!!
-        }
-
         // don't treat synthetic extensions as real extensions
         if (descriptor is SyntheticJavaPropertyDescriptor) {
             return callableWeight(descriptor.getMethod)
@@ -282,27 +278,50 @@ class LookupElementFactory(
             return callableWeight(descriptor.sourceFunction)
         }
 
-        val receiverParameter = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
-        if (receiverParameter != null) {
-            return if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParameter.type) }) {
-                when {
-                    descriptor.isExtensionForTypeParameter() -> CallableWeight.typeParameterExtension
-                    descriptor.isExtension -> CallableWeight.thisTypeExtension
-                    else -> CallableWeight.thisClassMember
-                }
-            }
-            else if (receiverTypes.any { it.isSubtypeOf(receiverParameter.type) }) {
-                if (descriptor.isExtension) CallableWeight.baseTypeExtension else CallableWeight.baseClassMember
-            }
-            else {
-                CallableWeight.receiverCastRequired
-            }
+        if (descriptor.overriddenDescriptors.isNotEmpty()) {
+            // Optimization: when one of direct overridden fits, then nothing can fit better
+            descriptor.overriddenDescriptors.mapNotNull {
+                it.callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch = null)
+            }.min()?.let { return it }
+
+            val overridden = descriptor.overriddenTreeUniqueAsSequence(useOriginal = false)
+            return overridden.map { callableWeightBasic(it, receiverTypes)!! }.min()!!
         }
+
+        return callableWeightBasic(descriptor, receiverTypes)
+    }
+
+    private fun callableWeightBasic(descriptor: CallableDescriptor, receiverTypes: Collection<KotlinType>): CallableWeight? {
+        descriptor.callableWeightBasedOnReceiver(receiverTypes, CallableWeight.receiverCastRequired)?.let { return it }
 
         return when (descriptor.containingDeclaration) {
             is PackageFragmentDescriptor, is ClassifierDescriptor -> CallableWeight.globalOrStatic
             else -> CallableWeight.local
         }
+    }
+
+    private fun CallableDescriptor.callableWeightBasedOnReceiver(
+            receiverTypes: Collection<KotlinType>,
+            onReceiverTypeMismatch: CallableWeight?
+    ): CallableWeight? {
+        val receiverParameter = extensionReceiverParameter ?: dispatchReceiverParameter
+        if (receiverParameter != null) {
+            return if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParameter.type) }) {
+                when {
+                    isExtensionForTypeParameter() -> CallableWeight.typeParameterExtension
+                    isExtension -> CallableWeight.thisTypeExtension
+                    else -> CallableWeight.thisClassMember
+                }
+            }
+            else if (receiverTypes.any { it.isSubtypeOf(receiverParameter.type) }) {
+                if (isExtension) CallableWeight.baseTypeExtension else CallableWeight.baseClassMember
+            }
+            else {
+                onReceiverTypeMismatch
+            }
+        }
+
+        return null
     }
 
     private fun CallableDescriptor.isExtensionForTypeParameter(): Boolean {
