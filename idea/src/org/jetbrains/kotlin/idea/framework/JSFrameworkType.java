@@ -47,6 +47,6 @@ public class JSFrameworkType extends FrameworkTypeEx {
     @NotNull
     @Override
     public Icon getIcon() {
-        return KotlinIcons.SMALL_LOGO_13;
+        return KotlinIcons.SMALL_LOGO;
     }
 }
