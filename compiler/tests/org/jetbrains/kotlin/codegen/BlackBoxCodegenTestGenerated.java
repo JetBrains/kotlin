@@ -6175,6 +6175,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionNtoStringNoReflect.kt")
+        public void testFunctionNtoStringNoReflect() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionNtoStringNoReflect.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("infixRecursiveCall.kt")
         public void testInfixRecursiveCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/infixRecursiveCall.kt");

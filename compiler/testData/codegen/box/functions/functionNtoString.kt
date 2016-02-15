@@ -1,28 +1,35 @@
+// WITH_REFLECT
+
 fun check(expected: String, obj: Any?) {
     val actual = obj.toString()
     if (actual != expected)
         throw AssertionError("Expected: $expected, actual: $actual")
 }
 
-
 fun box(): String {
-    check("kotlin.jvm.functions.Function0<kotlin.Unit>")
+    check("() -> kotlin.Unit")
     { -> }
-    check("kotlin.jvm.functions.Function0<java.lang.Integer>")
+    check("() -> kotlin.Int")
     { -> 42 }
-    check("kotlin.jvm.functions.Function1<java.lang.String, java.lang.Long>",
+    check("(kotlin.String) -> kotlin.Long",
           fun (s: String) = 42.toLong())
-    check("kotlin.jvm.functions.Function2<java.lang.Integer, java.lang.Integer, kotlin.Unit>")
+    check("(kotlin.Int, kotlin.Int) -> kotlin.Unit")
     { x: Int, y: Int -> }
 
-    check("kotlin.jvm.functions.Function1<java.lang.Integer, kotlin.Unit>",
+    check("kotlin.Int.() -> kotlin.Unit",
           fun Int.() {})
-    check("kotlin.jvm.functions.Function1<kotlin.Unit, java.lang.Integer>",
-          fun Unit.(): Int = 42)
-    check("kotlin.jvm.functions.Function2<java.lang.String, java.lang.String, java.lang.Long>",
-          fun String.(s: String): Long = 42.toLong())
-    check("kotlin.jvm.functions.Function3<java.lang.Integer, java.lang.Integer, java.lang.Integer, kotlin.Unit>",
-          fun Int.(x: Int, y: Int) {})
+    check("kotlin.Unit.() -> kotlin.Int?",
+          fun Unit.(): Int? = 42)
+    check("kotlin.String.(kotlin.String?) -> kotlin.Long",
+          fun String.(s: String?): Long = 42.toLong())
+    check("kotlin.collections.List<kotlin.String>.(kotlin.collections.MutableSet<*>, kotlin.Nothing) -> kotlin.Unit",
+          fun List<String>.(x: MutableSet<*>, y: Nothing) {})
+
+    check("(kotlin.IntArray, kotlin.ByteArray, kotlin.ShortArray, kotlin.CharArray, kotlin.LongArray, kotlin.BooleanArray, kotlin.FloatArray, kotlin.DoubleArray) -> kotlin.Array<kotlin.Int>",
+          fun (ia: IntArray, ba: ByteArray, sa: ShortArray, ca: CharArray, la: LongArray, za: BooleanArray, fa: FloatArray, da: DoubleArray): Array<Int> = null!!)
+
+    check("(kotlin.Array<kotlin.Array<kotlin.Array<kotlin.collections.List<kotlin.String>>>>) -> kotlin.Comparable<kotlin.String>",
+          fun (a: Array<Array<Array<List<String>>>>): Comparable<String> = null!!)
 
     return "OK"
 }

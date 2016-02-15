@@ -18,6 +18,8 @@ package kotlin.reflect.jvm.internal;
 
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
+import kotlin.reflect.jvm.ReflectLambdaKt;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 
 /**
  * @suppress
@@ -47,6 +49,18 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
         return KClassCacheKt.getOrCreateKotlinClass(javaClass);
+    }
+
+    @Override
+    public String renderLambdaToString(Lambda lambda) {
+        KFunction kFunction = ReflectLambdaKt.reflect(lambda);
+        if (kFunction != null) {
+            KFunctionImpl impl = UtilKt.asKFunctionImpl(kFunction);
+            if (impl != null) {
+                return ReflectionObjectRenderer.INSTANCE.renderLambda(impl.getDescriptor());
+            }
+        }
+        return super.renderLambdaToString(lambda);
     }
 
     // Functions

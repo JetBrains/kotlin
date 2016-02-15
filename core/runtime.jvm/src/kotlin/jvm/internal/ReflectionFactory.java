@@ -19,6 +19,8 @@ package kotlin.jvm.internal;
 import kotlin.reflect.*;
 
 public class ReflectionFactory {
+    private static final String KOTLIN_JVM_FUNCTIONS = "kotlin.jvm.functions.";
+
     public KClass createKotlinClass(Class javaClass) {
         return new ClassReference(javaClass);
     }
@@ -37,6 +39,11 @@ public class ReflectionFactory {
 
     public KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
         return new ClassReference(javaClass);
+    }
+
+    public String renderLambdaToString(Lambda lambda) {
+        String result = lambda.getClass().getGenericInterfaces()[0].toString();
+        return result.startsWith(KOTLIN_JVM_FUNCTIONS) ? result.substring(KOTLIN_JVM_FUNCTIONS.length()) : result;
     }
 
     // Functions
