@@ -9,4 +9,4 @@ fun foo(x : String) : String {
     return "other"
 }
 
-// 1 LOOKUPSWITCH
+// 0 LOOKUPSWITCH

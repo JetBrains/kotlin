@@ -1131,9 +1131,11 @@ public abstract class StackValue {
         }
 
         private boolean inlineJavaConstantIfNeeded(@NotNull Type type, @NotNull InstructionAdapter v) {
-            if (!isStaticPut) return false;
-            if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
-            if (!AsmUtil.isPrimitive(this.type) && !this.type.equals(Type.getObjectType("java/lang/String"))) return false;
+            if (!JvmCodegenUtil.isInlinedJavaConstProperty(descriptor)) return false;
+
+            assert AsmUtil.isPrimitive(this.type) || AsmTypes.JAVA_STRING_TYPE.equals(this.type) :
+                    "Java const property should have primitive or string type: " + descriptor;
+            assert isStaticPut : "Java const property should be static" + descriptor;
 
             JavaPropertyDescriptor javaPropertyDescriptor = (JavaPropertyDescriptor) descriptor;
             ConstantValue<?> constantValue = javaPropertyDescriptor.getCompileTimeInitializer();

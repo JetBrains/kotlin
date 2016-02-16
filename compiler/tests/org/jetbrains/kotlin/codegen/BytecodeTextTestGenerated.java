@@ -572,6 +572,27 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/constProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConstProperty extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInConstProperty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("noInline.kt")
+        public void testNoInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constProperty/noInline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noInlineInCmp.kt")
+        public void testNoInlineInCmp() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constProperty/noInlineInCmp.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/constants")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -607,6 +628,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("short.kt")
         public void testShort() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/short.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/string.kt");
             doTest(fileName);
         }
     }

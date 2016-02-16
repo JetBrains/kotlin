@@ -58,4 +58,10 @@ public class BytecodeTextMultifileTestGenerated extends AbstractBytecodeTextTest
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersInline/");
         doTestMultiFile(fileName);
     }
+
+    @TestMetadata("preEvaluateInlineJavaStaticFields")
+    public void testPreEvaluateInlineJavaStaticFields() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/preEvaluateInlineJavaStaticFields/");
+        doTestMultiFile(fileName);
+    }
 }

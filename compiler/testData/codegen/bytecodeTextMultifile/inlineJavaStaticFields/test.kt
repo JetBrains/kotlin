@@ -20,10 +20,10 @@ fun test() {
     JClass.PrimitiveFloat
     JClass.PrimitiveDouble
     JClass.Str
+    JClass.StrNullable
 
     JClass.BoxedInt
     JClass.NonFinal
-    JClass.StrNullable
 
     JClass().NonStatic
 
@@ -44,10 +44,10 @@ fun test() {
 // 1 LDC 36.6
 // 1 LDC 42.4242
 // 1 LDC ":J"
+// 1 LDC "nullable"
 // 1 GETSTATIC JClass.BoxedInt : Ljava/lang/Integer;
 // 1 GETSTATIC JClass.NonFinal : I
 // 1 GETFIELD JClass.NonStatic : I
-// 1 LDC "nullable"
 // 1 GETSTATIC KoKobject.JvmStatic : I
 // 1 GETSTATIC KoKobject.JvmStaticString : Ljava/lang/String
 // 3 POP2

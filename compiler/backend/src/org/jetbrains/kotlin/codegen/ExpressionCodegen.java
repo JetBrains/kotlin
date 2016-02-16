@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -71,6 +72,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -1235,9 +1237,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitConstantExpression(@NotNull KtConstantExpression expression, StackValue receiver) {
-        ConstantValue<?> compileTimeValue = getCompileTimeConstant(expression, bindingContext);
+        ConstantValue<?> compileTimeValue = getPrimitiveOrStringCompileTimeConstant(expression, bindingContext);
         assert compileTimeValue != null;
         return StackValue.constant(compileTimeValue.getValue(), expressionType(expression));
+    }
+
+    @Nullable
+    public static ConstantValue<?> getPrimitiveOrStringCompileTimeConstant(@NotNull KtExpression expression, @NotNull BindingContext bindingContext) {
+        ConstantValue<?> constant = getCompileTimeConstant(expression, bindingContext, false);
+        if (constant == null || ConstantExpressionEvaluatorKt.isStandaloneOnlyConstant(constant)) {
+            return null;
+        }
+        return constant;
     }
 
     @Nullable
@@ -1248,15 +1259,45 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Nullable
     public static ConstantValue<?> getCompileTimeConstant(
             @NotNull KtExpression expression,
-            @NotNull BindingContext bindingContext,
-            boolean checkPure
+            @NotNull final BindingContext bindingContext,
+            boolean takeUpConstValsAsConst
     ) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext);
-        if (compileTimeValue == null) {
+        if (compileTimeValue == null || compileTimeValue.getUsesNonConstValAsConstant()) {
             return null;
         }
 
-        if (compileTimeValue.getUsesNonConstValAsConstant() || (checkPure && !compileTimeValue.getParameters().isPure())) return null;
+        if (!takeUpConstValsAsConst && compileTimeValue.getUsesVariableAsConstant()) {
+            final Ref<Boolean> containsNonInlinedVals = new Ref<Boolean>(false);
+            KtVisitor constantChecker = new KtVisitor() {
+                @Override
+                public Object visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, Object data) {
+                    ResolvedCall resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
+                    if (resolvedCall != null) {
+                        CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
+                        if (callableDescriptor instanceof PropertyDescriptor &&
+                            !JvmCodegenUtil.isInlinedJavaConstProperty((VariableDescriptor) callableDescriptor)) {
+                                containsNonInlinedVals.set(true);
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                public Object visitKtElement(@NotNull KtElement element, Object data) {
+                    if (!containsNonInlinedVals.get()) {
+                        element.acceptChildren(this);
+                    }
+                    return null;
+                }
+            };
+
+            expression.accept(constantChecker);
+
+            if (containsNonInlinedVals.get()) {
+                return null;
+            }
+        }
 
         KotlinType expectedType = bindingContext.getType(expression);
         return compileTimeValue.toConstantValue(expectedType);
@@ -2902,7 +2943,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                               expression.getRight(), reference);
         }
         else {
-            ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+            ConstantValue<?> compileTimeConstant = getPrimitiveOrStringCompileTimeConstant(expression, bindingContext);
             if (compileTimeConstant != null) {
                 return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
             }
@@ -3025,7 +3066,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private boolean isIntZero(KtExpression expr, Type exprType) {
-        ConstantValue<?> exprValue = getCompileTimeConstant(expr, bindingContext);
+        ConstantValue<?> exprValue = getPrimitiveOrStringCompileTimeConstant(expr, bindingContext);
         return isIntPrimitive(exprType) && exprValue != null && Integer.valueOf(0).equals(exprValue.getValue());
     }
 
@@ -3179,7 +3220,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitPrefixExpression(@NotNull KtPrefixExpression expression, @NotNull StackValue receiver) {
-        ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+        ConstantValue<?> compileTimeConstant = getPrimitiveOrStringCompileTimeConstant(expression, bindingContext);
         if (compileTimeConstant != null) {
             return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
         }

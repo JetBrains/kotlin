@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -216,5 +217,10 @@ public class JvmCodegenUtil {
     @NotNull
     public static String getMappingFileName(@NotNull String moduleName) {
         return "META-INF/" + moduleName + "." + ModuleMapping.MAPPING_FILE_EXT;
+    }
+
+    public static boolean isInlinedJavaConstProperty(VariableDescriptor descriptor) {
+        if (!(descriptor instanceof JavaPropertyDescriptor)) return false;
+        return descriptor.isConst();
     }
 }
