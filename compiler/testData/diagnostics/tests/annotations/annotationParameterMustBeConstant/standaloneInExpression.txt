@@ -1,0 +1,55 @@
+package
+
+public final annotation class AnnE : kotlin.Annotation {
+    public constructor AnnE(/*0*/ i: kotlin.String)
+    public final val i: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class MyEnum : kotlin.Enum<MyEnum> {
+    enum entry A
+
+    private constructor MyEnum()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
+}
+
+@AnnE() public final class Test {
+    public constructor Test()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@AnnE() public final class Test2 {
+    public constructor Test2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@AnnE() public final class Test3 {
+    public constructor Test3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@AnnE() public final class Test4 {
+    public constructor Test4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

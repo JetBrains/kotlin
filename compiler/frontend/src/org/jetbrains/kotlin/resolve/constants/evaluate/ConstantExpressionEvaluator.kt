@@ -250,6 +250,9 @@ private class ConstantExpressionEvaluatorVisitor(
     private val stringExpressionEvaluator = object : KtVisitor<TypedCompileTimeConstant<String>, Nothing?>() {
         private fun createStringConstant(compileTimeConstant: CompileTimeConstant<*>): TypedCompileTimeConstant<String>? {
             val constantValue = compileTimeConstant.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)
+            if (constantValue.isStandaloneOnlyConstant()) {
+                return null;
+            }
             return when (constantValue) {
                 is ErrorValue, is EnumValue -> return null
                 is NullValue -> factory.createStringValue("null")
@@ -341,6 +344,10 @@ private class ConstantExpressionEvaluatorVisitor(
         else null
     }
 
+    private fun isStandaloneOnlyConstant(expression: KtExpression): Boolean {
+        return ConstantExpressionEvaluator.getConstant(expression, trace.bindingContext)?.isStandaloneOnlyConstant() ?: return false
+    }
+
     override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val compileTimeConstant = evaluate(expression.left, expectedType)
         if (compileTimeConstant != null) {
@@ -404,6 +411,9 @@ private class ConstantExpressionEvaluatorVisitor(
         val resultingDescriptorName = resolvedCall.resultingDescriptor.name
 
         val argumentForReceiver = createOperationArgumentForReceiver(resolvedCall, receiverExpression) ?: return null
+        if (isStandaloneOnlyConstant(argumentForReceiver.expression)) {
+            return null
+        }
 
         val argumentsEntrySet = resolvedCall.valueArguments.entries
         if (argumentsEntrySet.isEmpty()) {
@@ -426,6 +436,9 @@ private class ConstantExpressionEvaluatorVisitor(
         else if (argumentsEntrySet.size == 1) {
             val (parameter, argument) = argumentsEntrySet.first()
             val argumentForParameter = createOperationArgumentForFirstParameter(argument, parameter) ?: return null
+            if (isStandaloneOnlyConstant(argumentForParameter.expression)) {
+                return null
+            }
 
             if (isDivisionByZero(resultingDescriptorName.asString(), argumentForParameter.value)) {
                 val parentExpression: KtExpression = PsiTreeUtil.getParentOfType(receiverExpression, KtExpression::class.java)!!
@@ -886,3 +899,14 @@ internal fun <A> unaryOperation(
 
 internal data class BinaryOperationKey<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
 internal data class UnaryOperationKey<A>(val f: CompileTimeType<out A>, val functionName: String)
+
+fun ConstantValue<*>.isStandaloneOnlyConstant(): Boolean {
+    return this is KClassValue || this is EnumValue || this is AnnotationValue || this is ArrayValue
+}
+
+fun CompileTimeConstant<*>.isStandaloneOnlyConstant(): Boolean {
+    return when(this) {
+        is TypedCompileTimeConstant -> this.constantValue.isStandaloneOnlyConstant()
+        else -> return false
+    }
+}

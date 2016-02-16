@@ -1163,6 +1163,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("standaloneInExpression.kt")
+                public void testStandaloneInExpression() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/standaloneInExpression.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("strings.kt")
                 public void testStrings() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/strings.kt");
