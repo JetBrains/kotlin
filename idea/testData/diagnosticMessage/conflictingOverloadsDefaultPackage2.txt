@@ -1,2 +1,2 @@
 <!-- conflictingOverloadsDefaultPackage2 -->
-'public fun foo(y: kotlin.Int): kotlin.Int' conflicts with another declaration in package '<root>'
+'public fun foo(y: Int): Int' conflicts with another declaration in package '<root>'

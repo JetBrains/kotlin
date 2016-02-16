@@ -1,2 +1,2 @@
 <!-- constructorsRedeclaration1 -->
-'public constructor Element(x: kotlin.String)' conflicts with another declaration in class 'Element'
+'public constructor Element(x: String)' conflicts with another declaration in class 'Element'

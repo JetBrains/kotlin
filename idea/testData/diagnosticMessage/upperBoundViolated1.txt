@@ -1,3 +1,3 @@
 <!-- upperBoundViolated1 -->
-Type parameter bound for T in fun <R, T : kotlin.collections.List<R>> foo(r: R, list: T): kotlin.Unit
- is not satisfied: inferred type kotlin.collections.Collection<kotlin.Int> is not a subtype of kotlin.collections.List<kotlin.Int>
+Type parameter bound for T in fun <R, T : List<R>> foo(r: R, list: T): Unit
+ is not satisfied: inferred type Collection<Int> is not a subtype of List<Int>

@@ -1,2 +1,2 @@
 <!-- constructorsRedeclarationTopLevel1 -->
-'public fun Element(x: kotlin.String): kotlin.Unit' conflicts with another declaration in class 'Element'
+'public fun Element(x: String): Unit' conflicts with another declaration in class 'Element'

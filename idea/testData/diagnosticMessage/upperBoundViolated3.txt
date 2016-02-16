@@ -1,3 +1,3 @@
 <!-- upperBoundViolated3 -->
-Type parameter bound for T in fun <T : R, R : i.B> baz(t: T, r: R): kotlin.Unit where T : i.A
- is not satisfied: inferred type i.A is not a subtype of i.B
+Type parameter bound for T in fun <T : R, R : B> baz(t: T, r: R): Unit where T : A
+ is not satisfied: inferred type A is not a subtype of B
