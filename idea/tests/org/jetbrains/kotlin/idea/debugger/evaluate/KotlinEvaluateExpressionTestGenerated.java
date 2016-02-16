@@ -169,6 +169,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("inlineFunctionBreakpointAnotherFile.kt")
+        public void testInlineFunctionBreakpointAnotherFile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/inlineFunctionBreakpointAnotherFile.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("inlineFunctionBreakpointVariants.kt")
         public void testInlineFunctionBreakpointVariants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/inlineFunctionBreakpointVariants.kt");

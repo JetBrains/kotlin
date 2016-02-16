@@ -299,7 +299,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         try {
             val line = position.line + 1
             val locations = if (myDebugProcess.virtualMachineProxy.versionHigher("1.4"))
-                type.locationsOfLine("Kotlin", null, line)
+                type.locationsOfLine("Kotlin", null, line).filter { it.sourceName("Kotlin") == position.file.name }
             else
                 type.locationsOfLine(line)
             if (locations == null || locations.isEmpty()) throw NoDataException.INSTANCE
