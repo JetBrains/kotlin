@@ -19,23 +19,31 @@ package org.jetbrains.kotlin.js.test.utils;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CallCounter extends RecursiveJsVisitor {
 
     private final List<JsNameRef> callsNameRefs = new ArrayList<JsNameRef>();
 
     @NotNull
+    private final Set<String> exceptFunctionNames;
+
+    @NotNull
     public static CallCounter countCalls(@NotNull JsNode node) {
-        CallCounter visitor = new CallCounter();
+        return countCalls(node, Collections.<String>emptySet());
+    }
+
+    @NotNull
+    public static CallCounter countCalls(@NotNull JsNode node, @NotNull Set<String> exceptFunctionNames) {
+        CallCounter visitor = new CallCounter(new HashSet<String>(exceptFunctionNames));
         node.accept(visitor);
 
         return visitor;
     }
 
-    CallCounter() {}
+    CallCounter(@NotNull Set<String> exceptFunctionNames) {
+        this.exceptFunctionNames = exceptFunctionNames;
+    }
 
     public int getTotalCallsCount() {
         return callsNameRefs.size();
@@ -61,7 +69,10 @@ public class CallCounter extends RecursiveJsVisitor {
         JsExpression qualifier = invocation.getQualifier();
 
         if (qualifier instanceof JsNameRef) {
-            callsNameRefs.add((JsNameRef) qualifier);
+            JsNameRef nameRef = (JsNameRef) qualifier;
+            if (!exceptFunctionNames.contains(nameRef.getIdent())) {
+                callsNameRefs.add(nameRef);
+            }
         }
     }
 
