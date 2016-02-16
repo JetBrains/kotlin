@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -425,7 +425,7 @@ class TaskPrioritizer(
         }
     }
 
-    fun <D : CallableDescriptor> convertWithImpliedThisAndNoReceiver(
+    private fun <D : CallableDescriptor> convertWithImpliedThisAndNoReceiver(
             scope: LexicalScope,
             descriptors: Collection<D>,
             call: Call,
@@ -434,7 +434,7 @@ class TaskPrioritizer(
         return convertWithImpliedThis(scope, null, descriptors, NO_EXPLICIT_RECEIVER, call, knownSubstitutor)
     }
 
-    fun <D : CallableDescriptor> convertWithImpliedThis(
+    private fun <D : CallableDescriptor> convertWithImpliedThis(
             scope: LexicalScope,
             receiverValue: ReceiverValue?,
             descriptors: Collection<D>,

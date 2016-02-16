@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,23 @@ package org.jetbrains.kotlin.resolve.calls.callResolverUtil
 import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 enum class ResolveArgumentsMode {
@@ -162,4 +165,36 @@ fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argu
     }
 
     return parameterDescriptor.type
+}
+
+fun createResolutionCandidatesForConstructors(
+        lexicalScope: LexicalScope,
+        call: Call,
+        classWithConstructors: ClassDescriptor,
+        knownSubstitutor: TypeSubstitutor? = null
+): Collection<ResolutionCandidate<CallableDescriptor>> {
+    val constructors = classWithConstructors.constructors
+
+    if (constructors.isEmpty()) return emptyList()
+
+    val receiverKind: ExplicitReceiverKind
+    val dispatchReceiver: ReceiverValue?
+
+    if (classWithConstructors.isInner) {
+        val outerClassType = (classWithConstructors.containingDeclaration as? ClassDescriptor)?.defaultType ?: return emptyList()
+        val substitutedOuterClassType = knownSubstitutor?.let { it.substitute(outerClassType, Variance.INVARIANT) } ?: outerClassType
+
+        val receiver = lexicalScope.getImplicitReceiversHierarchy().firstOrNull {
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(it.type, substitutedOuterClassType)
+        } ?: return emptyList()
+
+        receiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER
+        dispatchReceiver = receiver.value
+    }
+    else {
+        receiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+        dispatchReceiver = null
+    }
+
+    return constructors.map { ResolutionCandidate.create<CallableDescriptor>(call, it, dispatchReceiver, null, receiverKind, knownSubstitutor) }
 }
