@@ -34,6 +34,8 @@ abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
         return DescriptorRendererImpl(options)
     }
 
+    abstract fun renderMessage(message: String): String
+
     abstract fun renderType(type: KotlinType): String
 
     abstract fun renderTypeArguments(typeArguments: List<TypeProjection>): String

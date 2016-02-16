@@ -78,7 +78,7 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun renderMessage(message: String): String {
+    override fun renderMessage(message: String): String {
         return when (textFormat) {
             RenderingFormat.PLAIN -> message
             RenderingFormat.HTML -> "<i>$message</i>"
