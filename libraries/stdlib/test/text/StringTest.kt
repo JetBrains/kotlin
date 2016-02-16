@@ -31,6 +31,7 @@ fun assertContentEquals(expected: String, actual: CharSequence, message: String?
 
 // helper predicates available on both platforms
 fun Char.isAsciiDigit() = this in '0'..'9'
+
 fun Char.isAsciiLetter() = this in 'A'..'Z' || this in 'a'..'z'
 fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
@@ -39,18 +40,17 @@ class StringTest {
     @test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
 
         val cases = listOf(
-            IsEmptyCase(null,              isNull = true),
-            IsEmptyCase("",                isEmpty = true, isBlank = true),
-            IsEmptyCase("  \r\n\t\u00A0",  isBlank = true),
-            IsEmptyCase(" Some ")
+                IsEmptyCase(null, isNull = true),
+                IsEmptyCase("", isEmpty = true, isBlank = true),
+                IsEmptyCase("  \r\n\t\u00A0", isBlank = true),
+                IsEmptyCase(" Some ")
         )
 
         for (case in cases) {
             val value = case.value?.let { arg1(it) }
             assertEquals(case.isNull || case.isEmpty, value.isNullOrEmpty(), "failed for case '$value'")
             assertEquals(case.isNull || case.isBlank, value.isNullOrBlank(), "failed for case '$value'")
-            if (value != null)
-            {
+            if (value != null) {
                 assertEquals(case.isEmpty, value.isEmpty(), "failed for case '$value'")
                 assertEquals(case.isBlank, value.isBlank(), "failed for case '$value'")
             }
@@ -81,7 +81,7 @@ class StringTest {
 
     @test fun startsWithStringForCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
         fun String.startsWithCs(prefix: String, ignoreCase: Boolean = false): Boolean =
-            arg1(this).startsWith(arg2(prefix), ignoreCase)
+                arg1(this).startsWith(arg2(prefix), ignoreCase)
 
         assertTrue("abcd".startsWithCs("ab"))
         assertTrue("abcd".startsWithCs("abcd"))
@@ -109,8 +109,8 @@ class StringTest {
 
     @test fun endsWithStringForCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
         fun String.endsWithCs(suffix: String, ignoreCase: Boolean = false): Boolean =
-            arg1(this).endsWith(arg2(suffix), ignoreCase)
-        
+                arg1(this).endsWith(arg2(suffix), ignoreCase)
+
         assertTrue("abcd".endsWithCs("d"))
         assertTrue("abcd".endsWithCs("abcd"))
         assertFalse("abcd".endsWithCs("b"))
@@ -123,7 +123,7 @@ class StringTest {
 
     @test fun startsWithChar() = withOneCharSequenceArg { arg1 ->
         fun String.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
-            arg1(this).startsWith(char, ignoreCase)
+                arg1(this).startsWith(char, ignoreCase)
 
         assertTrue("abcd".startsWith('a'))
         assertFalse("abcd".startsWith('b'))
@@ -134,7 +134,7 @@ class StringTest {
 
     @test fun endsWithChar() = withOneCharSequenceArg { arg1 ->
         fun String.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
-            arg1(this).endsWith(char, ignoreCase)
+                arg1(this).endsWith(char, ignoreCase)
 
         assertTrue("abcd".endsWith('d'))
         assertFalse("abcd".endsWith('b'))
@@ -145,7 +145,7 @@ class StringTest {
 
     @test fun commonPrefix() = withTwoCharSequenceArgs { arg1, arg2 ->
         fun String.commonPrefixWith(other: String, ignoreCase: Boolean = false): String =
-            arg1(this).commonPrefixWith(arg2(other), ignoreCase)
+                arg1(this).commonPrefixWith(arg2(other), ignoreCase)
 
         assertEquals("", "".commonPrefixWith(""))
         assertEquals("", "any".commonPrefixWith(""))
@@ -164,7 +164,7 @@ class StringTest {
 
     @test fun commonSuffix() = withTwoCharSequenceArgs { arg1, arg2 ->
         fun String.commonSuffixWith(other: String, ignoreCase: Boolean = false): String =
-            arg1(this).commonSuffixWith(arg2(other), ignoreCase)
+                arg1(this).commonSuffixWith(arg2(other), ignoreCase)
 
         assertEquals("", "".commonSuffixWith(""))
         assertEquals("", "any".commonSuffixWith(""))
@@ -175,7 +175,7 @@ class StringTest {
         assertEquals("strö", "strö".commonSuffixWith("BISTRÖ", ignoreCase = true))
         assertEquals("", "yearly".commonSuffixWith("HARDLY", ignoreCase = false))
         // surrogate pairs
-        val dth54  = "\uD83C\uDC58" // domino tile horizontal 5-4
+        val dth54 = "\uD83C\uDC58" // domino tile horizontal 5-4
         val kimono = "\uD83D\uDC58" // kimono
         assertEquals("", dth54.commonSuffixWith(kimono))
         assertEquals("$dth54", "d$dth54".commonSuffixWith("s$dth54"))
@@ -259,7 +259,7 @@ class StringTest {
         assertContentEquals("sae text", s.removeRange(2, 5))
         assertContentEquals("sa text", s.removeRange(2..5))
 
-        assertContentEquals(s.toString(), s.removeRange(2,2))
+        assertContentEquals(s.toString(), s.removeRange(2, 2))
 
         // symmetry with indices
         assertContentEquals("", s.removeRange(s.indices))
@@ -318,7 +318,7 @@ class StringTest {
 
     @test fun stringIterator() = withOneCharSequenceArg("239") { data ->
         var sum = 0
-        for(c in data)
+        for (c in data)
             sum += (c - '0')
         assertTrue(sum == 14)
     }
@@ -339,8 +339,8 @@ class StringTest {
         assertContentEquals("a", "\ra".trimStartCS())
         assertContentEquals("a", "\na".trimStartCS())
 
-        assertContentEquals("a=", arg1("-=-=a=").trimStart('-','='))
-        assertContentEquals("123a", arg1("ab123a").trimStart {  !it.isAsciiDigit() })
+        assertContentEquals("a=", arg1("-=-=a=").trimStart('-', '='))
+        assertContentEquals("123a", arg1("ab123a").trimStart { !it.isAsciiDigit() })
     }
 
     @test fun trimEnd() = withOneCharSequenceArg { arg1 ->
@@ -359,20 +359,20 @@ class StringTest {
         assertContentEquals("a", "a\r".trimEndCS())
         assertContentEquals("a", "a\n".trimEndCS())
 
-        assertContentEquals("=a", arg1("=a=-=-").trimEnd('-','='))
+        assertContentEquals("=a", arg1("=a=-=-").trimEnd('-', '='))
         assertContentEquals("ab123", arg1("ab123a").trimEnd { !it.isAsciiDigit() })
     }
 
     @test fun trimStartAndEnd() = withOneCharSequenceArg { arg1 ->
         val examples = arrayOf("a",
-                " a ",
-                "  a  ",
-                "  a b  ",
-                "\ta\tb\t",
-                "\t\ta\t\t",
-                "\ra\r",
-                "\na\n",
-                " \u00A0 a \u00A0 "
+                               " a ",
+                               "  a  ",
+                               "  a b  ",
+                               "\ta\tb\t",
+                               "\t\ta\t\t",
+                               "\ra\r",
+                               "\na\n",
+                               " \u00A0 a \u00A0 "
         )
 
         for ((source, example) in examples.map { it to arg1(it) }) {
@@ -381,7 +381,7 @@ class StringTest {
         }
 
         val examplesForPredicate = arrayOf("123",
-                "-=123=-"
+                                           "-=123=-"
         )
 
         val trimChars = charArrayOf('-', '=')
@@ -604,7 +604,7 @@ class StringTest {
         assertEquals(4, string.lastIndexOf('e'))
         assertEquals(2, string.lastIndexOf('e', 3))
 
-        for (startIndex in -1..string.length+1) {
+        for (startIndex in -1..string.length + 1) {
             assertEquals(string.indexOfAny(charArrayOf('e'), startIndex), string.indexOf('e', startIndex))
             assertEquals(string.lastIndexOfAny(charArrayOf('e'), startIndex), string.lastIndexOf('e', startIndex))
         }
@@ -620,7 +620,7 @@ class StringTest {
         assertEquals(2, string.lastIndexOf('e', 3, ignoreCase = true))
 
 
-        for (startIndex in -1..string.length+1){
+        for (startIndex in -1..string.length + 1) {
             assertEquals(string.indexOfAny(charArrayOf('e'), startIndex, ignoreCase = true), string.indexOf('E', startIndex, ignoreCase = true))
             assertEquals(string.lastIndexOfAny(charArrayOf('E'), startIndex, ignoreCase = true), string.lastIndexOf('e', startIndex, ignoreCase = true))
         }
@@ -682,8 +682,8 @@ class StringTest {
 
     @test fun replaceFirst() {
         val input = "AbbabA"
-        assertEquals("Abb${'$'}bA", input.replaceFirst('a','$'))
-        assertEquals("${'$'}bbabA", input.replaceFirst('a','$', ignoreCase = true))
+        assertEquals("Abb${'$'}bA", input.replaceFirst('a', '$'))
+        assertEquals("${'$'}bbabA", input.replaceFirst('a', '$', ignoreCase = true))
         // doesn't pass in Rhino JS
         // assertEquals("schrodinger", "schrÖdinger".replaceFirst('ö', 'o', ignoreCase = true))
 
@@ -712,6 +712,16 @@ class StringTest {
             assertEquals(1, list.size)
             assertEquals(s.toString(), list[0])
         }
+    }
+
+    @test fun occurencesOf() {
+        assertEquals("abaabaaababac".occurrencesOf("abaa").toList(), listOf(0, 3))
+        assertEquals("Abaabaaababac".occurrencesOf("abaa").toList(), listOf(3))
+        assertEquals("Abaabaaababac".occurrencesOf("abaa", ignoreCase = true).toList(), listOf(0, 3))
+        assertEquals("multi\nline\nstring\nmulti".occurrencesOf("multi").toList(), listOf(0, 18))
+        assertEquals("aaba".occurrencesOf("a").toList(), listOf(0, 1, 3))
+        assertEquals("".occurrencesOf("abc").count(), 0)
+        assertEquals("abc".occurrencesOf("").count(), 0)
     }
 
     @test fun forEach() = withOneCharSequenceArg("abcd1234") { data ->
@@ -836,7 +846,7 @@ class StringTest {
     @test fun fold() = withOneCharSequenceArg { arg1 ->
         // calculate number of digits in the string
         val data = arg1("a1b2c3def")
-        val result = data.fold(0, { digits, c -> if(c.isAsciiDigit()) digits + 1 else digits } )
+        val result = data.fold(0, { digits, c -> if (c.isAsciiDigit()) digits + 1 else digits })
         assertEquals(3, result)
 
         //simulate all method
@@ -849,7 +859,7 @@ class StringTest {
     @test fun foldRight() = withOneCharSequenceArg { arg1 ->
         // calculate number of digits in the string
         val data = arg1("a1b2c3def")
-        val result = data.foldRight(0, { c, digits -> if(c.isAsciiDigit()) digits + 1 else digits })
+        val result = data.foldRight(0, { c, digits -> if (c.isAsciiDigit()) digits + 1 else digits })
         assertEquals(3, result)
 
         //simulate all method
@@ -917,8 +927,8 @@ class StringTest {
         // group characters by their case
         val result = data.groupBy { it.isAsciiUpperCase() }
         assertEquals(2, result.size)
-        assertEquals(listOf('a','b','b','a','c'), result[false])
-        assertEquals(listOf('A','A','B','D'), result[true])
+        assertEquals(listOf('a', 'b', 'b', 'a', 'c'), result[false])
+        assertEquals(listOf('A', 'A', 'B', 'D'), result[true])
     }
 
     @test fun joinToString() {
@@ -1152,4 +1162,5 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
 }
