@@ -78,7 +78,8 @@ abstract class ImplementAbstractMemberIntentionBase :
     ): CallableMemberDescriptor? {
         val superClass = superMember.containingDeclaration as? ClassDescriptor ?: return null
         val substitutor = getTypeSubstitutor(superClass.defaultType, subClass.defaultType) ?: TypeSubstitutor.EMPTY
-        val subMember = subClass.findCallableMemberBySignature(superMember.substitute(substitutor) as CallableMemberDescriptor)
+        val signatureInSubClass = superMember.substitute(substitutor) as? CallableMemberDescriptor ?: return null
+        val subMember = subClass.findCallableMemberBySignature(signatureInSubClass)
         if (subMember?.kind?.isReal ?: false) return subMember else return null
     }
 
