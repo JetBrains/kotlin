@@ -815,10 +815,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val isJavaMethodUsage = isJavaMethodUsage(usageInfo)
 
         if (usageInfo is KotlinWrapperForJavaUsageInfos) {
-            val javaChangeInfos = (changeInfo as KotlinChangeInfo).getOrCreateJavaChangeInfos()
-            assert(javaChangeInfos != null) { "JavaChangeInfo not found: " + method.text }
-
-            javaChangeInfos!!.firstOrNull {
+            val javaChangeInfos = (changeInfo as KotlinChangeInfo).getOrCreateJavaChangeInfos() ?: return true
+            javaChangeInfos.firstOrNull {
                 changeInfo.originalToCurrentMethods[usageInfo.javaChangeInfo.method] == it.method
             }?.let { javaChangeInfo ->
                 val nullabilityPropagator = NullabilityPropagator(javaChangeInfo.method)
