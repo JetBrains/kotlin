@@ -52,22 +52,22 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Cannot access 'A': it is 'private' in file
-Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'private'
-Generic effective visibility 'public' should be the same or less permissive than its type parameter bound effective visibility 'private'
+'public' subclass exposes its 'private' supertype A
+'public' generic exposes its 'private' parameter bound type A
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
-Function effective visibility 'public' should be the same or less permissive than its parameter type effective visibility 'private'
+'public' function exposes its 'private' parameter type A
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
-Function effective visibility 'public' should be the same or less permissive than its return type effective visibility 'private'
+'public' function exposes its 'private' return type A
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
-Function effective visibility 'public' should be the same or less permissive than its return type effective visibility 'private'
+'public' function exposes its 'private' return type A
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
-Function effective visibility 'public' should be the same or less permissive than its return type effective visibility 'private'
+'public' function exposes its 'private' return type A
 
 ================ Step #2 =================
 

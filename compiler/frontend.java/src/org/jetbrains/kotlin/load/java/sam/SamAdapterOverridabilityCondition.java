@@ -46,13 +46,14 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
             return subOriginal == null ? Result.UNKNOWN : Result.INCOMPATIBLE; // DECLARATION can override anything
         }
 
-        OverridingUtil.OverrideCompatibilityInfo basicResult = OverridingUtil.DEFAULT
-                .isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, /* checkReturnType = */ false);
-
-        if (basicResult.getResult() != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) return Result.UNKNOWN;
-
         // inheritor if SYNTHESIZED can override inheritor of SYNTHESIZED if their originals have same erasure
         return equalErasure(superOriginal, subOriginal) ? Result.UNKNOWN : Result.INCOMPATIBLE;
+    }
+
+    @NotNull
+    @Override
+    public Contract getContract() {
+        return Contract.CONFLICTS_ONLY;
     }
 
     private static boolean equalErasure(@NotNull FunctionDescriptor fun1, @NotNull FunctionDescriptor fun2) {
@@ -87,6 +88,8 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
     // if function is or overrides declaration, returns null; otherwise, return original of sam adapter with substituted type parameters
     @Nullable
     private static SimpleFunctionDescriptor getOriginalOfSamAdapterFunction(@NotNull SimpleFunctionDescriptor callable) {
+        if (callable.getDispatchReceiverParameter() != null) return null;
+
         DeclarationDescriptor containingDeclaration = callable.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return null;

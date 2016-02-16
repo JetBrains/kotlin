@@ -43,13 +43,15 @@ public class InOperationTranslator extends AbstractTranslator {
     private final JsExpression left;
     private final KtExpression right;
     private final KtSimpleNameExpression operation;
+    private final boolean negated;
 
     public InOperationTranslator(@NotNull TranslationContext context, @NotNull JsExpression left, @NotNull KtExpression right,
-            @NotNull KtSimpleNameExpression operation) {
+            @NotNull KtSimpleNameExpression operation, boolean negated) {
         super(context);
         this.left = left;
         this.right = right;
         this.operation = operation;
+        this.negated = negated;
     }
 
     @NotNull
@@ -67,7 +69,11 @@ public class InOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateGeneral(@NotNull ResolvedCall<? extends FunctionDescriptor> call, @NotNull JsExpression rightTranslated) {
-        return CallTranslator.translate(context(), call, rightTranslated);
+        JsExpression result = CallTranslator.translate(context(), call, rightTranslated);
+        if (negated) {
+            result = JsAstUtils.negated(result);
+        }
+        return result;
     }
 
     @Nullable
@@ -94,8 +100,15 @@ public class InOperationTranslator extends AbstractTranslator {
     private JsExpression translateInt(@NotNull KtExpression lowerExpression, @NotNull KtExpression upperExpression) {
         JsExpression lower = Translation.translateAsExpression(lowerExpression, context());
         JsExpression upper = Translation.translateAsExpression(upperExpression, context());
-        JsExpression first = JsAstUtils.greaterThanEq(left, lower);
-        JsExpression second = JsAstUtils.lessThanEq(left, upper);
-        return JsAstUtils.and(first, second);
+        if (!negated) {
+            JsExpression first = JsAstUtils.greaterThanEq(left, lower);
+            JsExpression second = JsAstUtils.lessThanEq(left, upper);
+            return JsAstUtils.and(first, second);
+        }
+        else {
+            JsExpression first = JsAstUtils.lessThan(left, lower);
+            JsExpression second = JsAstUtils.greaterThan(left, upper);
+            return JsAstUtils.or(first, second);
+        }
     }
 }

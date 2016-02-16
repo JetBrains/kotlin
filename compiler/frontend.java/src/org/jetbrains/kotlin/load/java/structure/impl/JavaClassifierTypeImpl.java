@@ -27,10 +27,12 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     private static class ResolutionResult {
         private final JavaClassifier classifier;
         private final JavaTypeSubstitutor substitutor;
+        private final boolean isRaw;
 
-        private ResolutionResult(@Nullable JavaClassifier classifier, @NotNull JavaTypeSubstitutor substitutor) {
+        private ResolutionResult(@Nullable JavaClassifier classifier, @NotNull JavaTypeSubstitutor substitutor, boolean isRaw) {
             this.classifier = classifier;
             this.substitutor = substitutor;
+            this.isRaw = isRaw;
         }
     }
 
@@ -61,8 +63,8 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
             PsiSubstitutor substitutor = result.getSubstitutor();
             resolutionResult = new ResolutionResult(
                     psiClass == null ? null : JavaClassifierImpl.create(psiClass),
-                    new JavaTypeSubstitutorImpl(convertSubstitutionMap(substitutor.getSubstitutionMap()))
-            );
+                    new JavaTypeSubstitutorImpl(convertSubstitutionMap(substitutor.getSubstitutionMap())),
+                    PsiClassType.isRaw(result));
         }
     }
 
@@ -102,7 +104,8 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
     @Override
     public boolean isRaw() {
-        return getPsi().isRaw();
+        resolve();
+        return resolutionResult.isRaw;
     }
 
     @Override

@@ -63,16 +63,12 @@ class KotlinColorSettingsPage : ColorSettingsPage {
     }
 }
 
-fun Int?.bar(): Int {
+fun Int?.bar() {
     if (this != null) {
         println(<SMART_CAST_RECEIVER>toString</SMART_CAST_RECEIVER>())
     }
     else {
         println(<SMART_CONSTANT>this</SMART_CONSTANT>.toString())
-    }
-    <IMPLICIT_EXHAUSTIVE_WHEN>when</IMPLICIT_EXHAUSTIVE_WHEN> (this != null) {
-        true -> return 1
-        false -> return 0
     }
 }
 
@@ -161,7 +157,6 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast") to KotlinHighlightingColors.SMART_CAST_VALUE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.constant") to KotlinHighlightingColors.SMART_CONSTANT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast.receiver") to KotlinHighlightingColors.SMART_CAST_RECEIVER,
-                       KotlinBundle.message("options.kotlin.attribute.descriptor.implicit.exhaustive.when") to KotlinHighlightingColors.IMPLICIT_EXHAUSTIVE_WHEN,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.label") to KotlinHighlightingColors.LABEL)
     }
 

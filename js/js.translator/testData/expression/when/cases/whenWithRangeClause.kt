@@ -4,7 +4,10 @@ package foo
 
 fun box(): String {
     var result = testFun(-1) + testFun(0) + testFun(5) + testFun(9) + testFun(10) + testFun(150) + testFun(800)
-    return if (result == "misshithithitmisshit!@@@" && invocationCount == 7) "OK" else "fail"
+    if (result != "misshithithitmisshit!@@@" || invocationCount != 7) return "fail1:" + result
+    result = testFun2(-1) + testFun2(0) + testFun2(9) + testFun2(10)
+    if (result != "hitmissmisshit") return "fail2:" + result
+    return "OK"
 }
 fun testFun(index: Int): String {
     val thirdRange = 500..1000
@@ -12,6 +15,12 @@ fun testFun(index: Int): String {
         in 0..9 -> "hit"
         in 100.rangeTo(200) -> "hit!"
         in thirdRange -> "@@@"
+        else -> "miss"
+    }
+}
+fun testFun2(index: Int): String {
+    return when(index) {
+        !in 0..9 -> "hit"
         else -> "miss"
     }
 }

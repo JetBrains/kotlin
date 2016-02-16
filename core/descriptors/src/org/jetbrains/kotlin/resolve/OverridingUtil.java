@@ -84,13 +84,20 @@ public class OverridingUtil {
             @Nullable ClassDescriptor subClassDescriptor,
             boolean checkReturnType
     ) {
-        boolean wasSuccessfulExternalCondition = false;
+        OverrideCompatibilityInfo basicResult = isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, checkReturnType);
+        boolean wasSuccess = basicResult.getResult() == OVERRIDABLE;
+
         for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
+            // Do not run CONFLICTS_ONLY while there was no success
+            if (externalCondition.getContract() == ExternalOverridabilityCondition.Contract.CONFLICTS_ONLY) continue;
+            if (wasSuccess && externalCondition.getContract() == ExternalOverridabilityCondition.Contract.SUCCESS_ONLY) continue;
+
             ExternalOverridabilityCondition.Result result =
                     externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
+
             switch (result) {
                 case OVERRIDABLE:
-                    wasSuccessfulExternalCondition = true;
+                    wasSuccess = true;
                     break;
                 case CONFLICT:
                     return OverrideCompatibilityInfo.conflict("External condition failed");
@@ -102,11 +109,32 @@ public class OverridingUtil {
             }
         }
 
-        if (wasSuccessfulExternalCondition) {
-            return OverrideCompatibilityInfo.success();
+        if (!wasSuccess) {
+            return basicResult;
         }
 
-        return isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, checkReturnType);
+        // Search for conflicts from external conditions
+        for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
+            // Run all conditions that was not run before (i.e. CONFLICTS_ONLY)
+            if (externalCondition.getContract() != ExternalOverridabilityCondition.Contract.CONFLICTS_ONLY) continue;
+
+            ExternalOverridabilityCondition.Result result =
+                    externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
+            switch (result) {
+                case CONFLICT:
+                    return OverrideCompatibilityInfo.conflict("External condition failed");
+                case INCOMPATIBLE:
+                    return OverrideCompatibilityInfo.incompatible("External condition");
+                case OVERRIDABLE:
+                    throw new IllegalStateException(
+                            "Contract violation in " + externalCondition.getClass().getName() + " condition. It's not supposed to end with success");
+                case UNKNOWN:
+                    // do nothing
+                    // go to the next external condition or default override check
+            }
+        }
+
+        return OverrideCompatibilityInfo.success();
     }
 
     @NotNull
@@ -115,24 +143,8 @@ public class OverridingUtil {
             @NotNull CallableDescriptor subDescriptor,
             boolean checkReturnType
     ) {
-        if (superDescriptor instanceof FunctionDescriptor && !(subDescriptor instanceof FunctionDescriptor) ||
-            superDescriptor instanceof PropertyDescriptor && !(subDescriptor instanceof PropertyDescriptor)) {
-            return OverrideCompatibilityInfo.incompatible("Member kind mismatch");
-        }
-
-        if (!(superDescriptor instanceof FunctionDescriptor) && !(superDescriptor instanceof PropertyDescriptor)) {
-            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
-        }
-
-        // TODO: check outside of this method
-        if (!superDescriptor.getName().equals(subDescriptor.getName())) {
-            return OverrideCompatibilityInfo.incompatible("Name mismatch");
-        }
-
-        OverrideCompatibilityInfo receiverAndParameterResult = checkReceiverAndParameterCount(superDescriptor, subDescriptor);
-        if (receiverAndParameterResult != null) {
-            return receiverAndParameterResult;
-        }
+        OverrideCompatibilityInfo basicOverridability = getBasicOverridabilityProblem(superDescriptor, subDescriptor);
+        if (basicOverridability != null) return basicOverridability;
 
         List<KotlinType> superValueParameters = compiledValueParameters(superDescriptor);
         List<KotlinType> subValueParameters = compiledValueParameters(subDescriptor);
@@ -177,6 +189,33 @@ public class OverridingUtil {
         }
 
         return OverrideCompatibilityInfo.success();
+    }
+
+    @Nullable
+    public static OverrideCompatibilityInfo getBasicOverridabilityProblem(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor
+    ) {
+        if (superDescriptor instanceof FunctionDescriptor && !(subDescriptor instanceof FunctionDescriptor) ||
+            superDescriptor instanceof PropertyDescriptor && !(subDescriptor instanceof PropertyDescriptor)) {
+            return OverrideCompatibilityInfo.incompatible("Member kind mismatch");
+        }
+
+        if (!(superDescriptor instanceof FunctionDescriptor) && !(superDescriptor instanceof PropertyDescriptor)) {
+            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
+        }
+
+        // TODO: check outside of this method
+        if (!superDescriptor.getName().equals(subDescriptor.getName())) {
+            return OverrideCompatibilityInfo.incompatible("Name mismatch");
+        }
+
+        OverrideCompatibilityInfo receiverAndParameterResult = checkReceiverAndParameterCount(superDescriptor, subDescriptor);
+        if (receiverAndParameterResult != null) {
+            return receiverAndParameterResult;
+        }
+
+        return null;
     }
 
     @NotNull

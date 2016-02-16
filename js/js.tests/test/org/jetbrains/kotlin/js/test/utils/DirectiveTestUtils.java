@@ -34,7 +34,15 @@ public class DirectiveTestUtils {
     private static final DirectiveHandler FUNCTION_CONTAINS_NO_CALLS = new DirectiveHandler("CHECK_CONTAINS_NO_CALLS") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            checkFunctionContainsNoCalls(ast, arguments.getFirst());
+            Set<String> exceptNames = new HashSet<String>();
+            String exceptNamesArg = arguments.findNamedArgument("except");
+            if (exceptNamesArg != null) {
+                for (String exceptName : exceptNamesArg.split(";")) {
+                    exceptNames.add(exceptName.trim());
+                }
+            }
+
+            checkFunctionContainsNoCalls(ast, arguments.getFirst(), exceptNames);
         }
     };
 
@@ -179,9 +187,10 @@ public class DirectiveTestUtils {
         }
     }
 
-    public static void checkFunctionContainsNoCalls(JsNode node, String functionName) throws Exception {
+    public static void checkFunctionContainsNoCalls(JsNode node, String functionName, @NotNull Set<String> exceptFunctionNames)
+            throws Exception {
         JsFunction function = AstSearchUtil.getFunction(node, functionName);
-        CallCounter counter = CallCounter.countCalls(function);
+        CallCounter counter = CallCounter.countCalls(function, exceptFunctionNames);
         int callsCount = counter.getTotalCallsCount();
 
         String errorMessage = functionName + " contains calls";
