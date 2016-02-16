@@ -15101,6 +15101,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt3856.kt")
+                public void testKt3856() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/kt3856.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("methodsPriority.kt")
                 public void testMethodsPriority() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/methodsPriority.kt");

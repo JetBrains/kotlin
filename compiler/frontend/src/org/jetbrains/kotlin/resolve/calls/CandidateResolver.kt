@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -230,6 +230,13 @@ class CandidateResolver(
     }
 
     private fun checkOuterClassMemberIsAccessible(context: CallCandidateResolutionContext<*>): Boolean {
+
+        fun KtElement.insideScript() = (containingFile as? KtFile)?.isScript ?: false
+
+        // context.scope doesn't contains outer class implicit receiver if we inside nested class
+        // Outer scope for some class in script file is scopeForInitializerResolution see: DeclarationScopeProviderImpl.getResolutionScopeForDeclaration
+        if (!context.call.callElement.insideScript()) return true
+
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
         if (context.call.getExplicitReceiver() != null || context.call.getDispatchReceiver() != null) return true
 
