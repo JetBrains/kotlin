@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
         val system = builder.build()
 
-        val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(system)
+        val resultingStatus = Renderers.renderConstraintSystem(system, shortTypeBounds = true)
 
         val resultingSubstitutor = system.resultingSubstitutor
         val result = typeParameterDescriptors.map {

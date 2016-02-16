@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.diagnostics.rendering
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
-fun <P : Any> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?): Any = renderer?.render(parameter) ?: parameter
+fun <P : Any> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?, context: RenderingContext): Any
+        = renderer?.render(parameter, context) ?: parameter
 
 fun ClassDescriptor.renderKindWithName(): String = DescriptorRenderer.getClassKindPrefix(this) + " '" + name + "'"
 

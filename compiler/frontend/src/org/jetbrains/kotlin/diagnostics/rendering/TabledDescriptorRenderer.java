@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.Table
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -167,26 +167,33 @@ public class TabledDescriptorRenderer {
 
     protected void renderTable(TableRenderer table, StringBuilder result) {
         if (table.rows.isEmpty()) return;
+
+        RenderingContext context = computeRenderingContext(table);
         for (TableRow row : table.rows) {
             if (row instanceof TextRenderer) {
                 renderText((TextRenderer) row, result);
             }
             if (row instanceof DescriptorRow) {
-                result.append(DescriptorRenderer.COMPACT.render(((DescriptorRow) row).descriptor));
+                result.append(Renderers.COMPACT.render(((DescriptorRow) row).descriptor, context));
             }
             if (row instanceof FunctionArgumentsRow) {
                 FunctionArgumentsRow functionArgumentsRow = (FunctionArgumentsRow) row;
-                renderFunctionArguments(functionArgumentsRow.receiverType, functionArgumentsRow.argumentTypes, result);
+                renderFunctionArguments(functionArgumentsRow.receiverType, functionArgumentsRow.argumentTypes, result, context);
             }
             result.append("\n");
         }
     }
 
-    private void renderFunctionArguments(@Nullable KotlinType receiverType, @NotNull List<KotlinType> argumentTypes, StringBuilder result) {
+    private void renderFunctionArguments(
+            @Nullable KotlinType receiverType,
+            @NotNull List<KotlinType> argumentTypes,
+            StringBuilder result,
+            @NotNull RenderingContext context
+    ) {
         boolean hasReceiver = receiverType != null;
         if (hasReceiver) {
             result.append("receiver: ");
-            result.append(getTypeRenderer().render(receiverType));
+            result.append(getTypeRenderer().render(receiverType, context));
             result.append("  arguments: ");
         }
         if (argumentTypes.isEmpty()) {
@@ -197,7 +204,7 @@ public class TabledDescriptorRenderer {
         result.append("(");
         for (Iterator<KotlinType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             KotlinType argumentType = iterator.next();
-            String renderedArgument = getTypeRenderer().render(argumentType);
+            String renderedArgument = getTypeRenderer().render(argumentType, context);
 
             result.append(renderedArgument);
             if (iterator.hasNext()) {
@@ -212,4 +219,25 @@ public class TabledDescriptorRenderer {
     }
 
     public static enum TextElementType { STRONG, ERROR, DEFAULT }
+
+    @NotNull
+    protected static RenderingContext computeRenderingContext(@NotNull TableRenderer table) {
+        ArrayList<Object> toRender = new ArrayList<Object>();
+        for (TableRow row : table.rows) {
+            if (row instanceof DescriptorRow) {
+                toRender.add(((DescriptorRow) row).descriptor);
+            }
+            else if (row instanceof FunctionArgumentsRow) {
+                toRender.add(((FunctionArgumentsRow) row).receiverType);
+                toRender.addAll(((FunctionArgumentsRow) row).argumentTypes);
+            }
+            else if (row instanceof TextRenderer) {
+
+            }
+            else {
+                throw new AssertionError("Unknown row of type " + row.getClass());
+            }
+        }
+        return new RenderingContext.Impl(toRender);
+    }
 }

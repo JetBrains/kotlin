@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,11 +71,13 @@ public class IdeErrorMessages {
                     @NotNull
                     @Override
                     public String[] render(@NotNull TypeMismatchDueToTypeProjectionsData object) {
+                        RenderingContext context = RenderingContext
+                                .of(object.getExpectedType(), object.getExpressionType(), object.getReceiverType(), object.getCallableDescriptor());
                         return new String[] {
-                                HTML_RENDER_TYPE.render(object.getExpectedType()),
-                                HTML_RENDER_TYPE.render(object.getExpressionType()),
-                                HTML_RENDER_TYPE.render(object.getReceiverType()),
-                                HTML.render(object.getCallableDescriptor())
+                                HTML_RENDER_TYPE.render(object.getExpectedType(), context),
+                                HTML_RENDER_TYPE.render(object.getExpressionType(), context),
+                                HTML_RENDER_TYPE.render(object.getReceiverType(), context),
+                                HTML.render(object.getCallableDescriptor(), context)
                         };
                     }
                 });

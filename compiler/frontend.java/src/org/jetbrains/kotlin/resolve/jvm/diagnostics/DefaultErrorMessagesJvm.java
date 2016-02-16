@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer;
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
+import org.jetbrains.kotlin.diagnostics.rendering.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -33,7 +30,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new DiagnosticParameterRenderer<ConflictingJvmDeclarationsData>() {
         @NotNull
         @Override
-        public String render(@NotNull ConflictingJvmDeclarationsData data) {
+        public String render(@NotNull ConflictingJvmDeclarationsData data, @NotNull RenderingContext context) {
             List<String> renderedDescriptors = new ArrayList<String>();
             for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
                 DeclarationDescriptor descriptor = origin.getDescriptor();

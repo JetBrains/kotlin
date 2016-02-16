@@ -42,10 +42,9 @@ class DiagnosticWithParameters1Renderer<A : Any>(
 ) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters1<*, A>>(message) {
 
     override fun renderParameters(diagnostic: DiagnosticWithParameters1<*, A>): Array<out Any> {
-        return arrayOf(renderParameter(diagnostic.a, rendererForA))
+        val context = RenderingContext.of(diagnostic.a)
+        return arrayOf(renderParameter(diagnostic.a, rendererForA, context))
     }
-
-
 }
 
 class DiagnosticWithParameters2Renderer<A : Any, B : Any>(
@@ -55,9 +54,10 @@ class DiagnosticWithParameters2Renderer<A : Any, B : Any>(
 ) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters2<*, A, B>>(message) {
 
     override fun renderParameters(diagnostic: DiagnosticWithParameters2<*, A, B>): Array<out Any> {
+        val context = RenderingContext.of(diagnostic.a, diagnostic.b)
         return arrayOf(
-                renderParameter(diagnostic.a, rendererForA),
-                renderParameter(diagnostic.b, rendererForB)
+                renderParameter(diagnostic.a, rendererForA, context),
+                renderParameter(diagnostic.b, rendererForB, context)
         )
     }
 }
@@ -70,10 +70,11 @@ class DiagnosticWithParameters3Renderer<A : Any, B : Any, C : Any>(
 ) : AbstractDiagnosticWithParametersRenderer<DiagnosticWithParameters3<*, A, B, C>>(message) {
 
     override fun renderParameters(diagnostic: DiagnosticWithParameters3<*, A, B, C>): Array<out Any> {
+        val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c)
         return arrayOf(
-                renderParameter(diagnostic.a, rendererForA),
-                renderParameter(diagnostic.b, rendererForB),
-                renderParameter(diagnostic.c, rendererForC)
+                renderParameter(diagnostic.a, rendererForA, context),
+                renderParameter(diagnostic.b, rendererForB, context),
+                renderParameter(diagnostic.c, rendererForC, context)
         )
     }
 }

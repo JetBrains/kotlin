@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.*;
 
 public class DefaultErrorMessages {
 
@@ -118,11 +119,13 @@ public class DefaultErrorMessages {
                     @NotNull
                     @Override
                     public String[] render(@NotNull TypeMismatchDueToTypeProjectionsData object) {
+                        RenderingContext context =
+                                of(object.getExpectedType(), object.getExpressionType(), object.getReceiverType(), object.getCallableDescriptor());
                         return new String[] {
-                                RENDER_TYPE.render(object.getExpectedType()),
-                                RENDER_TYPE.render(object.getExpressionType()),
-                                RENDER_TYPE.render(object.getReceiverType()),
-                                DescriptorRenderer.FQ_NAMES_IN_TYPES.render(object.getCallableDescriptor())
+                                RENDER_TYPE.render(object.getExpectedType(), context),
+                                RENDER_TYPE.render(object.getExpressionType(), context),
+                                RENDER_TYPE.render(object.getReceiverType(), context),
+                                FQ_NAMES_IN_TYPES.render(object.getCallableDescriptor(), context)
                         };
                     }
                 });
@@ -175,7 +178,7 @@ public class DefaultErrorMessages {
         MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", new DiagnosticParameterRenderer<BadNamedArgumentsTarget>() {
             @NotNull
             @Override
-            public String render(@NotNull BadNamedArgumentsTarget target) {
+            public String render(@NotNull BadNamedArgumentsTarget target, @NotNull RenderingContext context) {
                 switch (target) {
                     case NON_KOTLIN_FUNCTION:
                         return "non-Kotlin functions";
@@ -391,7 +394,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new DiagnosticParameterRenderer<KtExpression>() {
             @NotNull
             @Override
-            public String render(@NotNull KtExpression expression) {
+            public String render(@NotNull KtExpression expression, @NotNull RenderingContext context) {
                 String expressionType = expression.toString();
                 return expressionType.substring(0, 1) +
                        expressionType.substring(1).toLowerCase();
@@ -487,7 +490,7 @@ public class DefaultErrorMessages {
         MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new DiagnosticParameterRenderer<KtTypeConstraint>() {
             @NotNull
             @Override
-            public String render(@NotNull KtTypeConstraint typeConstraint) {
+            public String render(@NotNull KtTypeConstraint typeConstraint, @NotNull RenderingContext context) {
                 //noinspection ConstantConditions
                 return typeConstraint.getSubjectTypeParameterName().getReferencedName();
             }
@@ -509,11 +512,13 @@ public class DefaultErrorMessages {
                     @NotNull
                     @Override
                     public String[] render(@NotNull VarianceConflictDiagnosticData data) {
+                        RenderingContext context =
+                                of(data.getTypeParameter(), data.getTypeParameter().getVariance(), data.getOccurrencePosition(), data.getContainingType());
                         return new String[] {
-                            NAME.render(data.getTypeParameter()),
-                            RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance()),
-                            RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition()),
-                            RENDER_TYPE.render(data.getContainingType())
+                            NAME.render(data.getTypeParameter(), context),
+                            RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance(), context),
+                            RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition(), context),
+                            RENDER_TYPE.render(data.getContainingType(), context)
                         };
                     }
                 });
@@ -548,7 +553,7 @@ public class DefaultErrorMessages {
         MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new DiagnosticParameterRenderer<KtSimpleNameExpression>() {
             @NotNull
             @Override
-            public String render(@NotNull KtSimpleNameExpression nameExpression) {
+            public String render(@NotNull KtSimpleNameExpression nameExpression, @NotNull RenderingContext context) {
                 //noinspection ConstantConditions
                 return nameExpression.getReferencedName();
             }
@@ -603,15 +608,15 @@ public class DefaultErrorMessages {
                 ELEMENT_TEXT, new DiagnosticParameterRenderer<KotlinType>() {
                     @NotNull
                     @Override
-                    public String render(@NotNull KotlinType type) {
+                    public String render(@NotNull KotlinType type, @NotNull RenderingContext context) {
                         if (type.isError()) return "";
-                        return " of type '" + RENDER_TYPE.render(type) + "'";
+                        return " of type '" + RENDER_TYPE.render(type, context) + "'";
                     }
                 });
         MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT, new DiagnosticParameterRenderer<Boolean>() {
             @NotNull
             @Override
-            public String render(@NotNull Boolean hasValueParameters) {
+            public String render(@NotNull Boolean hasValueParameters, @NotNull RenderingContext context) {
                 return hasValueParameters ? "..." : "";
             }
         });
