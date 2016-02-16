@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.Renderer
 
-fun <P : Any> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
+fun <P : Any> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?): Any = renderer?.render(parameter) ?: parameter
 
 fun ClassDescriptor.renderKindWithName(): String = DescriptorRenderer.getClassKindPrefix(this) + " '" + name + "'"
 

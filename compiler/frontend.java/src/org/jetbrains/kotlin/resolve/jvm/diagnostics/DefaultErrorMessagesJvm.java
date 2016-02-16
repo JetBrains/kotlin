@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
-    private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
+    private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new DiagnosticParameterRenderer<ConflictingJvmDeclarationsData>() {
         @NotNull
         @Override
         public String render(@NotNull ConflictingJvmDeclarationsData data) {

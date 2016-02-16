@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.*;
-import org.jetbrains.kotlin.renderer.Renderer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,29 +53,29 @@ public final class DiagnosticFactoryToRendererMap {
         map.put(factory, new SimpleDiagnosticRenderer(message));
     }
 
-    public <E extends PsiElement, A> void put(@NotNull DiagnosticFactory1<E, A> factory, @NotNull String message, @Nullable Renderer<? super A> rendererA) {
+    public <E extends PsiElement, A> void put(@NotNull DiagnosticFactory1<E, A> factory, @NotNull String message, @Nullable DiagnosticParameterRenderer<? super A> rendererA) {
         checkMutability();
         map.put(factory, new DiagnosticWithParameters1Renderer<A>(message, rendererA));
     }
 
     public <E extends PsiElement, A> void put(@NotNull DiagnosticFactory1<E, A> factory, @NotNull String message, @NotNull MultiRenderer<? super A> rendererA) {
         checkMutability();
-        map.put(factory, new DiagnosticWithMultiParametersRenderer<A>(message, rendererA));
+        map.put(factory, new DiagnosticWithParametersMultiRenderer<A>(message, rendererA));
     }
 
     public <E extends PsiElement, A, B> void put(@NotNull DiagnosticFactory2<E, A, B> factory,
             @NotNull String message,
-            @Nullable Renderer<? super A> rendererA,
-            @Nullable Renderer<? super B> rendererB) {
+            @Nullable DiagnosticParameterRenderer<? super A> rendererA,
+            @Nullable DiagnosticParameterRenderer<? super B> rendererB) {
         checkMutability();
         map.put(factory, new DiagnosticWithParameters2Renderer<A, B>(message, rendererA, rendererB));
     }
 
     public <E extends PsiElement, A, B, C> void put(@NotNull DiagnosticFactory3<E, A, B, C> factory,
             @NotNull String message,
-            @Nullable Renderer<? super A> rendererA,
-            @Nullable Renderer<? super B> rendererB,
-            @Nullable  Renderer<? super C> rendererC) {
+            @Nullable DiagnosticParameterRenderer<? super A> rendererA,
+            @Nullable DiagnosticParameterRenderer<? super B> rendererB,
+            @Nullable  DiagnosticParameterRenderer<? super C> rendererC) {
         checkMutability();
         map.put(factory, new DiagnosticWithParameters3Renderer<A, B, C>(message, rendererA, rendererB, rendererC));
     }

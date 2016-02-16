@@ -22,12 +22,16 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.RenderersUtilKt;
-import org.jetbrains.kotlin.renderer.*;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
+import org.jetbrains.kotlin.renderer.RenderingFormat;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -43,7 +47,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     @NotNull
     @Override
-    public Renderer<KotlinType> getTypeRenderer() {
+    public DiagnosticParameterRenderer<KotlinType> getTypeRenderer() {
         return IdeRenderers.HTML_RENDER_TYPE;
     }
 

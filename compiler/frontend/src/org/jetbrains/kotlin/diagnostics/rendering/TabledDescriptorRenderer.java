@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.Table
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -156,7 +155,7 @@ public class TabledDescriptorRenderer {
     }
 
     @NotNull
-    public Renderer<KotlinType> getTypeRenderer() {
+    public DiagnosticParameterRenderer<KotlinType> getTypeRenderer() {
         return Renderers.RENDER_TYPE;
     }
 

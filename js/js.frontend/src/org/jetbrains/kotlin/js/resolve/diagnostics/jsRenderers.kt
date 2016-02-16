@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.renderer.Renderer
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 
-object RenderFirstLineOfElementText : Renderer<PsiElement> {
+object RenderFirstLineOfElementText : DiagnosticParameterRenderer<PsiElement> {
     override fun render(element: PsiElement): String {
         val text = element.text
         val index = text.indexOf('\n')
@@ -28,7 +28,7 @@ object RenderFirstLineOfElementText : Renderer<PsiElement> {
     }
 }
 
-abstract class JsCallDataRenderer : Renderer<JsCallData> {
+abstract class JsCallDataRenderer : DiagnosticParameterRenderer<JsCallData> {
     protected abstract fun format(data: JsCallDataWithCode): String
 
     override fun render(data: JsCallData): String =

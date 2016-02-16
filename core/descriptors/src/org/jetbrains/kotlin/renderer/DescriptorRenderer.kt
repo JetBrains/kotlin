@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 
-abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
+abstract class DescriptorRenderer {
     fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
         val options = (this as DescriptorRendererImpl).options.copy()
         options.changeOptions()
@@ -48,7 +48,7 @@ abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
     abstract fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget? = null): String
 
-    override abstract fun render(declarationDescriptor: DeclarationDescriptor): String
+    abstract fun render(declarationDescriptor: DeclarationDescriptor): String
 
     abstract fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
 

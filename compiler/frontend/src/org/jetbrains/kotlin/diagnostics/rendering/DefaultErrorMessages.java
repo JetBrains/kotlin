@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.diagnostics.rendering;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +29,6 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtTypeConstraint;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
-import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
@@ -44,7 +41,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.kotlin.renderer.DescriptorRenderer.*;
 
 public class DefaultErrorMessages {
 
@@ -95,18 +91,6 @@ public class DefaultErrorMessages {
         return null;
     }
 
-    public static final DescriptorRenderer DEPRECATION_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions(
-            new Function1<DescriptorRendererOptions, Unit>() {
-                @Override
-                public Unit invoke(DescriptorRendererOptions options) {
-                    options.setWithoutTypeParameters(false);
-                    options.setReceiverAfterName(false);
-                    options.setRenderAccessors(true);
-                    return Unit.INSTANCE;
-                }
-            }
-    );
-
     static {
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
@@ -143,7 +127,7 @@ public class DefaultErrorMessages {
                     }
                 });
 
-        MAP.put(MEMBER_PROJECTED_OUT, "Out-projected type ''{1}'' prohibits the use of ''{0}''", DescriptorRenderer.FQ_NAMES_IN_TYPES, RENDER_TYPE);
+        MAP.put(MEMBER_PROJECTED_OUT, "Out-projected type ''{1}'' prohibits the use of ''{0}''", FQ_NAMES_IN_TYPES, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
@@ -188,7 +172,7 @@ public class DefaultErrorMessages {
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
         MAP.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", ELEMENT_TEXT);
-        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", new Renderer<BadNamedArgumentsTarget>() {
+        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", new DiagnosticParameterRenderer<BadNamedArgumentsTarget>() {
             @NotNull
             @Override
             public String render(@NotNull BadNamedArgumentsTarget target) {
@@ -404,7 +388,7 @@ public class DefaultErrorMessages {
 
         MAP.put(IMPLICIT_CAST_TO_ANY, "Conditional branch result of type {0} is implicitly cast to {1}",
                 RENDER_TYPE, RENDER_TYPE);
-        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new Renderer<KtExpression>() {
+        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new DiagnosticParameterRenderer<KtExpression>() {
             @NotNull
             @Override
             public String render(@NotNull KtExpression expression) {
@@ -500,7 +484,7 @@ public class DefaultErrorMessages {
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");
         MAP.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression");
-        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new Renderer<KtTypeConstraint>() {
+        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new DiagnosticParameterRenderer<KtTypeConstraint>() {
             @NotNull
             @Override
             public String render(@NotNull KtTypeConstraint typeConstraint) {
@@ -561,7 +545,7 @@ public class DefaultErrorMessages {
         MAP.put(INCONSISTENT_TYPE_PARAMETER_VALUES, "Type parameter {0} of ''{1}'' has inconsistent values: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
         MAP.put(INCONSISTENT_TYPE_PARAMETER_BOUNDS, "Type parameter {0} of ''{1}'' has inconsistent bounds: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new Renderer<KtSimpleNameExpression>() {
+        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new DiagnosticParameterRenderer<KtSimpleNameExpression>() {
             @NotNull
             @Override
             public String render(@NotNull KtSimpleNameExpression nameExpression) {
@@ -616,7 +600,7 @@ public class DefaultErrorMessages {
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
-                ELEMENT_TEXT, new Renderer<KotlinType>() {
+                ELEMENT_TEXT, new DiagnosticParameterRenderer<KotlinType>() {
                     @NotNull
                     @Override
                     public String render(@NotNull KotlinType type) {
@@ -624,7 +608,7 @@ public class DefaultErrorMessages {
                         return " of type '" + RENDER_TYPE.render(type) + "'";
                     }
                 });
-        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT, new Renderer<Boolean>() {
+        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT, new DiagnosticParameterRenderer<Boolean>() {
             @NotNull
             @Override
             public String render(@NotNull Boolean hasValueParameters) {
@@ -665,7 +649,7 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT, "Type inference for control flow expression failed. Please specify its type explicitly.");
 
-        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", (Renderer) null);
+        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", (DiagnosticParameterRenderer) null);
         MAP.put(NO_TYPE_ARGUMENTS_ON_RHS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected. " +
                                                            "Use ''{1}'' if you don''t want to pass type arguments", null, STRING);
 

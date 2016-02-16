@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.diagnostics.rendering;
+package org.jetbrains.kotlin.diagnostics.rendering
 
-import org.jetbrains.annotations.NotNull;
+interface DiagnosticParameterRenderer<in O> {
+    fun render(obj: O): String
+}
 
-public interface MultiRenderer<O> {
-    @NotNull
-    String[] render(@NotNull O object);
+fun <O> Renderer(block: (O) -> String) = object : DiagnosticParameterRenderer<O> {
+    override fun render(obj: O) = block(obj)
 }

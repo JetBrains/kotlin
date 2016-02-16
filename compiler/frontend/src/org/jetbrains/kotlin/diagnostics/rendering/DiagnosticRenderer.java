@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.renderer.Renderer;
 
-public interface DiagnosticRenderer<D extends Diagnostic> extends Renderer<D> {
+public interface DiagnosticRenderer<D extends Diagnostic> {
     @NotNull
-    @Override
     String render(@NotNull D diagnostic);
 }

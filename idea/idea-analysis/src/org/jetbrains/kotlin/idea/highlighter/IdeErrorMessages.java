@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.diagnostics.TypeMismatchDueToTypeProjectionsData;
 import org.jetbrains.kotlin.diagnostics.rendering.*;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataHtmlRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 
 import java.net.URL;
 
@@ -76,7 +75,7 @@ public class IdeErrorMessages {
                                 HTML_RENDER_TYPE.render(object.getExpectedType()),
                                 HTML_RENDER_TYPE.render(object.getExpressionType()),
                                 HTML_RENDER_TYPE.render(object.getReceiverType()),
-                                DescriptorRenderer.HTML.render(object.getCallableDescriptor())
+                                HTML.render(object.getCallableDescriptor())
                         };
                     }
                 });
@@ -110,30 +109,30 @@ public class IdeErrorMessages {
                                            "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
-                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML);
         MAP.put(RETURN_TYPE_MISMATCH_ON_INHERITANCE, "<html>Return types of inherited members are incompatible:<br/>{0},<br/>{1}</html>",
-                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                HTML, HTML);
 
         MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, "<html>Property type is ''{0}'', which is not a subtype type of overridden<br/>" +
-                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML);
         MAP.put(VAR_TYPE_MISMATCH_ON_OVERRIDE, "<html>Var-property type is ''{0}'', which is not a type of overridden<br/>" +
-                                                    "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+                                                    "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML);
         MAP.put(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, "<html>Types of inherited properties are incompatible:<br/>{0},<br/>{1}</html>",
-                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                HTML, HTML);
         MAP.put(VAR_TYPE_MISMATCH_ON_INHERITANCE, "<html>Types of inherited var-properties do not match:<br/>{0},<br/>{1}</html>",
-                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                HTML, HTML);
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
-                                       "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                                       "{1}</html>", HTML, HTML);
         MAP.put(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, "<html>Val-property cannot override var-property<br />" +
-                                       "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                                       "{1}</html>", HTML, HTML);
 
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "<html>{0} must be declared abstract or implement abstract member<br/>" +
                                                  "{1}</html>", RENDER_CLASS_OR_OBJECT,
-                DescriptorRenderer.HTML);
+                HTML);
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
-                RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
+                RENDER_CLASS_OR_OBJECT, HTML);
         MAP.put(CONFLICTING_OVERLOADS, "<html>''{0}''<br />conflicts with another declaration in {1}</html>",
                 IdeRenderers.HTML_COMPACT_WITH_MODIFIERS, Renderers.DECLARATION_NAME_WITH_KIND);
 

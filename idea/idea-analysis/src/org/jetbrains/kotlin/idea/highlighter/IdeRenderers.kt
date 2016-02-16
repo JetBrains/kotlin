@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.diagnostics.rendering.asRenderer
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.renderResolvedCall
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -30,7 +31,7 @@ import kotlin.comparisons.compareBy
 
 object IdeRenderers {
 
-    @JvmField val HTML_AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
+    @JvmField val HTML_AMBIGUOUS_CALLS = Renderer {
         calls: Collection<ResolvedCall<*>> ->
             calls
                 .map { it.resultingDescriptor }
@@ -38,11 +39,11 @@ object IdeRenderers {
                 .joinToString("") { "<li>${DescriptorRenderer.HTML.render(it)}</li>" }
     }
 
-    @JvmField val HTML_RENDER_TYPE: Renderer<KotlinType> = Renderer {
+    @JvmField val HTML_RENDER_TYPE = Renderer<KotlinType> {
         DescriptorRenderer.HTML.renderType(it)
     }
 
-    @JvmField val HTML_NONE_APPLICABLE_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
+    @JvmField val HTML_NONE_APPLICABLE_CALLS= Renderer {
         calls: Collection<ResolvedCall<*>> ->
             val comparator = compareBy(MemberComparator.INSTANCE) { c: ResolvedCall<*> -> c.resultingDescriptor }
             calls
@@ -50,32 +51,32 @@ object IdeRenderers {
                 .joinToString("") { "<li>${renderResolvedCall(it)}</li>" }
     }
 
-    @JvmField val HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER: Renderer<InferenceErrorData> = Renderer {
+    @JvmField val HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER = Renderer<InferenceErrorData> {
         Renderers.renderConflictingSubstitutionsInferenceError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
-    @JvmField val HTML_TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER: Renderer<InferenceErrorData> = Renderer {
+    @JvmField val HTML_TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER = Renderer<InferenceErrorData> {
         Renderers.renderParameterConstraintError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
-    @JvmField val HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER: Renderer<InferenceErrorData> = Renderer {
+    @JvmField val HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER = Renderer<InferenceErrorData> {
         Renderers.renderNoInformationForParameterError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
-    @JvmField val HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER: Renderer<InferenceErrorData> = Renderer {
+    @JvmField val HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER = Renderer<InferenceErrorData> {
         Renderers.renderUpperBoundViolatedInferenceError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
-    @JvmField val HTML_RENDER_RETURN_TYPE: Renderer<CallableMemberDescriptor> = Renderer {
+    @JvmField val HTML_RENDER_RETURN_TYPE = Renderer<CallableMemberDescriptor> {
         val returnType = it.returnType!!
         DescriptorRenderer.HTML.renderType(returnType)
     }
 
-    @JvmField val HTML_COMPACT_WITH_MODIFIERS: DescriptorRenderer = DescriptorRenderer.HTML.withOptions {
+    @JvmField val HTML_COMPACT_WITH_MODIFIERS = DescriptorRenderer.HTML.withOptions {
         withDefinedIn = false
-    }
+    }.asRenderer()
 
-    @JvmField val HTML_CONFLICTING_JVM_DECLARATIONS_DATA: Renderer<ConflictingJvmDeclarationsData> = Renderer {
+    @JvmField val HTML_CONFLICTING_JVM_DECLARATIONS_DATA = Renderer {
         data: ConflictingJvmDeclarationsData ->
 
         val conflicts = data.signatureOrigins
@@ -86,7 +87,9 @@ object IdeRenderers {
         "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
     }
 
-    @JvmField val HTML_THROWABLE: Renderer<Throwable> = Renderer {
+    @JvmField val HTML_THROWABLE = Renderer<Throwable> {
         Renderers.THROWABLE.render(it).replace("\n", "<br/>")
     }
+
+    @JvmField val HTML = DescriptorRenderer.HTML.asRenderer()
 }
