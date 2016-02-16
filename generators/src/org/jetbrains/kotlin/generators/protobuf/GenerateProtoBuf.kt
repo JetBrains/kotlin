@@ -105,7 +105,7 @@ fun modifyAndExecProtoc(protoPath: ProtoPath) {
     debugProtoFile.writeText(modifyForDebug(protoPath))
     debugProtoFile.deleteOnExit()
 
-    execProtoc(debugProtoFile.path, "compiler/tests")
+    execProtoc(debugProtoFile.path, "build-common/test")
 }
 
 fun modifyForDebug(protoPath: ProtoPath): String {
