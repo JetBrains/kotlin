@@ -65,6 +65,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("complexTypeMismatchWithTypeParameters.kt")
+    public void testComplexTypeMismatchWithTypeParameters() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/complexTypeMismatchWithTypeParameters.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("conflictingOverloadsClass.kt")
     public void testConflictingOverloadsClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");
@@ -212,6 +218,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("typeMismatchWithNothing.kt")
     public void testTypeMismatchWithNothing() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchWithNothing.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeMismatchWithTypeParameters.kt")
+    public void testTypeMismatchWithTypeParameters() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchWithTypeParameters.kt");
         doTest(fileName);
     }
 
