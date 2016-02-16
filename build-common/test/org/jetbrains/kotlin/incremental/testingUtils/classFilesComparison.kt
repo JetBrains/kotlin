@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build.classFilesComparison
+package org.jetbrains.kotlin.incremental.testingUtils
 
 import com.google.common.collect.Sets
 import com.google.common.hash.Hashing
@@ -36,7 +36,7 @@ import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
-import kotlin.comparisons.*
+import kotlin.comparisons.compareBy
 
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
