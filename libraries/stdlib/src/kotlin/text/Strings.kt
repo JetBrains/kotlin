@@ -1200,7 +1200,7 @@ private fun computePrefixFunction(pattern: CharSequence): IntArray {
  */
 public fun CharSequence.occurrencesOf(pattern: CharSequence, ignoreCase: Boolean = false): Sequence<Int> {
 
-    if (isEmpty() || pattern.isEmpty()) {
+    if (pattern.isEmpty() || pattern.length > this.length) {
         return emptySequence()
     }
 

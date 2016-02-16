@@ -715,12 +715,28 @@ class StringTest {
     }
 
     @test fun occurencesOf() {
+        // Multiple overlapping occurances
         assertEquals("abaabaaababac".occurrencesOf("abaa").toList(), listOf(0, 3))
         assertEquals("Abaabaaababac".occurrencesOf("abaa").toList(), listOf(3))
         assertEquals("Abaabaaababac".occurrencesOf("abaa", ignoreCase = true).toList(), listOf(0, 3))
+        assertEquals("abaabaaababac".occurrencesOf("abAa", ignoreCase = true).toList(), listOf(0, 3))
+        // Big and small theta
+        assertEquals("\u0398\u0398\u0398".occurrencesOf("\u0398\u0398").toList(), listOf(0, 1))
+        assertEquals("\u03b8\u0398\u0398".occurrencesOf("\u0398\u0398").toList(), listOf(1))
+
+        // Special character test
         assertEquals("multi\nline\nstring\nmulti".occurrencesOf("multi").toList(), listOf(0, 18))
-        assertEquals("aaba".occurrencesOf("a").toList(), listOf(0, 1, 3))
-        assertEquals("".occurrencesOf("abc").count(), 0)
+
+        // Single character test
+        assertEquals("aabA".occurrencesOf("a").toList(), listOf(0, 1))
+        assertEquals("aabA".occurrencesOf("a", ignoreCase = true).toList(), listOf(0, 1, 3))
+        assertEquals("aabA".occurrencesOf("A", ignoreCase = true).toList(), listOf(0, 1, 3))
+        // Big and small theta
+        assertEquals("\u0398\u0398\u0398".occurrencesOf("\u0398").toList(), listOf(0, 1, 2))
+        assertEquals("\u03b8\u0398\u0398".occurrencesOf("\u0398").toList(), listOf(1, 2))
+
+        // Early return test
+        assertEquals("z".occurrencesOf("abc").count(), 0)
         assertEquals("abc".occurrencesOf("").count(), 0)
     }
 
