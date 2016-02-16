@@ -4,10 +4,12 @@ import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.incremental.BuildStep
 import org.jetbrains.kotlin.gradle.incremental.parseTestBuildLog
 import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
+import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
 import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
 import org.junit.Assume
 import java.io.File
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 abstract class BaseIncrementalGradleIT : BaseGradleIT() {
@@ -55,14 +57,15 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
             println("<--- Expected build log stage: ${if (it.compileSucceeded) "succeeded" else "failed"}: kotlin: ${it.compiledKotlinFiles} java: ${it.compiledJavaFiles}")
         }
 
-
         for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(projectDir, mapWorkingToOriginalFile) }
             buildAndAssertStageResults(buildLogStep, weakTesting = weakTesting)
         }
+
+        rebuildAndCompareOutput(rebuildSucceedExpected = buildLogSteps.last().compileSucceeded)
     }
 
-    fun JpsTestProject.buildAndAssertStageResults(expected: BuildStep, options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
+    private fun JpsTestProject.buildAndAssertStageResults(expected: BuildStep, options: BuildOptions = defaultBuildOptions(), weakTesting: Boolean = false) {
         build("build", options = options) {
             if (expected.compileSucceeded) {
                 assertSuccessful()
@@ -72,6 +75,20 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
             else {
                 assertFailed()
             }
+        }
+    }
+
+    private fun JpsTestProject.rebuildAndCompareOutput(rebuildSucceedExpected: Boolean) {
+        val outDir = File(File(projectDir, "build"), "classes")
+        val incrementalOutDir = File(workingDir, "kotlin-classes-incremental")
+        incrementalOutDir.mkdirs()
+        copyDirRecursively(outDir, incrementalOutDir)
+
+        build("clean", "build") {
+            val rebuildSucceed = resultCode == 0
+            assertEquals(rebuildSucceed, rebuildSucceedExpected, "Rebuild exit code differs from incremental exit code")
+            outDir.mkdirs()
+            assertEqualDirectories(outDir, incrementalOutDir, forgiveExtraFiles = !rebuildSucceed)
         }
     }
 }

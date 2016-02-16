@@ -82,13 +82,15 @@ private fun getDirectoryString(dir: File, interestingPaths: List<String>): Strin
         p.pushIndent()
 
         val listFiles = dir.listFiles()
-        assertNotNull(listFiles)
+        assertNotNull("$dir does not exist", listFiles)
 
         val children = listFiles!!.sortedWith(compareBy({ it.isDirectory }, { it.name }))
         for (child in children) {
             if (child.isDirectory) {
-                p.println(child.name)
-                addDirContent(child)
+                if ((child.list()?.isNotEmpty() ?: false)) {
+                    p.println(child.name)
+                    addDirContent(child)
+                }
             }
             else {
                 p.println(child.name, " ", child.hash())
