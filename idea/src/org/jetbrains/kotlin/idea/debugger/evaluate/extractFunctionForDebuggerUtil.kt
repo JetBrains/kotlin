@@ -56,6 +56,7 @@ fun getFunctionForExtractedFragment(
             val message = when(errorMessage) {
                 ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
                 ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.name}:$breakpointLine"
+                ErrorMessage.SYNTAX_ERRORS -> "Cannot perform an action due to erroneous code"
                 ErrorMessage.SUPER_CALL -> "Cannot perform an action for expression with super call"
                 ErrorMessage.DENOTABLE_TYPES -> "Cannot perform an action because following types are unavailable from debugger scope"
                 ErrorMessage.ERROR_TYPES -> "Cannot perform an action because this code fragment contains erroneous types"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3121,6 +3121,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         @TestMetadata("replaceDuplicates.kt")
         public void testReplaceDuplicates() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/replaceDuplicates.kt");
+            doIntroducePropertyTest(fileName);
+        }
+
+        @TestMetadata("syntaxErrors.kt")
+        public void testSyntaxErrors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceProperty/syntaxErrors.kt");
             doIntroducePropertyTest(fileName);
         }
 
