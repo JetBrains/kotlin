@@ -6775,6 +6775,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyWithGetterWithoutType.kt")
+        public void testPropertyWithGetterWithoutType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyWithGetterWithoutType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithSetterWithoutType.kt")
+        public void testPropertyWithSetterWithoutType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyWithSetterWithoutType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("protectedFunWithoutReturnType.kt")
         public void testProtectedFunWithoutReturnType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/protectedFunWithoutReturnType.kt");

@@ -184,6 +184,8 @@ class QuickFixRegistrar : QuickFixContributor {
         UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixCallFix)
 
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
+        PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.registerActions(SpecifyTypeExplicitlyFix())
+        MUST_BE_INITIALIZED.registerActions(SpecifyTypeExplicitlyFix())
 
         ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix)
         NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix)

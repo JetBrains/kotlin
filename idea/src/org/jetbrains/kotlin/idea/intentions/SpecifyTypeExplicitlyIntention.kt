@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
@@ -59,9 +60,19 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclarat
     }
 
     companion object {
+
+        private val PropertyDescriptor.getterType: KotlinType?
+            get() = getter?.returnType?.let { if (it.isError) null else it }
+
+        private val PropertyDescriptor.setterType: KotlinType?
+            get() = setter?.valueParameters?.firstOrNull()?.type?.let { if (it.isError) null else it }
+
         fun getTypeForDeclaration(declaration: KtCallableDeclaration): KotlinType {
             val descriptor = declaration.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
             val type = (descriptor as? CallableDescriptor)?.returnType
+            if (type != null && type.isError && descriptor is PropertyDescriptor) {
+                return descriptor.getterType ?: descriptor.setterType ?: ErrorUtils.createErrorType("null type")
+            }
             return type ?: ErrorUtils.createErrorType("null type")
         }
 
