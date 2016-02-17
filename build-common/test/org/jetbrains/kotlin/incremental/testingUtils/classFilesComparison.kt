@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Assert.assertNotNull
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -38,13 +38,42 @@ import java.io.StringWriter
 import java.util.*
 import kotlin.comparisons.compareBy
 
-
 // Set this to true if you want to dump all bytecode (test will fail in this case)
-val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
+private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
 
-fun File.hash() = Files.hash(this, Hashing.crc32())
+fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean) {
+    val pathsInExpected = getAllRelativePaths(expected)
+    val pathsInActual = getAllRelativePaths(actual)
 
-fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
+    val commonPaths = Sets.intersection(pathsInExpected, pathsInActual)
+    val changedPaths = commonPaths
+            .filter { DUMP_ALL || !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
+            .sorted()
+
+    val expectedString = getDirectoryString(expected, changedPaths)
+    val actualString = getDirectoryString(actual, changedPaths)
+
+    if (DUMP_ALL) {
+        Assert.assertEquals(expectedString, actualString + " ")
+    }
+
+    if (forgiveExtraFiles) {
+        // If compilation fails, output may be different for full rebuild and partial make. Parsing output (directory string) for simplicity.
+        if (changedPaths.isEmpty()) {
+            val expectedListingLines = expectedString.split('\n').toList()
+            val actualListingLines = actualString.split('\n').toList()
+            if (actualListingLines.containsAll(expectedListingLines)) {
+                return
+            }
+        }
+    }
+
+    Assert.assertEquals(expectedString, actualString)
+}
+
+private fun File.hash() = Files.hash(this, Hashing.crc32())
+
+private fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
     val buf = StringBuilder()
     val p = Printer(buf)
 
@@ -83,7 +112,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
     return buf.toString()
 }
 
-fun getAllRelativePaths(dir: File): Set<String> {
+private fun getAllRelativePaths(dir: File): Set<String> {
     val result = HashSet<String>()
     FileUtil.processFilesRecursively(dir) {
         if (it!!.isFile) {
@@ -96,37 +125,7 @@ fun getAllRelativePaths(dir: File): Set<String> {
     return result
 }
 
-fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean) {
-    val pathsInExpected = getAllRelativePaths(expected)
-    val pathsInActual = getAllRelativePaths(actual)
-
-    val commonPaths = Sets.intersection(pathsInExpected, pathsInActual)
-    val changedPaths = commonPaths
-            .filter { DUMP_ALL || !Arrays.equals(File(expected, it).readBytes(), File(actual, it).readBytes()) }
-            .sorted()
-
-    val expectedString = getDirectoryString(expected, changedPaths)
-    val actualString = getDirectoryString(actual, changedPaths)
-
-    if (DUMP_ALL) {
-        assertEquals(expectedString, actualString + " ")
-    }
-
-    if (forgiveExtraFiles) {
-        // If compilation fails, output may be different for full rebuild and partial make. Parsing output (directory string) for simplicity.
-        if (changedPaths.isEmpty()) {
-            val expectedListingLines = expectedString.split('\n').toList()
-            val actualListingLines = actualString.split('\n').toList()
-            if (actualListingLines.containsAll(expectedListingLines)) {
-                return
-            }
-        }
-    }
-
-    assertEquals(expectedString, actualString)
-}
-
-fun classFileToString(classFile: File): String {
+private fun classFileToString(classFile: File): String {
     val out = StringWriter()
 
     val traceVisitor = TraceClassVisitor(PrintWriter(out))
@@ -160,13 +159,13 @@ fun classFileToString(classFile: File): String {
     return out.toString()
 }
 
-fun getExtensionRegistry(): ExtensionRegistry {
+private fun getExtensionRegistry(): ExtensionRegistry {
     val registry = ExtensionRegistry.newInstance()!!
     DebugJvmProtoBuf.registerAllExtensions(registry)
     return registry
 }
 
-fun fileToStringRepresentation(file: File): String {
+private fun fileToStringRepresentation(file: File): String {
     return when {
         file.name.endsWith(".class") -> {
             classFileToString(file)
