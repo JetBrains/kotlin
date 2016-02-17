@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import java.util.*
 internal class DescriptorRendererImpl(
         val options: DescriptorRendererOptionsImpl
 ) : DescriptorRenderer(), DescriptorRendererOptions by options/* this gives access to options without qualifier */ {
-
     init {
         assert(options.isLocked)
     }
@@ -604,7 +603,7 @@ internal class DescriptorRendererImpl(
 
         val returnType = function.returnType
         if (!withoutReturnType && (unitReturnType || (returnType == null || !KotlinBuiltIns.isUnit(returnType)))) {
-            builder.append(": ").append(if (returnType == null) "[NULL]" else escape(renderType(returnType)))
+            builder.append(": ").append(if (returnType == null) "[NULL]" else renderType(returnType))
         }
 
         renderWhereSuffix(function.typeParameters, builder)
@@ -615,7 +614,7 @@ internal class DescriptorRendererImpl(
 
         val receiver = callableDescriptor.extensionReceiverParameter
         if (receiver != null) {
-            builder.append(" on ").append(escape(renderType(receiver.type)))
+            builder.append(" on ").append(renderType(receiver.type))
         }
     }
 
@@ -623,7 +622,7 @@ internal class DescriptorRendererImpl(
         val receiver = callableDescriptor.extensionReceiverParameter
         if (receiver != null) {
             val type = receiver.type
-            var result = escape(renderType(type))
+            var result = renderType(type)
             if (shouldRenderAsPrettyFunctionType(type) && !TypeUtils.isNullableType(type)) {
                 result = "($result)"
             }
@@ -659,7 +658,7 @@ internal class DescriptorRendererImpl(
         for (typeParameter in typeParameters) {
             typeParameter.upperBounds
                     .drop(1) // first parameter is rendered by renderTypeParameter
-                    .mapTo(upperBoundStrings) { renderName(typeParameter.name) + " : " + escape(renderType(it)) }
+                    .mapTo(upperBoundStrings) { renderName(typeParameter.name) + " : " + renderType(it) }
         }
 
         if (!upperBoundStrings.isEmpty()) {
@@ -743,12 +742,12 @@ internal class DescriptorRendererImpl(
             builder.append(": ")
         }
 
-        builder.append(escape(renderType(typeToRender)))
+        builder.append(renderType(typeToRender))
 
         renderInitializer(variable, builder)
 
         if (verbose && varargElementType != null) {
-            builder.append(" /*").append(escape(renderType(realType))).append("*/")
+            builder.append(" /*").append(renderType(realType)).append("*/")
         }
     }
 
@@ -771,7 +770,7 @@ internal class DescriptorRendererImpl(
         }
 
         renderName(property, builder)
-        builder.append(": ").append(escape(renderType(property.type)))
+        builder.append(": ").append(renderType(property.type))
 
         renderReceiverAfterName(property, builder)
 

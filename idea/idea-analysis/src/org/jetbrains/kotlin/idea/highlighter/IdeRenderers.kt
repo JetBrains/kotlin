@@ -17,17 +17,13 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.diagnostics.rendering.ContextDependentRenderer
-import org.jetbrains.kotlin.diagnostics.rendering.Renderer
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.diagnostics.rendering.asRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.renderResolvedCall
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
-import org.jetbrains.kotlin.types.KotlinType
 import kotlin.comparisons.compareBy
 
 object IdeRenderers {
@@ -40,9 +36,7 @@ object IdeRenderers {
                 .joinToString("") { "<li>${DescriptorRenderer.HTML.render(it)}</li>" }
     }
 
-    @JvmField val HTML_RENDER_TYPE = Renderer<KotlinType> {
-        DescriptorRenderer.HTML.renderType(it)
-    }
+    @JvmField val HTML_RENDER_TYPE = SmartTypeRenderer(DescriptorRenderer.HTML)
 
     @JvmField val HTML_NONE_APPLICABLE_CALLS= Renderer {
         calls: Collection<ResolvedCall<*>> ->

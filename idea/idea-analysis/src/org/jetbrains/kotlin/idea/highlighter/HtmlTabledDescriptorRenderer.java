@@ -21,9 +21,11 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext;
+import org.jetbrains.kotlin.diagnostics.rendering.SmartDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
@@ -109,7 +111,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             }
             if (row instanceof DescriptorRow) {
                 tdSpace(result);
-                tdRightBoldColspan(result, 2, DESCRIPTOR_IN_TABLE.render(((DescriptorRow) row).descriptor));
+                tdRightBoldColspan(result, 2, DESCRIPTOR_IN_TABLE.render(((DescriptorRow) row).descriptor, context));
             }
             if (row instanceof FunctionArgumentsRow) {
                 FunctionArgumentsRow functionArgumentsRow = (FunctionArgumentsRow) row;
@@ -209,7 +211,8 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         }
     };
 
-    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = DescriptorRenderer.Companion.withOptions(
+    private static final DiagnosticParameterRenderer<DeclarationDescriptor>
+            DESCRIPTOR_IN_TABLE = new SmartDescriptorRenderer(DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
@@ -219,7 +222,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
                     options.setTextFormat(RenderingFormat.HTML);
                     return Unit.INSTANCE;
                 }
-            });
+            }));
 
     private static void td(StringBuilder builder, String text) {
         builder.append("<td style=\"white-space:nowrap;\">").append(text).append("</td>");
