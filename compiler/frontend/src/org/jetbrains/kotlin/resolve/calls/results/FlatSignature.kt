@@ -57,16 +57,25 @@ class FlatSignature<out T>(
                 }
             }
 
-            val extensionReceiverParameterType = originalDescriptor.extensionReceiverParameter?.type
             val valueArgumentParameterTypes = call.call.valueArguments.map { valueArgumentToParameterType[it] }
-            val valueParameterTypes = extensionReceiverParameterType.singletonOrEmptyList() + valueArgumentParameterTypes
+            val valueParameterTypes = originalDescriptor.extensionReceiverTypeOrEmpty() + valueArgumentParameterTypes
 
             val hasVarargs = originalDescriptor.valueParameters.any { it.varargElementType != null }
 
             return FlatSignature(call, originalTypeParameters, valueParameterTypes, hasVarargs, numDefaults)
         }
 
+        fun <D : CallableDescriptor> createFromCallableDescriptor(descriptor: D): FlatSignature<D> =
+                FlatSignature(descriptor,
+                              descriptor.typeParameters,
+                              valueParameterTypes = descriptor.extensionReceiverTypeOrEmpty() + descriptor.valueParameters.map { it.flatType },
+                              hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                              numDefaults = 0)
+
         val ValueParameterDescriptor.flatType: KotlinType
             get() = varargElementType ?: type
+
+        fun CallableDescriptor.extensionReceiverTypeOrEmpty() =
+                extensionReceiverParameter?.type.singletonOrEmptyList()
     }
 }

@@ -19,18 +19,19 @@ package org.jetbrains.kotlin.resolve.calls.results
 import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Specificity
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.getSpecificityRelationTo
 
 class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
@@ -151,23 +152,41 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
                                        if (discriminateGenerics)
                                            SpecificityComparisonDiscriminatingGenerics
                                        else
-                                           DefaultSpecificityComparison)
+                                           DefaultCallSpecificityComparison)
 
-    private abstract inner class SpecificityComparisonWithNumerics : SpecificityComparisonCallbacks<MutableResolvedCall<*>> {
-        override fun isTypeNotLessSpecific(type1: KotlinType, type2: KotlinType): Boolean? =
-                numericTypeMoreSpecific(type1, type2)
+    private abstract inner class SpecificityComparisonWithNumerics<T> : SpecificityComparisonCallbacks<T> {
+        override fun isNotLessSpecificSignature(signature1: FlatSignature<T>, signature2: FlatSignature<T>): Boolean?
+                = null
+
+        override fun isTypeNotLessSpecific(type1: KotlinType, type2: KotlinType): Boolean? {
+            val _double = builtIns.doubleType
+            val _float = builtIns.floatType
+            val _long = builtIns.longType
+            val _int = builtIns.intType
+            val _byte = builtIns.byteType
+            val _short = builtIns.shortType
+
+            when {
+                TypeUtils.equalTypes(type1, _double) && TypeUtils.equalTypes(type2, _float) -> return true
+                TypeUtils.equalTypes(type1, _int) -> {
+                    when {
+                        TypeUtils.equalTypes(type2, _long) -> return true
+                        TypeUtils.equalTypes(type2, _byte) -> return true
+                        TypeUtils.equalTypes(type2, _short) -> return true
+                    }
+                }
+                TypeUtils.equalTypes(type1, _short) && TypeUtils.equalTypes(type2, _byte) -> return true
+            }
+
+            return false
+        }
     }
 
-    private val DefaultSpecificityComparison = object : SpecificityComparisonWithNumerics() {
-        override fun isNotLessSpecificByOrigin(
-                signature1: FlatSignature<MutableResolvedCall<*>>,
-                signature2: FlatSignature<MutableResolvedCall<*>>
-        ): Boolean? =
-                null
-    }
+    private val DefaultCallSpecificityComparison = object : SpecificityComparisonWithNumerics<MutableResolvedCall<*>>() {}
+    private val DefaultDescriptorSpecificityComparison = object : SpecificityComparisonWithNumerics<CallableDescriptor>() {}
 
-    private val SpecificityComparisonDiscriminatingGenerics = object : SpecificityComparisonWithNumerics() {
-        override fun isNotLessSpecificByOrigin(
+    private val SpecificityComparisonDiscriminatingGenerics = object : SpecificityComparisonWithNumerics<MutableResolvedCall<*>>() {
+        override fun isNotLessSpecificSignature(
                 signature1: FlatSignature<MutableResolvedCall<*>>,
                 signature2: FlatSignature<MutableResolvedCall<*>>
         ): Boolean? {
@@ -236,94 +255,18 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
      * `null` if undecided.
      */
     private fun compareFunctionParameterTypes(f: CallableDescriptor, g: CallableDescriptor): Boolean {
-        val fReceiverType = f.extensionReceiverType
-        val gReceiverType = g.extensionReceiverType
-        if (fReceiverType != null && gReceiverType != null) {
-            if (!typeNotLessSpecific(fReceiverType, gReceiverType)) {
-                return false
-            }
-        }
+        if (f.valueParameters.size != g.valueParameters.size) return false
+        if (f.varargParameterPosition() != g.varargParameterPosition()) return false
 
-        val fParams = f.valueParameters
-        val gParams = g.valueParameters
-
-        val fSize = fParams.size
-        val gSize = gParams.size
-
-        if (fSize != gSize) return false
-
-        for (i in 0..fSize - 1) {
-            val fParam = fParams[i]
-            val gParam = gParams[i]
-
-            val fParamIsVararg = fParam.varargElementType != null
-            val gParamIsVararg = gParam.varargElementType != null
-
-            if (fParamIsVararg != gParamIsVararg) {
-                return false
-            }
-
-            val fParamType = getVarargElementTypeOrType(fParam)
-            val gParamType = getVarargElementTypeOrType(gParam)
-
-            if (!typeNotLessSpecific(fParamType, gParamType)) {
-                return false
-            }
-        }
-
-        return true
+        val fSignature = FlatSignature.createFromCallableDescriptor(f)
+        val gSignature = FlatSignature.createFromCallableDescriptor(g)
+        return isSignatureNotLessSpecific(fSignature, gSignature, CallHandle.NONE, DefaultDescriptorSpecificityComparison)
     }
 
     private fun isNotLessSpecificCallableReference(f: CallableDescriptor, g: CallableDescriptor): Boolean =
             // TODO should we "discriminate generic descriptors" for callable references?
             tryCompareDescriptorsFromScripts(f, g) ?:
             compareFunctionParameterTypes(f, g)
-
-    private fun getVarargElementTypeOrType(parameterDescriptor: ValueParameterDescriptor): KotlinType =
-            parameterDescriptor.varargElementType ?: parameterDescriptor.type
-
-    private fun typeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
-        val isSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(specific, general) || numericTypeMoreSpecific(specific, general)
-
-        if (!isSubtype) return false
-
-        if (isDefinitelyLessSpecificByTypeSpecificity(specific, general)) return false
-
-        return true
-    }
-
-    private fun isDefinitelyLessSpecificByTypeSpecificity(specific: KotlinType, general: KotlinType): Boolean {
-        val sThanG = specific.getSpecificityRelationTo(general)
-        val gThanS = general.getSpecificityRelationTo(specific)
-        return sThanG == Specificity.Relation.LESS_SPECIFIC &&
-               gThanS != Specificity.Relation.LESS_SPECIFIC
-    }
-
-    private fun numericTypeMoreSpecific(specific: KotlinType, general: KotlinType): Boolean {
-        val _double = builtIns.doubleType
-        val _float = builtIns.floatType
-        val _long = builtIns.longType
-        val _int = builtIns.intType
-        val _byte = builtIns.byteType
-        val _short = builtIns.shortType
-
-        when {
-            TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
-            TypeUtils.equalTypes(specific, _int) -> {
-                when {
-                    TypeUtils.equalTypes(general, _long) -> return true
-                    TypeUtils.equalTypes(general, _byte) -> return true
-                    TypeUtils.equalTypes(general, _short) -> return true
-                }
-            }
-            TypeUtils.equalTypes(specific, _short) && TypeUtils.equalTypes(general, _byte) -> return true
-        }
-
-        return false
-    }
-
-    private val CallableDescriptor.extensionReceiverType: KotlinType?
-        get() = extensionReceiverParameter?.type
 
     companion object {
         // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
@@ -364,3 +307,6 @@ internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.callHandle(
 
 internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.descriptorVisibility() =
         candidateDescriptor().visibility
+
+internal fun CallableDescriptor.varargParameterPosition() =
+        valueParameters.indexOfFirst { it.varargElementType != null }
