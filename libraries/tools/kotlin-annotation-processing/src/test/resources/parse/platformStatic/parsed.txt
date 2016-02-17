@@ -1,3 +1,5 @@
+kotlin.inline org.test.SomeClass a
 kotlin.inline org.test.SomeClass.Companion a
+kotlin.platform.platformStatic org.test.SomeClass a
 kotlin.platform.platformStatic org.test.SomeClass.Companion a
 org.jetbrains.annotations.NotNull org.test.SomeClass.Companion access$init$0
