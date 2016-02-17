@@ -16,22 +16,20 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
-import org.jetbrains.kotlin.idea.decompiler.common.toPackageProto
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -61,31 +59,6 @@ abstract class DeserializerForDecompilerBase(
 
     protected fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor =
             MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
-
-    protected fun getDescriptorsFromPackageFile(
-            packageFqName: FqName,
-            paths: SerializedResourcePaths,
-            log: Logger,
-            nameResolver: NameResolver
-    ): List<DeclarationDescriptor> {
-        assert(packageFqName == directoryPackageFqName) {
-            "Was called for $packageFqName; only members of $directoryPackageFqName package are expected."
-        }
-        val packageFilePath = paths.getPackageFilePath(directoryPackageFqName).substringAfterLast("/")
-        val file = packageDirectory.findChild(packageFilePath)
-        if (file == null) {
-            log.error("Could not read data for package $packageFqName; $packageFilePath absent in $packageDirectory")
-            return emptyList()
-        }
-
-        val content = file.contentsToByteArray(false)
-        val packageProto = content.toPackageProto(paths.extensionRegistry)
-        val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName), packageProto, nameResolver, packagePartSource = null,
-                components = deserializationComponents
-        ) { emptyList() }
-        return membersScope.getContributedDescriptors().toList()
-    }
 
     private fun createDummyModule(name: String) = ModuleDescriptorImpl(Name.special("<$name>"), storageManager, ModuleParameters.Empty, targetPlatform.builtIns)
 

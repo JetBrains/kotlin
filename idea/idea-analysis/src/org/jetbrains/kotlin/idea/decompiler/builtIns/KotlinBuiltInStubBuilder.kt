@@ -16,18 +16,14 @@
 
 package org.jetbrains.kotlin.idea.decompiler.builtIns
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
+import org.jetbrains.kotlin.builtins.BuiltInsClassDataFinder
 import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
-import org.jetbrains.kotlin.idea.decompiler.common.DirectoryBasedClassDataFinder
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
@@ -49,7 +45,11 @@ class KotlinBuiltInStubBuilder : ClsStubBuilder() {
                 val packageProto = file.proto.`package`
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
-                val components = createStubBuilderComponents(virtualFile, packageFqName, nameResolver)
+                val components = ClsStubBuilderComponents(
+                        BuiltInsClassDataFinder(file.proto, nameResolver),
+                        AnnotationLoaderForStubBuilderImpl(BuiltInSerializerProtocol),
+                        virtualFile
+                )
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
 
                 val fileStub = createFileStub(packageFqName)
@@ -64,11 +64,5 @@ class KotlinBuiltInStubBuilder : ClsStubBuilder() {
                 return fileStub
             }
         }
-    }
-
-    private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName, nameResolver: NameResolver): ClsStubBuilderComponents {
-        val finder = DirectoryBasedClassDataFinder(file.parent!!, packageFqName, nameResolver, BuiltInsSerializedResourcePaths)
-        val annotationLoader = AnnotationLoaderForStubBuilderImpl(BuiltInSerializerProtocol)
-        return ClsStubBuilderComponents(finder, annotationLoader, file)
     }
 }

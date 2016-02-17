@@ -22,18 +22,16 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
-import org.jetbrains.kotlin.idea.decompiler.common.DirectoryBasedClassDataFinder
-import org.jetbrains.kotlin.idea.decompiler.common.toClassProto
-import org.jetbrains.kotlin.idea.decompiler.common.toPackageProto
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClsStubBuilderComponents
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createPackageFacadeStub
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createTopLevelClassStub
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
 import java.io.ByteArrayInputStream
 
@@ -60,27 +58,25 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
         assert(stringsFile != null) { "strings file not found: $stringsFileName" }
 
         val nameResolver = NameResolverImpl.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
-        val components = createStubBuilderComponents(file, packageFqName, nameResolver)
+        val components = createStubBuilderComponents(file, nameResolver)
 
         if (isPackageHeader) {
-            val packageProto = content.toPackageProto(KotlinJavascriptSerializedResourcePaths.extensionRegistry)
-            val context = components.createContext(
-                    nameResolver, packageFqName, TypeTable(packageProto.typeTable)
-            )
+            val packageProto = ProtoBuf.Package.parseFrom(content, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+            val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
             return createPackageFacadeStub(packageProto, packageFqName, context)
         }
         else {
-            val classProto = content.toClassProto(KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+            val classProto = ProtoBuf.Class.parseFrom(content, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
             val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
             val classId = JsMetaFileUtils.getClassId(file)
             return createTopLevelClassStub(classId, classProto, context)
         }
     }
 
-    private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName, nameResolver: NameResolver): ClsStubBuilderComponents {
-        val classDataFinder = DirectoryBasedClassDataFinder(
-                file.parent!!, packageFqName, nameResolver, KotlinJavascriptSerializedResourcePaths
-        )
+    private fun createStubBuilderComponents(file: VirtualFile, nameResolver: NameResolver): ClsStubBuilderComponents {
+        val classDataFinder = KotlinJavascriptClassDataFinder(nameResolver) { path ->
+            file.parent.findChild(path.substringAfterLast("/"))?.inputStream
+        }
         val annotationLoader = AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol)
         return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
