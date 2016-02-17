@@ -115,6 +115,8 @@ class MultifileClassCodegen(
         if (!partFqNames.isEmpty()) {
             generateMultifileFacadeClass(generateCallableMemberTasks, partFqNames)
         }
+
+        done()
     }
 
     private fun generateCodeForSourceFiles(
@@ -289,7 +291,7 @@ class MultifileClassCodegen(
                 override fun generateKotlinMetadataAnnotation() = throw UnsupportedOperationException()
             }
 
-    fun done() {
+    private fun done() {
         classBuilder.done()
     }
 
