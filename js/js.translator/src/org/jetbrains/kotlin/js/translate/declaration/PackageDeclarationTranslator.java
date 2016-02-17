@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -63,7 +64,18 @@ public final class PackageDeclarationTranslator extends AbstractTranslator {
                 packageFragmentToTranslator.put(packageFragment, translator);
             }
 
-            translator.translate(file);
+            try {
+                translator.translate(file);
+            }
+            catch (TranslationRuntimeException e) {
+                throw e;
+            }
+            catch (RuntimeException e) {
+                throw new TranslationRuntimeException(file, e);
+            }
+            catch (AssertionError e) {
+                throw new TranslationRuntimeException(file, e);
+            }
         }
 
         for (PackageTranslator translator : packageFragmentToTranslator.values()) {

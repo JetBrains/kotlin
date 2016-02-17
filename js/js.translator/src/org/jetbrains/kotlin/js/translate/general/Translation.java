@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
-import org.jetbrains.kotlin.js.facade.exceptions.MainFunctionNotFoundException;
-import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
-import org.jetbrains.kotlin.js.facade.exceptions.TranslationInternalException;
-import org.jetbrains.kotlin.js.facade.exceptions.UnsupportedFeatureException;
+import org.jetbrains.kotlin.js.facade.exceptions.*;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
@@ -105,7 +102,18 @@ public final class Translation {
 
     @NotNull
     private static JsNode doTranslateExpression(KtExpression expression, TranslationContext context) {
-        return expression.accept(new ExpressionVisitor(), context);
+        try {
+            return expression.accept(new ExpressionVisitor(), context);
+        }
+        catch (TranslationRuntimeException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            throw new TranslationRuntimeException(expression, e);
+        }
+        catch (AssertionError e) {
+            throw new TranslationRuntimeException(expression, e);
+        }
     }
 
     @NotNull
