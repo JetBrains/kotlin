@@ -4471,6 +4471,177 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/implement")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Implement extends AbstractQuickFixTest {
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/abstract.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInImplement() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/implement"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/annotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enum.kt")
+        public void testEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/enum.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("finalClass.kt")
+        public void testFinalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/finalClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inCompanion.kt")
+        public void testInCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/inCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inInternalCompanion.kt")
+        public void testInInternalCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/inInternalCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inPrivateCompanion.kt")
+        public void testInPrivateCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/inPrivateCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inProtectedCompanion.kt")
+        public void testInProtectedCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/inProtectedCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incorrectRange.kt")
+        public void testIncorrectRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/incorrectRange.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/inner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("interface.kt")
+        public void testInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/interface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/local.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nested.kt")
+        public void testNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/nested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedPrivateInterface.kt")
+        public void testNestedPrivateInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/nestedPrivateInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noDefaultConstructor.kt")
+        public void testNoDefaultConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/noDefaultConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("private.kt")
+        public void testPrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/private.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateConstructor.kt")
+        public void testPrivateConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/privateConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateNested.kt")
+        public void testPrivateNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/privateNested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateNestedWithConflict.kt")
+        public void testPrivateNestedWithConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/privateNestedWithConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protected.kt")
+        public void testProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/protected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealed.kt")
+        public void testSealed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/sealed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedEmpty.kt")
+        public void testSealedEmpty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/sealedEmpty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedWithConflict.kt")
+        public void testSealedWithConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/sealedWithConflict.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParameter.kt")
+        public void testTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParameterOut.kt")
+        public void testTypeParameterOut() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParameterOut.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParameterWhere.kt")
+        public void testTypeParameterWhere() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParameterWhere.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeParametersClass.kt")
+        public void testTypeParametersClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/implement/typeParametersClass.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/initializeWithConstructorParameter")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

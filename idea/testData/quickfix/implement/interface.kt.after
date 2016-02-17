@@ -1,0 +1,14 @@
+// "Implement interface" "true"
+// SHOULD_BE_AVAILABLE_AFTER_EXECUTION
+
+interface Base {
+    fun foo(x: Int): Int
+
+    fun bar(y: String) = y
+}
+
+class BaseImpl : Base {
+    override fun foo(x: Int): Int {
+        throw UnsupportedOperationException()
+    }
+}

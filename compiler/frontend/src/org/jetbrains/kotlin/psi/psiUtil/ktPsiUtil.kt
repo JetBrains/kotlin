@@ -345,6 +345,8 @@ fun PsiElement.parameterIndex(): Int {
 
 fun KtModifierListOwner.isPrivate(): Boolean = hasModifier(KtTokens.PRIVATE_KEYWORD)
 
+fun KtModifierListOwner.isProtected(): Boolean = hasModifier(KtTokens.PROTECTED_KEYWORD)
+
 fun KtSimpleNameExpression.isImportDirectiveExpression(): Boolean {
     val parent = parent
     return parent is KtImportDirective || parent?.parent is KtImportDirective
