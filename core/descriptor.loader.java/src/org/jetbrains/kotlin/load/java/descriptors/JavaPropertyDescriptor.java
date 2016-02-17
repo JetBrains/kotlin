@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl;
+import org.jetbrains.kotlin.load.java.typeEnhancement.TypeEnhancementKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -110,6 +112,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
 
     @Override
     public boolean isConst() {
-        return isStaticFinal && ConstUtil.canBeUsedForConstVal(getType());
+        KotlinType type = getType();
+        return isStaticFinal && ConstUtil.canBeUsedForConstVal(type) &&
+               (!TypeEnhancementKt.hasEnhancedNullability(type) || KotlinBuiltIns.isString(type));
     }
 }

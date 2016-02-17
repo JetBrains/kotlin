@@ -12,6 +12,9 @@ public class JClass {
     public final static char PrimitiveChar = 'K';
     public final static String Str = ":J";
 
+    @Nullable
+    public final static String StrNullable = "nullable";
+
     @NotNull
     public final static Integer BoxedInt = 9500;
 
