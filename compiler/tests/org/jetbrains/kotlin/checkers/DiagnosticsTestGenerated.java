@@ -547,6 +547,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("RecursiveGetter.kt")
+        public void testRecursiveGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/RecursiveGetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("RecursiveResolve.kt")
         public void testRecursiveResolve() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/RecursiveResolve.kt");

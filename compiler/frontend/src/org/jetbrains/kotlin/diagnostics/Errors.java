@@ -355,7 +355,7 @@ public interface Errors {
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
 
 
-    DiagnosticFactory1<KtNamedDeclaration, Collection<KotlinType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED =
+    DiagnosticFactory1<KtDeclaration, Collection<KotlinType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     // Property-specific

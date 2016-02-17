@@ -122,11 +122,8 @@ class FunctionDescriptorResolver(
             builtIns.unitType
         }
         else if (function.hasBody()) {
-            DeferredType.createRecursionIntolerant(storageManager, trace) {
-                PreliminaryDeclarationVisitor.createForDeclaration(function, trace);
-                val type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
-                transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace)
-            }
+            inferReturnTypeFromExpressionBody(storageManager, expressionTypingServices, trace, scope,
+                                              dataFlowInfo, function, functionDescriptor)
         }
         else {
             ErrorUtils.createErrorType("No type, no body")

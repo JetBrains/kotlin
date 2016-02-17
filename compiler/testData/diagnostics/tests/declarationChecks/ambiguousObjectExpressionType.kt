@@ -24,6 +24,9 @@ class Foo {
 
     <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>public val <!EXPOSED_PROPERTY_TYPE!>publicProperty<!><!> = object : MyClass(), MyTrait {}
 
+    <!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>val propertyWithGetter<!>
+        <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>get()<!> = object: MyClass(), MyTrait {}
+
 
     private fun privateFunction() = object : MyClass(), MyTrait {}
 

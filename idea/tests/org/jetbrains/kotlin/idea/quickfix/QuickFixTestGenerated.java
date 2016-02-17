@@ -6775,9 +6775,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyWithGetterWithBlockBody.kt")
+        public void testPropertyWithGetterWithBlockBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyWithGetterWithBlockBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithGetterWithInferredType.kt")
+        public void testPropertyWithGetterWithInferredType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyWithGetterWithInferredType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyWithGetterWithoutType.kt")
         public void testPropertyWithGetterWithoutType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyWithGetterWithoutType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithRecursiveGetter.kt")
+        public void testPropertyWithRecursiveGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeAddition/propertyWithRecursiveGetter.kt");
             doTest(fileName);
         }
 
