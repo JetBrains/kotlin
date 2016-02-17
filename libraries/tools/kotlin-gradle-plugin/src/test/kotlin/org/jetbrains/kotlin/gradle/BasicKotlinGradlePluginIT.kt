@@ -1,8 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
-import org.junit.Test
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
+import org.junit.Test
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
@@ -19,19 +18,6 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
-        }
-    }
-
-    @Test
-    fun testLogLevelForceGC() {
-        val debugProject = Project("simpleProject", "1.12", minLogLevel = LogLevel.DEBUG)
-        debugProject.build("build") {
-            assertContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
-        }
-
-        val infoProject = Project("simpleProject", "1.12", minLogLevel = LogLevel.INFO)
-        infoProject.build("clean", "build") {
-            assertNotContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
         }
     }
 

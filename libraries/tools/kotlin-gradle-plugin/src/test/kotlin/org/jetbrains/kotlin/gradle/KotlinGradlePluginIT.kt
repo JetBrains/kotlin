@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
+import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
 import org.junit.Test
 
 class KotlinGradleIT: BaseGradleIT() {
@@ -78,6 +79,19 @@ class KotlinGradleIT: BaseGradleIT() {
         }
         finally {
             exitTestDaemon()
+        }
+    }
+
+    @Test
+    fun testLogLevelForceGC() {
+        val debugProject = Project("simpleProject", "1.12", minLogLevel = LogLevel.DEBUG)
+        debugProject.build("build") {
+            assertContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
+        }
+
+        val infoProject = Project("simpleProject", "1.12", minLogLevel = LogLevel.INFO)
+        infoProject.build("clean", "build") {
+            assertNotContains(CleanUpBuildListener.FORCE_SYSTEM_GC_MESSAGE)
         }
     }
 
