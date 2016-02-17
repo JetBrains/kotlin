@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
-import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -227,14 +223,3 @@ fun DeclarationDescriptor.isDynamic(): Boolean {
     return dispatchReceiverParameter != null && dispatchReceiverParameter.type.isDynamic()
 }
 
-class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: HierarchicalScope, syntheticScopes: SyntheticScopes, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D> {
-        return delegate.getExtensionsByName(scope, syntheticScopes, name, receiverTypes, location).filter {
-            it.extensionReceiverParameter?.type?.isDynamic() ?: false
-        }
-    }
-}
-
-fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.onlyDynamicReceivers(): CallableDescriptorCollectors<D> {
-    return CallableDescriptorCollectors(this.map { CollectorForDynamicReceivers(it) })
-}
