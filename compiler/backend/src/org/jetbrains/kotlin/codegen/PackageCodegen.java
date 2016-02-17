@@ -41,17 +41,18 @@ public class PackageCodegen {
     private final GenerationState state;
     private final Collection<KtFile> files;
     private final PackageFragmentDescriptor packageFragment;
-    private final PackageParts packageParts;
+    private final PackagePartRegistry packagePartRegistry;
 
     public PackageCodegen(
             @NotNull GenerationState state,
             @NotNull Collection<KtFile> files,
-            @NotNull FqName packageFqName
+            @NotNull FqName packageFqName,
+            @NotNull PackagePartRegistry registry
     ) {
         this.state = state;
         this.files = files;
         this.packageFragment = getOnlyPackageFragment(packageFqName);
-        packageParts = new PackageParts(packageFqName.asString());
+        packagePartRegistry = registry;
     }
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
@@ -110,7 +111,7 @@ public class PackageCodegen {
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return null;
 
         String name = fileClassType.getInternalName();
-        packageParts.getParts().add(name.substring(name.lastIndexOf('/') + 1));
+        packagePartRegistry.addPart(name.substring(name.lastIndexOf('/') + 1));
 
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 
@@ -145,10 +146,6 @@ public class PackageCodegen {
 
     public void generateClassOrObject(@NotNull KtClassOrObject classOrObject, @NotNull PackageContext packagePartContext) {
         MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null);
-    }
-
-    public PackageParts getPackageParts() {
-        return packageParts;
     }
 
     public Collection<KtFile> getFiles() {

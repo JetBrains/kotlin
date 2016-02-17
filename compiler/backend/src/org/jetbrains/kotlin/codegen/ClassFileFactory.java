@@ -20,9 +20,12 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.DataOutputStream;
 import kotlin.collections.CollectionsKt;
+import kotlin.collections.MapsKt;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -49,11 +52,12 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
-    private final Map<FqName, PackageCodegen> package2codegen = new HashMap<FqName, PackageCodegen>();
-    private final Map<FqName, MultifileClassCodegen> multifileClass2codegen = new HashMap<FqName, MultifileClassCodegen>();
     private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<String, OutAndSourceFileList>();
 
     private boolean isDone = false;
+
+    private final Set<File> packagePartSourceFiles = new HashSet<File>();
+    private final Map<String, PackageParts> partsGroupedByPackage = new LinkedHashMap<String, PackageParts>();
 
     public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
         this.state = state;
@@ -84,37 +88,23 @@ public class ClassFileFactory implements OutputFileCollection {
     void done() {
         if (!isDone) {
             isDone = true;
-            Collection<PackageCodegen> packageCodegens = package2codegen.values();
-            Collection<MultifileClassCodegen> multifileClassCodegens = multifileClass2codegen.values();
-            writeModuleMappings(packageCodegens, multifileClassCodegens);
+            writeModuleMappings();
         }
     }
 
-    private void writeModuleMappings(
-            @NotNull Collection<PackageCodegen> packageCodegens,
-            @NotNull Collection<MultifileClassCodegen> multifileClassCodegens
-    ) {
+    private void writeModuleMappings() {
         final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
-        List<PackageParts> parts = collectGeneratedPackageParts(packageCodegens, multifileClassCodegens);
-
-        Set<File> sourceFiles = new HashSet<File>();
-        // TODO extract common logic
-        for (PackageCodegen codegen : packageCodegens) {
-            sourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(codegen.getFiles())));
-        }
-        for (MultifileClassCodegen codegen : multifileClassCodegens) {
-            sourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(codegen.getFiles())));
-        }
+        List<PackageParts> parts = new SmartList<PackageParts>(partsGroupedByPackage.values());
 
         for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(parts, state)) {
             PackageParts.Companion.serialize(part, builder);
         }
 
         if (builder.getPackagePartsCount() != 0) {
-            state.getProgress().reportOutput(sourceFiles, new File(outputFilePath));
-            generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
+            state.getProgress().reportOutput(packagePartSourceFiles, new File(outputFilePath));
+            generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(packagePartSourceFiles)) {
                 @Override
                 public byte[] asBytes(ClassBuilderFactory factory) {
                     try {
@@ -148,34 +138,6 @@ public class ClassFileFactory implements OutputFileCollection {
                 }
             });
         }
-    }
-
-    private static List<PackageParts> collectGeneratedPackageParts(
-            @NotNull Collection<PackageCodegen> packageCodegens,
-            @NotNull Collection<MultifileClassCodegen> multifileClassCodegens
-    ) {
-        Map<String, PackageParts> mergedPartsByPackageName = new LinkedHashMap<String, PackageParts>();
-
-        for (PackageCodegen packageCodegen : packageCodegens) {
-            PackageParts generatedParts = packageCodegen.getPackageParts();
-            PackageParts premergedParts = new PackageParts(generatedParts.getPackageFqName());
-            mergedPartsByPackageName.put(generatedParts.getPackageFqName(), premergedParts);
-            premergedParts.getParts().addAll(generatedParts.getParts());
-        }
-
-        for (MultifileClassCodegen multifileClassCodegen : multifileClassCodegens) {
-            PackageParts multifileClassParts = multifileClassCodegen.getPackageParts();
-            PackageParts premergedParts = mergedPartsByPackageName.get(multifileClassParts.getPackageFqName());
-            if (premergedParts == null) {
-                premergedParts = new PackageParts(multifileClassParts.getPackageFqName());
-                mergedPartsByPackageName.put(multifileClassParts.getPackageFqName(), premergedParts);
-            }
-            premergedParts.getParts().addAll(multifileClassParts.getParts());
-        }
-
-        List<PackageParts> result = new ArrayList<PackageParts>();
-        result.addAll(mergedPartsByPackageName.values());
-        return result;
     }
 
     @NotNull
@@ -222,24 +184,34 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        PackageCodegen codegen = package2codegen.get(fqName);
-        if (codegen == null) {
-            codegen = new PackageCodegen(state, files, fqName);
-            package2codegen.put(fqName, codegen);
-        }
-
-        return codegen;
+        registerPackagePartSourceFiles(files);
+        return new PackageCodegen(state, files, fqName, buildNewPackagePartRegistry(fqName));
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        MultifileClassCodegen codegen = multifileClass2codegen.get(facadeFqName);
-        if (codegen == null) {
-            codegen = new MultifileClassCodegen(state, files, facadeFqName);
-            multifileClass2codegen.put(facadeFqName, codegen);
-        }
-        return codegen;
+        registerPackagePartSourceFiles(files);
+        return new MultifileClassCodegen(state, files, facadeFqName, buildNewPackagePartRegistry(facadeFqName.parent()));
+    }
+
+    private PackagePartRegistry buildNewPackagePartRegistry(@NotNull FqName packageFqName) {
+        final String packageFqNameAsString = packageFqName.asString();
+        return new PackagePartRegistry() {
+            @Override
+            public void addPart(@NotNull String partShortName) {
+                MapsKt.getOrPut(partsGroupedByPackage, packageFqNameAsString, new Function0<PackageParts>() {
+                    @Override
+                    public PackageParts invoke() {
+                        return new PackageParts(packageFqNameAsString);
+                    }
+                }).getParts().add(partShortName);
+            }
+        };
+    }
+
+    public void registerPackagePartSourceFiles(Collection<KtFile> files) {
+        packagePartSourceFiles.addAll(toIoFilesIgnoringNonPhysical(PackagePartClassUtils.getFilesWithCallables(files)));
     }
 
     @NotNull

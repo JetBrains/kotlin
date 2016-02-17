@@ -58,7 +58,8 @@ import java.util.*
 class MultifileClassCodegen(
         private val state: GenerationState,
         val files: Collection<KtFile>,
-        private val facadeFqName: FqName
+        private val facadeFqName: FqName,
+        private val packagePartRegistry: PackagePartRegistry
 ) {
     private val facadeClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName)
 
@@ -74,8 +75,6 @@ class MultifileClassCodegen(
 
     private fun getDeserializedCallables(compiledPackageFragment: PackageFragmentDescriptor) =
             compiledPackageFragment.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CALLABLES, MemberScope.ALL_NAME_FILTER).filterIsInstance<DeserializedCallableMemberDescriptor>()
-
-    val packageParts = PackageParts(facadeFqName.parent().asString())
 
     private val classBuilder = ClassBuilderOnDemand {
         val originFile = files.firstOrNull()
@@ -202,7 +201,7 @@ class MultifileClassCodegen(
         partFqNames.add(partClassInfo.fileClassFqName)
 
         val name = partType.internalName
-        packageParts.parts.add(name.substring(name.lastIndexOf('/') + 1))
+        packagePartRegistry.addPart(name.substring(name.lastIndexOf('/') + 1))
 
         val builder = state.factory.newVisitor(MultifileClassPart(file, packageFragment, facadeFqName), partType, file)
 
