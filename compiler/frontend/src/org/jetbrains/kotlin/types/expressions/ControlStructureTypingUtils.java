@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,8 +105,8 @@ public class ControlStructureTypingUtils {
                 construct, argumentNames, isArgumentNullable);
         TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
         TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType);
-        ResolutionCandidate<CallableDescriptor> resolutionCandidate =
-                ResolutionCandidate.<CallableDescriptor>create(call, function, knownTypeParameterSubstitutor);
+        ResolutionCandidate<FunctionDescriptor> resolutionCandidate =
+                ResolutionCandidate.<FunctionDescriptor>create(call, function, knownTypeParameterSubstitutor);
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
                 call, tracing, context, resolutionCandidate, dataFlowInfoForArguments);
         assert results.isSingleResult() : "Not single result after resolving one known candidate";

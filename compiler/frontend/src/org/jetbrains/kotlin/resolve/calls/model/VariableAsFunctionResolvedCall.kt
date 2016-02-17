@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.calls.CallResolver
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 
 interface VariableAsFunctionResolvedCall {
     val functionCall: ResolvedCall<FunctionDescriptor>
@@ -47,11 +46,7 @@ class VariableAsFunctionResolvedCallImpl(
     override fun getStatus(): ResolutionStatus = variableCall.status.combine(functionCall.status)
 
     override fun getTrace(): DelegatingBindingTrace {
-        //functionCall.trace is temporary trace above variableCall.trace and is committed already
-        if (CallResolver.useNewResolve) {
-            return functionCall.trace
-        }
-        return variableCall.trace
+        return functionCall.trace
     }
 
 }
