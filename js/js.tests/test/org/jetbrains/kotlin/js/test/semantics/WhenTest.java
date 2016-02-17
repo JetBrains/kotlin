@@ -133,4 +133,8 @@ public final class WhenTest extends AbstractExpressionTest {
     public void testWhenStatementWithRangeClause() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testEmpty() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

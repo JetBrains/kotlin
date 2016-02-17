@@ -67,7 +67,7 @@ public final class WhenTranslator extends AbstractTranslator {
         }
     }
 
-    private JsStatement translate() {
+    private JsNode translate() {
         if (expressionToMatch != null && JsAstUtils.isEmptyExpression(expressionToMatch)) {
             return JsEmpty.INSTANCE;
         }
@@ -100,7 +100,7 @@ public final class WhenTranslator extends AbstractTranslator {
                 currentIf = nextIf;
             }
         }
-        return resultIf;
+        return resultIf != null ? resultIf : context().getEmptyExpression();
     }
 
     @NotNull
