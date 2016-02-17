@@ -18,11 +18,8 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -33,14 +30,8 @@ abstract class DeserializedPackageFragment(
         fqName: FqName,
         protected val storageManager: StorageManager,
         module: ModuleDescriptor,
-        protected val serializedResourcePaths: SerializedResourcePaths,
-        private val loadResource: (path: String) -> InputStream?
+        protected val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
-
-    abstract val nameResolver: NameResolver
-
-    abstract val classIdToProto: Map<ClassId, ProtoBuf.Class>?
-
     // component dependency cycle
     @set:Inject
     lateinit var components: DeserializationComponents
@@ -48,6 +39,8 @@ abstract class DeserializedPackageFragment(
     private val deserializedMemberScope by storageManager.createLazyValue {
         computeMemberScope()
     }
+
+    abstract val classDataFinder: ClassDataFinder
 
     protected abstract fun computeMemberScope(): DeserializedPackageMemberScope
 

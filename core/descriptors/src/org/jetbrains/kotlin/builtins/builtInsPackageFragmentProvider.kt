@@ -43,7 +43,7 @@ fun createBuiltInPackageFragmentProvider(
     val components = DeserializationComponents(
             storageManager,
             module,
-            ResourceLoadingClassDataFinder(provider, BuiltInsSerializedResourcePaths, loadResource),
+            DeserializedClassDataFinder(provider),
             AnnotationAndConstantLoaderImpl(module, BuiltInSerializerProtocol),
             provider,
             localClassResolver,

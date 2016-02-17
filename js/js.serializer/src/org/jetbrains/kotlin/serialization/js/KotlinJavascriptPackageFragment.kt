@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -32,14 +31,15 @@ class KotlinJavascriptPackageFragment(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         loadResource: (path: String) -> InputStream?
-) : DeserializedPackageFragment(fqName, storageManager, module, KotlinJavascriptSerializedResourcePaths, loadResource) {
-    override val nameResolver = NameResolverImpl.read(loadResourceSure(serializedResourcePaths.getStringTableFilePath(fqName)))
+) : DeserializedPackageFragment(fqName, storageManager, module, loadResource) {
+    private val nameResolver =
+            NameResolverImpl.read(loadResourceSure(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName)))
 
-    override val classIdToProto: Map<ClassId, ProtoBuf.Class>? get() = null
+    override val classDataFinder = KotlinJavascriptClassDataFinder(nameResolver, loadResource)
 
     override fun computeMemberScope(): DeserializedPackageMemberScope {
-        val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
-        val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.extensionRegistry)
+        val packageStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName))
+        val packageProto = ProtoBuf.Package.parseFrom(packageStream, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
         return DeserializedPackageMemberScope(
                 this, packageProto, nameResolver, packagePartSource = null, components = components, classNames = { loadClassNames() }
         )
@@ -47,7 +47,7 @@ class KotlinJavascriptPackageFragment(
 
     private fun loadClassNames(): Collection<Name> {
         val classesStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName))
-        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, serializedResourcePaths.extensionRegistry)
+        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
         return classesProto.classNameList?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
 }

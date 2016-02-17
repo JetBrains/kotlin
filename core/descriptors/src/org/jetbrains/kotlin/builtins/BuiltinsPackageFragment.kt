@@ -30,8 +30,8 @@ class BuiltinsPackageFragment(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         loadResource: (path: String) -> InputStream?
-) : DeserializedPackageFragment(fqName, storageManager, module, BuiltInsSerializedResourcePaths, loadResource) {
-    private val builtinsMessage = run {
+) : DeserializedPackageFragment(fqName, storageManager, module, loadResource) {
+    private val proto = run {
         val stream = loadResourceSure(BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName))
         val version = BuiltInsBinaryVersion.readFrom(stream)
 
@@ -47,16 +47,13 @@ class BuiltinsPackageFragment(
         BuiltInsProtoBuf.BuiltIns.parseFrom(stream, BuiltInsSerializedResourcePaths.extensionRegistry)
     }
 
-    override val nameResolver = NameResolverImpl(builtinsMessage.strings, builtinsMessage.qualifiedNames)
+    private val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
 
-    override val classIdToProto =
-            builtinsMessage.classList.associateBy { klass ->
-                nameResolver.getClassId(klass.fqName)
-            }
+    override val classDataFinder = BuiltInsClassDataFinder(proto, nameResolver)
 
     override fun computeMemberScope() =
             DeserializedPackageMemberScope(
-                    this, builtinsMessage.`package`, nameResolver, packagePartSource = null, components = components,
-                    classNames = { classIdToProto.keys.filter { classId -> !classId.isNestedClass }.map { it.shortClassName } }
+                    this, proto.`package`, nameResolver, packagePartSource = null, components = components,
+                    classNames = { classDataFinder.allClassIds.filter { classId -> !classId.isNestedClass }.map { it.shortClassName } }
             )
 }
