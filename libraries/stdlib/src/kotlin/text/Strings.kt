@@ -1197,10 +1197,11 @@ private fun computePrefixFunction(pattern: CharSequence): IntArray {
  *                 are not supported
  * @param [ignoreCase] If true, characters are matched even if one is upper and the other is
  *                 lower case
+ * @param [matchOverlapping] If true, also match overlapping occurences.
  *
  * @return A list of indices where the supplied [pattern] starts in the text.
  */
-public fun CharSequence.occurrencesOf(pattern: CharSequence, ignoreCase: Boolean = false): Sequence<Int> {
+public fun CharSequence.occurrencesOf(pattern: CharSequence, ignoreCase: Boolean = false, matchOverlapping: Boolean = false): Sequence<Int> {
 
     if (pattern.length > this.length) {
         return emptySequence()
@@ -1231,7 +1232,7 @@ public fun CharSequence.occurrencesOf(pattern: CharSequence, ignoreCase: Boolean
                 matches++
             }
             if (matches == pattern.length) {
-                matches = prefixFunction[matches - 1]
+                matches = if (matchOverlapping) prefixFunction[matches - 1] else 0
                 i++
                 return@generateSequence i - pattern.length
             }

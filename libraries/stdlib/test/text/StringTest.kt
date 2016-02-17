@@ -716,12 +716,12 @@ class StringTest {
 
     @test fun occurencesOf() {
         // Multiple overlapping occurances
-        assertEquals("abaabaaababac".occurrencesOf("abaa").toList(), listOf(0, 3))
-        assertEquals("Abaabaaababac".occurrencesOf("abaa").toList(), listOf(3))
-        assertEquals("Abaabaaababac".occurrencesOf("abaa", ignoreCase = true).toList(), listOf(0, 3))
-        assertEquals("abaabaaababac".occurrencesOf("abAa", ignoreCase = true).toList(), listOf(0, 3))
+        assertEquals("abaabaaababac".occurrencesOf("abaa", matchOverlapping = true).toList(), listOf(0, 3))
+        assertEquals("Abaabaaababac".occurrencesOf("abaa", matchOverlapping = true).toList(), listOf(3))
+        assertEquals("Abaabaaababac".occurrencesOf("abaa", ignoreCase = true, matchOverlapping = true).toList(), listOf(0, 3))
+        assertEquals("abaabaaababac".occurrencesOf("abAa", ignoreCase = true, matchOverlapping = true).toList(), listOf(0, 3))
         // Big and small theta
-        assertEquals("\u0398\u0398\u0398".occurrencesOf("\u0398\u0398").toList(), listOf(0, 1))
+        assertEquals("\u0398\u0398\u0398".occurrencesOf("\u0398\u0398", matchOverlapping = true).toList(), listOf(0, 1))
         assertEquals("\u03b8\u0398\u0398".occurrencesOf("\u0398\u0398").toList(), listOf(1))
 
         // Special character test
@@ -734,10 +734,15 @@ class StringTest {
         // Big and small theta
         assertEquals("\u0398\u0398\u0398".occurrencesOf("\u0398").toList(), listOf(0, 1, 2))
         assertEquals("\u03b8\u0398\u0398".occurrencesOf("\u0398").toList(), listOf(1, 2))
+        assertEquals("\u03b8\u0398\u0398".occurrencesOf("\u0398", ignoreCase = true).toList(), listOf(0, 1, 2))
 
         // Early return test
         assertEquals("z".occurrencesOf("abc").count(), 0)
         assertEquals("abc".occurrencesOf("").toList(), listOf(0, 1, 2))
+
+        // Tests for non-overlappning option
+        assertEquals("Abaabaaababac".occurrencesOf("abaa", matchOverlapping = false).toList(), listOf(3))
+        assertEquals("Abaabaaababac".occurrencesOf("abaa", ignoreCase = true, matchOverlapping = false).toList(), listOf(0))
     }
 
     @test fun forEach() = withOneCharSequenceArg("abcd1234") { data ->
