@@ -1,4 +1,4 @@
-// Enable when JS backend supports Java class library
+// TODO: Enable when JS backend supports Java class library
 // TARGET_BACKEND: JVM
 import java.util.AbstractList
 

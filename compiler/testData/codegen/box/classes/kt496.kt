@@ -1,5 +1,3 @@
-// Enable for JS when it supports Java class library.
-// TARGET_BACKEND: JVM
 fun test1() : Boolean {
     try {
         return true
@@ -45,9 +43,7 @@ fun test4() : Int {
 
 fun test5() : Int {
     var x = 0
-    System.out?.println("test 5")
     while(true) {
-        System.out?.println(x)
         try {
             if(x < 10)
                 x++
@@ -63,9 +59,7 @@ fun test5() : Int {
 
 fun test6() : Int {
     var x = 0
-    System.out?.println("test 6")
     while(x < 10) {
-        System.out?.println(x)
         try {
             x++
             continue
@@ -81,7 +75,6 @@ fun box() : String {
     if(test1()) return "test1 failed"
     if(test2()) return "test2 failed"
     if(test3() != 2) return "test3 failed"
-    System.out?.println(test4())
     if(test4() != 0) return "test4 failed"
     if(test5() != 11) return "test5 failed"
     if(test6() != 10) return "test6 failed"

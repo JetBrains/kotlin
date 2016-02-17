@@ -1,4 +1,4 @@
-// Local classes are still unsupported
+// TODO: enable when JS backend gets support of local classes
 // TARGET_BACKEND: JVM
 
 open class C(s: Int) {

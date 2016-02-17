@@ -1,4 +1,4 @@
-// Enable for JS when it supports Java class library.
+// TODO: Enable for JS when it supports Java class library.
 // TARGET_BACKEND: JVM
 class SomeClass { companion object }
 

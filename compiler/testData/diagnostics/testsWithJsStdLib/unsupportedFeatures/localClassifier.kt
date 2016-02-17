@@ -1,5 +1,3 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-
 fun foo() {
     <!NON_TOPLEVEL_CLASS_DECLARATION!>class A<!> {
         inner <!NON_TOPLEVEL_CLASS_DECLARATION!>class E<!> {

@@ -4,9 +4,6 @@ class Reluctant() {
      }
 }
 
-// Probably, it's an old debugging code. JS backend still does not support this
-//fun p(o : Any?) = System.out?.println(o)
-
 fun test1() : String {
   try {
       val b = Reluctant()

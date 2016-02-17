@@ -1,4 +1,4 @@
-// Enable when JS backend supports local classes
+// TODO: Enable when JS backend supports local classes
 // TARGET_BACKEND: JVM
 fun box() : String {
     val o = object {

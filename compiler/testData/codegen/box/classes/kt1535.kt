@@ -1,4 +1,4 @@
-// Enable when JS backend supports Java class library, since FunctionX are required for interoperation
+// TODO: Enable when JS backend supports Java class library, since FunctionX are required for interoperation
 // TARGET_BACKEND: JVM
 class Works() : Function0<Any> {
     public override fun invoke():Any {
