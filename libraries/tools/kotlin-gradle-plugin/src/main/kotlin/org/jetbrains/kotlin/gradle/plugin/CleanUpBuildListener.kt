@@ -42,7 +42,7 @@ class CleanUpBuildListener(pluginClassLoader: ClassLoader) : BuildAdapter() {
     private val log = Logging.getLogger(this.javaClass)
     private var threadTracker: ThreadTracker? = ThreadTracker()
     private val cleanup = CompilerServicesCleanup(pluginClassLoader)
-    private var startMemory by Delegates.notNull<Long>()
+    private var startMemory: Long? = null
 
     // There is function with the same name in BuildAdapter,
     // but it is called before any plugin can attach build listener
@@ -65,11 +65,12 @@ class CleanUpBuildListener(pluginClassLoader: ClassLoader) : BuildAdapter() {
             gradle.removeListener(this)
         }
 
-        if (log.isDebugEnabled) {
-            val endMemory = getUsedMemoryKb()!!
-            // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
-            // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
-            log.kotlinDebug("[PERF] Used memory after build: $endMemory kb (difference since build start: ${"%+d".format(endMemory - startMemory)} kb)")
+        startMemory?.let { startMemoryCopy ->
+            getUsedMemoryKb()?.let { endMemory ->
+                // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
+                // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
+                log.kotlinDebug("[PERF] Used memory after build: $endMemory kb (difference since build start: ${"%+d".format(endMemory - startMemoryCopy)} kb)")
+            }
         }
     }
 
