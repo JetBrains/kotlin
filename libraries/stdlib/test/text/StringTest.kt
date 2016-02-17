@@ -110,7 +110,7 @@ class StringTest {
     @test fun endsWithStringForCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
         fun String.endsWithCs(suffix: String, ignoreCase: Boolean = false): Boolean =
             arg1(this).endsWith(arg2(suffix), ignoreCase)
-        
+
         assertTrue("abcd".endsWithCs("d"))
         assertTrue("abcd".endsWithCs("abcd"))
         assertFalse("abcd".endsWithCs("b"))
@@ -737,7 +737,7 @@ class StringTest {
 
         // Early return test
         assertEquals("z".occurrencesOf("abc").count(), 0)
-        assertEquals("abc".occurrencesOf("").count(), 0)
+        assertEquals("abc".occurrencesOf("").toList(), listOf(0, 1, 2))
     }
 
     @test fun forEach() = withOneCharSequenceArg("abcd1234") { data ->

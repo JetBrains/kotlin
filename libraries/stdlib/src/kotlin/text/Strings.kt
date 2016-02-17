@@ -1190,6 +1190,8 @@ private fun computePrefixFunction(pattern: CharSequence): IntArray {
  * Returns a list of indices where the pattern occurs in this String. This method
  * searches character by character and thus does not support regular expressions
  * as input for the pattern.
+ * For a pattern longer than the text, an empty sequence is returned. If the pattern
+ * is empty, all indices are matched.
  *
  * @param [pattern] The pattern to look for in this String. Regular expressions
  *                 are not supported
@@ -1200,8 +1202,12 @@ private fun computePrefixFunction(pattern: CharSequence): IntArray {
  */
 public fun CharSequence.occurrencesOf(pattern: CharSequence, ignoreCase: Boolean = false): Sequence<Int> {
 
-    if (pattern.isEmpty() || pattern.length > this.length) {
+    if (pattern.length > this.length) {
         return emptySequence()
+    }
+
+    if (pattern.isEmpty()) {
+        return indices.asSequence()
     }
 
     if (pattern.length == 1) {
