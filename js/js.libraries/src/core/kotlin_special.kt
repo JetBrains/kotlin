@@ -79,7 +79,7 @@ public inline fun ShortArray.asList(): List<Short> {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.copyOf(): Array<T> {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -87,7 +87,7 @@ public inline fun <T> Array<out T>.copyOf(): Array<T> {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun BooleanArray.copyOf(): BooleanArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -95,7 +95,7 @@ public inline fun BooleanArray.copyOf(): BooleanArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun ByteArray.copyOf(): ByteArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -103,7 +103,7 @@ public inline fun ByteArray.copyOf(): ByteArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun CharArray.copyOf(): CharArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -111,7 +111,7 @@ public inline fun CharArray.copyOf(): CharArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun DoubleArray.copyOf(): DoubleArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -119,7 +119,7 @@ public inline fun DoubleArray.copyOf(): DoubleArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun FloatArray.copyOf(): FloatArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -127,7 +127,7 @@ public inline fun FloatArray.copyOf(): FloatArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun IntArray.copyOf(): IntArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -135,7 +135,7 @@ public inline fun IntArray.copyOf(): IntArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun LongArray.copyOf(): LongArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**
@@ -143,7 +143,7 @@ public inline fun LongArray.copyOf(): LongArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.copyOf(): ShortArray {
-    return this.asDynamic().slice(0)
+    return this.asDynamic().slice()
 }
 
 /**

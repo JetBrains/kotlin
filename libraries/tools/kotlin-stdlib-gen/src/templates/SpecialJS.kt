@@ -58,7 +58,7 @@ fun specialJS(): List<GenericFunction> {
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         body {
-            "return this.asDynamic().slice(0)"
+            "return this.asDynamic().slice()"
         }
     }
 
