@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolve
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
@@ -84,23 +82,21 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
         val conflictingCandidates = filteredCandidates.map {
             candidateCall ->
-            CandidateCallWithArgumentMapping.create(candidateCall) { it.arguments.filter { it.getArgumentExpression() != null } }
+            FlatSignature.createFromResolvedCall(candidateCall)
         }
 
-        val bestCandidatesByParameterTypes = conflictingCandidates.mapNotNull {
+        val bestCandidatesByParameterTypes = conflictingCandidates.filter {
             candidate ->
-            candidate.check {
-                isMostSpecific(candidate, conflictingCandidates) {
-                    call1, call2 ->
-                    isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenerics)
-                }
+            isMostSpecific(candidate, conflictingCandidates) {
+                call1, call2 ->
+                isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenerics)
             }
         }
 
         return bestCandidatesByParameterTypes.exactMaxWith {
             call1, call2 ->
             isOfNotLessSpecificShape(call1, call2) && isOfNotLessSpecificVisibilityForDebugger(call1, call2, isDebuggerContext)
-        }?.resolvedCall
+        }?.origin
     }
 
     private inline fun <C : Any> Collection<C>.exactMaxWith(isNotWorse: (C, C) -> Boolean): C? {
@@ -134,12 +130,12 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
     /**
      * `call1` is not less specific than `call2`
      */
-    private fun <D : CallableDescriptor, K> isNotLessSpecificCallWithArgumentMapping(
-            call1: CandidateCallWithArgumentMapping<D, K>,
-            call2: CandidateCallWithArgumentMapping<D, K>,
+    private fun <D : CallableDescriptor> isNotLessSpecificCallWithArgumentMapping(
+            call1: FlatSignature<MutableResolvedCall<D>>,
+            call2: FlatSignature<MutableResolvedCall<D>>,
             discriminateGenerics: Boolean
     ): Boolean {
-        return tryCompareDescriptorsFromScripts(call1.candidateDescriptor, call2.candidateDescriptor) ?:
+        return tryCompareDescriptorsFromScripts(call1.candidateDescriptor(), call2.candidateDescriptor()) ?:
                compareCallsByUsedArguments(call1, call2, discriminateGenerics)
     }
 
@@ -147,9 +143,9 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
      * Returns `true` if `d1` is definitely not less specific than `d2`,
      * `false` otherwise.
      */
-    private fun <D : CallableDescriptor, K> compareCallsByUsedArguments(
-            call1: CandidateCallWithArgumentMapping<D, K>,
-            call2: CandidateCallWithArgumentMapping<D, K>,
+    private fun <D : CallableDescriptor> compareCallsByUsedArguments(
+            call1: FlatSignature<MutableResolvedCall<D>>,
+            call2: FlatSignature<MutableResolvedCall<D>>,
             discriminateGenerics: Boolean
     ): Boolean {
         if (discriminateGenerics) {
@@ -165,7 +161,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
         val typeParameters = call2.typeParameters
         val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
         var hasConstraints = false
-        val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(call1.resolvedCall.call.toHandle(), typeParameters)
+        val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(call1.callHandle(), typeParameters)
 
         fun compareTypesAndUpdateConstraints(type1: KotlinType?, type2: KotlinType?, constraintPosition: ConstraintPosition): Boolean {
             if (type1 == null || type2 == null) return true
@@ -186,23 +182,11 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             return true
         }
 
-        val extensionReceiverType1 = call1.extensionReceiverType
-        val extensionReceiverType2 = call2.extensionReceiverType
-        if (!compareTypesAndUpdateConstraints(extensionReceiverType1, extensionReceiverType2, RECEIVER_POSITION.position())) {
-            return false
-        }
-
-        assert(call1.argumentsCount == call2.argumentsCount) {
-            "$call1 and $call2 have different number of explicit arguments"
-        }
-
-        for (argumentKey in call1.argumentKeys) {
-            val type1 = call1.getValueParameterType(argumentKey)
-            val type2 = call2.getValueParameterType(argumentKey)
-
+        var argumentIndex = 0
+        for ((type1, type2) in call1.valueParameterTypes.zip(call2.valueParameterTypes)) {
             // We use this constraint system for subtyping relation check only,
             // so exact value parameter position doesn't matter.
-            if (!compareTypesAndUpdateConstraints(type1, type2, VALUE_PARAMETER_POSITION.position(0))) {
+            if (!compareTypesAndUpdateConstraints(type1, type2, VALUE_PARAMETER_POSITION.position(++argumentIndex))) {
                 return false
             }
         }
@@ -218,32 +202,29 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
         return true
     }
 
-    private fun <D: CallableDescriptor, K> isOfNotLessSpecificShape(
-            call1: CandidateCallWithArgumentMapping<D, K>,
-            call2: CandidateCallWithArgumentMapping<D, K>
+    private fun <D: CallableDescriptor> isOfNotLessSpecificShape(
+            call1: FlatSignature<MutableResolvedCall<D>>,
+            call2: FlatSignature<MutableResolvedCall<D>>
     ): Boolean {
         val hasVarargs1 = call1.hasVarargs
         val hasVarargs2 = call2.hasVarargs
         if (hasVarargs1 && !hasVarargs2) return false
         if (!hasVarargs1 && hasVarargs2) return true
 
-        if (call1.parametersWithDefaultValuesCount > call2.parametersWithDefaultValuesCount) {
+        if (call1.numDefaults > call2.numDefaults) {
             return false
         }
 
         return true
     }
 
-    private fun <D: CallableDescriptor, K> isOfNotLessSpecificVisibilityForDebugger(
-            call1: CandidateCallWithArgumentMapping<D, K>,
-            call2: CandidateCallWithArgumentMapping<D, K>,
+    private fun <D: CallableDescriptor> isOfNotLessSpecificVisibilityForDebugger(
+            call1: FlatSignature<MutableResolvedCall<D>>,
+            call2: FlatSignature<MutableResolvedCall<D>>,
             isDebuggerContext: Boolean
     ): Boolean {
         if (isDebuggerContext) {
-            val isMoreVisible1 = Visibilities.compare(
-                    call1.resolvedCall.resultingDescriptor.visibility,
-                    call2.resolvedCall.resultingDescriptor.visibility
-            )
+            val isMoreVisible1 = Visibilities.compare(call1.descriptorVisibility(), call2.descriptorVisibility())
             if (isMoreVisible1 != null && isMoreVisible1 < 0) return false
         }
 
@@ -269,23 +250,19 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
     }
 
     /**
-     * Returns `false` if `d1` is definitely less specific than `d2`,
-     * `null` if undecided.
-     */
-    private fun tryCompareExtensionReceiverType(type1: KotlinType?, type2: KotlinType?): Boolean? {
-        if (type1 != null && type2 != null) {
-            if (!typeNotLessSpecific(type1, type2))
-                return false
-        }
-        return null
-    }
-
-    /**
      * Returns `true` if `d1` is definitely not less specific than `d2`,
      * `false` if `d1` is definitely less specific than `d2`,
      * `null` if undecided.
      */
     private fun compareFunctionParameterTypes(f: CallableDescriptor, g: CallableDescriptor): Boolean {
+        val fReceiverType = f.extensionReceiverType
+        val gReceiverType = g.extensionReceiverType
+        if (fReceiverType != null && gReceiverType != null) {
+            if (!typeNotLessSpecific(fReceiverType, gReceiverType)) {
+                return false
+            }
+        }
+
         val fParams = f.valueParameters
         val gParams = g.valueParameters
 
@@ -319,8 +296,6 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
     private fun isNotLessSpecificCallableReference(f: CallableDescriptor, g: CallableDescriptor): Boolean =
             // TODO should we "discriminate generic descriptors" for callable references?
             tryCompareDescriptorsFromScripts(f, g) ?:
-            // TODO compare functional types for 'f' and 'g'
-            tryCompareExtensionReceiverType(f.extensionReceiverType, g.extensionReceiverType) ?:
             compareFunctionParameterTypes(f, g)
 
     private fun getVarargElementTypeOrType(parameterDescriptor: ValueParameterDescriptor): KotlinType =
@@ -398,5 +373,13 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
                 ResolvedCallHashingStrategy as TObjectHashingStrategy<C>
 
     }
-    
 }
+
+internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.candidateDescriptor() =
+        origin.candidateDescriptor.original
+
+internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.callHandle() =
+        origin.call.toHandle()
+
+internal fun <D : CallableDescriptor> FlatSignature<ResolvedCall<D>>.descriptorVisibility() =
+        candidateDescriptor().visibility
