@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
@@ -149,6 +150,16 @@ public class QuickFixFactoryForTypeMismatchError extends KotlinIntentionActionsF
                 if (declaration != null) {
                     actions.add(new ChangeFunctionReturnTypeFix(declaration, expectedType));
                 }
+            }
+        }
+
+        // KT-10063: arrayOf() bounding single array element
+        KtAnnotationEntry annotationEntry = PsiTreeUtil.getParentOfType(expression, KtAnnotationEntry.class);
+        if (annotationEntry != null) {
+            if (KotlinBuiltIns.isArray(expectedType) &&
+                TypeUtilsKt.isSubtypeOf(expressionType, expectedType.getArguments().get(0).getType()) ||
+                KotlinBuiltIns.isPrimitiveArray(expectedType)) {
+                actions.add(new AddArrayOfTypeFix(expression, expectedType));
             }
         }
 

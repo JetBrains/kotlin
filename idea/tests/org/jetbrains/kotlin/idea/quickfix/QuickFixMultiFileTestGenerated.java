@@ -1540,6 +1540,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeMismatch extends AbstractQuickFixMultiFileTest {
+        @TestMetadata("addArrayOfTypeForJavaAnnotation.before.Main.kt")
+        public void testAddArrayOfTypeForJavaAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addArrayOfTypeForJavaAnnotation.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
         }
