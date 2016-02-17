@@ -185,6 +185,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("returnTypeMismatchOnOverride.kt")
+    public void testReturnTypeMismatchOnOverride() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/returnTypeMismatchOnOverride.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("typeInferenceCannotCaptureTypes.kt")
     public void testTypeInferenceCannotCaptureTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeInferenceCannotCaptureTypes.kt");
