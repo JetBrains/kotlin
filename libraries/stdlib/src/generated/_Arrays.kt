@@ -11895,7 +11895,13 @@ public fun CharArray.asList(): List<Char> {
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator].
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted according to the specified [comparator], otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted according to the specified [comparator].
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11903,7 +11909,13 @@ public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11911,7 +11923,13 @@ public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11919,7 +11937,13 @@ public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: In
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11927,7 +11951,13 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11935,7 +11965,13 @@ public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int 
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11943,7 +11979,13 @@ public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: In
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11951,7 +11993,13 @@ public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: 
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size): Int {
@@ -11959,7 +12007,13 @@ public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex
 }
 
 /**
- * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
  */
 @kotlin.jvm.JvmVersion
 public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size): Int {

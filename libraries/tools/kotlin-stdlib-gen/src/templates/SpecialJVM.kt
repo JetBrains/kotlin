@@ -114,7 +114,19 @@ fun specialJVM(): List<GenericFunction> {
     templates add f("binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
-        doc { "Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted." }
+        doc {
+            """
+            Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+            The array is expected to be sorted, otherwise the result is undefined.
+
+            If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+
+            @return the index of the element, if it is contained in the array within the specified range;
+            otherwise, the inverted insertion point `(-insertion point - 1)`.
+            The insertion point is defined as the index at which the element should be inserted,
+            so that the array (or the specified subrange of array) still remains sorted.
+            """
+        }
         returns("Int")
         body {
             "return Arrays.binarySearch(this, fromIndex, toIndex, element)"
@@ -123,7 +135,19 @@ fun specialJVM(): List<GenericFunction> {
 
     templates add f("binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
         only(ArraysOfObjects)
-        doc { "Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator]." }
+        doc {
+            """
+            Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+            The array is expected to be sorted according to the specified [comparator], otherwise the result is undefined.
+
+            If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+
+            @return the index of the element, if it is contained in the array within the specified range;
+            otherwise, the inverted insertion point `(-insertion point - 1)`.
+            The insertion point is defined as the index at which the element should be inserted,
+            so that the array (or the specified subrange of array) still remains sorted according to the specified [comparator].
+            """
+        }
         returns("Int")
         body {
             "return Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)"
