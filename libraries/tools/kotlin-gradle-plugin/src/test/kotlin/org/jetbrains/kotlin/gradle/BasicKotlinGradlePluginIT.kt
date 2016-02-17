@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.gradle
 import org.junit.Test
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
-import org.junit.Test
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
