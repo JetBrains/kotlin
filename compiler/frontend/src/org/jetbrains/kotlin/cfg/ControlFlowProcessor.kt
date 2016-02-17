@@ -884,7 +884,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             builder.declareParameter(parameter)
             val defaultValue = parameter.defaultValue
             if (defaultValue != null) {
-                val skipDefaultValue = builder.createUnboundLabel("after default value for parameter " + parameter.name!!)
+                val skipDefaultValue = builder.createUnboundLabel("after default value for parameter ${parameter.name ?: "<anonymous>"}")
                 builder.nondeterministicJump(skipDefaultValue, defaultValue, null)
                 generateInstructions(defaultValue)
                 builder.bindLabel(skipDefaultValue)
