@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -276,7 +277,8 @@ public class InlineCodegen extends CallGenerator {
 
         InliningContext info = new RootInliningContext(
                 expressionMap, state, codegen.getInlineNameGenerator().subGenerator(jvmSignature.getAsmMethod().getName()),
-                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings, isDefaultCompilation
+                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings, isDefaultCompilation,
+                AnnotationUtilKt.hasInlineOnlyAnnotation(functionDescriptor)
         );
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,

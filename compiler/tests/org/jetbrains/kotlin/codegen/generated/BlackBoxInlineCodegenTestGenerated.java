@@ -1834,6 +1834,27 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineOnly extends AbstractBlackBoxInlineCodegenTest {
+            public void testAllFilesPresentInInlineOnly() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("noSmap.1.kt")
+            public void testNoSmap() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/noSmap.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("reified.1.kt")
+            public void testReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly/reified.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

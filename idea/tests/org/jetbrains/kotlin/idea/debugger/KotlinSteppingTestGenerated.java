@@ -235,6 +235,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("inlineOnly.kt")
+        public void testInlineOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/inlineOnly.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("returnVoid.kt")
         public void testReturnVoid() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/returnVoid.kt");

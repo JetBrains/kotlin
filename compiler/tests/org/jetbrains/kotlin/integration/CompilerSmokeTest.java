@@ -70,4 +70,12 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
 
         runCompiler("script", "script.kts", "-d", jar);
     }
+
+    public void testInlineOnly() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "inlineOnly.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("inlineOnly.compile", "-include-runtime", "inlineOnly.kt", "-d", jar));
+        run("inlineOnly.run", "-cp", jar, "InlineOnly.InlineOnlyKt");
+    }
 }
+
