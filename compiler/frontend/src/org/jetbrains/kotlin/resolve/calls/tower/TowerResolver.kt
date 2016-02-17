@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,18 +64,11 @@ class TowerResolver {
     internal fun <C> runResolve(
             context: TowerContext<C>,
             processor: ScopeTowerProcessor<C>,
-            useOrder: Boolean = true
-    ): Collection<C> {
-        return run(context, processor, useOrder, SuccessfulResultCollector(context))
-    }
+            useOrder: Boolean
+    ): Collection<C> = run(context.scopeTower.createTowerDataList(), processor, SuccessfulResultCollector { context.getStatus(it) }, useOrder)
 
-    internal fun <C> collectAllCandidates(context: TowerContext<C>, processor: ScopeTowerProcessor<C>): Collection<C> {
-        return run(context, processor, false, AllCandidatesCollector(context))
-    }
-
-    private fun ScopeTower.createLocalLevels() = lexicalScope.parentsWithSelf.
-            filterIsInstance<LexicalScope>().filter { it.kind.withLocalDescriptors }.
-            map { ScopeBasedTowerLevel(this, it) }
+    internal fun <C> collectAllCandidates(context: TowerContext<C>, processor: ScopeTowerProcessor<C>): Collection<C>
+            = run(context.scopeTower.createTowerDataList(), processor, AllCandidatesCollector { context.getStatus(it) }, false)
 
     private fun ScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
         val result = ArrayList<ScopeTowerLevel>()
@@ -160,14 +153,14 @@ class TowerResolver {
         return result
     }
 
-    private fun <C> run(
-            context: TowerContext<C>,
+    internal fun <C> run(
+            towerDataList: List<TowerData>,
             processor: ScopeTowerProcessor<C>,
-            useOrder: Boolean,
-            resultCollector: ResultCollector<C>
+            resultCollector: ResultCollector<C>,
+            useOrder: Boolean
     ): Collection<C> {
 
-        for (towerData in context.scopeTower.createTowerDataList()) {
+        for (towerData in towerDataList) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
             val candidatesGroups = if (useOrder) {
@@ -187,14 +180,14 @@ class TowerResolver {
     }
 
 
-    internal abstract class ResultCollector<C>(val context: TowerContext<C>) {
+    internal abstract class ResultCollector<C>(protected val getStatus: (C) -> ResolutionCandidateStatus) {
         abstract fun getSuccessfulCandidates(): Collection<C>?
 
         abstract fun getFinalCandidates(): Collection<C>
 
         fun pushCandidates(candidates: Collection<C>) {
             val filteredCandidates = candidates.filter {
-                context.getStatus(it).resultingApplicability != ResolutionCandidateApplicability.HIDDEN
+                getStatus(it).resultingApplicability != ResolutionCandidateApplicability.HIDDEN
             }
             if (filteredCandidates.isNotEmpty()) addCandidates(filteredCandidates)
         }
@@ -202,7 +195,7 @@ class TowerResolver {
         protected abstract fun addCandidates(candidates: Collection<C>)
     }
 
-    internal class AllCandidatesCollector<C>(context: TowerContext<C>): ResultCollector<C>(context) {
+    internal class AllCandidatesCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
         private val allCandidates = ArrayList<C>()
 
         override fun getSuccessfulCandidates(): Collection<C>? = null
@@ -212,10 +205,9 @@ class TowerResolver {
         override fun addCandidates(candidates: Collection<C>) {
             allCandidates.addAll(candidates)
         }
-
     }
 
-    internal class SuccessfulResultCollector<C>(context: TowerContext<C>): ResultCollector<C>(context) {
+    internal class SuccessfulResultCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
         private var currentCandidates: Collection<C> = emptyList()
         private var currentLevel: ResolutionCandidateApplicability? = null
 
@@ -234,10 +226,10 @@ class TowerResolver {
         override fun getFinalCandidates() = getResolved() ?: getResolvedSynthetic() ?: getResolvedLowPriority() ?: getErrors() ?: emptyList()
 
         override fun addCandidates(candidates: Collection<C>) {
-            val minimalLevel = candidates.map { context.getStatus(it).resultingApplicability }.min()!!
+            val minimalLevel = candidates.map { getStatus(it).resultingApplicability }.min()!!
             if (currentLevel == null || currentLevel!! > minimalLevel) {
                 currentLevel = minimalLevel
-                currentCandidates = candidates.filter { context.getStatus(it).resultingApplicability == minimalLevel }
+                currentCandidates = candidates.filter { getStatus(it).resultingApplicability == minimalLevel }
             }
         }
     }

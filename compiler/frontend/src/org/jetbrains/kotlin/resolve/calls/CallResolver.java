@@ -648,13 +648,16 @@ public class CallResolver {
             }
         }
 
-        if (contextForMigration.resolveKind != ResolveKind.GIVEN_CANDIDATES && useNewResolve) {
+        if (contextForMigration.resolveKind != ResolveKind.GIVEN_CANDIDATES) {
             assert contextForMigration.name != null;
             return (OverloadResolutionResultsImpl<F>)
                     newCallResolver.runResolve(context, contextForMigration.name, contextForMigration.resolveKind, tracing);
         }
+        else {
+            return (OverloadResolutionResultsImpl<F>) newCallResolver.runResolveForGivenCandidates(context, tracing, contextForMigration.givenCandidates);
+        }
 
-        return doResolveCall(context, contextForMigration.lazyTasks.invoke(), contextForMigration.callTransformer, tracing);
+        //return doResolveCall(context, contextForMigration.lazyTasks.invoke(), contextForMigration.callTransformer, tracing);
     }
 
     @NotNull

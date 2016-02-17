@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
-import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
+import org.jetbrains.kotlin.resolve.calls.tasks.*
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
@@ -77,10 +74,7 @@ class NewResolveOldInference(
         var processor = createResolveProcessor(kind, explicitReceiver, context, baseContext)
 
         if (context.collectAllCandidates) {
-            val allCandidates = towerResolver.collectAllCandidates(baseContext, processor)
-            val result = OverloadResolutionResultsImpl.nameNotFound<CallableDescriptor>()
-            result.allCandidates = allCandidates.map { it.resolvedCall as MutableResolvedCall<CallableDescriptor> }
-            return result
+            return allCandidatesResult(towerResolver.collectAllCandidates(baseContext, processor))
         }
         // Temporary fix for code migration (unaryPlus()/unaryMinus())
         val unaryConventionName = getUnaryPlusOrMinusOperatorFunctionName(context.call)
@@ -95,6 +89,46 @@ class NewResolveOldInference(
 
         val candidates = towerResolver.runResolve(baseContext, processor, useOrder = kind != CallResolver.ResolveKind.CALLABLE_REFERENCE)
         return convertToOverloadResults(candidates, tracing, context)
+    }
+
+    fun <D : CallableDescriptor> runResolveForGivenCandidates(
+            basicCallContext: BasicCallResolutionContext,
+            tracing: TracingStrategy,
+            candidates: Collection<ResolutionCandidate<D>>
+    ): OverloadResolutionResultsImpl<D> {
+        val resolvedCandidates = candidates.mapNotNull { candidate ->
+            val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
+            val resolvedCall = ResolvedCallImpl.create(candidate, candidateTrace, tracing, basicCallContext.dataFlowInfoForArguments)
+
+            if (candidate.descriptor.isHiddenInResolution()) {
+                return@mapNotNull Candidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), resolvedCall)
+            }
+
+            val callCandidateResolutionContext = CallCandidateResolutionContext.create(
+                    resolvedCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
+                    null, CandidateResolveMode.FULLY // todo
+            )
+            candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
+
+            val diagnostics = listOfNotNull(SynthesizedDescriptorDiagnostic.check { candidate.descriptor.isSynthesized },
+                                            createPreviousResolveError(resolvedCall.status))
+            Candidate(ResolutionCandidateStatus(diagnostics), resolvedCall)
+        }
+        if (basicCallContext.collectAllCandidates) {
+            val allCandidates = towerResolver.run(listOf(TowerData.Empty), KnownResultProcessor(resolvedCandidates),
+                                                  TowerResolver.AllCandidatesCollector { it.candidateStatus }, useOrder = false)
+            return allCandidatesResult(allCandidates) as OverloadResolutionResultsImpl<D>
+        }
+
+        val processedCandidates = towerResolver.run(listOf(TowerData.Empty), KnownResultProcessor(resolvedCandidates),
+                                                    TowerResolver.SuccessfulResultCollector { it.candidateStatus }, useOrder = true)
+
+        return convertToOverloadResults(processedCandidates, tracing, basicCallContext) as OverloadResolutionResultsImpl<D>
+    }
+
+    private fun allCandidatesResult(allCandidates: Collection<Candidate>)
+            = OverloadResolutionResultsImpl.nameNotFound<CallableDescriptor>().apply {
+        this.allCandidates = allCandidates.map { it.resolvedCall as MutableResolvedCall<CallableDescriptor> }
     }
 
     private fun createResolveProcessor(
