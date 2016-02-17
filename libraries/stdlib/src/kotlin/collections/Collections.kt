@@ -45,16 +45,16 @@ internal object EmptyList : List<Nothing>, Serializable {
     private fun readResolve(): Any = EmptyList
 }
 
-internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this)
+internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this, isVarargs = false)
 
-private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
+private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean): Collection<T> {
     override val size: Int get() = values.size
     override fun isEmpty(): Boolean = values.isEmpty()
     override fun contains(element: T): Boolean = values.contains(element)
     override fun containsAll(elements: Collection<T>): Boolean = elements.all { contains(it) }
     override fun iterator(): Iterator<T> = values.iterator()
     // override hidden toArray implementation to prevent copying of values array
-    public fun toArray(): Array<out Any?> = values.varargToArrayOfAny()
+    public fun toArray(): Array<out Any?> = values.copyToArrayOfAny(isVarargs)
 }
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
@@ -76,11 +76,11 @@ public fun <T> listOf(element: T): List<T> = Collections.singletonList(element)
 
 /** Returns a new [MutableList] with the given elements. */
 public fun <T> mutableListOf(vararg elements: T): MutableList<T>
-        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements))
+        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
 /** Returns a new [ArrayList] with the given elements. */
 public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
-        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements))
+        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
 /** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
 public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) listOf(element) else emptyList()
@@ -133,8 +133,12 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(
 
 // copies typed varargs array to array of objects
 @JvmVersion
-private fun <T> Array<out T>.varargToArrayOfAny(): Array<Any?>
-        = Arrays.copyOf(this, this.size, Array<Any?>::class.java)
+private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
+        if (isVarargs && this.javaClass == Array<Any?>::class.java)
+            // if the array came from varargs and already is array of Any, copying isn't required
+            @Suppress("CAST_NEVER_SUCCEEDS") (this as Array<Any?>)
+        else
+            Arrays.copyOf(this, this.size, Array<Any?>::class.java)
 
 /**
  * Searches this list or its range for the provided [element] index using binary search algorithm.

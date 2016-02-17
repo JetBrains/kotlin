@@ -75,6 +75,10 @@ internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>):
     return result
 }
 
-// copies vararg array due to different spread vararg behavior in JS.
-// After fixing #KT-6491 may return `this`
-internal inline fun <T> Array<out T>.varargToArrayOfAny(): Array<out Any?> = this.copyOf()
+
+internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
+        if (isVarargs)
+            // no need to copy vararg array in JS
+            this
+        else
+            this.copyOf()

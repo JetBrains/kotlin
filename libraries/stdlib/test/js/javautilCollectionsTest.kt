@@ -35,17 +35,39 @@ class JavautilCollectionsTest {
         assertEquals(array.toList(), TEST_LIST)
     }
 
-    @test fun arrayListDoesNotCreateArrayView() {
-        val array = arrayOf(1)
-        val list = arrayListOf(*array)
-        assertEquals(1, list[0])
-        array[0] = 2
-        assertEquals(1, list[0])
+    @test fun toListDoesNotCreateArrayView() {
+        snapshotDoesNotCreateView(arrayOf("first", "last"), { it.toList() })
+        snapshotDoesNotCreateView(arrayOf<Any>("item", 1), { it.toList() })
+    }
 
-        val arrayOfAny = arrayOf<Any>("first")
-        val listOfAny = arrayListOf(*arrayOfAny)
-        assertEquals("first", listOfAny[0])
-        arrayOfAny[0] = "last"
-        assertEquals("first", listOfAny[0])
+    @test fun toMutableListDoesNotCreateArrayView() {
+        snapshotDoesNotCreateView(arrayOf("first", "last"), { it.toMutableList() })
+        snapshotDoesNotCreateView(arrayOf<Any>("item", 2), { it.toMutableList() })
+    }
+
+    @test fun listOfDoesNotCreateView() {
+        snapshotDoesNotCreateView(arrayOf("first", "last"), { listOf(*it) })
+        snapshotDoesNotCreateView(arrayOf<Any>("item", 3), { listOf(*it) })
+    }
+
+    @test fun mutableListOfDoesNotCreateView() {
+        snapshotDoesNotCreateView(arrayOf("first", "last"), { mutableListOf(*it) })
+        snapshotDoesNotCreateView(arrayOf<Any>("item", 4), { mutableListOf(*it) })
+    }
+
+    @test fun arrayListDoesNotCreateArrayView() {
+        snapshotDoesNotCreateView(arrayOf(1, 2), { arrayListOf(*it) })
+        snapshotDoesNotCreateView(arrayOf<Any>("first", "last"), { arrayListOf(*it) })
+    }
+
+
+    private fun <T> snapshotDoesNotCreateView(array: Array<T>, snapshot: (Array<T>) -> List<T>) {
+        val first = array.first()
+        val last = array.last()
+
+        val list = snapshot(array)
+        assertEquals(first, list[0])
+        array[0] = last
+        assertEquals(first, list[0])
     }
 }
