@@ -63,12 +63,12 @@ class KotlinGradleIT: BaseGradleIT() {
             }
 
             for (i in 1..3) {
-                project.build(userVariantArg, "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+                project.build(userVariantArg, "clean", "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
                     assertSuccessful()
                     val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)".toRegex().find(output)
                     assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
                     val reportedGrowth = matches!!.groups.get(2)!!.value.removePrefix("+").toInt()
-                    assert(reportedGrowth <= 700) { "Used memory growth $reportedGrowth > 700" }
+                    assert(reportedGrowth <= 2000) { "Used memory growth $reportedGrowth > 700" }
                 }
             }
 
