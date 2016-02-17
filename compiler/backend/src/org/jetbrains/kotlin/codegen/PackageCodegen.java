@@ -76,12 +76,11 @@ public class PackageCodegen {
         }
     }
 
-    @Nullable
-    private ClassBuilder generateFile(@NotNull KtFile file) {
+    private void generateFile(@NotNull KtFile file) {
         JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
         if (fileClassInfo.getWithJvmMultifileClass()) {
-            return null;
+            return;
         }
 
         Type fileClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.getFileClassFqName());
@@ -108,7 +107,7 @@ public class PackageCodegen {
             }
         }
 
-        if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return null;
+        if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return;
 
         String name = fileClassType.getInternalName();
         packagePartRegistry.addPart(name.substring(name.lastIndexOf('/') + 1));
@@ -116,8 +115,6 @@ public class PackageCodegen {
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.PackagePart(file, packageFragment), fileClassType, file);
 
         new PackagePartCodegen(builder, file, fileClassType, packagePartContext, state).generate();
-
-        return builder;
     }
 
     @Nullable
