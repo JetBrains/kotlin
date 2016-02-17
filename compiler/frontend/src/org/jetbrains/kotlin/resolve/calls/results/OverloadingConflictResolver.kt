@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -147,18 +146,22 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             call1: FlatSignature<MutableResolvedCall<D>>,
             call2: FlatSignature<MutableResolvedCall<D>>,
             discriminateGenerics: Boolean
-    ): Boolean =
-            isSignatureNotLessSpecific(call1, call2, call1.callHandle(),
-                                       if (discriminateGenerics)
-                                           SpecificityComparisonDiscriminatingGenerics
-                                       else
-                                           DefaultCallSpecificityComparison)
+    ): Boolean {
+        if (discriminateGenerics) {
+            val isGeneric1 = call1.isGeneric
+            val isGeneric2 = call2.isGeneric
+            // generic loses to non-generic
+            if (isGeneric1 && !isGeneric2) return false
+            if (!isGeneric1 && isGeneric2) return true
+            // two generics are non-comparable
+            if (isGeneric1 && isGeneric2) return false
+        }
 
-    private abstract inner class SpecificityComparisonWithNumerics<T> : SpecificityComparisonCallbacks<T> {
-        override fun isNotLessSpecificSignature(signature1: FlatSignature<T>, signature2: FlatSignature<T>): Boolean?
-                = null
+        return isSignatureNotLessSpecific(call1, call2, SpecificityComparisonWithNumerics, call1.callHandle())
+    }
 
-        override fun isTypeNotLessSpecific(type1: KotlinType, type2: KotlinType): Boolean? {
+    private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
             val _double = builtIns.doubleType
             val _float = builtIns.floatType
             val _long = builtIns.longType
@@ -167,38 +170,18 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             val _short = builtIns.shortType
 
             when {
-                TypeUtils.equalTypes(type1, _double) && TypeUtils.equalTypes(type2, _float) -> return true
-                TypeUtils.equalTypes(type1, _int) -> {
+                TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
+                TypeUtils.equalTypes(specific, _int) -> {
                     when {
-                        TypeUtils.equalTypes(type2, _long) -> return true
-                        TypeUtils.equalTypes(type2, _byte) -> return true
-                        TypeUtils.equalTypes(type2, _short) -> return true
+                        TypeUtils.equalTypes(general, _long) -> return true
+                        TypeUtils.equalTypes(general, _byte) -> return true
+                        TypeUtils.equalTypes(general, _short) -> return true
                     }
                 }
-                TypeUtils.equalTypes(type1, _short) && TypeUtils.equalTypes(type2, _byte) -> return true
+                TypeUtils.equalTypes(specific, _short) && TypeUtils.equalTypes(general, _byte) -> return true
             }
 
             return false
-        }
-    }
-
-    private val DefaultCallSpecificityComparison = object : SpecificityComparisonWithNumerics<MutableResolvedCall<*>>() {}
-    private val DefaultDescriptorSpecificityComparison = object : SpecificityComparisonWithNumerics<CallableDescriptor>() {}
-
-    private val SpecificityComparisonDiscriminatingGenerics = object : SpecificityComparisonWithNumerics<MutableResolvedCall<*>>() {
-        override fun isNotLessSpecificSignature(
-                signature1: FlatSignature<MutableResolvedCall<*>>,
-                signature2: FlatSignature<MutableResolvedCall<*>>
-        ): Boolean? {
-            val isGeneric1 = signature1.isGeneric
-            val isGeneric2 = signature2.isGeneric
-            // generic loses to non-generic
-            if (isGeneric1 && !isGeneric2) return false
-            if (!isGeneric1 && isGeneric2) return true
-            // two generics are non-comparable
-            if (isGeneric1 && isGeneric2) return false
-            // otherwise continue comparing signatures
-            return null
         }
     }
 
@@ -250,23 +233,23 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
     }
 
     /**
-     * Returns `true` if `d1` is definitely not less specific than `d2`,
-     * `false` if `d1` is definitely less specific than `d2`,
+     * Returns `true` if `f` is definitely not less specific than `g`,
+     * `false` if `f` is definitely less specific than `g`,
      * `null` if undecided.
      */
-    private fun compareFunctionParameterTypes(f: CallableDescriptor, g: CallableDescriptor): Boolean {
+    private fun isNotLessSpecificCallableReferenceDescriptor(f: CallableDescriptor, g: CallableDescriptor): Boolean {
         if (f.valueParameters.size != g.valueParameters.size) return false
         if (f.varargParameterPosition() != g.varargParameterPosition()) return false
 
         val fSignature = FlatSignature.createFromCallableDescriptor(f)
         val gSignature = FlatSignature.createFromCallableDescriptor(g)
-        return isSignatureNotLessSpecific(fSignature, gSignature, CallHandle.NONE, DefaultDescriptorSpecificityComparison)
+        return isSignatureNotLessSpecific(fSignature, gSignature, SpecificityComparisonWithNumerics)
     }
 
     private fun isNotLessSpecificCallableReference(f: CallableDescriptor, g: CallableDescriptor): Boolean =
             // TODO should we "discriminate generic descriptors" for callable references?
             tryCompareDescriptorsFromScripts(f, g) ?:
-            compareFunctionParameterTypes(f, g)
+            isNotLessSpecificCallableReferenceDescriptor(f, g)
 
     companion object {
         // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects

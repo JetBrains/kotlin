@@ -21,15 +21,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE
-import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
+import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
+import org.jetbrains.kotlin.resolve.calls.results.SpecificityComparisonCallbacks
+import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
+import org.jetbrains.kotlin.resolve.calls.results.varargParameterPosition
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 object OverloadUtil {
@@ -46,52 +45,29 @@ object OverloadUtil {
         return checkOverloadability(a, b)
     }
 
+    private object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean =
+                false
+    }
+
     private fun checkOverloadability(a: CallableDescriptor, b: CallableDescriptor): Boolean {
         if (a.hasLowPriorityInOverloadResolution() != b.hasLowPriorityInOverloadResolution()) return true
+
+        // NB this makes generic and non-generic declarations with equivalent signatures non-conflicting
+        // E.g., 'fun <T> foo()' and 'fun foo()'.
+        // They can be disambiguated by providing explicit type parameters.
         if (a.typeParameters.isEmpty() != b.typeParameters.isEmpty()) return true
 
-        OverridingUtil.checkReceiverAndParameterCount(a, b)?.let { return it.result == INCOMPATIBLE }
+        if (ErrorUtils.containsErrorType(a) || ErrorUtils.containsErrorType(b)) return true
+        if (a.varargParameterPosition() != b.varargParameterPosition()) return true
 
-        val aValueParameters = OverridingUtil.compiledValueParameters(a)
-        val bValueParameters = OverridingUtil.compiledValueParameters(b)
+        val aSignature = FlatSignature.createFromCallableDescriptor(a)
+        val bSignature = FlatSignature.createFromCallableDescriptor(b)
 
-        val aTypeParameters = a.typeParameters
-        val bTypeParameters = b.typeParameters
+        val aIsNotLessSpecificThanB = isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks)
+        val bIsNotLessSpecificThanA = isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks)
 
-        val avsbConstraintsBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
-        val avsbTypeSubstitutor = avsbConstraintsBuilder.registerTypeVariables(CallHandle.NONE, aTypeParameters)
-        val bvsaConstraintsBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
-        val bvsaTypeSubstitutor = bvsaConstraintsBuilder.registerTypeVariables(CallHandle.NONE, bTypeParameters)
-
-        var constraintIndex = 0
-
-        for ((aType, bType) in aValueParameters.zip(bValueParameters)) {
-            if (aType.isError || bType.isError) return true
-
-            if (oneMoreSpecificThanAnother(bType, aType)) return true
-
-            if (!TypeUtils.dependsOnTypeParameters(aType, aTypeParameters)
-                && !TypeUtils.dependsOnTypeParameters(bType, bTypeParameters)
-                && !KotlinTypeChecker.DEFAULT.equalTypes(aType, bType)) {
-                return true
-            }
-
-            constraintIndex++
-            val aTypeSubstituted = avsbTypeSubstitutor.safeSubstitute(aType, Variance.INVARIANT)
-            val bTypeSubstituted = bvsaTypeSubstitutor.safeSubstitute(bType, Variance.INVARIANT)
-            avsbConstraintsBuilder.addSubtypeConstraint(bType, aTypeSubstituted,
-                                                        VALUE_PARAMETER_POSITION.position(constraintIndex))
-            bvsaConstraintsBuilder.addSubtypeConstraint(aType, bTypeSubstituted,
-                                                        VALUE_PARAMETER_POSITION.position(constraintIndex))
-        }
-
-        if (constraintIndex == 0) return false
-
-        avsbConstraintsBuilder.fixVariables()
-        bvsaConstraintsBuilder.fixVariables()
-
-        return avsbConstraintsBuilder.build().status.hasContradiction()
-               || bvsaConstraintsBuilder.build().status.hasContradiction()
+        return !(aIsNotLessSpecificThanB && bIsNotLessSpecificThanA)
     }
 
     private enum class DeclarationCategory {

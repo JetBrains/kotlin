@@ -23,52 +23,47 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.valuePara
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-interface SpecificityComparisonCallbacks<T> {
-    fun isNotLessSpecificSignature(signature1: FlatSignature<T>, signature2: FlatSignature<T>): Boolean?
-    fun isTypeNotLessSpecific(type1: KotlinType, type2: KotlinType): Boolean?
+interface SpecificityComparisonCallbacks {
+    fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
 }
 
 fun <T> isSignatureNotLessSpecific(
-        signature1: FlatSignature<T>,
-        signature2: FlatSignature<T>,
-        callHandle: CallHandle,
-        callbacks: SpecificityComparisonCallbacks<T>
+        specific: FlatSignature<T>,
+        general: FlatSignature<T>,
+        callbacks: SpecificityComparisonCallbacks,
+        callHandle: CallHandle = CallHandle.NONE
 ): Boolean {
-    callbacks.isNotLessSpecificSignature(signature1, signature2)?.let { return it }
+    if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
+    if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
 
-    val typeParameters = signature2.typeParameters
+    val typeParameters = general.typeParameters
     val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
-    var numConstraints = 0
     val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(callHandle, typeParameters)
 
-    for ((type1, type2) in signature1.valueParameterTypes.zip(signature2.valueParameterTypes)) {
-        if (type1 == null || type2 == null) continue
+    var numConstraints = 0
+    for ((specificType, generalType) in specific.valueParameterTypes.zip(general.valueParameterTypes)) {
+        if (specificType == null || generalType == null) continue
 
-        if (isDefinitelyLessSpecificByTypeSpecificity(type1, type2)) {
+        if (isDefinitelyLessSpecificByTypeSpecificity(specificType, generalType)) {
             return false
         }
 
-        if (typeParameters.isEmpty() || !TypeUtils.dependsOnTypeParameters(type2, typeParameters)) {
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(type1, type2)) {
-                callbacks.isTypeNotLessSpecific(type1, type2)?.let { if (!it) return false }
+        if (typeParameters.isEmpty() || !TypeUtils.dependsOnTypeParameters(generalType, typeParameters)) {
+            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(specificType, generalType)) {
+                if (!callbacks.isNonSubtypeNotLessSpecific(specificType, generalType)) {
+                    return false
+                }
             }
         }
         else {
-            val constraintPosition = valueParameterPosition(numConstraints++)
-            val substitutedType2 = typeSubstitutor.safeSubstitute(type2, Variance.INVARIANT)
-            constraintSystemBuilder.addSubtypeConstraint(type1, substitutedType2, constraintPosition)
+            val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
+            constraintSystemBuilder.addSubtypeConstraint(specificType, substitutedGeneralType, valueParameterPosition(numConstraints++))
         }
     }
 
-    if (numConstraints > 0) {
-        constraintSystemBuilder.fixVariables()
-        val constraintSystem = constraintSystemBuilder.build()
-        if (constraintSystem.status.hasContradiction()) {
-            return false
-        }
-    }
-
-    return true
+    constraintSystemBuilder.fixVariables()
+    val constraintSystem = constraintSystemBuilder.build()
+    return !constraintSystem.status.hasContradiction()
 }
 
 private fun isDefinitelyLessSpecificByTypeSpecificity(specific: KotlinType, general: KotlinType): Boolean {
