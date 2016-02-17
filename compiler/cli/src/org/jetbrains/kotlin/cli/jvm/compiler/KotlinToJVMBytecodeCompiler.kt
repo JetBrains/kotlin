@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.util.io.JarUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -67,7 +68,7 @@ object KotlinToJVMBytecodeCompiler {
 
     private fun writeOutput(
             configuration: CompilerConfiguration,
-            outputFiles: ClassFileFactory,
+            outputFiles: OutputFileCollection,
             outputDir: File?,
             jarPath: File?,
             jarRuntime: Boolean,

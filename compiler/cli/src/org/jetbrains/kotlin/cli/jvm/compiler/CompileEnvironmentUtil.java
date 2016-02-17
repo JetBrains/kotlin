@@ -35,11 +35,11 @@ import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.codegen.ClassFileFactory;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.name.FqName;
@@ -75,7 +75,7 @@ public class CompileEnvironmentUtil {
     }
 
     // TODO: includeRuntime should be not a flag but a path to runtime
-    private static void doWriteToJar(ClassFileFactory outputFiles, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
+    private static void doWriteToJar(OutputFileCollection outputFiles, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
             Attributes mainAttributes = manifest.getMainAttributes();
@@ -99,7 +99,7 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    public static void writeToJar(File jarPath, boolean jarRuntime, FqName mainClass, ClassFileFactory outputFiles) {
+    public static void writeToJar(File jarPath, boolean jarRuntime, FqName mainClass, OutputFileCollection outputFiles) {
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(jarPath);
