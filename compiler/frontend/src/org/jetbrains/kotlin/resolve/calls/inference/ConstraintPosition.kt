@@ -38,6 +38,8 @@ enum class ConstraintPositionKind {
     }
 }
 
+fun valueParameterPosition(index: Int) = ConstraintPositionKind.VALUE_PARAMETER_POSITION.position(index)
+
 interface ConstraintPosition {
     val kind: ConstraintPositionKind
 

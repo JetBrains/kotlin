@@ -33,9 +33,6 @@ class FlatSignature<out T>(
         val hasVarargs: Boolean,
         val numDefaults: Int
 ) {
-    override fun toString() = "<${typeParameters.joinToString {it.name.asString()} }> ${valueParameterTypes.joinToString()}; " +
-                              "${if (hasVarargs) "varargs;" else ""} $numDefaults"
-
     val isGeneric = typeParameters.isNotEmpty()
 
     companion object {

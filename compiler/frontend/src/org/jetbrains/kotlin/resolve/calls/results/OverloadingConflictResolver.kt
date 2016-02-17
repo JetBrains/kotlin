@@ -21,17 +21,16 @@ import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Specificity
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.getSpecificityRelationTo
 
 class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
@@ -147,59 +146,41 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             call1: FlatSignature<MutableResolvedCall<D>>,
             call2: FlatSignature<MutableResolvedCall<D>>,
             discriminateGenerics: Boolean
-    ): Boolean {
-        if (discriminateGenerics) {
-            val isGeneric1 = call1.isGeneric
-            val isGeneric2 = call2.isGeneric
+    ): Boolean =
+            isSignatureNotLessSpecific(call1, call2, call1.callHandle(),
+                                       if (discriminateGenerics)
+                                           SpecificityComparisonDiscriminatingGenerics
+                                       else
+                                           DefaultSpecificityComparison)
+
+    private abstract inner class SpecificityComparisonWithNumerics : SpecificityComparisonCallbacks<MutableResolvedCall<*>> {
+        override fun isTypeNotLessSpecific(type1: KotlinType, type2: KotlinType): Boolean? =
+                numericTypeMoreSpecific(type1, type2)
+    }
+
+    private val DefaultSpecificityComparison = object : SpecificityComparisonWithNumerics() {
+        override fun isNotLessSpecificByOrigin(
+                signature1: FlatSignature<MutableResolvedCall<*>>,
+                signature2: FlatSignature<MutableResolvedCall<*>>
+        ): Boolean? =
+                null
+    }
+
+    private val SpecificityComparisonDiscriminatingGenerics = object : SpecificityComparisonWithNumerics() {
+        override fun isNotLessSpecificByOrigin(
+                signature1: FlatSignature<MutableResolvedCall<*>>,
+                signature2: FlatSignature<MutableResolvedCall<*>>
+        ): Boolean? {
+            val isGeneric1 = signature1.isGeneric
+            val isGeneric2 = signature2.isGeneric
             // generic loses to non-generic
             if (isGeneric1 && !isGeneric2) return false
             if (!isGeneric1 && isGeneric2) return true
             // two generics are non-comparable
             if (isGeneric1 && isGeneric2) return false
+            // otherwise continue comparing signatures
+            return null
         }
-
-        val typeParameters = call2.typeParameters
-        val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
-        var hasConstraints = false
-        val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(call1.callHandle(), typeParameters)
-
-        fun compareTypesAndUpdateConstraints(type1: KotlinType?, type2: KotlinType?, constraintPosition: ConstraintPosition): Boolean {
-            if (type1 == null || type2 == null) return true
-
-            if (typeParameters.isEmpty() || !TypeUtils.dependsOnTypeParameters(type2, typeParameters)) {
-                if (!typeNotLessSpecific(type1, type2)) {
-                    return false
-                }
-            }
-            else if (isDefinitelyLessSpecificByTypeSpecificity(type1, type2)) {
-                return false
-            }
-            else {
-                hasConstraints = true
-                val substitutedType2 = typeSubstitutor.safeSubstitute(type2, Variance.INVARIANT)
-                constraintSystemBuilder.addSubtypeConstraint(type1, substitutedType2, constraintPosition)
-            }
-            return true
-        }
-
-        var argumentIndex = 0
-        for ((type1, type2) in call1.valueParameterTypes.zip(call2.valueParameterTypes)) {
-            // We use this constraint system for subtyping relation check only,
-            // so exact value parameter position doesn't matter.
-            if (!compareTypesAndUpdateConstraints(type1, type2, VALUE_PARAMETER_POSITION.position(++argumentIndex))) {
-                return false
-            }
-        }
-
-        if (hasConstraints) {
-            constraintSystemBuilder.fixVariables()
-            val constraintSystem = constraintSystemBuilder.build()
-            if (constraintSystem.status.hasContradiction()) {
-                return false
-            }
-        }
-
-        return true
     }
 
     private fun <D: CallableDescriptor> isOfNotLessSpecificShape(
