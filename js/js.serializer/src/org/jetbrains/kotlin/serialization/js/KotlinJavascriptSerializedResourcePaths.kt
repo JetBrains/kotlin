@@ -16,19 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 
-object KotlinJavascriptSerializedResourcePaths : SerializedResourcePaths {
-    override val extensionRegistry: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
-
-    init {
-        JsProtoBuf.registerAllExtensions(extensionRegistry)
-    }
-
+object KotlinJavascriptSerializedResourcePaths {
     private val CLASSES_FILE_EXTENSION = "kotlin_classes"
     private val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
 
@@ -36,15 +28,15 @@ object KotlinJavascriptSerializedResourcePaths : SerializedResourcePaths {
             fqName.toPath().withSepIfNotEmpty() + shortName(fqName) + "." + CLASSES_FILE_EXTENSION
 
 
-    override fun getClassMetadataPath(classId: ClassId): String {
+    fun getClassMetadataPath(classId: ClassId): String {
         return classId.packageFqName.toPath().withSepIfNotEmpty() + classId.relativeClassName.asString() +
                "." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION
     }
 
-    override fun getPackageFilePath(fqName: FqName): String =
+    fun getPackageFilePath(fqName: FqName): String =
             getPackageClassFqName(fqName).toPath() + "." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION
 
-    override fun getStringTableFilePath(fqName: FqName): String =
+    fun getStringTableFilePath(fqName: FqName): String =
             fqName.toPath().withSepIfNotEmpty() + shortName(fqName) + "." + STRING_TABLE_FILE_EXTENSION
 
     private fun FqName.toPath() = this.asString().replace('.', '/')

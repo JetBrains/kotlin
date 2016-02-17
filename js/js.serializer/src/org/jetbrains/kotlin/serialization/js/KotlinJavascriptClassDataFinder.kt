@@ -30,7 +30,7 @@ class KotlinJavascriptClassDataFinder(
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val stream = loadResource(KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classId)) ?: return null
-        val classProto = ProtoBuf.Class.parseFrom(stream, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+        val classProto = ProtoBuf.Class.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
         return ClassDataWithSource(ClassData(nameResolver, classProto))
     }
 }

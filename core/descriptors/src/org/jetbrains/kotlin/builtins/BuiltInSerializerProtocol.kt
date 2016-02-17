@@ -16,11 +16,22 @@
 
 package org.jetbrains.kotlin.builtins
 
+import com.google.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
 object BuiltInSerializerProtocol : SerializerExtensionProtocol(
+        ExtensionRegistryLite.newInstance().apply { BuiltInsProtoBuf.registerAllExtensions(this) },
         BuiltInsProtoBuf.constructorAnnotation, BuiltInsProtoBuf.classAnnotation, BuiltInsProtoBuf.functionAnnotation,
         BuiltInsProtoBuf.propertyAnnotation, BuiltInsProtoBuf.enumEntryAnnotation, BuiltInsProtoBuf.compileTimeValue,
         BuiltInsProtoBuf.parameterAnnotation, BuiltInsProtoBuf.typeAnnotation, BuiltInsProtoBuf.typeParameterAnnotation
-)
+) {
+    val BUILTINS_FILE_EXTENSION = "kotlin_builtins"
+
+    fun getBuiltInsFilePath(fqName: FqName): String =
+            fqName.asString().replace('.', '/') + "/" + shortName(fqName) + "." + BUILTINS_FILE_EXTENSION
+
+    private fun shortName(fqName: FqName): String =
+            if (fqName.isRoot) "default-package" else fqName.shortName().asString()
+}

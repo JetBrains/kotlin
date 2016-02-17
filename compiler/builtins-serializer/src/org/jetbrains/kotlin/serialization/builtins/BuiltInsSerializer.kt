@@ -21,8 +21,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -162,7 +162,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
                 version.forEach { writeInt(it) }
             }
             proto.build().writeTo(stream)
-            write(BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName), stream)
+            write(BuiltInSerializerProtocol.getBuiltInsFilePath(fqName), stream)
         }
 
         private fun write(fileName: String, stream: ByteArrayOutputStream) {

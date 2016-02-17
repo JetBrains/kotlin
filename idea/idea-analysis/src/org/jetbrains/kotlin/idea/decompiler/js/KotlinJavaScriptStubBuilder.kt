@@ -61,12 +61,12 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
         val components = createStubBuilderComponents(file, nameResolver)
 
         if (isPackageHeader) {
-            val packageProto = ProtoBuf.Package.parseFrom(content, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+            val packageProto = ProtoBuf.Package.parseFrom(content, JsSerializerProtocol.extensionRegistry)
             val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
             return createPackageFacadeStub(packageProto, packageFqName, context)
         }
         else {
-            val classProto = ProtoBuf.Class.parseFrom(content, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+            val classProto = ProtoBuf.Class.parseFrom(content, JsSerializerProtocol.extensionRegistry)
             val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
             val classId = JsMetaFileUtils.getClassId(file)
             return createTopLevelClassStub(classId, classProto, context)

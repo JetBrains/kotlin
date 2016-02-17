@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol)
 
 object JsSerializerProtocol : SerializerExtensionProtocol(
+        ExtensionRegistryLite.newInstance().apply { JsProtoBuf.registerAllExtensions(this) },
         JsProtoBuf.constructorAnnotation, JsProtoBuf.classAnnotation, JsProtoBuf.functionAnnotation, JsProtoBuf.propertyAnnotation,
         JsProtoBuf.enumEntryAnnotation, JsProtoBuf.compileTimeValue, JsProtoBuf.parameterAnnotation, JsProtoBuf.typeAnnotation,
         JsProtoBuf.typeParameterAnnotation

@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.serialization;
 
+import com.google.protobuf.ExtensionRegistryLite
 import com.google.protobuf.GeneratedMessageLite.GeneratedExtension
 
 open class SerializerExtensionProtocol(
+        val extensionRegistry: ExtensionRegistryLite,
         val constructorAnnotation: GeneratedExtension<ProtoBuf.Constructor, List<ProtoBuf.Annotation>>,
         val classAnnotation: GeneratedExtension<ProtoBuf.Class, List<ProtoBuf.Annotation>>,
         val functionAnnotation: GeneratedExtension<ProtoBuf.Function, List<ProtoBuf.Annotation>>,

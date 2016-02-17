@@ -39,7 +39,7 @@ class KotlinJavascriptPackageFragment(
 
     override fun computeMemberScope(): DeserializedPackageMemberScope {
         val packageStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName))
-        val packageProto = ProtoBuf.Package.parseFrom(packageStream, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+        val packageProto = ProtoBuf.Package.parseFrom(packageStream, JsSerializerProtocol.extensionRegistry)
         return DeserializedPackageMemberScope(
                 this, packageProto, nameResolver, packagePartSource = null, components = components, classNames = { loadClassNames() }
         )
@@ -47,7 +47,7 @@ class KotlinJavascriptPackageFragment(
 
     private fun loadClassNames(): Collection<Name> {
         val classesStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName))
-        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, JsSerializerProtocol.extensionRegistry)
         return classesProto.classNameList?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
 }

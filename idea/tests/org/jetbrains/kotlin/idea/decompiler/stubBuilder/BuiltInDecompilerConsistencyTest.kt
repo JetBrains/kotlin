@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileContentImpl
-import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
+import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.builtIns.BuiltInDefinitionFile
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInDecompiler
@@ -62,7 +62,7 @@ class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase()
         val dir = findDir(packageFqName, project)
         val groupedByExtension = dir.children.groupBy { it.extension }
         val classFiles = groupedByExtension[JavaClassFileType.INSTANCE.defaultExtension]!!.map { it.nameWithoutExtension }
-        val builtInsFile = groupedByExtension[BuiltInsSerializedResourcePaths.BUILTINS_FILE_EXTENSION]!!.single()
+        val builtInsFile = groupedByExtension[BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION]!!.single()
 
         val builtInFileStub = builtInsDecompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(builtInsFile))!!
 

@@ -73,7 +73,7 @@ class KotlinJavaScriptDeserializerForDecompiler(
         }
 
         val content = file.contentsToByteArray(false)
-        val packageProto = ProtoBuf.Package.parseFrom(content, KotlinJavascriptSerializedResourcePaths.extensionRegistry)
+        val packageProto = ProtoBuf.Package.parseFrom(content, JsSerializerProtocol.extensionRegistry)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName), packageProto, nameResolver, packagePartSource = null,
                 components = deserializationComponents
