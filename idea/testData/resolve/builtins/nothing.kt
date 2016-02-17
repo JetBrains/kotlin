@@ -1,4 +1,4 @@
 var x : <caret>Nothing
-// BINARY: kotlin/Nothing.kotlin_class
+// BINARY: kotlin/kotlin.kotlin_builtins
 // SRC: kotlin/Nothing.kt
 // TARGET: (kotlin).Nothing

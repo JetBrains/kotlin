@@ -16,70 +16,83 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileContentImpl
+import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
+import org.jetbrains.kotlin.idea.decompiler.builtIns.BuiltInDefinitionFile
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInDecompiler
-import org.jetbrains.kotlin.idea.decompiler.builtIns.buildDecompiledTextForBuiltIns
-import org.jetbrains.kotlin.idea.decompiler.builtIns.isInternalBuiltInFile
 import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.junit.Assert
 
 class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase() {
     private val classFileDecompiler = KotlinClassFileDecompiler()
     private val builtInsDecompiler = KotlinBuiltInDecompiler()
 
+    override fun setUp() {
+        super.setUp()
+        BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
+    }
+
+    override fun tearDown() {
+        BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = true
+        super.tearDown()
+    }
+
     fun testSameAsClsDecompilerForCompiledBuiltInClasses() {
-        checkTextAndStubTreeMatchForClassesInDirectory(findDir("kotlin", project))
-        checkTextAndStubTreeMatchForClassesInDirectory(findDir("kotlin.annotation", project))
-        checkTextAndStubTreeMatchForClassesInDirectory(findDir("kotlin.reflect", project))
+        doTest("kotlin")
+        doTest("kotlin.annotation")
+        doTest("kotlin.collections")
+        doTest("kotlin.ranges")
+        doTest("kotlin.reflect")
     }
 
-    // check builtIn decompiler against classFile decompiler, assuming the latter is well tested
-    // check for classes which are both compiled to jvm (.class) and serialized (.kotlin_class)
-    // in IDE we would actually hide corresponding .kotlin_class files and show .class files only
-    private fun checkTextAndStubTreeMatchForClassesInDirectory(dir: VirtualFile) {
+    // Check stubs for decompiled built-in classes against stubs for decompiled JVM class files, assuming the latter are well tested
+    // Check only those classes, stubs for which are present in the stub for a decompiled .kotlin_builtins file
+    private fun doTest(packageFqName: String) {
+        val dir = findDir(packageFqName, project)
         val groupedByExtension = dir.children.groupBy { it.extension }
-        val classFiles = groupedByExtension["class"]!!.map { it.nameWithoutExtension }
-        val kotlinClassFiles = groupedByExtension["kotlin_class"]!!.map { it.nameWithoutExtension }
-        val intersection = classFiles.intersect(kotlinClassFiles)
+        val classFiles = groupedByExtension[JavaClassFileType.INSTANCE.defaultExtension]!!.map { it.nameWithoutExtension }
+        val builtInsFile = groupedByExtension[BuiltInsSerializedResourcePaths.BUILTINS_FILE_EXTENSION]!!.single()
 
-        Assert.assertTrue("Some classes should be present", intersection.isNotEmpty())
+        val builtInFileStub = builtInsDecompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(builtInsFile))!!
 
-        intersection.forEach { className ->
-            val classFile = dir.findChild(className + ".class")!!
-            val builtInFile = dir.findChild(className + ".kotlin_class")!!
-            Assert.assertEquals(
-                    "Text mismatch for $className", getText(classFile, classFileDecompiler),
-                    buildDecompiledTextForBuiltIns(builtInFile).text // use internal api to avoid calling isInternalBuiltInFile
-            )
+        val classesEncountered = arrayListOf<FqName>()
 
-            Assert.assertTrue(isInternalBuiltInFile(builtInFile))
-
-            val classFileStub = classFileDecompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(classFile))!!
-            // use internal api to avoid calling isInternalBuiltInFile
-            val builtInFileStub = builtInsDecompiler.stubBuilder.doBuildFileStub(FileContentImpl.createByFile(builtInFile))!!
-            Assert.assertEquals("Stub mismatch for $className", classFileStub.serializeToString(), builtInFileStub.serializeToString())
+        for (className in classFiles) {
+            val classFile = dir.findChild(className + "." + JavaClassFileType.INSTANCE.defaultExtension)!!
+            val fileContent = FileContentImpl.createByFile(classFile)
+            if (IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file) == null) continue
+            val fileStub = classFileDecompiler.stubBuilder.buildFileStub(fileContent) ?: continue
+            val classStub = fileStub.findChildStubByType(KtClassElementType.getStubType(false)) as? KotlinClassStub ?: continue
+            val classFqName = classStub.getFqName()!!
+            val builtInClassStub = builtInFileStub.childrenStubs.firstOrNull {
+                it is KotlinClassStub && it.getFqName() == classFqName
+            } ?: continue
+            Assert.assertEquals("Stub mismatch for $classFqName", classStub.serializeToString(), builtInClassStub.serializeToString())
+            classesEncountered.add(classFqName)
         }
-    }
 
-    private fun getText(file: VirtualFile, kotlinClassFileDecompiler: ClassFileDecompilers.Full): String {
-        return kotlinClassFileDecompiler.createFileViewProvider(file, PsiManager.getInstance(project), false).document!!.text
+        Assert.assertTrue("Too few classes encountered in package $packageFqName: $classesEncountered", classesEncountered.size >= 5)
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
 
-
-fun findDir(packageFqName: String, project: Project): VirtualFile {
+internal fun findDir(packageFqName: String, project: Project): VirtualFile {
     val classNameIndex = KotlinFullClassNameIndex.getInstance()
-    val randomClassInPackage = classNameIndex.getAllKeys(project).find { it.startsWith(packageFqName + ".") && "." !in it.substringAfter(packageFqName + ".") }!!
+    val randomClassInPackage = classNameIndex.getAllKeys(project).first {
+        it.startsWith(packageFqName + ".") && "." !in it.substringAfter(packageFqName + ".")
+    }
     val classes = classNameIndex.get(randomClassInPackage, project, GlobalSearchScope.allScope(project))
-    return classes.first().containingFile.virtualFile.parent!!
+    return classes.first().containingFile.virtualFile.parent
 }

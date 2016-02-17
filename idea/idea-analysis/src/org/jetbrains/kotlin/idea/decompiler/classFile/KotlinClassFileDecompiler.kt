@@ -63,8 +63,8 @@ private val decompilerRendererForClassFiles = DescriptorRenderer.withOptions {
     typeNormalizer = { type -> if (type.isFlexible()) type.flexibility().lowerBound else type }
 }
 
-private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
-private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
+internal val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
+internal val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
 
 val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
 val INCOMPATIBLE_ABI_VERSION_COMMENT: String =

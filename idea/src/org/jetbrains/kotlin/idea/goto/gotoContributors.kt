@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInClassFileType
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
@@ -86,6 +86,6 @@ class KotlinGotoSymbolContributor : ChooseByNameContributor {
 
 private class BuiltInClassesScope(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
     override fun contains(file: VirtualFile): Boolean {
-        return file.fileType == KotlinBuiltInClassFileType && file in myBaseScope
+        return file.fileType == KotlinBuiltInFileType && file in myBaseScope
     }
 }

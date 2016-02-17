@@ -36,6 +36,7 @@ private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 
 private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS.withOptions {
     modifiers = DescriptorRendererModifier.ALL
+    withDefinedIn = true
 }
 
 fun descriptorToKey(descriptor: DeclarationDescriptor): String {

@@ -1386,13 +1386,9 @@
     <filetype.stubBuilder filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
     <filetype.decompiler filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
-    <fileType.fileViewProviderFactory filetype="kotlin_class" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
-    <filetype.stubBuilder filetype="kotlin_class" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
-    <filetype.decompiler filetype="kotlin_class" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
-
-    <fileType.fileViewProviderFactory filetype="kotlin_package" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
-    <filetype.stubBuilder filetype="kotlin_package" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
-    <filetype.decompiler filetype="kotlin_package" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
+    <fileType.fileViewProviderFactory filetype="kotlin_builtins" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
+    <filetype.stubBuilder filetype="kotlin_builtins" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
+    <filetype.decompiler filetype="kotlin_builtins" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
     <pathMacroExpandableProtocol protocol="kotlin-js-meta"/>
   </extensions>

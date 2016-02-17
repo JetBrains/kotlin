@@ -24,11 +24,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
-import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInClassFileType
-import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInPackageFileType
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-private val classFileLike = setOf(JavaClassFileType.INSTANCE, KotlinBuiltInClassFileType, KotlinBuiltInPackageFileType)
+private val classFileLike = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType)
 
 object ProjectRootsUtil {
     @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,

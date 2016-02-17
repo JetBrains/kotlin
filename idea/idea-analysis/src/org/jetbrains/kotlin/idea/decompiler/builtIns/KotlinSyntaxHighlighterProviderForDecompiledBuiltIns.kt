@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.idea.highlighter.KotlinHighlighter
 
 class KotlinSyntaxHighlighterProviderForDecompiledBuiltIns : SyntaxHighlighterProvider {
     override fun create(fileType: FileType, project: Project?, file: VirtualFile?): SyntaxHighlighter? {
-        if (fileType == KotlinBuiltInClassFileType || fileType == KotlinBuiltInPackageFileType) {
-            return KotlinHighlighter()
-        }
-        return null
+        return if (fileType == KotlinBuiltInFileType) KotlinHighlighter() else null
     }
 }

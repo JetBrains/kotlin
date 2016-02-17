@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.jetbrains.kotlin.idea
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
-import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInClassFileType
-import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInPackageFileType
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 
 class KotlinBuiltInFileTypeFactory : FileTypeFactory() {
     override fun createFileTypes(consumer: FileTypeConsumer) {
-        consumer.consume(KotlinBuiltInClassFileType, KotlinBuiltInClassFileType.defaultExtension)
-        consumer.consume(KotlinBuiltInPackageFileType, KotlinBuiltInPackageFileType.defaultExtension)
+        consumer.consume(KotlinBuiltInFileType, KotlinBuiltInFileType.defaultExtension)
     }
 }

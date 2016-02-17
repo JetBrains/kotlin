@@ -1,4 +1,4 @@
 val x : <caret>Int?
-// BINARY: kotlin/Int.kotlin_class
+// BINARY: kotlin/kotlin.kotlin_builtins
 // SRC: kotlin/Primitives.kt
 // TARGET: (kotlin).Int
