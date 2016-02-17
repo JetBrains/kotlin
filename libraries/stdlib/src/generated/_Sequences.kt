@@ -312,6 +312,8 @@ public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
 
 /**
  * Returns a sequence containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
  */
 public fun <T> Sequence<T>.filterIndexed(predicate: (Int, T) -> Boolean): Sequence<T> {
     // TODO: Rewrite with generalized MapFilterIndexingSequence
@@ -320,6 +322,8 @@ public fun <T> Sequence<T>.filterIndexed(predicate: (Int, T) -> Boolean): Sequen
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
  */
 public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -629,6 +633,8 @@ public fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R> {
 /**
  * Returns a sequence containing the results of applying the given [transform] function
  * to each element and its index in the original sequence.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R> {
     return TransformingIndexedSequence(this, transform)
@@ -637,6 +643,8 @@ public fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R> 
 /**
  * Returns a sequence containing only the non-null results of applying the given [transform] function
  * to each element and its index in the original sequence.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (Int, T) -> R?): Sequence<R> {
     return TransformingIndexedSequence(this, transform).filterNotNull()
@@ -645,6 +653,8 @@ public fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (Int, T) -> R?)
 /**
  * Applies the given [transform] function to each element and its index in the original sequence
  * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
@@ -654,6 +664,8 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndex
 /**
  * Applies the given [transform] function to each element and its index in the original sequence
  * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
@@ -776,6 +788,8 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original sequence.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
  */
 public inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
     var index = 0
@@ -793,6 +807,8 @@ public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
  */
 public inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
@@ -925,6 +941,8 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original sequence.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself and calculates the next accumulator value.
  */
 public inline fun <S, T: S> Sequence<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
     val iterator = this.iterator()

@@ -621,6 +621,8 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
  */
 public inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T> {
     return filterIndexedTo(ArrayList<T>(), predicate)
@@ -628,6 +630,8 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean):
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
  */
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -1133,6 +1137,8 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each element and its index in the original collection.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
@@ -1142,6 +1148,8 @@ public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element and its index in the original collection.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (Int, T) -> R?): List<R> {
     return mapIndexedNotNullTo(ArrayList<R>(), transform)
@@ -1150,6 +1158,8 @@ public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (Int, T)
 /**
  * Applies the given [transform] function to each element and its index in the original collection
  * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
@@ -1159,6 +1169,8 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndex
 /**
  * Applies the given [transform] function to each element and its index in the original collection
  * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
@@ -1324,6 +1336,8 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original collection.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
  */
 public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
     var index = 0
@@ -1347,6 +1361,8 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
  * to each element with its index in the original list and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
  */
 public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R {
     var index = lastIndex
@@ -1368,6 +1384,8 @@ public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
  */
 public inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
@@ -1500,6 +1518,8 @@ public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original collection.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself and calculates the next accumulator value.
  */
 public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
     val iterator = this.iterator()
@@ -1528,6 +1548,8 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
  * to each element with its index in the original list and current accumulator value.
+ * @param [operation] function that takes the index of an element, the element itself
+ * and current accumulator value, and calculates the next accumulator value.
  */
 public inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (Int, T, S) -> S): S {
     var index = lastIndex

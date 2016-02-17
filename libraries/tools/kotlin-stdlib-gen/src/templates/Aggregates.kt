@@ -360,6 +360,8 @@ fun aggregates(): List<GenericFunction> {
             """
             Accumulates value starting with [initial] value and applying [operation] from left to right
             to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
+            and the ${f.element} itself, and calculates the next accumulator value.
             """
         }
         typeParam("R")
@@ -382,6 +384,8 @@ fun aggregates(): List<GenericFunction> {
             """
             Accumulates value starting with [initial] value and applying [operation] from right to left
             to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
+            and current accumulator value, and calculates the next accumulator value.
             """
         }
         typeParam("R")
@@ -442,6 +446,8 @@ fun aggregates(): List<GenericFunction> {
             """
             Accumulates value starting with the first ${f.element} and applying [operation] from left to right
             to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
+            and the ${f.element} itself and calculates the next accumulator value.
             """
         }
         returns("T")
@@ -467,6 +473,8 @@ fun aggregates(): List<GenericFunction> {
             """
             Accumulates value starting with the first ${f.element} and applying [operation] from left to right
             to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
+            and the ${f.element} itself and calculates the next accumulator value.
             """
         }
         typeParam("S")
@@ -507,6 +515,8 @@ fun aggregates(): List<GenericFunction> {
             """
             Accumulates value starting with last ${f.element} and applying [operation] from right to left
             to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
+            and current accumulator value, and calculates the next accumulator value.
             """
         }
         returns("T")
@@ -534,6 +544,8 @@ fun aggregates(): List<GenericFunction> {
             """
             Accumulates value starting with last ${f.element} and applying [operation] from right to left
             to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
+            and current accumulator value, and calculates the next accumulator value.
             """
         }
         typeParam("S")
@@ -670,7 +682,12 @@ fun aggregates(): List<GenericFunction> {
     templates add f("forEachIndexed(action: (Int, T) -> Unit)") {
         inline(true)
         include(CharSequences)
-        doc { f -> "Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}." }
+        doc { f ->
+            """
+            Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}.
+            @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and performs the desired action on the ${f.element}.
+            """ }
         returns("Unit")
         body {
             """

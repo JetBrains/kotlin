@@ -406,7 +406,13 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterIndexed(predicate: (Int, T) -> Boolean)") {
         inline(true)
 
-        doc { f -> "Returns a ${f.mapResult} containing only ${f.element.pluralize()} matching the given [predicate]." }
+        doc { f ->
+            """
+            Returns a ${f.mapResult} containing only ${f.element.pluralize()} matching the given [predicate].
+            @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of predicate evaluation on the ${f.element}.
+            """
+        }
         returns("List<T>")
         body {
             """
@@ -414,7 +420,13 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing only those characters from the original ${f.collection} that match the given [predicate]." }
+        doc(CharSequences, Strings) { f ->
+            """
+            Returns a ${f.collection} containing only those characters from the original ${f.collection} that match the given [predicate].
+            @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of predicate evaluation on the ${f.element}.
+            """
+        }
         returns(CharSequences, Strings) { "SELF" }
         body(CharSequences, Strings) { f -> """return filterIndexedTo(StringBuilder(), predicate)${toResult(f)}""" }
 
@@ -434,7 +446,12 @@ fun filtering(): List<GenericFunction> {
 
         include(CharSequences)
 
-        doc { f -> "Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination]." }
+        doc { f ->
+            """
+            Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination].
+            @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of predicate evaluation on the ${f.element}.
+            """ }
         typeParam("C : TCollection")
         returns("C")
 
