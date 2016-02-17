@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFra
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
-import java.io.DataInputStream
 import java.io.InputStream
 
 class BuiltinsPackageFragment(
@@ -34,8 +33,7 @@ class BuiltinsPackageFragment(
 ) : DeserializedPackageFragment(fqName, storageManager, module, BuiltInsSerializedResourcePaths, loadResource) {
     private val builtinsMessage = run {
         val stream = loadResourceSure(BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName))
-        val dataInput = DataInputStream(stream)
-        val version = BuiltInsBinaryVersion(*(1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
+        val version = BuiltInsBinaryVersion.readFrom(stream)
 
         if (!version.isCompatible()) {
             // TODO: report a proper diagnostic

@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import java.io.DataInputStream
+import java.io.InputStream
 
 /**
  * The version of the format in which the .kotlin_builtins file is stored. This version also includes the version
@@ -28,5 +30,10 @@ class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     companion object {
         @JvmField
         val INSTANCE = BuiltInsBinaryVersion(1, 0, 0)
+
+        fun readFrom(stream: InputStream): BuiltInsBinaryVersion {
+            val dataInput = DataInputStream(stream)
+            return BuiltInsBinaryVersion(*(1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
+        }
     }
 }
