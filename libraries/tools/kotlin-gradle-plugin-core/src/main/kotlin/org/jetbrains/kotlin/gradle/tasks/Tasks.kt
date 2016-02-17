@@ -64,6 +64,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     var kotlinDestinationDir: File? = destinationDir
     // TODO: consider more reliable approach (see usage)
     var anyClassesCompiled: Boolean = false
+    var compilerCalled: Boolean = false
 
     private val loggerInstance = Logging.getLogger(this.javaClass)
     override fun getLogger() = loggerInstance
@@ -96,6 +97,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         populateCommonArgs(args)
         populateTargetSpecificArgs(args)
         val cachesDir = File(project.buildDir, "kotlin-caches")
+        compilerCalled = true
         callCompiler(args, sources, inputs.isIncremental, modified, removed, cachesDir)
         afterCompileHook(args)
     }
