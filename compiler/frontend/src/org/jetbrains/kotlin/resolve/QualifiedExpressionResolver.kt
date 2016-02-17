@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -407,19 +407,16 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
     ): Qualifier? {
         val name = expression.getReferencedNameAsName()
 
-        val qualifierDescriptor = when {
-            receiver is PackageQualifier -> {
+        val qualifierDescriptor = when (receiver) {
+            is PackageQualifier -> {
                 val childPackageFQN = receiver.packageView.fqName.child(name)
                 receiver.packageView.module.getPackage(childPackageFQN).check { !it.isEmpty() } ?:
                 receiver.packageView.memberScope.getContributedClassifier(name, KotlinLookupLocation(expression))
             }
-            receiver is ClassQualifier ->
-                receiver.scope.getContributedClassifier(name, KotlinLookupLocation(expression))
-            receiver == null ->
-                context.scope.findClassifier(name, KotlinLookupLocation(expression)) ?:
-                context.scope.ownerDescriptor.module.getPackage(FqName.ROOT.child(name)).check { !it.isEmpty() }
-            receiver is ReceiverValue ->
-                receiver.type.memberScope.memberScopeAsImportingScope().findClassifier(name, KotlinLookupLocation(expression))
+            is ClassQualifier -> receiver.scope.getContributedClassifier(name, KotlinLookupLocation(expression))
+            null -> context.scope.findClassifier(name, KotlinLookupLocation(expression)) ?:
+                    context.scope.ownerDescriptor.module.getPackage(FqName.ROOT.child(name)).check { !it.isEmpty() }
+            is ReceiverValue -> receiver.type.memberScope.memberScopeAsImportingScope().findClassifier(name, KotlinLookupLocation(expression))
             else -> null
         }
 
@@ -515,12 +512,9 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
     ) {
         path.foldRight(packageView) { qualifierPart, currentView ->
             storeResult(trace, qualifierPart.expression, currentView, shouldBeVisibleFrom = null, position = position)
-            val parentView = currentView.containingDeclaration
-            assert(parentView != null) {
-                "Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +
-                "path: ${path.joinToString()}, packageView fqName: ${packageView.fqName}"
-            }
-            parentView!!
+            currentView.containingDeclaration
+            ?: error("Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +
+                     "path: ${path.joinToString()}, packageView fqName: ${packageView.fqName}")
         }
     }
 
