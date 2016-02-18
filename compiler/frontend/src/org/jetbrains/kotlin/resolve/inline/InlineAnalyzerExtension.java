@@ -120,7 +120,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
         hasInlinable |= InlineUtil.containsReifiedTypeParameters(functionDescriptor);
 
-        if (!hasInlinable && !AnnotationUtilKt.isInlineOnly(functionDescriptor)) {
+        if (!hasInlinable && !AnnotationUtilKt.isInlineOnlyOrReified(functionDescriptor)) {
             KtModifierList modifierList = function.getModifierList();
             PsiElement inlineModifier = modifierList == null ? null : modifierList.getModifier(KtTokens.INLINE_KEYWORD);
             PsiElement reportOn = inlineModifier == null ? function : inlineModifier;

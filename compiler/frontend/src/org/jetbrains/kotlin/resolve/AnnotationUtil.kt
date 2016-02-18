@@ -68,10 +68,14 @@ fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
 
 private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
-fun MemberDescriptor.isInlineOnly(): Boolean {
+fun MemberDescriptor.isInlineOnlyOrReified(): Boolean {
     if (this !is FunctionDescriptor) return false
-    return typeParameters.any { it.isReified } ||
-           annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) && InlineUtil.isInline(this).apply {
-               assert(this) { "Function is not inline: ${this@isInlineOnly}"; }
-           }
+    return typeParameters.any { it.isReified } || hasInlineOnlyAnnotation()
+}
+
+fun MemberDescriptor.hasInlineOnlyAnnotation(): Boolean {
+    if (this !is FunctionDescriptor) return false
+    return annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) && InlineUtil.isInline(this).apply {
+        assert(this) { "Function is not inline: ${this@hasInlineOnlyAnnotation}"; }
+    }
 }

@@ -610,7 +610,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             boolean withinInline,
             boolean isSuperCall
     ) {
-        if (AnnotationUtilKt.isInlineOnly(unwrappedDescriptor)) return false;
+        if (AnnotationUtilKt.isInlineOnlyOrReified(unwrappedDescriptor)) return false;
 
         return isSuperCall && withinInline ||
                (accessFlag & ACC_PRIVATE) != 0 ||

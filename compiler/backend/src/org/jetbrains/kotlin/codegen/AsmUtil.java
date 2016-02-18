@@ -329,7 +329,7 @@ public class AsmUtil {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
 
-        if (AnnotationUtilKt.isInlineOnly(memberDescriptor)) return ACC_PRIVATE;
+        if (AnnotationUtilKt.isInlineOnlyOrReified(memberDescriptor)) return ACC_PRIVATE;
 
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
