@@ -49,12 +49,12 @@ abstract class MyAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {
 abstract class MyLegalAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {}
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass2<!><T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
-    fun foo(t: T) = t
-    fun bar(t: T) = t
+    <!ACCIDENTAL_OVERRIDE!>fun foo(t: T)<!> = t
+    <!ACCIDENTAL_OVERRIDE!>fun bar(t: T)<!> = t
     <!CONFLICTING_OVERLOADS!>val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>R<!>> pr : T<!> = t
 }
 abstract class MyLegalAbstractClass2<T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
-    fun foo(t: T) = t
-    fun bar(t: T) = t
+    <!ACCIDENTAL_OVERRIDE!>fun foo(t: T)<!> = t
+    <!ACCIDENTAL_OVERRIDE!>fun bar(t: T)<!> = t
     <!CONFLICTING_OVERLOADS!>val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>R<!>> pr : T<!> = t
 }

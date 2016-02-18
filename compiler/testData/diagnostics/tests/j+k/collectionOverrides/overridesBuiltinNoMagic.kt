@@ -143,7 +143,10 @@ public class X implements java.util.List<String> {
 
 // FILE: main.kt
 
-class <!CONFLICTING_INHERITED_JVM_DECLARATIONS, CONFLICTING_INHERITED_JVM_DECLARATIONS!>Y<!> : X()
+class Y : X()
+class <!CONFLICTING_JVM_DECLARATIONS!>Y2<!> : X() {
+    <!CONFLICTING_JVM_DECLARATIONS!>override fun removeAt(index: Int)<!> = ""
+}
 
 fun main() {
     X().remove("")

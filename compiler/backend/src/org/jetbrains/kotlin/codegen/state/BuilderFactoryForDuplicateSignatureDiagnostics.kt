@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -154,20 +155,27 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         val groupedBySignature = MultiMap.create<RawSignature, JvmDeclarationOrigin>()
 
         fun processMember(member: DeclarationDescriptor?) {
+            if (member !is CallableMemberDescriptor) return
             // a member of super is not visible: no override
-            if (member is DeclarationDescriptorWithVisibility && member.visibility == Visibilities.INVISIBLE_FAKE) return
+            if (member.visibility == Visibilities.INVISIBLE_FAKE) return
             // if a signature clashes with a SAM-adapter or something like that, there's no harm
-            if (member is CallableMemberDescriptor && isOrOverridesSamAdapter(member)) return
+            if (isOrOverridesSamAdapter(member)) return
 
             if (member is PropertyDescriptor) {
                 processMember(member.getter)
                 processMember(member.setter)
             }
             else if (member is FunctionDescriptor) {
-                val methodSignature = typeMapper.mapSignature(member)
-                val rawSignature = RawSignature(
-                        methodSignature.asmMethod.name!!, methodSignature.asmMethod.descriptor!!, MemberKind.METHOD)
-                groupedBySignature.putValue(rawSignature, OtherOrigin(member))
+                val signatures =
+                        if (member.kind == FAKE_OVERRIDE)
+                            member.overriddenDescriptors.mapTo(HashSet()) { it.original.asRawSignature() }
+                        else
+                            setOf(member.asRawSignature())
+
+                signatures.forEach {
+                    rawSignature ->
+                    groupedBySignature.putValue(rawSignature, OtherOrigin(member))
+                }
             }
         }
 
@@ -182,6 +190,11 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
         return groupedBySignature
     }
+
+    private fun FunctionDescriptor.asRawSignature() =
+        with(typeMapper.mapSignature(this)) {
+            RawSignature(asmMethod.name!!, asmMethod.descriptor!!, MemberKind.METHOD)
+        }
 
     private fun isOrOverridesSamAdapter(descriptor: CallableMemberDescriptor): Boolean {
         if (descriptor is SamAdapterDescriptor<*>) return true

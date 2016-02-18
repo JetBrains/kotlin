@@ -319,6 +319,18 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
             doTest(fileName);
         }
 
+        @TestMetadata("differentErasureInSuperClass.kt")
+        public void testDifferentErasureInSuperClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("differentErasureInSuperClassComplex.kt")
+        public void testDifferentErasureInSuperClassComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass/differentErasureInSuperClassComplex.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass/enum.kt");
