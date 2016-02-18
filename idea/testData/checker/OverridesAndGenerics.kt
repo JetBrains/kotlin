@@ -30,6 +30,6 @@
     <error>class MyIllegalClass1</error> : MyTrait<Int>, MyAbstractClass<String>() {}
 
     <error>class MyIllegalClass2</error><T> : MyTrait<Int>, MyAbstractClass<Int>() {
-        fun foo(t: T) = t
-        fun bar(t: T) = t
+        <error>fun foo(t: T)</error> = t
+        <error>fun bar(t: T)</error> = t
     }
