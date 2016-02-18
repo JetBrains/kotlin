@@ -385,7 +385,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         Messages.showErrorDialog(project,
                                  "<html>Couldn't configure kotlin-gradle plugin automatically.<br/>" +
                                  (message != null ? message : "") +
-                                 "See manual installation instructions <a href=\"http://confluence.jetbrains.com/display/Kotlin/Kotlin+Build+Tools#KotlinBuildTools-Gradle\">here</a></html>",
+                                 "See manual installation instructions <a href=\"https://kotlinlang.org/docs/reference/using-gradle.html\">here</a></html>",
                                  "Configure Kotlin-Gradle Plugin");
     }
 }
