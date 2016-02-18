@@ -52,8 +52,6 @@ import java.io.File;
 import java.util.Collection;
 
 public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfigurator {
-    private static final String[] KOTLIN_VERSIONS = {"0.6.+"};
-
     protected static final String VERSION_TEMPLATE = "$VERSION$";
 
     protected static final String CLASSPATH = "classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"";
@@ -85,7 +83,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     @Override
     public void configure(@NotNull Project project, Collection<Module> excludeModules) {
         ConfigureDialogWithModulesAndVersion dialog =
-                new ConfigureDialogWithModulesAndVersion(project, this, KOTLIN_VERSIONS, excludeModules);
+                new ConfigureDialogWithModulesAndVersion(project, this, excludeModules);
 
         dialog.show();
         if (!dialog.isOK()) return;

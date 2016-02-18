@@ -29,6 +29,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.util.net.HttpConfigurable;
+import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +42,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +63,6 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     public ConfigureDialogWithModulesAndVersion(
             @NotNull Project project,
             @NotNull KotlinProjectConfigurator configurator,
-            @NotNull final String[] kotlinVersions,
             @NotNull Collection<Module> excludeModules
     ) {
         super(project);
@@ -74,7 +74,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Find Kotlin Maven plugin versions", false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                setVersions(kotlinVersions);
+                loadKotlinVersions();
             }
         });
 
@@ -111,14 +111,14 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         return contentPane;
     }
 
-    private void setVersions(@NotNull String[] kotlinVersions) {
+    private void loadKotlinVersions() {
         Collection<String> items;
         try {
             items = loadVersions();
             hideLoader();
         }
         catch (Throwable t) {
-            items = Arrays.asList(kotlinVersions);
+            items = Collections.singletonList("1.0.0");
             showWarning();
         }
         updateVersions(items);
@@ -153,11 +153,10 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
             public void run() {
                 kotlinVersionComboBox.removeAllItems();
                 kotlinVersionComboBox.setEnabled(true);
-                kotlinVersionComboBox.addItem("0.1-SNAPSHOT");
                 for (String newItem : newItems) {
                     kotlinVersionComboBox.addItem(newItem);
                 }
-                kotlinVersionComboBox.setSelectedIndex(1);
+                kotlinVersionComboBox.setSelectedIndex(0);
             }
         }, ModalityState.stateForComponent(kotlinVersionComboBox));
     }
@@ -180,7 +179,10 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
                 JsonArray docsElements = rootElement.getAsJsonObject().get("response").getAsJsonObject().get("docs").getAsJsonArray();
 
                 for (JsonElement element : docsElements) {
-                    versions.add(element.getAsJsonObject().get("v").getAsString());
+                    String versionNumber = element.getAsJsonObject().get("v").getAsString();
+                    if (VersionComparatorUtil.compare("1.0.0", versionNumber) <= 0) {
+                        versions.add(versionNumber);
+                    }
                 }
             }
             finally {
