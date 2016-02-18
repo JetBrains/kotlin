@@ -14,10 +14,6 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
     val log = Logging.getLogger(this.javaClass)
 
     override fun apply(project: Project) {
-        val cleanUpBuildListener = CleanUpBuildListener(this.javaClass.classLoader)
-        cleanUpBuildListener.buildStarted()
-        project.gradle.addBuildListener(cleanUpBuildListener)
-
         val sourceBuildScript = findSourceBuildScript(project)
         if (sourceBuildScript == null) {
             log.error("Failed to determine source cofiguration of kotlin plugin. Can not download core. Please verify that this or any parent project " +
@@ -31,6 +27,9 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         val plugin = getPlugin(this.javaClass.classLoader, sourceBuildScript)
         plugin.apply(project)
 
+        val cleanUpBuildListener = CleanUpBuildListener(this.javaClass.classLoader, project)
+        cleanUpBuildListener.buildStarted()
+        project.gradle.addBuildListener(cleanUpBuildListener)
     }
 
     protected abstract fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler): Plugin<Project>
