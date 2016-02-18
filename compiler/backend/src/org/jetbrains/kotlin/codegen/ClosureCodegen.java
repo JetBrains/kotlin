@@ -126,7 +126,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         this.asmType = typeMapper.mapClass(classDescriptor);
 
-        visibilityFlag = AsmUtil.getVisibilityAccessFlagForAnonymous(classDescriptor);
+        visibilityFlag = AsmUtil.getVisibilityAccessFlagForClass(classDescriptor);
     }
 
     @Override

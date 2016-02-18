@@ -644,6 +644,27 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeFlags/lambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Lambda extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("lambdaInInlineFunction.kt")
+        public void testLambdaInInlineFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lambda/lambdaInInlineFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleLambda.kt")
+        public void testSimpleLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lambda/simpleLambda.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/lateinit")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

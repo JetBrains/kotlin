@@ -255,7 +255,10 @@ public class AsmUtil {
         For other cases use getVisibilityAccessFlag(MemberDescriptor descriptor)
         Classes in byte code should be public or package private
      */
-    public static int getVisibilityAccessFlagForClass(ClassDescriptor descriptor) {
+    public static int getVisibilityAccessFlagForClass(@NotNull ClassDescriptor descriptor) {
+        if (descriptor instanceof SyntheticClassDescriptorForLambda) {
+            return getVisibilityAccessFlagForAnonymous(descriptor);
+        }
         if (descriptor.getVisibility() == Visibilities.PUBLIC ||
             // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
             descriptor.getVisibility() == Visibilities.LOCAL ||
@@ -265,12 +268,17 @@ public class AsmUtil {
         return NO_FLAG_PACKAGE_PRIVATE;
     }
 
-    public static int getVisibilityAccessFlagForAnonymous(@NotNull ClassDescriptor descriptor) {
+    private static int getVisibilityAccessFlagForAnonymous(@NotNull ClassDescriptor descriptor) {
         return InlineUtil.isInlineOrContainingInline(descriptor.getContainingDeclaration()) ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
     }
 
     public static int calculateInnerClassAccessFlags(@NotNull ClassDescriptor innerClass) {
-        int visibility = (innerClass.getVisibility() == Visibilities.LOCAL) ? ACC_PUBLIC : getVisibilityAccessFlag(innerClass);
+        int visibility =
+                innerClass instanceof SyntheticClassDescriptorForLambda
+                ? getVisibilityAccessFlagForAnonymous(innerClass)
+                : innerClass.getVisibility() == Visibilities.LOCAL
+                  ? ACC_PUBLIC
+                  : getVisibilityAccessFlag(innerClass);
         return visibility |
                innerAccessFlagsForModalityAndKind(innerClass) |
                (innerClass.isInner() ? 0 : ACC_STATIC);
