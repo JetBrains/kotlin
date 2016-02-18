@@ -1,35 +1,45 @@
+@file:Suppress("DEPRECATION")
+
 package kotlin.test
 
 import java.util.*
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 class CollectionAssertionSession<E, C: Iterable<E>>(val collection: C)
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 inline fun <E, C: Iterable<E>> assert(collection: C, block: CollectionAssertionSession<E, C>.() -> Unit) {
     CollectionAssertionSession(collection).block()
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <C: Collection<*>> CollectionAssertionSession<*, C>.sizeShouldBe(expectedSize: Int, message: String? = null) {
     assertEquals(expectedSize, collection.size, message ?: "collection should have size $expectedSize but it is ${collection.size}")
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <T> CollectionAssertionSession<T, *>.elementAtShouldBe(position: Int, expected: T, message: String? = null) {
     assertEquals(expected, collection.elementAt(position), message ?: "element at $position should be $expected")
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <T, C: Iterable<T>> CollectionAssertionSession<T, C>.elementAtShouldComply(position: Int, message: String? = null, predicate: (T) -> Boolean) {
     assertTrue(message) { predicate(collection.elementAt(position)) }
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <T> CollectionAssertionSession<T, *>.lastElementShouldBe(expected: T, message: String? = null) {
     assertEquals(expected, collection.last(), message ?: "the last element should be $expected")
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <T> CollectionAssertionSession<T, *>.containsAll(vararg elements: T) {
     for (e in elements) {
         assertTrue(message = "Element $e is missing in the collection") { e in collection }
     }
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <T, C: Iterable<T>> CollectionAssertionSession<T, C>.shouldBe(expectedElements: Iterable<T>, message: String? = null) {
     val actual = collection.iterator()
     val expected = expectedElements.iterator()
@@ -46,6 +56,7 @@ fun <T, C: Iterable<T>> CollectionAssertionSession<T, C>.shouldBe(expectedElemen
     }
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <T, C: Set<T>> CollectionAssertionSession<T, C>.shouldBeSet(other: Set<T>, message: String? = null) {
     for (e in other) {
         if (e !in collection) {
@@ -59,6 +70,7 @@ fun <T, C: Set<T>> CollectionAssertionSession<T, C>.shouldBeSet(other: Set<T>, m
     }
 }
 
+@Deprecated("This is an experimental part of API. It may be changed or removed in next releases.")
 fun <T, C: Set<T>> CollectionAssertionSession<T, C>.shouldBeSet(vararg other: T) {
     val otherSet = HashSet<T>()
     for (e in other) {
