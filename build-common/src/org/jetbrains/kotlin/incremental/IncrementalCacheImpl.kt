@@ -92,12 +92,11 @@ open class IncrementalCacheImpl<Target>(
     private val dependents = arrayListOf<IncrementalCacheImpl<Target>>()
     private val outputDir by lazy(LazyThreadSafetyMode.NONE) { requireNotNull(targetOutputDir) { "Target is expected to have output directory: $target" } }
 
-    // TODO: review
-    val dependentsWithThis: Sequence<IncrementalCacheImpl<Target>>
-        get() = sequenceOf(this).plus(dependents.asSequence())
-
-    internal val dependentCaches: Iterable<IncrementalCacheImpl<Target>>
-        get() = dependents
+    val thisWithDependentCaches: Iterable<IncrementalCacheImpl<Target>> by lazy {
+        val result = arrayListOf(this)
+        result.addAll(dependents)
+        result
+    }
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
     }
@@ -139,7 +138,7 @@ open class IncrementalCacheImpl<Target>(
         return CompilationResult.NO_CHANGES
     }
 
-    fun saveFileToCache(generatedClass: GeneratedJvmClass<Target>): CompilationResult {
+    open fun saveFileToCache(generatedClass: GeneratedJvmClass<Target>): CompilationResult {
         val sourceFiles: Collection<File> = generatedClass.sourceFiles
         val kotlinClass: LocalFileKotlinClass = generatedClass.outputClass
         val className = kotlinClass.className
@@ -346,6 +345,9 @@ open class IncrementalCacheImpl<Target>(
         experimentalCacheVersion(targetDataRoot).clean()
         experimentalMaps.forEach { it.clean() }
     }
+
+    fun classesBySources(sources: Iterable<File>): Iterable<JvmClassName> =
+            sources.flatMap { sourceToClassesMap[it] }
 
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
 
@@ -575,7 +577,7 @@ open class IncrementalCacheImpl<Target>(
 
         val removedFqNames = removedClasses.map { it.fqNameForClassNameWithoutDollars }.toSet()
 
-        for (cache in dependentsWithThis) {
+        for (cache in thisWithDependentCaches) {
             val parentsFqNames = hashSetOf<FqName>()
             val childrenFqNames = hashSetOf<FqName>()
 

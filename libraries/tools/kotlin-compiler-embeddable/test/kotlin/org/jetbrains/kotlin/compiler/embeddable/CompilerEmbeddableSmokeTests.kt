@@ -36,8 +36,12 @@ public class CompilerSmokeTest {
 
     private val javaExecutable = File( File(System.getProperty("java.home"), "bin"), "java")
 
-    private val embeddableJar = File(".").listFiles { it -> it.name.startsWith("kotlin-compiler-embeddable", ignoreCase = true) && it.name.endsWith(".jar", ignoreCase = true) }?.firstOrNull()
-                                ?: throw FileNotFoundException("cannot find kotlin-compiler-embeddable*.jar in the directory " + File(".").absolutePath)
+    private val embeddableJar: File by lazy {
+        val f = File(System.getProperty("compilerJar") ?: "kotlin-compiler-embeddable.jar")
+        if (!f.exists())
+            throw FileNotFoundException("cannot find kotlin-compiler-embeddable.jar ($f)")
+        f
+    }
 
     @Test
     fun testSmoke() {

@@ -19,14 +19,11 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.apache.commons.lang.SystemUtils
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
+import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.gradle.api.tasks.compile.AbstractCompile
 import java.util.concurrent.ScheduledExecutorService
-
-internal fun getUsedMemoryKb(): Long {
-    System.gc()
-    val rt = Runtime.getRuntime()
-    return (rt.totalMemory() - rt.freeMemory()) / 1024
-}
+import kotlin.properties.Delegates
 
 
 private fun comparableVersionStr(version: String) =
@@ -39,30 +36,65 @@ private fun comparableVersionStr(version: String) =
                 ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
                 ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
+class CleanUpBuildListener(pluginClassLoader: ClassLoader, private val project: Project) : BuildAdapter() {
+    companion object {
+        const val FORCE_SYSTEM_GC_MESSAGE = "Forcing System.gc()"
+    }
 
-class FinishBuildListener(pluginClassLoader: ClassLoader, val startMemory: Long) : BuildAdapter() {
-    val log = Logging.getLogger(this.javaClass)
-
+    private val log = Logging.getLogger(this.javaClass)
     private var threadTracker: ThreadTracker? = ThreadTracker()
-
     private val cleanup = CompilerServicesCleanup(pluginClassLoader)
+    private var startMemory: Long? = null
+
+    // There is function with the same name in BuildAdapter,
+    // but it is called before any plugin can attach build listener
+    fun buildStarted() {
+        if (log.isDebugEnabled) {
+            startMemory = getUsedMemoryKb()!!
+        }
+    }
 
     override fun buildFinished(result: BuildResult?) {
-        log.kotlinDebug("Build finished listener")
-
         val gradle = result?.gradle
         if (gradle != null) {
-            cleanup(gradle.gradleVersion)
-            // checking thread leaks only then cleaning up
-            threadTracker?.checkThreadLeak(gradle)
+
+            val kotlinCompilerCalled = project.tasks.filter { it.name.contains("kotlin", ignoreCase = true) }
+                    .any { task -> task.hasProperty("compilerCalled") && task.property("compilerCalled") as? Boolean ?: false }
+
+            if (kotlinCompilerCalled) {
+                log.kotlinDebug("Cleanup after kotlin")
+
+                cleanup(gradle.gradleVersion)
+
+                // checking thread leaks only then cleaning up
+                threadTracker?.checkThreadLeak(gradle)
+            }
+            else {
+                log.kotlinDebug("Skipping kotlin cleanup since compiler wasn't called")
+            }
 
             threadTracker = null
             gradle.removeListener(this)
-        }
 
-        // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
-        // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
-        getUsedMemoryKb().let { log.kotlinDebug("[PERF] Used memory after build: $it kb (${"%+d".format(it - startMemory)} kb)") }
+            if (kotlinCompilerCalled) {
+                startMemory?.let { startMemoryCopy ->
+                    getUsedMemoryKb()?.let { endMemory ->
+                        // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
+                        // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
+                        log.kotlinDebug("[PERF] Used memory after build: $endMemory kb (difference since build start: ${"%+d".format(endMemory - startMemoryCopy)} kb)")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getUsedMemoryKb(): Long? {
+        if (!log.isDebugEnabled) return null
+
+        log.lifecycle(FORCE_SYSTEM_GC_MESSAGE)
+        System.gc()
+        val rt = Runtime.getRuntime()
+        return (rt.totalMemory() - rt.freeMemory()) / 1024
     }
 }
 
