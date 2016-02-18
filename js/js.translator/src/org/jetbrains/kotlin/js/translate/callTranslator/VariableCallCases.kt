@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsInvocation
+import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import java.util.Collections
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
+import java.util.*
 
 
 object NativeVariableAccessCase : VariableAccessCase() {
@@ -110,15 +109,11 @@ object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
 object SuperPropertyAccessCase : VariableAccessCase() {
     override fun VariableAccessInfo.dispatchReceiver(): JsExpression {
         val variableName = context.program().getStringLiteral(this.variableName.ident)
-        val jsReceiver = superCallReceiver
-        var propertyOwner = when (jsReceiver) {
-            null -> JsLiteral.THIS
-            else -> jsReceiver
-        }
+
         return if (isGetAccess())
-            JsInvocation(context.namer().callGetProperty, propertyOwner, dispatchReceiver!!, variableName)
+            JsInvocation(context.namer().callGetProperty, dispatchReceiver!!, calleeOwner, variableName)
         else
-            JsInvocation(context.namer().callSetProperty, propertyOwner, dispatchReceiver!!, variableName, value!!)
+            JsInvocation(context.namer().callSetProperty, dispatchReceiver!!, calleeOwner, variableName, value!!)
     }
 }
 

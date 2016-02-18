@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
-public final class KotlinFunctionIntrinsic extends FunctionIntrinsic {
+public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
     @NotNull
     private final JsNameRef function;
 

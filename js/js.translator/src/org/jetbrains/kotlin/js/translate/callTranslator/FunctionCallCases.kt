@@ -203,21 +203,14 @@ object ConstructorCallCase : FunctionCallCase() {
         return callInfo.callableDescriptor is ConstructorDescriptor
     }
 
-    override fun FunctionCallInfo.noReceivers(): JsExpression {
-        return receiver { it }
-    }
+    override fun FunctionCallInfo.noReceivers() = doTranslate { translateArguments }
 
-    override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
-        return receiver {
-            val receiver = superCallReceiver
-            if (receiver != null) (sequenceOf(receiver) + it).toList() else it
-        }
-    }
+    override fun FunctionCallInfo.dispatchReceiver() = doTranslate { argsWithReceiver(dispatchReceiver!!) }
 
-    private inline fun FunctionCallInfo.receiver(argumentTranslator: (List<JsExpression>) -> List<JsExpression>): JsExpression {
+    private inline fun FunctionCallInfo.doTranslate(getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>): JsExpression {
         val fqName = context.getQualifiedReference(callableDescriptor)
         val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
-        val arguments = argumentTranslator(argumentsInfo.translateArguments)
+        val arguments = argumentsInfo.getArguments()
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
         if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
@@ -236,10 +229,9 @@ object SuperCallCase : FunctionCallCase() {
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
         // TODO: spread operator
-        val prototypeClass = JsNameRef(Namer.getPrototypeName(), dispatchReceiver!!)
+        val prototypeClass = JsNameRef(Namer.getPrototypeName(), calleeOwner)
         val functionRef = Namer.getFunctionCallRef(JsNameRef(functionName, prototypeClass))
-        val receiver = superCallReceiver ?: JsLiteral.THIS;
-        return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(receiver))
+        return JsInvocation(functionRef, argumentsInfo.argsWithReceiver(dispatchReceiver!!))
     }
 }
 

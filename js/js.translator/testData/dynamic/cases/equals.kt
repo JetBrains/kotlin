@@ -1,10 +1,11 @@
 package foo
 
 object f {
-    var equalsCalled = false
+    var equalsCalled = 0
 
     override fun equals(other: Any?): Boolean {
-        equalsCalled = true
+        equalsCalled++
+        if (equalsCalled > 1) return false
         return super.equals(other)
     }
 }
@@ -40,7 +41,7 @@ fun box(): String {
 
     val ff: dynamic = f
     testFalse { ff.equals(v) }
-    assertTrue(f.equalsCalled, "f.equalsCalled")
+    assertEquals(1, f.equalsCalled)
 
     return "OK"
 }

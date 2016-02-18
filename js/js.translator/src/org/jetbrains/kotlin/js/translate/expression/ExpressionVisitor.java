@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.translate.context.Namer;
@@ -40,6 +38,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
@@ -56,13 +55,15 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor;
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
-import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateInitializerForProperty;
+import static org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET;
+import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
@@ -454,9 +455,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitSuperExpression(@NotNull KtSuperExpression expression, @NotNull TranslationContext context) {
-        DeclarationDescriptor superClassDescriptor = context.bindingContext().get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
-        assert superClassDescriptor != null: message(expression);
-        return translateAsFQReference(superClassDescriptor, context);
+        DeclarationDescriptor superTarget = getSuperTarget(context, expression);
+        ReceiverParameterDescriptor receiver = getReceiverParameterForDeclaration(superTarget);
+        return context.getDispatchReceiver(receiver);
     }
 
     @Override
@@ -521,5 +522,17 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         return super.visitAnnotatedExpression(expression, context);
+    }
+
+    @NotNull
+    private static DeclarationDescriptor getSuperTarget(TranslationContext context, KtSuperExpression expression) {
+        BindingContext bindingContext = context.bindingContext();
+        PsiElement labelPsi = bindingContext.get(LABEL_TARGET, expression.getTargetLabel());
+        ClassDescriptor labelTarget = (ClassDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, labelPsi);
+        if (labelTarget != null) return labelTarget;
+
+        DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
+        assert descriptor != null : "Missing declaration descriptor: " + PsiUtilsKt.getTextWithLocation(expression);
+        return descriptor;
     }
 }

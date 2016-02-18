@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.JsNew;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
@@ -27,10 +30,12 @@ import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo;
+import org.jetbrains.kotlin.js.translate.callTranslator.CallInfoExtensionsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
@@ -51,12 +56,29 @@ import static org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getStableMan
 public final class TopLevelFIF extends CompositeFIF {
     public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
     @NotNull
+    private static final KotlinFunctionIntrinsic KOTLIN_ANY_EQUALS = new KotlinFunctionIntrinsic("equals") {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            if (CallInfoExtensionsKt.isSuperInvocation(callInfo)) {
+                JsExpression dispatchReceiver = callInfo.getDispatchReceiver();
+                assert arguments.size() == 1 && dispatchReceiver != null;
+                return JsAstUtils.equality(dispatchReceiver, arguments.get(0));
+            }
+
+            return super.apply(callInfo, arguments, context);
+        }
+    };
+
+    @NotNull
     public static final KotlinFunctionIntrinsic KOTLIN_EQUALS = new KotlinFunctionIntrinsic("equals");
 
     @NotNull
-    public static final DescriptorPredicate HASH_CODE_IN_ANY = pattern("kotlin", "Any", "hashCode");
+    private static final DescriptorPredicate HASH_CODE_IN_ANY = pattern("kotlin", "Any", "hashCode");
     @NotNull
-    public static final KotlinFunctionIntrinsic KOTLIN_HASH_CODE = new KotlinFunctionIntrinsic("hashCode");
+    private static final KotlinFunctionIntrinsic KOTLIN_HASH_CODE = new KotlinFunctionIntrinsic("hashCode");
 
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
@@ -127,7 +149,7 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
-        add(EQUALS_IN_ANY, KOTLIN_EQUALS);
+        add(EQUALS_IN_ANY, KOTLIN_ANY_EQUALS);
         add(pattern("kotlin", "toString").isExtensionOf(FQ_NAMES.any.asString()), TO_STRING);
         add(pattern("kotlin", "equals").isExtensionOf(FQ_NAMES.any.asString()), KOTLIN_EQUALS);
         add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);

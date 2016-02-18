@@ -65,4 +65,8 @@ public final class EqualsTest extends AbstractExpressionTest {
     public void testEqualsBehaviorOnNull() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testSuperEquals() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

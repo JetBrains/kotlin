@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtSuperExpression;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -38,7 +36,6 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForElement;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 /**
  * All the info about the state of the translation process.
@@ -432,17 +429,5 @@ public class TranslationContext {
             decl = decl.getContainingDeclaration();
         }
         return null;
-    }
-
-    @NotNull
-    public DeclarationDescriptor getSuperTarget(KtSuperExpression expression) {
-        PsiElement labelPsi = bindingContext().get(LABEL_TARGET, expression.getTargetLabel());
-        ClassDescriptor labelTarget = (ClassDescriptor) bindingContext().get(DECLARATION_TO_DESCRIPTOR, labelPsi);
-        if (labelTarget != null) {
-            return labelTarget;
-        }
-        DeclarationDescriptor descriptor = bindingContext().get(REFERENCE_TARGET, expression.getInstanceReference());
-        assert descriptor != null : "Missing declaration descriptor: " + PsiUtilsKt.getTextWithLocation(expression);
-        return descriptor;
     }
 }
