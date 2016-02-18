@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -128,31 +126,6 @@ public class DescriptorFactory {
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()),
                                  Modality.FINAL, Visibilities.PUBLIC);
-    }
-
-    @NotNull
-    public static PropertyDescriptor createEnumValuesProperty(@NotNull ClassDescriptor enumClass) {
-        AnnotationsImpl annotations = AnnotationsImpl.createWithNoTarget(AnnotationUtilKt.createDeprecatedAnnotation(
-                getBuiltIns(enumClass), "Use 'values()' function instead", "this.values()", "ERROR"
-        ));
-
-        PropertyDescriptorImpl values =
-                PropertyDescriptorImpl.create(
-                        enumClass, annotations, Modality.FINAL, Visibilities.PUBLIC, /* isVar */ false,
-                        DescriptorUtils.ENUM_VALUES, CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource(),
-                        /* lateInit = */ false, /* isConst = */ false
-                );
-
-        KotlinType type = getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType());
-
-        PropertyGetterDescriptorImpl getter = createGetter(
-                values, Annotations.Companion.getEMPTY(), /* isDefault = */ false, /* isExternal = */ false);
-
-        values.initialize(getter, null);
-        getter.initialize(type);
-        values.setType(type, Collections.<TypeParameterDescriptor>emptyList(), null, (KotlinType) null);
-
-        return values;
     }
 
     @NotNull

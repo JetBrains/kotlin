@@ -63,9 +63,5 @@ class AnnotationsImpl : Annotations {
         @JvmStatic fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
             return AnnotationsImpl(annotationsWithTargets, 0)
         }
-
-        @JvmStatic fun createWithNoTarget(vararg annotations: AnnotationDescriptor): AnnotationsImpl {
-            return create(annotations.map { AnnotationWithTarget(it, null) })
-        }
     }
 }

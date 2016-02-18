@@ -3485,12 +3485,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("enumValues.kt")
-        public void testEnumValues() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/enumValues.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("extensionForGenericClass.kt")
         public void testExtensionForGenericClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/extensionForGenericClass.kt");

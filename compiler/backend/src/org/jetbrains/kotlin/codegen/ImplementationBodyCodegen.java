@@ -794,15 +794,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateEnumValuesMethod() {
         Type type = typeMapper.mapType(DescriptorUtilsKt.getBuiltIns(descriptor).getArrayType(INVARIANT, descriptor.getDefaultType()));
 
-        VariableDescriptor valuesProperty =
-                CollectionsKt.single(descriptor.getStaticScope().getContributedVariables(ENUM_VALUES, NoLookupLocation.FROM_BACKEND), new Function1<VariableDescriptor, Boolean>() {
-                    @Override
-                    public Boolean invoke(VariableDescriptor descriptor) {
-                        return CodegenUtil.isEnumValuesProperty(descriptor);
-                    }
-                });
-        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(myClass, valuesProperty), ACC_PUBLIC | ACC_STATIC, ENUM_VALUES.asString(),
-                                       "()" + type.getDescriptor(), null, null);
+        FunctionDescriptor valuesFunction =
+                CollectionsKt.single(descriptor.getStaticScope().getContributedFunctions(ENUM_VALUES, NoLookupLocation.FROM_BACKEND));
+        MethodVisitor mv = v.newMethod(
+                JvmDeclarationOriginKt.OtherOrigin(myClass, valuesFunction), ACC_PUBLIC | ACC_STATIC, ENUM_VALUES.asString(),
+                "()" + type.getDescriptor(), null, null
+        );
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();

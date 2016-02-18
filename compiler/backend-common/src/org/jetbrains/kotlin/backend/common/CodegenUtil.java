@@ -176,10 +176,6 @@ public class CodegenUtil {
                && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
     }
 
-    public static boolean isEnumValuesProperty(@NotNull VariableDescriptor propertyDescriptor) {
-        return DescriptorUtils.ENUM_VALUES.equals(propertyDescriptor.getName());
-    }
-
     @Nullable
     public static Integer getLineNumberForElement(@NotNull PsiElement statement, boolean markEndOffset) {
         PsiFile file = statement.getContainingFile();

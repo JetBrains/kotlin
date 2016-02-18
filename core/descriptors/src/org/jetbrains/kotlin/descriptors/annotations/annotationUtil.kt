@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.types.Variance
 
+// This function may be useful if we deprecate something not via the annotation but with special code in the compiler
+@Suppress("unused")
 fun KotlinBuiltIns.createDeprecatedAnnotation(
         message: String,
         replaceWith: String,

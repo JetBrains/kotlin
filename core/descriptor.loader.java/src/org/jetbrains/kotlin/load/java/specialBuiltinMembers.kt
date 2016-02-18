@@ -18,7 +18,6 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 
 private fun FqName.child(name: String): FqName = child(Name.identifier(name))
 private fun FqNameUnsafe.childSafe(name: String): FqName = child(Name.identifier(name)).toSafe()
@@ -240,13 +240,6 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor
 }
 
 fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor): String? {
-    if (callableMemberDescriptor.propertyIfAccessor.name == DescriptorUtils.ENUM_VALUES) {
-        val containingDeclaration = callableMemberDescriptor.containingDeclaration
-        if (callableMemberDescriptor is PropertyAccessorDescriptor
-                && containingDeclaration is ClassDescriptor
-                && containingDeclaration.kind == ClassKind.ENUM_CLASS) return DescriptorUtils.ENUM_VALUES.asString()
-    }
-
     val overriddenBuiltin = getOverriddenBuiltinThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
                             ?: return null
     return when (overriddenBuiltin) {

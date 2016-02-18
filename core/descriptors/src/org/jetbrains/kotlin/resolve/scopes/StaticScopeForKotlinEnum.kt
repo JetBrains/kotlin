@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory.*
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
@@ -38,16 +38,10 @@ class StaticScopeForKotlinEnum(private val containingClass: ClassDescriptor) : M
         listOf(createEnumValueOfMethod(containingClass), createEnumValuesMethod(containingClass))
     }
 
-    private val properties: List<PropertyDescriptor> by lazy {
-        listOf(createEnumValuesProperty(containingClass))
-    }
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = functions
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
-                                           nameFilter: (Name) -> Boolean) = functions + properties
-
-    override fun getContributedVariables(name: Name, location: LookupLocation) = properties.filterTo(ArrayList(1)) { it.name == name }
-
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.name == name }
+    override fun getContributedFunctions(name: Name, location: LookupLocation) =
+            functions.filterTo(ArrayList<FunctionDescriptor>(1)) { it.name == name }
 
     override fun printScopeStructure(p: Printer) {
         p.println("Static scope for $containingClass")
