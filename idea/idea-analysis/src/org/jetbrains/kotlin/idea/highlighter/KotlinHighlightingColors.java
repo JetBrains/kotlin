@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.ide.highlighter.JavaHighlightingColors;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
-import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
@@ -49,21 +48,21 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey KDOC_LINK = createTextAttributesKey("KDOC_LINK", DefaultLanguageHighlighterColors.DOC_COMMENT_TAG_VALUE);
 
     // class kinds
-    public static final TextAttributesKey CLASS = createTextAttributesKey("KOTLIN_CLASS", CodeInsightColors.CLASS_NAME_ATTRIBUTES);
-    public static final TextAttributesKey TYPE_PARAMETER = createTextAttributesKey("KOTLIN_TYPE_PARAMETER", CodeInsightColors.TYPE_PARAMETER_NAME_ATTRIBUTES);
-    public static final TextAttributesKey ABSTRACT_CLASS = createTextAttributesKey("KOTLIN_ABSTRACT_CLASS", CodeInsightColors.ABSTRACT_CLASS_NAME_ATTRIBUTES);
-    public static final TextAttributesKey TRAIT = createTextAttributesKey("KOTLIN_TRAIT", CodeInsightColors.INTERFACE_NAME_ATTRIBUTES);
+    public static final TextAttributesKey CLASS = createTextAttributesKey("KOTLIN_CLASS", DefaultLanguageHighlighterColors.CLASS_NAME);
+    public static final TextAttributesKey TYPE_PARAMETER = createTextAttributesKey("KOTLIN_TYPE_PARAMETER", DefaultLanguageHighlighterColors.PARAMETER);
+    public static final TextAttributesKey ABSTRACT_CLASS = createTextAttributesKey("KOTLIN_ABSTRACT_CLASS", DefaultLanguageHighlighterColors.CLASS_NAME);
+    public static final TextAttributesKey TRAIT = createTextAttributesKey("KOTLIN_TRAIT", DefaultLanguageHighlighterColors.INTERFACE_NAME);
     public static final TextAttributesKey ANNOTATION = createTextAttributesKey("KOTLIN_ANNOTATION");
     public static final TextAttributesKey OBJECT = createTextAttributesKey("KOTLIN_OBJECT", CLASS);
-    public static final TextAttributesKey ENUM_ENTRY = createTextAttributesKey("KOTLIN_ENUM_ENTRY", CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES);
+    public static final TextAttributesKey ENUM_ENTRY = createTextAttributesKey("KOTLIN_ENUM_ENTRY", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 
     // variable kinds
     public static final TextAttributesKey MUTABLE_VARIABLE = createTextAttributesKey("KOTLIN_MUTABLE_VARIABLE");
-    public static final TextAttributesKey LOCAL_VARIABLE = createTextAttributesKey("KOTLIN_LOCAL_VARIABLE", CodeInsightColors.LOCAL_VARIABLE_ATTRIBUTES);
-    public static final TextAttributesKey PARAMETER = createTextAttributesKey("KOTLIN_PARAMETER", CodeInsightColors.PARAMETER_ATTRIBUTES);
-    public static final TextAttributesKey WRAPPED_INTO_REF = createTextAttributesKey("KOTLIN_WRAPPED_INTO_REF", CodeInsightColors.IMPLICIT_ANONYMOUS_CLASS_PARAMETER_ATTRIBUTES);
-    public static final TextAttributesKey INSTANCE_PROPERTY = createTextAttributesKey("KOTLIN_INSTANCE_PROPERTY", CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES);
-    public static final TextAttributesKey PACKAGE_PROPERTY = createTextAttributesKey("KOTLIN_PACKAGE_PROPERTY", CodeInsightColors.STATIC_FIELD_ATTRIBUTES);
+    public static final TextAttributesKey LOCAL_VARIABLE = createTextAttributesKey("KOTLIN_LOCAL_VARIABLE", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
+    public static final TextAttributesKey PARAMETER = createTextAttributesKey("KOTLIN_PARAMETER", DefaultLanguageHighlighterColors.PARAMETER);
+    public static final TextAttributesKey WRAPPED_INTO_REF = createTextAttributesKey("KOTLIN_WRAPPED_INTO_REF", DefaultLanguageHighlighterColors.CLASS_NAME);
+    public static final TextAttributesKey INSTANCE_PROPERTY = createTextAttributesKey("KOTLIN_INSTANCE_PROPERTY", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+    public static final TextAttributesKey PACKAGE_PROPERTY = createTextAttributesKey("KOTLIN_PACKAGE_PROPERTY", DefaultLanguageHighlighterColors.STATIC_FIELD);
     public static final TextAttributesKey PROPERTY_WITH_BACKING_FIELD = createTextAttributesKey("KOTLIN_PROPERTY_WITH_BACKING_FIELD");
     public static final TextAttributesKey BACKING_FIELD_VARIABLE = createTextAttributesKey("KOTLIN_BACKING_FIELD_VARIABLE");
     public static final TextAttributesKey EXTENSION_PROPERTY = createTextAttributesKey("KOTLIN_EXTENSION_PROPERTY");
@@ -71,11 +70,11 @@ public class KotlinHighlightingColors {
 
     // functions
     public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = createTextAttributesKey("KOTLIN_CLOSURE_DEFAULT_PARAMETER");
-    public static final TextAttributesKey FUNCTION_DECLARATION = createTextAttributesKey("KOTLIN_FUNCTION_DECLARATION", CodeInsightColors.METHOD_DECLARATION_ATTRIBUTES);
-    public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("KOTLIN_FUNCTION_CALL", CodeInsightColors.METHOD_CALL_ATTRIBUTES);
-    public static final TextAttributesKey PACKAGE_FUNCTION_CALL = createTextAttributesKey("KOTLIN_PACKAGE_FUNCTION_CALL", CodeInsightColors.STATIC_METHOD_ATTRIBUTES);
+    public static final TextAttributesKey FUNCTION_DECLARATION = createTextAttributesKey("KOTLIN_FUNCTION_DECLARATION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
+    public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("KOTLIN_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
+    public static final TextAttributesKey PACKAGE_FUNCTION_CALL = createTextAttributesKey("KOTLIN_PACKAGE_FUNCTION_CALL", DefaultLanguageHighlighterColors.STATIC_METHOD);
     public static final TextAttributesKey EXTENSION_FUNCTION_CALL = createTextAttributesKey("KOTLIN_EXTENSION_FUNCTION_CALL");
-    public static final TextAttributesKey CONSTRUCTOR_CALL = createTextAttributesKey("KOTLIN_CONSTRUCTOR", CodeInsightColors.CONSTRUCTOR_CALL_ATTRIBUTES);
+    public static final TextAttributesKey CONSTRUCTOR_CALL = createTextAttributesKey("KOTLIN_CONSTRUCTOR", DefaultLanguageHighlighterColors.FUNCTION_CALL);
     public static final TextAttributesKey DYNAMIC_FUNCTION_CALL = createTextAttributesKey("KOTLIN_DYNAMIC_FUNCTION_CALL");
     public static final TextAttributesKey VARIABLE_AS_FUNCTION_CALL = createTextAttributesKey("KOTLIN_VARIABLE_AS_FUNCTION");
     public static final TextAttributesKey VARIABLE_AS_FUNCTION_LIKE_CALL = createTextAttributesKey("KOTLIN_VARIABLE_AS_FUNCTION_LIKE");
