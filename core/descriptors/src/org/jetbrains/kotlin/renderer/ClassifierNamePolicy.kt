@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-interface NameShortness {
-    object SHORT : NameShortness {
+interface ClassifierNamePolicy {
+    object SHORT : ClassifierNamePolicy {
         override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
             if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name)
 
@@ -40,7 +40,7 @@ interface NameShortness {
         }
     }
 
-    object FULLY_QUALIFIED : NameShortness {
+    object FULLY_QUALIFIED : ClassifierNamePolicy {
         override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
             if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name)
 
@@ -49,7 +49,7 @@ interface NameShortness {
     }
 
     // for local declarations qualified up to function scope
-    object SOURCE_CODE_QUALIFIED : NameShortness {
+    object SOURCE_CODE_QUALIFIED : ClassifierNamePolicy {
         override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
             return qualifiedNameForSourceCode(classifier)
         }

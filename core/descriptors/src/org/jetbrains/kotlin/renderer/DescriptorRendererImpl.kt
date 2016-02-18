@@ -123,7 +123,7 @@ internal class DescriptorRendererImpl(
         if (ErrorUtils.isError(klass)) {
             return klass.typeConstructor.toString()
         }
-        return nameShortness.renderClassifier(klass, this)
+        return classifierNamePolicy.renderClassifier(klass, this)
     }
 
     /* TYPES RENDERING */
@@ -143,7 +143,7 @@ internal class DescriptorRendererImpl(
                 return renderFlexibleTypeWithBothBounds(type.flexibility().lowerBound, type.flexibility().upperBound)
             }
             else if (flexibleTypesForCode) {
-                val prefix = if (nameShortness == NameShortness.SHORT) "" else Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString() + "."
+                val prefix = if (classifierNamePolicy == ClassifierNamePolicy.SHORT) "" else Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString() + "."
                 return prefix + Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName + lt() + renderNormalizedType(type.flexibility().lowerBound) + ", " + renderNormalizedType(type.flexibility().upperBound) + gt()
             }
             else {
@@ -203,7 +203,7 @@ internal class DescriptorRendererImpl(
         }
 
 
-        val kotlinCollectionsPrefix = nameShortness.renderClassifier(type.builtIns.collection, this).substringBefore("Collection")
+        val kotlinCollectionsPrefix = classifierNamePolicy.renderClassifier(type.builtIns.collection, this).substringBefore("Collection")
         val mutablePrefix = "Mutable"
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
         val simpleCollection = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + mutablePrefix, upperRendered, kotlinCollectionsPrefix, kotlinCollectionsPrefix + "(" + mutablePrefix + ")")
@@ -212,7 +212,7 @@ internal class DescriptorRendererImpl(
         val mutableEntry = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + "MutableMap.MutableEntry", upperRendered, kotlinCollectionsPrefix + "Map.Entry", kotlinCollectionsPrefix + "(Mutable)Map.(Mutable)Entry")
         if (mutableEntry != null) return mutableEntry
 
-        val kotlinPrefix = nameShortness.renderClassifier(type.builtIns.array, this).substringBefore("Array")
+        val kotlinPrefix = classifierNamePolicy.renderClassifier(type.builtIns.array, this).substringBefore("Array")
         // Foo[] -> Array<(out) Foo!>!
         val array = replacePrefixes(lowerRendered, kotlinPrefix + escape("Array<"), upperRendered, kotlinPrefix + escape("Array<out "), kotlinPrefix + escape("Array<(out) "))
         if (array != null) return array

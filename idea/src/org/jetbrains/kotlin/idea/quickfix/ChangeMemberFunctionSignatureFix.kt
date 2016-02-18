@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.NameShortness
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.resolve.findMemberWithMaxVisibility
@@ -72,7 +72,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
                 withDefinedIn = false
                 modifiers = emptySet()
-                nameShortness = NameShortness.SHORT
+                classifierNamePolicy = ClassifierNamePolicy.SHORT
                 unitReturnType = false
                 renderDefaultValues = false
             }

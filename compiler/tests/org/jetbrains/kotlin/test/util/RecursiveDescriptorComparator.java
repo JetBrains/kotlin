@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class RecursiveDescriptorComparator {
                     options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
                     options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                     options.setIncludePropertyConstant(true);
-                    options.setNameShortness(NameShortness.FULLY_QUALIFIED.INSTANCE);
+                    options.setClassifierNamePolicy(ClassifierNamePolicy.FULLY_QUALIFIED.INSTANCE);
                     options.setVerbose(true);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;

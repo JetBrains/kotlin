@@ -105,14 +105,14 @@ abstract class DescriptorRenderer {
 
         @JvmField val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             modifiers = emptySet()
-            nameShortness = NameShortness.SHORT
+            classifierNamePolicy = ClassifierNamePolicy.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
         @JvmField val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
-            nameShortness = NameShortness.SHORT
+            classifierNamePolicy = ClassifierNamePolicy.SHORT
             withoutTypeParameters = true
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             receiverAfterName = true
@@ -126,13 +126,13 @@ abstract class DescriptorRenderer {
         }
 
         @JvmField val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
-            nameShortness = NameShortness.SHORT
+            classifierNamePolicy = ClassifierNamePolicy.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
         @JvmField val DEBUG_TEXT: DescriptorRenderer = withOptions {
             debugMode = true
-            nameShortness = NameShortness.FULLY_QUALIFIED
+            classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
             modifiers = DescriptorRendererModifier.ALL
         }
 
@@ -162,7 +162,7 @@ abstract class DescriptorRenderer {
 }
 
 interface DescriptorRendererOptions {
-    var nameShortness: NameShortness
+    var classifierNamePolicy: ClassifierNamePolicy
     var withDefinedIn: Boolean
     var modifiers: Set<DescriptorRendererModifier>
     var startFromName: Boolean
