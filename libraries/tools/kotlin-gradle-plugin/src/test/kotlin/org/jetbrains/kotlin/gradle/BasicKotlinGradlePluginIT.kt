@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.junit.Test
+import org.gradle.api.logging.LogLevel
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
 
