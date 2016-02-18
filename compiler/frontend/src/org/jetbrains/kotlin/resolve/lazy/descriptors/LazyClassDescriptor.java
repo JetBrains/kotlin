@@ -21,8 +21,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Mutable;
@@ -48,15 +48,18 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.KtObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.AbstractClassTypeConstructor;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,9 +87,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final LazyClassTypeConstructor typeConstructor;
     private final Modality modality;
     private final Visibility visibility;
-    private final NotNullLazyValue<ClassKind> kind;
-    private final NotNullLazyValue<Boolean> isInner;
-    private final NotNullLazyValue<Boolean> isData;
+    private final ClassKind kind;
+    private final boolean isInner;
+    private final boolean isData;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -124,25 +127,25 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.declarationProvider = c.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
         this.unsubstitutedMemberScope = createMemberScope(c, this.declarationProvider);
+        this.kind = classLikeInfo.getClassKind();
         this.staticScope = new StaticScopeForKotlinClass(this);
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
-        final ClassKind syntaxKind = classLikeInfo.getClassKind();
         this.isCompanionObject = classLikeInfo instanceof KtObjectInfo && ((KtObjectInfo) classLikeInfo).isCompanionObject();
 
-        final KtModifierList modifierList = classLikeInfo.getModifierList();
-        if (syntaxKind.isSingleton()) {
+        KtModifierList modifierList = classLikeInfo.getModifierList();
+        if (kind.isSingleton()) {
             this.modality = Modality.FINAL;
         }
         else {
-            Modality defaultModality = syntaxKind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
+            Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
             this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
 
         boolean isLocal = classOrObject != null && KtPsiUtil.isLocal(classOrObject);
         Visibility defaultVisibility;
-        if (syntaxKind == ClassKind.ENUM_ENTRY || (syntaxKind == ClassKind.OBJECT && isCompanionObject)) {
+        if (kind == ClassKind.ENUM_ENTRY || (kind == ClassKind.OBJECT && isCompanionObject)) {
             defaultVisibility = Visibilities.PUBLIC;
         }
         else {
@@ -150,29 +153,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, defaultVisibility);
 
+        this.isInner = isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(this);
+        this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
+
         StorageManager storageManager = c.getStorageManager();
-        final ClassDescriptor descriptor = this;
 
-        this.isInner = storageManager.createLazyValue(new Function0<Boolean>() {
-            @Override
-            public Boolean invoke() {
-                return isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(descriptor);
-            }
-        });
-
-        this.isData = storageManager.createLazyValue(new Function0<Boolean>() {
-            @Override
-            public Boolean invoke() {
-                return modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
-            }
-        });
-
-        this.kind = storageManager.createLazyValue(new Function0<ClassKind>() {
-            @Override
-            public ClassKind invoke() {
-                return (syntaxKind == ClassKind.CLASS && modifierList != null && modifierList.hasModifier(KtTokens.ANNOTATION_KEYWORD)) ? ClassKind.ANNOTATION_CLASS : syntaxKind;
-            }
-        });
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<KtAnnotationEntry>();
         if (classOrObject != null && classOrObject.getParent() instanceof KtObjectLiteralExpression) {
@@ -483,7 +468,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @Override
     public ClassKind getKind() {
-        return kind.invoke();
+        return kind;
     }
 
     @NotNull
@@ -500,12 +485,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Override
     public boolean isInner() {
-        return isInner.invoke();
+        return isInner;
     }
 
     @Override
     public boolean isData() {
-        return isData.invoke();
+        return isData;
     }
 
     @Override

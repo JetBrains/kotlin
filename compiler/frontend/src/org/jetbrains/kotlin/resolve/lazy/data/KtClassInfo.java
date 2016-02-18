@@ -37,6 +37,9 @@ public class KtClassInfo extends KtClassOrObjectInfo<KtClass> {
         else if (element.isEnum()) {
             this.kind = ClassKind.ENUM_CLASS;
         }
+        else if (element.isAnnotation()) {
+            this.kind = ClassKind.ANNOTATION_CLASS;
+        }
         else {
             this.kind = ClassKind.CLASS;
         }
