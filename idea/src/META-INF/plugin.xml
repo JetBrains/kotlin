@@ -233,9 +233,6 @@
     <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"
-                    serviceImplementation="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
                     serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
 
