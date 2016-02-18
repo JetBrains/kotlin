@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 
 interface CallInfo {
@@ -77,6 +78,9 @@ val CallInfo.superCallReceiver : JsExpression?
                 }
             }
             is ThisClassReceiver -> {
+                JsLiteral.THIS
+            }
+            is ExtensionReceiver -> {
                 JsLiteral.THIS
             }
             else -> {
