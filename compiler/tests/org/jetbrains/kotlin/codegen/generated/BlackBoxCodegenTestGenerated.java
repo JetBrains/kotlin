@@ -7768,6 +7768,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("innerClassQualifiedFunctionCall.kt")
+        public void testInnerClassQualifiedFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/innerClassQualifiedFunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("innerClassQualifiedPropertyAccess.kt")
+        public void testInnerClassQualifiedPropertyAccess() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/innerClassQualifiedPropertyAccess.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3492ClassFun.kt")
         public void testKt3492ClassFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/super/kt3492ClassFun.kt");
