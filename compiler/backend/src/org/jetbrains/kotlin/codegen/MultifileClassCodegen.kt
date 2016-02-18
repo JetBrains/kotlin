@@ -127,6 +127,7 @@ class MultifileClassCodegen(
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             try {
                 generatePart(file, generateCallableMemberTasks, partFqNames)
+                state.afterIndependentPart()
             }
             catch (e: ProcessCanceledException) {
                 throw e
@@ -292,6 +293,9 @@ class MultifileClassCodegen(
 
     private fun done() {
         classBuilder.done()
+        if (classBuilder.isComputed) {
+            state.afterIndependentPart()
+        }
     }
 
     companion object {

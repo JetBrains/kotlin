@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.JarUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -82,6 +84,20 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
+    private fun createOutputFilesFlushingCallbackIfPossible(
+            configuration: CompilerConfiguration,
+            outputDir: File?,
+            jarPath: File?
+    ): GenerationStateEventCallback {
+        if (jarPath != null) return GenerationStateEventCallback.DO_NOTHING
+
+        return GenerationStateEventCallback { state ->
+            val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
+            writeOutput(configuration, currentOutput, outputDir, jarPath = null, jarRuntime = false, mainClass = null)
+            state.factory.releaseGeneratedOutput()
+        }
+    }
+
     fun compileModules(
             environment: KotlinCoreEnvironment,
             configuration: CompilerConfiguration,
@@ -119,8 +135,13 @@ object KotlinToJVMBytecodeCompiler {
                     environment.project, getAbsolutePaths(directory, module), configuration) { s -> throw IllegalStateException("Should have been checked before: " + s) }
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
             val moduleOutputDirectory = File(module.getOutputDirectory())
+
+            val onIndependentPartCompilationEnd =
+                    createOutputFilesFlushingCallbackIfPossible(configuration, File(module.getOutputDirectory()), jarPath)
+
             val generationState = generate(environment, result, ktFiles, module, moduleOutputDirectory,
-                                           module.getModuleName())
+                                           module.getModuleName(),  onIndependentPartCompilationEnd)
+
             outputFiles.put(module, generationState.factory)
             generationStates.add(generationState);
         }
@@ -192,7 +213,9 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         if (!checkKotlinPackageUsage(environment, environment.getSourceFiles())) return false
-        val generationState = analyzeAndGenerate(environment) ?: return false
+
+        val onIndependentPartCompilationEnd = createOutputFilesFlushingCallbackIfPossible(environment.configuration, outputDir, jar)
+        val generationState = analyzeAndGenerate(environment, onIndependentPartCompilationEnd) ?: return false
 
         val mainClass = findMainClass(generationState, environment.getSourceFiles())
 
@@ -247,7 +270,7 @@ object KotlinToJVMBytecodeCompiler {
             configuration: CompilerConfiguration,
             paths: KotlinPaths,
             environment: KotlinCoreEnvironment): Class<*>? {
-        val state = analyzeAndGenerate(environment) ?: return null
+        val state = analyzeAndGenerate(environment, GenerationStateEventCallback.DO_NOTHING) ?: return null
 
         val classLoader: GeneratedClassLoader
         try {
@@ -266,14 +289,17 @@ object KotlinToJVMBytecodeCompiler {
 
     }
 
-    fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
+    fun analyzeAndGenerate(
+            environment: KotlinCoreEnvironment,
+            onIndependentPartCompilationEnd: GenerationStateEventCallback
+    ): GenerationState? {
         val result = analyze(environment, null) ?: return null
 
         if (!result.shouldGenerateCode) return null
 
         result.throwIfError()
 
-        return generate(environment, result, environment.getSourceFiles(), null, null, null)
+        return generate(environment, result, environment.getSourceFiles(), null, null, null, onIndependentPartCompilationEnd)
     }
 
     private fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
@@ -331,7 +357,9 @@ object KotlinToJVMBytecodeCompiler {
             sourceFiles: List<KtFile>,
             module: Module?,
             outputDirectory: File?,
-            moduleName: String?): GenerationState {
+            moduleName: String?,
+            onIndependentPartCompilationEnd: GenerationStateEventCallback
+    ): GenerationState {
         val configuration = environment.configuration
         val incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
 
@@ -369,7 +397,8 @@ object KotlinToJVMBytecodeCompiler {
                 moduleName,
                 outputDirectory,
                 incrementalCompilationComponents,
-                configuration.get(JVMConfigurationKeys.MULTIFILE_FACADES_OPEN, false))
+                configuration.get(JVMConfigurationKeys.MULTIFILE_FACADES_OPEN, false),
+                onIndependentPartCompilationEnd = onIndependentPartCompilationEnd)
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val generationStart = PerformanceCounter.currentTime()

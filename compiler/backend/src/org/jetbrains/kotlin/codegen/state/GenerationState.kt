@@ -67,7 +67,8 @@ class GenerationState @JvmOverloads constructor(
         val outDirectory: File? = null,
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val generateOpenMultifileClasses: Boolean = false,
-        val progress: Progress = Progress.DEAF
+        val progress: Progress = Progress.DEAF,
+        private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
 ) {
     abstract class GenerateClassFilter {
         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
@@ -170,6 +171,10 @@ class GenerationState @JvmOverloads constructor(
         CodegenBinding.initTrace(this)
     }
 
+    fun afterIndependentPart() {
+        onIndependentPartCompilationEnd(this)
+    }
+
     private fun markUsed() {
         if (used) throw IllegalStateException("${GenerationState::class.java} cannot be used more than once")
 
@@ -197,3 +202,14 @@ private class LazyJvmDiagnostics(compute: () -> Diagnostics): Diagnostics {
 
     override fun iterator() = delegate.iterator()
 }
+
+interface GenerationStateEventCallback : (GenerationState) -> Unit {
+    companion object {
+        val DO_NOTHING = GenerationStateEventCallback {  }
+    }
+}
+
+fun GenerationStateEventCallback(block: (GenerationState) -> Unit): GenerationStateEventCallback =
+        object : GenerationStateEventCallback {
+            override fun invoke(s: GenerationState) = block(s)
+        }

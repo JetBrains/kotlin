@@ -92,6 +92,10 @@ public class ClassFileFactory implements OutputFileCollection {
         }
     }
 
+    public void releaseGeneratedOutput() {
+        generators.clear();
+    }
+
     private void writeModuleMappings() {
         final JvmPackageTable.PackageTable.Builder builder = JvmPackageTable.PackageTable.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
@@ -144,6 +148,11 @@ public class ClassFileFactory implements OutputFileCollection {
     @Override
     public List<OutputFile> asList() {
         done();
+        return getCurrentOutput();
+    }
+
+    @NotNull
+    public List<OutputFile> getCurrentOutput() {
         return ContainerUtil.map(generators.keySet(), new Function<String, OutputFile>() {
             @Override
             public OutputFile fun(String relativeClassFilePath) {

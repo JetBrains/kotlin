@@ -36,8 +36,12 @@ public class ClassBuilderOnDemand extends DelegatingClassBuilder {
 
     @Override
     public void done() {
-        if (classBuilder.isComputed()) {
+        if (isComputed()) {
             classBuilder.invoke().done();
         }
+    }
+
+    public boolean isComputed() {
+        return classBuilder.isComputed();
     }
 }

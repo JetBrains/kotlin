@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
-import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
@@ -60,6 +59,7 @@ public class PackageCodegen {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             try {
                 generateFile(file);
+                state.afterIndependentPart();
             }
             catch (ProcessCanceledException e) {
                 throw e;
