@@ -81,10 +81,6 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
         this.primaryConstructor = primaryConstructor;
     }
 
-    public void setPrimaryConstructor(@NotNull ConstructorDescriptor primaryConstructor) {
-        this.primaryConstructor = primaryConstructor;
-    }
-
     @NotNull
     @Override
     public Annotations getAnnotations() {
