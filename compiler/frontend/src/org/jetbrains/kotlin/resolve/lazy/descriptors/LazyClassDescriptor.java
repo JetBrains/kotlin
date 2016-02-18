@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
+import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -128,7 +128,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.unsubstitutedMemberScope = createMemberScope(c, this.declarationProvider);
         this.kind = classLikeInfo.getClassKind();
-        this.staticScope = new StaticScopeForKotlinClass(this);
+        this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(this) : MemberScope.Empty.INSTANCE;
 
         this.typeConstructor = new LazyClassTypeConstructor();
 

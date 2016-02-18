@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
+import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -63,7 +63,7 @@ class DeserializedClassDescriptor(
 
     private val classId = nameResolver.getClassId(classProto.fqName)
 
-    private val staticScope = StaticScopeForKotlinClass(this)
+    private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()
     private val memberScope = DeserializedClassMemberScope()
     private val nestedClasses = NestedClassDescriptors()

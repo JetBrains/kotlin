@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl;
-import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -46,7 +45,6 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
     private final ConstructorDescriptor primaryConstructor;
     private final MemberScope scope;
-    private final MemberScope staticScope = new StaticScopeForKotlinClass(this);
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
     private final Annotations annotations;
 
@@ -102,7 +100,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @NotNull
     @Override
     public MemberScope getStaticScope() {
-        return staticScope;
+        return MemberScope.Empty.INSTANCE;
     }
 
     @NotNull

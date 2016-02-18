@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -62,7 +61,6 @@ class FunctionClassDescriptor(
         }
     }
 
-    private val staticScope = StaticScopeForKotlinClass(this)
     private val typeConstructor = FunctionTypeConstructor()
     private val memberScope = FunctionClassScope(storageManager, this)
 
@@ -88,7 +86,7 @@ class FunctionClassDescriptor(
 
     override fun getContainingDeclaration() = containingDeclaration
 
-    override fun getStaticScope() = staticScope
+    override fun getStaticScope() = MemberScope.Empty
 
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
 
@@ -120,7 +118,7 @@ class FunctionClassDescriptor(
                 val typeConstructor = descriptor.typeConstructor
 
                 // Substitute all type parameters of the super class with our last type parameters
-                val arguments = getParameters().takeLast(typeConstructor.parameters.size).map {
+                val arguments = parameters.takeLast(typeConstructor.parameters.size).map {
                     TypeProjectionImpl(it.defaultType)
                 }
 

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -37,7 +36,6 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final Modality modality;
     private final ClassKind kind;
     private final TypeConstructor typeConstructor;
-    private final MemberScope staticScope = new StaticScopeForKotlinClass(this);
 
     private MemberScope unsubstitutedMemberScope;
     private Set<ConstructorDescriptor> constructors;
@@ -108,7 +106,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @NotNull
     @Override
     public MemberScope getStaticScope() {
-        return staticScope;
+        return MemberScope.Empty.INSTANCE;
     }
 
     @Nullable
