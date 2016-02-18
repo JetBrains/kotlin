@@ -114,6 +114,14 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         collector.showNotification();
     }
 
+    public void configureSilently(@NotNull Project project) {
+        String defaultPathToJar = getDefaultPathToJarFile(project);
+        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
+        for (Module module : ModuleManager.getInstance(project).getModules()) {
+            configureModuleWithLibrary(module, defaultPathToJar, null, collector);
+        }
+    }
+
     protected void configureModuleWithLibrary(
             @NotNull Module module,
             @NotNull String defaultPath,

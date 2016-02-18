@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
@@ -111,5 +112,9 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     }
 
     KotlinJavaModuleConfigurator() {
+    }
+
+    public static KotlinJavaModuleConfigurator getInstance() {
+        return Extensions.findExtension(EP_NAME, KotlinJavaModuleConfigurator.class);
     }
 }
