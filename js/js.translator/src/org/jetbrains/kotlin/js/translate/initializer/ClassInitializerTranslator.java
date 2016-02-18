@@ -166,8 +166,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 assert superDescriptor != null : "This class is expected to have super class: "
                                                  + PsiUtilsKt.getTextWithLocation(classDeclaration);
                 if (superDescriptor.isInner() && descriptor.isInner()) {
-                    arguments = new ArrayList<JsExpression>(arguments);
-                    arguments.add(0, new JsNameRef("$outer", JsLiteral.THIS));
+                    arguments.add(0, new JsNameRef(Namer.OUTER_FIELD_NAME, JsLiteral.THIS));
                 }
                 addCallToSuperMethod(arguments, initializer);
             }

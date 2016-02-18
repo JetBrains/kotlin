@@ -387,7 +387,7 @@ public class TranslationContext {
         }
         ClassDescriptor parentDescriptor = parent.classDescriptor;
         if (classDescriptor != parentDescriptor) {
-            return new JsNameRef("$outer", parent.getDispatchReceiverPath(cls));
+            return new JsNameRef(Namer.OUTER_FIELD_NAME, parent.getDispatchReceiverPath(cls));
         }
         else {
             return parent.getDispatchReceiverPath(cls);
@@ -444,10 +444,5 @@ public class TranslationContext {
         DeclarationDescriptor descriptor = bindingContext().get(REFERENCE_TARGET, expression.getInstanceReference());
         assert descriptor != null : "Missing declaration descriptor: " + PsiUtilsKt.getTextWithLocation(expression);
         return descriptor;
-    }
-
-    public boolean isLocal() {
-        DeclarationDescriptor descriptor = declarationDescriptor;
-        return descriptor != null && DescriptorUtils.isLocal(descriptor);
     }
 }

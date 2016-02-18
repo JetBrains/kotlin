@@ -498,9 +498,9 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/native/nested"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
-            @TestMetadata("nativeNestedClassProhibited.kt")
-            public void testNativeNestedClassProhibited() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nested/nativeNestedClassProhibited.kt");
+            @TestMetadata("nativeInnerClassProhibited.kt")
+            public void testNativeInnerClassProhibited() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/nested/nativeInnerClassProhibited.kt");
                 doTest(fileName);
             }
         }

@@ -151,11 +151,20 @@ var Kotlin = {};
         return object;
     }
 
-    Kotlin.doCreateClass = function (metadata, constructor) {
+    /**
+     * @param {(Array|Object|null)=} bases
+     * @param {(function(new: T, ?, ?, ?, ?, ?, ?, ?): T)|null=} constructor
+     * @param {Object=} properties
+     * @param {Object=} staticProperties
+     * @returns {function(new: T): T}
+     * @template T
+     */
+    Kotlin.createClassNow = function (bases, constructor, properties, staticProperties) {
         if (constructor == null) {
             constructor = emptyFunction();
         }
 
+        var metadata = computeMetadata(bases, properties, staticProperties);
         metadata.type = Kotlin.TYPE.CLASS;
         copyProperties(constructor, metadata.staticMembers);
 
@@ -169,7 +178,7 @@ var Kotlin = {};
         Object.defineProperties(prototypeObj, metadata.properties);
         copyProperties(prototypeObj, metadata.functions);
         prototypeObj.constructor = constructor;
-        Kotlin.defineInnerTypes(constructor, metadata.types);
+        defineNestedTypes(constructor, metadata.types);
 
         if (metadata.baseClass != null) {
             constructor.baseInitializer = metadata.baseClass;
@@ -181,20 +190,7 @@ var Kotlin = {};
         return constructor;
     };
 
-    /**
-     * @param {(Array|Object|null)=} bases
-     * @param {(function(new: T, ?, ?, ?, ?, ?, ?, ?): T)|null=} constructor
-     * @param {Object=} properties
-     * @param {Object=} staticProperties
-     * @returns {function(new: T): T}
-     * @template T
-     */
-    Kotlin.createClassNow = function (bases, constructor, properties, staticProperties) {
-        var metadata = computeMetadata(bases, properties, staticProperties);
-        return Kotlin.doCreateClass(metadata, constructor);
-    };
-
-    Kotlin.defineInnerTypes = function(constructor, types) {
+    function defineNestedTypes(constructor, types) {
         for (var innerTypeName in types) {
             // since types object does not inherit from anything, it's just a map
             //noinspection JSUnfilteredForInLoop
@@ -206,21 +202,13 @@ var Kotlin = {};
                 configurable: true
             });
         }
-    };
+    }
 
     Kotlin.createObjectNow = function (bases, constructor, functions, staticProperties) {
-        var metadata = computeMetadata(bases, functions, staticProperties);
-        var noNameClass = Kotlin.doCreateClass(metadata, constructor);
+        var noNameClass = Kotlin.createClassNow(bases, constructor, functions, staticProperties);
         var obj = new noNameClass();
         noNameClass.$metadata$.type = Kotlin.TYPE.OBJECT;
-        for (var innerTypeName in metadata.types) {
-            // since types object does not inherit from anything, it's just a map
-            //noinspection JSUnfilteredForInLoop
-            Object.defineProperty(obj, innerTypeName, {
-                get : metadata.types[innerTypeName],
-                configurable: true
-            });
-        }
+        defineNestedTypes(obj, noNameClass.$metadata$.types);
         return obj;
     };
 
@@ -236,7 +224,7 @@ var Kotlin = {};
         copyProperties(obj.prototype, obj.$metadata$.functions);
         Object.defineProperty(obj, "object", {get: class_object, configurable: true});
 
-        Kotlin.defineInnerTypes(constructor, obj.$metadata$.types);
+        defineNestedTypes(constructor, obj.$metadata$.types);
         return obj;
     };
 
@@ -258,8 +246,7 @@ var Kotlin = {};
      */
     Kotlin.createClass = function (basesFun, constructor, properties, staticProperties) {
         function $o() {
-            var metadata = computeMetadata(getBases(basesFun), properties, staticProperties);
-            var klass = Kotlin.doCreateClass(metadata, constructor);
+            var klass = Kotlin.createClassNow(getBases(basesFun), constructor, properties, staticProperties);
             Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
