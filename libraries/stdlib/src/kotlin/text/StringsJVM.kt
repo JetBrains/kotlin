@@ -156,13 +156,16 @@ public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
 }
 
 /**
- * Returns a substring of this string starting with the specified index.
+ * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
  */
 @kotlin.internal.InlineOnly
 public inline fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
 
 /**
- * Returns the substring of this string starting and ending at the specified indices.
+ * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
+ *
+ * @param startIndex the start index (inclusive).
+ * @param endIndex the end index (exclusive).
  */
 @kotlin.internal.InlineOnly
 public inline fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)

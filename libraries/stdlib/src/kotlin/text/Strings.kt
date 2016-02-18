@@ -277,23 +277,26 @@ public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
 }
 
 /**
- * Returns a substring specified by the given [range].
+ * Returns a substring specified by the given [range] of indices.
  */
 public fun String.substring(range: IntRange): String = substring(range.start, range.endInclusive + 1)
 
 /**
- * Returns a subsequence of this char sequence specified by the given [range].
+ * Returns a subsequence of this char sequence specified by the given [range] of indices.
  */
 public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.endInclusive + 1)
 
 /**
- * Returns a substring of chars from a range of this char sequence specified by [startIndex] and [endIndex] indices.
+ * Returns a substring of chars from a range of this char sequence starting at the [startIndex] and ending right before the [endIndex].
+ *
+ * @param startIndex the start index (inclusive).
+ * @param endIndex the end index (exclusive). If not specified, the length of the char sequence is used.
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.substring(startIndex: Int, endIndex: Int = length): String = subSequence(startIndex, endIndex).toString()
 
 /**
- * Returns a substring of chars from a [range] of this char sequence.
+ * Returns a substring of chars at indices from the specified [range] of this char sequence.
  */
 public fun CharSequence.substring(range: IntRange): String = subSequence(range.start, range.endInclusive + 1).toString()
 

@@ -26,12 +26,13 @@ public interface CharSequence {
     public val length: Int
 
     /**
-     * Returns the character at the specified [index] in the sequence.
+     * Returns the character at the specified [index] in this character sequence.
      */
     public operator fun get(index: Int): Char
 
     /**
-     * Returns a subsequence of this sequence.
+     * Returns a new character sequence that is a subsequence of this character sequence,
+     * starting at the specified [startIndex] and ending right before the specified [endIndex].
      *
      * @param startIndex the start index (inclusive).
      * @param endIndex the end index (exclusive).
