@@ -150,6 +150,9 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
     fun projectRelativePath(f: File) = f.toRelativeString(project.projectDir)
 
+    // TODO: find out whether we really need to be able to override destination dir here, and how it should work with destinationDir property
+    private val compilerDestinationDir: String get() = if (StringUtils.isEmpty(kotlinOptions.destination)) { kotlinDestinationDir?.path.orEmpty() } else { kotlinOptions.destination }
+
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
 //        args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
@@ -160,12 +163,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             logger.kotlinDebug("args.classpath = ${args.classpath}")
         }
 
-        args.destination = if (StringUtils.isEmpty(kotlinOptions.destination)) {
-            kotlinDestinationDir?.path
-        } else {
-            kotlinOptions.destination
-        }
-        logger.kotlinDebug("args.destination = ${args.destination}")
+        logger.kotlinDebug("destinationDir = $compilerDestinationDir")
 
         val extraProperties = extensions.extraProperties
         args.pluginClasspaths = extraProperties.getOrNull<Array<String>>("compilerPluginClasspaths") ?: arrayOf()
@@ -219,7 +217,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         val targetType = "java-production"
         val moduleName = args.moduleName
         val targets = listOf(TargetId(moduleName, targetType))
-        val outputDir = File(args.destination)
+        val outputDir = File(compilerDestinationDir)
         val caches = hashMapOf<TargetId, GradleIncrementalCacheImpl>()
         val lookupStorage = LookupStorage(File(cachesBaseDir, "lookups"))
         val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
@@ -339,7 +337,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         }
 
         fun cleanupOnError() {
-            val outputDirFile = File(args.destination!!)
+            val outputDirFile = File(compilerDestinationDir)
 
             assert(outputDirFile.exists())
             val generatedRelPaths = allGeneratedFiles.map { it.outputFile.toRelativeString(outputDirFile) }
@@ -506,7 +504,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         logger.debug("Copying resulting files to classes")
 
         // Copy kotlin classes to all classes directory
-        val outputDirFile = File(args.destination!!)
+        val outputDirFile = File(compilerDestinationDir)
         if (outputDirFile.exists()) {
             FileUtils.copyDirectory(outputDirFile, destinationDir)
         }
