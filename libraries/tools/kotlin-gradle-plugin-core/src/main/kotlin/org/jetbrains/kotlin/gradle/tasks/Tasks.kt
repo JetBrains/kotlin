@@ -101,8 +101,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         compilerCalled = true
         val cachesDir = File(project.buildDir, "kotlin-caches")
         beforeCompileHook(args)
-        callCompiler(args, sources, inputs.isIncremental, modified, removed, cachesDir)
-        afterCompileHook(args)
+
+        try {
+            callCompiler(args, sources, inputs.isIncremental, modified, removed, cachesDir)
+        }
+        finally {
+            afterCompileHook(args)
+        }
     }
 
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
