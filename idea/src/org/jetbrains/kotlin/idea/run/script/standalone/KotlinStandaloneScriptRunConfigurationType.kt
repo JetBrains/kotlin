@@ -24,7 +24,7 @@ class KotlinStandaloneScriptRunConfigurationType : ConfigurationTypeBase(
         "KotlinStandaloneScriptRunConfigurationType",
         "Kotlin script",
         "Run Kotlin script",
-        KotlinIcons.LAUNCH
+        KotlinIcons.SMALL_LOGO_13
 ) {
     init {
         addFactory(Factory(this))
