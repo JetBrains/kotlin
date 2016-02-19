@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.rendering.*;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.MemberComparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,17 +31,19 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         @NotNull
         @Override
         public String render(@NotNull ConflictingJvmDeclarationsData data, @NotNull RenderingContext context) {
-            List<String> renderedDescriptors = new ArrayList<String>();
+            List<DeclarationDescriptor> renderedDescriptors = new ArrayList<DeclarationDescriptor>();
             for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
                 DeclarationDescriptor descriptor = origin.getDescriptor();
                 if (descriptor != null) {
-                    renderedDescriptors.add(DescriptorRenderer.COMPACT.render(descriptor));
+                    renderedDescriptors.add(descriptor);
                 }
             }
-            Collections.sort(renderedDescriptors);
+            Collections.sort(renderedDescriptors, MemberComparator.INSTANCE);
+            RenderingContext.Impl renderingContext = new RenderingContext.Impl(renderedDescriptors);
+
             StringBuilder sb = new StringBuilder();
-            for (String renderedDescriptor : renderedDescriptors) {
-                sb.append("    ").append(renderedDescriptor).append("\n");
+            for (DeclarationDescriptor descriptor : renderedDescriptors) {
+                sb.append("    ").append(Renderers.COMPACT.render(descriptor, renderingContext)).append("\n");
             }
             return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
         }

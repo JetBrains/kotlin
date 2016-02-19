@@ -729,6 +729,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("ambiguous.kt")
+            public void testAmbiguous() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/ambiguous.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("class.kt")
             public void testClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/class.kt");
