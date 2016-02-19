@@ -1,0 +1,11 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    maven {
+        url 'file://' + pathToKotlinPlugin
+    }
+  }
+  dependencies {
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
+  }
+}
