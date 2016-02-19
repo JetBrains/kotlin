@@ -10,6 +10,17 @@
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/dependencies/protobuf-java-2.5.0-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/antLayout/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/jps-builders/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/jps-builders/testSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/jps-launcher/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/model-api/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/model-impl/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/model-impl/testSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/model-serialization/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/model-serialization/testSrc" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/plugin-system/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/jps/standalone-builder/src" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/jps" recursive="false" />
   </library>
