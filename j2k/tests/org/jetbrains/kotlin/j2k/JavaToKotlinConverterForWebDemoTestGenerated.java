@@ -3821,6 +3821,57 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         }
     }
 
+    @TestMetadata("j2k/testData/fileOrElement/protected")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Protected extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInProtected() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/protected"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("constructorProperty.java")
+        public void testConstructorProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/constructorProperty.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inheritorsSamePackage.java")
+        public void testInheritorsSamePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/inheritorsSamePackage.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlyProtectedConstructor.java")
+        public void testOnlyProtectedConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/onlyProtectedConstructor.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protectedInSamePackage.java")
+        public void testProtectedInSamePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/protectedInSamePackage.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("severalInheritors.java")
+        public void testSeveralInheritors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/severalInheritors.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superInSamePackage.java")
+        public void testSuperInSamePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/superInSamePackage.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usages.java")
+        public void testUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/usages.java");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("j2k/testData/fileOrElement/rawGenerics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
