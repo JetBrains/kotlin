@@ -288,8 +288,7 @@ public class MethodInliner {
                         super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                     }
                 }
-                else if (ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false)) &&
-                         !isDefaultCompilation()) {
+                else if (ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false))) {
                     // we will put it if needed in anew processing
                 }
                 else {
@@ -378,7 +377,6 @@ public class MethodInliner {
             ) {
                 if (isInliningLambda || GENERATE_DEBUG_INFO) {
                     String varSuffix = inliningContext.isRoot() &&
-                                       !isDefaultCompilation() &&
                                        !InlineCodegenUtil.isFakeLocalVariableForInline(name) ?
                                        INLINE_FUN_VAR_SUFFIX : "";
                     String varName = !varSuffix.isEmpty() && name.equals("this") ? name + "_" : name;
@@ -446,7 +444,7 @@ public class MethodInliner {
 
             if (frame != null) {
                 if (ReifiedTypeInliner.isNeedClassReificationMarker(cur)) {
-                    awaitClassReification = !isDefaultCompilation();
+                    awaitClassReification = true;
                 }
                 else if (cur.getType() == AbstractInsnNode.METHOD_INSN) {
                     if (InlineCodegenUtil.isFinallyStart(cur)) {
@@ -808,9 +806,5 @@ public class MethodInliner {
             this.finallyIntervalEnd = finallyIntervalEnd;
         }
 
-    }
-
-    private boolean isDefaultCompilation() {
-        return inliningContext.isRoot() && ((RootInliningContext) inliningContext).isDefaultCompilation;
     }
 }

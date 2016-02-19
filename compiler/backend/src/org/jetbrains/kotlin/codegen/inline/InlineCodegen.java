@@ -86,7 +86,7 @@ public class InlineCodegen extends CallGenerator {
 
     private final ReifiedTypeInliner reifiedTypeInliner;
     @Nullable private final TypeParameterMappings typeParameterMappings;
-    private final boolean isDefaultCompilation;
+    private final boolean isDefaultMethodCompilation;
 
     private LambdaInfo activeLambda;
 
@@ -98,11 +98,11 @@ public class InlineCodegen extends CallGenerator {
             @NotNull FunctionDescriptor function,
             @NotNull KtElement callElement,
             @Nullable TypeParameterMappings typeParameterMappings,
-            boolean isDefaultCompilation
+            boolean isDefaultMethodCompilation
     ) {
         assert InlineUtil.isInline(function) || InlineUtil.isArrayConstructorWithLambda(function) :
                 "InlineCodegen can inline only inline functions and array constructors: " + function;
-        this.isDefaultCompilation = isDefaultCompilation;
+        this.isDefaultMethodCompilation = isDefaultMethodCompilation;
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.codegen = codegen;
@@ -148,7 +148,11 @@ public class InlineCodegen extends CallGenerator {
 
         try {
             nodeAndSmap = createMethodNode(callDefault);
-            endCall(inlineCall(nodeAndSmap));
+            if (isDefaultMethodCompilation) {
+                nodeAndSmap.getNode().accept(new MethodBodyVisitor(codegen.v));
+            } else {
+                endCall(inlineCall(nodeAndSmap));
+            }
         }
         catch (CompilationException e) {
             throw e;
@@ -277,7 +281,7 @@ public class InlineCodegen extends CallGenerator {
 
         InliningContext info = new RootInliningContext(
                 expressionMap, state, codegen.getInlineNameGenerator().subGenerator(jvmSignature.getAsmMethod().getName()),
-                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings, isDefaultCompilation,
+                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings,
                 AnnotationUtilKt.hasInlineOnlyAnnotation(functionDescriptor)
         );
 
@@ -678,6 +682,11 @@ public class InlineCodegen extends CallGenerator {
             @NotNull Type parameterType,
             @NotNull StackValue value
     ) {
+        if (isDefaultMethodCompilation) {
+            //original method would be inlined directly into default impl body without any inline magic
+            //so we no need to load variables on stack to further method call
+            return;
+        }
         putValueIfNeeded(parameterType, value, -1);
     }
 

@@ -790,6 +790,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("remappedParameterInInline.kt")
+        public void testRemappedParameterInInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/remappedParameterInInline.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("whenEntry.kt")
         public void testWhenEntry() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/whenEntry.kt");
