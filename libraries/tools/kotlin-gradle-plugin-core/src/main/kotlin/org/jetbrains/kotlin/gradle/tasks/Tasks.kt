@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils
 import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.internal.AbstractTask
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtraPropertiesExtension
@@ -48,9 +49,13 @@ import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
 
-val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
+const val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
+const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
+const val KOTLIN_CACHES_DIR_NAME = "kotlin-caches"
+const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
 
-val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
+val AbstractTask.kotlinCachesDir: File
+    get() = File(project.buildDir, KOTLIN_CACHES_DIR_NAME)
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
@@ -99,11 +104,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         populateCommonArgs(args)
         populateTargetSpecificArgs(args)
         compilerCalled = true
-        val cachesDir = File(project.buildDir, "kotlin-caches")
         beforeCompileHook(args)
 
         try {
-            callCompiler(args, sources, inputs.isIncremental, modified, removed, cachesDir)
+            callCompiler(args, sources, inputs.isIncremental, modified, removed, kotlinCachesDir)
         }
         finally {
             afterCompileHook(args)
@@ -233,6 +237,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
         var currentRemoved = removed.filter { it.isKotlinFile() }
         val allGeneratedFiles = hashSetOf<GeneratedFile<TargetId>>()
         val logAction = { logStr: String -> logger.kotlinInfo(logStr) }
+        val dirtySourcesSinceLastTimeFile = File(cachesBaseDir, DIRTY_SOURCES_FILE_NAME)
 
         fun getOrCreateIncrementalCache(target: TargetId): GradleIncrementalCacheImpl {
             val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
@@ -267,7 +272,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             } else listOf())
         }
 
-        fun dirtyKotlinSourcesFromGradle(): Set<File> {
+        fun dirtyKotlinSourcesFromGradle(): MutableSet<File> {
             // TODO: handle classpath changes similarly - compare with cashed version (likely a big change, may be costly, some heuristics could be considered)
             val modifiedKotlinFiles = modified.filter { it.isKotlinFile() }.toMutableSet()
             val lookupSymbols = dirtyLookupSymbolsFromModifiedJavaFiles()
@@ -341,7 +346,17 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                     }
                 }
             }
-            val dirtyFiles = dirtyKotlinSourcesFromGradle().toSet()
+
+            val dirtyFiles = dirtyKotlinSourcesFromGradle()
+            if (dirtySourcesSinceLastTimeFile.exists()) {
+                val files = dirtySourcesSinceLastTimeFile.readLines().map(::File).filter { it.exists() }
+                if (files.isNotEmpty()) {
+                    logger.kotlinDebug { "Source files added since last compilation: $files" }
+                }
+
+                dirtyFiles.addAll(files)
+            }
+
             return Pair(dirtyFiles, true)
         }
 
@@ -398,7 +413,14 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
                 logger.warn("Kotlin incremental compilation tried to compile removed files: $nonExistingSource")
             }
 
+            val text = existingSource.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
+            dirtySourcesSinceLastTimeFile.writeText(text)
+
             val (exitCode, generatedFiles) = compileChanged(targets, existingSource.toSet(), outputDir, args, ::getIncrementalCache, lookupTracker)
+
+            if (exitCode == ExitCode.OK) {
+                dirtySourcesSinceLastTimeFile.delete()
+            }
 
             allGeneratedFiles.addAll(generatedFiles)
             val compilationResult = updateIncrementalCaches(targets, generatedFiles,
@@ -522,7 +544,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             FileUtils.copyDirectory(outputDirFile, destinationDir)
         }
 
-        kotlinClassFiles.removeAll(listClassFiles(outputDirPath))
+        kotlinClassFiles.removeAll(listClassFiles(compilerDestinationDir))
         if (kotlinClassFiles.isNotEmpty()) {
             // some classes were removed during compilation
             val filesToRemove = kotlinClassFiles.map {
@@ -705,6 +727,13 @@ internal fun Logger.kotlinInfo(message: String) {
 
 internal fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
+}
+
+inline
+internal fun Logger.kotlinDebug(message: ()->String) {
+    if (isDebugEnabled) {
+        kotlinDebug(message())
+    }
 }
 
 internal fun listClassFiles(path: String): Sequence<File> =
