@@ -261,7 +261,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         @Suppress("REIFIED_TYPE_UNSAFE_SUBSTITUTION")
         val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass<ModuleBuildTarget>>()
-        val additionalPassRequired = updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
+        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
 
         if (!IncrementalCompilation.isEnabled()) {
             return OK
@@ -279,7 +279,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         processChanges(filesToCompile.values().toSet(), allCompiledFiles, dataManager, incrementalCaches.values, changesInfo, fsOperations)
         incrementalCaches.values.forEach { it.cleanDirtyInlineFunctions() }
 
-        return if (additionalPassRequired) ADDITIONAL_PASS_REQUIRED else OK
+        return OK
     }
 
     private fun applyActionsOnCacheVersionChange(
@@ -476,10 +476,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>,
             incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>
-    ): Boolean {
+    ) {
         val previousMappings = context.projectDescriptor.dataManager.mappings
-        val delta = previousMappings.createDelta()
-        val callback = delta.callback
+        val callback = JavaBuilderUtil.getDependenciesRegistrar(context)
+
         val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
             val files = HashSet<File>()
             dirtyFilesHolder.getRemovedFiles(it).mapTo(files, ::File)
@@ -511,9 +511,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val allCompiled = filesToCompile.values()
-        val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
+        val successfullyCompiled = if (compilationErrors) listOf<File>() else allCompiled
 
-        return JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
+        JavaBuilderUtil.registerFilesToCompile(context, allCompiled)
+        JavaBuilderUtil.registerSuccessfullyCompiled(context, successfullyCompiled)
     }
 
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, generatedFiles: List<GeneratedFile<ModuleBuildTarget>>) {
