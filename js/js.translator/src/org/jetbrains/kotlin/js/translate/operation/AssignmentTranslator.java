@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.JsBlock;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.lexer.KtToken;
-import org.jetbrains.kotlin.psi.KtBinaryExpression;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.AccessTranslationUtils;
 import org.jetbrains.kotlin.js.translate.reference.AccessTranslator;
 import org.jetbrains.kotlin.js.translate.reference.BackingFieldAccessTranslator;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.isVariableReassignment;
@@ -72,7 +72,7 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         JsBlock rightBlock = new JsBlock();
         this.right = translateRightExpression(context, expression, rightBlock);
 
-        if (isValProperty(left, context)) {
+        if (isReferenceToBackingFieldFromConstructor(left, context)) {
             KtSimpleNameExpression simpleName = getSimpleName(left);
             assert simpleName != null;
             this.accessTranslator = BackingFieldAccessTranslator.newInstance(simpleName, context);
@@ -83,17 +83,45 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         context.addStatementsToCurrentBlockFrom(rightBlock);
     }
 
-    private static boolean isValProperty(
+    private static boolean isReferenceToBackingFieldFromConstructor(
             @NotNull KtExpression expression,
             @NotNull TranslationContext context
     ) {
-        KtSimpleNameExpression simpleNameExpression = getSimpleName(expression);
+        if (expression instanceof KtSimpleNameExpression) {
+            KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) expression;
+            DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), nameExpression);
+            return isReferenceToBackingFieldFromConstructor(descriptor, context);
+        }
+        else if (expression instanceof KtDotQualifiedExpression) {
+            KtDotQualifiedExpression qualifiedExpression = (KtDotQualifiedExpression) expression;
+            if (qualifiedExpression.getReceiverExpression() instanceof KtThisExpression &&
+                qualifiedExpression.getSelectorExpression() instanceof KtSimpleNameExpression) {
+                KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) qualifiedExpression.getSelectorExpression();
+                DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), nameExpression);
+                return isReferenceToBackingFieldFromConstructor(descriptor, context);
+            }
+        }
+        return false;
+    }
 
-        if (simpleNameExpression != null) {
-            DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression);
-            return descriptor instanceof PropertyDescriptor && !((PropertyDescriptor) descriptor).isVar();
+    private static boolean isReferenceToBackingFieldFromConstructor(
+            @Nullable DeclarationDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
+        if (!(descriptor instanceof PropertyDescriptor)) {
+            return false;
+        }
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+
+        if (!(context.getDeclarationDescriptor() instanceof ClassDescriptor)) {
+            return false;
+        }
+        ClassDescriptor classDescriptor = (ClassDescriptor) context.getDeclarationDescriptor();
+
+        if (classDescriptor != propertyDescriptor.getContainingDeclaration()) {
+            return false;
         }
 
-        return false;
+        return !propertyDescriptor.isVar();
     }
 }

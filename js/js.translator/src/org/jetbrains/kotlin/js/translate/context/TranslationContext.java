@@ -359,13 +359,12 @@ public class TranslationContext {
     }
 
     private boolean isConstructorOrDirectScope(DeclarationDescriptor descriptor) {
-        if (descriptor == declarationDescriptor) {
-            return true;
+        if (declarationDescriptor instanceof ClassDescriptor && !DescriptorUtils.isCompanionObject(declarationDescriptor)) {
+            return descriptor == declarationDescriptor;
         }
-        if (declarationDescriptor instanceof ConstructorDescriptor) {
-            return descriptor == declarationDescriptor.getContainingDeclaration();
+        else {
+            return declarationDescriptor != null && descriptor == DescriptorUtils.getContainingClass(declarationDescriptor);
         }
-        return false;
     }
 
     @NotNull
@@ -392,7 +391,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    private DefinitionPlace getDefinitionPlace() {
+    public DefinitionPlace getDefinitionPlace() {
         if (definitionPlace != null) return definitionPlace;
         if (parent != null) return parent.getDefinitionPlace();
 
@@ -429,5 +428,10 @@ public class TranslationContext {
             decl = decl.getContainingDeclaration();
         }
         return null;
+    }
+
+    @Nullable
+    public DeclarationDescriptor getDeclarationDescriptor() {
+        return declarationDescriptor;
     }
 }

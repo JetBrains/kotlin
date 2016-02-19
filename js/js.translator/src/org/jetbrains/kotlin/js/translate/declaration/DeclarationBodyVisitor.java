@@ -108,6 +108,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
             return null;
         }
 
+        context = context.newDeclaration(descriptor, context.getDefinitionPlace());
         JsPropertyInitializer methodAsPropertyInitializer = Translation.functionTranslator(expression, context).translateAsMethod();
         result.add(methodAsPropertyInitializer);
         return null;
@@ -116,6 +117,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitProperty(@NotNull KtProperty expression, TranslationContext context) {
         PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), expression);
+        context.newDeclaration(propertyDescriptor, context.getDefinitionPlace());
         PropertyTranslatorKt.translateAccessors(propertyDescriptor, expression, result, context);
         return null;
     }
