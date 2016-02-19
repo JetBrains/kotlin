@@ -179,6 +179,18 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("overloadResolutionAmbiguityHtml.kt")
+    public void testOverloadResolutionAmbiguityHtml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/overloadResolutionAmbiguityHtml.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("overloadResolutionAmbiguityTxt.kt")
+    public void testOverloadResolutionAmbiguityTxt() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/overloadResolutionAmbiguityTxt.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("renderCollectionOfTypes.kt")
     public void testRenderCollectionOfTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/renderCollectionOfTypes.kt");

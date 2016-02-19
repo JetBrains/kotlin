@@ -30,10 +30,11 @@ object IdeRenderers {
 
     @JvmField val HTML_AMBIGUOUS_CALLS = Renderer {
         calls: Collection<ResolvedCall<*>> ->
-            calls
+        val descriptors = calls
                 .map { it.resultingDescriptor }
                 .sortedWith(MemberComparator.INSTANCE)
-                .joinToString("") { "<li>${DescriptorRenderer.HTML.render(it)}</li>" }
+        val context = RenderingContext.Impl(descriptors)
+        descriptors.joinToString("") { "<li>${HTML.render(it, context)}</li>" }
     }
 
     @JvmField val HTML_RENDER_TYPE = SmartTypeRenderer(DescriptorRenderer.HTML)
