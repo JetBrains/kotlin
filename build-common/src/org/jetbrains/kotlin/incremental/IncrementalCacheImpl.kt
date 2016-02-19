@@ -191,7 +191,7 @@ open class IncrementalCacheImpl<Target>(
                 addToClassStorage(kotlinClass, sourceFiles.first())
 
                 protoMap.process(kotlinClass, isPackage = false) +
-                constantsMap.process(kotlinClass, isPackage = true) +
+                constantsMap.process(kotlinClass, isPackage = false) +
                 inlineFunctionsMap.process(kotlinClass, isPackage = false)
             }
             else -> CompilationResult.NO_CHANGES
