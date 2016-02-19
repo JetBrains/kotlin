@@ -18,13 +18,19 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
+import org.jetbrains.org.objectweb.asm.Attribute;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.TypePath;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
-public class InliningInstructionAdapter extends InstructionAdapter {
+public class MethodBodyVisitor extends InstructionAdapter {
 
-    public InliningInstructionAdapter(MethodVisitor mv) {
+    public MethodBodyVisitor(MethodVisitor mv) {
         super(InlineCodegenUtil.API, mv);
+    }
+
+    @Override
+    public void visitParameter(String name, int access) {
     }
 
     @Override
@@ -33,12 +39,12 @@ public class InliningInstructionAdapter extends InstructionAdapter {
     }
 
     @Override
-    public void visitMaxs(int maxStack, int maxLocals) {
-
+    public AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
+        return null;
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
+    public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
         return null;
     }
 
@@ -48,7 +54,18 @@ public class InliningInstructionAdapter extends InstructionAdapter {
     }
 
     @Override
-    public void visitEnd() {
+    public void visitAttribute(Attribute attr) {
+    }
 
+    @Override
+    public void visitCode() {
+    }
+
+    @Override
+    public void visitMaxs(int maxStack, int maxLocals) {
+    }
+
+    @Override
+    public void visitEnd() {
     }
 }

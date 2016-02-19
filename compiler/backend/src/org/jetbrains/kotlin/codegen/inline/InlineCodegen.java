@@ -308,7 +308,7 @@ public class InlineCodegen extends CallGenerator {
         generateAndInsertFinallyBlocks(adapter, infos, ((StackValue.Local)remapper.remap(parameters.getArgsSizeOnStack() + 1).value).index);
         removeFinallyMarkers(adapter);
 
-        adapter.accept(new InliningInstructionAdapter(codegen.v));
+        adapter.accept(new MethodBodyVisitor(codegen.v));
 
         addInlineMarker(codegen.v, false);
 

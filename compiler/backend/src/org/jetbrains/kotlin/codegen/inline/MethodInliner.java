@@ -147,7 +147,7 @@ public class MethodInliner {
 
         processReturns(resultNode, labelOwner, remapReturn, end);
         //flush transformed node to output
-        resultNode.accept(new InliningInstructionAdapter(adapter));
+        resultNode.accept(new MethodBodyVisitor(adapter));
 
         sourceMapper.endMapping();
         return result;
