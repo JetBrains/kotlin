@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
-import org.jetbrains.kotlin.resolve.OverridingStrategy;
+import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
@@ -246,7 +246,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
             OverridingUtil.generateOverridesInFunctionGroup(
                     name, fromSupertypes, Collections.<D>emptySet(), EnumEntrySyntheticClassDescriptor.this,
-                    new OverridingStrategy() {
+                    new NonReportingOverrideStrategy() {
                         @Override
                         @SuppressWarnings("unchecked")
                         public void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride) {
@@ -255,7 +255,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                         }
 
                         @Override
-                        public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
+                        protected void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
                             // Do nothing
                         }
                     }

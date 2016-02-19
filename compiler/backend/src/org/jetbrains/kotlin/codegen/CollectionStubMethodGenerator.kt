@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -191,7 +192,7 @@ class CollectionStubMethodGenerator(
     ): List<FunctionDescriptor> {
         val result = ArrayList<FunctionDescriptor>()
 
-        OverrideResolver.generateOverridesInAClass(klass, listOf(), object : OverridingStrategy() {
+        OverrideResolver.generateOverridesInAClass(klass, listOf(), object : NonReportingOverrideStrategy() {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 if (fakeOverride !is FunctionDescriptor) return
                 if (fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass)?.kind == DECLARATION) {

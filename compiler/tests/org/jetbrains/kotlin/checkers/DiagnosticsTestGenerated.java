@@ -12146,6 +12146,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt9550.kt")
+                public void testKt9550() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt9550.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("returnTypeMismatch.kt")
                 public void testReturnTypeMismatch() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/returnTypeMismatch.kt");

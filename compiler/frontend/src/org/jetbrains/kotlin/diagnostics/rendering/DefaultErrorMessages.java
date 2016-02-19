@@ -601,6 +601,7 @@ public class DefaultErrorMessages {
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "Var-property {0} cannot be overridden by val-property {1}", FQ_NAMES_IN_TYPES, FQ_NAMES_IN_TYPES);
 
+        MAP.put(CONFLICTING_INHERITED_MEMBERS, "{0} inherits conflicting members: {1}", NAME, commaSeparated(FQ_NAMES_IN_TYPES));
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "{0} must be declared abstract or implement abstract member {1}", RENDER_CLASS_OR_OBJECT,
                 FQ_NAMES_IN_TYPES);
         MAP.put(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, "{0} must be declared abstract or implement abstract base class member {1}",

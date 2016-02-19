@@ -347,7 +347,7 @@ public class OverridingUtil {
                     break;
                 case CONFLICT:
                     if (isVisible) {
-                        strategy.conflict(fromSupertype, fromCurrent);
+                        strategy.overrideConflict(fromSupertype, fromCurrent);
                     }
                     bound.add(fromSupertype);
                     break;
@@ -638,7 +638,7 @@ public class OverridingUtil {
                 new Function1<CallableMemberDescriptor, Unit>() {
                     @Override
                     public Unit invoke(CallableMemberDescriptor descriptor) {
-                        strategy.conflict(overrider, descriptor);
+                        strategy.inheritanceConflict(overrider, descriptor);
                         return Unit.INSTANCE;
                     }
                 });

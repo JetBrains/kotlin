@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -106,9 +107,14 @@ open class LazyClassMemberScope(
                 result.add(fakeOverride as D)
             }
 
-            override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
+            override fun overrideConflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent) as? KtDeclaration ?: error("fromCurrent can not be a fake override")
                 trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromSuper.containingDeclaration))
+            }
+
+            override fun inheritanceConflict(first: CallableMemberDescriptor, second: CallableMemberDescriptor) {
+                val thisClassDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(thisDescriptor) as? KtClassOrObject ?: error("No class declaration")
+                trace.report(Errors.CONFLICTING_INHERITED_MEMBERS.on(thisClassDeclaration, thisDescriptor, listOf(first, second)))
             }
         })
         OverrideResolver.resolveUnknownVisibilities(result, trace)
