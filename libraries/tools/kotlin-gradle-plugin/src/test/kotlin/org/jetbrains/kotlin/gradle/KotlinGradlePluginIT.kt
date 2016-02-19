@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.CleanUpBuildListener
 import org.junit.Test
+import java.io.File
+import kotlin.test.assertTrue
 
 class KotlinGradleIT: BaseGradleIT() {
 
@@ -120,6 +122,41 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
             assertReportExists("subproject")
             assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
+        }
+    }
+
+    @Test
+    fun testSimpleMultiprojectIncremental() {
+
+        fun Project.modify(body: Project.() -> Unit): Project {
+            this.body()
+            return this
+        }
+
+        Project("multiprojectWithDependency", "1.6").build("-PincrementalOption=true", "assemble") {
+            assertSuccessful()
+            assertReportExists("projA")
+            assertContains(":projA:compileKotlin")
+            assertNotContains("projA:compileKotlin UP-TO-DATE")
+            assertReportExists("projB")
+            assertContains(":projB:compileKotlin")
+            assertNotContains("projB:compileKotlin UP-TO-DATE")
+        }
+        Project("multiprojectWithDependency", "1.6").modify {
+            val oldSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt")
+            val newSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt.new")
+            assertTrue { oldSrc.exists() }
+            assertTrue { newSrc.exists() }
+            newSrc.copyTo(oldSrc, overwrite = true)
+        }.build("-PincrementalOption=true", "assemble") {
+            assertSuccessful()
+            assertReportExists("projA")
+            assertContains(":projA:compileKotlin")
+            assertContains("[KOTLIN] is incremental == true")
+            assertNotContains("projA:compileKotlin UP-TO-DATE")
+            assertReportExists("projB")
+            assertContains(":projB:compileKotlin")
+            assertNotContains("projB:compileKotlin UP-TO-DATE")
         }
     }
 
