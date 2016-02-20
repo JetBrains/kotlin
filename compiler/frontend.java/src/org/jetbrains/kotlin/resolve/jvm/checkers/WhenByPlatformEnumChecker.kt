@@ -17,15 +17,12 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.cfg.WhenChecker
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
-import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.flexibility
@@ -49,10 +46,4 @@ class WhenByPlatformEnumChecker : AdditionalTypeChecker {
         }
     }
 
-    override fun checkReceiver(
-            receiverParameter: ReceiverParameterDescriptor,
-            receiverArgument: ReceiverValue,
-            safeAccess: Boolean,
-            c: CallResolutionContext<*>
-    ) {}
 }

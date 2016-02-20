@@ -19,15 +19,12 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
-import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
 
@@ -56,13 +53,6 @@ class JavaTypeAccessibilityChecker : AdditionalTypeChecker {
             }
         }
     }
-
-    override fun checkReceiver(
-            receiverParameter: ReceiverParameterDescriptor,
-            receiverArgument: ReceiverValue,
-            safeAccess: Boolean,
-            c: CallResolutionContext<*>
-    ) {}
 
     private fun findInaccessibleJavaTypes(type: KotlinType, c: ResolutionContext<*>): List<KotlinType> {
         val scopeOwner = c.scope.ownerDescriptor
