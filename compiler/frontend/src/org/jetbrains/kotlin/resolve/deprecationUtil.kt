@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,11 +178,7 @@ enum class DeprecationLevelValue {
     WARNING, ERROR, HIDDEN
 }
 
-@Deprecated("Should be removed together with kotlin.HiddenDeclaration")
-private val HIDDEN_ANNOTATION_FQ_NAME = FqName("kotlin.HiddenDeclaration")
-
 fun DeclarationDescriptor.isHiddenInResolution(): Boolean {
     if (this is FunctionDescriptor && this.isHiddenToOvercomeSignatureClash) return true
-    return annotations.findAnnotation(HIDDEN_ANNOTATION_FQ_NAME) != null
-           || getDeprecation()?.deprecationLevel == DeprecationLevelValue.HIDDEN
+    return getDeprecation()?.deprecationLevel == DeprecationLevelValue.HIDDEN
 }
