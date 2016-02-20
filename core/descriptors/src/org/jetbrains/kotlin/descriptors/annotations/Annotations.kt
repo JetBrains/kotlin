@@ -122,9 +122,9 @@ class CompositeAnnotations(
 
     override fun hasAnnotation(fqName: FqName) = delegates.asSequence().any { it.hasAnnotation(fqName) }
 
-    override fun findAnnotation(fqName: FqName) = delegates.asSequence().map { it.findAnnotation(fqName) }.filterNotNull().firstOrNull()
+    override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
 
-    override fun findExternalAnnotation(fqName: FqName) = delegates.asSequence().map { it.findExternalAnnotation(fqName) }.filterNotNull().firstOrNull()
+    override fun findExternalAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findExternalAnnotation(fqName) }.firstOrNull()
 
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
 

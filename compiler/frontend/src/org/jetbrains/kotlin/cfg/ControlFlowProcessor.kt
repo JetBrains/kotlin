@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartFMap
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.ControlFlowBuilder.PredefinedOperation.*
 import org.jetbrains.kotlin.cfg.pseudocode.ControlFlowInstructionsGenerator
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
@@ -31,29 +32,29 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValu
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.*
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-
 import java.util.*
-
-import org.jetbrains.kotlin.cfg.ControlFlowBuilder.PredefinedOperation.*
-import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.lexer.KtTokens.*
 
 class ControlFlowProcessor(private val trace: BindingTrace) {
 
@@ -202,7 +203,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         private fun elementsToValues(from: List<KtElement?>): List<PseudoValue> {
-            return from.map { element -> getBoundOrUnreachableValue(element) }.filterNotNull()
+            return from.mapNotNull { element -> getBoundOrUnreachableValue(element) }
         }
 
         private fun generateInitializer(declaration: KtDeclaration, initValue: PseudoValue) {
@@ -1268,7 +1269,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         private fun generateCallOrMarkUnresolved(call: KtCallElement) {
             if (!generateCall(call)) {
-                val arguments = call.valueArguments.map { valueArgument -> valueArgument.getArgumentExpression() }.filterNotNull()
+                val arguments = call.valueArguments.mapNotNull { valueArgument -> valueArgument.getArgumentExpression() }
 
                 for (argument in arguments) {
                     generateInstructions(argument)

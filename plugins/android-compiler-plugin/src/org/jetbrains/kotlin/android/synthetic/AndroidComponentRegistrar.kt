@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenEx
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
-import org.jetbrains.kotlin.android.synthetic.res.*
+import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
+import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
@@ -73,7 +76,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE)
-        val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.map { parseVariant(it) }?.filterNotNull() ?: emptyList()
+        val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.mapNotNull { parseVariant(it) } ?: emptyList()
 
         if (variants.isNotEmpty() && !applicationPackage.isNullOrBlank()) {
             val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage!!, variants)

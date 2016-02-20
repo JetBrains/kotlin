@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.preprocessor
 
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnnotated
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtUserType
 
 interface Conditional {
 
@@ -52,10 +54,10 @@ interface Conditional {
 }
 
 fun KtAnnotated.parseConditionalAnnotations(): List<Conditional> =
-        annotationEntries.map {
+        annotationEntries.mapNotNull {
             val parser = Conditional.ANNOTATIONS.get(it.typeReferenceName)
             parser?.parse?.invoke(it.valueArguments.splitToPositionalAndNamed())
-        }.filterNotNull()
+        }
 
 
 val KtAnnotationEntry.typeReferenceName: String? get() =

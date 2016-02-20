@@ -268,7 +268,7 @@ class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressC
             return descriptor.annotations.toList()
         }
         else {
-            return annotated.annotationEntries.map { context.get(BindingContext.ANNOTATION, it) }.filterNotNull()
+            return annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
         }
     }
 }

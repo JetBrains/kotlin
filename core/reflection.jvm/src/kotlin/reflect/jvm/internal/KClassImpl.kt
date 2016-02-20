@@ -120,7 +120,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
     override val nestedClasses: Collection<KClass<*>>
-        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).map {
+        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).mapNotNull {
             nestedClass ->
             val source = (nestedClass as DeclarationDescriptorWithSource).source
             when (source) {
@@ -139,7 +139,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
                 }
                 else -> throw KotlinReflectionInternalError("Unsupported class: $nestedClass (source = $source)")
             }
-        }.filterNotNull().map { KClassImpl(it) }
+        }.map { KClassImpl(it) }
 
     @Suppress("UNCHECKED_CAST")
     private val objectInstance_ = ReflectProperties.lazy {

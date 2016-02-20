@@ -40,11 +40,10 @@ class LazyJavaPackageFragment(
     }
 
     internal val kotlinBinaryClasses by c.storageManager.createLazyValue {
-        val simpleNames = c.components.packageMapper.findPackageParts(fqName.asString())
-        simpleNames.map {
+        c.components.packageMapper.findPackageParts(fqName.asString()).mapNotNull {
             val classId = ClassId(fqName, Name.identifier(it))
             c.components.kotlinClassFinder.findKotlinClass(classId)
-        }.filterNotNull()
+        }
     }
 
     internal fun resolveTopLevelClass(javaClass: JavaClass) = topLevelClasses(javaClass)

@@ -57,7 +57,7 @@ internal fun KotlinType.getNestedArguments(): List<TypeProjection> {
 }
 
 internal fun KotlinType.getNestedTypeParameters(): List<TypeParameterDescriptor> {
-    return getNestedArguments().map { typeProjection ->
+    return getNestedArguments().mapNotNull { typeProjection ->
         typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
-    }.filterNotNull()
+    }
 }

@@ -41,7 +41,7 @@ class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
             val propertyDescriptor = resolvePropertyDescriptor(simpleNameExpression) ?: return null
 
             val psiElements = layoutManager.propertyToXmlAttributes(propertyDescriptor)
-            val valueElements = psiElements.map { (it as? XmlAttribute)?.valueElement as? PsiElement }.filterNotNull()
+            val valueElements = psiElements.mapNotNull { (it as? XmlAttribute)?.valueElement as? PsiElement }
             if (valueElements.isNotEmpty()) return valueElements.toTypedArray()
         }
 
@@ -64,5 +64,4 @@ class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getActionText(context: DataContext?): String? {
         return null
     }
-
 }

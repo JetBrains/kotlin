@@ -611,11 +611,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val args = expression.operands.map {
             codeConverter.convertExpression(it, expression.type).assignPrototype(it, commentsAndSpacesInheritance)
         }
-        val operators = expression.operands.map {
+        val operators = expression.operands.mapNotNull {
             expression.getTokenBeforeOperand(it)?.let {
                 Operator(it.tokenType).assignPrototype(it, commentsAndSpacesInheritance)
             }
-        }.filterNotNull()
+        }
 
         result = PolyadicExpression(args, operators).assignPrototype(expression)
     }

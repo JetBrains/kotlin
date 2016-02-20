@@ -470,9 +470,9 @@ class LazyJavaClassMemberScope(
             simpleFunctionDescriptor: SimpleFunctionDescriptor
     ): Boolean {
         val candidatesToOverride =
-                getFunctionsFromSupertypes(simpleFunctionDescriptor.name).map {
+                getFunctionsFromSupertypes(simpleFunctionDescriptor.name).mapNotNull {
                     BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it)
-                }.filterNotNull()
+                }
 
         return candidatesToOverride.any {
             candidate ->

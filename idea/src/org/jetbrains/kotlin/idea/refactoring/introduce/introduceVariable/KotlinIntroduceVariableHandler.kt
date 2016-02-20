@@ -319,7 +319,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     private fun KtExpression.findOccurrences(occurrenceContainer: PsiElement): List<KtExpression> {
         return toRange()
                 .match(occurrenceContainer, KotlinPsiUnifier.DEFAULT)
-                .map {
+                .mapNotNull {
                     val candidate = it.range.elements.first()
                     when (candidate) {
                         is KtExpression -> candidate
@@ -327,7 +327,6 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         else -> throw AssertionError("Unexpected candidate element: " + candidate.text)
                     } as? KtExpression
                 }
-                .filterNotNull()
     }
 
     private fun KtExpression.shouldReplaceOccurrence(bindingContext: BindingContext, container: PsiElement?): Boolean {

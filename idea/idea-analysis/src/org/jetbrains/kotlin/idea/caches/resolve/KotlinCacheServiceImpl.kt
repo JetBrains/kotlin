@@ -171,7 +171,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                     return annotatedDescriptor.annotations.toList()
                 }
                 else {
-                    return annotated.annotationEntries.map { context.get(BindingContext.ANNOTATION, it) }.filterNotNull()
+                    return annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
                 }
             }
         }, LibraryModificationTracker.getInstance(project), PsiModificationTracker.MODIFICATION_COUNT)

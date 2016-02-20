@@ -132,7 +132,7 @@ fun KotlinType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<Ko
         assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
 
         val qualifiers = indexedThisType[index]
-        val verticalSlice = indexedFromSupertypes.map { it.getOrElse(index, { null }) }.filterNotNull()
+        val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index) }
 
         // Only the head type constructor is safely co-variant
         qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
@@ -142,8 +142,8 @@ fun KotlinType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<Ko
 }
 
 private fun KotlinType.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>, isCovariant: Boolean): JavaTypeQualifiers {
-    val nullabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().nullability }.filterNotNull().toSet()
-    val mutabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().mutability }.filterNotNull().toSet()
+    val nullabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().nullability }.toSet()
+    val mutabilityFromSupertypes = fromSupertypes.mapNotNull { it.extractQualifiers().mutability }.toSet()
 
     val own = extractQualifiersFromAnnotations()
 

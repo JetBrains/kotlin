@@ -95,8 +95,7 @@ class DescriptorKindFilter(
     override fun toString(): String {
         val predefinedFilterName = DEBUG_PREDEFINED_FILTERS_MASK_NAMES.firstOrNull { it.mask == kindMask } ?.name
         val kindString = predefinedFilterName ?: DEBUG_MASK_BIT_NAMES
-                .map { if (acceptsKinds(it.mask)) it.name else null }
-                .filterNotNull()
+                .mapNotNull { if (acceptsKinds(it.mask)) it.name else null }
                 .joinToString(separator = " | ")
 
         return "DescriptorKindFilter($kindString, $excludes)"
@@ -138,21 +137,19 @@ class DescriptorKindFilter(
         private class MaskToName(val mask: Int, val name: String)
 
         private val DEBUG_PREDEFINED_FILTERS_MASK_NAMES = staticFields<DescriptorKindFilter>()
-                .map { field ->
+                .mapNotNull { field ->
                     val filter = field.get(null) as? DescriptorKindFilter
                     if (filter != null) MaskToName(filter.kindMask, field.name) else null
                 }
-                .filterNotNull()
                 .toReadOnlyList()
 
         private val DEBUG_MASK_BIT_NAMES = staticFields<DescriptorKindFilter>()
                 .filter { it.type == Integer.TYPE }
-                .map { field ->
+                .mapNotNull { field ->
                     val mask = field.get(null) as Int
                     val isOneBitMask = mask == (mask and (-mask))
                     if (isOneBitMask) MaskToName(mask, field.name) else null
                 }
-                .filterNotNull()
                 .toReadOnlyList()
 
         private inline fun <reified T : Any> staticFields() = T::class.java.fields.filter { Modifier.isStatic(it.modifiers) }
