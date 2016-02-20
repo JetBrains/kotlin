@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,8 +91,6 @@ public interface MatchResult {
      * If the group in the regular expression is optional and there were no match captured by that group,
      * corresponding component value is an empty string.
      */
-    @Suppress("NOTHING_TO_INLINE")
-    @kotlin.jvm.JvmVersion
     public class Destructured internal constructor(public val match: MatchResult) {
         @kotlin.internal.InlineOnly
         public operator inline fun component1():  String = match.groupValues[1]
