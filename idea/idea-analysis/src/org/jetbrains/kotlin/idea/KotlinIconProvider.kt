@@ -14,163 +14,106 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea
 
-import com.intellij.ide.IconProvider;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.RowIcon;
-import com.intellij.util.PlatformIcons;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.KtLightClassForFacade;
-import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.ide.IconProvider
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.util.Iconable
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.ui.RowIcon
+import com.intellij.util.PlatformIcons
+import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
+import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import javax.swing.Icon
 
-import javax.swing.*;
-import java.util.List;
+class KotlinIconProvider : IconProvider(), DumbAware {
 
-public class KotlinIconProvider extends IconProvider implements DumbAware {
-
-    public static KotlinIconProvider INSTANCE = new KotlinIconProvider();
-
-    @Nullable
-    public static KtClassOrObject getMainClass(@NotNull KtFile file) {
-        List<KtDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<KtDeclaration>() {
-            @Override
-            public boolean value(KtDeclaration jetDeclaration) {
-                return jetDeclaration instanceof KtClassOrObject;
-            }
-        });
-        if (classes.size() == 1) {
-            if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
-                return (KtClassOrObject) classes.get(0);
-            }
+    override fun getIcon(psiElement: PsiElement, flags: Int): Icon? {
+        if (psiElement is KtFile) {
+            val mainClass = getMainClass(psiElement)
+            return if (mainClass != null && psiElement.declarations.size == 1) getIcon(mainClass, flags) else KotlinIcons.FILE
         }
-        return null;
+
+        val result = psiElement.getBaseIcon()
+        if (flags and Iconable.ICON_FLAG_VISIBILITY > 0 && result != null && psiElement is KtModifierListOwner) {
+            val list = psiElement.modifierList
+            return createRowIcon(result, getVisibilityIcon(list))
+        }
+        return result
     }
 
-    @Override
-    public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
-        if (psiElement instanceof KtFile) {
-            KtFile file = (KtFile) psiElement;
-            KtClassOrObject mainClass = getMainClass(file);
-            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : KotlinIcons.FILE;
-        }
+    companion object {
 
-        Icon result = getBaseIcon(psiElement);
-        if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof KtModifierListOwner) {
-            KtModifierList list = ((KtModifierListOwner) psiElement).getModifierList();
-            result = createRowIcon(result, getVisibilityIcon(list));
-        }
-        return result;
-    }
+        var INSTANCE = KotlinIconProvider()
 
-    private static RowIcon createRowIcon(Icon baseIcon, Icon visibilityIcon) {
-        RowIcon rowIcon = new RowIcon(2);
-        rowIcon.setIcon(baseIcon, 0);
-        rowIcon.setIcon(visibilityIcon, 1);
-        return rowIcon;
-    }
-
-    public static Icon getVisibilityIcon(@Nullable KtModifierList list) {
-        if (list != null) {
-            if (list.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-                return PlatformIcons.PRIVATE_ICON;
+        fun getMainClass(file: KtFile): KtClassOrObject? {
+            val classes = file.declarations.filterIsInstance<KtClassOrObject>()
+            if (classes.size == 1 && StringUtil.getPackageName(file.name) == classes[0].name) {
+                return classes[0]
             }
-            if (list.hasModifier(KtTokens.PROTECTED_KEYWORD)) {
-                return PlatformIcons.PROTECTED_ICON;
-            }
-            if (list.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
-                return PlatformIcons.PACKAGE_LOCAL_ICON;
-            }
+            return null
         }
 
-        return PlatformIcons.PUBLIC_ICON;
-    }
-
-    public static Icon getBaseIcon(PsiElement psiElement) {
-        if (psiElement instanceof KtPackageDirective) {
-            return PlatformIcons.PACKAGE_ICON;
+        private fun createRowIcon(baseIcon: Icon, visibilityIcon: Icon): RowIcon {
+            val rowIcon = RowIcon(2)
+            rowIcon.setIcon(baseIcon, 0)
+            rowIcon.setIcon(visibilityIcon, 1)
+            return rowIcon
         }
 
-        if (psiElement instanceof KtLightClassForFacade) {
-            return KotlinIcons.FILE;
-        }
-
-        if (psiElement instanceof KtLightClassForDecompiledDeclaration) {
-            KtClassOrObject origin = ((KtLightClassForDecompiledDeclaration) psiElement).getOrigin();
-            if (origin != null) {
-                psiElement = origin;
+        fun getVisibilityIcon(list: KtModifierList?): Icon {
+            if (list != null) {
+                if (list.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+                    return PlatformIcons.PRIVATE_ICON
+                }
+                if (list.hasModifier(KtTokens.PROTECTED_KEYWORD)) {
+                    return PlatformIcons.PROTECTED_ICON
+                }
+                if (list.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
+                    return PlatformIcons.PACKAGE_LOCAL_ICON
+                }
             }
-            else {
+
+            return PlatformIcons.PUBLIC_ICON
+        }
+
+        fun PsiElement.getBaseIcon(): Icon? = when(this) {
+            is KtPackageDirective -> PlatformIcons.PACKAGE_ICON
+            is KtLightClassForFacade -> KotlinIcons.FILE
+            is KtLightClassForDecompiledDeclaration -> {
+                val origin = getOrigin()
                 //TODO (light classes for decompiled files): correct presentation
-                return KotlinIcons.CLASS;
+                if (origin != null) origin.getBaseIcon() else KotlinIcons.CLASS
             }
-        }
-
-        if (psiElement instanceof KtLightClassForExplicitDeclaration) {
-            psiElement = psiElement.getNavigationElement();
-        }
-
-        if (psiElement instanceof KtNamedFunction) {
-            if (((KtFunction) psiElement).getReceiverTypeReference() != null) {
-                return KotlinIcons.EXTENSION_FUNCTION;
+            is KtLightClassForExplicitDeclaration -> navigationElement.getBaseIcon()
+            is KtNamedFunction -> when {
+                receiverTypeReference != null -> KotlinIcons.EXTENSION_FUNCTION
+                getStrictParentOfType<KtNamedDeclaration>() is KtClass ->
+                    if (KtPsiUtil.isAbstract(this)) PlatformIcons.ABSTRACT_METHOD_ICON else PlatformIcons.METHOD_ICON
+                else -> KotlinIcons.FUNCTION
             }
-
-            if (PsiTreeUtil.getParentOfType(psiElement, KtNamedDeclaration.class) instanceof KtClass) {
-                if (KtPsiUtil.isAbstract((KtFunction) psiElement)) {
-                    return PlatformIcons.ABSTRACT_METHOD_ICON;
+            is KtFunctionLiteral -> KotlinIcons.LAMBDA
+            is KtClass -> when {
+                isInterface() -> KotlinIcons.TRAIT
+                isEnum() -> KotlinIcons.ENUM
+                this is KtEnumEntry && getPrimaryConstructorParameterList() == null -> KotlinIcons.ENUM
+                else -> KotlinIcons.CLASS
+            }
+            is KtObjectDeclaration -> KotlinIcons.OBJECT
+            is KtParameter -> {
+                if (KtPsiUtil.getClassIfParameterIsProperty(this) != null) {
+                    if (isMutable) KotlinIcons.FIELD_VAR else KotlinIcons.FIELD_VAL
                 }
-                else {
-                    return PlatformIcons.METHOD_ICON;
-                }
+                else
+                    KotlinIcons.PARAMETER
             }
-            else {
-                return KotlinIcons.FUNCTION;
-            }
+            is KtProperty -> if (isVar) KotlinIcons.FIELD_VAR else KotlinIcons.FIELD_VAL
+            else -> null
         }
-
-        if (psiElement instanceof KtFunctionLiteral) return KotlinIcons.LAMBDA;
-
-        if (psiElement instanceof KtClass) {
-            KtClass ktClass = (KtClass) psiElement;
-            if (ktClass.isInterface()) {
-                return KotlinIcons.TRAIT;
-            }
-
-            Icon icon = ktClass.isEnum() ? KotlinIcons.ENUM : KotlinIcons.CLASS;
-            if (ktClass instanceof KtEnumEntry) {
-                KtEnumEntry enumEntry = (KtEnumEntry) ktClass;
-                if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                    icon = KotlinIcons.ENUM;
-                }
-            }
-            return icon;
-        }
-        if (psiElement instanceof KtObjectDeclaration) {
-            return KotlinIcons.OBJECT;
-        }
-        if (psiElement instanceof KtParameter) {
-            KtParameter parameter = (KtParameter) psiElement;
-            if (KtPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
-                return parameter.isMutable() ? KotlinIcons.FIELD_VAR : KotlinIcons.FIELD_VAL;
-            }
-
-            return KotlinIcons.PARAMETER;
-        }
-        if (psiElement instanceof KtProperty) {
-            KtProperty property = (KtProperty) psiElement;
-            return property.isVar() ? KotlinIcons.FIELD_VAR : KotlinIcons.FIELD_VAL;
-        }
-
-        return null;
     }
 }
