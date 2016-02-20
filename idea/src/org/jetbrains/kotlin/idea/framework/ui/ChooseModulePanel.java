@@ -19,13 +19,19 @@ package org.jetbrains.kotlin.idea.framework.ui;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.Function;
+import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -37,7 +43,7 @@ public class ChooseModulePanel {
     private JRadioButton allModulesWithKtRadioButton;
     private JRadioButton singleModuleRadioButton;
     private JComboBox singleModuleComboBox;
-    private JTextField allModulesWithKtNames;
+    private HyperlinkLabel allModulesWithKtNames;
     private JRadioButton allModulesRadioButton;
 
     @NotNull private final Project project;
@@ -71,14 +77,31 @@ public class ChooseModulePanel {
         allModulesWithKtRadioButton.addActionListener(listener);
         allModulesRadioButton.addActionListener(listener);
 
-        String fullList = StringUtil.join(modulesWithKtFiles, new Function<Module, String>() {
-            @Override
-            public String fun(Module module) {
-                return module.getName();
-            }
-        }, ", ");
-        allModulesWithKtNames.setText(fullList);
-        allModulesWithKtNames.setBorder(null);
+        if (modulesWithKtFiles.size() > 2) {
+            allModulesWithKtNames.setHtmlText("<html>" + XmlUtil.escape(modulesWithKtFiles.get(0).getName()) + ", " +
+                                              XmlUtil.escape(modulesWithKtFiles.get(1).getName()) +
+                                              " and <a href=\"#\">" + (modulesWithKtFiles.size() - 2) + " other modules</a>");
+            allModulesWithKtNames.addHyperlinkListener(new HyperlinkListener() {
+                @Override
+                public void hyperlinkUpdate(HyperlinkEvent event) {
+                    JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<Module>("Modules with Kotlin Files", modulesWithKtFiles) {
+                        @NotNull
+                        @Override
+                        public String getTextFor(Module value) {
+                            return value.getName();
+                        }
+                    }).showUnderneathOf(allModulesWithKtNames);
+                }
+            });
+        }
+        else {
+            allModulesWithKtNames.setText(StringUtil.join(modules, new Function<Module, String>() {
+                @Override
+                public String fun(Module module) {
+                    return module.getName();
+                }
+            }, ", "));
+        }
 
         ButtonGroup modulesGroup = new ButtonGroup();
         modulesGroup.add(allModulesRadioButton);
