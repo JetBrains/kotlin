@@ -557,7 +557,6 @@
             <withKotlin modulename="kotlin-compiler">
                 <compilerarg value="-version"/>
             </withKotlin>
-            <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
@@ -617,7 +616,7 @@
             <withKotlin modulename="kotlin-build-common">
                 <compilerarg value="-version"/>
             </withKotlin>
-            <skip pattern="kotlin/jvm/internal/.*"/>
+            <skip pattern="kotlin/Metadata"/>
             <src>
                 <pathelement path="build-common/src"/>
             </src>
@@ -692,7 +691,6 @@
             <withKotlin modulename="kotlin-android-compiler-plugin">
                 <compilerarg value="-version"/>
             </withKotlin>
-            <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
                 <pathelement path="plugins/android-compiler-plugin/src"/>
@@ -719,7 +717,6 @@
             <withKotlin modulename="kotlin-ant-tools">
                 <compilerarg value="-version"/>
             </withKotlin>
-            <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
                 <dirset dir="${basedir}/ant">
@@ -799,7 +796,6 @@
 
             <javac2 srcdir="${toString:src.dirset}" destdir="@{output}" debug="true" debuglevel="lines,vars,source"
                     includeAntRuntime="false" source="${java.target}" target="${java.target}">
-                <skip pattern="kotlin/jvm/internal/.*"/>
                 <skip pattern="kotlin/Metadata"/>
                 <classpath>
                     <path refid="classpath.path"/>
@@ -975,7 +971,7 @@
             <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
                 <compilerarg value="-version"/>
                 <compilerarg value="-script"/>
-                <compilerarg value="kotlin/jvm/internal/.*|kotlin/Metadata"/> <!-- Annotations to strip -->
+                <compilerarg value="kotlin/Metadata"/> <!-- Annotation to strip -->
                 <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
                 <compilerarg value="${output}/kotlin-reflect-jarjar.jar"/>
                 <compilerarg value="${kotlin-home}/lib/kotlin-reflect.jar"/>
@@ -1071,7 +1067,6 @@
             <withKotlin modulename="kotlin-for-upsource">
                 <compilerarg value="-version"/>
             </withKotlin>
-            <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
                 <dirset dir="${basedir}/idea/ide-common" includes="src"/>
