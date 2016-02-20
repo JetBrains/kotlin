@@ -792,7 +792,13 @@ fun main(args: Array<String>) {
     }
 
     testGroup("idea/idea-ultimate/tests", "idea/testData") {
+        testClass<AbstractInspectionTest>("UltimateInspectionTestGenerated") {
+            model("ultimateInspections", pattern = "^(inspections\\.test)$", singleClass = true)
+        }
 
+        testClass<AbstractQuickFixTest>("UltimateQuickFixTestGenerated") {
+            model("ultimateQuickFixes", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
+        }
     }
 
     testGroup("idea/tests", "compiler/testData") {
