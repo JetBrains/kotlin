@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.types.KotlinType;
 
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
@@ -35,8 +34,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public final MutableResolvedCall<D> candidateCall;
     @NotNull
     public final TracingStrategy tracing;
-    @Nullable
-    public final Receiver explicitExtensionReceiverForInvoke;
     @NotNull
     public final CandidateResolveMode candidateResolveMode;
 
@@ -53,7 +50,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull StatementFilter statementFilter,
-            @Nullable Receiver explicitExtensionReceiverForInvoke,
             @NotNull CandidateResolveMode candidateResolveMode,
             boolean isAnnotationContext,
             boolean isDebuggerContext,
@@ -65,20 +61,19 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
               collectAllCandidates, callPosition);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
-        this.explicitExtensionReceiverForInvoke = explicitExtensionReceiverForInvoke;
         this.candidateResolveMode = candidateResolveMode;
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing, @NotNull Call call, @Nullable Receiver explicitExtensionReceiverForInvoke,
+            @NotNull TracingStrategy tracing, @NotNull Call call,
             @NotNull CandidateResolveMode candidateResolveMode
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
-                context.statementFilter, explicitExtensionReceiverForInvoke,
+                context.statementFilter,
                 candidateResolveMode, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
     }
 
@@ -90,7 +85,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.statementFilter,
-                null, CandidateResolveMode.FULLY, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
+                CandidateResolveMode.FULLY, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
                 context.callPosition);
     }
 
@@ -109,6 +104,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, statementFilter,
-                explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+                candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 }
