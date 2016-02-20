@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 
-class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
+class WhenByPlatformEnumChecker : AdditionalTypeChecker {
 
     override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
         if (expression is KtWhenExpression && expression.elseExpression == null) {

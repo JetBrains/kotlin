@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
+import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.jvm.JvmOverloadFilter
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
@@ -55,7 +54,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
         ),
 
         additionalTypeCheckers = listOf(
-                JavaNullabilityWarningsChecker(),
+                WhenByPlatformEnumChecker(),
                 RuntimeAssertionsTypeChecker,
                 JavaGenericVarianceViolationTypeChecker,
                 JavaTypeAccessibilityChecker()
