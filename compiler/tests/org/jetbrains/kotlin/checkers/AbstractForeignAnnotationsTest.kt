@@ -16,26 +16,14 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
-
 abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
-    lateinit var annotationsFile: File
-
-    override fun createCompilerConfiguration(javaFilesDir: File?): CompilerConfiguration {
-        val annotationsFile = MockLibraryUtil.compileLibraryToJar(
+    override fun getExtraClasspath(): List<File> {
+        return listOf(MockLibraryUtil.compileLibraryToJar(
                 "compiler/testData/foreignAnnotations/annotations",
-                "foreign-annotations", /* addSources = */false, /* allowKotlinPackage =*/ false)
-
-        return KotlinTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY,
-                TestJdkKind.MOCK_JDK,
-                listOf(KotlinTestUtils.getAnnotationsJar(), annotationsFile),
-                listOf(javaFilesDir))
+                "foreign-annotations", /* addSources = */false, /* allowKotlinPackage = */ false
+        ))
     }
 }

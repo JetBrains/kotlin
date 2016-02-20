@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.checkers;
 
-import com.google.common.io.Files;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.io.FileUtil;
+import kotlin.collections.CollectionsKt;
+import kotlin.io.FilesKt;
+import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -31,17 +31,17 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixture {
+    private File javaFilesDir;
+    private File kotlinSourceRoot;
+
     protected class ModuleAndDependencies {
         final M module;
         final List<String> dependencies;
@@ -52,69 +52,49 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixtur
         }
     }
 
-    protected static boolean writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
-        try {
-            File sourceFile = new File(targetDir, fileName);
-            KotlinTestUtils.mkdirs(sourceFile.getParentFile());
-            Files.write(content, sourceFile, Charset.forName("utf-8"));
-            return true;
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
     @Override
-    protected KotlinCoreEnvironment createEnvironment() {
-        File javaFilesDir = createJavaFilesDir();
-        CompilerConfiguration configuration = createCompilerConfiguration(javaFilesDir);
-        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition.INSTANCE);
-        File kotlinSourceRoot = getKotlinSourceRoot();
-        if (kotlinSourceRoot != null) {
-            ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
-        }
-        return createEnvironment(getTestRootDisposable(), configuration);
-    }
-
-    @NotNull
-    protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
-        return KotlinTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.MOCK_RUNTIME,
-                TestJdkKind.MOCK_JDK,
-                Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
+    protected KotlinCoreEnvironment createEnvironment() throws Exception {
+        javaFilesDir = KotlinTestUtils.tmpDir("java-files");
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
+                getConfigurationKind(),
+                getTestJdkKind(),
+                CollectionsKt.plus(Collections.singletonList(KotlinTestUtils.getAnnotationsJar()), getExtraClasspath()),
                 Collections.singletonList(javaFilesDir)
         );
+        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition.INSTANCE);
+        if (isKotlinSourceRootNeeded()) {
+            kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src");
+            ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
+        }
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, getEnvironmentConfigFiles());
     }
 
     @NotNull
-    protected KotlinCoreEnvironment createEnvironment(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+    protected ConfigurationKind getConfigurationKind() {
+        return ConfigurationKind.MOCK_RUNTIME;
     }
 
-    @Nullable
-    protected File getKotlinSourceRoot() {
-        return null;
+    @NotNull
+    protected TestJdkKind getTestJdkKind() {
+        return TestJdkKind.MOCK_JDK;
     }
 
-    protected File createJavaFilesDir() {
-        return createTmpDir("java-files");
+    @NotNull
+    protected List<File> getExtraClasspath() {
+        return Collections.emptyList();
     }
 
-    protected static File createTmpDir(String dirName) {
-        File dir = new File(FileUtil.getTempDirectory(), dirName);
-        try {
-            KotlinTestUtils.mkdirs(dir);
-        }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-        return dir;
+    @NotNull
+    protected List<String> getEnvironmentConfigFiles() {
+        return EnvironmentConfigFiles.JVM_CONFIG_FILES;
+    }
+
+    protected boolean isKotlinSourceRootNeeded() {
+        return false;
     }
 
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
-        final File javaFilesDir = createJavaFilesDir();
-        final File kotlinFilesDir = getKotlinSourceRoot();
 
         String expectedText = KotlinTestUtils.doLoadFile(file);
 
@@ -133,8 +113,8 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixtur
                             writeSourceFile(fileName, text, javaFilesDir);
                         }
 
-                        if (fileName.endsWith(".kt") && kotlinFilesDir != null) {
-                            writeSourceFile(fileName, text, kotlinFilesDir);
+                        if (fileName.endsWith(".kt") && kotlinSourceRoot != null) {
+                            writeSourceFile(fileName, text, kotlinSourceRoot);
                         }
 
                         return createTestFile(module, fileName, text, directives);
@@ -147,6 +127,12 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixtur
                         assert oldValue == null : "Module " + name + " declared more than once";
 
                         return module;
+                    }
+
+                    private void writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
+                        File file = new File(targetDir, fileName);
+                        KotlinTestUtils.mkdirs(file.getParentFile());
+                        FilesKt.writeText(file, content, Charsets.UTF_8);
                     }
                 });
 

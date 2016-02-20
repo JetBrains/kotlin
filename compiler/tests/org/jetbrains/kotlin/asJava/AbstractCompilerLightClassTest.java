@@ -22,34 +22,25 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTestWithJava<Void, Void> {
-    @Override
     @NotNull
-    protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
-        return KotlinTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL,
-                TestJdkKind.MOCK_JDK,
-                Arrays.asList(KotlinTestUtils.getAnnotationsJar()),
-                Arrays.asList(javaFilesDir)
-        );
+    @Override
+    protected ConfigurationKind getConfigurationKind() {
+        return ConfigurationKind.ALL;
     }
 
-    @NotNull
     @Override
-    protected File getKotlinSourceRoot() {
-        return createTmpDir("kotlin-src");
+    protected boolean isKotlinSourceRootNeeded() {
+        return true;
     }
 
     @NotNull

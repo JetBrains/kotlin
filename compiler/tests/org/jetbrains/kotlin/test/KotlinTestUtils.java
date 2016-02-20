@@ -337,15 +337,15 @@ public class KotlinTestUtils {
         return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
     }
 
-    public static void mkdirs(File file) throws IOException {
+    public static void mkdirs(@NotNull File file) {
         if (file.isDirectory()) {
             return;
         }
         if (!file.mkdirs()) {
             if (file.exists()) {
-                throw new IOException("failed to create " + file + " file exists and not a directory");
+                throw new IllegalStateException("Failed to create " + file + ": file exists and not a directory");
             }
-            throw new IOException();
+            throw new IllegalStateException("Failed to create " + file);
         }
     }
 

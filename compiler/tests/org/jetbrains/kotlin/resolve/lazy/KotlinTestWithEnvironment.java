@@ -36,7 +36,7 @@ public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmen
         super.tearDown();
     }
 
-    protected abstract KotlinCoreEnvironment createEnvironment();
+    protected abstract KotlinCoreEnvironment createEnvironment() throws Exception;
 
     @NotNull
     public KotlinCoreEnvironment getEnvironment() {
