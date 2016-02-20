@@ -43,6 +43,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/annotations"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("annotationArrayArgument.java")
+        public void testAnnotationArrayArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationArrayArgument.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationDefault.java")
+        public void testAnnotationDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationDefault.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("annotationInterface1.java")
         public void testAnnotationInterface1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface1.java");

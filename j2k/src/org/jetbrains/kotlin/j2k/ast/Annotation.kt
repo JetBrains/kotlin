@@ -27,27 +27,39 @@ class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Def
             builder.append(name)
         }
         else {
-            builder.append(name)
-                    .append("(")
-                    .buildList(
-                            generators = arguments.map {
-                                {
-                                    if (it.first != null) {
-                                        builder append it.first!! append " = " append it.second
-                                    }
-                                    else {
-                                        builder append it.second
-                                    }
-                                }
-                            },
-                            separator = ", ")
-                    .append(")")
+            generateCall(builder)
         }
+    }
+
+    fun generateCall(builder: CodeBuilder) {
+        builder.append(name)
+                .append("(")
+                .buildList(
+                        generators = arguments.map {
+                            {
+                                if (it.first != null) {
+                                    builder append it.first!! append " = " append it.second
+                                }
+                                else {
+                                    builder append it.second
+                                }
+                            }
+                        },
+                        separator = ", ")
+                .append(")")
     }
 
     override fun postGenerateCode(builder: CodeBuilder) {
         // we add line break in postGenerateCode to keep comments attached to this element on the same line
         builder.append(if (newLineAfter) "\n" else " ")
+    }
+}
+
+class AnnotationConstructorCall(name: Identifier, arguments: List<Pair<Identifier?, DeferredElement<Expression>>>) : Expression() {
+    private val annotation = Annotation(name, arguments, false)
+
+    override fun generateCode(builder: CodeBuilder) {
+        annotation.generateCall(builder)
     }
 }
 
