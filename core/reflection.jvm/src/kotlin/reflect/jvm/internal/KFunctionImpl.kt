@@ -28,7 +28,7 @@ import kotlin.reflect.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 
 internal open class KFunctionImpl protected constructor(
-        private val container: KDeclarationContainerImpl,
+        override val container: KDeclarationContainerImpl,
         name: String,
         private val signature: String,
         descriptorInitialValue: FunctionDescriptor?

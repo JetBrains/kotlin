@@ -31,8 +31,6 @@ import kotlin.reflect.KProperty
 internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
     val javaField: Field?
 
-    val container: KDeclarationContainerImpl
-
     val signature: String
 
     override val getter: Getter<R>
@@ -53,6 +51,8 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     abstract class Getter<out R> : Accessor<R>(), KProperty.Getter<R>, KCallableImpl<R> {
         override val name: String get() = "<get-${property.name}>"
+
+        override val container: KDeclarationContainerImpl get() = property.container
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default getter created this way won't have any source information
@@ -75,6 +75,8 @@ internal interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<
         abstract override val property: KMutablePropertyImpl<R>
 
         override val name: String get() = "<set-${property.name}>"
+
+        override val container: KDeclarationContainerImpl get() = property.container
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default setter created this way won't have any source information

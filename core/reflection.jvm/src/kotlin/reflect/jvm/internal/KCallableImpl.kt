@@ -33,6 +33,8 @@ internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
 
     val defaultCaller: FunctionCaller<*>?
 
+    val container: KDeclarationContainerImpl
+
     override val annotated: Annotated get() = descriptor
 
     override val parameters: List<KParameter>

@@ -24,7 +24,7 @@ import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
 import kotlin.reflect.jvm.internal.JvmPropertySignature.KotlinProperty
 
 internal abstract class DescriptorBasedProperty<out R> protected constructor(
-        val container: KDeclarationContainerImpl,
+        override val container: KDeclarationContainerImpl,
         name: String,
         val signature: String,
         descriptorInitialValue: PropertyDescriptor?
