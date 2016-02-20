@@ -72,6 +72,10 @@ public interface JFunction0 {
     void foo();
 }
 
+public interface Listener {
+    public void onChange(int visibility);
+}
+
 public interface JFunction1ReturnType<T> {
     void foo(T t);
 }
