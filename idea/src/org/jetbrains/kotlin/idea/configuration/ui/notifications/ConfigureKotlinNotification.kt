@@ -14,89 +14,62 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration.ui.notifications;
+package org.jetbrains.kotlin.idea.configuration.ui.notifications
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
-import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent;
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
+import org.jetbrains.kotlin.idea.configuration.getAbleToRunConfigurators
+import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
+import org.jetbrains.kotlin.idea.configuration.getNonConfiguredModules
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
+import javax.swing.event.HyperlinkEvent
 
-import javax.swing.event.HyperlinkEvent;
-import java.util.Collection;
-import java.util.List;
+class ConfigureKotlinNotification(
+        project: Project,
+        excludeModules: List<Module>) : Notification(KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, "Configure Kotlin",
+                                                     getNotificationString(project, excludeModules),
+                                                     NotificationType.WARNING, NotificationListener { notification, event ->
+    if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+        val configurator = getConfiguratorByName(event.description) ?: throw AssertionError("Missed action: " + event.description)
+        notification.expire()
 
-import static kotlin.collections.CollectionsKt.first;
+        configurator.configure(project, excludeModules)
+    }
+}) {
 
-public class ConfigureKotlinNotification extends Notification {
-    private static final String TITLE = "Configure Kotlin";
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o !is ConfigureKotlinNotification) return false
 
-    public ConfigureKotlinNotification(
-            @NotNull final Project project,
-            @NotNull final List<Module> excludeModules
-    ) {
-        super(KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, getNotificationString(project, excludeModules),
-              NotificationType.WARNING, new NotificationListener() {
-            @Override
-            public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(event.getDescription());
-                    if (configurator == null) {
-                        throw new AssertionError("Missed action: " + event.getDescription());
-                    }
-                    notification.expire();
+        if (content != o.content) return false
 
-                    configurator.configure(project, excludeModules);
-                }
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return content.hashCode()
+    }
+
+    companion object {
+        fun getNotificationString(project: Project, excludeModules: Collection<Module>): String {
+            val modules = getNonConfiguredModules(project, excludeModules)
+
+            val isOnlyOneModule = modules.size == 1
+
+            val modulesString = if (isOnlyOneModule) "'${modules.first().name}' module" else "modules"
+            val links = getAbleToRunConfigurators(project).joinToString(separator = "<br/>") {
+                configurator -> getLink(configurator, isOnlyOneModule)
             }
-        });
-    }
 
-    @NotNull
-    public static String getNotificationString(Project project, Collection<Module> excludeModules) {
-        Collection<Module> modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, excludeModules);
+            return "Configure $modulesString in '${project.name}' project<br/> $links"
+        }
 
-        final boolean isOnlyOneModule = modules.size() == 1;
-
-        String modulesString = isOnlyOneModule ? String.format("'%s' module", first(modules).getName()) : "modules";
-        String links = StringUtil.join(ConfigureKotlinInProjectUtilsKt.getAbleToRunConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
-            @Override
-            public String fun(KotlinProjectConfigurator configurator) {
-                return getLink(configurator, isOnlyOneModule);
-            }
-        }, "<br/>");
-
-        return String.format("Configure %s in '%s' project<br/> %s", modulesString, project.getName(), links);
-    }
-
-    @NotNull
-    private static String getLink(@NotNull KotlinProjectConfigurator configurator, boolean isOnlyOneModule) {
-        return StringUtil.join("<a href=\"", configurator.getName(), "\">as Kotlin (",
-                               configurator.getPresentableText(),
-                               isOnlyOneModule ? ") module" : ") modules",
-                               "</a>");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ConfigureKotlinNotification)) return false;
-
-        ConfigureKotlinNotification that = (ConfigureKotlinNotification) o;
-
-        if (!getContent().equals(that.getContent())) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return getContent().hashCode();
+        private fun getLink(configurator: KotlinProjectConfigurator, isOnlyOneModule: Boolean): String {
+            return "<a href=\"${configurator.name}\">as Kotlin (${configurator.presentableText}) module${if(!isOnlyOneModule) "s" else ""}</a>"
+        }
     }
 }
