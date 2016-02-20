@@ -9231,6 +9231,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/toRawStringLiteral")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ToRawStringLiteral extends AbstractIntentionTest {
+        @TestMetadata("3quotes.kt")
+        public void test3quotes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/3quotes.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInToRawStringLiteral() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/toRawStringLiteral"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("alreadyRaw.kt")
+        public void testAlreadyRaw() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/alreadyRaw.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dollar.kt")
+        public void testDollar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/dollar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dollar2.kt")
+        public void testDollar2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/dollar2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("quotesAndSlashes.kt")
+        public void testQuotesAndSlashes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/quotesAndSlashes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("specialChar.kt")
+        public void testSpecialChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/specialChar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tabCharacter.kt")
+        public void testTabCharacter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/tabCharacter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("trailingSpace.kt")
+        public void testTrailingSpace() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/trailingSpace.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("trailingSpace2.kt")
+        public void testTrailingSpace2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/trailingSpace2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("trailingSpace3.kt")
+        public void testTrailingSpace3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toRawStringLiteral/trailingSpace3.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/usePropertyAccessSyntax")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

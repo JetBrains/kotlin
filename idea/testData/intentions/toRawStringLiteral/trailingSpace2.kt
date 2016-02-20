@@ -1,0 +1,1 @@
+val v = <caret>"Hello, world!\n "
