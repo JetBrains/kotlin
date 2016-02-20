@@ -180,10 +180,10 @@ public class CallResolver {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<D>>() {
             @Override
             public OverloadResolutionResults<D> invoke() {
-                TaskContextForMigration<D> contextForMigration = new TaskContextForMigration<D>(
+                ResolutionTask<D> resolutionTask = new ResolutionTask<D>(
                         kind, name, null
                 );
-                return doResolveCallOrGetCachedResults(context, contextForMigration, tracing);
+                return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
             }
         });
     }
@@ -207,10 +207,10 @@ public class CallResolver {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<D>>() {
             @Override
             public OverloadResolutionResults<D> invoke() {
-                TaskContextForMigration<D> contextForMigration = new TaskContextForMigration<D>(
+                ResolutionTask<D> resolutionTask = new ResolutionTask<D>(
                         ResolveKind.GIVEN_CANDIDATES, null, candidates
                 );
-                return doResolveCallOrGetCachedResults(context, contextForMigration, tracing);
+                return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
             }
         });
     }
@@ -485,20 +485,20 @@ public class CallResolver {
 
                 Set<ResolutionCandidate<FunctionDescriptor>> candidates = Collections.singleton(candidate);
 
-                TaskContextForMigration<FunctionDescriptor> contextForMigration =
-                        new TaskContextForMigration<FunctionDescriptor>(
+                ResolutionTask<FunctionDescriptor> resolutionTask =
+                        new ResolutionTask<FunctionDescriptor>(
                                 ResolveKind.GIVEN_CANDIDATES, null, candidates
                         );
 
 
-                return doResolveCallOrGetCachedResults(basicCallResolutionContext, contextForMigration, tracing);
+                return doResolveCallOrGetCachedResults(basicCallResolutionContext, resolutionTask, tracing);
             }
         });
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> doResolveCallOrGetCachedResults(
             @NotNull BasicCallResolutionContext context,
-            @NotNull TaskContextForMigration<D> contextForMigration,
+            @NotNull ResolutionTask<D> resolutionTask,
             @NotNull TracingStrategy tracing
     ) {
         Call call = context.call;
@@ -510,7 +510,7 @@ public class CallResolver {
         BindingContextUtilsKt.recordScope(newContext.trace, newContext.scope, newContext.call.getCalleeExpression());
         BindingContextUtilsKt.recordDataFlowInfo(newContext, newContext.call.getCalleeExpression());
 
-        OverloadResolutionResultsImpl<D> results = doResolveCall(newContext, contextForMigration, tracing);
+        OverloadResolutionResultsImpl<D> results = doResolveCall(newContext, resolutionTask, tracing);
         DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
         if (deltasTraceForTypeInference != null) {
             deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
@@ -570,7 +570,7 @@ public class CallResolver {
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> doResolveCall(
             @NotNull BasicCallResolutionContext context,
-            @NotNull TaskContextForMigration<D> contextForMigration,
+            @NotNull ResolutionTask<D> resolutionTask,
             @NotNull TracingStrategy tracing
     ) {
         if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
@@ -591,20 +591,19 @@ public class CallResolver {
             }
         }
 
-        if (contextForMigration.resolveKind != ResolveKind.GIVEN_CANDIDATES) {
-            assert contextForMigration.name != null;
+        if (resolutionTask.resolveKind != ResolveKind.GIVEN_CANDIDATES) {
+            assert resolutionTask.name != null;
             return (OverloadResolutionResultsImpl<D>)
-                    newCallResolver.runResolve(context, contextForMigration.name, contextForMigration.resolveKind, tracing);
+                    newCallResolver.runResolve(context, resolutionTask.name, resolutionTask.resolveKind, tracing);
         }
         else {
-            assert contextForMigration.givenCandidates != null;
-            return newCallResolver.runResolveForGivenCandidates(context, tracing, contextForMigration.givenCandidates);
+            assert resolutionTask.givenCandidates != null;
+            return newCallResolver.runResolveForGivenCandidates(context, tracing, resolutionTask.givenCandidates);
         }
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private static class TaskContextForMigration<D extends CallableDescriptor> {
+    private static class ResolutionTask<D extends CallableDescriptor> {
 
         @Nullable
         final Name name;
@@ -615,7 +614,7 @@ public class CallResolver {
         @NotNull
         final ResolveKind resolveKind;
 
-        private TaskContextForMigration(
+        private ResolutionTask(
                 @NotNull ResolveKind kind,
                 @Nullable Name name,
                 @Nullable Collection<ResolutionCandidate<D>> candidates
