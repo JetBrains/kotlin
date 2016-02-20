@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -39,7 +37,6 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean isDebuggerContext,
@@ -47,7 +44,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull CallPosition callPosition
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+              dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 
     @NotNull
@@ -59,12 +56,11 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CheckArgumentTypesMode checkArguments,
-            @NotNull CallChecker callChecker,
             boolean isAnnotationContext
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               new ResolutionResultsCacheImpl(), null,
-                                              callChecker, StatementFilter.NONE, isAnnotationContext, false, false,
+                                              StatementFilter.NONE, isAnnotationContext, false, false,
                                               CallPosition.Unknown.INSTANCE);
     }
 
@@ -76,7 +72,6 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
         return new BasicCallResolutionContext(
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
                 context.resolutionResultsCache, dataFlowInfoForArguments,
-                context.callChecker,
                 context.statementFilter, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
     }
 
@@ -101,17 +96,13 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
+                dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 
     @NotNull
     public BasicCallResolutionContext replaceCall(@NotNull Call newCall) {
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
-    }
-
-    public void performContextDependentCallChecks(@NotNull ResolvedCall<?> resolvedCall) {
-        callChecker.check(resolvedCall, this);
+                dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 }

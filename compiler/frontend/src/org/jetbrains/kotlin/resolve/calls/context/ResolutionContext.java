@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -46,8 +45,6 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public final ResolutionResultsCache resolutionResultsCache;
     @NotNull
-    public final CallChecker callChecker;
-    @NotNull
     public final StatementFilter statementFilter;
 
     public final boolean isAnnotationContext;
@@ -66,7 +63,6 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean isDebuggerContext,
@@ -79,7 +75,6 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.dataFlowInfo = dataFlowInfo;
         this.contextDependency = contextDependency;
         this.resolutionResultsCache = resolutionResultsCache;
-        this.callChecker = callChecker;
         this.statementFilter = statementFilter;
         this.isAnnotationContext = isAnnotationContext;
         this.isDebuggerContext = isDebuggerContext;

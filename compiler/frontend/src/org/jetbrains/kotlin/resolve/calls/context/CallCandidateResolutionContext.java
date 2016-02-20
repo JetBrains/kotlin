@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -53,7 +52,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             @Nullable Receiver explicitExtensionReceiverForInvoke,
             @NotNull CandidateResolveMode candidateResolveMode,
@@ -63,7 +61,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull CallPosition callPosition
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext,
+              dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext,
               collectAllCandidates, callPosition);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
@@ -80,7 +78,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
-                context.callChecker, context.statementFilter, explicitExtensionReceiverForInvoke,
+                context.statementFilter, explicitExtensionReceiverForInvoke,
                 candidateResolveMode, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
     }
 
@@ -91,7 +89,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
-                context.dataFlowInfoForArguments, context.callChecker, context.statementFilter,
+                context.dataFlowInfoForArguments, context.statementFilter,
                 null, CandidateResolveMode.FULLY, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
                 context.callPosition);
     }
@@ -110,7 +108,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, statementFilter,
+                resolutionResultsCache, dataFlowInfoForArguments, statementFilter,
                 explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 }

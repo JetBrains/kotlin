@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -47,14 +46,13 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @SuppressWarnings("NullableProblems")
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean isDebuggerContext,
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callChecker,
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
               statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
         this.call = call;
         this.checkArguments = checkArguments;
@@ -67,10 +65,5 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
         else {
             this.dataFlowInfoForArguments = new MutableDataFlowInfoForArguments.WithoutArgumentsCheck(dataFlowInfo);
         }
-    }
-
-    @NotNull
-    public BasicCallResolutionContext toBasic() {
-        return BasicCallResolutionContext.create(this, call, checkArguments);
     }
 }
