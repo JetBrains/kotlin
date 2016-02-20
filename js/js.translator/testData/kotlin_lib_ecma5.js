@@ -224,7 +224,7 @@ var Kotlin = {};
         copyProperties(obj.prototype, obj.$metadata$.functions);
         Object.defineProperty(obj, "object", {get: class_object, configurable: true});
 
-        defineNestedTypes(constructor, obj.$metadata$.types);
+        defineNestedTypes(obj, obj.$metadata$.types);
         return obj;
     };
 

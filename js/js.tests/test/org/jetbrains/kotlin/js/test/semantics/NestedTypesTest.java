@@ -34,6 +34,10 @@ public class NestedTypesTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testNestedInInterface() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testInner() throws Exception {
         checkFooBoxIsOk();
     }
