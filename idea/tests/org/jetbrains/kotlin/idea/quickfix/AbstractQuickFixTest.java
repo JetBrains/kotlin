@@ -152,7 +152,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     throw e;
                 }
                 catch (Throwable e) {
-                    if (!e.getMessage().equals(expectedErrorMessage)) {
+                    if (expectedErrorMessage == null || !expectedErrorMessage.equals(e.getMessage())) {
                         e.printStackTrace();
                         fail(testName);
                     }
