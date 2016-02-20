@@ -102,6 +102,10 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testPrivatePropertyAccessFromMethod() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     @Override
     @NotNull
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
