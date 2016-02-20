@@ -40,4 +40,10 @@ public class UltimateInspectionTestGenerated extends AbstractInspectionTest {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/ultimateInspections/spring/finalSpringAnnotatedDeclaration/inspectionData/inspections.test");
         doTest(fileName);
     }
+
+    @TestMetadata("spring/unconfiguredFacet/inspectionData/inspections.test")
+    public void testSpring_unconfiguredFacet_inspectionData_Inspections_test() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/ultimateInspections/spring/unconfiguredFacet/inspectionData/inspections.test");
+        doTest(fileName);
+    }
 }
