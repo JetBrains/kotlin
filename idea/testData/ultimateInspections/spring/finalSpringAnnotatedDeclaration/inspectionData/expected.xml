@@ -1,0 +1,74 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>18</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Configuration class should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>21</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Configuration class should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>32</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Component class should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>41</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Bean function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>44</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Bean function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>47</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Bean function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>50</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Bean function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>55</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Bean function should be declared open</description>
+    </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>58</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Final Kotlin class or function with Spring annotation</problem_class>
+        <description>@Bean function should be declared open</description>
+    </problem>
+</problems>

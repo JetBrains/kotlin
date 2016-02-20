@@ -53,9 +53,12 @@ class SpringTestFixtureExtension() : TestFixtureExtension {
     override fun tearDown() {
         try {
             // clear existing SpringFacet configuration before running next test
-            module?.let { SpringFacet.getInstance(it) }?.let {
-                it.removeFileSets()
-                FacetUtil.deleteFacet(it)
+            module?.let { module ->
+                SpringFacet.getInstance(module)?.let { facet ->
+                    facet.removeFileSets()
+                    FacetUtil.deleteFacet(facet)
+                }
+                ConfigLibraryUtil.removeLibrary(module, "spring" + SpringFramework.FRAMEWORK_4_2_0.version)
             }
         }
         finally {
