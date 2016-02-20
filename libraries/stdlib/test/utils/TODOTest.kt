@@ -1,31 +1,47 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test.utils
 
 import kotlin.*
 import kotlin.test.*
 import org.junit.Test as test
 
-private class PartiallyImplementedClass {
-    public val prop: String get() = TODO()
-//  fun method1() = TODO() as String // <- doesn't compile in JS
-    public fun method2(): Int = TODO()
+class TODOTest {
+    private class PartiallyImplementedClass {
+        public val prop: String get() = TODO()
+        //  fun method1() = TODO() as String // <- doesn't compile in JS
+        public fun method2(): Int = TODO()
 
-    public fun method3(switch: Boolean, value: String): String {
-        if (!switch)
-            TODO("what if false")
-        else {
-            if (value.length < 3)
-                throw TODO("write message")
+        public fun method3(switch: Boolean, value: String): String {
+            if (!switch)
+                TODO("what if false")
+            else {
+                if (value.length < 3)
+                    throw TODO("write message")
+            }
+
+            return value
         }
 
-        return value
+        public fun method4() {
+            TODO()
+        }
     }
 
-    public fun method4() {
-        TODO()
-    }
-}
-
-class TODOTest {
     private fun assertNotImplemented(block: () -> Unit) {
         assertTrue(assertFails(block) is NotImplementedError)
     }

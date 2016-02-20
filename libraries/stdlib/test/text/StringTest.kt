@@ -1,10 +1,24 @@
+/*
+ * Copyright 2010-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package test.text
 
 import kotlin.test.*
 import org.junit.Test as test
 
-// could not be local inside isEmptyAndBlank, because non-toplevel declarations is not yet supported for JS
-class IsEmptyCase(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
 
 fun createString(content: String): CharSequence = content
 fun createStringBuilder(content: String): CharSequence = StringBuilder((content as Any).toString()) // required for Rhino JS
@@ -35,6 +49,10 @@ fun Char.isAsciiLetter() = this in 'A'..'Z' || this in 'a'..'z'
 fun Char.isAsciiUpperCase() = this in 'A'..'Z'
 
 class StringTest {
+
+    // could not be local inside isEmptyAndBlank, because local declarations is not yet supported for JS
+    // TODO: move inside after KT-11030 is implemented
+    class IsEmptyCase(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
 
     @test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
 
