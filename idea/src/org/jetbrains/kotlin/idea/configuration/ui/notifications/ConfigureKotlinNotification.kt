@@ -30,9 +30,10 @@ import javax.swing.event.HyperlinkEvent
 
 class ConfigureKotlinNotification(
         project: Project,
-        excludeModules: List<Module>) : Notification(KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, "Configure Kotlin",
-                                                     getNotificationString(project, excludeModules),
-                                                     NotificationType.WARNING, NotificationListener { notification, event ->
+        excludeModules: List<Module>,
+        notificationString: String) : Notification(KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, "Configure Kotlin",
+                                                   notificationString,
+                                                   NotificationType.WARNING, NotificationListener { notification, event ->
     if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
         val configurator = getConfiguratorByName(event.description) ?: throw AssertionError("Missed action: " + event.description)
         notification.expire()
@@ -40,6 +41,9 @@ class ConfigureKotlinNotification(
         configurator.configure(project, excludeModules)
     }
 }) {
+
+    constructor(project: Project, excludeModules: List<Module>)
+        : this(project, excludeModules, getNotificationString(project, excludeModules))
 
     override fun equals(o: Any?): Boolean {
         if (this === o) return true
