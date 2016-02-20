@@ -18,8 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
@@ -109,9 +107,7 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
 
     fun computeFieldCaller(field: Field): FunctionCaller<Field> = when {
         isInsideClassCompanionObject() -> {
-            val containingDeclaration = descriptor.containingDeclaration as ClassDescriptor
-            val sourceElement = containingDeclaration.source as KotlinJvmBinarySourceElement
-            val klass = (sourceElement.binaryClass as ReflectKotlinClass).klass
+            val klass = (descriptor.containingDeclaration as ClassDescriptor).toJavaClass()!!
             if (isGetter) FunctionCaller.ClassCompanionFieldGetter(field, klass)
             else FunctionCaller.ClassCompanionFieldSetter(field, klass)
         }

@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
 import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -122,22 +118,14 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
     override val nestedClasses: Collection<KClass<*>>
         get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).mapNotNull {
             nestedClass ->
-            val source = (nestedClass as DeclarationDescriptorWithSource).source
-            when (source) {
-                is KotlinJvmBinarySourceElement ->
-                    (source.binaryClass as ReflectKotlinClass).klass
-                is JavaSourceElement ->
-                    (source.javaElement as ReflectJavaClass).element
-                SourceElement.NO_SOURCE -> {
-                    // If neither a Kotlin class nor a Java class, it must be a built-in
-                    val classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(nestedClass))
-                                  ?: throw KotlinReflectionInternalError("Class with no source must be a built-in: $nestedClass")
-                    val packageName = classId.packageFqName.asString()
-                    val className = classId.relativeClassName.asString().replace('.', '$')
-                    // All pseudo-classes like String.Companion must be accessible from the current class loader
-                    (this as Any).javaClass.safeClassLoader.tryLoadClass("$packageName.$className")
-                }
-                else -> throw KotlinReflectionInternalError("Unsupported class: $nestedClass (source = $source)")
+            (nestedClass as ClassDescriptor).toJavaClass() ?: run {
+                // If neither a Kotlin class nor a Java class, it must be a built-in
+                val classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(nestedClass))
+                              ?: throw KotlinReflectionInternalError("Class with no source must be a built-in: $nestedClass")
+                val packageName = classId.packageFqName.asString()
+                val className = classId.relativeClassName.asString().replace('.', '$')
+                // All pseudo-classes like String.Companion must be accessible from the current class loader
+                (this as Any).javaClass.safeClassLoader.tryLoadClass("$packageName.$className")
             }
         }.map { KClassImpl(it) }
 

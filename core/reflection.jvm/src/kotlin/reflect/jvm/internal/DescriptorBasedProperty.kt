@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -50,17 +51,29 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
         val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
         when (jvmSignature) {
             is KotlinProperty -> {
+                val descriptor = jvmSignature.descriptor
                 JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver, jvmSignature.typeTable)?.let {
-                    container.findFieldBySignature(
-                            it.name, JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor.containingDeclaration)
-                    )
+                    val owner = if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor.containingDeclaration)) {
+                        container.jClass.enclosingClass
+                    }
+                    else descriptor.containingDeclaration.let { containingDeclaration ->
+                        if (containingDeclaration is ClassDescriptor) containingDeclaration.toJavaClass()
+                        else container.jClass
+                    }
+
+                    try {
+                        owner?.getDeclaredField(it.name)
+                    }
+                    catch (e: NoSuchFieldException) {
+                        null
+                    }
                 }
             }
             is JavaField -> jvmSignature.field
         }
     }
 
-    // Used in subclasses as an implementation of an irrelevant property from KPropertyImpl
+    @Suppress("unused") // Used in subclasses as an implementation of an irrelevant property from KPropertyImpl
     val javaField: Field? get() = javaField_()
 
     override fun equals(other: Any?): Boolean {

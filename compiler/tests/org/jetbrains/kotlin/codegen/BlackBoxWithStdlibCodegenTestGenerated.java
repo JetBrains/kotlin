@@ -3987,6 +3987,27 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/fakeOverrides")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FakeOverrides extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInFakeOverrides() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/mapping/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("javaFieldGetterSetter.kt")
+                public void testJavaFieldGetterSetter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/fakeOverrides/javaFieldGetterSetter.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("javaMethod.kt")
+                public void testJavaMethod() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/fakeOverrides/javaMethod.kt");
+                    doTestWithStdlib(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/jvmStatic")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

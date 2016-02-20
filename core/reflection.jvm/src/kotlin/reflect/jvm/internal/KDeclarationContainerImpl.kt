@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
-import java.lang.reflect.Field
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.reflect.KCallable
@@ -233,18 +232,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return result
-    }
-
-    // TODO: check resulting field's type
-    fun findFieldBySignature(name: String, isCompanionOfClass: Boolean): Field? {
-        val owner = if (isCompanionOfClass) jClass.enclosingClass else jClass
-
-        return try {
-            owner.getDeclaredField(name)
-        }
-        catch (e: NoSuchFieldException) {
-            null
-        }
     }
 
     companion object {
