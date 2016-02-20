@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class KotlinMultiFileTestWithWithJava<M, F> extends KotlinLiteFixture {
+public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixture {
     protected class ModuleAndDependencies {
         final M module;
         final List<String> dependencies;

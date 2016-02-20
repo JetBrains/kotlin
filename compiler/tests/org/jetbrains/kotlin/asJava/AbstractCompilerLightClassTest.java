@@ -20,7 +20,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithWithJava;
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTestWithWithJava<Void, Void> {
+public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTestWithJava<Void, Void> {
     @Override
     @NotNull
     protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {

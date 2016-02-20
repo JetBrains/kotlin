@@ -47,8 +47,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class BaseDiagnosticsTest extends
-                                          KotlinMultiFileTestWithWithJava<BaseDiagnosticsTest.TestModule, BaseDiagnosticsTest.TestFile> {
+public abstract class BaseDiagnosticsTest
+        extends KotlinMultiFileTestWithJava<BaseDiagnosticsTest.TestModule, BaseDiagnosticsTest.TestFile> {
 
     public static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
     public static final Pattern DIAGNOSTICS_PATTERN = Pattern.compile("([\\+\\-!])(\\w+)\\s*");
