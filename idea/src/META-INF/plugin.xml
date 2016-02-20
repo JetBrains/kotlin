@@ -530,6 +530,8 @@
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider"/>
 
+    <library.javaSourceRootDetector implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceRootDetector"/>
+
     <typeHierarchyProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.hierarchy.KotlinTypeHierarchyProvider"/>
     <callHierarchyProvider
         language="kotlin"
