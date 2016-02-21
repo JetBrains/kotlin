@@ -457,14 +457,25 @@ public fun String.decapitalize(): String {
  * @sample test.text.StringJVMTest.repeat
  */
 public fun CharSequence.repeat(n: Int): String {
-    if (n < 0)
-        throw IllegalArgumentException("Value should be non-negative, but was $n")
+    require (n >= 0) { "Count 'n' must be non-negative, but was $n." }
 
-    val sb = StringBuilder(n * length)
-    for (i in 1..n) {
-        sb.append(this)
+    return when (n) {
+        0 -> ""
+        1 -> this.toString()
+        else -> {
+            when (length) {
+                0 -> ""
+                1 -> this[0].let { char -> String(CharArray(n) { char }) }
+                else -> {
+                    val sb = StringBuilder(n * length)
+                    for (i in 1..n) {
+                        sb.append(this)
+                    }
+                    sb.toString()
+                }
+            }
+        }
     }
-    return sb.toString()
 }
 
 

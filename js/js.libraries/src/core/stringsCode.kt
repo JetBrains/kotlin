@@ -75,6 +75,27 @@ public inline fun String.decapitalize(): String {
     return if (isNotEmpty()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
+/**
+ * Returns a string containing this char sequence repeated [n] times.
+ * @throws [IllegalArgumentException] when n < 0.
+ */
+public fun CharSequence.repeat(n: Int): String {
+    require (n >= 0) { "Count 'n' must be non-negative, but was $n." }
+    return when (n) {
+        0 -> ""
+        1 -> this.toString()
+        else -> {
+            var result = ""
+            if (!isEmpty()) {
+                val s = this.toString()
+                for (i in 1..n) {
+                    result += s
+                }
+            }
+            return result
+        }
+    }
+}
 
 public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
         nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "gi" else "g"), Regex.escapeReplacement(newValue))

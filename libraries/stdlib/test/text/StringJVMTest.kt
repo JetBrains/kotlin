@@ -45,17 +45,6 @@ class StringJVMTest {
         }
     }
 
-    @test fun repeat() = withOneCharSequenceArg { arg1 ->
-        fun String.repeat(n: Int): String = arg1(this).repeat(n)
-
-        assertFails { "foo".repeat(-1) }
-        assertEquals("", "foo".repeat(0))
-        assertEquals("foo", "foo".repeat(1))
-        assertEquals("foofoo", "foo".repeat(2))
-        assertEquals("foofoofoo", "foo".repeat(3))
-    }
-
-
     @test fun sliceCharSequenceFails() = withOneCharSequenceArg { arg1 ->
         assertFails {
             arg1("abc").slice(1..4)

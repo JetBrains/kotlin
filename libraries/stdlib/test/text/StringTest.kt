@@ -334,6 +334,19 @@ class StringTest {
         assertEquals("xxx", s.replaceBeforeLast("=", "/new/path", "xxx"))
     }
 
+    @test fun repeat() = withOneCharSequenceArg { arg1 ->
+        fun String.repeat(n: Int): String = arg1(this).repeat(n)
+
+        assertFails { "foo".repeat(-1) }
+        assertEquals("", "foo".repeat(0))
+        assertEquals("foo", "foo".repeat(1))
+        assertEquals("foofoo", "foo".repeat(2))
+        assertEquals("foofoofoo", "foo".repeat(3))
+
+        assertEquals("", "".repeat(Int.MAX_VALUE))
+        assertEquals("aaaaaaaaaaaaa", "a".repeat(13))
+    }
+
     @test fun stringIterator() = withOneCharSequenceArg("239") { data ->
         var sum = 0
         for(c in data)
