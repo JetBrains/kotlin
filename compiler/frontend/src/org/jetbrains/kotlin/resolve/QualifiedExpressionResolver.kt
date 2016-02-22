@@ -583,7 +583,8 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         val qualifier =
                 when (descriptor) {
                     is PackageViewDescriptor -> PackageQualifier(referenceExpression, descriptor)
-                    is ClassifierDescriptor -> createClassifierQualifier(referenceExpression, descriptor, trace.bindingContext)
+                    is ClassDescriptor -> ClassQualifier(referenceExpression, descriptor)
+                    is TypeParameterDescriptor -> TypeParameterQualifier(referenceExpression, descriptor)
                     else -> return null
                 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.conversion.copy.range
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassifierQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 
 class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpression>(
         KtDotQualifiedExpression::class.java,
@@ -73,8 +72,9 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpressio
 
     private fun target(expression: KtDotQualifiedExpression): DeclarationDescriptor? {
         val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-        val qualifier = bindingContext[BindingContext.QUALIFIER, expression.receiverExpression] as? ClassifierQualifier ?: return null
-        if (qualifier.descriptor !is ClassDescriptor) return null
+        if (bindingContext[BindingContext.QUALIFIER, expression.receiverExpression] !is ClassQualifier) {
+            return null
+        }
         val selector = expression.getQualifiedElementSelector() as? KtNameReferenceExpression ?: return null
         return selector.mainReference.resolveToDescriptors(bindingContext).firstOrNull()
     }
