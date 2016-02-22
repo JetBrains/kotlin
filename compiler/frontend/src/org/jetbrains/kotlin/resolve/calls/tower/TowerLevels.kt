@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,12 +133,12 @@ internal class ReceiverScopeTowerLevel(
 }
 
 internal class QualifierScopeTowerLevel(scopeTower: ScopeTower, val qualifier: QualifierReceiver) : AbstractScopeTowerLevel(scopeTower) {
-    override fun getVariables(name: Name, extensionReceiver: ReceiverValue?) = qualifier.getNestedClassesAndPackageMembersScope()
+    override fun getVariables(name: Name, extensionReceiver: ReceiverValue?) = qualifier.staticScope
             .getContributedVariablesAndObjects(name, location).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }
 
-    override fun getFunctions(name: Name, extensionReceiver: ReceiverValue?) = qualifier.getNestedClassesAndPackageMembersScope()
+    override fun getFunctions(name: Name, extensionReceiver: ReceiverValue?) = qualifier.staticScope
             .getContributedFunctionsAndConstructors(name, location).map {
                 createCandidateDescriptor(it, dispatchReceiver = null)
             }

@@ -161,7 +161,7 @@ class NewResolveOldInference(
             explicitReceiver: Receiver?,
             create: (ReceiverValue?) -> ScopeTowerProcessor<Candidate>
     ): ScopeTowerProcessor<Candidate> {
-        return if (explicitReceiver is Qualifier) {
+        return if (explicitReceiver is QualifierReceiver) {
             (explicitReceiver as? ClassQualifier)?.classValueReceiver?.let(create)
             ?: KnownResultProcessor<Candidate>(listOf())
         }

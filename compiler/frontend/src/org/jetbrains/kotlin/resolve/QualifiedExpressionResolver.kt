@@ -409,9 +409,9 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
 
         val qualifierDescriptor = when (receiver) {
             is PackageQualifier -> {
-                val childPackageFQN = receiver.packageView.fqName.child(name)
-                receiver.packageView.module.getPackage(childPackageFQN).check { !it.isEmpty() } ?:
-                receiver.packageView.memberScope.getContributedClassifier(name, KotlinLookupLocation(expression))
+                val childPackageFQN = receiver.descriptor.fqName.child(name)
+                receiver.descriptor.module.getPackage(childPackageFQN).check { !it.isEmpty() } ?:
+                receiver.descriptor.memberScope.getContributedClassifier(name, KotlinLookupLocation(expression))
             }
             is ClassQualifier -> receiver.scope.getContributedClassifier(name, KotlinLookupLocation(expression))
             null -> context.scope.findClassifier(name, KotlinLookupLocation(expression)) ?:

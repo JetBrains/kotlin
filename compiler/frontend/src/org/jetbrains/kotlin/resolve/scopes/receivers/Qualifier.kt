@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
@@ -32,64 +29,53 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-interface Qualifier: Receiver {
+interface QualifierReceiver : Receiver {
+    val staticScope: MemberScope
 
-    val expression: KtExpression
-
-    val referenceExpression: KtSimpleNameExpression
-
-    val descriptor: DeclarationDescriptor
-
-    val scope: MemberScope
+    val classValueReceiver: ReceiverValue?
 }
 
-abstract class QualifierReceiver(
-        override val referenceExpression: KtSimpleNameExpression
-) : Qualifier {
-
-    override val expression: KtExpression
+abstract class Qualifier(val referenceExpression: KtSimpleNameExpression) : QualifierReceiver {
+    val expression: KtExpression
         get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
-    abstract fun getNestedClassesAndPackageMembersScope(): MemberScope
+    abstract val descriptor: DeclarationDescriptor
+
+    abstract val scope: MemberScope
 }
 
 class PackageQualifier(
         referenceExpression: KtSimpleNameExpression,
-        val packageView: PackageViewDescriptor
-) : QualifierReceiver(referenceExpression) {
+        override val descriptor: PackageViewDescriptor
+) : Qualifier(referenceExpression) {
 
-    override val descriptor: DeclarationDescriptor
-        get() = packageView
+    override val scope: MemberScope get() = descriptor.memberScope
 
-    override val scope: MemberScope get() = packageView.memberScope
+    override val staticScope: MemberScope get() = descriptor.memberScope
 
-    override fun getNestedClassesAndPackageMembersScope(): MemberScope = packageView.memberScope
+    override val classValueReceiver: ReceiverValue? get() = null
 
-    override fun toString() = "Package{$packageView}"
+    override fun toString() = "Package{$descriptor}"
 }
 
 class TypeParameterQualifier(
         referenceExpression: KtSimpleNameExpression,
-        override val descriptor: DeclarationDescriptor
-) : QualifierReceiver(referenceExpression) {
-    override fun getNestedClassesAndPackageMembersScope(): MemberScope = MemberScope.Empty
-
+        override val descriptor: TypeParameterDescriptor
+) : Qualifier(referenceExpression) {
     override val scope: MemberScope get() = MemberScope.Empty
+    override val staticScope: MemberScope get() = MemberScope.Empty
+    override val classValueReceiver: ReceiverValue? get() = null
 }
 
 class ClassQualifier(
         referenceExpression: KtSimpleNameExpression,
         override val descriptor: ClassDescriptor
-) : QualifierReceiver(referenceExpression) {
-    val classValueReceiver: ClassValueReceiver? = descriptor.classValueType?.let {
+) : Qualifier(referenceExpression) {
+    override val classValueReceiver: ClassValueReceiver? = descriptor.classValueType?.let {
         ClassValueReceiver(this, it)
     }
 
     override val scope: MemberScope get() {
-        if (descriptor !is ClassDescriptor) {
-            return MemberScope.Empty
-        }
-
         val scopes = ArrayList<MemberScope>(3)
 
         val classObjectTypeScope = descriptor.classValueType?.memberScope?.let {
@@ -106,11 +92,7 @@ class ClassQualifier(
         return ChainedMemberScope("Member scope for ${descriptor.name} as class or object", scopes)
     }
 
-    override fun getNestedClassesAndPackageMembersScope(): MemberScope {
-        if (descriptor !is ClassDescriptor) {
-            return MemberScope.Empty
-        }
-
+    override val staticScope: MemberScope get() {
         val scopes = ArrayList<MemberScope>(2)
 
         scopes.add(descriptor.staticScope)

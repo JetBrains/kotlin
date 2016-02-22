@@ -313,7 +313,7 @@ class CallExpressionResolver(
         val selector = element.selector
         var selectorTypeInfo = getUnsafeSelectorTypeInfo(receiver, element.node, selector, context, initialDataFlowInfoForArguments)
 
-        if (receiver is QualifierReceiver) {
+        if (receiver is Qualifier) {
             resolveDeferredReceiverInQualifiedExpression(receiver, selector, context)
         }
 
@@ -383,7 +383,7 @@ class CallExpressionResolver(
         for (element in elementChain) {
             val receiverType = receiverTypeInfo.type ?: ErrorUtils.createErrorType("Type for " + element.receiver.text)
 
-            val receiver = trace.get(BindingContext.QUALIFIER, element.receiver) as QualifierReceiver?
+            val receiver = trace.get(BindingContext.QUALIFIER, element.receiver)
                            ?: ExpressionReceiver.create(element.receiver, receiverType, trace.bindingContext)
 
             val qualifiedExpression = element.qualified
@@ -419,7 +419,7 @@ class CallExpressionResolver(
     }
 
     private fun resolveDeferredReceiverInQualifiedExpression(
-            qualifierReceiver: QualifierReceiver,
+            qualifier: Qualifier,
             selectorExpression: KtExpression?,
             context: ExpressionTypingContext
     ) {
@@ -428,7 +428,7 @@ class CallExpressionResolver(
             context.trace.get(BindingContext.REFERENCE_TARGET, it)
         }
 
-        resolveQualifierAsReceiverInExpression(qualifierReceiver, selectorDescriptor, context, symbolUsageValidator)
+        resolveQualifierAsReceiverInExpression(qualifier, selectorDescriptor, context, symbolUsageValidator)
     }
 
     companion object {

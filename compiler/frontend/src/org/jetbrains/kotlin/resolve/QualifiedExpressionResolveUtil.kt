@@ -86,9 +86,9 @@ private fun resolveQualifierReferenceTarget(
 
     if (qualifier is PackageQualifier &&
         (selectorContainer is PackageFragmentDescriptor || selectorContainer is PackageViewDescriptor) &&
-        DescriptorUtils.getFqName(qualifier.packageView) == DescriptorUtils.getFqName(selectorContainer)
+        DescriptorUtils.getFqName(qualifier.descriptor) == DescriptorUtils.getFqName(selectorContainer)
     ) {
-        return qualifier.packageView
+        return qualifier.descriptor
     }
 
     // TODO make decisions about short reference to companion object somewhere else

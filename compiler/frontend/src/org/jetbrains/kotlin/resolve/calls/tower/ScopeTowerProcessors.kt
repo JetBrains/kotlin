@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -120,7 +119,7 @@ private fun <C> createSimpleProcessor(
         val qualifierProcessor = QualifierScopeTowerProcessor(context, explicitReceiver, collectCandidates)
 
         // todo enum entry, object.
-        val classValue = (explicitReceiver as? ClassQualifier)?.classValueReceiver ?: return qualifierProcessor
+        val classValue = explicitReceiver.classValueReceiver ?: return qualifierProcessor
         return CompositeScopeTowerProcessor(
                 qualifierProcessor,
                 ExplicitReceiverScopeTowerProcessor(context, classValue, collectCandidates)
