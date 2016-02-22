@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME;
@@ -38,15 +39,9 @@ public class RangeCodegenUtil {
     private static final ImmutableMap<FqName, PrimitiveType> RANGE_TO_ELEMENT_TYPE;
     private static final ImmutableMap<FqName, PrimitiveType> PROGRESSION_TO_ELEMENT_TYPE;
 
-    private static PrimitiveType[] supportedRangeTypes() {
-        return new PrimitiveType[] {
-                PrimitiveType.CHAR,
-                PrimitiveType.INT,
-                PrimitiveType.LONG,
-                // deprecated:
-                PrimitiveType.BYTE,
-                PrimitiveType.SHORT,
-        };
+    @NotNull
+    public static List<PrimitiveType> supportedRangeTypes() {
+        return Arrays.asList(PrimitiveType.CHAR, PrimitiveType.INT, PrimitiveType.LONG);
     }
 
     static {
