@@ -161,7 +161,7 @@ public class JvmCodegenUtil {
         if (accessor == null) return true;
 
         // If the accessor is non-default (i.e. it has some code) we should call that accessor and not use direct access
-        if (accessor.hasBody()) return false;
+        if (DescriptorPsiUtilsKt.hasBody(accessor)) return false;
 
         // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
         return Visibilities.isPrivate(property.getVisibility()) || accessor.getModality() == FINAL;

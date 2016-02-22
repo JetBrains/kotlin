@@ -816,12 +816,13 @@ public class DescriptorResolver {
                     annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, setter.getModifierList(), trace)));
             KtParameter parameter = setter.getParameter();
 
-            setterDescriptor = new PropertySetterDescriptorImpl(propertyDescriptor, annotations,
-                                                                resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
-                                                                resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
-                                                                setter.hasBody(), false, setter.hasModifier(EXTERNAL_KEYWORD),
-                                                                CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt
-                                                                        .toSourceElement(setter));
+            setterDescriptor = new PropertySetterDescriptorImpl(
+                    propertyDescriptor, annotations,
+                    resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
+                    resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
+                    /* isDefault = */ false, setter.hasModifier(EXTERNAL_KEYWORD),
+                    CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(setter)
+            );
             KtTypeReference returnTypeReference = setter.getReturnTypeReference();
             if (returnTypeReference != null) {
                 KotlinType returnType = typeResolver.resolveType(scopeWithTypeParameters, returnTypeReference, trace, true);
@@ -905,12 +906,13 @@ public class DescriptorResolver {
                 }
             }
 
-            getterDescriptor = new PropertyGetterDescriptorImpl(propertyDescriptor, getterAnnotations,
-                                                                resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
-                                                                resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
-                                                                getter.hasBody(), false, getter.hasModifier(EXTERNAL_KEYWORD),
-                                                                CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt
-                                                                        .toSourceElement(getter));
+            getterDescriptor = new PropertyGetterDescriptorImpl(
+                    propertyDescriptor, getterAnnotations,
+                    resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
+                    resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
+                    /* isDefault = */ false, getter.hasModifier(EXTERNAL_KEYWORD),
+                    CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
+            );
             if (returnType.isError() && !getter.hasBlockBody() && getter.hasBody()) {
                 returnType = inferReturnTypeFromExpressionBody(storageManager, expressionTypingServices, trace, scopeWithTypeParameters,
                                                                DataFlowInfoFactory.EMPTY, getter, getterDescriptor);

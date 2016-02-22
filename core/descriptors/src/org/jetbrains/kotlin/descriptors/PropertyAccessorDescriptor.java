@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public interface PropertyAccessorDescriptor extends FunctionDescriptor {
-    boolean hasBody();
-
     boolean isDefault();
 
     @NotNull
@@ -45,6 +43,4 @@ public interface PropertyAccessorDescriptor extends FunctionDescriptor {
             Kind kind,
             boolean copyOverrides
     );
-
-    boolean isExternal();
 }

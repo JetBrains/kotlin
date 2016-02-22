@@ -33,7 +33,7 @@ import java.util.Collections;
 public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implements AccessorForCallableDescriptor<PropertyDescriptor> {
     private final PropertyDescriptor calleeDescriptor;
     private final ClassDescriptor superCallTarget;
-    @NotNull private final String nameSuffix;
+    private final String nameSuffix;
     private final boolean withSyntheticGetterAccessor;
     private final boolean withSyntheticSetterAccessor;
 
@@ -95,9 +95,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     public static class Getter extends PropertyGetterDescriptorImpl implements AccessorForCallableDescriptor<PropertyGetterDescriptor> {
         public Getter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-                  false, false,
-                  /* isExternal = */ false,
-                  Kind.DECLARATION, null, SourceElement.NO_SOURCE);
+                  /* isDefault = */ false, /* isExternal = */ false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initialize(property.getType());
         }
 
@@ -119,9 +117,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     public static class Setter extends PropertySetterDescriptorImpl implements AccessorForCallableDescriptor<PropertySetterDescriptor>{
         public Setter(AccessorForPropertyDescriptor property) {
             super(property, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
-                  false, false,
-                  /* isExternal = */ false,
-                  Kind.DECLARATION, null, SourceElement.NO_SOURCE);
+                  /* isDefault = */ false, /* isExternal = */ false, Kind.DECLARATION, null, SourceElement.NO_SOURCE);
             initializeDefault();
         }
 
