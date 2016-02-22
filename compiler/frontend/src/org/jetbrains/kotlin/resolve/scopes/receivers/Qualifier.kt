@@ -27,42 +27,44 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 interface QualifierReceiver : Receiver {
+    val descriptor: DeclarationDescriptor
+
     val staticScope: MemberScope
 
     val classValueReceiver: ReceiverValue?
 }
 
-abstract class Qualifier(val referenceExpression: KtSimpleNameExpression) : QualifierReceiver {
-    val expression: KtExpression
-        get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
-
-    abstract val descriptor: DeclarationDescriptor
+interface Qualifier : QualifierReceiver {
+    val referenceExpression: KtSimpleNameExpression
 }
 
+val Qualifier.expression: KtExpression
+    get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
+
 class PackageQualifier(
-        referenceExpression: KtSimpleNameExpression,
+        override val referenceExpression: KtSimpleNameExpression,
         override val descriptor: PackageViewDescriptor
-) : Qualifier(referenceExpression) {
-
-    override val staticScope: MemberScope get() = descriptor.memberScope
-
+) : Qualifier {
     override val classValueReceiver: ReceiverValue? get() = null
+    override val staticScope: MemberScope get() = descriptor.memberScope
 
     override fun toString() = "Package{$descriptor}"
 }
 
 class TypeParameterQualifier(
-        referenceExpression: KtSimpleNameExpression,
+        override val referenceExpression: KtSimpleNameExpression,
         override val descriptor: TypeParameterDescriptor
-) : Qualifier(referenceExpression) {
-    override val staticScope: MemberScope get() = MemberScope.Empty
+) : Qualifier {
     override val classValueReceiver: ReceiverValue? get() = null
+    override val staticScope: MemberScope get() = MemberScope.Empty
+
+    override fun toString() = "TypeParameter{$descriptor}"
 }
 
 class ClassQualifier(
-        referenceExpression: KtSimpleNameExpression,
+        override val referenceExpression: KtSimpleNameExpression,
         override val descriptor: ClassDescriptor
-) : Qualifier(referenceExpression) {
+) : Qualifier {
     override val classValueReceiver: ClassValueReceiver? = descriptor.classValueType?.let {
         ClassValueReceiver(this, it)
     }

@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueTypeDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
-import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
-import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
-import org.jetbrains.kotlin.resolve.scopes.receivers.TypeParameterQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
