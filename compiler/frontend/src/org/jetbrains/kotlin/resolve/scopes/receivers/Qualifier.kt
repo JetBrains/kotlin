@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
@@ -35,9 +34,6 @@ interface Qualifier: Receiver {
     val expression: KtExpression
 
     val referenceExpression: KtSimpleNameExpression
-
-    val name: Name
-        get() = descriptor.name
 
     val descriptor: DeclarationDescriptor
 
@@ -110,7 +106,7 @@ class ClassQualifier(
             scopes.add(classifier.unsubstitutedInnerClassesScope)
         }
 
-        return ChainedMemberScope("Member scope for $name as class or object", scopes)
+        return ChainedMemberScope("Member scope for ${classifier.name} as class or object", scopes)
     }
 
     override fun getNestedClassesAndPackageMembersScope(): MemberScope {
@@ -126,7 +122,7 @@ class ClassQualifier(
             scopes.add(ScopeUtils.getStaticNestedClassesScope(classifier))
         }
 
-        return ChainedMemberScope("Static scope for $name as class or object", scopes)
+        return ChainedMemberScope("Static scope for ${classifier.name} as class or object", scopes)
     }
 
     override fun toString() = "Class{$classifier}"
