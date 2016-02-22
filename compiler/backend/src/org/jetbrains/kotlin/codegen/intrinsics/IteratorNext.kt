@@ -20,38 +20,39 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class IteratorNext : IntrinsicMethod() {
-    private fun getIteratorName(returnType: Type): String {
-        return when (returnType) {
-            Type.CHAR_TYPE -> "Char"
-            Type.BOOLEAN_TYPE -> "Boolean"
-            Type.BYTE_TYPE -> "Byte"
-            Type.SHORT_TYPE -> "Short"
-            Type.INT_TYPE -> "Int"
-            Type.LONG_TYPE -> "Long"
-            Type.FLOAT_TYPE -> "Float"
-            Type.DOUBLE_TYPE -> "Double"
-            else -> throw UnsupportedOperationException("Can't get correct name for iterator from type: " + returnType)
-        }
-    }
-
     override fun toCallable(method: CallableMethod): Callable {
         val type = AsmUtil.unboxType(method.returnType)
         return object : IntrinsicCallable(type, listOf(), AsmTypes.OBJECT_TYPE, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
-                val name = getIteratorName(returnType)
+                val primitiveClassName = getKotlinPrimitiveClassName(returnType)
                 v.invokevirtual(
-                        COLLECTIONS_PACKAGE_FQ_NAME.child(Name.identifier(name + "Iterator")) .asString().replace('.', '/'),
-                        "next$name",
+                        getPrimitiveIteratorType(primitiveClassName).internalName,
+                        "next${primitiveClassName.asString()}",
                         "()" + returnType.descriptor,
                         false
                 )
             }
+        }
+    }
+
+    companion object {
+        // Type.CHAR_TYPE -> "Char"
+        private fun getKotlinPrimitiveClassName(type: Type): Name {
+            return JvmPrimitiveType.get(type.className).primitiveType.typeName
+        }
+
+        // "Char" -> type for kotlin.collections.CharIterator
+        fun getPrimitiveIteratorType(primitiveClassName: Name): Type {
+            val iteratorName = Name.identifier(primitiveClassName.asString() + "Iterator")
+            return Type.getObjectType(COLLECTIONS_PACKAGE_FQ_NAME.child(iteratorName).internalNameWithoutInnerClasses)
         }
     }
 }

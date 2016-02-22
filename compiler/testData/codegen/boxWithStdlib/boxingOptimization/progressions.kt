@@ -23,6 +23,11 @@ fun box() : String {
     assertEquals(result7, 100)
     assertEquals(result8, 100)
 
+    val result9 = (0..10).reduce { total, next -> total + next }
+    val result10 = (0L..10L).reduce { total, next -> total + next }
+    assertEquals(result9, 55)
+    assertEquals(result10, 55L)
+
     return "OK"
 }
 
