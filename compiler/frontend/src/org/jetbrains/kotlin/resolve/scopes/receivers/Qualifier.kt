@@ -22,11 +22,8 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
-import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 interface QualifierReceiver : Receiver {
@@ -40,16 +37,12 @@ abstract class Qualifier(val referenceExpression: KtSimpleNameExpression) : Qual
         get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
     abstract val descriptor: DeclarationDescriptor
-
-    abstract val scope: MemberScope
 }
 
 class PackageQualifier(
         referenceExpression: KtSimpleNameExpression,
         override val descriptor: PackageViewDescriptor
 ) : Qualifier(referenceExpression) {
-
-    override val scope: MemberScope get() = descriptor.memberScope
 
     override val staticScope: MemberScope get() = descriptor.memberScope
 
@@ -62,7 +55,6 @@ class TypeParameterQualifier(
         referenceExpression: KtSimpleNameExpression,
         override val descriptor: TypeParameterDescriptor
 ) : Qualifier(referenceExpression) {
-    override val scope: MemberScope get() = MemberScope.Empty
     override val staticScope: MemberScope get() = MemberScope.Empty
     override val classValueReceiver: ReceiverValue? get() = null
 }
@@ -75,30 +67,13 @@ class ClassQualifier(
         ClassValueReceiver(this, it)
     }
 
-    override val scope: MemberScope get() {
-        val scopes = ArrayList<MemberScope>(3)
-
-        val classObjectTypeScope = descriptor.classValueType?.memberScope?.let {
-            FilteringScope(it) { it !is ClassDescriptor }
-        }
-        scopes.addIfNotNull(classObjectTypeScope)
-
-        scopes.add(descriptor.staticScope)
-
-        if (descriptor.kind != ClassKind.ENUM_ENTRY) {
-            scopes.add(descriptor.unsubstitutedInnerClassesScope)
-        }
-
-        return ChainedMemberScope("Member scope for ${descriptor.name} as class or object", scopes)
-    }
-
     override val staticScope: MemberScope get() {
         val scopes = ArrayList<MemberScope>(2)
 
         scopes.add(descriptor.staticScope)
 
         if (descriptor.kind != ClassKind.ENUM_ENTRY) {
-            scopes.add(ScopeUtils.getStaticNestedClassesScope(descriptor))
+            scopes.add(descriptor.unsubstitutedInnerClassesScope)
         }
 
         return ChainedMemberScope("Static scope for ${descriptor.name} as class or object", scopes)

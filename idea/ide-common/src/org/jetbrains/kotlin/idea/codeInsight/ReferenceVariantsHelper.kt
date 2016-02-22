@@ -1,6 +1,5 @@
 /*
-
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +30,13 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 class ReferenceVariantsHelper(
@@ -175,7 +176,7 @@ class ReferenceVariantsHelper(
         if (receiverExpression != null) {
             val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression]
             if (qualifier != null) {
-                descriptors.addAll(qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
+                descriptors.addAll(qualifier.staticScope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
             }
 
             val explicitReceiverTypes = if (useReceiverType != null) {
@@ -213,7 +214,7 @@ class ReferenceVariantsHelper(
     ): Collection<DeclarationDescriptor> {
         if (receiverExpression != null) {
             val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
-            return qualifier.scope.getDescriptorsFiltered(kindFilter, nameFilter)
+            return qualifier.staticScope.getDescriptorsFiltered(kindFilter, nameFilter)
         }
         else {
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
@@ -249,7 +250,11 @@ class ReferenceVariantsHelper(
     ): Collection<DeclarationDescriptor> {
         if (receiverExpression != null) {
             val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
-            return qualifier.scope.getDescriptorsFiltered(kindFilter, nameFilter)
+            val staticDescriptors = qualifier.staticScope.getDescriptorsFiltered(kindFilter, nameFilter)
+
+            val objectDescriptor = (qualifier as? ClassQualifier)?.descriptor?.check { it.kind == ClassKind.OBJECT } ?: return staticDescriptors
+
+            return staticDescriptors + objectDescriptor.defaultType.memberScope.getDescriptorsFiltered(kindFilter, nameFilter)
         }
         else {
             val rootPackage = resolutionFacade.moduleDescriptor.getPackage(FqName.ROOT)

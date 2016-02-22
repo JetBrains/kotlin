@@ -2250,6 +2250,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/staticMembers"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("ImportsFromEnumEntry.kt")
+            public void testImportsFromEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/staticMembers/ImportsFromEnumEntry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImportsFromNonObject.kt")
+            public void testImportsFromNonObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/staticMembers/ImportsFromNonObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImportsFromObjectNoDuplicates.kt")
             public void testImportsFromObjectNoDuplicates() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/staticMembers/ImportsFromObjectNoDuplicates.kt");
