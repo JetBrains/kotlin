@@ -20,15 +20,18 @@ import org.jetbrains.kotlin.codegen.InlineTestUtil
 import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.jvm.compiler.AbstractSMAPBaseTest
+import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 
 abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest(), AbstractSMAPBaseTest {
-
     fun doTestMultiFileWithInlineCheck(firstFileName: String) {
         val fileName = relativePath(File(firstFileName))
         val inputFiles = listOf(fileName, fileName.substringBeforeLast("1.kt") + "2.kt")
 
-        doTestMultiFile(inputFiles)
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
+        loadFiles(*inputFiles.toTypedArray())
+        blackBox()
+
         try {
             InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.psiFiles)
             checkSMAP(myFiles.psiFiles, generateClassesInFile().getClassFiles())

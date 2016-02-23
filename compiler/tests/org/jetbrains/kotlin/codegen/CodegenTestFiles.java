@@ -81,24 +81,29 @@ public class CodegenTestFiles {
         return psiFiles;
     }
 
+    @NotNull
+    public static CodegenTestFiles create(@NotNull List<KtFile> ktFiles) {
+        assert !ktFiles.isEmpty() : "List should have at least one file";
+        return new CodegenTestFiles(ktFiles, Collections.<Pair<String, String>>emptyList(), Collections.emptyList());
+    }
+
     public static CodegenTestFiles create(Project project, String[] names) {
         return create(project, names, KotlinTestUtils.getTestDataPathBase());
     }
 
     public static CodegenTestFiles create(Project project, String[] names, String testDataPath) {
-        ArrayList<KtFile> files = new ArrayList<KtFile>();
+        List<KtFile> files = new ArrayList<KtFile>(names.length);
         for (String name : names) {
             try {
                 String content = KotlinTestUtils.doLoadFile(testDataPath + "/codegen/", name);
-                int i = name.lastIndexOf('/');
-                //name = name.substring(i+1);
                 KtFile file = KotlinTestUtils.createFile(name, content, project);
                 files.add(file);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return new CodegenTestFiles(files, Collections.<Pair<String, String>>emptyList(), Collections.emptyList());
+        return create(files);
     }
 
     @NotNull

@@ -60,7 +60,7 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
-public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, File> {
+public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, CodegenTestCase.TestFile> {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
 
     protected KotlinCoreEnvironment myEnvironment;
@@ -326,6 +326,21 @@ public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, 
         }
     }
 
+    public static class TestFile implements Comparable<TestFile> {
+        public final String name;
+        public final String content;
+
+        public TestFile(@NotNull String name, @NotNull String content) {
+            this.name = name;
+            this.content = content;
+        }
+
+        @Override
+        public int compareTo(@NotNull TestFile o) {
+            return name.compareTo(o.name);
+        }
+    }
+
     @Override
     protected Void createTestModule(@NotNull String name) {
         // TODO: support multi-module codegen tests
@@ -333,12 +348,12 @@ public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, 
     }
 
     @Override
-    protected File createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
-        return new File(fileName);
+    protected TestFile createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
+        return new TestFile(fileName, text);
     }
 
     @Override
-    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<File> files) throws Exception {
+    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<TestFile> files) throws Exception {
         throw new UnsupportedOperationException("Multi-file test cases are not supported in this test");
     }
 }

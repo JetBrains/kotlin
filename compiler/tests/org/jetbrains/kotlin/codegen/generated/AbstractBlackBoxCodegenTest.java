@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
+import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -50,10 +51,14 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     @Override
-    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<File> files) throws Exception {
-        assert files.size() == 1 : "Multi-file test cases are not supported yet in this test";
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFileByFullPath(file.getPath());
+    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<TestFile> files) throws Exception {
+        if (files.size() == 1) {
+            createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+            blackBoxFileByFullPath(file.getPath());
+        }
+        else {
+            doTestMultiFile(files);
+        }
     }
 
     public void doTestAgainstJava(@NotNull String filename) {
@@ -81,25 +86,17 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBoxFileByFullPath(filename);
     }
 
-    public void doTestMultiFile(@NotNull String folderName) {
-        final List<String> files = new ArrayList<String>(2);
-        FileUtil.processFilesRecursively(new File(folderName), new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                if (file.getName().endsWith(".kt")) {
-                    files.add(relativePath(file));
-                }
-                return true;
-            }
-        });
-
-        doTestMultiFile(files);
-    }
-
-    protected void doTestMultiFile(@NotNull List<String> files) {
+    private void doTestMultiFile(@NotNull List<TestFile> files) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
         Collections.sort(files);
-        loadFiles(ArrayUtil.toStringArray(files));
+
+        List<KtFile> ktFiles = new ArrayList<KtFile>(files.size());
+        for (TestFile file : files) {
+            ktFiles.add(KotlinTestUtils.createFile(file.name, file.content, myEnvironment.getProject()));
+        }
+
+        myFiles = CodegenTestFiles.create(ktFiles);
+
         blackBox();
     }
 
