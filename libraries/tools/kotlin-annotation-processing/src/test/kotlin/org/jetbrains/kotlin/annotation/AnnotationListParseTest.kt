@@ -39,9 +39,6 @@ public class AnnotationListParseTest {
     fun testNestedClasses() = doTest("nestedClasses")
 
     @Test
-    fun testPlatformStatic() = doTest("platformStatic")
-
-    @Test
     fun testSimple() = doTest("simple")
 
     @Test
