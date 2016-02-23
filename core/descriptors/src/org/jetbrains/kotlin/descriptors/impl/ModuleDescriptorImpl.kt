@@ -44,7 +44,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 
-    override fun getPackage(fqName: FqName): PackageViewDescriptor = LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> {
+        fqName: FqName -> LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+    }
+
+    override fun getPackage(fqName: FqName): PackageViewDescriptor = packages(fqName)
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         return packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
