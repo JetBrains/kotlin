@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.Set;
 
 public class JavaClassFinderImpl implements JavaClassFinder {
     private Project project;
@@ -107,5 +108,11 @@ public class JavaClassFinderImpl implements JavaClassFinder {
     public JavaPackage findPackage(@NotNull FqName fqName) {
         PsiPackage psiPackage = javaFacade.findPackage(fqName.asString(), javaSearchScope);
         return psiPackage == null ? null : new JavaPackageImpl(psiPackage, javaSearchScope);
+    }
+
+    @Nullable
+    @Override
+    public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
+        return javaFacade.knownClassNamesInPackage(packageFqName);
     }
 }

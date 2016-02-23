@@ -20,7 +20,10 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 interface KotlinCliJavaFileManager : JavaFileManager {
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass?
+
+    fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
 }

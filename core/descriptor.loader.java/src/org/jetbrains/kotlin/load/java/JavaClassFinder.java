@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+
+import java.util.Set;
 
 public interface JavaClassFinder {
     @Nullable
@@ -29,4 +32,8 @@ public interface JavaClassFinder {
 
     @Nullable
     JavaPackage findPackage(@NotNull FqName fqName);
+
+    @ReadOnly
+    @Nullable
+    Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName);
 }

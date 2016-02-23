@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageScope(
@@ -37,6 +38,12 @@ class LazyJavaPackageScope(
         private val jPackage: JavaPackage,
         override val ownerDescriptor: LazyJavaPackageFragment
 ) : LazyJavaStaticScope(c) {
+
+    // Null means that it's impossible to determine list of class names in package, i.e. in IDE where special finders exist
+    // But for compiler though we can determine full list of class names by getting all class-file names in classpath and sources
+    private val knownClassNamesInPackage: NullableLazyValue<Set<String>> = c.storageManager.createNullableLazyValue {
+        c.components.finder.knownClassNamesInPackage(ownerDescriptor.fqName)
+    }
 
     private val partToFacade = c.storageManager.createLazyValue {
         val result = hashMapOf<String, String>()
@@ -88,6 +95,12 @@ class LazyJavaPackageScope(
         if (!SpecialNames.isSafeIdentifier(name)) return null
 
         recordLookup(name, location)
+
+        val knownClassNamesInPackage = knownClassNamesInPackage()
+        if (knownClassNamesInPackage != null && name.asString() !in knownClassNamesInPackage) {
+            return null
+        }
+
         return classes(name)
     }
 
