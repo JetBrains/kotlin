@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
@@ -27,30 +28,34 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.findDeclaredMethodByName;
 
 public class ClassGenTest extends CodegenTestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testPSVMClass() {
-        loadFile("classes/simpleClass.kt");
+    @NotNull
+    @Override
+    protected String getPrefix() {
+        return "classes";
+    }
 
+    public void testSimpleClass() {
+        loadFile();
         Class<?> aClass = generateClass("SimpleClass");
         Method[] methods = aClass.getDeclaredMethods();
         // public int SimpleClass.foo()
         assertEquals(1, methods.length);
     }
 
-    public void testArrayListInheritance() throws Exception {
-        loadFile("classes/inheritingFromArrayList.kt");
+    public void testInheritingFromArrayList() throws Exception {
+        loadFile();
         Class<?> aClass = generateClass("Foo");
         assertInstanceOf(aClass.newInstance(), List.class);
     }
 
     public void testDelegationToVal() throws Exception {
-        loadFile("classes/delegationToVal.kt");
+        loadFile();
         GeneratedClassLoader loader = generateAndCreateClassLoader();
         Class<?> aClass = loader.loadClass("DelegationToValKt");
         assertEquals("OK", aClass.getMethod("box").invoke(null));
@@ -82,8 +87,8 @@ public class ClassGenTest extends CodegenTestCase {
         assertEquals("OKOK", iActingMethod.invoke(test3.getMethod("getActing").invoke(obj)));
     }
 
-    public void testNewInstanceExplicitConstructor() throws Exception {
-        loadFile("classes/newInstanceDefaultConstructor.kt");
+    public void testNewInstanceDefaultConstructor() throws Exception {
+        loadFile();
         Method method = generateFunction("test");
         Integer returnValue = (Integer) method.invoke(null);
         assertEquals(610, returnValue.intValue());
@@ -103,7 +108,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testClassObjectInterface() throws Exception {
-        loadFile("classes/classObjectInterface.kt");
+        loadFile();
         Method method = generateFunction();
         Object result = method.invoke(null);
         assertInstanceOf(result, Runnable.class);
@@ -132,14 +137,8 @@ public class ClassGenTest extends CodegenTestCase {
         assertEquals(method.getReturnType().getName(), "java.lang.Void");
     }
 
-    /*
-    public void testKt1213() {
-        //        blackBoxFile("regressions/kt1213.kt");
-    }
-    */
-
     public void testClassObjectIsInnerClass() throws Exception {
-        loadFile("classes/classObjectIsInnerClass.kt");
+        loadFile();
         GeneratedClassLoader loader = generateAndCreateClassLoader();
         Class<?> a = loader.loadClass("A");
         Class<?> companionObject = loader.loadClass("A$" + SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString());

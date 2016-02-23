@@ -53,19 +53,19 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testWhile() throws Exception {
-        factorialTest("controlStructures/while.kt");
+        factorialTest();
     }
 
     public void testDoWhile() throws Exception {
-        factorialTest("controlStructures/doWhile.kt");
+        factorialTest();
     }
 
     public void testBreak() throws Exception {
-        factorialTest("controlStructures/break.kt");
+        factorialTest();
     }
 
-    private void factorialTest(String name) throws Exception {
-        loadFile(name);
+    private void factorialTest() throws Exception {
+        loadFile();
         Method main = generateFunction();
         assertEquals(6, main.invoke(null, 3));
         assertEquals(120, main.invoke(null, 5));

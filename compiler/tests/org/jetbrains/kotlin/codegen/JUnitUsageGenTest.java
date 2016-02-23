@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -43,13 +44,19 @@ public class JUnitUsageGenTest extends CodegenTestCase {
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
+    @NotNull
+    @Override
+    protected String getPrefix() {
+        return "junit";
+    }
+
     public void testKt2344() throws Exception {
-        loadFile("junit/kt2344.kt");
+        loadFile();
         generateFunction().invoke(null);
     }
 
     public void testKt1592() throws Exception {
-        loadFile("junit/kt1592.kt");
+        loadFile();
         Class<?> packageClass = generateFacadeClass();
         Method method = packageClass.getMethod("foo", Method.class);
         method.setAccessible(true);
