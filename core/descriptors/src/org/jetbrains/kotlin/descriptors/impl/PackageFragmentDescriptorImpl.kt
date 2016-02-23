@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 
 abstract class PackageFragmentDescriptorImpl(
         module: ModuleDescriptor,
-        override val fqName: FqName
+        final override val fqName: FqName
 ) : DeclarationDescriptorNonRootImpl(module, Annotations.EMPTY, fqName.shortNameOrSpecial(), SourceElement.NO_SOURCE),
         PackageFragmentDescriptor {
     override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = this
