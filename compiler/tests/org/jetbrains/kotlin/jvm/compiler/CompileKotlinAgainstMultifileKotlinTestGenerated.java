@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/boxMultifileClasses")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class CompileKotlinAgainstMultifileKotlinTestGenerated extends AbstractCompileKotlinAgainstMultifileKotlinTest {
+public class CompileKotlinAgainstMultifileKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInBoxMultifileClasses() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses"), Pattern.compile("^(.+)\\.1.kt$"), true);
     }

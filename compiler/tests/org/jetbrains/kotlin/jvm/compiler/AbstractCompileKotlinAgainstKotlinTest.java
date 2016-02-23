@@ -20,6 +20,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
+import kotlin.Pair;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
@@ -36,12 +38,15 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
     private File aDir;
@@ -69,7 +74,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
         main.invoke(null, new Object[] {ArrayUtil.EMPTY_STRING_ARRAY});
     }
 
-    protected void invokeBox(@NotNull String fileName) throws Exception {
+    private void invokeBox(@NotNull String fileName) throws Exception {
         Method box = generatedClass(fileName).getMethod("box");
         String result = (String) box.invoke(null);
         assertEquals("OK", result);
@@ -85,13 +90,13 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
         return classLoader.loadClass(PackagePartClassUtils.getFilePartShortName(fileLastName));
     }
 
-    protected ClassFileFactory compileA(@NotNull File ktAFile) throws IOException {
+    private ClassFileFactory compileA(@NotNull File ktAFile) throws IOException {
         KotlinCoreEnvironment jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
                                                                                                                   ConfigurationKind.ALL);
         return compileKotlin(ktAFile, aDir, jetCoreEnvironment, getTestRootDisposable());
     }
 
-    protected ClassFileFactory compileB(@NotNull File ktBFile) throws IOException {
+    private ClassFileFactory compileB(@NotNull File ktBFile) throws IOException {
         CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils
                 .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar(), aDir);
 
@@ -118,5 +123,31 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
         Disposer.dispose(disposable);
         return outputFiles;
+    }
+
+    @NotNull
+    protected Pair<ClassFileFactory, ClassFileFactory> doBoxTest(@NotNull String firstFileName) {
+        List<String> files = Arrays.asList(firstFileName, StringsKt.substringBeforeLast(firstFileName, "1.kt", "") + "2.kt");
+
+        ClassFileFactory factory1 = null;
+        ClassFileFactory factory2 = null;
+        try {
+            factory1 = compileA(new File(files.get(1)));
+            factory2 = compileB(new File(files.get(0)));
+            invokeBox(files.get(0));
+        }
+        catch (Throwable e) {
+            String result = "";
+            if (factory1 != null) {
+                result += "FIRST: \n\n" + factory1.createText();
+            }
+            if (factory2 != null) {
+                result += "\n\nSECOND: \n\n" + factory2.createText();
+            }
+            System.out.println(result);
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+
+        return new Pair<ClassFileFactory, ClassFileFactory>(factory1, factory2);
     }
 }

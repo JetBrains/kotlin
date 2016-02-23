@@ -16,18 +16,12 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.InlineTestUtil
 import org.jetbrains.kotlin.codegen.filterClassFiles
-import java.io.File
-import java.util.Collections
 
 abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest(), AbstractSMAPBaseTest {
-
     fun doBoxTestWithInlineCheck(firstFileName: String) {
-        val inputFiles = listOf(firstFileName, firstFileName.substringBeforeLast("1.kt") + "2.kt")
-
-        val (factory1, factory2) = doBoxTest(inputFiles)
+        val (factory1, factory2) = doBoxTest(firstFileName)
         val allGeneratedFiles = factory1.asList() + factory2.asList()
 
         try {
@@ -40,30 +34,4 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
             throw e
         }
     }
-
-    private fun doBoxTest(files: List<String>): Pair<ClassFileFactory, ClassFileFactory> {
-        Collections.sort(files)
-
-        var factory1: ClassFileFactory? = null
-        var factory2: ClassFileFactory? = null
-        try {
-            factory1 = compileA(File(files[1]))
-            factory2 = compileB(File(files[0]))
-            invokeBox(files[0])
-        }
-        catch (e: Throwable) {
-            var result = ""
-            if (factory1 != null) {
-                result += "FIRST: \n\n" + factory1.createText()
-            }
-            if (factory2 != null) {
-                result += "\n\nSECOND: \n\n" + factory2.createText()
-            }
-            System.out.println(result)
-            throw e
-        }
-
-        return Pair(factory1!!, factory2!!)
-    }
-
 }
