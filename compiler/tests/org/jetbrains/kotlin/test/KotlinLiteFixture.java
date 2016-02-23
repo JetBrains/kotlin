@@ -21,49 +21,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.testFramework.TestDataFile;
-import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.junit.Assert;
 
-import java.io.IOException;
-
 public abstract class KotlinLiteFixture extends KotlinTestWithEnvironment {
-    @NonNls
-    protected final String myFullDataPath;
-    private KtFile myFile;
-
-    public KotlinLiteFixture(@NonNls String dataPath) {
-        myFullDataPath = getTestDataPath() + "/" + dataPath;
-    }
-
-    public KotlinLiteFixture() {
-        myFullDataPath = getTestDataPath();
-    }
-
-    protected KtFile getFile() {
-        return myFile;
-    }
-
     protected String getTestDataPath() {
         return KotlinTestUtils.getTestDataPathBase();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        myFile = null;
-        super.tearDown();
-    }
-
-    protected String loadFile(@NonNls @TestDataFile String name) throws IOException {
-        return KotlinTestUtils.doLoadFile(myFullDataPath, name);
     }
 
     protected KtFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
@@ -74,30 +40,13 @@ public abstract class KotlinLiteFixture extends KotlinTestWithEnvironment {
         return KotlinTestUtils.createFile(fileName, text, getProject());
     }
 
-    protected KtFile loadPsiFile(String name) {
-        try {
-            return createPsiFile(name, null, loadFile(name));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected static void ensureParsed(PsiFile file) {
+    private static void ensureParsed(PsiFile file) {
         file.accept(new PsiElementVisitor() {
             @Override
-            public void visitElement(PsiElement element) {
+            public void visitElement(@NotNull PsiElement element) {
                 element.acceptChildren(this);
             }
         });
-    }
-
-    protected void prepareForTest(String name) throws IOException {
-        String text = loadFile(name + ".kt");
-        createAndCheckPsiFile(name, text);
-    }
-
-    protected void createAndCheckPsiFile(String name, String text) {
-        myFile = createCheckAndReturnPsiFile(name, null, text);
     }
 
     protected KtFile createCheckAndReturnPsiFile(String testName, String fileName, String text) {
@@ -105,6 +54,7 @@ public abstract class KotlinLiteFixture extends KotlinTestWithEnvironment {
         ensureParsed(myFile);
         assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
         assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));
+        //noinspection ConstantConditions
         assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
         assertEquals("psi text mismatch", text, myFile.getText());
         return myFile;

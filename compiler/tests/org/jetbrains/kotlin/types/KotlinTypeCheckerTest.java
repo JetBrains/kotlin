@@ -51,16 +51,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class KotlinTypeCheckerTest extends KotlinLiteFixture {
-
     private KotlinBuiltIns builtIns;
     private LexicalScope scopeWithImports;
     private TypeResolver typeResolver;
     private ExpressionTypingServices expressionTypingServices;
-
-
-    public KotlinTypeCheckerTest() {
-        super("");
-    }
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
@@ -70,7 +64,6 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
 
         ModuleDescriptorImpl module = KotlinTestUtils.createEmptyModule();
         builtIns = module.getBuiltIns();

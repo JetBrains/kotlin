@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.junit.Assert;
 
 import java.io.File;
@@ -34,6 +36,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class KtPsiUtilTest extends KotlinLiteFixture {
+    @NotNull
+    private KtFile loadPsiFile(@NotNull String name) {
+        try {
+            return createPsiFile(name, null, KotlinTestUtils.doLoadFile(getTestDataPath(), name));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void testUnquotedIdentifier() {
         Assert.assertEquals("", KtPsiUtil.unquoteIdentifier(""));
         Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifier("a2"));

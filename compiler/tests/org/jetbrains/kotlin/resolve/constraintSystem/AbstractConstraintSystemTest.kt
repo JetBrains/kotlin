@@ -58,7 +58,7 @@ abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
     override fun tearDown() {
         _typeResolver = null
         _testDeclarations = null
-        super<KotlinLiteFixture>.tearDown()
+        super.tearDown()
     }
 
     override fun getTestDataPath(): String {
@@ -68,7 +68,7 @@ abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
     private fun analyzeDeclarations(): ConstraintSystemTestData {
         val fileName = "declarations.kt"
 
-        val psiFile = createPsiFile(null, fileName, loadFile(fileName))!!
+        val psiFile = createPsiFile(null, fileName, KotlinTestUtils.doLoadFile(testDataPath, fileName))!!
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
         return ConstraintSystemTestData(bindingContext, project, typeResolver)
     }

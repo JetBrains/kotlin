@@ -88,7 +88,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinLiteFixture {
         final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
         MessageType messageType = getMessageTypeDirective(directives);
 
-        KtFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
+        KtFile psiFile = createPsiFile(null, fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName));
         AnalysisResult analysisResult = analyze(psiFile);
         BindingContext bindingContext = analysisResult.getBindingContext();
 

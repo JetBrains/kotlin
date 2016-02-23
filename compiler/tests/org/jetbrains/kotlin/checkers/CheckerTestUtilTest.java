@@ -29,15 +29,16 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 public class CheckerTestUtilTest extends KotlinLiteFixture {
-
-    public CheckerTestUtilTest() {
-        super("diagnostics/checkerTestUtil");
+    @Override
+    protected String getTestDataPath() {
+        return KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil";
     }
 
     @Override
@@ -45,10 +46,9 @@ public class CheckerTestUtilTest extends KotlinLiteFixture {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 
-
     protected void doTest(TheTest theTest) throws Exception {
-        prepareForTest("test");
-        theTest.test(getFile());
+        String text = KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt");
+        theTest.test(createCheckAndReturnPsiFile("test", null, text));
     }
 
     public void testEquals() throws Exception {
@@ -132,7 +132,7 @@ public class CheckerTestUtilTest extends KotlinLiteFixture {
         AbstractDiagnosticsTest test = new AbstractDiagnosticsTest() {
             {setUp();}
         };
-        test.doTest(myFullDataPath + File.separatorChar + "test_with_diagnostic.kt");
+        test.doTest(getTestDataPath() + File.separatorChar + "test_with_diagnostic.kt");
     }
 
     private static abstract class TheTest {
