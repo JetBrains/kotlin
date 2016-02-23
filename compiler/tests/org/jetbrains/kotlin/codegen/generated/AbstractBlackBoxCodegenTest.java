@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.codegen.generated;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
-import kotlin.text.Charsets;
 import kotlin.io.FilesKt;
+import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -44,13 +44,16 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
-    public void doTest(@NotNull String filename) {
+    @Override
+    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<File> files) throws Exception {
+        assert files.size() == 1 : "Multi-file test cases are not supported yet in this test";
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFileByFullPath(filename);
+        blackBoxFileByFullPath(file.getPath());
     }
 
     public void doTestAgainstJava(@NotNull String filename) {

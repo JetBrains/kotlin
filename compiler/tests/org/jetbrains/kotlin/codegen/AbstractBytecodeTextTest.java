@@ -34,6 +34,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
     private static final Pattern AT_OUTPUT_FILE_PATTERN = Pattern.compile("^\\s*//\\s*@(.*):$");
     private static final Pattern EXPECTED_OCCURRENCES_PATTERN = Pattern.compile("^\\s*//\\s*(\\d+)\\s*(.*)$");
 
+    @Override
     public void doTest(@NotNull String filename) throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
         loadFileByFullPath(filename);

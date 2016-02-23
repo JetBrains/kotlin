@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.SmartList;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
@@ -60,10 +60,8 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
-public abstract class CodegenTestCase extends UsefulTestCase {
-
-    public static final String DEFAULT_TEST_FILE_NAME = "a_test";
-    public static final String DEFAULT_TEST_FILE_CLASS_NAME = "A_testKt";
+public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, File> {
+    private static final String DEFAULT_TEST_FILE_NAME = "a_test";
 
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
@@ -326,5 +324,21 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         catch (ClassNotFoundException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
+    }
+
+    @Override
+    protected Void createTestModule(@NotNull String name) {
+        // TODO: support multi-module codegen tests
+        throw new UnsupportedOperationException("Multi-module codegen tests are not yet supported");
+    }
+
+    @Override
+    protected File createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
+        return new File(fileName);
+    }
+
+    @Override
+    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<File> files) throws Exception {
+        throw new UnsupportedOperationException("Multi-file test cases are not supported in this test");
     }
 }

@@ -32,10 +32,12 @@ public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @Override
     protected void doTest(@NotNull String filename) {
         loadFileByFullPath(filename);
 
         try {
+            //noinspection ConstantConditions
             FqName fqName = myFiles.getPsiFile().getScript().getFqName();
             Class<?> scriptClass = generateClass(fqName.asString());
 
