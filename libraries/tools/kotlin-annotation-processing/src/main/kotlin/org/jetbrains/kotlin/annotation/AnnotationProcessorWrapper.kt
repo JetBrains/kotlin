@@ -37,18 +37,18 @@ class AnnotatedClassDescriptor(classFqName: String) : AnnotatedElementDescriptor
 }
 
 class AnnotatedMethodDescriptor(classFqName: String, public val methodName: String) : AnnotatedElementDescriptor(classFqName) {
-    override fun equals(other: Any?) = other is AnnotatedMethodDescriptor && methodName == other.methodName
+    override fun equals(other: Any?) = other is AnnotatedMethodDescriptor && methodName == other.methodName && classFqName == other.classFqName
 
-    override fun hashCode() = methodName.hashCode()
+    override fun hashCode() = 31 * classFqName.hashCode() + methodName.hashCode()
 }
 class AnnotatedConstructorDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName) {
     // use referential equality
 }
 
 class AnnotatedFieldDescriptor(classFqName: String, public val fieldName: String) : AnnotatedElementDescriptor(classFqName) {
-    override fun equals(other: Any?) = other is AnnotatedFieldDescriptor && fieldName == other.fieldName
+    override fun equals(other: Any?) = other is AnnotatedFieldDescriptor && fieldName == other.fieldName && classFqName == other.classFqName
 
-    override fun hashCode() = fieldName.hashCode()
+    override fun hashCode() = 31 * classFqName.hashCode() + fieldName.hashCode()
 }
 
 public abstract class AnnotationProcessorWrapper(
