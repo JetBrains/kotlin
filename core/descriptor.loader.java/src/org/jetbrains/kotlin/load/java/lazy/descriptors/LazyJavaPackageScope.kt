@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -72,37 +73,64 @@ class LazyJavaPackageScope(
         c.components.deserializedDescriptorResolver.createKotlinPackageScope(ownerDescriptor, ownerDescriptor.kotlinBinaryClasses)
     }
 
-    private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> { name ->
-        val classId = ClassId(ownerDescriptor.fqName, name)
+    private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> { request ->
+        val classId = ClassId(ownerDescriptor.fqName, request.name)
 
-        val kotlinResult = c.resolveKotlinBinaryClass(c.components.kotlinClassFinder.findKotlinClass(classId))
+        val kotlinBinaryClass =
+                // These branches should be semantically equal, but the first one could be faster
+                if (request.javaClass != null)
+                    c.components.kotlinClassFinder.findKotlinClass(request.javaClass)
+                else
+                    c.components.kotlinClassFinder.findKotlinClass(classId)
+
+        val kotlinResult = c.resolveKotlinBinaryClass(kotlinBinaryClass)
+
         when (kotlinResult) {
             is KotlinClassLookupResult.Found -> kotlinResult.descriptor
             is KotlinClassLookupResult.SyntheticClass -> null
             is KotlinClassLookupResult.NotFound -> {
-                c.components.finder.findClass(classId)?.let { javaClass ->
-                    c.javaClassResolver.resolveClass(javaClass).apply {
-                        assert(this == null || this.containingDeclaration == ownerDescriptor) {
-                            "Wrong package fragment for $this, expected $ownerDescriptor"
-                        }
-                    }
+
+                val javaClass = request.javaClass ?: c.components.finder.findClass(classId)
+                javaClass?.let { it ->
+                    LazyJavaClassDescriptor(c, ownerDescriptor, it.fqName!!, it)
                 }
             }
         }
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    // javaClass here is only for sake of optimizations
+    private class FindClassRequest(val name: Name, val javaClass: JavaClass?) {
+        override fun equals(other: Any?): Boolean{
+            if (this === other) return true
+
+            other as FindClassRequest
+
+            if (name != other.name) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int{
+            return name.hashCode()
+        }
+    }
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null, location)
+
+    private fun findClassifier(name: Name, javaClass: JavaClass?, location: LookupLocation): ClassDescriptor? {
         if (!SpecialNames.isSafeIdentifier(name)) return null
 
         recordLookup(name, location)
 
         val knownClassNamesInPackage = knownClassNamesInPackage()
-        if (knownClassNamesInPackage != null && name.asString() !in knownClassNamesInPackage) {
+        if (javaClass == null && knownClassNamesInPackage != null && name.asString() !in knownClassNamesInPackage) {
             return null
         }
 
-        return classes(name)
+        return classes(FindClassRequest(name, javaClass))
     }
+
+    fun findClassifierByJavaClass(javaClass: JavaClass, location: LookupLocation) = findClassifier(javaClass.name, javaClass, location)
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
