@@ -318,7 +318,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     @Nullable
     private Method computeEnclosingMethod(@NotNull CodegenContext context) {
         if (context instanceof MethodContext) {
-            Method method = typeMapper.mapSignature(((MethodContext) context).getFunctionDescriptor()).getAsmMethod();
+            Method method = typeMapper.mapAsmMethod(((MethodContext) context).getFunctionDescriptor());
             if (!method.getName().equals("<clinit>")) {
                 return method;
             }

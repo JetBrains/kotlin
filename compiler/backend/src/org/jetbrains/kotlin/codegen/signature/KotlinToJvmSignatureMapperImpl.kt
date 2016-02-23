@@ -30,5 +30,5 @@ class KotlinToJvmSignatureMapperImpl : KotlinToJvmSignatureMapper {
     private val typeMapper = JetTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null,
                                            IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME)
 
-    override fun mapToJvmMethodSignature(function: FunctionDescriptor) = typeMapper.mapSignature(function)
+    override fun mapToJvmMethodSignature(function: FunctionDescriptor) = typeMapper.mapAsmMethod(function)
 }

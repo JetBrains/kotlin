@@ -17,19 +17,13 @@
 package org.jetbrains.kotlin.resolve.jvm.jvmSignature
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.org.objectweb.asm.commons.Method
 
 interface KotlinToJvmSignatureMapper {
-    fun mapToJvmMethodSignature(function: FunctionDescriptor): JvmMethodSignature
+    fun mapToJvmMethodSignature(function: FunctionDescriptor): Method
 }
 
-fun erasedSignaturesEqualIgnoringReturnTypes(subFunction: JvmMethodSignature, superFunction: JvmMethodSignature): Boolean {
-    val subParams = subFunction.valueParameters
-    val superParams = superFunction.valueParameters
+fun erasedSignaturesEqualIgnoringReturnTypes(subFunction: Method, superFunction: Method) =
+        subFunction.parametersDescriptor() == superFunction.parametersDescriptor()
 
-    if (subParams.size != superParams.size) return false
-
-    return subParams.zip(superParams).all {
-        p -> val (subParam, superParam) = p
-        subParam.asmType == superParam.asmType
-    }
-}
+private fun Method.parametersDescriptor() = descriptor.substring(1, descriptor.lastIndexOf(")"))

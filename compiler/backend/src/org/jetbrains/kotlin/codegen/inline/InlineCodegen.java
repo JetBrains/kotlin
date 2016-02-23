@@ -116,7 +116,7 @@ public class InlineCodegen extends CallGenerator {
 
         PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
         context = (MethodContext) getContext(functionDescriptor, state, element != null ? (KtFile) element.getContainingFile() : null);
-        jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
+        jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, context.getContextKind());
 
         // TODO: implement AS_FUNCTION inline strategy
         this.asFunctionInline = false;
@@ -331,7 +331,7 @@ public class InlineCodegen extends CallGenerator {
             parentCodegen = ((FakeMemberCodegen) parentCodegen).delegate;
         }
 
-        JvmMethodSignature signature = typeMapper.mapSignature(context.getFunctionDescriptor(), context.getContextKind());
+        JvmMethodSignature signature = typeMapper.mapSignatureSkipGeneric(context.getFunctionDescriptor(), context.getContextKind());
         return new InlineCallSiteInfo(parentCodegen.getClassName(), signature.getAsmMethod().getName(), signature.getAsmMethod().getDescriptor());
     }
 
@@ -349,7 +349,7 @@ public class InlineCodegen extends CallGenerator {
 
         MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoInlinedLambda(descriptor, info.isCrossInline);
 
-        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(descriptor);
+        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
         MethodNode methodNode = new MethodNode(InlineCodegenUtil.API, getMethodAsmFlags(descriptor, context.getContextKind()), asmMethod.getName(), asmMethod.getDescriptor(), jvmMethodSignature.getGenericsSignature(), null);
 

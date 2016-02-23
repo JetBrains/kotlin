@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -239,7 +240,7 @@ class CollectionStubMethodGenerator(
         return KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArguments)
     }
 
-    private fun FunctionDescriptor.signature(): JvmMethodSignature = typeMapper.mapSignature(this)
+    private fun FunctionDescriptor.signature(): JvmMethodSignature = typeMapper.mapSignatureWithGeneric(this, OwnerKind.IMPLEMENTATION)
 
     private fun generateMethodStub(signature: JvmMethodSignature, synthetic: Boolean) {
         // TODO: investigate if it makes sense to generate abstract stubs in traits

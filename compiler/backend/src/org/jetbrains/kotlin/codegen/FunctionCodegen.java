@@ -152,7 +152,7 @@ public class FunctionCodegen {
             return;
         }
 
-        JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, contextKind);
+        JvmMethodSignature jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, contextKind);
         Method asmMethod = jvmSignature.getAsmMethod();
 
         int flags = getMethodAsmFlags(functionDescriptor, contextKind);
@@ -180,7 +180,7 @@ public class FunctionCodegen {
 
         generateMethodAnnotations(functionDescriptor, asmMethod, mv);
 
-        generateParameterAnnotations(functionDescriptor, mv, typeMapper.mapSignature(functionDescriptor));
+        generateParameterAnnotations(functionDescriptor, mv, typeMapper.mapSignatureSkipGeneric(functionDescriptor));
 
         generateBridges(functionDescriptor);
 
@@ -212,10 +212,10 @@ public class FunctionCodegen {
             // native @JvmStatic foo() in companion object should delegate to the static native function moved to the outer class
             mv.visitCode();
             FunctionDescriptor staticFunctionDescriptor = JvmStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
-            JvmMethodSignature jvmMethodSignature =
-                    typeMapper.mapSignature(memberCodegen.getContext().accessibleDescriptor(staticFunctionDescriptor, null));
+            Method accessorMethod =
+                    typeMapper.mapAsmMethod(memberCodegen.getContext().accessibleDescriptor(staticFunctionDescriptor, null));
             Type owningType = typeMapper.mapClass((ClassifierDescriptor) staticFunctionDescriptor.getContainingDeclaration());
-            generateDelegateToMethodBody(false, mv, jvmMethodSignature.getAsmMethod(), owningType.getInternalName());
+            generateDelegateToMethodBody(false, mv, accessorMethod, owningType.getInternalName());
         }
 
         endVisit(mv, null, origin.getElement());
@@ -582,7 +582,7 @@ public class FunctionCodegen {
                 CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor);
                 assert overridden != null;
 
-                Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
+                Method method = typeMapper.mapAsmMethod(descriptor);
                 int flags = ACC_ABSTRACT | getVisibilityAccessFlag(descriptor);
                 v.newMethod(JvmDeclarationOriginKt.OtherOrigin(overridden), flags, method.getName(), method.getDescriptor(), null, null);
             }
@@ -594,7 +594,7 @@ public class FunctionCodegen {
         return new Function1<FunctionDescriptor, Method>() {
             @Override
             public Method invoke(FunctionDescriptor descriptor) {
-                return typeMapper.mapSignature(descriptor).getAsmMethod();
+                return typeMapper.mapAsmMethod(descriptor);
             }
         };
     }
@@ -708,7 +708,7 @@ public class FunctionCodegen {
             @NotNull Method defaultMethod
     ) {
         GenerationState state = parentCodegen.state;
-        JvmMethodSignature signature = state.getTypeMapper().mapSignature(functionDescriptor, methodContext.getContextKind());
+        JvmMethodSignature signature = state.getTypeMapper().mapSignatureWithGeneric(functionDescriptor, methodContext.getContextKind());
 
         boolean isStatic = isStaticMethod(methodContext.getContextKind(), functionDescriptor);
         FrameMap frameMap = createFrameMap(state, functionDescriptor, signature, isStatic);
@@ -978,7 +978,7 @@ public class FunctionCodegen {
                             @NotNull MemberCodegen<?> parentCodegen
                     ) {
                         Method delegateToMethod = typeMapper.mapToCallableMethod(delegatedTo, /* superCall = */ false).getAsmMethod();
-                        Method delegateMethod = typeMapper.mapSignature(delegateFunction).getAsmMethod();
+                        Method delegateMethod = typeMapper.mapAsmMethod(delegateFunction);
 
                         Type[] argTypes = delegateMethod.getArgumentTypes();
                         Type[] originalArgTypes = delegateToMethod.getArgumentTypes();

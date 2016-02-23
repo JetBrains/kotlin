@@ -192,8 +192,8 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     private fun FunctionDescriptor.asRawSignature() =
-        with(typeMapper.mapSignature(this)) {
-            RawSignature(asmMethod.name!!, asmMethod.descriptor!!, MemberKind.METHOD)
+        with(typeMapper.mapAsmMethod(this)) {
+            RawSignature(name, descriptor, MemberKind.METHOD)
         }
 
     private fun isOrOverridesSamAdapter(descriptor: CallableMemberDescriptor): Boolean {

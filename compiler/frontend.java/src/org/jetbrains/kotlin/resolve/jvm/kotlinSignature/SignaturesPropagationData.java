@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
@@ -197,11 +198,11 @@ public class SignaturesPropagationData {
 
         // TODO: Add propagation for other kotlin descriptors (KT-3621)
         Name name = method.getName();
-        JvmMethodSignature autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
+        Method autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
         for (KotlinType supertype : containingClass.getTypeConstructor().getSupertypes()) {
             Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
             for (FunctionDescriptor candidate : superFunctionCandidates) {
-                JvmMethodSignature candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
+                Method candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (KotlinToJvmSignatureMapperKt.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
                     superFunctions.add(candidate);
                 }

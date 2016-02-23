@@ -260,8 +260,8 @@ public class MethodInliner {
 
                     //return value boxing/unboxing
                     Method bridge =
-                            typeMapper.mapSignature(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
-                    Method delegate = typeMapper.mapSignature(info.getFunctionDescriptor()).getAsmMethod();
+                            typeMapper.mapAsmMethod(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor()));
+                    Method delegate = typeMapper.mapAsmMethod(info.getFunctionDescriptor());
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
                     setLambdaInlining(false);
                     addInlineMarker(this, false);

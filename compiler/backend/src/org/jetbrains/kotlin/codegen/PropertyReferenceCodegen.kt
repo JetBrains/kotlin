@@ -174,7 +174,7 @@ class PropertyReferenceCodegen(
                         initialize(property.type)
                     }
 
-            val method = state.typeMapper.mapSignature(getter).asmMethod
+            val method = state.typeMapper.mapAsmMethod(getter)
             return method.name + method.descriptor
         }
 

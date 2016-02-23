@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 
 import java.util.ArrayList;
@@ -148,15 +149,15 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     @NotNull
     public List<Type> getInvokeParamsWithoutCaptured() {
-        Type[] types = typeMapper.mapSignature(functionDescriptor).getAsmMethod().getArgumentTypes();
+        Type[] types = typeMapper.mapAsmMethod(functionDescriptor).getArgumentTypes();
         return Arrays.asList(types);
     }
 
     @NotNull
     public Parameters addAllParameters(FieldRemapper remapper) {
-        JvmMethodSignature signature = typeMapper.mapSignature(getFunctionDescriptor());
+        Method asmMethod = typeMapper.mapAsmMethod(getFunctionDescriptor());
         ParametersBuilder builder =
-                ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, signature.getAsmMethod().getDescriptor(), this);
+                ParametersBuilder.initializeBuilderFrom(AsmTypes.OBJECT_TYPE, asmMethod.getDescriptor(), this);
 
         for (CapturedParamDesc info : getCapturedVars()) {
             CapturedParamInfo field = remapper.findField(new FieldInsnNode(0, info.getContainingLambdaName(), info.getFieldName(), ""));
