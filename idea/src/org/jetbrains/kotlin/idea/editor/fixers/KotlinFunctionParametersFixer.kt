@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.idea.editor.fixers
 
 import com.intellij.lang.SmartEnterProcessorWithFixers
+import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
-import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
@@ -29,8 +29,7 @@ class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
 
         val parameterList = psiElement.valueParameterList
         if (parameterList == null) {
-            val identifier = psiElement.nameIdentifier
-            if (identifier == null) return
+            val identifier = psiElement.nameIdentifier ?: return
 
             // Insert () after name or after type parameters list when it placed after name
             val offset = Math.max(identifier.range.end, psiElement.typeParameterList?.range?.end ?: psiElement.range.start)
@@ -38,8 +37,7 @@ class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<Kotlin
             processor.registerUnresolvedError(offset + 1)
         }
         else {
-            val rParen = parameterList.lastChild
-            if (rParen == null) return
+            val rParen = parameterList.lastChild ?: return
 
             if (")" != rParen.text) {
                 val params = parameterList.parameters
