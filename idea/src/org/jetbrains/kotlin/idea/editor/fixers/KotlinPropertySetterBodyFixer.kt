@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,17 @@ import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-
-class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinPropertySetterBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
-        if (psiElement !is KtNamedFunction) return
+        if (psiElement !is KtPropertyAccessor) return
+
+        if (!psiElement.isSetter) return
+
         if (psiElement.bodyExpression != null || psiElement.equalsToken != null) return
 
         val parentDeclaration = psiElement.getStrictParentOfType<KtDeclaration>()
@@ -39,6 +42,9 @@ class KotlinFunctionDeclarationBodyFixer : SmartEnterProcessorWithFixers.Fixer<K
                 return
             }
         }
+
+        //setter without parameter and body is valid
+        if (psiElement.namePlaceholder.endOffset == psiElement.endOffset) return
 
         val doc = editor.document
         var endOffset = psiElement.range.end
