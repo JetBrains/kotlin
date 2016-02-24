@@ -2492,7 +2492,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (!isInline) return defaultCallGenerator;
 
         FunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal());
-        return new InlineCodegen(this, state, original, callElement, typeParameterMappings, isDefaultCompilation);
+        if (isDefaultCompilation) {
+            return new InlineCodegenForDefaultBody(original, this, state);
+        }
+        else {
+            return new InlineCodegen(this, state, original, callElement, typeParameterMappings);
+        }
     }
 
     @NotNull

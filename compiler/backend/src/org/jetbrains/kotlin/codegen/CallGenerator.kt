@@ -38,11 +38,6 @@ abstract class CallGenerator {
             }
         }
 
-        override fun genCallWithoutAssertions(
-                callableMethod: CallableMethod, codegen: ExpressionCodegen) {
-            callableMethod.genInvokeInstruction(codegen.v)
-        }
-
         override fun afterParameterPut(
                 type: Type,
                 stackValue: StackValue?,
@@ -106,8 +101,6 @@ abstract class CallGenerator {
     }
 
     abstract fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
-
-    abstract fun genCallWithoutAssertions(callableMethod: CallableMethod, codegen: ExpressionCodegen)
 
     abstract fun afterParameterPut(
             type: Type,

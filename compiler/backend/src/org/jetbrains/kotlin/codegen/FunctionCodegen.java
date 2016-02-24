@@ -756,7 +756,7 @@ public class FunctionCodegen {
 
         CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
 
-        generator.genCallWithoutAssertions(method, codegen);
+        generator.genCall(method, null, false, codegen);
 
         iv.areturn(signature.getReturnType());
     }
