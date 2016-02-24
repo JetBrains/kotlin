@@ -1016,6 +1016,175 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testSetter1() = doFileTest(
+            """
+            var a : Int = 0
+                set<caret>
+            """
+            ,
+            """
+            var a : Int = 0
+                set
+            <caret>
+            """
+    )
+
+    fun testSetter2() = doFileTest(
+            """
+            var a : Int = 0
+                set(<caret>
+            """
+            ,
+            """
+            var a : Int = 0
+                set(value) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetter3() = doFileTest(
+            """
+            var a : Int = 0
+                set(<caret>)
+            """
+            ,
+            """
+            var a : Int = 0
+                set(value) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetter4() = doFileTest(
+            """
+            var a : Int = 0
+                set(v<caret>)
+            """
+            ,
+            """
+            var a : Int = 0
+                set(v) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetter5() = doFileTest(
+            """
+            var a : Int = 0
+                set(<caret>) {
+                }
+            """
+            ,
+            """
+            var a : Int = 0
+                set(value) {
+                    <caret>
+                }
+            """
+    )
+    fun testSetter6() = doFileTest(
+            """
+            var a : Int = 0
+                set(v<caret>) {
+                }
+            """
+            ,
+            """
+            var a : Int = 0
+                set(v) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetterPrivate1() = doFileTest(
+            """
+            var a : Int = 0
+                private set<caret>
+            """
+            ,
+            """
+            var a : Int = 0
+                private set
+            <caret>
+            """
+    )
+
+    fun testSetterPrivate2() = doFileTest(
+            """
+            var a : Int = 0
+                private set(<caret>
+            """
+            ,
+            """
+            var a : Int = 0
+                private set(value) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetterPrivate3() = doFileTest(
+            """
+            var a : Int = 0
+                private set(<caret>)
+            """
+            ,
+            """
+            var a : Int = 0
+                private set(value) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetterPrivate4() = doFileTest(
+            """
+            var a : Int = 0
+                private set(v<caret>)
+            """
+            ,
+            """
+            var a : Int = 0
+                private set(v) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetterPrivate5() = doFileTest(
+            """
+            var a : Int = 0
+                private set(<caret>) {
+                }
+            """
+            ,
+            """
+            var a : Int = 0
+                private set(value) {
+                    <caret>
+                }
+            """
+    )
+
+    fun testSetterPrivate6() = doFileTest(
+            """
+            var a : Int = 0
+                private set(v<caret>) {
+                }
+            """
+            ,
+            """
+            var a : Int = 0
+                private set(v) {
+                    <caret>
+                }
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----\n${this.trimIndent()}\n//----"

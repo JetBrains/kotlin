@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.idea.editor.fixers
 
 import com.intellij.lang.SmartEnterProcessorWithFixers
-import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.KtWhileExpression
+import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtLoopExpression
+import org.jetbrains.kotlin.psi.KtWhileExpression
 
 class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
@@ -39,8 +39,7 @@ class KotlinMissingForOrWhileBodyFixer : SmartEnterProcessorWithFixers.Fixer<Kot
 
         if (body != null && body.startLine(doc) == loopExpression.startLine(doc)) return
 
-        val rParen = loopExpression.rightParenthesis
-        if (rParen == null) return
+        val rParen = loopExpression.rightParenthesis ?: return
 
         doc.insertString(rParen.range.end, "{}")
     }
