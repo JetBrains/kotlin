@@ -72,7 +72,9 @@ public class SignaturesPropagationData {
                 createAutoMethodDescriptor(containingClass, method, autoReturnType, autoValueParameters, autoTypeParameters);
 
         superFunctions = getSuperFunctionsForMethod(method, autoMethodDescriptor, containingClass);
-        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters);
+        modifiedValueParameters = superFunctions.isEmpty()
+                                  ? new ValueParameters(null, autoValueParameters, /* stableParameterNames = */false)
+                                  : modifyValueParametersAccordingToSuperMethods(autoValueParameters);
     }
 
     @NotNull
@@ -198,9 +200,18 @@ public class SignaturesPropagationData {
 
         // TODO: Add propagation for other kotlin descriptors (KT-3621)
         Name name = method.getName();
-        Method autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
+        Method autoSignature = null;
+        boolean autoMethodContainsVararg = SignaturePropagationUtilKt.containsVarargs(autoMethodDescriptor);
         for (KotlinType supertype : containingClass.getTypeConstructor().getSupertypes()) {
-            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
+            Collection<FunctionDescriptor> superFunctionCandidates =
+                    supertype.getMemberScope().getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
+
+            if (!autoMethodContainsVararg && !SignaturePropagationUtilKt.containsAnyNotTrivialSignature(superFunctionCandidates)) continue;
+
+            if (autoSignature == null) {
+                autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
+            }
+
             for (FunctionDescriptor candidate : superFunctionCandidates) {
                 Method candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (KotlinToJvmSignatureMapperKt.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
