@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.android.actions
 
+import com.android.tools.idea.gradle.GradleSyncState
+import com.android.tools.idea.gradle.project.GradleSyncListener
 import com.intellij.history.core.RevisionsCollector
 import com.intellij.history.core.revisions.Revision
 import com.intellij.history.integration.LocalHistoryImpl
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.android.facet.AndroidFacet
@@ -38,7 +42,54 @@ private val NEW_KOTLIN_ACTIVITY_END_LABEL = "Finish New Kotlin Activity Action"
 class NewKotlinActivityAction: AnAction(KotlinIcons.FILE) {
 
     companion object {
+        internal fun attachGradleSyncListener(project: Project) {
+            subscribe(project, gradleSyncListener)
+        }
+
         private val LOG = Logger.getInstance(NewKotlinActivityAction::class.java)
+
+        private fun convertFilesAfterProjectSync(files: List<PsiJavaFile>) {
+            gradleSyncListener.javaFilesToKotlin = files
+        }
+
+        private val gradleSyncListener = object: GradleSyncListener.Adapter() {
+            internal var javaFilesToKotlin: List<PsiJavaFile>? = null
+
+            override fun syncSucceeded(project: Project) {
+                convertFiles(project)
+            }
+
+            override fun syncFailed(project: Project, errorMessage: String) {
+                convertFiles(project)
+            }
+
+            private fun convertFiles(project: Project) {
+                if (javaFilesToKotlin != null) {
+                    DumbService.getInstance(project).smartInvokeLater {
+                        JavaToKotlinAction.convertFiles(javaFilesToKotlin!!, project, false)
+                        javaFilesToKotlin = null
+                    }
+                }
+            }
+        }
+
+        private fun subscribe(project: Project, listener: GradleSyncListener) {
+            try {
+                val subscribeFun = GradleSyncState::class.functions.find { it.name == "subscribe" && it.parameters.count() == 2 }
+                if (subscribeFun != null) {
+                    // AS 2.0
+                    subscribeFun.call(project, listener)
+                }
+                else {
+                    // AS 1.5
+                    val connection = project.messageBus.connect(project)
+                    connection.subscribe(GradleSyncState.GRADLE_SYNC_TOPIC, gradleSyncListener)
+                }
+            }
+            catch(e: Throwable) {
+                LOG.error(e)
+            }
+        }
     }
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -81,7 +132,13 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.FILE) {
                     }
                 }
                 if (javaFiles.isNotEmpty()) {
-                    JavaToKotlinAction.convertFiles(javaFiles, project, false)
+                    val syncState = GradleSyncState.getInstance(project)
+                    if (syncState.isSyncInProgress) {
+                        convertFilesAfterProjectSync(javaFiles)
+                    }
+                    else {
+                        JavaToKotlinAction.convertFiles(javaFiles, project, false)
+                    }
                 }
                 break
             }
