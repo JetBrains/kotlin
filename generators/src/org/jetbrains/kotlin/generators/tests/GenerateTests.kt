@@ -203,8 +203,8 @@ fun main(args: Array<String>) {
             model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
         }
 
-        testClass(AbstractCompileKotlinAgainstKotlinTest::class.java, "CompileKotlinAgainstMultifileKotlinTestGenerated") {
-            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doBoxTest")
+        testClass<AbstractCompileKotlinAgainstKotlinTest>("CompileKotlinAgainstMultifileKotlinTestGenerated") {
+            model("codegen/boxMultifileClasses", testMethod = "doBoxTest")
         }
 
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxMultiFileCodegenTestGenerated") {
@@ -281,7 +281,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompileKotlinAgainstKotlinTest>() {
-            model("compileKotlinAgainstKotlin", extension = "A.kt")
+            model("compileKotlinAgainstKotlin")
         }
 
         testClass<AbstractDescriptorRendererTest>() {

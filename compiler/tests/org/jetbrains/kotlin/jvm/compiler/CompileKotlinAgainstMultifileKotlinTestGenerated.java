@@ -32,7 +32,54 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstMultifileKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInBoxMultifileClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("compiler/testData/codegen/boxMultifileClasses/calls")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Calls extends AbstractCompileKotlinAgainstKotlinTest {
+        public void testAllFilesPresentInCalls() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses/calls"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("callFromOtherPackage.kt")
+        public void testCallFromOtherPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/callFromOtherPackage.kt");
+            doBoxTest(fileName);
+        }
+
+        @TestMetadata("constFromOtherPackage.kt")
+        public void testConstFromOtherPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/constFromOtherPackage.kt");
+            doBoxTest(fileName);
+        }
+
+        @TestMetadata("valFromOtherPackage.kt")
+        public void testValFromOtherPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/valFromOtherPackage.kt");
+            doBoxTest(fileName);
+        }
+
+        @TestMetadata("varFromOtherPackage.kt")
+        public void testVarFromOtherPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/varFromOtherPackage.kt");
+            doBoxTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxMultifileClasses/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractCompileKotlinAgainstKotlinTest {
+        public void testAllFilesPresentInReflection() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("constPropertyReferenceFromMultifileClass.kt")
+        public void testConstPropertyReferenceFromMultifileClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/reflection/constPropertyReferenceFromMultifileClass.kt");
+            doBoxTest(fileName);
+        }
+    }
 }
