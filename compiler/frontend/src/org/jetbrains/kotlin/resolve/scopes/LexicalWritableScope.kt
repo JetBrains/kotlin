@@ -29,24 +29,15 @@ class LexicalWritableScope(
         redeclarationChecker: LocalRedeclarationChecker,
         override val kind: LexicalScopeKind
 ) : LexicalScopeStorage(parent, redeclarationChecker) {
-    enum class LockLevel {
-        WRITING,
-        BOTH,
-        READING
-    }
 
-    private var lockLevel: LockLevel = LockLevel.WRITING
+    private var canWrite: Boolean = true
     private var lastSnapshot: Snapshot? = null
 
-    fun changeLockLevel(lockLevel: LockLevel) {
-        if (lockLevel.ordinal < this.lockLevel.ordinal) {
-            throw IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString())
-        }
-        this.lockLevel = lockLevel
+    fun freeze() {
+        canWrite = false
     }
 
     fun takeSnapshot(): LexicalScope {
-        checkMayRead()
         if (lastSnapshot == null || lastSnapshot!!.descriptorLimit != addedDescriptors.size) {
             lastSnapshot = Snapshot(addedDescriptors.size)
         }
@@ -68,40 +59,21 @@ class LexicalWritableScope(
         addVariableOrClassDescriptor(classifierDescriptor)
     }
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = checkMayRead().addedDescriptors
-
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = checkMayRead().getClassifier(name)
-
-    override fun getContributedVariables(name: Name, location: LookupLocation) = checkMayRead().getVariables(name)
-
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = checkMayRead().getFunctions(name)
-
-    private fun checkMayRead(): LexicalWritableScope {
-        if (lockLevel != LockLevel.READING && lockLevel != LockLevel.BOTH) {
-            throw IllegalStateException("cannot read with lock level " + lockLevel + " at " + toString())
-        }
-        return this
-    }
-
     private fun checkMayWrite() {
-        if (lockLevel != LockLevel.WRITING && lockLevel != LockLevel.BOTH) {
-            throw IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString())
+        if (!canWrite) {
+            throw IllegalStateException("Cannot write into freezed scope:" + toString())
         }
     }
 
     private inner class Snapshot(val descriptorLimit: Int) : LexicalScope by this {
         override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-                = this@LexicalWritableScope.addedDescriptors.subList(0, descriptorLimit)
+                = addedDescriptors.subList(0, descriptorLimit)
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation)
-                = this@LexicalWritableScope.getClassifier(name, descriptorLimit)
+        override fun getContributedClassifier(name: Name, location: LookupLocation) = variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
+        override fun getContributedVariables(name: Name, location: LookupLocation) = listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)
 
-        override fun getContributedVariables(name: Name, location: LookupLocation)
-                = this@LexicalWritableScope.getVariables(name, descriptorLimit)
+        override fun getContributedFunctions(name: Name, location: LookupLocation) = functionsByName(name, descriptorLimit)
 
-        override fun getContributedFunctions(name: Name, location: LookupLocation)
-                = this@LexicalWritableScope.getFunctions(name, descriptorLimit)
 
         override fun toString(): String = "Snapshot($descriptorLimit) for $kind"
 

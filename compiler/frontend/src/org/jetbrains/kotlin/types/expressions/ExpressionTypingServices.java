@@ -165,7 +165,6 @@ public class ExpressionTypingServices {
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
                                                               new TraceBasedLocalRedeclarationChecker(context.trace), LexicalScopeKind.CODE_BLOCK);
-        scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
 
         KotlinTypeInfo r;
         if (block.isEmpty()) {
@@ -176,7 +175,7 @@ public class ExpressionTypingServices {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression,
                                                       context.replaceStatementFilter(statementFilter));
         }
-        scope.changeLockLevel(LexicalWritableScope.LockLevel.READING);
+        scope.freeze();
 
         if (containingDescriptor instanceof ScriptDescriptor) {
             context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, scope);

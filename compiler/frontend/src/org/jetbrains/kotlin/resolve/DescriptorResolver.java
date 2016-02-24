@@ -724,7 +724,7 @@ public class DescriptorResolver {
                         LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
                         propertyDescriptor, writableScope, scope, typeParameters, trace);
-                writableScope.changeLockLevel(LexicalWritableScope.LockLevel.READING);
+                writableScope.freeze();
                 resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);
                 scopeWithTypeParameters = writableScope;
             }

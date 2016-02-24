@@ -143,7 +143,6 @@ class FunctionDescriptorResolver(
 
         val typeParameterDescriptors = descriptorResolver.
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.typeParameters, trace)
-        innerScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)
         descriptorResolver.resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace)
 
         val receiverTypeRef = function.receiverTypeReference
@@ -156,7 +155,7 @@ class FunctionDescriptorResolver(
 
         val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, innerScope, trace, expectedFunctionType)
 
-        innerScope.changeLockLevel(LexicalWritableScope.LockLevel.READING)
+        innerScope.freeze()
 
         val returnType = function.typeReference?.let { typeResolver.resolveType(innerScope, it, trace, true) }
 
@@ -283,7 +282,6 @@ class FunctionDescriptorResolver(
                 TraceBasedLocalRedeclarationChecker(trace),
                 LexicalScopeKind.CONSTRUCTOR_HEADER
         )
-        parameterScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)
         val constructor = constructorDescriptor.initialize(
                 resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),
                 resolveVisibilityFromModifiers(

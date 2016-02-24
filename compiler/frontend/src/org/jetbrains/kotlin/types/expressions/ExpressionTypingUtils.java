@@ -81,10 +81,8 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static LexicalWritableScope newWritableScopeImpl(ExpressionTypingContext context, @NotNull LexicalScopeKind scopeKind) {
-        LexicalWritableScope scope = new LexicalWritableScope(context.scope, context.scope.getOwnerDescriptor(), false, null,
-                                                              new TraceBasedLocalRedeclarationChecker(context.trace), scopeKind);
-        scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
-        return scope;
+        return new LexicalWritableScope(context.scope, context.scope.getOwnerDescriptor(), false, null,
+                                        new TraceBasedLocalRedeclarationChecker(context.trace), scopeKind);
     }
 
     public static KtExpression createFakeExpressionOfType(

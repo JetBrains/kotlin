@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
 class LexicalScopeImpl @JvmOverloads constructor(
@@ -34,12 +32,6 @@ class LexicalScopeImpl @JvmOverloads constructor(
     init {
         InitializeHandler().initialize()
     }
-
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = getClassifier(name)
-    override fun getContributedVariables(name: Name, location: LookupLocation) = getVariables(name)
-
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = getFunctions(name)
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = addedDescriptors
 
     override fun toString(): String = kind.toString()
 

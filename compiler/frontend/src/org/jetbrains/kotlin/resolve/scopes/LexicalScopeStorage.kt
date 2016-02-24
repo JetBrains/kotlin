@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import java.util.*
@@ -35,6 +36,14 @@ abstract class LexicalScopeStorage(
 
     private var functionsByName: MutableMap<Name, IntList>? = null
     private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = variableOrClassDescriptorByName(name) as? ClassifierDescriptor
+    override fun getContributedVariables(name: Name, location: LookupLocation) = listOfNotNull(variableOrClassDescriptorByName(name) as? VariableDescriptor)
+
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = functionsByName(name)
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = addedDescriptors
 
     protected fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
         val name = descriptor.name
@@ -72,8 +81,8 @@ abstract class LexicalScopeStorage(
         return null
     }
 
-    protected fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size): List<FunctionDescriptor>? {
-        if (descriptorLimit == 0) return null
+    protected fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size): List<FunctionDescriptor> {
+        if (descriptorLimit == 0) return emptyList()
 
         var list = functionsByName?.get(name)
         while (list != null) {
@@ -82,7 +91,7 @@ abstract class LexicalScopeStorage(
             }
             list = list.prev
         }
-        return null
+        return emptyList()
     }
 
     private fun addDescriptor(descriptor: DeclarationDescriptor): Int {
@@ -106,14 +115,4 @@ abstract class LexicalScopeStorage(
         } while (rest != null)
         return result
     }
-
-    protected fun getClassifier(name: Name, descriptorLimit: Int = addedDescriptors.size)
-            = variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
-
-    protected fun getVariables(name: Name, descriptorLimit: Int = addedDescriptors.size): Collection<VariableDescriptor>
-            = listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)
-
-    protected fun getFunctions(name: Name, descriptorLimit: Int = addedDescriptors.size): Collection<FunctionDescriptor>
-            = functionsByName(name, descriptorLimit) ?: emptyList()
-
 }
