@@ -114,6 +114,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             if (CollectionsKt.any(usedValues, new Function1<BasicValue, Boolean>() {
                 @Override
                 public Boolean invoke(BasicValue input) {
+                    if (input == BasicValue.UNINITIALIZED_VALUE) return false;
                     return input == null ||
                            !(input instanceof BoxedBasicValue) ||
                            !((BoxedBasicValue) input).isSafeToRemove() ||

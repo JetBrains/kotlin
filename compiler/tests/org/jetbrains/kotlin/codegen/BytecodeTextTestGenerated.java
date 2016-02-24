@@ -376,6 +376,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt6842.kt")
+        public void testKt6842() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/kt6842.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt7224.kt")
         public void testKt7224() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/kt7224.kt");
@@ -409,6 +415,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleUninitializedMerge.kt")
+        public void testSimpleUninitializedMerge() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/simpleUninitializedMerge.kt");
             doTest(fileName);
         }
 

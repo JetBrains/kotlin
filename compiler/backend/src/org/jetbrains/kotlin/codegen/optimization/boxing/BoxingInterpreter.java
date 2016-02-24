@@ -210,6 +210,10 @@ public class BoxingInterpreter extends OptimizationBasicInterpreter {
     @Override
     @NotNull
     public BasicValue merge(@NotNull BasicValue v, @NotNull BasicValue w) {
+        if (v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE) {
+            return BasicValue.UNINITIALIZED_VALUE;
+        }
+
         if (v instanceof BoxedBasicValue && ((BoxedBasicValue) v).typeEquals(w)) {
             onMergeSuccess((BoxedBasicValue) v, (BoxedBasicValue) w);
             return v;
