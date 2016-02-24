@@ -137,6 +137,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("intRangeNoBoxing.kt")
+    public void testIntRangeNoBoxing() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/intRangeNoBoxing.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("interfaceDefaultImpl.kt")
     public void testInterfaceDefaultImpl() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/interfaceDefaultImpl.kt");
