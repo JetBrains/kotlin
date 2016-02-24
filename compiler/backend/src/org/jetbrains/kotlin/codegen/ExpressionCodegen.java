@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicCallable;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
@@ -3085,7 +3086,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         StackValue rightValue;
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
-        if (isPrimitive(leftType) && isPrimitive(rightType)) {
+        Callable callable = resolveToCallable((FunctionDescriptor) resolvedCall.getResultingDescriptor(), false, resolvedCall);
+        if (callable instanceof IntrinsicCallable) {
             type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
