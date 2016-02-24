@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.codegen.optimization.boxing;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.util.Pair;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -109,15 +111,15 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
             final BoxedBasicValue firstBoxed = (BoxedBasicValue) boxed.iterator().next();
 
-            if (!Collections2.filter(usedValues, new Predicate<BasicValue>() {
+            if (CollectionsKt.any(usedValues, new Function1<BasicValue, Boolean>() {
                 @Override
-                public boolean apply(BasicValue input) {
+                public Boolean invoke(BasicValue input) {
                     return input == null ||
                            !(input instanceof BoxedBasicValue) ||
                            !((BoxedBasicValue) input).isSafeToRemove() ||
                            !((BoxedBasicValue) input).getPrimitiveType().equals(firstBoxed.getPrimitiveType());
                 }
-            }).isEmpty()) {
+            })) {
                 for (BasicValue value : usedValues) {
                     if (value instanceof BoxedBasicValue && ((BoxedBasicValue) value).isSafeToRemove()) {
                         values.remove((BoxedBasicValue) value);
