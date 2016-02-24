@@ -30,6 +30,10 @@ class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
     companion object {
 
         private val jpsResourcesPath = File("../../../jps-plugin/testData/incremental")
+        private val ignoredDirs = setOf(File(jpsResourcesPath, "cacheVersionChanged"),
+                                        File(jpsResourcesPath, "changeIncrementalOption"),
+                                        File(jpsResourcesPath, "custom"),
+                                        File(jpsResourcesPath, "lookupTracker"))
 
         val MAX_TESTS_ON_SINGLE_DAEMON = 20
         private var testsCounter = 0
@@ -39,6 +43,7 @@ class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
         @JvmStatic
         fun data(): List<Array<String>> =
                 jpsResourcesPath.walk()
+                        .onEnter { it !in ignoredDirs }
                         .filter { it.isDirectory && isJpsTestProject(it) }
                         .map { arrayOf(it.toRelativeString(jpsResourcesPath)) }
                         .toList()
