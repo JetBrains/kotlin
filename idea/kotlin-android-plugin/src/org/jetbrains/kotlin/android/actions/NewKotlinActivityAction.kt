@@ -46,15 +46,20 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.FILE) {
             subscribe(project, gradleSyncListener)
         }
 
+        internal fun willBeConvertedToKotlin(file: VirtualFile): Boolean {
+            return javaFilesToKotlin?.any {
+                it.virtualFile == file
+            } ?: false
+        }
+
         private val LOG = Logger.getInstance(NewKotlinActivityAction::class.java)
+        private var javaFilesToKotlin: List<PsiJavaFile>? = null
 
         private fun convertFilesAfterProjectSync(files: List<PsiJavaFile>) {
-            gradleSyncListener.javaFilesToKotlin = files
+            javaFilesToKotlin = files
         }
 
         private val gradleSyncListener = object: GradleSyncListener.Adapter() {
-            internal var javaFilesToKotlin: List<PsiJavaFile>? = null
-
             override fun syncSucceeded(project: Project) {
                 convertFiles(project)
             }

@@ -13,6 +13,8 @@
                          groupName="Kotlin"
                          enabledByDefault="true"
                          level="ERROR"/>
+
+        <editorNotificationProvider implementation="org.jetbrains.kotlin.android.actions.KotlinNewActivityNotification"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
