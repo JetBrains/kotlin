@@ -41,6 +41,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("callsToMultifileClassFromOtherPackage.kt")
+    public void testCallsToMultifileClassFromOtherPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/callsToMultifileClassFromOtherPackage.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("classInObject.kt")
     public void testClassInObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/classInObject.kt");
@@ -56,6 +62,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("classObjectMember.kt")
     public void testClassObjectMember() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/classObjectMember.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("constPropertyReferenceFromMultifileClass.kt")
+    public void testConstPropertyReferenceFromMultifileClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/constPropertyReferenceFromMultifileClass.kt");
         doTest(fileName);
     }
 
