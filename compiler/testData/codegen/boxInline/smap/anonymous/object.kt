@@ -10,18 +10,6 @@ inline fun call(crossinline init: () -> Unit) {
     }.run()
 }
 
-
-//SMAP
-//object.2.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 object.2.kt
-//builders/Object_2Kt$call$1
-//*L
-//1#1,21:1
-//*E
-
 // FILE: 2.kt
 
 import builders.*
@@ -42,30 +30,46 @@ fun box(): String {
     return test()
 }
 //NO_CHECK_LAMBDA_INLINING
-//SMAP
-//object.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 object.1.kt
-//Object_1Kt
-//+ 2 object.2.kt
-//builders/Object_2Kt
-//*L
-//1#1,45:1
-//4#2,5:46
-//*E
-//
-//SMAP
-//object.2.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 object.2.kt
-//builders/Object_2Kt$call$1
-//+ 2 object.1.kt
-//Object_1Kt
-//*L
-//1#1,21:1
-//8#2,2:22
-//*E
+
+// FILE: 1.smap
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+builders/_1Kt$call$1
+*L
+1#1,13:1
+*E
+
+// FILE: 2.smap
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+builders/_1Kt
+*L
+1#1,22:1
+6#2,5:23
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+builders/_1Kt$call$1
++ 2 2.kt
+_2Kt
+*L
+1#1,13:1
+10#2,2:14
+*E

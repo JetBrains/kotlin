@@ -6,8 +6,6 @@ inline fun call(crossinline init: () -> Unit) {
     return init()
 }
 
-//SMAP ABSENT
-
 // FILE: 2.kt
 
 import builders.*
@@ -30,39 +28,44 @@ fun box(): String {
     return test()
 }
 //NO_CHECK_LAMBDA_INLINING
+
+// FILE: 1.smap
+
+// FILE: 2.smap
+
 //TODO SHOULD BE LESS
-//SMAP
-//lambdaOnInlineCallSite.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 lambdaOnInlineCallSite.1.kt
-//LambdaOnInlineCallSite_1Kt
-//+ 2 lambdaOnInlineCallSite.2.kt
-//builders/LambdaOnInlineCallSite_2Kt
-//*L
-//1#1,56:1
-//4#2:57
-//*E
-//
-//SMAP
-//lambdaOnInlineCallSite.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 lambdaOnInlineCallSite.1.kt
-//LambdaOnInlineCallSite_1Kt$test$1$1
-//*L
-//1#1,56:1
-//*E
-//
-//SMAP
-//lambdaOnInlineCallSite.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 lambdaOnInlineCallSite.1.kt
-//LambdaOnInlineCallSite_1Kt$test$1$1
-//*L
-//1#1,56:1
-//*E
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+builders/_1Kt
+*L
+1#1,24:1
+6#2:25
+*E
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt$test$1$1
+*L
+1#1,24:1
+*E
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt$test$1$1
+*L
+1#1,24:1
+*E

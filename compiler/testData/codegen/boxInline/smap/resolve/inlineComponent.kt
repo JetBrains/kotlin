@@ -8,8 +8,6 @@ operator inline fun A.component1() = a
 
 operator inline fun A.component2() = b
 
-//SMAP ABSENT
-
 // FILE: 2.kt
 
 import zzz.*
@@ -20,16 +18,20 @@ fun box(): String {
     return if (p == 1 && l == 11) "OK" else "fail: $p"
 }
 
-//SMAP
-//inlineComponent.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 inlineComponent.1.kt
-//InlineComponent_1Kt
-//+ 2 inlineComponent.2.kt
-//zzz/InlineComponent_2Kt
-//*L
-//1#1,21:1
-//5#2,3:22
-//*E
+// FILE: 1.smap
+
+// FILE: 2.smap
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+zzz/_1Kt
+*L
+1#1,11:1
+7#2,3:12
+*E

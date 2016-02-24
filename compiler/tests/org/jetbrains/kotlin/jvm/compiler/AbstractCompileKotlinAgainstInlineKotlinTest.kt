@@ -27,13 +27,13 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
     override fun doMultiFileTest(
             file: File, modules: Map<String, KotlinMultiFileTestWithJava<Void, TestFile>.ModuleAndDependencies>, files: List<TestFile>
     ) {
-        assert(files.size == 2) { "There should be exactly two files in this test" }
+        val kotlinFiles = files.filter { it.name.endsWith(".kt") }
+        assert(kotlinFiles.size == 2) { "There should be exactly two files in this test" }
 
         var factory1: ClassFileFactory? = null
         var factory2: ClassFileFactory? = null
         try {
-            val fileA = files[0]
-            val fileB = files[1]
+            val (fileA, fileB) = kotlinFiles
             factory1 = compileA(fileA.name, fileA.content)
             factory2 = compileB(fileB.name, fileB.content)
             invokeBox(PackagePartClassUtils.getFilePartShortName(File(fileB.name).name))
@@ -42,7 +42,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
 
             val sourceFiles = factory1.inputFiles + factory2.inputFiles
             InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
-            checkSMAP(sourceFiles, allGeneratedFiles.filterClassFiles())
+            checkSMAP(files, allGeneratedFiles.filterClassFiles())
         }
         catch (e: Throwable) {
             var result = ""

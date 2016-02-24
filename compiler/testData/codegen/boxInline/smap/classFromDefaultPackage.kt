@@ -12,16 +12,18 @@ fun box(): String {
     return "OK"
 }
 
-//SMAP
-//classFromDefaultPackage.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 classFromDefaultPackage.1.kt
-//ClassFromDefaultPackage_1Kt
-//+ 2 classFromDefaultPackage.2.kt
-//A
-//*L
-//1#1,20:1
-//2#2:21
-//*E
+// FILE: 2.smap
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+A
+*L
+1#1,9:1
+4#2:10
+*E

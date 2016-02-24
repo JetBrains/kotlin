@@ -15,16 +15,18 @@ fun box(): String {
     return "OK"
 }
 
-//SMAP
-//reified.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 reified.1.kt
-//Reified_1Kt
-//+ 2 reified.2.kt
-//test/Reified_2Kt
-//*L
-//1#1,22:1
-//3#2:23
-//*E
+// FILE: 2.smap
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+test/_1Kt
+*L
+1#1,12:1
+5#2:13
+*E

@@ -4,8 +4,6 @@ package zzz
 
 inline fun nothing() {}
 
-//SMAP ABSENT
-
 // FILE: 2.kt
 
 fun box(): String {
@@ -19,14 +17,19 @@ inline fun test(p: () -> String): String {
     pd = "O"
     return pd + p()
 }
+
+// FILE: 1.smap
+
+// FILE: 2.smap
+
 //TODO should be empty
-//SMAP
-//oneFile.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 oneFile.1.kt
-//OneFile_1Kt
-//*L
-//1#1,22:1
-//*E
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
+*L
+1#1,15:1
+*E

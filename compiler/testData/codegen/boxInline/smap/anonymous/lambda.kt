@@ -8,22 +8,11 @@ inline fun call(crossinline init: () -> Unit) {
     }()
 }
 
-//SMAP
-//lambda.2.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 lambda.2.kt
-//builders/Lambda_2Kt$call$1
-//*L
-//1#1,18:1
-//*E
-
 // FILE: 2.kt
 
 import builders.*
 
-
+//NO_CHECK_LAMBDA_INLINING
 fun test(): String {
     var res = "Fail"
 
@@ -38,32 +27,46 @@ fun test(): String {
 fun box(): String {
     return test()
 }
-//NO_CHECK_LAMBDA_INLINING
 
-//SMAP
-//lambda.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 lambda.1.kt
-//Lambda_1Kt
-//+ 2 lambda.2.kt
-//builders/Lambda_2Kt
-//*L
-//1#1,46:1
-//4#2:47
-//*E
-//
-//SMAP
-//lambda.2.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 lambda.2.kt
-//builders/Lambda_2Kt$call$1
-//+ 2 lambda.1.kt
-//Lambda_1Kt
-//*L
-//1#1,18:1
-//8#2,2:19
-//*E
+// FILE: 1.smap
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+builders/_1Kt$call$1
+*L
+1#1,11:1
+*E
+
+// FILE: 2.smap
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+builders/_1Kt
+*L
+1#1,21:1
+6#2:22
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+builders/_1Kt$call$1
++ 2 2.kt
+_2Kt
+*L
+1#1,11:1
+10#2,2:12
+*E

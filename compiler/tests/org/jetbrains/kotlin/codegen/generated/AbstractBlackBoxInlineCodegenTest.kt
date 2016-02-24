@@ -34,7 +34,7 @@ abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest()
 
         try {
             InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.psiFiles)
-            checkSMAP(myFiles.psiFiles, generateClassesInFile().getClassFiles())
+            checkSMAP(files, generateClassesInFile().getClassFiles())
         }
         catch (e: Throwable) {
             System.out.println(generateToText())

@@ -101,7 +101,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
         List<KtFile> ktFiles = new ArrayList<KtFile>(files.size());
         for (TestFile file : files) {
-            ktFiles.add(KotlinTestUtils.createFile(file.name, file.content, myEnvironment.getProject()));
+            if (file.name.endsWith(".kt")) {
+                ktFiles.add(KotlinTestUtils.createFile(file.name, file.content, myEnvironment.getProject()));
+            }
         }
 
         myFiles = CodegenTestFiles.create(ktFiles);

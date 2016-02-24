@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import java.io.File
+import java.io.StringReader
 
 interface AbstractSMAPBaseTest {
-
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.mapNotNull { outputFile ->
             var debugInfo: String? = null
@@ -42,52 +42,43 @@ interface AbstractSMAPBaseTest {
         }
     }
 
-    private fun extractSmapFromSource(file: KtFile): SMAPAndFile? {
-        val fileContent = file.text
-        val smapPrefix = "//SMAP"
-        if (InTextDirectivesUtils.isDirectiveDefined(fileContent, smapPrefix)) {
-            InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, smapPrefix)
-            var smapData = fileContent.substring(fileContent.indexOf(smapPrefix))
-            smapData = smapData.replace("//", "").trim()
+    private fun extractSmapFromTestDataFile(file: CodegenTestCase.TestFile): SMAPAndFile? {
+        if (!file.name.endsWith(".smap")) return null
 
-            return SMAPAndFile(if (smapData.startsWith("SMAP ABSENT")) null else smapData,
-                               SMAPAndFile.getPath(file.virtualFile.canonicalPath!!))
-        }
-        return null;
+        val content = buildString {
+            StringReader(file.content).forEachLine { line ->
+                // Strip comments
+                if (!line.startsWith("//")) {
+                    appendln(line.trim())
+                }
+            }
+        }.trim()
+
+        return SMAPAndFile(if (content.isNotEmpty()) content else null, SMAPAndFile.getPath(file.name))
     }
 
-    fun checkSMAP(inputFiles: List<KtFile>, outputFiles: Iterable<OutputFile>) {
-        if (!InlineCodegenUtil.GENERATE_SMAP) {
-            return
-        }
+    fun checkSMAP(inputFiles: List<CodegenTestCase.TestFile>, outputFiles: Iterable<OutputFile>) {
+        if (!InlineCodegenUtil.GENERATE_SMAP) return
 
-        val sourceData = inputFiles.mapNotNull { extractSmapFromSource(it) }
+        val sourceData = inputFiles.mapNotNull { extractSmapFromTestDataFile(it) }
         val compiledData = extractSMAPFromClasses(outputFiles).groupBy {
             it.sourceFile
         }.map {
-            val smap = it.value.mapNotNull { it.smap?.replaceHash() }.joinToString("\n")
+            val smap = it.value.mapNotNull { it.smap }.joinToString("\n")
             SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key)
         }.associateBy { it.sourceFile }
 
         for (source in sourceData) {
-            val data = compiledData[source.sourceFile]
-            Assert.assertEquals("Smap data differs for ${source.sourceFile}", source.smap, data?.smap?.trim())
+            val ktFileName = "/" + source.sourceFile.replace(".smap", ".kt")
+            val data = compiledData[ktFileName]
+            Assert.assertEquals("Smap data differs for $ktFileName", normalize(source.smap), normalize(data?.smap))
         }
     }
 
+    private fun normalize(text: String?) =
+            text?.let { StringUtil.convertLineSeparators(it.trim()) }
 
-    private fun String.replaceHash(): String {
-        val fileSectionStart = indexOf("*F") + 3
-        val lineSection = indexOf("*L") - 1
-
-        val files = substring(fileSectionStart, lineSection).split("\n")
-
-        val cleaned = files.joinToString("\n")
-
-        return substring(0, fileSectionStart) + cleaned + substring(lineSection)
-    }
-
-    class SMAPAndFile(val smap: String?, val sourceFile: String) {
+    private class SMAPAndFile(val smap: String?, val sourceFile: String) {
         companion object {
             fun SMAPAndFile(smap: String?, sourceFile: File) = SMAPAndFile(smap, getPath(sourceFile))
 

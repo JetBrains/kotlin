@@ -17,17 +17,6 @@ inline fun head(init: () -> Unit) {val p = initTag2(init); return p}
 inline fun html(init: () -> Unit) {
     return init(init)
 }
-//TODO SHOULD BE EMPTY
-//SMAP
-//smap.2.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 smap.2.kt
-//builders/Smap_2Kt
-//*L
-//1#1,28:1
-//*E
 
 // FILE: 2.kt
 
@@ -53,19 +42,35 @@ fun box(): String {
     return expected
 }
 
-//SMAP
-//smap.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 smap.1.kt
-//Smap_1Kt
-//+ 2 smap.2.kt
-//builders/Smap_2Kt
-//*L
-//1#1,38:1
-//16#2:39
-//4#2,9:40
-//8#2,3:49
-//5#2:52
-//*E
+// FILE: 1.smap
+
+//TODO SHOULD BE EMPTY
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+builders/_1Kt
+*L
+1#1,21:1
+*E
+
+// FILE: 2.smap
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+builders/_1Kt
+*L
+1#1,25:1
+18#2:26
+6#2,9:27
+10#2,3:36
+7#2:39
+*E

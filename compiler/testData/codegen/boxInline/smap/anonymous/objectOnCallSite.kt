@@ -6,8 +6,6 @@ inline fun call(crossinline init: () -> Unit) {
     return init()
 }
 
-//SMAP ABSENT
-
 // FILE: 2.kt
 
 import builders.*
@@ -33,16 +31,21 @@ fun box(): String {
 }
 //NO_CHECK_LAMBDA_INLINING
 
+// FILE: 1.smap
+
+// FILE: 2.smap
+
 //SMAP
-//objectOnCallSite.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 objectOnCallSite.1.kt
-//ObjectOnCallSite_1Kt
-//+ 2 objectOnCallSite.2.kt
-//builders/ObjectOnCallSite_2Kt
-//*L
-//1#1,36:1
-//4#2:37
-//*E
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+builders/_1Kt
+*L
+1#1,26:1
+6#2:27
+*E

@@ -22,8 +22,6 @@ public inline fun massert(value: Boolean, message: Any = "Assertion failed") {
     }
 }
 
-//SMAP ABSENT
-
 // FILE: 2.kt
 
 import test.*
@@ -37,17 +35,21 @@ fun box(): String {
     return "OK"
 }
 
-//SMAP
-//assertion.1.kt
-//Kotlin
-//*S Kotlin
-//*F
-//+ 1 assertion.1.kt
-//Assertion_1Kt
-//+ 2 assertion.2.kt
-//test/Assertion_2Kt
-//*L
-//1#1,25:1
-//15#2,7:26
-//6#2,7:33
-//*E
+// FILE: 1.smap
+
+// FILE: 2.smap
+
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+test/_1Kt
+*L
+1#1,14:1
+17#2,7:15
+8#2,7:22
+*E
