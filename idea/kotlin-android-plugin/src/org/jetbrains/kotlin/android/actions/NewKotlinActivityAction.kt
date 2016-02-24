@@ -71,7 +71,10 @@ class NewKotlinActivityAction: AnAction(KotlinIcons.FILE) {
             private fun convertFiles(project: Project) {
                 if (javaFilesToKotlin != null) {
                     DumbService.getInstance(project).smartInvokeLater {
-                        JavaToKotlinAction.convertFiles(javaFilesToKotlin!!, project, false)
+                        val filesToConvert = javaFilesToKotlin!!.filter { it.isValid }
+                        if (filesToConvert.isNotEmpty()) {
+                            JavaToKotlinAction.convertFiles(filesToConvert, project, false)
+                        }
                         javaFilesToKotlin = null
                     }
                 }
