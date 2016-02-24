@@ -1,0 +1,4 @@
+package
+
+@kotlin.Deprecated() public fun bar(): kotlin.Nothing?
+@java.lang.Deprecated() public fun foo(): kotlin.String

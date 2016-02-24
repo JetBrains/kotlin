@@ -16,25 +16,26 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException
 
 abstract class LazyAnnotationsContext(
         val annotationResolver: AnnotationResolver,
@@ -109,6 +110,9 @@ class LazyAnnotations(
     }
 }
 
+class ReenteringAnnotationArgumentsComputationException internal constructor(val name: FqName?) :
+        Exception("Recursive annotation arguments computation for $name")
+
 class LazyAnnotationDescriptor(
         val c: LazyAnnotationsContext,
         val annotationEntry: KtAnnotationEntry
@@ -126,9 +130,25 @@ class LazyAnnotationDescriptor(
         )
     }
 
-    private val valueArguments = c.storageManager.createLazyValue {
-        computeValueArguments()
-    }
+    private fun ClassifierDescriptor?.isDeprecated() =
+            when (this?.fqNameSafe) {
+                KotlinBuiltIns.FQ_NAMES.deprecated -> true
+                FqName("java.lang.Deprecated") -> true
+                else -> false
+            }
+
+    // Recursion can occur here for deprecated annotation, see KT-6367
+    private val valueArguments = c.storageManager.createLazyValueWithPostCompute(
+            { computeValueArguments() },
+            {
+                val descriptor = this.getType().constructor.declarationDescriptor
+                if (!descriptor.isDeprecated())
+                    throw ReenteringAnnotationArgumentsComputationException(descriptor?.fqNameSafe)
+                else
+                    emptyMap()
+            },
+            {}
+    )
 
     private val source = annotationEntry.toSourceElement()
 
