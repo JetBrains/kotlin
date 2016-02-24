@@ -35,7 +35,7 @@ fun box(): String {
     if (enclosingMethod?.name != "box") return "fail 1: ${enclosingMethod?.name}"
 
     val enclosingClass = javaClass1.enclosingClass
-    if (enclosingClass?.name != "TransformedConstructorWithAdditionalObject_1Kt") return "fail 2: ${enclosingClass?.name}"
+    if (enclosingClass?.name != "_2Kt") return "fail 2: ${enclosingClass?.name}"
 
 
     val res2 = res.a()

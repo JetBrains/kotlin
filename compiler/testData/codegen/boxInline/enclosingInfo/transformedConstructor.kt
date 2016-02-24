@@ -32,10 +32,10 @@ fun box(): String {
 
 
     val enclosingConstructor = z.javaClass.enclosingConstructor
-    if (enclosingConstructor?.name != "TransformedConstructor_1Kt\$box$\$inlined\$test$1") return "fail 1: ${enclosingConstructor?.name}"
+    if (enclosingConstructor?.name != "_2Kt\$box$\$inlined\$test$1") return "fail 1: ${enclosingConstructor?.name}"
 
     val enclosingClass = z.javaClass.enclosingClass
-    if (enclosingClass?.name != "TransformedConstructor_1Kt\$box$\$inlined\$test$1") return "fail 2: ${enclosingClass?.name}"
+    if (enclosingClass?.name != "_2Kt\$box$\$inlined\$test$1") return "fail 2: ${enclosingClass?.name}"
 
     return res.a()
 }

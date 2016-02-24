@@ -17,7 +17,7 @@ fun box(): String {
     if (enclosingMethod?.name != "box") return "fail 1: ${enclosingMethod?.name}"
 
     var enclosingClass = res.javaClass.enclosingClass
-    if (enclosingClass?.name != "AnonymousInLambda_1Kt") return "fail 2: ${enclosingClass?.name}"
+    if (enclosingClass?.name != "_2Kt") return "fail 2: ${enclosingClass?.name}"
 
     return res()
 }
