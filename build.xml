@@ -551,7 +551,9 @@
 
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-compiler"/>
+            <withKotlin modulename="kotlin-compiler">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src refid="compilerSources.path"/>
@@ -609,7 +611,9 @@
 
         <javac2 destdir="${output}/classes/kotlin-build-common" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-build-common"/>
+            <withKotlin modulename="kotlin-build-common">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <pathelement path="build-common/src"/>
@@ -682,7 +686,9 @@
     <target name="android-compiler-plugin">
         <cleandir dir="${output}/classes/android-compiler-plugin"/>
         <javac2 destdir="${output}/classes/android-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-            <withKotlin modulename="kotlin-android-compiler-plugin"/>
+            <withKotlin modulename="kotlin-android-compiler-plugin">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
@@ -707,7 +713,9 @@
         <cleandir dir="${output}/classes/ant"/>
         <javac2 destdir="${output}/classes/ant" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-ant-tools"/>
+            <withKotlin modulename="kotlin-ant-tools">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
@@ -1057,7 +1065,9 @@
 
         <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-for-upsource"/>
+            <withKotlin modulename="kotlin-for-upsource">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
