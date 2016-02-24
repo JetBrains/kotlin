@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,19 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.OverloadUtil
+import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import java.util.*
 
-abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandler) {
+abstract class LexicalScopeStorage(
+        parent: HierarchicalScope,
+        val redeclarationChecker: LocalRedeclarationChecker
+): LexicalScope {
+    override val parent = parent.takeSnapshot()
 
     protected val addedDescriptors: MutableList<DeclarationDescriptor> = SmartList()
 
@@ -31,12 +38,6 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
 
     protected fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
         val name = descriptor.name
-
-        val originalDescriptor = variableOrClassDescriptorByName(name)
-        if (originalDescriptor != null) {
-            redeclarationHandler.handleRedeclaration(originalDescriptor, descriptor)
-        }
-
         val descriptorIndex = addDescriptor(descriptor)
 
         if (variablesAndClassifiersByName == null) {
@@ -48,8 +49,6 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
     }
 
     protected fun addFunctionDescriptorInternal(functionDescriptor: FunctionDescriptor) {
-        checkOverloadConflicts(functionDescriptor)
-
         val name = functionDescriptor.name
         val descriptorIndex = addDescriptor(functionDescriptor)
         if (functionsByName == null) {
@@ -57,23 +56,6 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
         }
         //TODO: could not use += because of KT-8050
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
-    }
-
-    private fun checkOverloadConflicts(functionDescriptor: FunctionDescriptor) {
-        val name = functionDescriptor.name
-        val originalFunctions = functionsByName(name).orEmpty()
-        val originalVariableOrClass = variableOrClassDescriptorByName(name)
-        val potentiallyConflictingOverloads =
-                if (originalVariableOrClass is ClassDescriptor)
-                    originalFunctions + originalVariableOrClass.constructors
-                else
-                    originalFunctions
-        for (overloadedDescriptor in potentiallyConflictingOverloads) {
-            if (!OverloadUtil.isOverloadable(overloadedDescriptor, functionDescriptor)) {
-                redeclarationHandler.handleConflictingOverloads(functionDescriptor, overloadedDescriptor)
-                break
-            }
-        }
     }
 
     protected fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size): DeclarationDescriptor? {
@@ -104,6 +86,7 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
     }
 
     private fun addDescriptor(descriptor: DeclarationDescriptor): Int {
+        redeclarationChecker.checkBeforeAddingToScope(this, descriptor)
         addedDescriptors.add(descriptor)
         return addedDescriptors.size - 1
     }

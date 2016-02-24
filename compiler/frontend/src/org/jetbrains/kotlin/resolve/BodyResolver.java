@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +32,12 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
@@ -574,7 +572,7 @@ public class BodyResolver {
             final ConstructorDescriptor unsubstitutedPrimaryConstructor
     ) {
         return new LexicalScopeImpl(originalScope, unsubstitutedPrimaryConstructor, false, null,
-                                    LexicalScopeKind.DEFAULT_VALUE, RedeclarationHandler.DO_NOTHING,
+                                    LexicalScopeKind.DEFAULT_VALUE, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override
                                         public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
@@ -810,7 +808,7 @@ public class BodyResolver {
             final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
             innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
                                               LexicalScopeKind.PROPERTY_ACCESSOR_BODY,
-                                              RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                                              LocalRedeclarationChecker.DO_NOTHING.INSTANCE, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                 @Override
                 public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
                     handler.addVariableDescriptor(fieldDescriptor);

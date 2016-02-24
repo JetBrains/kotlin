@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,7 +164,7 @@ fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: Declarati
 
         is FunctionDescriptor ->
             FunctionDescriptorUtil.getFunctionInnerScope(getOuterScope(descriptor, resolutionFacade),
-                                                         descriptor, RedeclarationHandler.DO_NOTHING)
+                                                         descriptor, LocalRedeclarationChecker.DO_NOTHING)
 
         is PropertyDescriptor ->
             ScopeUtils.makeScopeForPropertyHeader(getOuterScope(descriptor, resolutionFacade), descriptor)

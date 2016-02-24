@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         final ClassifierDescriptor contextClass = ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
         LexicalScope typeParameters = new LexicalScopeImpl(topLevelScope, module, false, null, LexicalScopeKind.SYNTHETIC,
-                                                           RedeclarationHandler.THROW_EXCEPTION,
+                                                           ThrowingLocalRedeclarationChecker.INSTANCE,
                                                            new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                                                @Override
                                                                public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
+import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
-import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import java.util.*
 
 class FunctionDescriptorResolver(
@@ -140,7 +139,7 @@ class FunctionDescriptorResolver(
             expectedFunctionType: KotlinType
     ) {
         val innerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
-                                              TraceBasedRedeclarationHandler(trace), LexicalScopeKind.FUNCTION_HEADER)
+                                              TraceBasedLocalRedeclarationChecker(trace), LexicalScopeKind.FUNCTION_HEADER)
 
         val typeParameterDescriptors = descriptorResolver.
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.typeParameters, trace)
@@ -281,7 +280,7 @@ class FunctionDescriptorResolver(
                 scope,
                 constructorDescriptor,
                 false, null,
-                TraceBasedRedeclarationHandler(trace),
+                TraceBasedLocalRedeclarationChecker(trace),
                 LexicalScopeKind.CONSTRUCTOR_HEADER
         )
         parameterScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)

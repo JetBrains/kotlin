@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
+import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -163,7 +164,7 @@ public class ExpressionTypingServices {
 
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
-                                                              new TraceBasedRedeclarationHandler(context.trace), LexicalScopeKind.CODE_BLOCK);
+                                                              new TraceBasedLocalRedeclarationChecker(context.trace), LexicalScopeKind.CODE_BLOCK);
         scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
 
         KotlinTypeInfo r;

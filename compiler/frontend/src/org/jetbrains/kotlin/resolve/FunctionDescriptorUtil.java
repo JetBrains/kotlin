@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,18 +62,17 @@ public class FunctionDescriptorUtil {
 
     @NotNull
     public static LexicalScope getFunctionInnerScope(@NotNull LexicalScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
-        TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
-        return getFunctionInnerScope(outerScope, descriptor, redeclarationHandler);
+        return getFunctionInnerScope(outerScope, descriptor, new TraceBasedLocalRedeclarationChecker(trace));
     }
 
     @NotNull
     public static LexicalScope getFunctionInnerScope(
             @NotNull LexicalScope outerScope,
             @NotNull final FunctionDescriptor descriptor,
-            @NotNull RedeclarationHandler redeclarationHandler
+            @NotNull LocalRedeclarationChecker redeclarationChecker
     ) {
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-        return new LexicalScopeImpl(outerScope, descriptor, true, receiver, LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationHandler,
+        return new LexicalScopeImpl(outerScope, descriptor, true, receiver, LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override
                                         public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

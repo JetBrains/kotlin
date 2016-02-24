@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
-import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -723,7 +720,7 @@ public class DescriptorResolver {
             }
             else {
                 LexicalWritableScope writableScope = new LexicalWritableScope(
-                        scope, containingDeclaration, false, null, new TraceBasedRedeclarationHandler(trace),
+                        scope, containingDeclaration, false, null, new TraceBasedLocalRedeclarationChecker(trace),
                         LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
                         propertyDescriptor, writableScope, scope, typeParameters, trace);

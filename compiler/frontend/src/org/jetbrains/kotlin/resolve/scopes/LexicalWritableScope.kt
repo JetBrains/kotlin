@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.utils.Printer
 
 class LexicalWritableScope(
@@ -27,16 +26,14 @@ class LexicalWritableScope(
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
-        redeclarationHandler: RedeclarationHandler,
+        redeclarationChecker: LocalRedeclarationChecker,
         override val kind: LexicalScopeKind
-) : LexicalScope, WritableScopeStorage(redeclarationHandler) {
+) : LexicalScopeStorage(parent, redeclarationChecker) {
     enum class LockLevel {
         WRITING,
         BOTH,
         READING
     }
-
-    override val parent = parent.takeSnapshot()
 
     private var lockLevel: LockLevel = LockLevel.WRITING
     private var lastSnapshot: Snapshot? = null

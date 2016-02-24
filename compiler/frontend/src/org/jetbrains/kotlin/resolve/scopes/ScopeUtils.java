@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.utils.Printer;
 
 public final class ScopeUtils {
@@ -44,7 +47,7 @@ public final class ScopeUtils {
     ) {
         return new LexicalScopeImpl(parent, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_HEADER,
                                     // redeclaration on type parameters should be reported early, see: DescriptorResolver.resolvePropertyDescriptor()
-                                    RedeclarationHandler.DO_NOTHING,
+                                    LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override
                                         public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

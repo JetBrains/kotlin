@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -210,7 +209,7 @@ public class TypeUnifierTest extends KotlinLiteFixture {
 
     private TypeProjection makeType(String typeStr) {
         LexicalScope withX = new LexicalScopeImpl(builtinsImportingScope, builtIns.getBuiltInsModule(),
-                                                  false, null, LexicalScopeKind.SYNTHETIC, RedeclarationHandler.DO_NOTHING,
+                                                  false, null, LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                                                   new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                                       @Override
                                                       public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

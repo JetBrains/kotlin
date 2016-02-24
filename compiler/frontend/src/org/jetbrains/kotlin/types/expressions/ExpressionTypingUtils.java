@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
-import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
+import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_INFERENCE_ERRORS;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
 
 public class ExpressionTypingUtils {
@@ -82,7 +82,7 @@ public class ExpressionTypingUtils {
     @NotNull
     public static LexicalWritableScope newWritableScopeImpl(ExpressionTypingContext context, @NotNull LexicalScopeKind scopeKind) {
         LexicalWritableScope scope = new LexicalWritableScope(context.scope, context.scope.getOwnerDescriptor(), false, null,
-                                                              new TraceBasedRedeclarationHandler(context.trace), scopeKind);
+                                                              new TraceBasedLocalRedeclarationChecker(context.trace), scopeKind);
         scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
         return scope;
     }

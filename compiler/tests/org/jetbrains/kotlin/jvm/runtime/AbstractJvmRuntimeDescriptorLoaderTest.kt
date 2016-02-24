@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactoryNoModules
@@ -217,12 +220,13 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
     private class ScopeWithClassifiers(classifiers: List<ClassifierDescriptor>) : MemberScopeImpl() {
         private val classifierMap = HashMap<Name, ClassifierDescriptor>()
-        val redeclarationHandler = RedeclarationHandler.THROW_EXCEPTION
 
         init {
             for (classifier in classifiers) {
                 classifierMap.put(classifier.name, classifier)?.let {
-                    redeclarationHandler.handleRedeclaration(it, classifier)
+                    throw IllegalStateException(String.format("Redeclaration: %s (%s) and %s (%s) (no line info available)",
+                                                              DescriptorUtils.getFqName(it), it,
+                                                              DescriptorUtils.getFqName(classifier), classifier))
                 }
             }
         }

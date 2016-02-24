@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -267,7 +266,7 @@ object ReplaceWithAnnotationAnalyzer {
 
             is FunctionDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
-                FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, RedeclarationHandler.DO_NOTHING)
+                FunctionDescriptorUtil.getFunctionInnerScope(outerScope, descriptor, LocalRedeclarationChecker.DO_NOTHING)
             }
 
             is PropertyDescriptor -> {
