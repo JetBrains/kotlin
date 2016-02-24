@@ -42,7 +42,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixtur
     private File javaFilesDir;
     private File kotlinSourceRoot;
 
-    protected class ModuleAndDependencies {
+    public class ModuleAndDependencies {
         final M module;
         final List<String> dependencies;
 

@@ -196,11 +196,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBlackBoxInlineCodegenTest>("BlackBoxInlineCodegenTestGenerated") {
-            model("codegen/boxInline", extension = "1.kt", testMethod = "doTestMultiFileWithInlineCheck")
+            model("codegen/boxInline")
         }
 
         testClass<AbstractCompileKotlinAgainstInlineKotlinTest>("CompileKotlinAgainstInlineKotlinTestGenerated") {
-            model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
+            model("codegen/boxInline")
         }
 
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxMultiFileCodegenTestGenerated") {

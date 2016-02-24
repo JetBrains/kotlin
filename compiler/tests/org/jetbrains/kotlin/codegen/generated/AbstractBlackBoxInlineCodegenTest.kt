@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.generated
 
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.codegen.InlineTestUtil
 import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.getClassFiles
@@ -24,12 +25,11 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 
 abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest(), AbstractSMAPBaseTest {
-    fun doTestMultiFileWithInlineCheck(firstFileName: String) {
-        val fileName = relativePath(File(firstFileName))
-        val inputFiles = listOf(fileName, fileName.substringBeforeLast("1.kt") + "2.kt")
-
+    override fun doMultiFileTest(
+            file: File, modules: Map<String, KotlinMultiFileTestWithJava<Void, TestFile>.ModuleAndDependencies>, files: List<TestFile>
+    ) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
-        loadFiles(*inputFiles.toTypedArray())
+        loadMultiFiles(files)
         blackBox()
 
         try {

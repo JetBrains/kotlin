@@ -16,45 +16,33 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.codegen.ClassFileFactory
-import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.InlineTestUtil
 import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest(), AbstractSMAPBaseTest {
-    protected fun doBoxTest(firstFileName: String): Pair<ClassFileFactory, ClassFileFactory> {
-        var files: List<CodegenTestCase.TestFile> = KotlinTestUtils.createTestFiles(
-                firstFileName, KotlinTestUtils.doLoadFile(File(firstFileName)),
-                object : KotlinTestUtils.TestFileFactory<Unit, CodegenTestCase.TestFile> {
-                    override fun createFile(
-                            module: Unit?, fileName: String, text: String, directives: Map<String, String>
-                    ): CodegenTestCase.TestFile {
-                        return CodegenTestCase.TestFile(fileName, text)
-                    }
-
-                    override fun createModule(name: String, dependencies: List<String>) {
-                        throw UnsupportedOperationException()
-                    }
-                })
-
-        // TODO: drop this (migrate codegen/box/inline/)
-        if (files.size == 1) {
-            val firstFile = files.iterator().next()
-            val secondFile = File(firstFileName.replace("1.kt", "2.kt"))
-            files = listOf(firstFile, CodegenTestCase.TestFile(secondFile.name, KotlinTestUtils.doLoadFile(secondFile)))
-        }
+    override fun doMultiFileTest(
+            file: File, modules: Map<String, KotlinMultiFileTestWithJava<Void, TestFile>.ModuleAndDependencies>, files: List<TestFile>
+    ) {
+        assert(files.size == 2) { "There should be exactly two files in this test" }
 
         var factory1: ClassFileFactory? = null
         var factory2: ClassFileFactory? = null
         try {
-            val fileA = files[1]
-            val fileB = files[0]
+            val fileA = files[0]
+            val fileB = files[1]
             factory1 = compileA(fileA.name, fileA.content)
             factory2 = compileB(fileB.name, fileB.content)
             invokeBox(PackagePartClassUtils.getFilePartShortName(File(fileB.name).name))
+
+            val allGeneratedFiles = factory1.asList() + factory2.asList()
+
+            val sourceFiles = factory1.inputFiles + factory2.inputFiles
+            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
+            checkSMAP(sourceFiles, allGeneratedFiles.filterClassFiles())
         }
         catch (e: Throwable) {
             var result = ""
@@ -65,23 +53,6 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
                 result += "\n\nSECOND: \n\n" + factory2.createText()
             }
             println(result)
-            throw e
-        }
-
-        return Pair(factory1, factory2)
-    }
-
-    fun doBoxTestWithInlineCheck(firstFileName: String) {
-        val (factory1, factory2) = doBoxTest(firstFileName)
-        val allGeneratedFiles = factory1.asList() + factory2.asList()
-
-        try {
-            val sourceFiles = factory1.inputFiles + factory2.inputFiles
-            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
-            checkSMAP(sourceFiles, allGeneratedFiles.filterClassFiles())
-        }
-        catch (e: Throwable) {
-            System.out.println(factory1.createText() + "\n" + factory2.createText())
             throw e
         }
     }

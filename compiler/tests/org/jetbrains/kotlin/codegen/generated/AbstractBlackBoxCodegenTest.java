@@ -22,6 +22,7 @@ import com.intellij.util.Processor;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
@@ -33,7 +34,10 @@ import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
+import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -88,6 +92,11 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     private void doTestMultiFile(@NotNull List<TestFile> files) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
+        loadMultiFiles(files);
+        blackBox();
+    }
+
+    protected void loadMultiFiles(@NotNull List<TestFile> files) {
         Collections.sort(files);
 
         List<KtFile> ktFiles = new ArrayList<KtFile>(files.size());
@@ -96,8 +105,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         }
 
         myFiles = CodegenTestFiles.create(ktFiles);
-
-        blackBox();
     }
 
     // NOTE: tests under fullJdk/ are run with FULL_JDK instead of MOCK_JDK
@@ -180,7 +187,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         // If there are many files, the first 'box(): String' function will be executed.
         GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader();
         for (KtFile firstFile : myFiles.getPsiFiles()) {
-            String className = JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
+            String className = getFacadeFqName(firstFile);
+            if (className == null) continue;
             Class<?> aClass = getGeneratedClass(generatedClassLoader, className);
             try {
                 Method method = getBoxMethodOrNull(aClass);
@@ -195,6 +203,16 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 throw ExceptionUtilsKt.rethrow(e);
             }
         }
+    }
+
+    @Nullable
+    private static String getFacadeFqName(@NotNull KtFile firstFile) {
+        for (KtDeclaration declaration : firstFile.getDeclarations()) {
+            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
+                return JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
+            }
+        }
+        return null;
     }
 
     private static Class<?> getGeneratedClass(GeneratedClassLoader generatedClassLoader, String className) {
