@@ -413,6 +413,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/cast/changeToStarProjectionNullable.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("uncheckedCastOnTypeParameter.kt")
+            public void testUncheckedCastOnTypeParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addStarProjections/cast/uncheckedCastOnTypeParameter.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/addStarProjections/checkType")
