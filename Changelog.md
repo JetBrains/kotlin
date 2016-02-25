@@ -97,6 +97,7 @@ New features:
 - [KT-9752](https://youtrack.jetbrains.com/issue/KT-9752)  More usable file chooser for "Move declaration to another file"
 - [KT-9697](https://youtrack.jetbrains.com/issue/KT-9697)  Move method to companion object and back
 - [KT-11098](https://youtrack.jetbrains.com/issue/KT-11098) Inspection on final classes/functions annotated with Spring @Configuration/@Component/@Bean
+- [KT-11405](https://youtrack.jetbrains.com/issue/KT-11405) Navigation and Find Usages for Spring beans referenced in annotation arguments and BeanFactory method calls
 
 General issues fixed:
 
