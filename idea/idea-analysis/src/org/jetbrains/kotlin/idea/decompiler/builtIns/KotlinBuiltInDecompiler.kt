@@ -48,7 +48,7 @@ class KotlinBuiltInDecompiler : ClassFileDecompilers.Full() {
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-            if (isInternalBuiltInFile(BuiltInDefinitionFile.read(provider.virtualFile))) {
+            if (BuiltInDefinitionFile.read(provider.virtualFile) == null) {
                 null
             }
             else {
@@ -68,6 +68,8 @@ fun buildDecompiledTextForBuiltIns(builtInFile: VirtualFile): DecompiledText {
     }
 
     val file = BuiltInDefinitionFile.read(builtInFile)
+               ?: error("Unexpectedly empty built-in file: $builtInFile")
+
     when (file) {
         is BuiltInDefinitionFile.Incompatible -> {
             return createIncompatibleAbiVersionDecompiledText(BuiltInsBinaryVersion.INSTANCE, file.version)
@@ -111,7 +113,7 @@ sealed class BuiltInDefinitionFile {
         var FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = true
             @TestOnly set
 
-        fun read(file: VirtualFile): BuiltInDefinitionFile {
+        fun read(file: VirtualFile): BuiltInDefinitionFile? {
             val stream = ByteArrayInputStream(file.contentsToByteArray())
 
             val version = BuiltInsBinaryVersion.readFrom(stream)
@@ -120,18 +122,15 @@ sealed class BuiltInDefinitionFile {
             }
 
             val proto = BuiltInsProtoBuf.BuiltIns.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-            return BuiltInDefinitionFile.Compatible(proto, file.parent)
-        }
-    }
-}
+            val result = BuiltInDefinitionFile.Compatible(proto, file.parent)
+            if (result.classesToDecompile.isEmpty() &&
+                result.proto.`package`.functionCount == 0 &&
+                result.proto.`package`.propertyCount == 0) {
+                // No callables or top-level classes to decompile: should skip this file
+                return null
+            }
 
-internal fun isInternalBuiltInFile(file: BuiltInDefinitionFile): Boolean {
-    when (file) {
-        is BuiltInDefinitionFile.Incompatible -> return false
-        is BuiltInDefinitionFile.Compatible -> {
-            return file.classesToDecompile.isEmpty() &&
-                   file.proto.`package`.functionCount == 0 &&
-                   file.proto.`package`.propertyCount == 0
+            return result
         }
     }
 }

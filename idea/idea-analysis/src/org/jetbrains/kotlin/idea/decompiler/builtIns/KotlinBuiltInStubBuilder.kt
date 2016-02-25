@@ -33,9 +33,7 @@ class KotlinBuiltInStubBuilder : ClsStubBuilder() {
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
         assert(virtualFile.fileType == KotlinBuiltInFileType) { "Unexpected file type ${virtualFile.fileType}" }
-        val file = BuiltInDefinitionFile.read(virtualFile)
-
-        if (isInternalBuiltInFile(file)) return null
+        val file = BuiltInDefinitionFile.read(virtualFile) ?: return null
 
         when (file) {
             is BuiltInDefinitionFile.Incompatible -> {
