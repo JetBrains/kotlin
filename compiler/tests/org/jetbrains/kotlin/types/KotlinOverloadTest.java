@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -28,12 +27,11 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
-public class KotlinOverloadTest extends KotlinLiteFixture {
-
+public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     private final ModuleDescriptor root = KotlinTestUtils.createEmptyModule("<test_root>");
     private FunctionDescriptorResolver functionDescriptorResolver;
 

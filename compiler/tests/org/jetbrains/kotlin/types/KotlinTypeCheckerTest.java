@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -50,7 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class KotlinTypeCheckerTest extends KotlinLiteFixture {
+public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     private KotlinBuiltIns builtIns;
     private LexicalScope scopeWithImports;
     private TypeResolver typeResolver;

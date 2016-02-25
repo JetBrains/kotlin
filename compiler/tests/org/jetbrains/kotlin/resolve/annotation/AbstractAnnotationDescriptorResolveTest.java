@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.io.File;
@@ -55,7 +55,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
-public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLiteFixture {
+public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTestWithEnvironment {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override

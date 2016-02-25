@@ -26,12 +26,11 @@ import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
-public class KotlinOverridingTest extends KotlinLiteFixture {
-
+public class KotlinOverridingTest extends KotlinTestWithEnvironment {
     private final ModuleDescriptor root = KotlinTestUtils.createEmptyModule("<test_root>");
     private FunctionDescriptorResolver functionDescriptorResolver;
 

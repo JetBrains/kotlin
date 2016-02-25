@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixture {
+public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEnvironment {
     private File javaFilesDir;
     private File kotlinSourceRoot;
 

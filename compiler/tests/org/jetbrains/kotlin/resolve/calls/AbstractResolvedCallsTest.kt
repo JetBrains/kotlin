@@ -16,32 +16,35 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinLiteFixture
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import java.io.File
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.KtFile
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import java.io.File
 
-abstract class AbstractResolvedCallsTest : KotlinLiteFixture() {
+abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     fun doTest(filePath: String) {

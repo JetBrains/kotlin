@@ -39,14 +39,14 @@ import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.util.Map;
 import java.util.Set;
 
-public class TypeUnifierTest extends KotlinLiteFixture {
+public class TypeUnifierTest extends KotlinTestWithEnvironment {
     private Set<TypeConstructor> variables;
 
     private KotlinBuiltIns builtIns;
@@ -63,7 +63,6 @@ public class TypeUnifierTest extends KotlinLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
 
         ModuleDescriptorImpl module = KotlinTestUtils.createEmptyModule();
         builtIns = module.getBuiltIns();

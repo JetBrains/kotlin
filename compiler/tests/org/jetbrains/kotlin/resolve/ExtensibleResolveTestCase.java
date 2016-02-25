@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ExtensibleResolveTestCase extends KotlinLiteFixture {
+public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironment {
     private ExpectedResolveData expectedResolveData;
 
     @Override

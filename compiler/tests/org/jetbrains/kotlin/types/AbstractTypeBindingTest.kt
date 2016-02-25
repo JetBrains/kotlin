@@ -16,20 +16,22 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.test.KotlinLiteFixture
-import org.jetbrains.kotlin.test.ConfigurationKind
-import java.io.File
-import org.jetbrains.kotlin.resolve.typeBinding.*
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.typeBinding.TypeArgumentBinding
+import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
+import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
+import org.jetbrains.kotlin.test.KotlinTestUtils.loadJetFile
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.utils.Printer
+import java.io.File
 
-abstract class AbstractTypeBindingTest : KotlinLiteFixture() {
+abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
     override fun createEnvironment() = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     protected fun doTest(path: String) {
