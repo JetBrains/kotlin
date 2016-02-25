@@ -87,9 +87,17 @@ public fun CharSequence.repeat(n: Int): String {
         else -> {
             var result = ""
             if (!isEmpty()) {
-                val s = this.toString()
-                for (i in 1..n) {
-                    result += s
+                var s = this.toString()
+                var count = n
+                while (true) {
+                    if ((count and 1) == 1) {
+                        result += s
+                    }
+                    count = count ushr 1
+                    if (count == 0) {
+                        break
+                    }
+                    s += s
                 }
             }
             return result
