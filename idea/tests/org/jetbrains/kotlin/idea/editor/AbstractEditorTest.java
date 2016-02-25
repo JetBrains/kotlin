@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,30 +23,18 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 
-public class KotlinCommenterTest extends AbstractEditorTest {
-    private static final String BASE_PATH =
-            new File(PluginTestCaseBase.getTestDataPathBase(), "/editor/commenter/").getAbsolutePath();
+public abstract class AbstractEditorTest extends LightCodeInsightTestCase {
+    protected abstract String getBasePath();
 
-    public void testGenerateDocComment() throws Exception {
-        doNewLineTypingTest();
+    protected String loadFile(String name) throws Exception {
+        return FileUtil.loadFile(new File(getBasePath(), name), true);
     }
 
-    public void testNewLineInComment() throws Exception {
-        doNewLineTypingTest();
+    protected void configure() throws Exception {
+        configureFromFileText("a.kt", loadFile(getTestName(true) + ".kt"));
     }
 
-    public void testNewLineInTag() throws Exception {
-        doNewLineTypingTest();
-    }
-
-    private void doNewLineTypingTest() throws Exception {
-        configure();
-        EditorTestUtil.performTypingAction(getEditor(), '\n');
-        check();
-    }
-
-    @Override
-    protected String getBasePath() {
-        return BASE_PATH;
+    protected void check() throws Exception {
+        checkResultByText(loadFile(getTestName(true) + "_after.kt"));
     }
 }
