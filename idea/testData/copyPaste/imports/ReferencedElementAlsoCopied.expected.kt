@@ -1,4 +1,4 @@
-// ERROR: Type mismatch: inferred type is kotlin.Unit but to.A was expected
+// ERROR: Type mismatch: inferred type is Unit but A was expected
 // ERROR: Function 'ext' must have a body
 package to
 

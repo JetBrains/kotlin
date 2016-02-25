@@ -1,5 +1,5 @@
-// ERROR: Expected condition of type kotlin.Boolean
-// ERROR: Expected condition of type kotlin.Boolean
+// ERROR: Expected condition of type Boolean
+// ERROR: Expected condition of type Boolean
 // SKIP_ERRORS_AFTER
 
 fun test(n: Int): String {

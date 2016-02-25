@@ -12,8 +12,8 @@ Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
 Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
-    fun function(list: kotlin.collections.List<kotlin.Any>): kotlin.Unit
-    fun function(list: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    fun function(list: List<Any>): kotlin.Unit
+    fun function(list: List<String>): kotlin.Unit
 Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
-    fun function(list: kotlin.collections.List<kotlin.Any>): kotlin.Unit
-    fun function(list: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    fun function(list: List<Any>): kotlin.Unit
+    fun function(list: List<String>): kotlin.Unit

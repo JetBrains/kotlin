@@ -1,4 +1,4 @@
-// ERROR: Type mismatch: inferred type is kotlin.String? but kotlin.String was expected
+// ERROR: Type mismatch: inferred type is String? but String was expected
 import java.util.HashMap
 import kotlinApi.KotlinClass
 import javaApi.JavaClass

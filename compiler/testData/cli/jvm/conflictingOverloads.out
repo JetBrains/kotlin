@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/conflictingOverloads.kt:1:1: error: 'public fun a(): kotlin.collections.List<kotlin.Int>' conflicts with another declaration in package '<root>'
+compiler/testData/cli/jvm/conflictingOverloads.kt:1:1: error: 'public fun a(): List<Int>' conflicts with another declaration in package '<root>'
 fun a(): List<Int> = null!!
 ^
-compiler/testData/cli/jvm/conflictingOverloads.kt:2:1: error: 'public fun a(): kotlin.collections.List<kotlin.String>' conflicts with another declaration in package '<root>'
+compiler/testData/cli/jvm/conflictingOverloads.kt:2:1: error: 'public fun a(): List<String>' conflicts with another declaration in package '<root>'
 fun a(): List<String> = null!!
 ^
 COMPILATION_ERROR

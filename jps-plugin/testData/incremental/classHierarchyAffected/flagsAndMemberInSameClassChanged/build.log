@@ -37,9 +37,9 @@ Cannot access 'A': it is 'private' in file
 'public' function exposes its 'private' return type A
 Cannot access 'A': it is 'private' in file
 Cannot access 'A': it is 'private' in file
-Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?
 Cannot access 'x': it is 'invisible_fake' in 'B'
-Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?
 
 ================ Step #2 =================
 
@@ -57,8 +57,8 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
-Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?
 
 ================ Step #3 =================
 

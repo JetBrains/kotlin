@@ -1,5 +1,5 @@
 // "???" "false"
-//ERROR: Type mismatch: inferred type is kotlin.Array<out kotlin.Int> but kotlin.Array<out kotlin.String> was expected
+//ERROR: Type mismatch: inferred type is Array<out Int> but Array<out String> was expected
 
 //this test checks that there is no ArrayIndexOutOfBoundsException when there are more arguments than parameters
 fun <T> array1(vararg a : T) = a

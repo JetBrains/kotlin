@@ -1,5 +1,5 @@
 // "Cast expression 'x' to 'List<Any>?'" "true"
-// ERROR: Java type mismatch expected kotlin.collections.(Mutable)List<kotlin.Any!>! but found kotlin.collections.MutableList<kotlin.String>. Use explicit cast
+// ERROR: Java type mismatch expected (Mutable)List<Any!>! but found MutableList<String>. Use explicit cast
 
 fun main(x: MutableList<String>) {
     A.foo(x as List<Any>?)

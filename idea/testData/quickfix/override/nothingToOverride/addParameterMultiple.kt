@@ -1,5 +1,5 @@
 // "Change function signature..." "true"
-// ERROR: Class 'B' must be declared abstract or implement abstract member public abstract fun f(a: kotlin.String): kotlin.Unit defined in A
+// ERROR: Class 'B' must be declared abstract or implement abstract member public abstract fun f(a: String): Unit defined in A
 interface A {
     fun f(a: Int)
     fun f(a: String)

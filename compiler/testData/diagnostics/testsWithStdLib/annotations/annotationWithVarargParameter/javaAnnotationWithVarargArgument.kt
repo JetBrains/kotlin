@@ -4,6 +4,6 @@ public @interface A {
 }
 
 // FILE: b.kt
-@A(*<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH(kotlin.Array<out kotlin.String>; IGNORE)!>arrayOf(1, "b")<!>)
+@A(*<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH(Array<out String>; IGNORE)!>arrayOf(1, "b")<!>)
 fun test() {
 }

@@ -1,5 +1,5 @@
 // "Make 'A' abstract" "false"
-// ERROR: Class 'X' must override public open fun foo(): kotlin.Unit defined in X because it inherits many implementations of it
+// ERROR: Class 'X' must override public open fun foo(): Unit defined in X because it inherits many implementations of it
 // ACTION: Create test
 // ACTION: Make internal
 // ACTION: Make private

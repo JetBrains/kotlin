@@ -1,4 +1,4 @@
-// ERROR: Type mismatch: inferred type is kotlin.Unit but a.A was expected
+// ERROR: Type mismatch: inferred type is Unit but A was expected
 package to
 
 import a.*

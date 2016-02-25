@@ -1,4 +1,4 @@
-// ERROR: Type inference failed. Expected type mismatch: inferred type is java.util.HashMap<kotlin.Any!, kotlin.Any!> but kotlin.collections.Map<kotlin.String, kotlin.String> was expected
+// ERROR: Type inference failed. Expected type mismatch: inferred type is HashMap<Any!, Any!> but Map<String, String> was expected
 import java.util.*
 
 internal object A {

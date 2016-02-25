@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: Class 'C' must be declared abstract or implement abstract base class member public abstract fun foo(): kotlin.Int defined in B
+// ERROR: Class 'C' must be declared abstract or implement abstract base class member public abstract fun foo(): Int defined in B
 interface A {
     fun <caret>foo(): Int
 }

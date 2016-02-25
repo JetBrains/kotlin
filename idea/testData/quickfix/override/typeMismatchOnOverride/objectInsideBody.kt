@@ -1,5 +1,5 @@
 // "Change 'prop' type to 'Int'" "true"
-// ERROR: Null can not be a value of a non-null type kotlin.Int
+// ERROR: Null can not be a value of a non-null type Int
 interface Test<T> {
     val prop : T
 }

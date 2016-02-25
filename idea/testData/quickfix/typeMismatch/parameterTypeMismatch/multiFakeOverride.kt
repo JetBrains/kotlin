@@ -1,5 +1,5 @@
 // "class org.jetbrains.kotlin.idea.quickfix.ChangeParameterTypeFix" "false"
-// ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Int was expected
+// ERROR: Type mismatch: inferred type is String but Int was expected
 interface A {
     fun f(i: Int): Boolean
 }

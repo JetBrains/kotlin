@@ -1,46 +1,46 @@
 compiler/testData/cli/jvm/signatureClash.kt:6:5: error: accidental override: The following declarations have the same JVM signature (getX()I):
-    fun <get-x>(): kotlin.Int
-    fun getX(): kotlin.Int
+    fun <get-x>(): Int
+    fun getX(): Int
     fun getX() = 1
     ^
 compiler/testData/cli/jvm/signatureClash.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
-    fun <get-a>(): kotlin.Int
-    fun getA(): kotlin.Int
+    fun <get-a>(): Int
+    fun getA(): Int
     fun getA(): Int = 1
     ^
 compiler/testData/cli/jvm/signatureClash.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
-    fun <get-a>(): kotlin.Int
-    fun getA(): kotlin.Int
+    fun <get-a>(): Int
+    fun getA(): Int
     val a: Int = 1
     ^
 compiler/testData/cli/jvm/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun <get-b>(): kotlin.Int
-    fun getB(): kotlin.Int
+    fun <get-b>(): Int
+    fun getB(): Int
 fun getB(): Int = 1
 ^
 compiler/testData/cli/jvm/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun <get-b>(): kotlin.Int
-    fun getB(): kotlin.Int
+    fun <get-b>(): Int
+    fun getB(): Int
 val b: Int = 1
 ^
 compiler/testData/cli/jvm/signatureClash.kt:19:7: error: platform declaration clash: The following declarations have the same JVM signature (getTr()I):
-    fun <get-tr>(): kotlin.Int
-    fun getTr(): kotlin.Int
+    fun <get-tr>(): Int
+    fun getTr(): Int
 class SubTr : Tr {
       ^
 compiler/testData/cli/jvm/signatureClash.kt:20:5: error: platform declaration clash: The following declarations have the same JVM signature (getTr()I):
-    fun <get-tr>(): kotlin.Int
-    fun getTr(): kotlin.Int
+    fun <get-tr>(): Int
+    fun getTr(): Int
     val tr = 1
     ^
 compiler/testData/cli/jvm/signatureClash.kt:24:7: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-    fun `access$f`(c: C): kotlin.Unit
-    fun f(): kotlin.Unit
+    fun `access$f`(c: C): Unit
+    fun f(): Unit
 class C {
       ^
 compiler/testData/cli/jvm/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
-    fun `access$f`(c: C): kotlin.Unit
-    fun f(): kotlin.Unit
+    fun `access$f`(c: C): Unit
+    fun f(): Unit
     fun `access$f`(c: C) {}
     ^
 COMPILATION_ERROR

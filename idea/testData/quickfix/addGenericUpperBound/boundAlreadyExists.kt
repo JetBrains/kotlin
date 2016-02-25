@@ -1,5 +1,5 @@
 // "class org.jetbrains.kotlin.idea.quickfix.AddGenericUpperBoundFix" "false"
-// ERROR: Type argument is not within its bounds: should be subtype of 'kotlin.Any'
+// ERROR: Type argument is not within its bounds: should be subtype of 'Any'
 
 fun <T : Any> foo() = 1
 

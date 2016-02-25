@@ -1,31 +1,31 @@
 compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:15:5: error: accidental override: The following declarations have the same JVM signature (access$foo(LDerived;)V):
-    fun `access$foo`(d: Derived): kotlin.Unit
-    fun foo(): kotlin.Unit
+    fun `access$foo`(d: Derived): Unit
+    fun foo(): Unit
     private fun foo() {}
     ^
 compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:18:9: error: accidental override: The following declarations have the same JVM signature (access$getBar$p(LDerived;)I):
-    fun <get-bar>(): kotlin.Int
-    fun `access$getBar$p`(d: Derived): kotlin.Int
+    fun <get-bar>(): Int
+    fun `access$getBar$p`(d: Derived): Int
         get
         ^
 compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:19:9: error: accidental override: The following declarations have the same JVM signature (access$setBar$p(LDerived;I)V):
-    fun <set-bar>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setBar$p`(d: Derived, i: kotlin.Int): kotlin.Unit
+    fun <set-bar>(<set-?>: Int): Unit
+    fun `access$setBar$p`(d: Derived, i: Int): Unit
         set
         ^
 compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:21:5: error: accidental override: The following declarations have the same JVM signature (access$getBaz$p(LDerived;)I):
-    fun <get-baz>(): kotlin.Int
-    fun `access$getBaz$p`(d: Derived): kotlin.Int
+    fun <get-baz>(): Int
+    fun `access$getBaz$p`(d: Derived): Int
     private var baz = 1
     ^
 compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:23:5: error: accidental override: The following declarations have the same JVM signature (access$getBoo$p(LDerived;)I):
-    fun <get-boo>(): kotlin.Int
-    fun `access$getBoo$p`(d: Derived): kotlin.Int
+    fun <get-boo>(): Int
+    fun `access$getBoo$p`(d: Derived): Int
     private val boo = 1
     ^
 compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:27:9: error: accidental override: The following declarations have the same JVM signature (access$setBar1$p(LDerived;I)V):
-    fun <set-bar1>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setBar1$p`(d: Derived, i: kotlin.Int): kotlin.Unit
+    fun <set-bar1>(<set-?>: Int): Unit
+    fun `access$setBar1$p`(d: Derived, i: Int): Unit
         set
         ^
 COMPILATION_ERROR

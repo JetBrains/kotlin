@@ -4,7 +4,7 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Move 'A' to separate file
-// ERROR: Object 'A' must be declared abstract or implement abstract member public abstract val foo: kotlin.Int defined in I
+// ERROR: Object 'A' must be declared abstract or implement abstract member public abstract val foo: Int defined in I
 interface I {
     val foo: Int
 }
