@@ -300,6 +300,7 @@ public class DelegatedPropertyResolver {
         return resolutionResults;
     }
 
+    //TODO: diagnostics rendering does not belong here
     private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {
         KtExpression calleeExpression = call.getCalleeExpression();
         assert calleeExpression != null : "CalleeExpression should exists for fake call of convention method";
@@ -313,7 +314,7 @@ public class DelegatedPropertyResolver {
         String arguments = StringUtil.join(argumentTypes, new Function<KotlinType, String>() {
             @Override
             public String fun(KotlinType type) {
-                return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
+                return DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
             }
         }, ", ");
         builder.append(arguments);
