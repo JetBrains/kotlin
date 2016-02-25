@@ -193,6 +193,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("strictfpOnClass.kt")
+        public void testStrictfpOnClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/strictfpOnClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Synchronized.kt")
         public void testSynchronized() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/Synchronized.kt");
