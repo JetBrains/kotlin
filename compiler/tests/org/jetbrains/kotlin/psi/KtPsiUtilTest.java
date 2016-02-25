@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.ImportPath;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.junit.Assert;
 
 import java.io.File;
@@ -35,11 +35,12 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class KtPsiUtilTest extends KotlinLiteFixture {
+public class KtPsiUtilTest extends KotlinTestWithEnvironment {
     @NotNull
     private KtFile loadPsiFile(@NotNull String name) {
         try {
-            return createPsiFile(name, null, KotlinTestUtils.doLoadFile(getTestDataPath(), name));
+            String text = KotlinTestUtils.doLoadFile(KotlinTestUtils.getTestDataPathBase(), name);
+            return KotlinTestUtils.createFile(name + ".kt", text, getProject());
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -82,7 +83,7 @@ public class KtPsiUtilTest extends KotlinLiteFixture {
     }
 
     public void testIsLocalClass() throws IOException {
-        String text = FileUtil.loadFile(new File(getTestDataPath() + "/psiUtil/isLocalClass.kt"), true);
+        String text = FileUtil.loadFile(new File(KotlinTestUtils.getTestDataPathBase() + "/psiUtil/isLocalClass.kt"), true);
         KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(text);
 
         @SuppressWarnings("unchecked")
@@ -91,10 +92,10 @@ public class KtPsiUtilTest extends KotlinLiteFixture {
         for (KtClassOrObject classOrObject : classOrObjects) {
             String classOrObjectName = classOrObject.getName();
             if (classOrObjectName != null && classOrObjectName.contains("Local")) {
-                assertTrue("JetPsiUtil.isLocalClass should return true for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
+                assertTrue("KtPsiUtil.isLocal should return true for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
             }
             else {
-                assertFalse("JetPsiUtil.isLocalClass should return false for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
+                assertFalse("KtPsiUtil.isLocal should return false for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
             }
         }
     }

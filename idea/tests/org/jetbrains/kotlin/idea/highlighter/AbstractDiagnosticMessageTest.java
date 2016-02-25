@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractDiagnosticMessageTest extends KotlinLiteFixture {
+public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnvironment {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
     private static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
     private static final String MESSAGE_TYPE_DIRECTIVE = "MESSAGE_TYPE";
@@ -68,7 +68,6 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinLiteFixture {
     }
 
     @NotNull
-    @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
     }
@@ -88,7 +87,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinLiteFixture {
         final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
         MessageType messageType = getMessageTypeDirective(directives);
 
-        KtFile psiFile = createPsiFile(null, fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName));
+        KtFile psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName), getProject());
         AnalysisResult analysisResult = analyze(psiFile);
         BindingContext bindingContext = analysisResult.getBindingContext();
 

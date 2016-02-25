@@ -26,16 +26,15 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.tests.di.createContainerForTests
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
-abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
-
+abstract class AbstractConstraintSystemTest : KotlinTestWithEnvironment() {
     private var _typeResolver: TypeResolver? = null
     private val typeResolver: TypeResolver
         get() = _typeResolver!!
@@ -61,14 +60,13 @@ abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
         super.tearDown()
     }
 
-    override fun getTestDataPath(): String {
-        return super.getTestDataPath() + "/constraintSystem/"
-    }
+    private val testDataPath: String
+        get() = KotlinTestUtils.getTestDataPathBase() + "/constraintSystem/"
 
     private fun analyzeDeclarations(): ConstraintSystemTestData {
         val fileName = "declarations.kt"
 
-        val psiFile = createPsiFile(null, fileName, KotlinTestUtils.doLoadFile(testDataPath, fileName))!!
+        val psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(testDataPath, fileName), project)
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
         return ConstraintSystemTestData(bindingContext, project, typeResolver)
     }

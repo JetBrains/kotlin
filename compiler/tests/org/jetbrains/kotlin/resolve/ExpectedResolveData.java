@@ -25,7 +25,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -118,21 +117,21 @@ public abstract class ExpectedResolveData {
             text = text.substring(0, start) + text.substring(matcher.end());
         }
 
-        KtFile jetFile = createJetFile(fileName, text);
+        KtFile ktFile = createKtFile(fileName, text);
 
         for (Map.Entry<Integer, String> entry : intPositionToType.entrySet()) {
-            positionToType.put(new Position(jetFile, entry.getKey()), entry.getValue());
+            positionToType.put(new Position(ktFile, entry.getKey()), entry.getValue());
         }
         for (Map.Entry<String, Integer> entry : declarationToIntPosition.entrySet()) {
-            declarationToPosition.put(entry.getKey(), new Position(jetFile, entry.getValue()));
+            declarationToPosition.put(entry.getKey(), new Position(ktFile, entry.getValue()));
         }
         for (Map.Entry<Integer, String> entry : intPositionToReference.entrySet()) {
-            positionToReference.put(new Position(jetFile, entry.getKey()), entry.getValue());
+            positionToReference.put(new Position(ktFile, entry.getKey()), entry.getValue());
         }
-        return jetFile;
+        return ktFile;
     }
 
-    protected abstract KtFile createJetFile(String fileName, String text);
+    protected abstract KtFile createKtFile(String fileName, String text);
 
     protected static BindingContext analyze(List<KtFile> files, KotlinCoreEnvironment environment) {
         if (files.isEmpty()) {

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.types.Flexibility;
 import org.junit.Assert;
 
@@ -135,10 +136,10 @@ public abstract class BaseDiagnosticsTest
 
         if (includeExtras) {
             if (declareFlexibleType) {
-                jetFiles.add(createPsiFile(null, "EXPLICIT_FLEXIBLE_TYPES.kt", EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS));
+                jetFiles.add(KotlinTestUtils.createFile("EXPLICIT_FLEXIBLE_TYPES.kt", EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS, getProject()));
             }
             if (declareCheckType) {
-                jetFiles.add(createPsiFile(null, "CHECK_TYPE.kt", CHECK_TYPE_DECLARATIONS));
+                jetFiles.add(KotlinTestUtils.createFile("CHECK_TYPE.kt", CHECK_TYPE_DECLARATIONS, getProject()));
             }
         }
 
@@ -270,7 +271,7 @@ public abstract class BaseDiagnosticsTest
                 this.expectedText = textWithMarkers;
                 String textWithExtras = addExtras(expectedText);
                 this.clearText = CheckerTestUtil.parseDiagnosedRanges(textWithExtras, diagnosedRanges);
-                this.jetFile = createCheckAndReturnPsiFile(null, fileName, clearText);
+                this.jetFile = CheckerTestUtilTest.createCheckAndReturnPsiFile(fileName, clearText, getProject());
                 for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
                     diagnosedRange.setFile(jetFile);
                 }
