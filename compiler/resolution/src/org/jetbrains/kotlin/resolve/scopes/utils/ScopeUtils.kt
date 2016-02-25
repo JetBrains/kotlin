@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.scopes.utils
 
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.SmartList
 
 val HierarchicalScope.parentsWithSelf: Sequence<HierarchicalScope>
     get() = generateSequence(this) { it.parent }
