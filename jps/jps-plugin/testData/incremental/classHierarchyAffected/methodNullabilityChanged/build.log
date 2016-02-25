@@ -23,7 +23,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Null can not be a value of a non-null type kotlin.Any
+Null can not be a value of a non-null type Any
 
 ================ Step #2 =================
 

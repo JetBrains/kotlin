@@ -20,7 +20,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Any?
 
 ================ Step #2 =================
 

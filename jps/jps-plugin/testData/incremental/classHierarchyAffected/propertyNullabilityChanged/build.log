@@ -24,7 +24,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Type mismatch: inferred type is kotlin.Any? but kotlin.Any was expected
+Type mismatch: inferred type is Any? but Any was expected
 
 ================ Step #2 =================
 

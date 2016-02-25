@@ -9,7 +9,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-'public constructor A(x: kotlin.String)' conflicts with another declaration in package '<root>'
+'public constructor A(x: String)' conflicts with another declaration in package '<root>'
 
 ================ Step #2 =================
 

@@ -34,8 +34,8 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Type mismatch: inferred type is kotlin.collections.List<B> but kotlin.collections.List<A> was expected
-Type mismatch: inferred type is kotlin.collections.List<C> but kotlin.collections.List<A> was expected
+Type mismatch: inferred type is List<B> but List<A> was expected
+Type mismatch: inferred type is List<C> but List<A> was expected
 
 ================ Step #2 =================
 
