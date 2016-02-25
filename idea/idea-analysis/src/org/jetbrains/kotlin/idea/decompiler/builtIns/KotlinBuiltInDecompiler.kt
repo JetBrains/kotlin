@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
-import org.jetbrains.kotlin.idea.decompiler.classFile.CURRENT_ABI_VERSION_MARKER
-import org.jetbrains.kotlin.idea.decompiler.classFile.FILE_ABI_VERSION_MARKER
-import org.jetbrains.kotlin.idea.decompiler.classFile.INCOMPATIBLE_ABI_VERSION_COMMENT
+import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
@@ -73,12 +71,7 @@ fun buildDecompiledTextForBuiltIns(builtInFile: VirtualFile): DecompiledText {
     when (file) {
         is BuiltInDefinitionFile.Incompatible -> {
             // TODO: test
-            return DecompiledText(
-                    INCOMPATIBLE_ABI_VERSION_COMMENT
-                            .replace(CURRENT_ABI_VERSION_MARKER, BuiltInsBinaryVersion.INSTANCE.toString())
-                            .replace(FILE_ABI_VERSION_MARKER, file.version.toString()),
-                    mapOf()
-            )
+            return createIncompatibleAbiVersionDecompiledText(BuiltInsBinaryVersion.INSTANCE, file.version)
         }
         is BuiltInDefinitionFile.Compatible -> {
             val packageFqName = file.packageFqName

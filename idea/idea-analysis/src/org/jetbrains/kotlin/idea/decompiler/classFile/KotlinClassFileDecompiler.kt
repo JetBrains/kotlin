@@ -24,6 +24,7 @@ import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
@@ -63,16 +64,6 @@ private val decompilerRendererForClassFiles = DescriptorRenderer.withOptions {
     typeNormalizer = { type -> if (type.isFlexible()) type.flexibility().lowerBound else type }
 }
 
-internal val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
-internal val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
-
-val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
-val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
-        "$INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT\n" +
-        "//\n" +
-        "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
-        "// File ABI version is $FILE_ABI_VERSION_MARKER"
-
 fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
@@ -81,12 +72,7 @@ fun buildDecompiledTextForClassFile(
                                  ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
 
     if (!classHeader.metadataVersion.isCompatible()) {
-        return DecompiledText(
-                INCOMPATIBLE_ABI_VERSION_COMMENT
-                        .replace(CURRENT_ABI_VERSION_MARKER, JvmMetadataVersion.INSTANCE.toString())
-                        .replace(FILE_ABI_VERSION_MARKER, classHeader.metadataVersion.toString()),
-                mapOf()
-        )
+        return createIncompatibleAbiVersionDecompiledText(JvmMetadataVersion.INSTANCE, classHeader.metadataVersion)
     }
 
     return when (classHeader.kind) {
