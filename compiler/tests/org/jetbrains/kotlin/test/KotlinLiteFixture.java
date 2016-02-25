@@ -24,7 +24,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.junit.Assert;
 
 public abstract class KotlinLiteFixture extends KotlinTestWithEnvironment {
