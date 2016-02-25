@@ -313,7 +313,7 @@ public class DefaultErrorMessages {
                 NAME, ELEMENT_TEXT);
         MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "Assignment operators ambiguity: {0}", AMBIGUOUS_CALLS);
 
-        MAP.put(EQUALS_MISSING, "No method 'equals(kotlin.Any?): kotlin.Boolean' available");
+        MAP.put(EQUALS_MISSING, "No method 'equals(Any?): Boolean' available");
         MAP.put(ASSIGNMENT_IN_EXPRESSION_CONTEXT, "Assignments are not expressions, and only expressions are allowed in this context");
         MAP.put(SUPER_IS_NOT_AN_EXPRESSION, "''{0}'' is not an expression, it can only be used on the left-hand side of a dot ('.')", STRING);
         MAP.put(SUPER_CANT_BE_EXTENSION_RECEIVER, "''{0}'' is not an expression, it can not be used as a receiver for extension functions", STRING);
@@ -348,7 +348,7 @@ public class DefaultErrorMessages {
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, "None of the hasNext() functions is applicable for iterator() of type ''{0}''", RENDER_TYPE);
-        MAP.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, "The ''iterator().hasNext()'' function of the loop range must return kotlin.Boolean, but returns {0}", RENDER_TYPE);
+        MAP.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, "The ''iterator().hasNext()'' function of the loop range must return Boolean, but returns {0}", RENDER_TYPE);
 
         MAP.put(NEXT_MISSING, "next() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(NEXT_AMBIGUITY, "next() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
@@ -367,7 +367,7 @@ public class DefaultErrorMessages {
                 STRING, RENDER_TYPE, RENDER_TYPE);
         MAP.put(DELEGATE_PD_METHOD_NONE_APPLICABLE, "''{0}'' method may be missing. None of the following functions will be called: {1}", STRING, AMBIGUOUS_CALLS);
 
-        MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
+        MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return Int, but returns {0}", RENDER_TYPE);
 
         MAP.put(UNDERSCORE_IS_RESERVED, "Names _, __, ___, ..., are reserved in Kotlin");
         MAP.put(INVALID_CHARACTERS, "Name {0}", STRING);
@@ -442,7 +442,7 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
-        MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'kotlin.Any'");
+        MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'");
         MAP.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
@@ -533,16 +533,16 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, "Type arguments for outer class are redundant when nested class is referenced");
 
         MAP.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is forbidden for catch parameter");
-        MAP.put(GENERIC_THROWABLE_SUBCLASS, "Subclass of 'kotlin.Throwable' may not have type parameters");
+        MAP.put(GENERIC_THROWABLE_SUBCLASS, "Subclass of 'Throwable' may not have type parameters");
 
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "The loop iterates over values of type {0} but the parameter is declared to be {1}", RENDER_TYPE,
                 RENDER_TYPE);
-        MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type kotlin.Boolean, but is of type {0}", RENDER_TYPE);
+        MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type Boolean, but is of type {0}", RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
         MAP.put(IMPLICIT_NOTHING_RETURN_TYPE, "''Nothing'' return type needs to be specified explicitly");
         MAP.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "''Nothing'' property type needs to be specified explicitly");
         MAP.put(IMPLICIT_INTERSECTION_TYPE, "Inferred type {0} is an intersection, please specify the required type explicitly", RENDER_TYPE);
-        MAP.put(EXPECTED_CONDITION, "Expected condition of type kotlin.Boolean");
+        MAP.put(EXPECTED_CONDITION, "Expected condition of type Boolean");
 
         MAP.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE);
         MAP.put(UNCHECKED_CAST, "Unchecked cast: {0} to {1}", RENDER_TYPE, RENDER_TYPE);
@@ -719,7 +719,7 @@ public class DefaultErrorMessages {
         MAP.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated");
 
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
-        MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "kotlin.Array class literal requires a type argument, please specify one in angle brackets");
+        MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "Array class literal requires a type argument, please specify one in angle brackets");
 
         //Inline
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
