@@ -173,6 +173,18 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("noneApplicableHtml.kt")
+    public void testNoneApplicableHtml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicableHtml.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noneApplicableTxt.kt")
+    public void testNoneApplicableTxt() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicableTxt.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("numberValueTypes.kt")
     public void testNumberValueTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/numberValueTypes.kt");

@@ -39,12 +39,13 @@ object IdeRenderers {
 
     @JvmField val HTML_RENDER_TYPE = SmartTypeRenderer(DescriptorRenderer.HTML)
 
-    @JvmField val HTML_NONE_APPLICABLE_CALLS= Renderer {
+    @JvmField val HTML_NONE_APPLICABLE_CALLS = Renderer {
         calls: Collection<ResolvedCall<*>> ->
-            val comparator = compareBy(MemberComparator.INSTANCE) { c: ResolvedCall<*> -> c.resultingDescriptor }
-            calls
+        val context = RenderingContext.Impl(calls.map { it.resultingDescriptor })
+        val comparator = compareBy(MemberComparator.INSTANCE) { c: ResolvedCall<*> -> c.resultingDescriptor }
+        calls
                 .sortedWith(comparator)
-                .joinToString("") { "<li>${renderResolvedCall(it)}</li>" }
+                .joinToString("") { "<li>${renderResolvedCall(it, context)}</li>" }
     }
 
     @JvmField val HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER = Renderer<InferenceErrorData> {

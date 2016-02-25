@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.idea.highlighter.renderersUtil
 
 import com.google.common.html.HtmlEscapers
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
+import org.jetbrains.kotlin.diagnostics.rendering.SmartTypeRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.asRenderer
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.hasTypeMismatchErrorOnParameter
@@ -46,8 +48,9 @@ private val HTML_FOR_UNINFERRED_TYPE_PARAMS: DescriptorRenderer = DescriptorRend
     textFormat = RenderingFormat.HTML
 }
 
-fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): String {
-    val htmlRenderer = HTML_FOR_UNINFERRED_TYPE_PARAMS
+fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext): String {
+    val typeRenderer = SmartTypeRenderer(HTML_FOR_UNINFERRED_TYPE_PARAMS)
+    val descriptorRenderer = HTML_FOR_UNINFERRED_TYPE_PARAMS.asRenderer()
     val stringBuilder = StringBuilder("")
     val indent = "&nbsp;&nbsp;"
 
@@ -58,7 +61,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         val parameterType = varargElementType ?: parameter.type
         val renderedParameter =
                 (if (varargElementType != null) "<b>vararg</b> " else "") +
-                htmlRenderer.renderType(parameterType) +
+                typeRenderer.render(parameterType, context) +
                 if (parameter.hasDefaultValue()) " = ..." else ""
         if (resolvedCall.hasTypeMismatchErrorOnParameter(parameter)) {
             return renderError(renderedParameter)
@@ -89,15 +92,15 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         val typeParameterToTypeArgumentMap = resolvedCall.typeArguments
         if (!inferredTypeParameters.isEmpty()) {
             append(inferredTypeParameters.map { typeParameter ->
-                    "${typeParameter.name} = ${htmlRenderer.renderType(typeParameterToTypeArgumentMap[typeParameter]!!)}"
-                }.joinToString())
+                "${typeParameter.name} = ${typeRenderer.render(typeParameterToTypeArgumentMap[typeParameter]!!, context)}"
+            }.joinToString())
         }
     }
 
     val resultingDescriptor = resolvedCall.resultingDescriptor
     val receiverParameter = resultingDescriptor.extensionReceiverParameter
     if (receiverParameter != null) {
-        append(htmlRenderer.renderType(receiverParameter.type)).append(".")
+        append(typeRenderer.render(receiverParameter.type, context)).append(".")
     }
     append(HtmlEscapers.htmlEscaper().escape(resultingDescriptor.name.asString())).append("(")
     append(resultingDescriptor.valueParameters.map { parameter -> renderParameter(parameter) }.joinToString())
@@ -106,7 +109,8 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
     if (!resolvedCall.candidateDescriptor.typeParameters.isEmpty()) {
         appendTypeParametersSubstitution()
         append("<i> for </i><br/>$indent")
-        append(htmlRenderer.render(resolvedCall.candidateDescriptor))
+        // candidate descriptor is not in context of the rest of the message
+        append(descriptorRenderer.render(resolvedCall.candidateDescriptor, RenderingContext.of(resolvedCall.candidateDescriptor)))
     }
     else {
         append(" <i>defined in</i> ")
