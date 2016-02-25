@@ -70,7 +70,6 @@ fun buildDecompiledTextForBuiltIns(builtInFile: VirtualFile): DecompiledText {
     val file = BuiltInDefinitionFile.read(builtInFile)
     when (file) {
         is BuiltInDefinitionFile.Incompatible -> {
-            // TODO: test
             return createIncompatibleAbiVersionDecompiledText(BuiltInsBinaryVersion.INSTANCE, file.version)
         }
         is BuiltInDefinitionFile.Compatible -> {
@@ -128,7 +127,7 @@ sealed class BuiltInDefinitionFile {
 
 internal fun isInternalBuiltInFile(file: BuiltInDefinitionFile): Boolean {
     when (file) {
-        is BuiltInDefinitionFile.Incompatible -> return true
+        is BuiltInDefinitionFile.Incompatible -> return false
         is BuiltInDefinitionFile.Compatible -> {
             return file.classesToDecompile.isEmpty() &&
                    file.proto.`package`.functionCount == 0 &&

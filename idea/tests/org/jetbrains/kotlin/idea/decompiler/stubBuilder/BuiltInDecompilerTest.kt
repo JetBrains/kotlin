@@ -16,30 +16,62 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInStubBuilder
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
+import java.io.File
 
-class BuiltInDecompilerTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractBuiltInDecompilerTest : LightCodeInsightFixtureTestCase() {
+    protected fun doTest(packageFqName: String): String {
+        val stubTreeFromDecompiler = configureAndBuildFileStub(packageFqName)
+        val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(myFixture.file)
+        val expectedText = stubTreeFromDecompiledText.serializeToString()
+        Assert.assertEquals("Stub mismatch for package $packageFqName", expectedText, stubTreeFromDecompiler.serializeToString())
+        return expectedText
+    }
+
+    abstract fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*>
+
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+}
+
+class BuiltInDecompilerTest : AbstractBuiltInDecompilerTest() {
+    override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
+        val dirInRuntime = findDir(packageFqName, project)
+        val kotlinBuiltInsVirtualFile = dirInRuntime.children.single { it.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION }
+        myFixture.configureFromExistingVirtualFile(kotlinBuiltInsVirtualFile)
+        return KotlinBuiltInStubBuilder().buildFileStub(FileContentImpl.createByFile(kotlinBuiltInsVirtualFile))!!
+    }
+
     fun testBuiltInStubTreeEqualToStubTreeFromDecompiledText() {
         doTest("kotlin")
         doTest("kotlin.collections")
     }
+}
 
-    private fun doTest(packageFqName: String) {
-        val dirInRuntime = findDir(packageFqName, project)
-        val kotlinBuiltInsVirtualFile = dirInRuntime.children.single { it.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION }
-        val stubTreeFromDecompiler = KotlinBuiltInStubBuilder().buildFileStub(FileContentImpl.createByFile(kotlinBuiltInsVirtualFile))!!
-        myFixture.configureFromExistingVirtualFile(kotlinBuiltInsVirtualFile)
+class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() {
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/builtins/"
 
-        val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(myFixture.file)
-        val expectedText = stubTreeFromDecompiledText.serializeToString()
-        Assert.assertEquals("Stub mismatch for package $packageFqName", expectedText, stubTreeFromDecompiler.serializeToString())
+    override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
+        myFixture.configureByFile(testDataPath + BuiltInSerializerProtocol.getBuiltInsFilePath(FqName(packageFqName)))
+        return KotlinBuiltInStubBuilder().buildFileStub(FileContentImpl.createByFile(myFixture.file.virtualFile))!!
     }
 
-    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    fun testStubTreesEqualForIncompatibleAbiVersion() {
+        val serializedStub = doTest("test")
+        KotlinTestUtils.assertEqualsToFile(
+                File(testDataPath + "test.text"),
+                myFixture.file.text.replace(BuiltInsBinaryVersion.INSTANCE.toString(), "\$VERSION\$")
+        )
+        KotlinTestUtils.assertEqualsToFile(File(testDataPath + "test.stubs"), serializedStub)
+    }
 }
