@@ -93,6 +93,11 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinLiteFixtur
         return false;
     }
 
+    @NotNull
+    protected final File getJavaFilesDir() {
+        return javaFilesDir;
+    }
+
     protected void doTest(String filePath) throws Exception {
         File file = new File(filePath);
 

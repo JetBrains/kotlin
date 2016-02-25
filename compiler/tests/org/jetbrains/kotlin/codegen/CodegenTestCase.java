@@ -23,6 +23,7 @@ import com.intellij.util.SmartList;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
+import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -52,6 +54,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +128,20 @@ public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, 
 
     protected void loadFile() {
         loadFile(getPrefix() + "/" + getTestName(true) + ".kt");
+    }
+
+    protected void loadMultiFiles(@NotNull List<TestFile> files) {
+        Collections.sort(files);
+
+        List<KtFile> ktFiles = new ArrayList<KtFile>(files.size());
+        for (TestFile file : files) {
+            if (file.name.endsWith(".kt")) {
+                String content = CheckerTestUtil.parseDiagnosedRanges(file.content, new ArrayList<CheckerTestUtil.DiagnosedRange>(0));
+                ktFiles.add(KotlinTestUtils.createFile(file.name, content, myEnvironment.getProject()));
+            }
+        }
+
+        myFiles = CodegenTestFiles.create(ktFiles);
     }
 
     @NotNull
@@ -338,6 +355,21 @@ public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, 
         @Override
         public int compareTo(@NotNull TestFile o) {
             return name.compareTo(o.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof TestFile && ((TestFile) obj).name.equals(name);
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 

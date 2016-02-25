@@ -92,19 +92,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBox();
     }
 
-    protected void loadMultiFiles(@NotNull List<TestFile> files) {
-        Collections.sort(files);
-
-        List<KtFile> ktFiles = new ArrayList<KtFile>(files.size());
-        for (TestFile file : files) {
-            if (file.name.endsWith(".kt")) {
-                ktFiles.add(KotlinTestUtils.createFile(file.name, file.content, myEnvironment.getProject()));
-            }
-        }
-
-        myFiles = CodegenTestFiles.create(ktFiles);
-    }
-
     // NOTE: tests under fullJdk/ are run with FULL_JDK instead of MOCK_JDK
     @NotNull
     private static TestJdkKind getTestJdkKind(@NotNull String sourcePath) {

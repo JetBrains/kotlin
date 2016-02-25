@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.collections.CollectionsKt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -75,6 +75,7 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
         loadFiles(ArrayUtil.toStringArray(sourceFiles));
 
         List<OccurrenceInfo> expected = readExpectedOccurrences(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + sourceFiles.get(0));
-        countAndCompareActualOccurrences(expected);
+        String actual = generateToText();
+        checkGeneratedTextAgainstExpectedOccurrences(actual, expected);
     }
 }

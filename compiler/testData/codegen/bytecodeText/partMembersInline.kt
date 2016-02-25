@@ -1,3 +1,12 @@
+// FILE: otherFile.kt
+
+@file:[JvmName("Util") JvmMultifileClass]
+package test
+
+public fun publicInOtherFile() {}
+
+// FILE: thisFile.kt
+
 @file:[JvmName("Util") JvmMultifileClass]
 package test
 

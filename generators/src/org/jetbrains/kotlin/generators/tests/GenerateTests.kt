@@ -221,12 +221,8 @@ fun main(args: Array<String>) {
             model("codegen/script", extension = "kts")
         }
 
-        testClass(AbstractBytecodeTextTest::class.java) {
+        testClass<AbstractBytecodeTextTest>() {
             model("codegen/bytecodeText")
-        }
-
-        testClass(AbstractBytecodeTextTest::class.java, "BytecodeTextMultifileTestGenerated") {
-            model("codegen/bytecodeTextMultifile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
 
         testClass<AbstractBytecodeListingTest>() {

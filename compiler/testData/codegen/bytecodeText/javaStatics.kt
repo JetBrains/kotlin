@@ -1,3 +1,23 @@
+// FILE: Child.java
+
+class Child extends Parent {
+    public static int b = 3;
+    public static int c = 4;
+    public static void bar() {}
+    public static void baz() {}
+}
+
+// FILE: Parent.java
+
+class Parent {
+    public static int a = 1;
+    public static int b = 2;
+    public static void foo() {}
+    public static void baz() {}
+}
+
+// FILE: test.kt
+
 fun test() {
     Parent.a
     Parent.b
@@ -12,7 +32,6 @@ fun test() {
     Child.baz()
 }
 
-// @TestKt.class:
 // 1 GETSTATIC Parent.a : I
 // 1 GETSTATIC Parent.b : I
 // 1 INVOKESTATIC Parent.foo()
