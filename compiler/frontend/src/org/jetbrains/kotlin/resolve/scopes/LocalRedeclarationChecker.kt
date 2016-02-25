@@ -24,13 +24,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverloadUtil
 
-interface LocalRedeclarationChecker {
-    fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor)
-
-    object DO_NOTHING : LocalRedeclarationChecker {
-        override fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor) {}
-    }
-}
 
 abstract class AbstractLocalRedeclarationChecker : LocalRedeclarationChecker {
     override fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor) {

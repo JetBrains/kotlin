@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
@@ -25,14 +28,6 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
-
-interface QualifierReceiver : Receiver {
-    val descriptor: DeclarationDescriptor
-
-    val staticScope: MemberScope
-
-    val classValueReceiver: ReceiverValue?
-}
 
 interface Qualifier : QualifierReceiver {
     val referenceExpression: KtSimpleNameExpression

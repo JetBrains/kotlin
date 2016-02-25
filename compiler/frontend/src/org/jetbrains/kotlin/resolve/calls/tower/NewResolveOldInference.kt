@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.*
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
@@ -339,4 +340,17 @@ class NewResolveOldInference(
 
     }
 
+}
+
+@Deprecated("Temporary error")
+internal class PreviousResolutionError(candidateLevel: ResolutionCandidateApplicability): ResolutionDiagnostic(candidateLevel)
+
+@Deprecated("Temporary error")
+internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResolutionError? {
+    val level = when (status) {
+        ResolutionStatus.SUCCESS, ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> return null
+        ResolutionStatus.UNSAFE_CALL_ERROR -> ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR
+        else -> ResolutionCandidateApplicability.INAPPLICABLE
+    }
+    return PreviousResolutionError(level)
 }

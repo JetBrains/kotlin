@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 
-internal class KnownResultProcessor<C>(
+class KnownResultProcessor<C>(
         val result: Collection<C>
 ): ScopeTowerProcessor<C> {
     override fun process(data: TowerData)
             = if (data == TowerData.Empty) listOfNotNull(result.check { it.isNotEmpty() }) else emptyList()
 }
 
-internal class CompositeScopeTowerProcessor<C>(
+class CompositeScopeTowerProcessor<C>(
         vararg val processors: ScopeTowerProcessor<C>
 ) : ScopeTowerProcessor<C> {
     override fun process(data: TowerData): List<Collection<C>> = processors.flatMap { it.process(data) }
@@ -133,8 +133,8 @@ private fun <C> createSimpleProcessor(
     }
 }
 
-internal fun <C> createVariableProcessor(context: TowerContext<C>, explicitReceiver: Receiver?)
+fun <C> createVariableProcessor(context: TowerContext<C>, explicitReceiver: Receiver?)
         = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getVariables)
 
-internal fun <C> createFunctionProcessor(context: TowerContext<C>, explicitReceiver: Receiver?)
+fun <C> createFunctionProcessor(context: TowerContext<C>, explicitReceiver: Receiver?)
         = createSimpleProcessor(context, explicitReceiver, ScopeTowerLevel::getFunctions)

@@ -62,7 +62,7 @@ internal abstract class AbstractScopeTowerLevel(
             if (descriptor.isSynthesized) diagnostics.add(SynthesizedDescriptorDiagnostic)
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-            val shouldSkipVisibilityCheck = scopeTower is ScopeTowerImpl && scopeTower.isDebuggerContext
+            val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
             if (!shouldSkipVisibilityCheck) {
                 Visibilities.findInvisibleMember(
                         dispatchReceiver, descriptor,

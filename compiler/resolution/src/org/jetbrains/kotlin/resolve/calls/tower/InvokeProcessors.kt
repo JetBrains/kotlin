@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 
-internal abstract class AbstractInvokeTowerProcessor<C>(
+abstract class AbstractInvokeTowerProcessor<C>(
         protected val functionContext: TowerContext<C>,
         private val variableProcessor: ScopeTowerProcessor<C>
 ) : ScopeTowerProcessor<C> {
@@ -85,7 +85,7 @@ internal abstract class AbstractInvokeTowerProcessor<C>(
 }
 
 // todo KT-9522 Allow invoke convention for synthetic property
-internal class InvokeTowerProcessor<C>(
+class InvokeTowerProcessor<C>(
         functionContext: TowerContext<C>,
         private val explicitReceiver: Receiver?
 ) : AbstractInvokeTowerProcessor<C>(
@@ -101,7 +101,7 @@ internal class InvokeTowerProcessor<C>(
     }
 }
 
-internal class InvokeExtensionTowerProcessor<C>(
+class InvokeExtensionTowerProcessor<C>(
         functionContext: TowerContext<C>,
         private val explicitReceiver: ReceiverValue?
 ) : AbstractInvokeTowerProcessor<C>(
@@ -151,7 +151,7 @@ private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
 }
 
 // case 1.(foo())() or (foo())()
-internal fun <C> createCallTowerProcessorForExplicitInvoke(
+fun <C> createCallTowerProcessorForExplicitInvoke(
         contextForInvoke: TowerContext<C>,
         expressionForInvoke: ReceiverValue,
         explicitReceiver: ReceiverValue?

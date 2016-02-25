@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
@@ -32,12 +31,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 
-internal class CandidateWithBoundDispatchReceiverImpl<D : CallableDescriptor>(
-        override val dispatchReceiver: ReceiverValue?,
-        override val descriptor: D,
-        override val diagnostics: List<ResolutionDiagnostic>
-) : CandidateWithBoundDispatchReceiver<D>
-
 internal class ScopeTowerImpl(
         resolutionContext: ResolutionContext<*>,
         override val dynamicScope: MemberScope,
@@ -50,7 +43,7 @@ internal class ScopeTowerImpl(
     override val implicitReceivers = resolutionContext.scope.getImplicitReceiversHierarchy().
             mapNotNull { it.value.check { !it.type.containsError() } }
 
-    val isDebuggerContext = resolutionContext.isDebuggerContext
+    override val isDebuggerContext = resolutionContext.isDebuggerContext
 }
 
 private class DataFlowDecoratorImpl(private val resolutionContext: ResolutionContext<*>): DataFlowDecorator {

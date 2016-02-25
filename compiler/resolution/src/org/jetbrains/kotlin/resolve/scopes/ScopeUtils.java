@@ -20,7 +20,6 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
@@ -78,7 +77,7 @@ public final class ScopeUtils {
         );
     }
 
-    @TestOnly
+    // TestOnly
     @NotNull
     public static String printStructure(@Nullable MemberScope scope) {
         StringBuilder out = new StringBuilder();

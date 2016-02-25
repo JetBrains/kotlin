@@ -26,6 +26,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import java.util.*
 
+interface LocalRedeclarationChecker {
+    fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor)
+
+    object DO_NOTHING : LocalRedeclarationChecker {
+        override fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor) {}
+    }
+}
+
 abstract class LexicalScopeStorage(
         parent: HierarchicalScope,
         val redeclarationChecker: LocalRedeclarationChecker

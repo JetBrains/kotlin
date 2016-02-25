@@ -47,27 +47,27 @@ interface TowerContext<C> {
     fun contextForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<C>>?
 }
 
-internal sealed class TowerData {
+sealed class TowerData {
     object Empty : TowerData()
     class OnlyImplicitReceiver(val implicitReceiver: ReceiverValue): TowerData()
     class TowerLevel(val level: ScopeTowerLevel) : TowerData()
     class BothTowerLevelAndImplicitReceiver(val level: ScopeTowerLevel, val implicitReceiver: ReceiverValue) : TowerData()
 }
 
-internal interface ScopeTowerProcessor<C> {
+interface ScopeTowerProcessor<C> {
     // Candidates with matched receivers (dispatch receiver was already matched in ScopeTowerLevel)
     // Candidates in one groups have same priority, first group has highest priority.
     fun process(data: TowerData): List<Collection<C>>
 }
 
 class TowerResolver {
-    internal fun <C> runResolve(
+    fun <C> runResolve(
             context: TowerContext<C>,
             processor: ScopeTowerProcessor<C>,
             useOrder: Boolean
     ): Collection<C> = run(context.scopeTower.createTowerDataList(), processor, SuccessfulResultCollector { context.getStatus(it) }, useOrder)
 
-    internal fun <C> collectAllCandidates(context: TowerContext<C>, processor: ScopeTowerProcessor<C>): Collection<C>
+    fun <C> collectAllCandidates(context: TowerContext<C>, processor: ScopeTowerProcessor<C>): Collection<C>
             = run(context.scopeTower.createTowerDataList(), processor, AllCandidatesCollector { context.getStatus(it) }, false)
 
     private fun ScopeTower.createNonLocalLevels(): List<ScopeTowerLevel> {
@@ -153,7 +153,7 @@ class TowerResolver {
         return result
     }
 
-    internal fun <C> run(
+    fun <C> run(
             towerDataList: List<TowerData>,
             processor: ScopeTowerProcessor<C>,
             resultCollector: ResultCollector<C>,
@@ -180,7 +180,7 @@ class TowerResolver {
     }
 
 
-    internal abstract class ResultCollector<C>(protected val getStatus: (C) -> ResolutionCandidateStatus) {
+    abstract class ResultCollector<C>(protected val getStatus: (C) -> ResolutionCandidateStatus) {
         abstract fun getSuccessfulCandidates(): Collection<C>?
 
         abstract fun getFinalCandidates(): Collection<C>
@@ -195,7 +195,7 @@ class TowerResolver {
         protected abstract fun addCandidates(candidates: Collection<C>)
     }
 
-    internal class AllCandidatesCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
+    class AllCandidatesCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
         private val allCandidates = ArrayList<C>()
 
         override fun getSuccessfulCandidates(): Collection<C>? = null
@@ -207,7 +207,7 @@ class TowerResolver {
         }
     }
 
-    internal class SuccessfulResultCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
+    class SuccessfulResultCollector<C>(getStatus: (C) -> ResolutionCandidateStatus): ResultCollector<C>(getStatus) {
         private var currentCandidates: Collection<C> = emptyList()
         private var currentLevel: ResolutionCandidateApplicability? = null
 
