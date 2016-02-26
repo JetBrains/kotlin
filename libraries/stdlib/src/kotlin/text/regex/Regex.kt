@@ -61,7 +61,7 @@ public enum class RegexOption(override val value: Int, override val mask: Int = 
     /** Enables Unix lines mode.
      * In this mode, only the `'\n'` is recognized as a line terminator.
      */
-    UNIX_LINES(Pattern.UNIX_LINES), // TODO: Remove this
+    UNIX_LINES(Pattern.UNIX_LINES),
 
     /** Permits whitespace and comments in pattern. */
     COMMENTS(Pattern.COMMENTS),
