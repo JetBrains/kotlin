@@ -68,7 +68,7 @@ class KotlinGradleIT: BaseGradleIT() {
                     val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)".toRegex().find(output)
                     assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin on attempt $i" }
                     val reportedGrowth = matches!!.groups.get(2)!!.value.removePrefix("+").toInt()
-                    val expectedGrowthLimit = 2000
+                    val expectedGrowthLimit = 2500
                     assert(reportedGrowth <= expectedGrowthLimit) { "Used memory growth $reportedGrowth > $expectedGrowthLimit" }
                 }
             }
