@@ -25,11 +25,8 @@ import com.intellij.openapi.options.colors.ColorSettingsPage
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
-
-import javax.swing.*
-import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import java.util.HashMap
+import java.util.*
 
 class KotlinColorSettingsPage : ColorSettingsPage {
     override fun getIcon() = KotlinIcons.SMALL_LOGO
@@ -38,28 +35,31 @@ class KotlinColorSettingsPage : ColorSettingsPage {
     override fun getDemoText(): String {
         return """/* Block comment */
 <KEYWORD>package</KEYWORD> hello
-<KEYWORD>import</KEYWORD> kotlin.util.* // line comment
+<KEYWORD>import</KEYWORD> kotlin.collections.* // line comment
 
 /**
  * Doc comment here for `SomeClass`
  * @see <KDOC_LINK>Iterator#next()</KDOC_LINK>
  */
 <ANNOTATION>@Deprecated</ANNOTATION>("Deprecated class")
-<BUILTIN_ANNOTATION>public</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <INSTANCE_PROPERTY><MUTABLE_VARIABLE>prop1</MUTABLE_VARIABLE></INSTANCE_PROPERTY> : Int)
-    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>, dyn: dynamic) {
-        <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>("length\nis ${"$"}{<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE><STRING_ESCAPE>\e</STRING_ESCAPE></INVALID_STRING_ESCAPE>")
+<BUILTIN_ANNOTATION>private</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <PARAMETER><MUTABLE_VARIABLE><INSTANCE_PROPERTY>prop1</INSTANCE_PROPERTY></MUTABLE_VARIABLE></PARAMETER> : Int) {
+    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>, dyn: <KEYWORD>dynamic</KEYWORD>) {
+        <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>("length\nis ${"$"}{<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <STRING_ESCAPE><INVALID_STRING_ESCAPE>\e</INVALID_STRING_ESCAPE></STRING_ESCAPE>")
         val <LOCAL_VARIABLE>ints</LOCAL_VARIABLE> = java.util.<CONSTRUCTOR_CALL>ArrayList</CONSTRUCTOR_CALL><Int?>(2)
         <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER><VARIABLE_AS_FUNCTION_CALL>f</VARIABLE_AS_FUNCTION_CALL></PARAMETER>() + <PARAMETER><VARIABLE_AS_FUNCTION_LIKE_CALL>fl</VARIABLE_AS_FUNCTION_LIKE_CALL></PARAMETER>()
         val <LOCAL_VARIABLE>myFun</LOCAL_VARIABLE> = <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW> <FUNCTION_LITERAL_BRACES_AND_ARROW>-></FUNCTION_LITERAL_BRACES_AND_ARROW> "" <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>;
-        var <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE> = <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<FUNCTION_CALL>size</FUNCTION_CALL>()
-        if (!<LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_PROPERTY><PACKAGE_PROPERTY>empty</PACKAGE_PROPERTY></EXTENSION_PROPERTY>) {
-              <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL><PACKAGE_FUNCTION_CALL><FUNCTION_CALL>forEach</FUNCTION_CALL></PACKAGE_FUNCTION_CALL></EXTENSION_FUNCTION_CALL> <LABEL>lit@</LABEL> <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW>
-                  if (<FUNCTION_LITERAL_DEFAULT_PARAMETER>it</FUNCTION_LITERAL_DEFAULT_PARAMETER> == null) return<LABEL>@lit</LABEL>
-                  <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>(<FUNCTION_LITERAL_DEFAULT_PARAMETER><SMART_CAST_VALUE>it</SMART_CAST_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)
-              <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>
-        }
+        var <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE> = <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<INSTANCE_PROPERTY>size</INSTANCE_PROPERTY>
+        ints.<PACKAGE_PROPERTY><EXTENSION_PROPERTY>lastIndex</EXTENSION_PROPERTY></PACKAGE_PROPERTY> + <PACKAGE_PROPERTY>globalCounter</PACKAGE_PROPERTY>
+        <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<PACKAGE_FUNCTION_CALL><FUNCTION_CALL><EXTENSION_FUNCTION_CALL>forEach</EXTENSION_FUNCTION_CALL></FUNCTION_CALL></PACKAGE_FUNCTION_CALL> <LABEL>lit@</LABEL> <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW>
+            if (<FUNCTION_LITERAL_DEFAULT_PARAMETER>it</FUNCTION_LITERAL_DEFAULT_PARAMETER> == null) return<LABEL>@lit</LABEL>
+            <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>(<FUNCTION_LITERAL_DEFAULT_PARAMETER><SMART_CAST_VALUE>it</SMART_CAST_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)
+        <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>
         dyn.<DYNAMIC_FUNCTION_CALL>dynamicCall</DYNAMIC_FUNCTION_CALL>()
         dyn.<DYNAMIC_PROPERTY_CALL>dynamicProp</DYNAMIC_PROPERTY_CALL> = 5
+    }
+
+    <BUILTIN_ANNOTATION>override</BUILTIN_ANNOTATION> fun hashCode(): Int {
+        return <KEYWORD>super</KEYWORD>.hashCode() * 31
     }
 }
 
@@ -72,18 +72,19 @@ fun Int?.bar() {
     }
 }
 
-var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY></PROPERTY_WITH_BACKING_FIELD> : Int = 5
-    <KEYWORD>get</KEYWORD>() {
-        return <BACKING_FIELD_VARIABLE><LOCAL_VARIABLE><MUTABLE_VARIABLE>field</MUTABLE_VARIABLE></LOCAL_VARIABLE></BACKING_FIELD_VARIABLE>
-    }
+var <PACKAGE_PROPERTY><MUTABLE_VARIABLE><PROPERTY_WITH_BACKING_FIELD>globalCounter</PROPERTY_WITH_BACKING_FIELD></MUTABLE_VARIABLE></PACKAGE_PROPERTY> : Int = <NUMBER>5</NUMBER>
+    <KEYWORD>get</KEYWORD> = <LOCAL_VARIABLE><MUTABLE_VARIABLE><BACKING_FIELD_VARIABLE>field</BACKING_FIELD_VARIABLE></MUTABLE_VARIABLE></LOCAL_VARIABLE>
 
-<KEYWORD>public</KEYWORD> <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {
+<KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {
 }
 
 <KEYWORD>object</KEYWORD> <OBJECT>Obj</OBJECT>
 
-<KEYWORD>enum</KEYWORD> <KEYWORD>class</KEYWORD> <CLASS>E</CLASS> { <ENUM_ENTRY>A</ENUM_ENTRY> }
-               Bad character: \n
+<KEYWORD>enum</KEYWORD> <KEYWORD>class</KEYWORD> <CLASS>E</CLASS> { <ENUM_ENTRY>A</ENUM_ENTRY>, <ENUM_ENTRY>B</ENUM_ENTRY> }
+
+<KEYWORD>interface</KEYWORD> <TRAIT>FunctionLike</TRAIT> {
+    <BUILTIN_ANNOTATION>operator</BUILTIN_ANNOTATION> <KEYWORD>fun</KEYWORD> <FUNCTION_DECLARATION>invoke</FUNCTION_DECLARATION>() = <NUMBER>1</NUMBER>
+}
 """
     }
 
@@ -130,7 +131,7 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
                        OptionsBundle.message("options.java.attribute.descriptor.class") to KotlinHighlightingColors.CLASS,
                        OptionsBundle.message("options.java.attribute.descriptor.type.parameter") to KotlinHighlightingColors.TYPE_PARAMETER,
                        OptionsBundle.message("options.java.attribute.descriptor.abstract.class") to KotlinHighlightingColors.ABSTRACT_CLASS,
-                       "Interface" to KotlinHighlightingColors.TRAIT,
+                       OptionsBundle.message("options.java.attribute.descriptor.interface") to KotlinHighlightingColors.TRAIT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.annotation") to KotlinHighlightingColors.ANNOTATION,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.object") to KotlinHighlightingColors.OBJECT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.enumEntry") to KotlinHighlightingColors.ENUM_ENTRY,
@@ -153,7 +154,6 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
                        KotlinBundle.message("options.kotlin.attribute.descriptor.constructor.call") to KotlinHighlightingColors.CONSTRUCTOR_CALL,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.variable.as.function.call") to KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.variable.as.function.like.call") to KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL,
-                       OptionsBundle.message("options.java.attribute.descriptor.bad.character") to KotlinHighlightingColors.BAD_CHARACTER,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast") to KotlinHighlightingColors.SMART_CAST_VALUE,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.constant") to KotlinHighlightingColors.SMART_CONSTANT,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast.receiver") to KotlinHighlightingColors.SMART_CAST_RECEIVER,
