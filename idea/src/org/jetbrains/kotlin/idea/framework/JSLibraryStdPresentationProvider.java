@@ -71,11 +71,13 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
 
     @Nullable
     public static VirtualFile getJsStdLibJar(@NotNull Library library) {
-        return LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.JS_LIB_JAR_NAME);
+        return LibraryPresentationProviderUtil.isExternalLibrary(library) ? null :
+               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.JS_LIB_JAR_NAME);
     }
 
     @Nullable
     public static VirtualFile getJsStdLibSrcJar(@NotNull Library library) {
-        return LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.SOURCES)), PathUtil.JS_LIB_SRC_JAR_NAME);
+        return LibraryPresentationProviderUtil.isExternalLibrary(library) ? null :
+               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.SOURCES)), PathUtil.JS_LIB_SRC_JAR_NAME);
     }
 }

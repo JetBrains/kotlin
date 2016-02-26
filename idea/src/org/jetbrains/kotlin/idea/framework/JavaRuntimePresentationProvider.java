@@ -61,21 +61,25 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
 
     @Nullable
     public static VirtualFile getRuntimeJar(@NotNull Library library) {
-        return JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
+        return LibraryPresentationProviderUtil.isExternalLibrary(library) ? null :
+               JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
     }
 
     @Nullable
     public static VirtualFile getReflectJar(@NotNull Library library) {
-        return LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_JAVA_REFLECT_JAR);
+        return LibraryPresentationProviderUtil.isExternalLibrary(library) ? null :
+               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_JAVA_REFLECT_JAR);
     }
 
     @Nullable
     public static VirtualFile getRuntimeSrcJar(@NotNull Library library) {
-        return getRuntimeSrcJar(Arrays.asList(library.getFiles(OrderRootType.SOURCES)));
+        return LibraryPresentationProviderUtil.isExternalLibrary(library) ? null :
+               getRuntimeSrcJar(Arrays.asList(library.getFiles(OrderRootType.SOURCES)));
     }
 
     @Nullable
     public static VirtualFile getTestJar(@NotNull Library library) {
-        return LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_TEST_JAR);
+        return LibraryPresentationProviderUtil.isExternalLibrary(library) ? null :
+               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_TEST_JAR);
     }
 }
