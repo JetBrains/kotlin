@@ -1032,6 +1032,7 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }

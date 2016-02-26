@@ -6512,6 +6512,7 @@ public fun CharArray.toSet(): Set<Char> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun <T: Comparable<T>> Array<out T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
@@ -6519,6 +6520,7 @@ public fun <T: Comparable<T>> Array<out T>.toSortedSet(): SortedSet<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun ByteArray.toSortedSet(): SortedSet<Byte> {
     return toCollection(TreeSet<Byte>())
 }
@@ -6526,6 +6528,7 @@ public fun ByteArray.toSortedSet(): SortedSet<Byte> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun ShortArray.toSortedSet(): SortedSet<Short> {
     return toCollection(TreeSet<Short>())
 }
@@ -6533,6 +6536,7 @@ public fun ShortArray.toSortedSet(): SortedSet<Short> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun IntArray.toSortedSet(): SortedSet<Int> {
     return toCollection(TreeSet<Int>())
 }
@@ -6540,6 +6544,7 @@ public fun IntArray.toSortedSet(): SortedSet<Int> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun LongArray.toSortedSet(): SortedSet<Long> {
     return toCollection(TreeSet<Long>())
 }
@@ -6547,6 +6552,7 @@ public fun LongArray.toSortedSet(): SortedSet<Long> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun FloatArray.toSortedSet(): SortedSet<Float> {
     return toCollection(TreeSet<Float>())
 }
@@ -6554,6 +6560,7 @@ public fun FloatArray.toSortedSet(): SortedSet<Float> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun DoubleArray.toSortedSet(): SortedSet<Double> {
     return toCollection(TreeSet<Double>())
 }
@@ -6561,6 +6568,7 @@ public fun DoubleArray.toSortedSet(): SortedSet<Double> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun BooleanArray.toSortedSet(): SortedSet<Boolean> {
     return toCollection(TreeSet<Boolean>())
 }
@@ -6568,6 +6576,7 @@ public fun BooleanArray.toSortedSet(): SortedSet<Boolean> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun CharArray.toSortedSet(): SortedSet<Char> {
     return toCollection(TreeSet<Char>())
 }

@@ -610,6 +610,7 @@ public fun CharSequence.toSet(): Set<Char> {
 /**
  * Returns a [SortedSet] of all characters.
  */
+@kotlin.jvm.JvmVersion
 public fun CharSequence.toSortedSet(): SortedSet<Char> {
     return toCollection(TreeSet<Char>())
 }

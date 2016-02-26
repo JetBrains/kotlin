@@ -40,6 +40,7 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("toSortedSet()") {
         include(CharSequences)
+        jvmOnly(true)
         typeParam("T: Comparable<T>")
         doc { f -> "Returns a [SortedSet] of all ${f.element.pluralize()}." }
         returns("SortedSet<T>")
