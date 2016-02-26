@@ -122,12 +122,6 @@ public open class LinkedHashMap<K, V>(
 @library
 public open class NoSuchElementException(message: String? = null) : Exception() {}
 
-@library
-public interface Enumeration<E> {
-    public fun hasMoreElements(): Boolean
-    public fun nextElement(): E
-}
-
 @native
 public class Date() {
     public fun getTime(): Int = noImpl
