@@ -16,13 +16,7 @@ class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
 
     @Test
     fun testFromJps() {
-        try {
-            JpsTestProject(jpsResourcesPath, relativePath).performAndAssertBuildStages(weakTesting = true)
-        }
-        finally {
-            if (defaultBuildOptions().withDaemon)
-                checkRecycleDaemon()
-        }
+        JpsTestProject(jpsResourcesPath, relativePath).performAndAssertBuildStages(weakTesting = true)
     }
 
     override fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
@@ -35,9 +29,6 @@ class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
                                         File(jpsResourcesPath, "custom"),
                                         File(jpsResourcesPath, "lookupTracker"))
 
-        val MAX_TESTS_ON_SINGLE_DAEMON = 20
-        private var testsCounter = 0
-
         @Suppress("unused")
         @Parameterized.Parameters(name = "{index}: {0}")
         @JvmStatic
@@ -47,14 +38,6 @@ class KotlinGradlePluginJpsParametrizedIT : BaseIncrementalGradleIT() {
                         .filter { it.isDirectory && isJpsTestProject(it) }
                         .map { arrayOf(it.toRelativeString(jpsResourcesPath)) }
                         .toList()
-
-        @Synchronized
-        fun checkRecycleDaemon() {
-            if (testsCounter++ > MAX_TESTS_ON_SINGLE_DAEMON) {
-                BaseGradleIT.tearDownAll()
-                testsCounter = 0
-            }
-        }
     }
 }
 
