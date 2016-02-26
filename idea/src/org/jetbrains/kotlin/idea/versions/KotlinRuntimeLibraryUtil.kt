@@ -64,9 +64,7 @@ fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<Vi
 }
 
 
-fun updateLibraries(
-        project: Project,
-        libraries: Collection<Library>) {
+fun updateLibraries(project: Project, libraries: Collection<Library>) {
     ApplicationManager.getApplication().invokeLater {
         val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator? ?:
                                error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
