@@ -237,12 +237,11 @@ public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, com
 /**
  * Returns the elements from the list from indexes specified in range.
  */
-public operator fun <T> List<T>.get(indexesRange : IntRange): List<T> = indexesRange.map { get(it) }
-
-/**
- * Returns the elements from the list from indexes specified in arguments.
- */
-public operator fun <T> List<T>.get(vararg indexes : Int): List<T> = indexes.map { get(it) }
+operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
+        if(indexesRange.first<=indexesRange.last)
+            subList(indexesRange.first, indexesRange.last+1)
+        else
+            listOf<T>()
 
 /**
  * Checks that `from` and `to` are in
