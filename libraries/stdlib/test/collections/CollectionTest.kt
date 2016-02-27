@@ -854,4 +854,25 @@ class CollectionTest {
         // we need toString() inside pattern because of KT-8666
         assertEquals("[1, a, null, ${Long.MAX_VALUE.toString()}]", listOf(1, "a", null, Long.MAX_VALUE).toString())
     }
+
+    @test fun testGetRange() {
+        val listStr = listOf("a", "b", "c", "d", "e")
+        println(listStr[1..3] == listOf("b", "c", "d"))
+        println(listStr[1..3] is List<String>)
+        println(listStr[1..3][0..1] == listOf("b", "c"))
+        println(listStr[1..3][0..1] is List<String>)
+        println(listStr[1..3][0..1][0] is String)
+        println(listStr[1..3][0..1][0] == "b")
+
+        println(listStr[1..1] == listOf(listStr[1]))
+        println(listStr[3..1] == listOf<String>())
+    }
+
+    @test fun testGetVarargs() {
+        val listStr = listOf("a", "b", "c", "d", "e")
+        println(listOf(0, 1, 2, 3, 4, 5)[0,2,4] == listOf(0, 2, 4))
+        println(listStr[1,2,4] == listOf("b", "c", "e"))
+        println(listStr[1,2,4][0,2] == listOf("b", "e"))
+        println(listStr[1,2,4][0,2][1] == "e")
+    }
 }
