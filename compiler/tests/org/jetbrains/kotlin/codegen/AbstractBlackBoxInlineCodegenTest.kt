@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.generated
+package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
-import org.jetbrains.kotlin.codegen.InlineTestUtil
-import org.jetbrains.kotlin.codegen.filterClassFiles
-import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.jvm.compiler.SMAPTestUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.generated;
+package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
@@ -28,10 +28,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
-import org.jetbrains.kotlin.codegen.CodegenTestCase;
-import org.jetbrains.kotlin.codegen.CodegenTestFiles;
-import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
-import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtDeclaration;
@@ -65,11 +61,11 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         }
     }
 
-    public void doTestAgainstJava(@NotNull String filename) {
+    protected void doTestAgainstJava(@NotNull String filename) {
         blackBoxFileAgainstJavaByFullPath(filename);
     }
 
-    public void doTestWithJava(@NotNull String filename) {
+    protected void doTestWithJava(@NotNull String filename) {
         try {
             blackBoxFileWithJavaByFullPath(filename);
         }
@@ -78,7 +74,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         }
     }
 
-    public void doTestWithStdlib(@NotNull String filename) {
+    protected void doTestWithStdlib(@NotNull String filename) {
         configurationKind = InTextDirectivesUtils.isDirectiveDefined(
                 FilesKt.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
         ) ? ConfigurationKind.NO_KOTLIN_REFLECT : ConfigurationKind.ALL;
