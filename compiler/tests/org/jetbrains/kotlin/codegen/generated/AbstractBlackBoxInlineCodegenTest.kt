@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.codegen.InlineTestUtil
 import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.getClassFiles
-import org.jetbrains.kotlin.jvm.compiler.AbstractSMAPBaseTest
+import org.jetbrains.kotlin.jvm.compiler.SMAPTestUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 
-abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest(), AbstractSMAPBaseTest {
+abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun doMultiFileTest(
             file: File, modules: Map<String, KotlinMultiFileTestWithJava<Void, TestFile>.ModuleAndDependencies>, files: List<TestFile>
     ) {
@@ -34,10 +34,10 @@ abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest()
 
         try {
             InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.psiFiles)
-            checkSMAP(files, generateClassesInFile().getClassFiles())
+            SMAPTestUtil.checkSMAP(files, generateClassesInFile().getClassFiles())
         }
         catch (e: Throwable) {
-            System.out.println(generateToText())
+            println(generateToText())
             throw e
         }
     }

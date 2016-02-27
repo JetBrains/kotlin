@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import java.io.File
 
-abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest(), AbstractSMAPBaseTest {
+abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest() {
     override fun doMultiFileTest(
             file: File, modules: Map<String, KotlinMultiFileTestWithJava<Void, TestFile>.ModuleAndDependencies>, files: List<TestFile>
     ) {
@@ -42,7 +42,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
 
             val sourceFiles = factory1.inputFiles + factory2.inputFiles
             InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
-            checkSMAP(files, allGeneratedFiles.filterClassFiles())
+            SMAPTestUtil.checkSMAP(files, allGeneratedFiles.filterClassFiles())
         }
         catch (e: Throwable) {
             var result = ""

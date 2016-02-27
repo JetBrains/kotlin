@@ -28,7 +28,7 @@ import org.junit.Assert
 import java.io.File
 import java.io.StringReader
 
-interface AbstractSMAPBaseTest {
+object SMAPTestUtil {
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.mapNotNull { outputFile ->
             var debugInfo: String? = null
