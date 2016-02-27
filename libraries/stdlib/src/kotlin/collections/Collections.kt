@@ -250,7 +250,11 @@ operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
 /**
  * Returns the list multiplication.
  */
-operator fun <T> List<T>.times(factor: Int): List<T> = (1..factor).flatMap { this }
+operator fun <T> List<T>.times(factor: Int): List<T> =
+        if (factor < 0)
+            throw ArithmeticException("List factor must be bigger then 0")
+        else
+            (1..factor).flatMap { this }
 
 /**
  * Checks that `from` and `to` are in

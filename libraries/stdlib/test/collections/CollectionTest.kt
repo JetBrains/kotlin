@@ -873,20 +873,22 @@ class CollectionTest {
         assertEquals(listStr[1..3][0..1][0], "b")
     }
 
-    fun throwsError(f :()->Unit): Boolean {
-        try{
-            f()
-        } catch(e: Exception){
-            return true
-        }
-        return false
-    }
-
     @test fun testListTimes(){
         val shortlistStr = listOf("a", "b")
         assertEquals(shortlistStr*0, listOf<String>())
         assertEquals(shortlistStr*1, listOf("a", "b"))
         assertEquals(shortlistStr*2, listOf("a", "b", "a", "b"))
         assertEquals(shortlistStr*3, listOf("a", "b", "a", "b", "a", "b"))
+        assertTrue(throwsError{shortlistStr*-1})
+        assertTrue(throwsError{shortlistStr*-2})
+    }
+
+    private fun throwsError(f :()->Unit): Boolean {
+        try{
+            f()
+        } catch(e: Exception){
+            return true
+        }
+        return false
     }
 }
