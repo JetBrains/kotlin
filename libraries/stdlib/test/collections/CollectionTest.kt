@@ -861,15 +861,16 @@ class CollectionTest {
         assertTrue(throwsError{listStr[-1..2]})
         assertTrue(throwsError{listStr[1..10]})
 
-        assertTrue(listStr[1..3] == listOf("b", "c", "d"))
+        assertEquals(listStr[IntRange.EMPTY], listOf<String>())
+        assertEquals(listStr[1..1], listOf(listStr[1]))
+        assertEquals(listStr[3..1], listOf<String>())
+
+        assertEquals(listStr[1..3], listOf("b", "c", "d"))
         assertTrue(listStr[1..3] is List<String>)
-        assertTrue(listStr[1..3][0..1] == listOf("b", "c"))
+        assertEquals(listStr[1..3][0..1], listOf("b", "c"))
         assertTrue(listStr[1..3][0..1] is List<String>)
         assertTrue(listStr[1..3][0..1][0] is String)
-        assertTrue(listStr[1..3][0..1][0] == "b")
-
-        assertTrue(listStr[1..1] == listOf(listStr[1]))
-        assertTrue(listStr[3..1] == listOf<String>())
+        assertEquals(listStr[1..3][0..1][0], "b")
     }
 
     fun throwsError(f :()->Unit): Boolean {
@@ -883,9 +884,9 @@ class CollectionTest {
 
     @test fun testListTimes(){
         val shortlistStr = listOf("a", "b")
-        assertTrue(shortlistStr*0 == listOf<String>())
-        assertTrue(shortlistStr*1 == listOf("a", "b"))
-        assertTrue(shortlistStr*2 == listOf("a", "b", "a", "b"))
-        assertTrue(shortlistStr*3 == listOf("a", "b", "a", "b", "a", "b"))
+        assertEquals(shortlistStr*0, listOf<String>())
+        assertEquals(shortlistStr*1, listOf("a", "b"))
+        assertEquals(shortlistStr*2, listOf("a", "b", "a", "b"))
+        assertEquals(shortlistStr*3, listOf("a", "b", "a", "b", "a", "b"))
     }
 }
