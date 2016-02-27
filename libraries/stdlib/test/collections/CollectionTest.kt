@@ -856,37 +856,49 @@ class CollectionTest {
     }
 
     @test fun testGetRange() {
+        val emptyList = listOf<String>()
+
+        assertTrue(throwsError { emptyList[0..0] })
+        assertEquals(emptyList, emptyList[IntRange.EMPTY])
+
         val listStr = listOf("a", "b", "c", "d", "e")
 
-        assertTrue(throwsError{listStr[-1..2]})
-        assertTrue(throwsError{listStr[1..10]})
+        assertTrue(throwsError { listStr[-1..2] })
+        assertTrue(throwsError { listStr[1..10] })
 
-        assertEquals(listStr[IntRange.EMPTY], listOf<String>())
-        assertEquals(listStr[1..1], listOf(listStr[1]))
-        assertEquals(listStr[3..1], listOf<String>())
+        assertEquals(emptyList, listStr[IntRange.EMPTY])
+        assertEquals(listOf(listStr[1]), listStr[1..1])
+        assertEquals(emptyList, listStr[3..1])
 
-        assertEquals(listStr[1..3], listOf("b", "c", "d"))
+        assertEquals(listOf("b", "c", "d"), listStr[1..3])
         assertTrue(listStr[1..3] is List<String>)
-        assertEquals(listStr[1..3][0..1], listOf("b", "c"))
+        assertEquals(listOf("b", "c"), listStr[1..3][0..1])
         assertTrue(listStr[1..3][0..1] is List<String>)
         assertTrue(listStr[1..3][0..1][0] is String)
-        assertEquals(listStr[1..3][0..1][0], "b")
+        assertEquals("b", listStr[1..3][0..1][0])
     }
 
-    @test fun testListTimes(){
+    @test fun testListTimes() {
+        val emptyList = listOf<String>()
+        assertTrue(throwsError { emptyList * -1 })
+        assertEquals(emptyList, emptyList * 0)
+        assertEquals(emptyList, emptyList * 1)
+        assertEquals(emptyList, emptyList * 2)
+
         val shortlistStr = listOf("a", "b")
-        assertEquals(shortlistStr*0, listOf<String>())
-        assertEquals(shortlistStr*1, listOf("a", "b"))
-        assertEquals(shortlistStr*2, listOf("a", "b", "a", "b"))
-        assertEquals(shortlistStr*3, listOf("a", "b", "a", "b", "a", "b"))
-        assertTrue(throwsError{shortlistStr*-1})
-        assertTrue(throwsError{shortlistStr*-2})
+        assertTrue(throwsError { shortlistStr * -1 })
+        assertTrue(throwsError { shortlistStr * -2 })
+        assertEquals(listOf<String>(), shortlistStr * 0)
+        assertEquals(listOf("a", "b"), shortlistStr * 1)
+        assertEquals(listOf("a", "b", "a", "b"), shortlistStr * 2)
+        assertEquals(listOf("a", "b", "a", "b", "a", "b"), shortlistStr * 3)
     }
 
-    private fun throwsError(f :()->Unit): Boolean {
-        try{
+    private fun throwsError(f: () -> Unit): Boolean {
+        try {
             f()
-        } catch(e: Exception){
+        }
+        catch(e: Exception) {
             return true
         }
         return false

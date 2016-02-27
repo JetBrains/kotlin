@@ -237,24 +237,26 @@ public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, com
 /**
  * Returns the elements from the list from indexes specified in range.
  */
-operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
-        if (indexesRange.first < 0)
+public operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
+        if (indexesRange.isEmpty())
+            listOf<T>()
+        else if (indexesRange.first < 0)
             throw IndexOutOfBoundsException("Range beginning (${indexesRange.first}) is less than zero.")
         else if (indexesRange.last > lastIndex)
             throw IndexOutOfBoundsException("Range end (${indexesRange.last}) is bigger then the end of table ($lastIndex)")
         else if (indexesRange.first <= indexesRange.last)
-            subList(indexesRange.first, indexesRange.last + 1)
+            subList(indexesRange.first, indexesRange.last + 1).toList()
         else
-            listOf<T>()
+            throw Exception("Unknown exception in getting range of indexes from list")
 
 /**
  * Returns the list multiplication.
  */
-operator fun <T> List<T>.times(factor: Int): List<T> =
-        if (factor < 0)
-            throw ArithmeticException("List factor must be bigger then 0")
-        else
-            (1..factor).flatMap { this }
+public operator fun <T> List<T>.times(factor: Int): List<T> {
+    require(factor >= 0) { "List factor must be bigger then 0" }
+    return (1..factor).flatMap { this }
+}
+
 
 /**
  * Checks that `from` and `to` are in
