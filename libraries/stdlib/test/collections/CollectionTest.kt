@@ -880,4 +880,12 @@ class CollectionTest {
         }
         return false
     }
+
+    @test fun testListTimes(){
+        val shortlistStr = listOf("a", "b")
+        assertTrue(shortlistStr*0 == listOf<String>())
+        assertTrue(shortlistStr*1 == listOf("a", "b"))
+        assertTrue(shortlistStr*2 == listOf("a", "b", "a", "b"))
+        assertTrue(shortlistStr*3 == listOf("a", "b", "a", "b", "a", "b"))
+    }
 }

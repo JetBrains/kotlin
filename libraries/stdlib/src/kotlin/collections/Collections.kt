@@ -246,6 +246,11 @@ operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
             listOf<T>()
 
 /**
+ * Returns the list multiplication.
+ */
+operator fun <T> List<T>.times(factor: Int): List<T> = (1..factor).flatMap { this }
+
+/**
  * Checks that `from` and `to` are in
  * the range of [0..size] and throws an appropriate exception, if they aren't.
  */
