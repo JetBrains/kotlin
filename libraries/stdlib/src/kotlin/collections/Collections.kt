@@ -238,7 +238,9 @@ public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, com
  * Returns the elements from the list from indexes specified in range.
  */
 operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
-        if(indexesRange.first<=indexesRange.last)
+        if(indexesRange.first < 0 || indexesRange.last > lastIndex)
+            throw IndexOutOfBoundsException()
+        else if(indexesRange.first<=indexesRange.last)
             subList(indexesRange.first, indexesRange.last+1)
         else
             listOf<T>()

@@ -857,15 +857,27 @@ class CollectionTest {
 
     @test fun testGetRange() {
         val listStr = listOf("a", "b", "c", "d", "e")
-        assertEquals(listStr[1..3] == listOf("b", "c", "d"))
-        assertEquals(listStr[1..3] is List<String>)
-        assertEquals(listStr[1..3][0..1] == listOf("b", "c"))
-        assertEquals(listStr[1..3][0..1] is List<String>)
-        assertEquals(listStr[1..3][0..1][0] is String)
-        assertEquals(listStr[1..3][0..1][0] == "b")
 
-        assertEquals(listStr[1..1] == listOf(listStr[1]))
-        assertEquals(listStr[3..1] == listOf<String>())
+        assertTrue(throwsError{listStr[-1..2]})
+        assertTrue(throwsError{listStr[1..10]})
+
+        assertTrue(listStr[1..3] == listOf("b", "c", "d"))
+        assertTrue(listStr[1..3] is List<String>)
+        assertTrue(listStr[1..3][0..1] == listOf("b", "c"))
+        assertTrue(listStr[1..3][0..1] is List<String>)
+        assertTrue(listStr[1..3][0..1][0] is String)
+        assertTrue(listStr[1..3][0..1][0] == "b")
+
+        assertTrue(listStr[1..1] == listOf(listStr[1]))
+        assertTrue(listStr[3..1] == listOf<String>())
     }
 
+    fun throwsError(f :()->Unit): Boolean {
+        try{
+            f()
+        } catch(e: Exception){
+            return true
+        }
+        return false
+    }
 }
