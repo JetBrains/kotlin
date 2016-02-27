@@ -1,6 +1,6 @@
 
-public fun <warning descr="Missing Documentation">publicUndocumentedFun</warning>() {}
-fun <warning descr="Missing Documentation">defaultUndocumentedFun</warning>() {}
+public fun <warning descr="Missing documentation">publicUndocumentedFun</warning>() {}
+fun <warning descr="Missing documentation">defaultUndocumentedFun</warning>() {}
 
 /** Some documentation */
 public fun publicDocumentedFun() {}
@@ -13,8 +13,8 @@ internal fun internalUndocumentedFun() {}
 
 
 
-public class <warning descr="Missing Documentation">publicUndocumentedClass</warning>() {}
-class <warning descr="Missing Documentation">defaultUndocumentedClass</warning>() {}
+public class <warning descr="Missing documentation">publicUndocumentedClass</warning>() {}
+class <warning descr="Missing documentation">defaultUndocumentedClass</warning>() {}
 
 /** Some documentation */
 public class publicDocumentedClass() {}
@@ -29,8 +29,8 @@ internal class internalUndocumentedClass() {}
 
 private open class Properties {
 
-    public open val <warning descr="Missing Documentation">publicUndocumentedProperty</warning>: Int = 0
-    open val <warning descr="Missing Documentation">defaultUndocumentedProperty</warning>: Int = 0
+    public open val <warning descr="Missing documentation">publicUndocumentedProperty</warning>: Int = 0
+    open val <warning descr="Missing documentation">defaultUndocumentedProperty</warning>: Int = 0
 
     /** Some documentation */
     public open val publicDocumentedProperty: Int = 0
@@ -51,14 +51,14 @@ private open class Properties {
 }
 
 private open class ChildClass : Properties() {
-    override val <warning descr="Missing Documentation">publicUndocumentedProperty</warning>: Int = 4
-    override val <warning descr="Missing Documentation">defaultUndocumentedProperty</warning>: Int = 4
+    override val <warning descr="Missing documentation">publicUndocumentedProperty</warning>: Int = 4
+    override val <warning descr="Missing documentation">defaultUndocumentedProperty</warning>: Int = 4
     override val publicDocumentedProperty: Int = 4
     override val defaultDocumentedProperty: Int = 4
 
     /** Some documentation */
     override public val internalUndocumentedProperty: Int = 4
-    override public val <warning descr="Missing Documentation">protectedUndocumentedProperty</warning>: Int = 4
+    override public val <warning descr="Missing documentation">protectedUndocumentedProperty</warning>: Int = 4
     override public val protectedDocumentedProperty: Int = 4
 }
 
