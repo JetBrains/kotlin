@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
-import org.jetbrains.kotlin.jvm.compiler.SMAPTestUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 

@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm.compiler
+package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
-import org.jetbrains.kotlin.codegen.ClassFileFactory
-import org.jetbrains.kotlin.codegen.InlineTestUtil
-import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import java.io.File
 

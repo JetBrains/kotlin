@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm.compiler;
+package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.codegen.ClassFileFactory;
-import org.jetbrains.kotlin.codegen.CodegenTestCase;
-import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;

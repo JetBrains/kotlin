@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm.compiler
+package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
-import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
