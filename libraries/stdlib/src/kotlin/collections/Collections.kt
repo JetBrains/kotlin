@@ -243,7 +243,7 @@ public operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
         else if (indexesRange.first < 0)
             throw IndexOutOfBoundsException("Range beginning (${indexesRange.first}) is less than zero.")
         else if (indexesRange.last > lastIndex)
-            throw IndexOutOfBoundsException("Range end (${indexesRange.last}) is bigger then the end of table ($lastIndex)")
+            throw IndexOutOfBoundsException("Range end (${indexesRange.last}) is bigger than the end of table ($lastIndex)")
         else if (indexesRange.first <= indexesRange.last)
             subList(indexesRange.first, indexesRange.last + 1).toList()
         else
@@ -253,7 +253,7 @@ public operator fun <T> List<T>.get(indexesRange: IntRange): List<T> =
  * Returns the list multiplication.
  */
 public operator fun <T> List<T>.times(factor: Int): List<T> {
-    require(factor >= 0) { "List factor must be bigger then 0" }
+    require(factor >= 0) { "List factor cannot be negative. It's value is $factor" }
     return (1..factor).flatMap { this }
 }
 
