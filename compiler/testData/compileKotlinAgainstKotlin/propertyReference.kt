@@ -11,15 +11,17 @@ public val String.extension: Long
 
 import a.*
 
-fun main(args: Array<String>) {
+fun box(): String {
     val f = ::topLevel
     val x1 = f.get()
-    if (x1 != 42) throw AssertionError("Fail x1: $x1")
+    if (x1 != 42) return "Fail x1: $x1"
     f.set(239)
     val x2 = f.get()
-    if (x2 != 239) throw AssertionError("Fail x2: $x2")
+    if (x2 != 239) return "Fail x2: $x2"
 
     val g = String::extension
     val y1 = g.get("abcde")
-    if (y1 != 5L) throw AssertionError("Fail y1: $y1")
+    if (y1 != 5L) return "Fail y1: $y1"
+
+    return "OK"
 }

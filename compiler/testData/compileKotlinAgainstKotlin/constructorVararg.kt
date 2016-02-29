@@ -6,8 +6,9 @@ class A(vararg s: String) {
 
 // FILE: B.kt
 
-fun main(args: Array<String>) {
-  A()
-  A("a")
-  A("a", "b")
+fun box(): String {
+    A()
+    A("a")
+    A("a", "b")
+    return "OK"
 }

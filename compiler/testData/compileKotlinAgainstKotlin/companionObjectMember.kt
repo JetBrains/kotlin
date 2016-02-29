@@ -9,7 +9,7 @@ class A {
 
 // FILE: B.kt
 
-fun main(args: Array<String>) {
-    if (A.foo() != 42) throw Exception()
-    if (A.bar != "OK") throw Exception()
+fun box(): String {
+    if (A.foo() != 42) return "Fail foo"
+    return A.bar
 }

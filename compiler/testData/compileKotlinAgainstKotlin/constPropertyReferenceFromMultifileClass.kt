@@ -12,7 +12,7 @@ const val OK: String = "OK"
 
 import a.OK
 
-fun main(args: Array<String>) {
+fun box(): String {
     val okRef = ::OK
 
     // TODO: see KT-10892
@@ -23,5 +23,5 @@ fun main(args: Array<String>) {
 //    }
 
     val result = okRef.get()
-    if (result != "OK") throw AssertionError("Fail: $result")
+    return result
 }

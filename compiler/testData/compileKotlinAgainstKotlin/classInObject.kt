@@ -3,13 +3,16 @@
 package a
 
 object CartRoutes {
-    class RemoveOrderItem()
+    class RemoveOrderItem {
+        val result = "OK"
+    }
 }
 
 // FILE: B.kt
 
 import a.CartRoutes
 
-fun main(args: Array<String>) {
+fun box(): String {
     val r = CartRoutes.RemoveOrderItem()
+    return r.result
 }

@@ -18,7 +18,7 @@ import test.*
 class Inv<T>
 fun <T> inv(t: T): Inv<T> = Inv<T>()
 
-fun main(args: Array<String>) {
+fun box(): String {
     printStream().checkError()
     val p: Inv<PrintStream> = inv(printStream())
     val p1: Inv<PrintStream?> = inv(printStream())
@@ -31,4 +31,6 @@ fun main(args: Array<String>) {
     a[0] = 1
     val a1: Inv<Array<Int>> = inv(a)
     val a2: Inv<Array<out Int>?> = inv(a)
+
+    return "OK"
 }

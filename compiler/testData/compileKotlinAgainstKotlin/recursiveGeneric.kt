@@ -14,10 +14,11 @@ interface Super {
 
 import a.*
 
-fun main(args: Array<String>) {
+fun box(): String {
     val declaredMethod = Super::class.java.getDeclaredMethod("foo", Rec::class.java)
     val genericString = declaredMethod.toGenericString()
-    if (genericString != "public abstract a.Rec<?, ?> a.Super.foo(a.Rec<?, ?>)") throw AssertionError(genericString)
+    if (genericString != "public abstract a.Rec<?, ?> a.Super.foo(a.Rec<?, ?>)") return "Fail: $genericString"
+    return "OK"
 }
 
 fun test(s: Super, p: Rec<*, *>) {

@@ -12,10 +12,11 @@ var varOK: String = "Hmmm?"
 
 import a.*
 
-fun main(args: Array<String>) {
-    if (foo() != "OK") throw AssertionError("Fail function")
-    if (constOK != "OK") throw AssertionError("Fail const")
-    if (valOK != "OK") throw AssertionError("Fail val")
+fun box(): String {
+    if (foo() != "OK") return "Fail function"
+    if (constOK != "OK") return "Fail const"
+    if (valOK != "OK") return "Fail val"
     varOK = "OK"
-    if (varOK != "OK") throw AssertionError("Fail var")
+    if (varOK != "OK") return "Fail var"
+    return varOK
 }

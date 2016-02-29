@@ -14,6 +14,6 @@ public enum class EnumClass {
 
 import library.EnumClass
 
-fun main(args: Array<String>) {
-    if (EnumClass.entry() != EnumClass.ENTRY) throw AssertionError()
+fun box(): String {
+    return if (EnumClass.entry() != EnumClass.ENTRY) "Fail" else "OK"
 }

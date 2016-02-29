@@ -45,8 +45,9 @@ annotation class Ann(
         val str: String
 )
 
-fun main(args: Array<String>) {
+fun box(): String {
     // Trigger annotation loading
     (MyClass1() as java.lang.Object).getClass().getAnnotations()
     (MyClass2() as java.lang.Object).getClass().getAnnotations()
+    return "OK"
 }

@@ -23,10 +23,11 @@ import constants.*
 @AnnotationClass("$b $s $i $l $f $d $bb $c $str")
 class DummyClass()
 
-fun main(args: Array<String>) {
+fun box(): String {
     val klass = DummyClass::class.java
     val annotationClass = AnnotationClass::class.java
     val annotation = klass.getAnnotation(annotationClass)!!
     val value = annotation.value
     require(value == "100 20000 2000000 2000000000000 3.14 3.14 true \u03c0 :)", { "Annotation value: $value" })
+    return "OK"
 }

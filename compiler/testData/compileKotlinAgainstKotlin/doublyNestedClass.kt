@@ -12,9 +12,7 @@ class A {
 
 // FILE: B.kt
 
-fun main(args: Array<String>) {
+fun box(): String {
     val str = aaa.A.B.O().s
-    if (str != "OK") {
-        throw Exception()
-    }
+    return str
 }

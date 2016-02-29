@@ -35,9 +35,9 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("annotationInTrait.kt")
-    public void testAnnotationInTrait() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/annotationInTrait.kt");
+    @TestMetadata("annotationInInterface.kt")
+    public void testAnnotationInInterface() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/annotationInInterface.kt");
         doTest(fileName);
     }
 
@@ -53,15 +53,15 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
-    @TestMetadata("classObjectInEnum.kt")
-    public void testClassObjectInEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/classObjectInEnum.kt");
+    @TestMetadata("companionObjectInEnum.kt")
+    public void testCompanionObjectInEnum() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/companionObjectInEnum.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("classObjectMember.kt")
-    public void testClassObjectMember() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/classObjectMember.kt");
+    @TestMetadata("companionObjectMember.kt")
+    public void testCompanionObjectMember() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/companionObjectMember.kt");
         doTest(fileName);
     }
 
@@ -95,12 +95,6 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
-    @TestMetadata("importObject.kt")
-    public void testImportObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/importObject.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("inlinedConstants.kt")
     public void testInlinedConstants() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/inlinedConstants.kt");
@@ -125,9 +119,15 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
-    @TestMetadata("jvmNameOnAccessor.kt")
-    public void testJvmNameOnAccessor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmNameOnAccessor.kt");
+    @TestMetadata("jvmNames.kt")
+    public void testJvmNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmNames.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("jvmStaticInObject.kt")
+    public void testJvmStaticInObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
         doTest(fileName);
     }
 
@@ -158,18 +158,6 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("nestedObject.kt")
     public void testNestedObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/nestedObject.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("platformNames.kt")
-    public void testPlatformNames() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/platformNames.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("platformStaticInObject.kt")
-    public void testPlatformStaticInObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/platformStaticInObject.kt");
         doTest(fileName);
     }
 

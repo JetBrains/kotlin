@@ -11,6 +11,7 @@ enum class E {
 
 import aaa.E
 
-fun main(args: Array<String>) {
-    if (E.TRIVIAL_ENTRY == E.SUBCLASS) throw AssertionError()
+fun box(): String {
+    if (E.TRIVIAL_ENTRY == E.SUBCLASS) return "Fail"
+    return "OK"
 }

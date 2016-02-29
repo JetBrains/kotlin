@@ -15,6 +15,7 @@ fun Outer.testExt() {
     Inner("test")
 }
 
-fun main(args: Array<String>) {
+fun box(): String {
     Outer().testExt()
+    return "OK"
 }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.util.ArrayUtil;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,19 +59,31 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
+        assert javaFilesDir == null : ".java files are not supported yet in this test";
+        doTwoFileTest(files);
+    }
+
+    @NotNull
+    protected Pair<ClassFileFactory, ClassFileFactory> doTwoFileTest(@NotNull List<TestFile> files) throws Exception {
         // Note that it may be beneficial to improve this test to handle many files, compiling them successively against all previous
         assert files.size() == 2 : "There should be exactly two files in this test";
         TestFile fileA = files.get(0);
         TestFile fileB = files.get(1);
-        compileA(fileA.name, fileA.content);
-        compileB(fileB.name, fileB.content);
-        invokeMain(fileB.name);
-    }
-
-    private void invokeMain(@NotNull String fileName) throws Exception {
-        String className = PackagePartClassUtils.getFilePartShortName(fileName);
-        Method main = createGeneratedClassLoader().loadClass(className).getMethod("main", String[].class);
-        main.invoke(null, new Object[] {ArrayUtil.EMPTY_STRING_ARRAY});
+        ClassFileFactory factoryA = compileA(fileA.name, fileA.content);
+        ClassFileFactory factoryB = null;
+        try {
+            factoryB = compileB(fileB.name, fileB.content);
+            invokeBox(PackagePartClassUtils.getFilePartShortName(new File(fileB.name).getName()));
+        }
+        catch (Throwable e) {
+            String result = "FIRST: \n\n" + factoryA.createText();
+            if (factoryB != null) {
+                result += "\n\nSECOND: \n\n" + factoryB.createText();
+            }
+            System.out.println(result);
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+        return new Pair<ClassFileFactory, ClassFileFactory>(factoryA, factoryB);
     }
 
     protected void invokeBox(@NotNull String className) throws Exception {

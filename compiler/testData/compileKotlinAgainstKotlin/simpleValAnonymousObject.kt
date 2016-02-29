@@ -14,7 +14,7 @@ interface ClassA {
 
 import pkg.ClassA
 
-fun main(args: Array<String>) {
+fun box(): String {
     val obj = ClassA.DEFAULT
-    obj.toString()
+    return obj.toString()
 }

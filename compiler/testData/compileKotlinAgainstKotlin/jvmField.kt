@@ -18,6 +18,7 @@ open class C : B() {
     }
 }
 
-fun main(args: Array<String>) {
+fun box(): String {
     C().test()
+    return "OK"
 }

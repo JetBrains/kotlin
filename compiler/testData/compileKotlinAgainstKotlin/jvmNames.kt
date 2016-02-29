@@ -11,13 +11,20 @@ var v: Int = 1
     @JvmName("vset")
     set
 
+fun consumeInt(x: Int) {}
+
+class A {
+    val OK: String = "OK"
+        @JvmName("OK") get
+}
+
 // FILE: B.kt
 
 import lib.*
 
-fun main(args: Array<String>) {
+fun box(): String {
     foo()
-
     v = 1
-    println(v)
+    consumeInt(v)
+    return A().OK
 }

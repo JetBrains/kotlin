@@ -4,15 +4,16 @@ package aaa
 
 class A {
     enum class E {
-      A
+        A
     }
 }
 
 // FILE: B.kt
 
-fun main(args: Array<String>) {
+fun box(): String {
     val str = aaa.A.E.A
     if (str.toString() != "A") {
-        throw Exception()
+        return "Fail $str"
     }
+    return "OK"
 }

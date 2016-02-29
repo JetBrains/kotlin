@@ -6,9 +6,10 @@ fun hello() = 17
 
 // FILE: B.kt
 
-fun main(args: Array<String>) {
+fun box(): String {
     val h = aaa.hello()
     if (h != 17) {
         throw Exception()
     }
+    return "OK"
 }
