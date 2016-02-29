@@ -16,7 +16,13 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -24,7 +30,15 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
@@ -42,10 +56,24 @@ class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
                                            (descriptor as? CallableMemberDescriptor)?.overriddenDescriptors
                                                    ?.any { (it.source.getPsi() as? KtNamedDeclaration)?.docComment != null } ?: false
                     if (!hasDocumentation) {
-                        holder.registerProblem(nameIdentifier, "Missing documentation")
+                        holder.registerProblem(nameIdentifier, "Missing documentation", AddDocumentationFix())
                     }
                 }
             }
+        }
+    }
+
+    class AddDocumentationFix : LocalQuickFix {
+        override fun getName(): String = "Add documentation"
+
+        override fun getFamilyName(): String = name
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val declaration = descriptor.psiElement.getParentOfType<KtNamedDeclaration>(true)
+                              ?: throw IllegalStateException("Can't find declaration")
+            declaration.addBefore(KDocElementFactory(project).createKDocFromText("/**  */"), declaration.firstChild)
+            val editor = descriptor.psiElement.findExistingEditor()
+            editor?.caretModel?.moveToOffset(declaration.startOffset + 4)
         }
     }
 }
