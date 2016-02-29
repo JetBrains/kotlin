@@ -795,6 +795,9 @@ public class FunctionCodegen {
                 if (receiverParameter != null) {
                     frameMap.enter(receiverParameter, state.getTypeMapper().mapType(receiverParameter));
                 }
+                else {
+                    frameMap.enterTemp(parameter.getAsmType());
+                }
             }
             else if (parameter.getKind() != JvmMethodParameterKind.VALUE) {
                 frameMap.enterTemp(parameter.getAsmType());
