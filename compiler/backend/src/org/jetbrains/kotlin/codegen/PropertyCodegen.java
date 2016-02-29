@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -212,7 +213,7 @@ public class PropertyCodegen {
     }
 
     public void generateConstructorPropertyAsMethodForAnnotationClass(KtParameter p, PropertyDescriptor descriptor) {
-        JvmMethodSignature signature = typeMapper.mapAnnotationParameterSignature(descriptor);
+        JvmMethodGenericSignature signature = typeMapper.mapAnnotationParameterSignature(descriptor);
         String name = p.getName();
         if (name == null) return;
         MethodVisitor mv = v.newMethod(

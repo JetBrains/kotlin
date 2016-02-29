@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -398,7 +399,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public JvmMethodSignature mapAnnotationParameterSignature(@NotNull PropertyDescriptor descriptor) {
+    public JvmMethodGenericSignature mapAnnotationParameterSignature(@NotNull PropertyDescriptor descriptor) {
         JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
         sw.writeReturnType();
         mapType(descriptor.getType(), sw, TypeMappingMode.VALUE_FOR_ANNOTATION);
@@ -990,7 +991,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean skipGenericSignature) {
+    private JvmMethodGenericSignature mapSignature(@NotNull FunctionDescriptor f, boolean skipGenericSignature) {
         return mapSignature(f, OwnerKind.IMPLEMENTATION, skipGenericSignature);
     }
 
@@ -1005,12 +1006,12 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public JvmMethodSignature mapSignatureWithGeneric(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
+    public JvmMethodGenericSignature mapSignatureWithGeneric(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
         return mapSignature(f, kind, false);
     }
 
     @NotNull
-    private JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind, boolean skipGenericSignature) {
+    private JvmMethodGenericSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind, boolean skipGenericSignature) {
         if (f.getInitialSignatureDescriptor() != null && f != f.getInitialSignatureDescriptor()) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(f) == null ||
@@ -1027,7 +1028,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public JvmMethodSignature mapSignature(
+    public JvmMethodGenericSignature mapSignature(
             @NotNull FunctionDescriptor f,
             @NotNull OwnerKind kind,
             @NotNull List<ValueParameterDescriptor> valueParameters,
@@ -1078,7 +1079,7 @@ public class JetTypeMapper {
             sw.writeReturnTypeEnd();
         }
 
-        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
+        JvmMethodGenericSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
@@ -1086,7 +1087,7 @@ public class JetTypeMapper {
             if (specialSignatureInfo != null) {
                 String newGenericSignature = CodegenUtilKt.replaceValueParametersIn(
                         specialSignatureInfo, signature.getGenericsSignature());
-                return new JvmMethodSignature(signature.getAsmMethod(), newGenericSignature, signature.getValueParameters());
+                return new JvmMethodGenericSignature(signature.getAsmMethod(), signature.getValueParameters(), newGenericSignature);
             }
         }
 

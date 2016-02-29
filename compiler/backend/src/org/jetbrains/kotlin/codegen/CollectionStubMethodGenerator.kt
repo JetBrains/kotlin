@@ -52,8 +52,8 @@ class CollectionStubMethodGenerator(
         val superCollectionClasses = findRelevantSuperCollectionClasses()
         if (superCollectionClasses.isEmpty()) return
 
-        val methodStubsToGenerate = LinkedHashSet<JvmMethodSignature>()
-        val syntheticStubsToGenerate = LinkedHashSet<JvmMethodSignature>()
+        val methodStubsToGenerate = LinkedHashSet<JvmMethodGenericSignature>()
+        val syntheticStubsToGenerate = LinkedHashSet<JvmMethodGenericSignature>()
 
         for ((readOnlyClass, mutableClass) in superCollectionClasses) {
             // To determine which method stubs we need to generate, we create a synthetic class (named 'child' here) which inherits from
@@ -118,10 +118,10 @@ class CollectionStubMethodGenerator(
                                 else
                                     Pair(overriddenMethodSignature.asmMethod, overriddenMethodSignature.valueParameters)
 
-                        specialSignature = JvmMethodSignature(
+                        specialSignature = JvmMethodGenericSignature(
                                 asmMethod,
-                                specialGenericSignature,
-                                valueParameters
+                                valueParameters,
+                                specialGenericSignature
                         )
 
                         methodStubsToGenerate.add(specialSignature)
@@ -240,9 +240,9 @@ class CollectionStubMethodGenerator(
         return KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArguments)
     }
 
-    private fun FunctionDescriptor.signature(): JvmMethodSignature = typeMapper.mapSignatureWithGeneric(this, OwnerKind.IMPLEMENTATION)
+    private fun FunctionDescriptor.signature(): JvmMethodGenericSignature = typeMapper.mapSignatureWithGeneric(this, OwnerKind.IMPLEMENTATION)
 
-    private fun generateMethodStub(signature: JvmMethodSignature, synthetic: Boolean) {
+    private fun generateMethodStub(signature: JvmMethodGenericSignature, synthetic: Boolean) {
         // TODO: investigate if it makes sense to generate abstract stubs in traits
         var access = ACC_PUBLIC
         if (descriptor.kind == ClassKind.INTERFACE) access = access or ACC_ABSTRACT

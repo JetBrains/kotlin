@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.signature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -171,13 +172,13 @@ public class JvmSignatureWriter {
     }
 
     @NotNull
-    public JvmMethodSignature makeJvmMethodSignature(@NotNull String name) {
+    public JvmMethodGenericSignature makeJvmMethodSignature(@NotNull String name) {
         List<Type> types = new ArrayList<Type>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature parameter : kotlinParameterTypes) {
             types.add(parameter.getAsmType());
         }
         Method asmMethod = new Method(name, jvmReturnType, types.toArray(new Type[types.size()]));
-        return new JvmMethodSignature(asmMethod, makeJavaGenericSignature(), kotlinParameterTypes);
+        return new JvmMethodGenericSignature(asmMethod, kotlinParameterTypes, makeJavaGenericSignature());
     }
 
     public int getCurrentSignatureSize() {

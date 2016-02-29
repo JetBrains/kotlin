@@ -237,7 +237,7 @@ public class InlineCodegen extends CallGenerator {
                                            getMethodAsmFlags(functionDescriptor, context.getContextKind()) | (callDefault ? Opcodes.ACC_STATIC : 0),
                                            asmMethod.getName(),
                                            asmMethod.getDescriptor(),
-                                           jvmSignature.getGenericsSignature(),
+                                           null,
                                            null);
 
             //for maxLocals calculation
@@ -351,7 +351,7 @@ public class InlineCodegen extends CallGenerator {
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
-        MethodNode methodNode = new MethodNode(InlineCodegenUtil.API, getMethodAsmFlags(descriptor, context.getContextKind()), asmMethod.getName(), asmMethod.getDescriptor(), jvmMethodSignature.getGenericsSignature(), null);
+        MethodNode methodNode = new MethodNode(InlineCodegenUtil.API, getMethodAsmFlags(descriptor, context.getContextKind()), asmMethod.getName(), asmMethod.getDescriptor(), null, null);
 
         MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 
