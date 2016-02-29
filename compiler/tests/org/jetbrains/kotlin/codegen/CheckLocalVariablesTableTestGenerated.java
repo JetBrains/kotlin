@@ -89,6 +89,12 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         doTest(fileName);
     }
 
+    @TestMetadata("kt11117.kt")
+    public void testKt11117() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/kt11117.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambdaAsVar.kt")
     public void testLambdaAsVar() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
