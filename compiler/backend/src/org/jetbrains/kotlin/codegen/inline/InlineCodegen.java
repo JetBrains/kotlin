@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
@@ -69,7 +69,7 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFun
 
 public class InlineCodegen extends CallGenerator {
     private final GenerationState state;
-    private final JetTypeMapper typeMapper;
+    private final KotlinTypeMapper typeMapper;
 
     private final FunctionDescriptor functionDescriptor;
     private final JvmMethodSignature jvmSignature;
@@ -189,7 +189,7 @@ public class InlineCodegen extends CallGenerator {
             @NotNull CodegenContext context,
             boolean callDefault,
             @NotNull GenerationState state) throws IOException {
-        JetTypeMapper typeMapper = state.getTypeMapper();
+        KotlinTypeMapper typeMapper = state.getTypeMapper();
         Method asmMethod = callDefault
                            ? typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind())
                            : jvmSignature.getAsmMethod();
@@ -208,7 +208,7 @@ public class InlineCodegen extends CallGenerator {
             }
         }
         else if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
-            JetTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
+            KotlinTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
             ClassId containerId = containingClasses.getImplClassId();

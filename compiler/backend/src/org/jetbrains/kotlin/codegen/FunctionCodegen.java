@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotati
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -86,7 +86,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen {
     public final GenerationState state;
-    private final JetTypeMapper typeMapper;
+    private final KotlinTypeMapper typeMapper;
     private final BindingContext bindingContext;
     private final CodegenContext owner;
     private final ClassBuilder v;
@@ -301,7 +301,7 @@ public class FunctionCodegen {
     private static Type getThisTypeForFunction(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext context,
-            @NotNull JetTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         ReceiverParameterDescriptor dispatchReceiver = functionDescriptor.getDispatchReceiverParameter();
         if (functionDescriptor instanceof ConstructorDescriptor) {
@@ -333,7 +333,7 @@ public class FunctionCodegen {
         Label methodBegin = new Label();
         mv.visitLabel(methodBegin);
 
-        JetTypeMapper typeMapper = parentCodegen.typeMapper;
+        KotlinTypeMapper typeMapper = parentCodegen.typeMapper;
         if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, getSignatureMapper(typeMapper))) {
             generateTypeCheckBarrierIfNeeded(
                     new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), /* delegateParameterType = */null);
@@ -363,7 +363,7 @@ public class FunctionCodegen {
             mv.visitLabel(methodEntry);
             context.setMethodStartLabel(methodEntry);
 
-            if (!JetTypeMapper.isAccessor(functionDescriptor)) {
+            if (!KotlinTypeMapper.isAccessor(functionDescriptor)) {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
             methodEnd = new Label();
@@ -591,7 +591,7 @@ public class FunctionCodegen {
     }
 
     @NotNull
-    private static Function1<FunctionDescriptor, Method> getSignatureMapper(final @NotNull  JetTypeMapper typeMapper) {
+    private static Function1<FunctionDescriptor, Method> getSignatureMapper(final @NotNull KotlinTypeMapper typeMapper) {
         return new Function1<FunctionDescriptor, Method>() {
             @Override
             public Method invoke(FunctionDescriptor descriptor) {
@@ -613,7 +613,7 @@ public class FunctionCodegen {
     }
 
     @NotNull
-    public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull final JetTypeMapper mapper) {
+    public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull final KotlinTypeMapper mapper) {
         AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
         if (annotation == null) {
             annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.Throws"));

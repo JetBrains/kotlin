@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.serialization
 
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
@@ -30,7 +30,7 @@ import java.io.OutputStream
 import java.util.*
 
 // TODO: optimize by reordering records to minimize storage of 'range' fields
-class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
+class JvmStringTable(private val typeMapper: KotlinTypeMapper) : StringTable {
     val strings = ArrayList<String>()
     private val records = ArrayList<Record.Builder>()
     private val map = HashMap<String, Int>()

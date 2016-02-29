@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
@@ -138,7 +138,7 @@ public class JvmCodegenUtil {
             boolean isDelegated,
             @NotNull MethodContext contextBeforeInline
     ) {
-        if (JetTypeMapper.isAccessor(property)) return false;
+        if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
         // Inline functions can't use direct access because a field may not be visible at the call site

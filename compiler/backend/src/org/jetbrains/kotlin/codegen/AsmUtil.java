@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -171,7 +171,7 @@ public class AsmUtil {
 
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
-               JetTypeMapper.isStaticAccessor(functionDescriptor) ||
+               KotlinTypeMapper.isStaticAccessor(functionDescriptor) ||
                AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor);
     }
 
@@ -213,7 +213,7 @@ public class AsmUtil {
             flags |= ACC_ABSTRACT;
         }
 
-        if (JetTypeMapper.isAccessor(functionDescriptor)
+        if (KotlinTypeMapper.isAccessor(functionDescriptor)
             || AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }
@@ -418,7 +418,7 @@ public class AsmUtil {
         v.athrow();
     }
 
-    public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {
+    public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, KotlinTypeMapper typeMapper) {
         List<Pair<String, Type>> allFields = new ArrayList<Pair<String, Type>>();
 
         ClassifierDescriptor captureThis = closure.getCaptureThis();
@@ -619,7 +619,7 @@ public class AsmUtil {
 
     private static void genParamAssertion(
             @NotNull InstructionAdapter v,
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull FrameMap frameMap,
             @NotNull CallableDescriptor parameter,
             @NotNull String name

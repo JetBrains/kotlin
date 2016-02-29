@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
@@ -183,7 +183,7 @@ public class InlineCodegenUtil {
 
     public static String getInlineName(
             @NotNull CodegenContext codegenContext,
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull JvmFileClassesProvider fileClassesManager
     ) {
         return getInlineName(codegenContext, codegenContext.getContextDescriptor(), typeMapper, fileClassesManager);
@@ -192,7 +192,7 @@ public class InlineCodegenUtil {
     private static String getInlineName(
             @NotNull CodegenContext codegenContext,
             @NotNull DeclarationDescriptor currentDescriptor,
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull JvmFileClassesProvider fileClassesProvider
     ) {
         if (currentDescriptor instanceof PackageFragmentDescriptor) {

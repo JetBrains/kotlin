@@ -45,7 +45,7 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -328,7 +328,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
     private fun getInternalClassNameForElement(
             element: KtElement,
-            typeMapper: JetTypeMapper,
+            typeMapper: KotlinTypeMapper,
             file: KtFile,
             isInLibrary: Boolean,
             withInlines: Boolean
@@ -404,7 +404,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return CachedClassNames(getClassNameForFile(file))
     }
 
-    private fun getClassNameForClass(klass: KtClassOrObject, typeMapper: JetTypeMapper) = klass.readAction { getJvmInternalNameForImpl(typeMapper, it) }
+    private fun getClassNameForClass(klass: KtClassOrObject, typeMapper: KotlinTypeMapper) = klass.readAction { getJvmInternalNameForImpl(typeMapper, it) }
     private fun getClassNameForFile(file: KtFile) = file.readAction { NoResolveFileClassesProvider.getFileClassInternalName(it) }
 
     private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out KtElement>> =
@@ -423,7 +423,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return readAction { PsiTreeUtil.getParentOfType(notPositionedElement, *TYPES_TO_CALCULATE_CLASSNAME) }
     }
 
-    fun getJvmInternalNameForPropertyOwner(typeMapper: JetTypeMapper, descriptor: PropertyDescriptor): String {
+    fun getJvmInternalNameForPropertyOwner(typeMapper: KotlinTypeMapper, descriptor: PropertyDescriptor): String {
         return descriptor.readAction {
             typeMapper.mapOwner(
                     if (JvmAbi.isPropertyWithBackingFieldInOuterClass(it)) it.containingDeclaration else it
@@ -431,7 +431,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
     }
 
-    private fun getJvmInternalNameForImpl(typeMapper: JetTypeMapper, ktClass: KtClassOrObject): String? {
+    private fun getJvmInternalNameForImpl(typeMapper: KotlinTypeMapper, ktClass: KtClassOrObject): String? {
         val classDescriptor = typeMapper.bindingContext.get<PsiElement, ClassDescriptor>(BindingContext.CLASS, ktClass) ?: return null
 
         if (ktClass is KtClass && ktClass.isInterface()) {

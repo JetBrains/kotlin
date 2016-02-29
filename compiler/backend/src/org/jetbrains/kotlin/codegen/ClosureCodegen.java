@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -405,7 +405,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @NotNull
     public static List<FieldInfo> calculateConstructorParameters(
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull CalculatedClosure closure,
             @NotNull Type ownerType
     ) {

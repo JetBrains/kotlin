@@ -95,7 +95,7 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class JetTypeMapper {
+public class KotlinTypeMapper {
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
     private final JvmFileClassesProvider fileClassesProvider;
@@ -103,7 +103,7 @@ public class JetTypeMapper {
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
 
-    public JetTypeMapper(
+    public KotlinTypeMapper(
             @NotNull BindingContext bindingContext,
             @NotNull ClassBuilderMode classBuilderMode,
             @NotNull JvmFileClassesProvider fileClassesProvider,

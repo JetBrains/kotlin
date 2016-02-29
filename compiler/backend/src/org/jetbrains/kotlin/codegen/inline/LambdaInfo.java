@@ -21,14 +21,13 @@ import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
@@ -44,7 +43,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     public final KtExpression expression;
 
-    private final JetTypeMapper typeMapper;
+    private final KotlinTypeMapper typeMapper;
 
     @NotNull
     public final Set<String> labels;
@@ -63,7 +62,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     private final Type closureClassType;
 
-    LambdaInfo(@NotNull KtExpression expr, @NotNull JetTypeMapper typeMapper, boolean isCrossInline) {
+    LambdaInfo(@NotNull KtExpression expr, @NotNull KotlinTypeMapper typeMapper, boolean isCrossInline) {
         this.isCrossInline = isCrossInline;
         this.expression = expr instanceof KtLambdaExpression ?
                           ((KtLambdaExpression) expr).getFunctionLiteral() : expr;

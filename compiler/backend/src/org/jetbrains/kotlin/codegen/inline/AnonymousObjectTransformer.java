@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.FieldInfo;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
@@ -38,7 +38,7 @@ public class AnonymousObjectTransformer {
 
     protected final GenerationState state;
 
-    protected final JetTypeMapper typeMapper;
+    protected final KotlinTypeMapper typeMapper;
 
     private final InlineResult transformationResult;
 

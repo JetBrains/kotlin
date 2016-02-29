@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -57,7 +57,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return super.getParentContext();
     }
 
-    public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
+    public StackValue getReceiverExpression(KotlinTypeMapper typeMapper) {
         assert getCallableDescriptorWithReceiver() != null;
         @SuppressWarnings("ConstantConditions")
         Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getExtensionReceiverParameter().getType());

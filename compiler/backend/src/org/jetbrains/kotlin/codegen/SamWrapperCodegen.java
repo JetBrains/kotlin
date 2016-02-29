@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -49,7 +49,7 @@ public class SamWrapperCodegen {
     private static final String FUNCTION_FIELD_NAME = "function";
 
     private final GenerationState state;
-    private final JetTypeMapper typeMapper;
+    private final KotlinTypeMapper typeMapper;
     private final SamType samType;
     private final MemberCodegen<?> parentCodegen;
 

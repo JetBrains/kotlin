@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
@@ -34,7 +34,7 @@ val FunctionDescriptor.sourceFilePath: String
         return containingFile?.virtualFile?.canonicalPath!!
     }
 
-fun FunctionDescriptor.getClassFilePath(typeMapper: JetTypeMapper, cache: IncrementalCache): String {
+fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: IncrementalCache): String {
     val container = containingDeclaration as? DeclarationDescriptorWithSource
     val source = container?.source
 

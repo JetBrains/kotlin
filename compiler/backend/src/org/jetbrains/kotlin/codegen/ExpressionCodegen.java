@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
@@ -111,7 +111,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> implements LocalLookup {
     private final GenerationState state;
-    final JetTypeMapper typeMapper;
+    final KotlinTypeMapper typeMapper;
     private final BindingContext bindingContext;
 
     public final InstructionAdapter v;
@@ -2254,7 +2254,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
         }
         else {
-            fieldName = JetTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
+            fieldName = KotlinTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
         }
 
         return StackValue.property(propertyDescriptor, backingFieldOwner,
@@ -2839,12 +2839,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public static StackValue generateClassLiteralReference(@NotNull JetTypeMapper typeMapper, @NotNull KotlinType type) {
+    public static StackValue generateClassLiteralReference(@NotNull KotlinTypeMapper typeMapper, @NotNull KotlinType type) {
         return generateClassLiteralReference(typeMapper, type, null);
     }
 
     @NotNull
-    private static StackValue generateClassLiteralReference(@NotNull final JetTypeMapper typeMapper, @NotNull final KotlinType type, @Nullable final ExpressionCodegen codegen) {
+    private static StackValue generateClassLiteralReference(@NotNull final KotlinTypeMapper typeMapper, @NotNull final KotlinType type, @Nullable final ExpressionCodegen codegen) {
         return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {

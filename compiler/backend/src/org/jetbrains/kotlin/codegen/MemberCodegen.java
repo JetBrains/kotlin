@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -74,7 +74,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
     protected final ClassBuilder v;
     protected final FunctionCodegen functionCodegen;
     protected final PropertyCodegen propertyCodegen;
-    protected final JetTypeMapper typeMapper;
+    protected final KotlinTypeMapper typeMapper;
     protected final BindingContext bindingContext;
     protected final JvmFileClassesProvider fileClassesProvider;
     private final MemberCodegen<?> parentCodegen;
@@ -672,7 +672,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
             iv.dup();
             reg = 0;
         }
-        else if (accessorIsConstructor || (accessorDescriptor != null && JetTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
+        else if (accessorIsConstructor || (accessorDescriptor != null && KotlinTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
             if (!AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor)) {
                 iv.load(0, OBJECT_TYPE);
             }

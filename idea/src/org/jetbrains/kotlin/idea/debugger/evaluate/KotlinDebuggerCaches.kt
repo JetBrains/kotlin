@@ -32,7 +32,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.Value
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
@@ -60,7 +60,7 @@ class KotlinDebuggerCaches(private val project: Project) {
 
     private val cachedTypeMappers = CachedValuesManager.getManager(project).createCachedValue(
             {
-                CachedValueProvider.Result<HashMap<PsiElement, JetTypeMapper>>(
+                CachedValueProvider.Result<HashMap<PsiElement, KotlinTypeMapper>>(
                         hashMapOf(), PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
@@ -111,7 +111,7 @@ class KotlinDebuggerCaches(private val project: Project) {
             }
         }
 
-        fun getOrCreateTypeMapper(psiElement: PsiElement): JetTypeMapper {
+        fun getOrCreateTypeMapper(psiElement: PsiElement): KotlinTypeMapper {
             val cache = getInstance(runReadAction { psiElement.project })
             synchronized(cache.cachedTypeMappers) {
                 val typeMappersCache = cache.cachedTypeMappers.value
@@ -141,7 +141,7 @@ class KotlinDebuggerCaches(private val project: Project) {
             }
         }
 
-        private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): JetTypeMapper {
+        private fun createTypeMapperForLibraryFile(element: KtElement, file: KtFile): KotlinTypeMapper {
             return runReadAction {
                 val analysisResult = element.analyzeAndGetResult()
 
@@ -159,7 +159,7 @@ class KotlinDebuggerCaches(private val project: Project) {
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
                 runReadAction { if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)!! }
 
-        private fun createTypeMapperForSourceFile(file: KtFile): JetTypeMapper {
+        private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper {
             return runReadAction {
                 val analysisResult = file.analyzeFullyAndGetResult()
                 analysisResult.throwIfError()
@@ -175,7 +175,7 @@ class KotlinDebuggerCaches(private val project: Project) {
             }
         }
 
-        @TestOnly fun addTypeMapper(file: KtFile, typeMapper: JetTypeMapper) {
+        @TestOnly fun addTypeMapper(file: KtFile, typeMapper: KotlinTypeMapper) {
             getInstance(file.project).cachedTypeMappers.value[file] = typeMapper
         }
     }

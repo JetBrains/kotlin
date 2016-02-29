@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.FieldInfo;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer;
@@ -40,7 +40,7 @@ public class ScriptContext extends ClassContext {
     private final KtExpression lastStatement;
 
     public ScriptContext(
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull List<ScriptDescriptor> earlierScripts,
             @NotNull ClassDescriptor contextDescriptor,
