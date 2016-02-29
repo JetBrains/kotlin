@@ -45,16 +45,15 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     @Override
-    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<TestFile> files) throws Exception {
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
         if (files.size() == 1) {
             createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-            blackBoxFileByFullPath(file.getPath());
+            blackBoxFileByFullPath(wholeFile.getPath());
         }
         else {
             doTestMultiFile(files);

@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -36,15 +37,15 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
     private static final Pattern EXPECTED_OCCURRENCES_PATTERN = Pattern.compile("^\\s*//\\s*(\\d+)\\s*(.*)$");
 
     @Override
-    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<TestFile> files) throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, getJavaFilesDir());
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, javaFilesDir);
         loadMultiFiles(files);
 
         if (isMultiFileTest(files)) {
             doTestMultiFile(files);
         }
         else {
-            List<OccurrenceInfo> expected = readExpectedOccurrences(file.getPath());
+            List<OccurrenceInfo> expected = readExpectedOccurrences(wholeFile.getPath());
             String actual = generateToText();
             checkGeneratedTextAgainstExpectedOccurrences(actual, expected);
         }

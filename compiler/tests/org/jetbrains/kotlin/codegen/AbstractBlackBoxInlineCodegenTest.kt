@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 
 abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
-    override fun doMultiFileTest(
-            file: File, modules: Map<String, KotlinMultiFileTestWithJava<Void, TestFile>.ModuleAndDependencies>, files: List<TestFile>
-    ) {
+    override fun doMultiFileTest(file: File, files: List<TestFile>, javaFilesDir: File?) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         loadMultiFiles(files)
         blackBox()

@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import java.io.File
 
 abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest() {
-    override fun doMultiFileTest(
-            file: File, modules: Map<String, KotlinMultiFileTestWithJava<Void, TestFile>.ModuleAndDependencies>, files: List<TestFile>
-    ) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
         val kotlinFiles = files.filter { it.name.endsWith(".kt") }
         assert(kotlinFiles.size == 2) { "There should be exactly two files in this test" }
 

@@ -17,14 +17,17 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.util.SmartList;
+import com.intellij.testFramework.UsefulTestCase;
+import kotlin.collections.ArraysKt;
+import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
-import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
@@ -63,7 +66,7 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
-public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, CodegenTestCase.TestFile> {
+public abstract class CodegenTestCase extends UsefulTestCase {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
 
     protected KotlinCoreEnvironment myEnvironment;
@@ -72,19 +75,22 @@ public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, 
     protected GeneratedClassLoader initializedClassLoader;
     protected ConfigurationKind configurationKind;
 
-    final protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind, File... javaSourceRoot) {
+    protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
+            @NotNull ConfigurationKind configurationKind,
+            @Nullable File... javaSourceRoots
+    ) {
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironment twice");
         }
 
-        CompilerConfiguration configuration =
-                compilerConfigurationForTests(configurationKind, TestJdkKind.MOCK_JDK,
-                                              Collections.singletonList(getAnnotationsJar()), new SmartList<File>(javaSourceRoot));
+        CompilerConfiguration configuration = compilerConfigurationForTests(
+                configurationKind, TestJdkKind.MOCK_JDK, Collections.singletonList(getAnnotationsJar()),
+                ArraysKt.filterNotNull(javaSourceRoots)
+        );
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
-                getTestRootDisposable(),
-                configuration,
-                EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
     }
 
     @Override
@@ -373,19 +379,42 @@ public abstract class CodegenTestCase extends KotlinMultiFileTestWithJava<Void, 
         }
     }
 
-    @Override
-    protected Void createTestModule(@NotNull String name) {
-        // TODO: support multi-module codegen tests
-        throw new UnsupportedOperationException("Multi-module codegen tests are not yet supported");
+    protected void doTest(String filePath) throws Exception {
+        File file = new File(filePath);
+        String expectedText = KotlinTestUtils.doLoadFile(file);
+        final Ref<File> javaFilesDir = Ref.create();
+
+        List<TestFile> testFiles =
+                KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+                    @NotNull
+                    @Override
+                    public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+                        if (fileName.endsWith(".java")) {
+                            if (javaFilesDir.isNull()) {
+                                try {
+                                    javaFilesDir.set(KotlinTestUtils.tmpDir("java-files"));
+                                }
+                                catch (IOException e) {
+                                    throw ExceptionUtilsKt.rethrow(e);
+                                }
+                            }
+                            writeSourceFile(fileName, text, javaFilesDir.get());
+                        }
+
+                        return new TestFile(fileName, text);
+                    }
+
+                    private void writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
+                        File file = new File(targetDir, fileName);
+                        KotlinTestUtils.mkdirs(file.getParentFile());
+                        FilesKt.writeText(file, content, Charsets.UTF_8);
+                    }
+                });
+
+        doMultiFileTest(file, testFiles, javaFilesDir.get());
     }
 
-    @Override
-    protected TestFile createTestFile(Void module, String fileName, String text, Map<String, String> directives) {
-        return new TestFile(fileName, text);
-    }
-
-    @Override
-    protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<TestFile> files) throws Exception {
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
         throw new UnsupportedOperationException("Multi-file test cases are not supported in this test");
     }
 }

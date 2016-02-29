@@ -54,6 +54,7 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() throws Exception {
+        // TODO: do not create temporary directory for tests without Java sources
         javaFilesDir = KotlinTestUtils.tmpDir("java-files");
         CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
                 getConfigurationKind(),
@@ -91,11 +92,6 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
 
     protected boolean isKotlinSourceRootNeeded() {
         return false;
-    }
-
-    @NotNull
-    protected final File getJavaFilesDir() {
-        return javaFilesDir;
     }
 
     protected void doTest(String filePath) throws Exception {
