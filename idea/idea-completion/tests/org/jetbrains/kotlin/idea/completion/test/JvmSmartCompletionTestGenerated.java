@@ -113,6 +113,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("EA70945.kt")
+    public void testEA70945() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EA70945.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("EmptyPrefix.kt")
     public void testEmptyPrefix() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EmptyPrefix.kt");
