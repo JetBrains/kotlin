@@ -21,13 +21,12 @@ import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.js.JavaScript
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsBinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
-object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(
+object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex, JsBinaryVersion>(
         KotlinJavaScriptAbiVersionIndex::class.java, { JsBinaryVersion(*it) }
 ) {
     override fun getIndexer() = INDEXER
@@ -39,7 +38,7 @@ object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScr
     private val VERSION = 2
 
     private val INDEXER = DataIndexer { inputData: FileContent ->
-        val result = HashMap<BinaryVersion, Void?>()
+        val result = HashMap<JsBinaryVersion, Void?>()
 
         tryBlock(inputData) {
             val text = VfsUtilCore.loadText(inputData.file)

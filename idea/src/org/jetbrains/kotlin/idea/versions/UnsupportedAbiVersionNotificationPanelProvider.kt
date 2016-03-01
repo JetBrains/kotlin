@@ -31,6 +31,7 @@ import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootAdapter
 import com.intellij.openapi.roots.ModuleRootEvent
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
@@ -40,12 +41,22 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
+import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinPluginUpdater
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import org.jetbrains.kotlin.idea.framework.getJsStdLibJar
+import org.jetbrains.kotlin.idea.framework.getReflectJar
 import org.jetbrains.kotlin.idea.framework.getRuntimeJar
+import org.jetbrains.kotlin.idea.framework.getTestJar
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.text.MessageFormat
+import java.util.*
 import javax.swing.Icon
+import javax.swing.JLabel
+import javax.swing.event.HyperlinkEvent
 
 class UnsupportedAbiVersionNotificationPanelProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
 
@@ -66,43 +77,87 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         })
     }
 
-    private fun doCreate(module: Module, badRoots: Collection<VirtualFile>): EditorNotificationPanel {
+    private fun doCreate(module: Module, badVersionedRoots: Collection<BinaryVersionedFile<BinaryVersion>>): EditorNotificationPanel {
         val answer = ErrorNotificationPanel()
+        val badRootFiles = badVersionedRoots.map { it.file }
 
         val kotlinLibraries = findAllUsedLibraries(project).keySet()
         val badRuntimeLibraries = kotlinLibraries.filter { library ->
             val runtimeJar = getLocalJar(getRuntimeJar(library))
             val jsLibJar = getLocalJar(getJsStdLibJar(library))
-            badRoots.contains(runtimeJar) || badRoots.contains(jsLibJar)
+            badRootFiles.contains(runtimeJar) || badRootFiles.contains(jsLibJar)
         }
 
-        if (!badRuntimeLibraries.isEmpty()) {
-            val otherBadRootsCount = badRoots.size - badRuntimeLibraries.size
+        val isPluginOldForAllRoots = badVersionedRoots.all { it.supportedVersion < it.version }
+        val isPluginNewForAllRoots = badVersionedRoots.all { it.supportedVersion > it.version }
 
-            val text = MessageFormat.format("<html><b>{0,choice,0#|1#|1<Some }Kotlin runtime librar{0,choice,0#|1#y|1<ies}</b>" + "{1,choice,0#|1# and one other jar|1< and {1} other jars} " + "{1,choice,0#has|0<have} an unsupported format</html>",
+        if (!badRuntimeLibraries.isEmpty()) {
+            val badRootsInRuntimeLibraries = findBadRootsInRuntimeLibraries(badRuntimeLibraries, badVersionedRoots)
+            val otherBadRootsCount = badVersionedRoots.size - badRootsInRuntimeLibraries.size
+
+            val text = MessageFormat.format("<html><b>{0,choice,0#|1#|1<Some }Kotlin runtime librar{0,choice,0#|1#y|1<ies}</b>" +
+                                            "{1,choice,0#|1# and one other jar|1< and {1} other jars} " +
+                                            "{1,choice,0#has|0<have} an unsupported binary format.</html>",
                                             badRuntimeLibraries.size,
                                             otherBadRootsCount)
 
-            val actionLabelText = MessageFormat.format("Update {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ",
-                                                       badRuntimeLibraries.size)
-
             answer.setText(text)
-            answer.createActionLabel(actionLabelText) { updateLibraries(project, badRuntimeLibraries) }
-            if (otherBadRootsCount > 0) {
-                createShowPathsActionLabel(module, answer, "Show all")
-            }
-        }
-        else if (badRoots.size == 1) {
-            val root = badRoots.iterator().next()
-            val presentableName = root.presentableName
-            answer.setText("<html>Kotlin library <b>'$presentableName'</b> has an unsupported format. Please update the library or the plugin</html>")
 
-            answer.createActionLabel("Go to " + presentableName) { navigateToLibraryRoot(project, root) }
+            if (isPluginOldForAllRoots) {
+                createUpdatePluginLink(answer)
+            }
+
+            val isPluginOldForAllRuntimeLibraries = badRootsInRuntimeLibraries.all { it.supportedVersion < it.version }
+            val isPluginNewForAllRuntimeLibraries = badRootsInRuntimeLibraries.all { it.supportedVersion > it.version }
+
+            val updateAction = when {
+                isPluginNewForAllRuntimeLibraries -> "Update"
+                isPluginOldForAllRuntimeLibraries -> "Downgrade"
+                else -> "Replace"
+            }
+
+            val actionLabelText = MessageFormat.format("$updateAction {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ", badRuntimeLibraries.size)
+            answer.createActionLabel(actionLabelText) { updateLibraries(project, badRuntimeLibraries) }
+        }
+        else if (badVersionedRoots.size == 1) {
+            val badVersionedRoot = badVersionedRoots.first()
+            val presentableName = badVersionedRoot.file.presentableName
+
+            when {
+                isPluginOldForAllRoots -> {
+                    answer.setText("<html>Kotlin library <b>'$presentableName'</b> was compiled with a newer Kotlin compiler and can't be read. Please update Kotlin plugin.</html>")
+                    createUpdatePluginLink(answer)
+                }
+
+                isPluginNewForAllRoots ->
+                    answer.setText("<html>Kotlin library <b>'$presentableName'</b> has outdated binary format and can't be read by current plugin. Please update the library.</html>")
+
+                else -> {
+                    throw IllegalStateException("Bad root with compatible version found: $badVersionedRoot")
+                }
+            }
+
+            answer.createActionLabel("Go to " + presentableName) { navigateToLibraryRoot(project, badVersionedRoot.file) }
         }
         else {
-            answer.setText("Some Kotlin libraries attached to this project have unsupported format. Please update the libraries or the plugin")
-            createShowPathsActionLabel(module, answer, "Show paths")
+            when {
+                isPluginOldForAllRoots -> {
+                    answer.setText("Some Kotlin libraries attached to this project were compiled with a newer Kotlin compiler and can't be read. " +
+                                   "Please update Kotlin plugin.")
+                    createUpdatePluginLink(answer)
+                }
+
+                isPluginNewForAllRoots ->
+                    answer.setText("Some Kotlin libraries attached to this project have outdated binary format and can't be read by current plugin. " +
+                                   "Please update found libraries.")
+
+                else ->
+                    answer.setText("Some Kotlin libraries attached to this project have unsupported binary format. Please update the libraries or the plugin.")
+            }
         }
+
+        createShowPathsActionLabel(module, answer, "Details")
+
         return answer
     }
 
@@ -112,12 +167,36 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                 val badRoots = collectBadRoots(module)
                 assert(!badRoots.isEmpty()) { "This action should only be called when bad roots are present" }
 
-                val listPopupModel = LibraryRootsPopupModel("Unsupported format", project, badRoots)
+                val listPopupModel = LibraryRootsPopupModel("Unsupported format, plugin version: " + KotlinPluginUtil.getPluginVersion(), project, badRoots)
                 val popup = JBPopupFactory.getInstance().createListPopup(listPopupModel)
                 popup.showUnderneathOf(label)
 
                 null
             }, "Can't show all paths during index update")
+        }
+    }
+
+    private fun createUpdatePluginLink(answer: ErrorNotificationPanel) {
+        answer.createProgressAction("     Check...", "Update plugin") { link, updateLink ->
+            KotlinPluginUpdater.getInstance().runUpdateCheck { pluginUpdateStatus ->
+                when (pluginUpdateStatus) {
+                    is PluginUpdateStatus.Update -> {
+                        link.isVisible = false
+                        updateLink.isVisible = true
+
+                        updateLink.addHyperlinkListener(object : HyperlinkAdapter() {
+                            override fun hyperlinkActivated(e: HyperlinkEvent) {
+                                KotlinPluginUpdater.getInstance().installPluginUpdate(pluginUpdateStatus)
+                            }
+                        })
+                    }
+                    is PluginUpdateStatus.LatestVersionInstalled -> {
+                        link.text = "No updates found"
+                    }
+                }
+
+                false  // do not auto-retry update check
+            }
         }
     }
 
@@ -159,23 +238,50 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         return null
     }
 
-    private class LibraryRootsPopupModel(title: String, private val project: Project, roots: Collection<VirtualFile>)
-        : BaseListPopupStep<VirtualFile>(title, *roots.toTypedArray()) {
+    private fun findBadRootsInRuntimeLibraries(
+            badRuntimeLibraries: List<Library>,
+            badVersionedRoots: Collection<BinaryVersionedFile<BinaryVersion>>): ArrayList<BinaryVersionedFile<BinaryVersion>> {
+        val badRootsInLibraries = ArrayList<BinaryVersionedFile<BinaryVersion>>()
 
-        override fun getTextFor(root: VirtualFile): String {
-            val relativePath = VfsUtilCore.getRelativePath(root, project.baseDir, '/')
-            return relativePath ?: root.path
+        fun addToBadRoots(file: VirtualFile?) {
+            if (file != null) {
+                val runtimeJarBadRoot = badVersionedRoots.firstOrNull { it.file == file }
+                if (runtimeJarBadRoot != null) {
+                    badRootsInLibraries.add(runtimeJarBadRoot)
+                }
+            }
         }
 
-        override fun getIconFor(aValue: VirtualFile): Icon? {
-            if (aValue.isDirectory) {
+        badRuntimeLibraries.forEach { library ->
+            addToBadRoots(getLocalJar(getRuntimeJar(library)))
+            addToBadRoots(getLocalJar(getJsStdLibJar(library)))
+            addToBadRoots(getLocalJar(getReflectJar(library)))
+            addToBadRoots(getLocalJar(getTestJar(library)))
+        }
+
+        return badRootsInLibraries
+    }
+
+    private class LibraryRootsPopupModel(
+            title: String,
+            private val project: Project,
+            roots: Collection<BinaryVersionedFile<BinaryVersion>>
+    ) : BaseListPopupStep<BinaryVersionedFile<BinaryVersion>>(title, *roots.toTypedArray()) {
+
+        override fun getTextFor(root: BinaryVersionedFile<BinaryVersion>): String {
+            val relativePath = VfsUtilCore.getRelativePath(root.file, project.baseDir, '/')
+            return "${relativePath ?: root.file.path} (${root.version}) - expected: ${root.supportedVersion}"
+        }
+
+        override fun getIconFor(aValue: BinaryVersionedFile<BinaryVersion>): Icon? {
+            if (aValue.file.isDirectory) {
                 return AllIcons.Nodes.Folder
             }
             return AllIcons.FileTypes.Archive
         }
 
-        override fun onChosen(selectedValue: VirtualFile, finalChoice: Boolean): PopupStep<Any>? {
-            navigateToLibraryRoot(project, selectedValue)
+        override fun onChosen(selectedValue: BinaryVersionedFile<BinaryVersion>, finalChoice: Boolean): PopupStep<Any>? {
+            navigateToLibraryRoot(project, selectedValue.file)
             return PopupStep.FINAL_CHOICE
         }
 
@@ -185,6 +291,16 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
     private class ErrorNotificationPanel : EditorNotificationPanel() {
         init {
             myLabel.icon = AllIcons.General.Error
+        }
+
+        fun createProgressAction(text: String, successLinkText: String, updater: (JLabel, HyperlinkLabel) -> Unit) {
+            val label = JLabel(text)
+            myLinksPanel.add(label)
+
+            val successLink = createActionLabel(successLinkText, {  })
+            successLink.isVisible = false
+
+            updater(label, successLink)
         }
     }
 
@@ -205,7 +321,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             OpenFileDescriptor(project, root).navigate(true)
         }
 
-        fun collectBadRoots(module: Module): Collection<VirtualFile> {
+        fun collectBadRoots(module: Module): Collection<BinaryVersionedFile<BinaryVersion>> {
             val badJVMRoots = getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
             val badJSRoots = getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
 
@@ -222,4 +338,17 @@ fun EditorNotificationPanel.createComponentActionLabel(labelText: String, callba
         callback(label.get())
     }
     label.set(createActionLabel(labelText, action))
+}
+
+private operator fun BinaryVersion.compareTo(other: BinaryVersion): Int {
+    for (i in 0..Math.max(numbers.size, other.numbers.size) - 1) {
+        val thisPart = numbers.getOrNull(i) ?: -1
+        val otherPart = other.numbers.getOrNull(i) ?: -1
+
+        if (thisPart != otherPart) {
+            return thisPart - otherPart
+        }
+    }
+
+    return 0
 }

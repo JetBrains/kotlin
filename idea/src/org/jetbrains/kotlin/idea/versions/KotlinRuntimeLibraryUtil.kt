@@ -47,24 +47,29 @@ import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.utils.JsBinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.IOException
 
-fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<VirtualFile> {
+fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<BinaryVersionedFile<JvmMetadataVersion>> {
     return getLibraryRootsWithAbiIncompatibleVersion(
-            module, KotlinMetadataVersionIndex,
+            module,
+            JvmMetadataVersion.INSTANCE,
+            KotlinMetadataVersionIndex,
             { version -> !version.isCompatible() })
 }
 
-fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<VirtualFile> {
+fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<BinaryVersionedFile<JsBinaryVersion>> {
     return getLibraryRootsWithAbiIncompatibleVersion(
-            module, KotlinJavaScriptAbiVersionIndex,
+            module,
+            JsBinaryVersion.INSTANCE,
+            KotlinJavaScriptAbiVersionIndex,
             { version -> !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.minor) })       // TODO: support major.minor.patch version in JS metadata
 }
-
 
 fun updateLibraries(project: Project, libraries: Collection<Library>) {
     ApplicationManager.getApplication().invokeLater {
@@ -215,10 +220,13 @@ internal fun replaceFile(updatedFile: File, replacedJarFile: VirtualFile) {
     }
 }
 
-private fun getLibraryRootsWithAbiIncompatibleVersion(
+data class BinaryVersionedFile<out T : BinaryVersion>(val file: VirtualFile, val version: T, val supportedVersion: T)
+
+private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
         module: Module,
-        index: ScalarIndexExtension<BinaryVersion>,
-        checkVersion: (BinaryVersion) -> Boolean): Collection<VirtualFile> {
+        supportedVersion: T,
+        index: ScalarIndexExtension<T>,
+        checkVersion: (T) -> Boolean): Collection<BinaryVersionedFile<T>> {
     val id = index.name
 
     val moduleWithAllDependencies = setOf(module) + ModuleUtil.getAllDependentModules(module)
@@ -227,7 +235,7 @@ private fun getLibraryRootsWithAbiIncompatibleVersion(
 
     val allVersions = FileBasedIndex.getInstance().getAllKeys(id, module.project)
     val badVersions = allVersions.filter(checkVersion).toHashSet()
-    val badRoots = Sets.newHashSet<VirtualFile>()
+    val badRoots = Sets.newHashSet<BinaryVersionedFile<T>>()
     val fileIndex = ProjectFileIndex.SERVICE.getInstance(module.project)
 
     for (version in badVersions) {
@@ -236,7 +244,7 @@ private fun getLibraryRootsWithAbiIncompatibleVersion(
             val libraryRoot = fileIndex.getClassRootForFile(indexedFile) ?:
                     error("Only library roots were requested, and only class files should be indexed with KotlinAbiVersionIndex key. " +
                           "File: ${indexedFile.path}")
-            badRoots.add(getLocalFile(libraryRoot))
+            badRoots.add(BinaryVersionedFile(getLocalFile(libraryRoot), version, supportedVersion))
         }
     }
 
