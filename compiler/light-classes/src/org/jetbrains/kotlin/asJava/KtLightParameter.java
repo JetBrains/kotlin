@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import java.util.List;
 
-public class KtLightParameter extends LightParameter implements KtLightElement<KtParameter, PsiParameter> {
+public class KtLightParameter extends LightParameter implements KtLightDeclaration<KtParameter, PsiParameter> {
     private static String getName(PsiParameter delegate, int index) {
         String name = delegate.getName();
         return name != null ? name : "p" + index;
@@ -49,7 +49,7 @@ public class KtLightParameter extends LightParameter implements KtLightElement<K
         this.index = index;
         this.method = method;
 
-        this.modifierList = new KtLightModifierList(method.getManager(), ArrayUtil.EMPTY_STRING_ARRAY) {
+        this.modifierList = new KtLightModifierListWithExplicitModifiers(this, ArrayUtil.EMPTY_STRING_ARRAY) {
             @Override
             public PsiAnnotationOwner getDelegate() {
                 return delegate.getModifierList();

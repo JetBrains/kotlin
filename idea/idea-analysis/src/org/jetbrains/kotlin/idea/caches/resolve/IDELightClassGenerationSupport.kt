@@ -29,6 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
@@ -192,9 +193,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return KotlinFileFacadeFqNameIndex.INSTANCE.get(facadeFqName.asString(), project, scope)
     }
 
-    override fun resolveClassToDescriptor(classOrObject: KtClassOrObject): ClassDescriptor? {
+    override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         try {
-            return classOrObject.resolveToDescriptor() as ClassDescriptor
+            return declaration.resolveToDescriptor()
         }
         catch (e: NoDescriptorForDeclarationException) {
             return null

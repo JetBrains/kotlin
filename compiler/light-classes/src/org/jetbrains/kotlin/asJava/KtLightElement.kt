@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.asJava
 
-import org.jetbrains.kotlin.psi.KtDeclaration
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 
-interface KtLightElement<T : KtDeclaration, D : PsiElement> : PsiNamedElement {
+interface KtLightElement<T : KtElement, D : PsiElement> : PsiNamedElement {
     fun getOrigin(): T?
 
     fun getDelegate(): D
 }
+
+interface KtLightDeclaration<T: KtDeclaration, D: PsiElement>: KtLightElement<T, D>

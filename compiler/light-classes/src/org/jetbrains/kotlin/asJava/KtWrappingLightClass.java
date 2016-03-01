@@ -123,7 +123,9 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
             @Override
             public PsiField fun(PsiField field) {
                 LightMemberOrigin origin = ClsWrapperStubPsiFactory.getMemberOrigin(field);
-                return KtLightFieldImpl.Factory.create(origin != null ? origin.getOriginalElement() : null, field, KtWrappingLightClass.this);
+                return KtLightFieldImpl.Factory.create(origin != null ? origin.getOriginalElement() : null,
+                                                       field,
+                                                       KtWrappingLightClass.this);
             }
         });
     }
