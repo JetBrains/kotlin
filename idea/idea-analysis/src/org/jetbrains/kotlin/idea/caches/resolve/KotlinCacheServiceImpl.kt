@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
+import org.jetbrains.kotlin.asJava.outOfBlockModificationCount
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.container.getService
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import org.jetbrains.kotlin.utils.keysToMap
 
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
@@ -92,10 +95,10 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
-        val dependenciesForSyntheticFileCache = listOf(
-                PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
-                KotlinOutOfBlockCompletionModificationTracker.getInstance(project)
-        )
+        val filesModificationTracker = ModificationTracker {
+            files.sumByLong { it.outOfBlockModificationCount }
+        }
+        val dependenciesForSyntheticFileCache = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT, filesModificationTracker)
         val debugName = "completion/highlighting in $syntheticFileModule for files ${files.joinToString { it.name }} for platform $targetPlatform"
         return when {
             syntheticFileModule is ModuleSourceInfo -> {
@@ -179,19 +182,17 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
     private val syntheticFileCachesLock = Any()
 
-    private val slruCacheProvider = CachedValueProvider {
+    private val syntheticFilesCacheProvider = CachedValueProvider {
         CachedValueProvider.Result(object : SLRUCache<Set<KtFile>, ProjectResolutionFacade>(2, 3) {
-            override fun createValue(files: Set<KtFile>): ProjectResolutionFacade {
-                return createFacadeForSyntheticFiles(files)
-            }
+            override fun createValue(files: Set<KtFile>) = createFacadeForSyntheticFiles(files)
         }, LibraryModificationTracker.getInstance(project), ProjectRootModificationTracker.getInstance(project))
     }
 
     private fun getFacadeForSyntheticFiles(files: Set<KtFile>): ProjectResolutionFacade {
-        return synchronized(syntheticFileCachesLock) {
+        synchronized(syntheticFileCachesLock) {
             //NOTE: computations inside createCacheForSyntheticFiles depend on project root structure
             // so we additionally drop the whole slru cache on change
-            CachedValuesManager.getManager(project).getCachedValue(project, slruCacheProvider).get(files)
+            return CachedValuesManager.getManager(project).getCachedValue(project, syntheticFilesCacheProvider).get(files)
         }
     }
 

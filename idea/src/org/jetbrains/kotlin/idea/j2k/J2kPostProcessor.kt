@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinOutOfBlockCompletionModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.conversion.copy.range
@@ -65,9 +64,6 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             }
 
             if (modificationStamp == file.modificationStamp) break
-
-            //TODO: it's a hack!
-            KotlinOutOfBlockCompletionModificationTracker.getInstance(file.project).incModificationCount()
 
             elementToActions = collectAvailableActions(file, rangeMarker)
         }
