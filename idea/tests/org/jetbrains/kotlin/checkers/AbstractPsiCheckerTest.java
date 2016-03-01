@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,28 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 
 import java.io.File;
+
+import static org.jetbrains.kotlin.resolve.lazy.ResolveSession.areDescriptorsCreatedForDeclaration;
 
 public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String filePath) throws Exception {
         myFixture.configureByFile(filePath);
         checkHighlighting(true, false, false);
+        checkResolveToDescriptor();
     }
 
     public void doTest(@NotNull String... filePath) throws Exception {
         myFixture.configureByFiles(filePath);
         checkHighlighting(true, false, false);
+        checkResolveToDescriptor();
     }
 
     public void doTestWithInfos(@NotNull String filePath) throws Exception {
@@ -45,6 +53,7 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
 
             NameHighlighter.INSTANCE.setNamesHighlightingEnabled(false);
             checkHighlighting(true, true, false);
+            checkResolveToDescriptor();
         }
         finally {
             NameHighlighter.INSTANCE.setNamesHighlightingEnabled(true);
@@ -58,6 +67,19 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
         catch (FileComparisonFailure e) {
             throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(), new File(e.getFilePath()).getAbsolutePath());
         }
+    }
+
+    void checkResolveToDescriptor() {
+        KtFile file = (KtFile) myFixture.getFile();
+        file.accept(new KtTreeVisitorVoid() {
+            @Override
+            public void visitDeclaration(@NotNull KtDeclaration dcl) {
+                if (areDescriptorsCreatedForDeclaration(dcl)) {
+                    ResolutionUtils.resolveToDescriptor(dcl); // check for exceptions
+                }
+                dcl.acceptChildren(this, null);
+            }
+        });
     }
 
     @NotNull
