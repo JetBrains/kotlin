@@ -94,7 +94,7 @@ public class ControlFlowInformationProvider {
         this(declaration, trace, new ControlFlowProcessor(trace).generatePseudocode(declaration));
     }
 
-    public PseudocodeVariablesData getPseudocodeVariablesData() {
+    private PseudocodeVariablesData getPseudocodeVariablesData() {
         if (pseudocodeVariablesData == null) {
             pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode, trace.getBindingContext());
         }
@@ -216,7 +216,7 @@ public class ControlFlowInformationProvider {
         }
     }
 
-    public void checkDefiniteReturn(final @NotNull KotlinType expectedReturnType, @NotNull final UnreachableCode unreachableCode) {
+    private void checkDefiniteReturn(final @NotNull KotlinType expectedReturnType, @NotNull final UnreachableCode unreachableCode) {
         assert subroutine instanceof KtDeclarationWithBody;
         KtDeclarationWithBody function = (KtDeclarationWithBody) subroutine;
 
@@ -294,7 +294,7 @@ public class ControlFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 //  Uninitialized variables analysis
 
-    public void markUninitializedVariables() {
+    private void markUninitializedVariables() {
         final Collection<VariableDescriptor> varWithUninitializedErrorGenerated = Sets.newHashSet();
         final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
         final boolean processClassOrObject = subroutine instanceof KtClassOrObject;
@@ -346,7 +346,7 @@ public class ControlFlowInformationProvider {
         );
     }
 
-    public void recordInitializedVariables() {
+    private void recordInitializedVariables() {
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
         Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
@@ -537,7 +537,7 @@ public class ControlFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 //  "Unused variable" & "unused value" analyses
 
-    public void markUnusedVariables() {
+    private void markUnusedVariables() {
         final PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Map<Instruction, Edges<UseControlFlowInfo>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
@@ -647,7 +647,7 @@ public class ControlFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 //  "Unused expressions" in block
 
-    public void markUnusedExpressions() {
+    private void markUnusedExpressions() {
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
@@ -676,7 +676,7 @@ public class ControlFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 // Statements
 
-    public void markStatements() {
+    private void markStatements() {
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
@@ -711,7 +711,7 @@ public class ControlFlowInformationProvider {
         return false;
     }
 
-    public void checkIfExpressions() {
+    private void checkIfExpressions() {
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
@@ -814,7 +814,7 @@ public class ControlFlowInformationProvider {
         return finger;
     }
 
-    public void checkWhenExpressions() {
+    private void checkWhenExpressions() {
         final Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
@@ -876,7 +876,7 @@ public class ControlFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 // Tail calls
 
-    public void markTailCalls() {
+    private void markTailCalls() {
         final DeclarationDescriptor subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
         if (!(subroutineDescriptor instanceof FunctionDescriptor)) return;
         if (!((FunctionDescriptor) subroutineDescriptor).isTailrec()) return;
@@ -884,7 +884,7 @@ public class ControlFlowInformationProvider {
         // finally blocks are copied which leads to multiple diagnostics reported on one instruction
         class KindAndCall {
             TailRecursionKind kind;
-            ResolvedCall<?> call;
+            private final ResolvedCall<?> call;
 
             KindAndCall(TailRecursionKind kind, ResolvedCall<?> call) {
                 this.kind = kind;
@@ -896,6 +896,7 @@ public class ControlFlowInformationProvider {
                 pseudocode,
                 TraversalOrder.FORWARD,
                 new FunctionVoid1<Instruction>() {
+                    @Override
                     public void execute(@NotNull Instruction instruction) {
                         if (!(instruction instanceof CallInstruction)) return;
                         CallInstruction callInstruction = (CallInstruction) instruction;
@@ -1109,7 +1110,7 @@ public class ControlFlowInformationProvider {
     }
 
     //TODO after KT-4621 rewrite to Kotlin
-    public abstract static class InstructionDataAnalyzeStrategy<D> implements Function3<Instruction, D, D, Unit> {
+    private abstract static class InstructionDataAnalyzeStrategy<D> implements Function3<Instruction, D, D, Unit> {
         @Override
         public Unit invoke(Instruction instruction, D enterData, D exitData) {
             execute(instruction, enterData, exitData);
@@ -1119,7 +1120,7 @@ public class ControlFlowInformationProvider {
         public abstract void execute(Instruction instruction, D enterData, D exitData);
     }
 
-    public abstract static class FunctionVoid1<P> implements Function1<P, Unit> {
+    private abstract static class FunctionVoid1<P> implements Function1<P, Unit> {
         @Override
         public Unit invoke(P p) {
             execute(p);
