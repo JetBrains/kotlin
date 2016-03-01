@@ -22,6 +22,9 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider
 import com.intellij.openapi.roots.libraries.LibraryProperties
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.PathUtil
 import java.util.*
 
 fun <LP : LibraryProperties<out Any>> isDetected(provider: LibraryPresentationProvider<LP>, library: Library): Boolean {
@@ -40,4 +43,28 @@ fun isExternalLibrary(library: Library): Boolean {
     return ExternalSystemApiUtil.isExternalSystemLibrary(library, ProjectSystemId.IDE) ||
            ExternalSystemApiUtil.isExternalSystemLibrary(library, GRADLE_SYSTEM_ID) ||
            ExternalSystemApiUtil.isExternalSystemLibrary(library, MAVEN_SYSTEM_ID)
+}
+
+fun getRuntimeJar(library: Library): VirtualFile? {
+    if (isExternalLibrary(library)) return null
+    return JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)))
+}
+
+fun getReflectJar(library: Library): VirtualFile? {
+    if (isExternalLibrary(library)) return null
+    return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_JAVA_REFLECT_JAR)
+}
+
+fun getRuntimeSrcJar(library: Library): VirtualFile? {
+    if (isExternalLibrary(library)) return null
+    return getRuntimeSrcJar(Arrays.asList(*library.getFiles(OrderRootType.SOURCES)))
+}
+
+fun getTestJar(library: Library): VirtualFile? {
+    if (isExternalLibrary(library)) return null
+    return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_TEST_JAR)
+}
+
+private fun getRuntimeSrcJar(classesRoots: List<VirtualFile>): VirtualFile? {
+    return LibraryUtils.getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
 }

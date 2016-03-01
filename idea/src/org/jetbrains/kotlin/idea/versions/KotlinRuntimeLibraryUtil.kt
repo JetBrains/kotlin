@@ -42,9 +42,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.framework.isDetected
+import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -76,15 +74,15 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
 
         for (library in libraries) {
             if (isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
-                updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
-                updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
-                updateJar(project, JavaRuntimePresentationProvider.getTestJar(library), LibraryJarDescriptor.TEST_JAR)
+                updateJar(project, getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
+                updateJar(project, getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
+                updateJar(project, getTestJar(library), LibraryJarDescriptor.TEST_JAR)
 
                 if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
                     kJvmConfigurator.copySourcesToPathFromLibrary(library, collector)
                 }
                 else {
-                    updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
+                    updateJar(project, getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
                 }
             }
             else if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {

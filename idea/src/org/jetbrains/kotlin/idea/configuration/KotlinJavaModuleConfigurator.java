@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription;
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
+import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtilKt;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -96,7 +96,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Nullable
     @Override
     protected String getOldSourceRootUrl(@NotNull Library library) {
-        VirtualFile runtimeJarPath = JavaRuntimePresentationProvider.getRuntimeJar(library);
+        VirtualFile runtimeJarPath = LibraryPresentationProviderUtilKt.getRuntimeJar(library);
         return runtimeJarPath != null ? runtimeJarPath.getUrl() + "src" : null;
     }
 
