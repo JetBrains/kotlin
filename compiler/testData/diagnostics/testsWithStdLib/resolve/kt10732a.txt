@@ -1,0 +1,4 @@
+package
+
+@kotlin.jvm.JvmName(name = "f1") public fun </*0*/ T> kotlin.collections.List<T>.foo(): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.List<T>?.foo(): kotlin.Unit
