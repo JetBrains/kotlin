@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-interface KtLightMethod : PsiMethod, KtLightElement<KtDeclaration, PsiMethod> {
+interface KtLightMethod : PsiMethod, KtLightDeclaration<KtDeclaration, PsiMethod> {
     val isDelegated: Boolean
 }
 
@@ -107,6 +107,10 @@ sealed class KtLightMethodImpl(
     private fun throwCanNotModify(): Nothing {
         throw IncorrectOperationException(JavaCoreBundle.message("psi.error.attempt.to.edit.class.file"))
     }
+
+    private val _modifierList by lazy { KtLightModifierList(delegate.modifierList, this) }
+
+    override fun getModifierList() = _modifierList
 
     override fun getParameterList() = paramsList.value
 

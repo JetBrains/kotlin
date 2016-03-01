@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter;
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner;
 
 public class KtLightTypeParameter
-        extends AbstractLightClass implements PsiTypeParameter, KtLightElement<KtTypeParameter, PsiTypeParameter> {
+        extends AbstractLightClass implements PsiTypeParameter, KtLightDeclaration<KtTypeParameter, PsiTypeParameter> {
     private final PsiTypeParameterListOwner owner;
     private final int index;
     private final String name;

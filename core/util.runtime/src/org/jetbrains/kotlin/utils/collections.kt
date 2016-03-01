@@ -80,3 +80,10 @@ fun <T> Collection<T>.toReadOnlyList(): List<T> =
 
 fun <T: Any> T?.singletonOrEmptyList(): List<T> =
         if (this != null) listOf(this) else emptyList()
+
+fun <T> List<T>.indexOfFirst(startFrom: Int, predicate: (T) -> Boolean): Int {
+    for (index in startFrom..lastIndex) {
+        if (predicate(this[index])) return index
+    }
+    return -1
+}

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 
-interface KtLightField : PsiField, KtLightElement<KtDeclaration, PsiField>
+interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>
 
 // Copied from com.intellij.psi.impl.light.LightField
 sealed class KtLightFieldImpl(
@@ -65,7 +65,9 @@ sealed class KtLightFieldImpl(
     @Throws(IncorrectOperationException::class)
     override fun setName(@NonNls name: String) = throw IncorrectOperationException("Not supported")
 
-    override fun getModifierList() = delegate.modifierList
+    private val _modifierList by lazy { delegate.modifierList?.let { KtLightModifierList(it, this) } }
+
+    override fun getModifierList() = _modifierList
 
     override fun hasModifierProperty(@NonNls name: String) = delegate.hasModifierProperty(name)
 

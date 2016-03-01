@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
@@ -126,3 +127,9 @@ private fun isNonAbstractMember(member: KtDeclaration?): Boolean {
 
 private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
+
+fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
+    val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
+    val lightElement = ktDeclaration.toLightElements().firstOrNull() as? PsiModifierListOwner ?: return null
+    return lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotation && it.getOrigin() == this }
+}

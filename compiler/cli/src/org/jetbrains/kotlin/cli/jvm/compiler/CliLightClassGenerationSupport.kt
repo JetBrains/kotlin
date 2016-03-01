@@ -137,8 +137,8 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         return KtLightClassForExplicitDeclaration.create(classOrObject)
     }
 
-    override fun resolveClassToDescriptor(classOrObject: KtClassOrObject): ClassDescriptor? {
-        return bindingContext.get(BindingContext.CLASS, classOrObject)
+    override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
+        return bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
     }
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {

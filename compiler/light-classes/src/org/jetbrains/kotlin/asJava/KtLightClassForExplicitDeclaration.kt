@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.light.LightClass
+import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
@@ -170,7 +172,7 @@ open class KtLightClassForExplicitDeclaration(
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassData().javaFileStub
 
     protected fun getDescriptor(): ClassDescriptor? {
-        return LightClassGenerationSupport.getInstance(project).resolveClassToDescriptor(classOrObject)
+        return LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
     }
 
     private fun getLightClassData(): OutermostKotlinClassLightClassData {
@@ -262,7 +264,7 @@ open class KtLightClassForExplicitDeclaration(
     override fun getQualifiedName(): String = classFqName.asString()
 
     private val _modifierList : PsiModifierList by lazy {
-        object : KtLightModifierList(this.manager, computeModifiers()) {
+        object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForExplicitDeclaration, computeModifiers()) {
             override val delegate: PsiAnnotationOwner
                 get() = this@KtLightClassForExplicitDeclaration.getDelegate().modifierList!!
         }
