@@ -31,6 +31,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.PathUtil.getLocalPath
@@ -43,6 +45,8 @@ import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -244,3 +248,12 @@ fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
                              jarName + " is not found. Make sure plugin is properly installed.",
                              "No Runtime Found")
 }
+
+fun getKotlinRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
+    return runReadAction {
+        project.runWithAlternativeResolveEnabled {
+            JavaPsiFacade.getInstance(project).findClass("kotlin.Unit", scope)
+        }
+    }
+}
+

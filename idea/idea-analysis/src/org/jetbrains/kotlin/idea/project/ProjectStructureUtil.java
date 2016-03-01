@@ -18,35 +18,24 @@ package org.jetbrains.kotlin.idea.project;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.kotlin.psi.KtFile;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class ProjectStructureUtil {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
-    private static final Key<CachedValue<Boolean>> HAS_KOTLIN_JVM_MODULES = Key.create("HAS_KOTLIN_JVM_MODULES");
-    private static final Key<CachedValue<Boolean>> IS_DEPEND_ON_JVM_KOTLIN = Key.create("KOTLIN_IS_DEPEND_ON_JVM_KOTLIN");
 
     private ProjectStructureUtil() {
     }
@@ -54,12 +43,6 @@ public class ProjectStructureUtil {
     public static boolean isJsKotlinModule(@NotNull KtFile file) {
         Module module = ModuleUtilCore.findModuleForPsiElement(file);
         return module != null && isJsKotlinModule(module);
-    }
-
-    public static boolean hasKotlinRuntimeInScope(@NotNull Module module) {
-        GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(
-                hasKotlinFilesOnlyInTests(module));
-        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(module.getProject(), scope) != null;
     }
 
     public static boolean isJsKotlinModule(@NotNull final Module module) {
@@ -75,59 +58,6 @@ public class ProjectStructureUtil {
             }, false);
 
             module.putUserData(IS_KOTLIN_JS_MODULE, result);
-        }
-
-        return result.getValue();
-    }
-
-    public static boolean hasJvmKotlinModules(@NotNull final Project project) {
-        CachedValue<Boolean> result = project.getUserData(HAS_KOTLIN_JVM_MODULES);
-        if (result == null) {
-            result = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<Boolean>() {
-                @Override
-                public Result<Boolean> compute() {
-                    boolean hasJvmKotlinModules = false;
-
-                    for (Module module : ModuleManager.getInstance(project).getModules()) {
-                        if (hasKotlinRuntimeInScope(module)) {
-                            hasJvmKotlinModules = true;
-                            break;
-                        }
-                    }
-
-                    return Result.create(hasJvmKotlinModules, ProjectRootModificationTracker.getInstance(project));
-                }
-            }, false);
-
-            project.putUserData(HAS_KOTLIN_JVM_MODULES, result);
-        }
-
-        return result.getValue();
-    }
-
-    public static boolean isUsedInKotlinJavaModule(@NotNull final Module module) {
-        CachedValue<Boolean> result = module.getUserData(IS_DEPEND_ON_JVM_KOTLIN);
-        if (result == null) {
-            result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
-                @Override
-                public Result<Boolean> compute() {
-                    boolean usedInKotlinModule = false;
-
-                    Set<Module> dependentModules = new HashSet<Module>();
-                    ModuleUtilCore.collectModulesDependsOn(module, dependentModules);
-
-                    for (Module module : dependentModules) {
-                        if (hasKotlinRuntimeInScope(module)) {
-                            usedInKotlinModule = true;
-                            break;
-                        }
-                    }
-
-                    return Result.create(usedInKotlinModule, ProjectRootModificationTracker.getInstance(module.getProject()));
-                }
-            }, false);
-
-            module.putUserData(IS_DEPEND_ON_JVM_KOTLIN, result);
         }
 
         return result.getValue();
@@ -155,13 +85,5 @@ public class ProjectStructureUtil {
                 return jsLibrary.get();
             }
         });
-    }
-
-    public static boolean hasKotlinFilesInSources(@NotNull Module module) {
-        return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false));
-    }
-
-    public static boolean hasKotlinFilesOnlyInTests(@NotNull Module module) {
-        return !hasKotlinFilesInSources(module) && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true));
     }
 }

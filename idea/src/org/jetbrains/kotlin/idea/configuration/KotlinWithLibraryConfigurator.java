@@ -365,7 +365,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @NotNull
     private static DependencyScope getDependencyScope(@NotNull Module module) {
-        if (ProjectStructureUtil.hasKotlinFilesOnlyInTests(module)) {
+        if (ConfigureKotlinInProjectUtilsKt.hasKotlinFilesOnlyInTests(module)) {
             return DependencyScope.TEST;
         }
         return DependencyScope.COMPILE;

@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory;
@@ -63,7 +62,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        if (ProjectStructureUtil.hasKotlinRuntimeInScope(module)) {
+        if (ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module)) {
             return true;
         }
 

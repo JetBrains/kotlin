@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.kotlin.idea.framework.KotlinLibraryUtilKt;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
+import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.utils.KotlinPaths;
@@ -38,7 +37,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        return ProjectStructureUtil.hasKotlinRuntimeInScope(module);
+        return ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module);
     }
 
     @NotNull
@@ -108,7 +107,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         }
 
         LibraryScope scope = new LibraryScope(project, library);
-        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(project, scope) != null;
+        return KotlinRuntimeLibraryUtilKt.getKotlinRuntimeMarkerClass(project, scope) != null;
     }
 
     KotlinJavaModuleConfigurator() {
