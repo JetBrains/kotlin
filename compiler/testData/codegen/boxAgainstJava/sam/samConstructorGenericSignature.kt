@@ -1,3 +1,17 @@
+// FILE: JavaClass.java
+
+class JavaClass {
+    interface Computable<T> {
+        T compute();
+    }
+
+    static <T> T compute(Computable<T> computable) {
+        return computable.compute();
+    }
+}
+
+// FILE: 1.kt
+
 import java.util.Arrays
 
 fun box(): String {

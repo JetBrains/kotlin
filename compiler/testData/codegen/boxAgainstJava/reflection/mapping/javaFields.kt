@@ -1,5 +1,17 @@
+// FILE: J.java
+
+public class J {
+    public final int i;
+    public String s;
+
+    public J(int i, String s) {
+        this.i = i;
+        this.s = s;
+    }
+}
+
+// FILE: 1.kt
 // FULL_JDK
-import javaFields as J
 
 import java.lang.reflect.*
 import kotlin.reflect.*

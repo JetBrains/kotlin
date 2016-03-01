@@ -206,7 +206,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxAgainstJavaCodegenTestGenerated") {
-            model("codegen/boxAgainstJava", testMethod = "doTestAgainstJava")
+            model("codegen/boxAgainstJava")
         }
 
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJavaCodegenTestGenerated") {

@@ -1,6 +1,12 @@
-// KT-4878
+// FILE: D.java
 
-import fieldAccessFromExtensionInTraitImpl as D
+public class D {
+    public final String result = "OK";
+}
+
+// FILE: 1.kt
+
+// KT-4878
 
 interface T {
     fun Int.foo(d: D) = d.result!!

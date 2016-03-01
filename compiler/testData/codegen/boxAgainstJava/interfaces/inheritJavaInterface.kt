@@ -1,3 +1,11 @@
+// FILE: A.java
+
+interface A {
+    void foo();
+}
+
+// FILE: 1.kt
+
 internal interface B : A {
     fun bar() = 1
 }

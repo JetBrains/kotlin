@@ -1,3 +1,15 @@
+// FILE: Delegation.java
+
+public class Delegation {
+    public static class ReturnNull {
+        public String foo() {
+            return null;
+        }
+    }
+}
+
+// FILE: 1.kt
+
 interface Tr {
     fun foo(): String
 }

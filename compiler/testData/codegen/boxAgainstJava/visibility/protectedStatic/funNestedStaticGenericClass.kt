@@ -1,9 +1,21 @@
-class Derived(): funNestedStaticGenericClass.Inner<String>() {
+// FILE: J.java
+
+public class J<T> {
+    public static class Inner<S> {
+        protected static String protectedFun() {
+            return "OK";
+        }
+    }
+}
+
+// FILE: 1.kt
+
+class Derived : J.Inner<String>() {
     fun test(): String {
-        return funNestedStaticGenericClass.Inner.protectedFun()!!
+        return J.Inner.protectedFun()!!
     }
 }
 
 fun box(): String {
-   return Derived().test()
+    return Derived().test()
 }

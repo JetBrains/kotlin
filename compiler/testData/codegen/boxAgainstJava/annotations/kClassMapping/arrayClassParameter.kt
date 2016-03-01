@@ -1,3 +1,15 @@
+// FILE: JavaAnn.java
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface JavaAnn {
+    Class<?>[] args();
+}
+
+// FILE: 1.kt
+
 class O
 class K
 

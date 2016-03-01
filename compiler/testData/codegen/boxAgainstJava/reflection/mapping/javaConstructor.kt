@@ -1,6 +1,17 @@
+// FILE: J.java
+
+public class J {
+    public final String result;
+
+    public J(String result) {
+        this.result = result;
+    }
+}
+
+// FILE: 1.kt
+
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
-import javaConstructor as J
 
 fun box(): String {
     val reference = ::J

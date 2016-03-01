@@ -1,8 +1,26 @@
+// FILE: Foo.java
+
+class Foo {
+    public static final int i = 2;
+    public static final short s = 2;
+    public static final float f = 2f;
+    public static final double d = 2.0;
+    public static final long l = 2L;
+    public static final byte b = 2;
+    public static final boolean bool = true;
+    public static final char c = 'c';
+    public static final String str = "str";
+    public static final int charAsInt = '3';
+    public static final char intAsChar = 3;
+}
+
+// FILE: 1.kt
+
 @Ann(Foo.i, Foo.s, Foo.f, Foo.d, Foo.l, Foo.b, Foo.bool, Foo.c, Foo.str, Foo.charAsInt, Foo.intAsChar) class MyClass
 
 fun box(): String {
     val ann = MyClass::class.java.getAnnotation(Ann::class.java)
-    if (ann == null) return "fail: cannot find Ann on MyClass}"
+    if (ann == null) return "fail: cannot find Ann on MyClass"
     if (ann.i != 2) return "fail: annotation parameter i should be 2, but was ${ann.i}"
     if (ann.s != 2.toShort()) return "fail: annotation parameter i should be 2, but was ${ann.i}"
     if (ann.f != 2.toFloat()) return "fail: annotation parameter i should be 2, but was ${ann.i}"

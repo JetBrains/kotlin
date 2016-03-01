@@ -1,6 +1,19 @@
+// FILE: J.java
+
+public class J {
+    public String f(String s) {
+        return s;
+    }
+
+    public static String g(String s) {
+        return s;
+    }
+}
+
+// FILE: 1.kt
+
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
-import javaMethods as J
 
 fun box(): String {
     val f = J::f

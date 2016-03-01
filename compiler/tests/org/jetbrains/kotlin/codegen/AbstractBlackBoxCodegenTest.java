@@ -47,6 +47,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     @Override
@@ -56,12 +58,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             blackBoxFileByFullPath(wholeFile.getPath());
         }
         else {
-            doTestMultiFile(files);
+            doTestMultiFile(files, javaFilesDir);
         }
-    }
-
-    protected void doTestAgainstJava(@NotNull String filename) {
-        blackBoxFileAgainstJavaByFullPath(filename);
     }
 
     protected void doTestWithJava(@NotNull String filename) {
@@ -85,8 +83,40 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBoxFileByFullPath(filename);
     }
 
-    private void doTestMultiFile(@NotNull List<TestFile> files) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
+    private void doTestMultiFile(@NotNull List<TestFile> files, @Nullable File javaSourceDir) throws Exception {
+        TestJdkKind jdkKind = TestJdkKind.MOCK_JDK;
+        for (TestFile file : files) {
+            if (isFullJdkDirectiveDefined(file.content)) {
+                jdkKind = TestJdkKind.FULL_JDK;
+                break;
+            }
+        }
+
+        File javaOutputDir;
+        if (javaSourceDir != null) {
+            final List<String> javaSourceFilePaths = new ArrayList<String>();
+            FileUtil.processFilesRecursively(javaSourceDir, new Processor<File>() {
+                @Override
+                public boolean process(File file) {
+                    if (file.isFile() && file.getName().endsWith(".java")) {
+                        javaSourceFilePaths.add(file.getPath());
+                    }
+                    return true;
+                }
+            });
+
+            javaOutputDir = compileJava(javaSourceFilePaths, Collections.<String>emptyList(), Collections.<String>emptyList());
+        }
+        else {
+            javaOutputDir = null;
+        }
+
+        CompilerConfiguration configuration =
+                compilerConfigurationForTests(ConfigurationKind.ALL, jdkKind, getAnnotationsJar(), javaOutputDir);
+
+        myEnvironment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+
         loadMultiFiles(files);
         blackBox();
     }
@@ -98,25 +128,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             return TestJdkKind.FULL_JDK;
         }
 
-        return InTextDirectivesUtils.isDirectiveDefined(
-                FilesKt.readText(new File(sourcePath), Charsets.UTF_8), "FULL_JDK"
-        ) ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
+        String content = FilesKt.readText(new File(sourcePath), Charsets.UTF_8);
+        return isFullJdkDirectiveDefined(content) ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
     }
 
-    private void blackBoxFileAgainstJavaByFullPath(@NotNull String ktFileFullPath) {
-        String ktFile = relativePath(new File(ktFileFullPath));
-        File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
-
-        myEnvironment = KotlinCoreEnvironment.createForTests(
-                getTestRootDisposable(),
-                KotlinTestUtils.compilerConfigurationForTests(
-                        ConfigurationKind.ALL, getTestJdkKind(ktFileFullPath), KotlinTestUtils.getAnnotationsJar(), javaClassesTempDirectory
-                ),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
-        );
-
-        loadFile(ktFile);
-        blackBox();
+    private static boolean isFullJdkDirectiveDefined(@NotNull String content) {
+        return InTextDirectivesUtils.isDirectiveDefined(content, "FULL_JDK");
     }
 
     private void blackBoxFileWithJavaByFullPath(@NotNull String directory) throws Exception {

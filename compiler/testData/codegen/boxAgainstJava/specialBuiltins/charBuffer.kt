@@ -1,3 +1,5 @@
+// FILE: CharBuffer.java
+
 public abstract class CharBuffer implements CharSequence {
     public final int length() {
         return 0;
@@ -24,4 +26,12 @@ public abstract class CharBuffer implements CharSequence {
             }
         };
     }
+}
+
+// FILE: 1.kt
+
+fun box(): String {
+    val cb: CharBuffer = CharBuffer.impl()
+
+    return cb.get(0).toString() + (cb as CharSequence).get(1).toString()
 }

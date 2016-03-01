@@ -1,3 +1,26 @@
+// FILE: Super.java
+
+class Super {
+    public String lastCalled = null;
+
+    void foo(Runnable r) {
+        lastCalled = "super";
+    }
+}
+
+// FILE: Sub.java
+
+import kotlin.jvm.functions.Function0;
+import kotlin.Unit;
+
+class Sub extends Super {
+    void foo(Function0<Unit> r) {
+        lastCalled = "sub";
+    }
+}
+
+// FILE: 1.kt
+
 fun box(): String {
     val sub = Sub()
     val sup: Super = sub

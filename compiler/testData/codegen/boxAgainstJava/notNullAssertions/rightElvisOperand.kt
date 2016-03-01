@@ -1,3 +1,13 @@
+// FILE: RightElvisOperand.java
+
+class RightElvisOperand {
+    static String foo() {
+        return null;
+    }
+}
+
+// FILE: 1.kt
+
 fun baz(): String? = null
 
 fun bar(): String = baz() ?: RightElvisOperand.foo()

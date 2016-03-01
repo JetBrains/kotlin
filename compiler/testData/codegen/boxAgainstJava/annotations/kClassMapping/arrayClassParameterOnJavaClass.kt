@@ -1,3 +1,23 @@
+// FILE: JavaAnn.java
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface JavaAnn {
+    Class<?>[] args();
+}
+
+// FILE: MyJavaClass.java
+
+class O {}
+class K {}
+
+@JavaAnn(args = {O.class, K.class})
+class MyJavaClass {}
+
+// FILE: 1.kt
+
 fun box(): String {
     val args = MyJavaClass::class.java.getAnnotation(JavaAnn::class.java).args
     val argName1 = args[0].simpleName ?: "fail 1"

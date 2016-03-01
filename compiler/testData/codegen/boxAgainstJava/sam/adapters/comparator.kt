@@ -1,3 +1,15 @@
+// FILE: JavaClass.java
+
+import java.util.*;
+
+class JavaClass {
+    public static void sortIntList(List<Integer> list, Comparator<Integer> comparator) {
+        Collections.sort(list, comparator);
+    }
+}
+
+// FILE: 1.kt
+
 import java.util.*
 
 fun box(): String {
