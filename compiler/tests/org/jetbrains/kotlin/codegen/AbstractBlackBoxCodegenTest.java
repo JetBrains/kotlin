@@ -127,12 +127,11 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         FileUtil.processFilesRecursively(dirFile, new Processor<File>() {
             @Override
             public boolean process(File file) {
-                String path = relativePath(file);
-                if (path.endsWith(".kt")) {
-                    ktFilePaths.add(path);
+                if (file.getName().endsWith(".kt")) {
+                    ktFilePaths.add(relativePath(file));
                 }
-                else if (path.endsWith(".java")) {
-                    javaFilePaths.add(path);
+                else if (file.getName().endsWith(".java")) {
+                    javaFilePaths.add(file.getPath());
                 }
                 return true;
             }

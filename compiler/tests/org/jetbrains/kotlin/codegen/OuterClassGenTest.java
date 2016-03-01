@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -151,7 +152,8 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) throws Exception {
-        File javaClassesTempDirectory = compileJava(TEST_FOLDER + "/" + testDataFile + ".java");
+        File javaClassesTempDirectory = compileJava(
+                KotlinTestUtils.getTestDataPathBase() + "/codegen/" + TEST_FOLDER + "/" + testDataFile + ".java");
 
         UrlClassLoader javaClassLoader = UrlClassLoader.build().urls(javaClassesTempDirectory.toURI().toURL()).get();
 
