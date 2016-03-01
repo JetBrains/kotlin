@@ -213,7 +213,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJavaCodegenTestGenerated") {
-            model("codegen/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
+            model("codegen/boxWithJava")
         }
 
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithStdlibCodegenTestGenerated") {
@@ -348,7 +348,7 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/java8-tests/tests", "compiler/testData") {
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJava8CodegenTestGenerated") {
-            model("codegen/java8/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
+            model("codegen/java8/box")
         }
         testClass<AbstractDiagnosticsWithFullJdkTest>("DiagnosticsWithJava8TestGenerated") {
             model("diagnostics/testsWithJava8")

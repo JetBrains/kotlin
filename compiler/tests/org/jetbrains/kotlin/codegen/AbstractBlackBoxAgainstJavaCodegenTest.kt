@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -25,16 +24,14 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
 abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenTest() {
-    override fun createEnvironment(jdkKind: TestJdkKind, javaSourceDir: File?) {
-        val javaOutputDir = javaSourceDir?.let { javaSourceDir ->
-            val javaSourceFilePaths = javaSourceDir.walk().mapNotNull { file ->
-                if (file.isFile && file.extension == JavaFileType.DEFAULT_EXTENSION) {
-                    file.path
-                }
-                else null
-            }.toList()
-
-            CodegenTestUtil.compileJava(javaSourceFilePaths, emptyList(), emptyList())
+    override fun compileAndRun(
+            files: List<CodegenTestCase.TestFile>,
+            javaSourceDir: File?,
+            jdkKind: TestJdkKind,
+            javacOptions: List<String>
+    ) {
+        val javaOutputDir = javaSourceDir?.let { directory ->
+            CodegenTestUtil.compileJava(findJavaSourcesInDirectory(directory), emptyList(), javacOptions)
         }
 
         val configuration = KotlinTestUtils.compilerConfigurationForTests(
@@ -42,5 +39,8 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
         )
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+        loadMultiFiles(files)
+        blackBox()
     }
 }
