@@ -38,8 +38,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-
-import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
+import java.util.Collections;
 
 public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     @NotNull
@@ -62,10 +61,18 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFileByFullPath(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName);
     }
 
-    private void doTestCallAssertions(boolean disableCallAssertions) throws Exception {
-        File javaClassesTempDirectory = compileJava(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/A.java");
+    @NotNull
+    private File compileJava0(@NotNull String fileName) {
+        return CodegenTestUtil.compileJava(
+                Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName),
+                Collections.<String>emptyList(),
+                Collections.<String>emptyList()
+        );
+    }
 
-        setUpEnvironment(disableCallAssertions, true, javaClassesTempDirectory);
+    private void doTestCallAssertions(boolean disableCallAssertions) throws Exception {
+        File javaOut = compileJava0("A.java");
+        setUpEnvironment(disableCallAssertions, true, javaOut);
 
         loadSource("AssertionChecker.kt");
         generateFunction("checkAssertions").invoke(null, !disableCallAssertions);
@@ -101,10 +108,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     public void testGenerateParamAssertions() throws Exception {
-        File javaClassesTempDirectory =
-                compileJava(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/doGenerateParamAssertions.java");
-
-        setUpEnvironment(true, false, javaClassesTempDirectory);
+        File javaOut = compileJava0("doGenerateParamAssertions.java");
+        setUpEnvironment(true, false, javaOut);
 
         loadSource("doGenerateParamAssertions.kt");
         generateFunction().invoke(null);
@@ -137,9 +142,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     public void testJavaMultipleSubstitutions() {
-        File javaClassesTempDirectory =
-                compileJava(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/javaMultipleSubstitutions.java");
-        setUpEnvironment(false, false, javaClassesTempDirectory);
+        File javaOut = compileJava0("javaMultipleSubstitutions.java");
+        setUpEnvironment(false, false, javaOut);
 
         loadSource("javaMultipleSubstitutions.kt");
         String text = generateToText();

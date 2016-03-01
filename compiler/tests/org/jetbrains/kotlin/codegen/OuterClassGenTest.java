@@ -33,12 +33,14 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
 import java.io.InputStream;
-
-import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
+import java.util.Collections;
 
 public class OuterClassGenTest extends CodegenTestCase {
-
-    private static final String TEST_FOLDER = "outerClassInfo";
+    @NotNull
+    @Override
+    protected String getPrefix() {
+        return "outerClassInfo";
+    }
 
     public void testClass() throws Exception {
         doTest("foo.Foo", "outerClassInfo");
@@ -152,10 +154,13 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) throws Exception {
-        File javaClassesTempDirectory = compileJava(
-                KotlinTestUtils.getTestDataPathBase() + "/codegen/" + TEST_FOLDER + "/" + testDataFile + ".java");
+        File javaOut = CodegenTestUtil.compileJava(
+                Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
+                Collections.<String>emptyList(),
+                Collections.<String>emptyList()
+        );
 
-        UrlClassLoader javaClassLoader = UrlClassLoader.build().urls(javaClassesTempDirectory.toURI().toURL()).get();
+        UrlClassLoader javaClassLoader = UrlClassLoader.build().urls(javaOut.toURI().toURL()).get();
 
         String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";
         InputStream javaClassStream = javaClassLoader.getResourceAsStream(javaClassPath);
@@ -188,7 +193,7 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     @NotNull
     private ClassReader getKotlinClassReader(@Language("RegExp") @NotNull String internalNameRegexp, @NotNull String testDataFile) {
-        loadFile(TEST_FOLDER + "/" + testDataFile + ".kt");
+        loadFile(getPrefix() + "/" + testDataFile + ".kt");
         OutputFileCollection outputFiles = generateClassesInFile();
         for (OutputFile file : outputFiles.asList()) {
             if (file.getRelativePath().matches(internalNameRegexp + "\\.class")) {

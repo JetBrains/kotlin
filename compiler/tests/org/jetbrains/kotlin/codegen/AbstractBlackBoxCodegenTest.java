@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
@@ -112,8 +111,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
 
         if (javaSourceDir != null) {
-            File output =
-                    compileJava(findJavaSourcesInDirectory(javaSourceDir), Collections.singletonList(kotlinOut.getPath()), javacOptions);
+            File output = CodegenTestUtil.compileJava(
+                    findJavaSourcesInDirectory(javaSourceDir), Collections.singletonList(kotlinOut.getPath()), javacOptions
+            );
             // Add javac output to classpath so that the created class loader can find generated Java classes
             JvmContentRootsKt.addJvmClasspathRoot(configuration, output);
         }
