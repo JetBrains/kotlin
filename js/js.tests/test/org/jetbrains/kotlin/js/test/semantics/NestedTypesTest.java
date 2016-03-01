@@ -66,6 +66,10 @@ public class NestedTypesTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testInheritanceFromNestedBuiltIn() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     @NotNull
     @Override
     protected List<String> additionalJsFiles(@NotNull EcmaVersion ecmaVersion) {
