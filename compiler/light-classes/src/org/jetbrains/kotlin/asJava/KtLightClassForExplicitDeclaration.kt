@@ -263,9 +263,8 @@ open class KtLightClassForExplicitDeclaration(
 
     private val _modifierList : PsiModifierList by lazy {
         object : KtLightModifierList(this.manager, computeModifiers()) {
-            override fun getDelegate(): PsiModifierList {
-                return this@KtLightClassForExplicitDeclaration.getDelegate().modifierList!!
-            }
+            override val delegate: PsiAnnotationOwner
+                get() = this@KtLightClassForExplicitDeclaration.getDelegate().modifierList!!
         }
     }
 
