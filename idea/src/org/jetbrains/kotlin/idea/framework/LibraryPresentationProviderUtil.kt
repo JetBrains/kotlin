@@ -14,38 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.intellij.openapi.externalSystem.model.ProjectSystemId;
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
-import com.intellij.openapi.roots.libraries.LibraryProperties;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.libraries.LibraryPresentationProvider
+import com.intellij.openapi.roots.libraries.LibraryProperties
+import java.util.*
 
-import java.util.Arrays;
+fun <LP : LibraryProperties<out Any>> isDetected(provider: LibraryPresentationProvider<LP>, library: Library): Boolean {
+    return getLibraryProperties(provider, library) != null
+}
 
-public class LibraryPresentationProviderUtil {
-    private LibraryPresentationProviderUtil() {}
+fun <LP : LibraryProperties<out Any>> getLibraryProperties(provider: LibraryPresentationProvider<LP>, library: Library): LP? {
+    if (isExternalLibrary(library)) return null
+    return provider.detect(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)))
+}
 
-    public static <LP extends LibraryProperties> boolean isDetected(@NotNull LibraryPresentationProvider<LP> provider, @NotNull Library library) {
-        return getLibraryProperties(provider, library) != null;
-    }
+private val MAVEN_SYSTEM_ID = ProjectSystemId("MAVEN")
+private val GRADLE_SYSTEM_ID = ProjectSystemId("GRADLE")
 
-    @Nullable
-    public static <LP extends LibraryProperties> LP getLibraryProperties(@NotNull LibraryPresentationProvider<LP> provider, @NotNull Library library) {
-        if (isExternalLibrary(library)) return null;
-        return provider.detect(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
-    }
-
-    private static final ProjectSystemId MAVEN_SYSTEM_ID = new ProjectSystemId("MAVEN");
-    private static final ProjectSystemId GRADLE_SYSTEM_ID = new ProjectSystemId("GRADLE");
-
-    public static boolean isExternalLibrary(@NotNull Library library) {
-        return ExternalSystemApiUtil.isExternalSystemLibrary(library, ProjectSystemId.IDE) ||
-               ExternalSystemApiUtil.isExternalSystemLibrary(library, GRADLE_SYSTEM_ID) ||
-               ExternalSystemApiUtil.isExternalSystemLibrary(library, MAVEN_SYSTEM_ID);
-    }
+fun isExternalLibrary(library: Library): Boolean {
+    return ExternalSystemApiUtil.isExternalSystemLibrary(library, ProjectSystemId.IDE) ||
+           ExternalSystemApiUtil.isExternalSystemLibrary(library, GRADLE_SYSTEM_ID) ||
+           ExternalSystemApiUtil.isExternalSystemLibrary(library, MAVEN_SYSTEM_ID)
 }

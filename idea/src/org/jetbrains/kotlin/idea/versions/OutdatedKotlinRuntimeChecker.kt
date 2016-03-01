@@ -30,7 +30,8 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil
+import org.jetbrains.kotlin.idea.framework.getLibraryProperties
+import org.jetbrains.kotlin.idea.framework.isDetected
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.IOException
 import javax.swing.event.HyperlinkEvent
@@ -50,8 +51,8 @@ fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
 
     for ((library, modules) in findAllUsedLibraries(project).entrySet()) {
         val libraryVersionProperties =
-                LibraryPresentationProviderUtil.getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library) ?:
-                LibraryPresentationProviderUtil.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library) ?:
+                getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library) ?:
+                getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library) ?:
                 continue
 
         val libraryVersion = libraryVersionProperties.versionString
@@ -136,7 +137,7 @@ private fun suggestDeleteKotlinJsIfNeeded(project: Project, outdatedLibraries: C
 
     var addNotification = false
     for (library in outdatedLibraries) {
-        if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
+        if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
             val jsStdlibJar = JSLibraryStdPresentationProvider.getJsStdLibJar(library)
             assert(jsStdlibJar != null) { "jslibFile should not be null" }
 

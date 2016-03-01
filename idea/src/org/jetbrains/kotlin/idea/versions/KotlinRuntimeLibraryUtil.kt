@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil
+import org.jetbrains.kotlin.idea.framework.isDetected
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -75,7 +75,7 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
         val collector = createConfigureKotlinNotificationCollector(project)
 
         for (library in libraries) {
-            if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
+            if (isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
                 updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
                 updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
                 updateJar(project, JavaRuntimePresentationProvider.getTestJar(library), LibraryJarDescriptor.TEST_JAR)
@@ -87,7 +87,7 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
                     updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
                 }
             }
-            else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
+            else if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
                 updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
 
                 if (kJsConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
