@@ -472,6 +472,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DescructuringDeclarationInForLoop.kt")
+        public void testDescructuringDeclarationInForLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DescructuringDeclarationInForLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DoubleDefine.kt")
         public void testDoubleDefine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DoubleDefine.kt");
