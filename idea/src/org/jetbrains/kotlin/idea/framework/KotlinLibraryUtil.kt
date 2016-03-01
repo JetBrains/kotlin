@@ -38,8 +38,7 @@ fun <LP : LibraryProperties<out Any>> getLibraryProperties(provider: LibraryPres
 
 private val MAVEN_SYSTEM_ID = ProjectSystemId("MAVEN")
 private val GRADLE_SYSTEM_ID = ProjectSystemId("GRADLE")
-
-fun isExternalLibrary(library: Library): Boolean {
+private fun isExternalLibrary(library: Library): Boolean {
     return ExternalSystemApiUtil.isExternalSystemLibrary(library, ProjectSystemId.IDE) ||
            ExternalSystemApiUtil.isExternalSystemLibrary(library, GRADLE_SYSTEM_ID) ||
            ExternalSystemApiUtil.isExternalSystemLibrary(library, MAVEN_SYSTEM_ID)
@@ -76,5 +75,5 @@ fun getJsStdLibSrcJar(library: Library): VirtualFile? {
 }
 
 private fun getRuntimeSrcJar(classesRoots: List<VirtualFile>): VirtualFile? {
-    return LibraryUtils.getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
+    return LibraryUtils.getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR)
 }
