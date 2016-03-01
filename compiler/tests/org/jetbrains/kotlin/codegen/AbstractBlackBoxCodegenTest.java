@@ -83,7 +83,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBoxFileByFullPath(filename);
     }
 
-    private void doTestMultiFile(@NotNull List<TestFile> files, @Nullable File javaSourceDir) throws Exception {
+    private void doTestMultiFile(@NotNull List<TestFile> files, @Nullable File javaSourceDir) {
         TestJdkKind jdkKind = TestJdkKind.MOCK_JDK;
         for (TestFile file : files) {
             if (isFullJdkDirectiveDefined(file.content)) {
@@ -92,33 +92,15 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             }
         }
 
-        File javaOutputDir;
-        if (javaSourceDir != null) {
-            final List<String> javaSourceFilePaths = new ArrayList<String>();
-            FileUtil.processFilesRecursively(javaSourceDir, new Processor<File>() {
-                @Override
-                public boolean process(File file) {
-                    if (file.isFile() && file.getName().endsWith(".java")) {
-                        javaSourceFilePaths.add(file.getPath());
-                    }
-                    return true;
-                }
-            });
-
-            javaOutputDir = compileJava(javaSourceFilePaths, Collections.<String>emptyList(), Collections.<String>emptyList());
-        }
-        else {
-            javaOutputDir = null;
-        }
-
-        CompilerConfiguration configuration =
-                compilerConfigurationForTests(ConfigurationKind.ALL, jdkKind, getAnnotationsJar(), javaOutputDir);
-
-        myEnvironment =
-                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-
+        createEnvironment(jdkKind, javaSourceDir);
         loadMultiFiles(files);
         blackBox();
+    }
+
+    protected void createEnvironment(@NotNull TestJdkKind jdkKind, @Nullable File javaSourceDir) {
+        CompilerConfiguration configuration = compilerConfigurationForTests(ConfigurationKind.ALL, jdkKind, getAnnotationsJar());
+        myEnvironment =
+                KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     // NOTE: tests under fullJdk/ are run with FULL_JDK instead of MOCK_JDK
