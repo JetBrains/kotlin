@@ -2732,6 +2732,63 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PostfixIncrementDecrement extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInPostfixIncrementDecrement() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("arrayElement.kt")
+        public void testArrayElement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/arrayElement.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("classNaryGetSet.kt")
+        public void testClassNaryGetSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/classNaryGetSet.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("classWithGetSet.kt")
+        public void testClassWithGetSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/classWithGetSet.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("extOnLong.kt")
+        public void testExtOnLong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/extOnLong.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("genericClassWithGetSet.kt")
+        public void testGenericClassWithGetSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/genericClassWithGetSet.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("memberExtOnLong.kt")
+        public void testMemberExtOnLong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/memberExtOnLong.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("mutableListElement.kt")
+        public void testMutableListElement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/mutableListElement.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/postfixIncrementDecrement/nullable.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/privateConstructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
