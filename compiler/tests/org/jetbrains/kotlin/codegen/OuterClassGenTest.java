@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Ref;
-import com.intellij.util.lang.UrlClassLoader;
+import kotlin.io.FilesKt;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +32,6 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Collections;
 
 public class OuterClassGenTest extends CodegenTestCase {
@@ -160,13 +159,9 @@ public class OuterClassGenTest extends CodegenTestCase {
                 Collections.<String>emptyList()
         );
 
-        UrlClassLoader javaClassLoader = UrlClassLoader.build().urls(javaOut.toURI().toURL()).get();
-
         String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";
-        InputStream javaClassStream = javaClassLoader.getResourceAsStream(javaClassPath);
-        assert javaClassStream != null : "Couldn't find class bytecode " + javaClassPath;
 
-        ClassReader javaReader =  new ClassReader(javaClassStream);
+        ClassReader javaReader = new ClassReader(FilesKt.readBytes(new File(javaOut, javaClassPath)));
         ClassReader kotlinReader = getKotlinClassReader(classFqName.replace('.', '/').replace("$", "\\$"), testDataFile);
 
         checkInfo(kotlinReader, javaReader);
@@ -200,8 +195,9 @@ public class OuterClassGenTest extends CodegenTestCase {
                 return new ClassReader(file.asByteArray());
             }
         }
-        throw new AssertionError("Couldn't find class by regexp: " + internalNameRegexp + " in:\n" + StringsKt
-                .join(outputFiles.asList(), "\n"));
+        throw new AssertionError(
+                "Couldn't find class by regexp: " + internalNameRegexp + " in:\n" + StringsKt.join(outputFiles.asList(), "\n")
+        );
     }
 
     private static void checkInfo(@NotNull ClassReader kotlinReader, @NotNull ClassReader javaReader) {
