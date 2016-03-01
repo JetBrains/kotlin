@@ -55,13 +55,17 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
-        if (files.size() == 1) {
-            createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-            blackBoxFileByFullPath(wholeFile.getPath());
+        TestJdkKind jdkKind = TestJdkKind.MOCK_JDK;
+        List<String> javacOptions = new ArrayList<String>(0);
+        for (TestFile file : files) {
+            if (isFullJdkDirectiveDefined(file.content)) {
+                jdkKind = TestJdkKind.FULL_JDK;
+                break;
+            }
+            javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
-        else {
-            doTestMultiFile(files, javaFilesDir);
-        }
+
+        compileAndRun(files, javaFilesDir, jdkKind, javacOptions);
     }
 
     protected void doTestWithStdlib(@NotNull String filename) {
@@ -74,20 +78,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         );
 
         blackBoxFileByFullPath(filename);
-    }
-
-    private void doTestMultiFile(@NotNull List<TestFile> files, @Nullable File javaSourceDir) {
-        TestJdkKind jdkKind = TestJdkKind.MOCK_JDK;
-        List<String> javacOptions = new ArrayList<String>(0);
-        for (TestFile file : files) {
-            if (isFullJdkDirectiveDefined(file.content)) {
-                jdkKind = TestJdkKind.FULL_JDK;
-                break;
-            }
-            javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
-        }
-
-        compileAndRun(files, javaSourceDir, jdkKind, javacOptions);
     }
 
     protected void compileAndRun(
