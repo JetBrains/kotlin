@@ -16455,6 +16455,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("safeAs.kt")
+            public void testSafeAs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safeAs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("shortIfExprNotNull.kt")
             public void testShortIfExprNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/shortIfExprNotNull.kt");

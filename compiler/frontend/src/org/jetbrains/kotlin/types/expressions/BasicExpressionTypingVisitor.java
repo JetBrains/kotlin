@@ -1304,6 +1304,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
             if (jumpInRight || !rightDataFlowInfo.getPredictableNullability(leftValue).canBeNull()) {
                 dataFlowInfo = dataFlowInfo.disequate(leftValue, nullValue);
+                if (left instanceof KtBinaryExpressionWithTypeRHS) {
+                    dataFlowInfo = establishSubtypingForTypeRHS((KtBinaryExpressionWithTypeRHS) left, dataFlowInfo, context);
+                }
             }
             DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
             dataFlowInfo = dataFlowInfo.assign(resultValue, leftValue).disequate(resultValue, nullValue);
@@ -1329,6 +1332,27 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                 dataFlowInfo,
                                                 loopBreakContinuePossible,
                                                 context.dataFlowInfo);
+    }
+
+    @NotNull
+    private static DataFlowInfo establishSubtypingForTypeRHS(
+            @NotNull KtBinaryExpressionWithTypeRHS left,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ExpressionTypingContext context
+    ) {
+        IElementType operationType = left.getOperationReference().getReferencedNameElementType();
+        if (operationType == AS_SAFE) {
+            KtExpression underSafeAs = left.getLeft();
+            KotlinType underSafeAsType = context.trace.getType(underSafeAs);
+            if (underSafeAsType != null) {
+                DataFlowValue underSafeAsValue = createDataFlowValue(underSafeAs, underSafeAsType, context);
+                KotlinType targetType = context.trace.get(BindingContext.TYPE, left.getRight());
+                if (targetType != null) {
+                    return dataFlowInfo.establishSubtyping(underSafeAsValue, targetType);
+                }
+            }
+        }
+        return dataFlowInfo;
     }
 
     @NotNull
