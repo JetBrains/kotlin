@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
+import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtilKt;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.js.JavaScript;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -97,7 +97,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @Nullable
     @Override
     protected String getOldSourceRootUrl(@NotNull Library library) {
-        VirtualFile jsStdLibJar = JSLibraryStdPresentationProvider.getJsStdLibJar(library);
+        VirtualFile jsStdLibJar = LibraryPresentationProviderUtilKt.getJsStdLibJar(library);
         return jsStdLibJar != null ? jsStdLibJar.getUrl() : null;
     }
 }

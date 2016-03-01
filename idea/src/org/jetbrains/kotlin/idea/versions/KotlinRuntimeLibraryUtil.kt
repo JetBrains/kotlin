@@ -86,13 +86,13 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
                 }
             }
             else if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
-                updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
+                updateJar(project, getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
 
                 if (kJsConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
                     kJsConfigurator.copySourcesToPathFromLibrary(library, collector)
                 }
                 else {
-                    updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
+                    updateJar(project, getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
                 }
             }
         }

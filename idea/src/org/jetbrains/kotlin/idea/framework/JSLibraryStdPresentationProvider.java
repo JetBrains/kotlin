@@ -25,11 +25,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinIcons;
-import org.jetbrains.kotlin.utils.LibraryUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.List;
 
 public class JSLibraryStdPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
@@ -67,17 +65,5 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
         }
 
         return false;
-    }
-
-    @Nullable
-    public static VirtualFile getJsStdLibJar(@NotNull Library library) {
-        return LibraryPresentationProviderUtilKt.isExternalLibrary(library) ? null :
-               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.JS_LIB_JAR_NAME);
-    }
-
-    @Nullable
-    public static VirtualFile getJsStdLibSrcJar(@NotNull Library library) {
-        return LibraryPresentationProviderUtilKt.isExternalLibrary(library) ? null :
-               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.SOURCES)), PathUtil.JS_LIB_SRC_JAR_NAME);
     }
 }
