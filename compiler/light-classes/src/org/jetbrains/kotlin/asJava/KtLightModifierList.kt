@@ -14,45 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationOwner;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.light.LightModifierList;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiAnnotationOwner
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.light.LightModifierList
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
-public abstract class KtLightModifierList extends LightModifierList {
-    public KtLightModifierList(PsiManager psiManager, @NotNull String[] modifiers) {
-        super(psiManager, KotlinLanguage.INSTANCE, modifiers);
-    }
+abstract class KtLightModifierList(
+        psiManager: PsiManager,
+        modifiers: Array<String>
+) : LightModifierList(psiManager, KotlinLanguage.INSTANCE, *modifiers) {
+    abstract val delegate: PsiAnnotationOwner
 
-    public abstract PsiAnnotationOwner getDelegate();
+    override fun getAnnotations() = delegate.annotations
 
-    @Override
-    @NotNull
-    public PsiAnnotation[] getAnnotations() {
-        return getDelegate().getAnnotations();
-    }
+    override fun getApplicableAnnotations() = delegate.applicableAnnotations
 
-    @Override
-    @NotNull
-    public PsiAnnotation[] getApplicableAnnotations() {
-        return getDelegate().getApplicableAnnotations();
-    }
+    override fun findAnnotation(@NonNls qualifiedName: String) = delegate.findAnnotation(qualifiedName)
 
-    @Override
-    @Nullable
-    public PsiAnnotation findAnnotation(@NotNull @NonNls String qualifiedName) {
-        return getDelegate().findAnnotation(qualifiedName);
-    }
-
-    @Override
-    @NotNull
-    public PsiAnnotation addAnnotation(@NotNull @NonNls String qualifiedName) {
-        return getDelegate().addAnnotation(qualifiedName);
-    }
+    override fun addAnnotation(@NonNls qualifiedName: String) = delegate.addAnnotation(qualifiedName)
 }
