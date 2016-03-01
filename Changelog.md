@@ -10,3 +10,4 @@
 ### Tools. J2K
 - Protected members used outside of inheritors are converted as public
 - Support conversion for annotation constructor calls
+- Place comments from the middle of the call to the end

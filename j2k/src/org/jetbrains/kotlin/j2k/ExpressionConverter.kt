@@ -413,10 +413,17 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             }
         }
 
-        result = MethodCallExpression(codeConverter.convertExpression(methodExpr),
+        /* We move prototypes from methodExpression to full expression because
+         * it could contains comments inside, and then we paste them at the end of expression
+         * In the case of call, we should paste them after parenthesis
+         * ex. Foo./*comment*/bar() -> Foo.bar() /*comment*/
+         */
+        val methodExpression = codeConverter.convertExpression(methodExpr)
+        result = MethodCallExpression(methodExpression,
                                       convertArguments(expression),
                                       typeArguments,
-                                      isNullable)
+                                      isNullable).assignPrototypesFrom(methodExpression)
+        methodExpression.assignNoPrototype()
     }
 
     private fun KtLightMethod.isKotlinExtensionFunction(): Boolean {

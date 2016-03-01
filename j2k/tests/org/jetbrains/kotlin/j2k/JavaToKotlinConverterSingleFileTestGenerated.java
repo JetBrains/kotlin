@@ -973,6 +973,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/comments"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("commentInsideCall.java")
+        public void testCommentInsideCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/commentInsideCall.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("comments.java")
         public void testComments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/comments.java");
