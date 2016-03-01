@@ -17,19 +17,14 @@
 package org.jetbrains.kotlin.idea.framework;
 
 import com.intellij.framework.library.LibraryVersionProperties;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryPresentationProvider;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinIcons;
-import org.jetbrains.kotlin.utils.LibraryUtils;
-import org.jetbrains.kotlin.utils.PathUtil;
 
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.List;
 
 public class JavaRuntimePresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
@@ -52,34 +47,5 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
         String version = JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots);
         return version == null ? null : new LibraryVersionProperties(version);
-    }
-
-    @Nullable
-    private static VirtualFile getRuntimeSrcJar(@NotNull List<VirtualFile> classesRoots) {
-        return LibraryUtils.getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
-    }
-
-    @Nullable
-    public static VirtualFile getRuntimeJar(@NotNull Library library) {
-        return LibraryPresentationProviderUtilKt.isExternalLibrary(library) ? null :
-               JavaRuntimeDetectionUtil.getRuntimeJar(Arrays.asList(library.getFiles(OrderRootType.CLASSES)));
-    }
-
-    @Nullable
-    public static VirtualFile getReflectJar(@NotNull Library library) {
-        return LibraryPresentationProviderUtilKt.isExternalLibrary(library) ? null :
-               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_JAVA_REFLECT_JAR);
-    }
-
-    @Nullable
-    public static VirtualFile getRuntimeSrcJar(@NotNull Library library) {
-        return LibraryPresentationProviderUtilKt.isExternalLibrary(library) ? null :
-               getRuntimeSrcJar(Arrays.asList(library.getFiles(OrderRootType.SOURCES)));
-    }
-
-    @Nullable
-    public static VirtualFile getTestJar(@NotNull Library library) {
-        return LibraryPresentationProviderUtilKt.isExternalLibrary(library) ? null :
-               LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_TEST_JAR);
     }
 }
