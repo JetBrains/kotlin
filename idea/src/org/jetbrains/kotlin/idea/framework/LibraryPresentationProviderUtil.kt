@@ -65,6 +65,16 @@ fun getTestJar(library: Library): VirtualFile? {
     return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_TEST_JAR)
 }
 
+fun getJsStdLibJar(library: Library): VirtualFile? {
+    if (isExternalLibrary(library)) return null
+    return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(OrderRootType.CLASSES)), PathUtil.JS_LIB_JAR_NAME)
+}
+
+fun getJsStdLibSrcJar(library: Library): VirtualFile? {
+    if (isExternalLibrary(library)) return null
+    return LibraryUtils.getJarFile(Arrays.asList(*library.getFiles(OrderRootType.SOURCES)), PathUtil.JS_LIB_SRC_JAR_NAME)
+}
+
 private fun getRuntimeSrcJar(classesRoots: List<VirtualFile>): VirtualFile? {
     return LibraryUtils.getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR);
 }

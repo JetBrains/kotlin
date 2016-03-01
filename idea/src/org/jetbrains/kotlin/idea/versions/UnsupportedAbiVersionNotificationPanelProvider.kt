@@ -42,7 +42,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
+import org.jetbrains.kotlin.idea.framework.getJsStdLibJar
 import org.jetbrains.kotlin.idea.framework.getRuntimeJar
 import java.text.MessageFormat
 import javax.swing.Icon
@@ -72,7 +72,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         val kotlinLibraries = findAllUsedLibraries(project).keySet()
         val badRuntimeLibraries = kotlinLibraries.filter { library ->
             val runtimeJar = getLocalJar(getRuntimeJar(library))
-            val jsLibJar = getLocalJar(JSLibraryStdPresentationProvider.getJsStdLibJar(library))
+            val jsLibJar = getLocalJar(getJsStdLibJar(library))
             badRoots.contains(runtimeJar) || badRoots.contains(jsLibJar)
         }
 
