@@ -188,6 +188,8 @@ class ExpectedInfos(
 
     private fun calculateForArgument(callElement: KtCallElement, argument: ValueArgument): Collection<ExpectedInfo>? {
         val call = callElement.getCall(bindingContext) ?: return null
+        // sometimes we get wrong call (see testEA70945) TODO: refactor resolve so that it does not happen
+        if (call.callElement != callElement) return null
         return calculateForArgument(call, argument)
     }
 
