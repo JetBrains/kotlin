@@ -245,6 +245,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("JavaConstructorNotNullParameter.kt")
+    public void testJavaConstructorNotNullParameter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/JavaConstructorNotNullParameter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaEnumEntry.kt")
     public void testJavaEnumEntry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/references/JavaEnumEntry.kt");

@@ -118,7 +118,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull List<KotlinType> enhancedValueParametersTypes,
             @NotNull KotlinType enhancedReturnType
     ) {
-        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), /* original = */ null, getKind(), null, false);
+        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), /* original = */ null, getKind(), null, true);
         // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
         enhanced.initialize(
                 enhancedReceiverType,
