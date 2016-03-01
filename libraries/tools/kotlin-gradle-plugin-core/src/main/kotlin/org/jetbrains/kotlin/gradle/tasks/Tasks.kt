@@ -409,9 +409,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             logger.kotlinInfo("compile iteration: ${sourcesToCompile.joinToString{ projectRelativePath(it) }}")
 
             val (existingSource, nonExistingSource) = sourcesToCompile.partition { it.isFile }
-            if (nonExistingSource.any()) {
-                logger.warn("Kotlin incremental compilation tried to compile removed files: $nonExistingSource")
-            }
+            assert(nonExistingSource.isEmpty()) { "Trying to compile removed files: ${nonExistingSource.map(::projectRelativePath)}" }
 
             val text = existingSource.map { it.canonicalPath }.joinToString(separator = System.getProperty("line.separator"))
             dirtySourcesSinceLastTimeFile.writeText(text)
