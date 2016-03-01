@@ -3265,26 +3265,31 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.operation(asmBaseType, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                StackValue value = gen(expression.getBaseExpression());
-                value = StackValue.complexWriteReadReceiver(value);
+                StackValue value = StackValue.complexWriteReadReceiver(gen(expression.getBaseExpression()));
 
-                Type type = expressionType(expression.getBaseExpression());
-                value.put(type, v); // old value
+                value.put(asmBaseType, v);
+                AsmUtil.dup(v, asmBaseType);
 
-                value.dup(v, true);
+                StackValue previousValue = StackValue.local(myFrameMap.enterTemp(asmBaseType), asmBaseType);
+                previousValue.store(StackValue.onStack(asmBaseType), v);
 
                 Type storeType;
                 if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
-                    genIncrement(asmResultType, increment, v);
-                    storeType = type;
+                    genIncrement(asmResultType, asmBaseType, increment, v);
+                    storeType = asmBaseType;
                 }
                 else {
-                    StackValue result = invokeFunction(resolvedCall, StackValue.onStack(type));
+                    StackValue result = invokeFunction(resolvedCall, StackValue.onStack(asmBaseType));
                     result.put(result.type, v);
                     storeType = result.type;
                 }
 
                 value.store(StackValue.onStack(storeType), v, true);
+
+                previousValue.put(asmBaseType, v);
+
+                myFrameMap.leaveTemp(asmBaseType);
+
                 return Unit.INSTANCE;
             }
         });

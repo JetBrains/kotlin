@@ -557,22 +557,31 @@ public class AsmUtil {
     }
 
     public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
-        if (expectedType == Type.LONG_TYPE) {
-            v.lconst(myDelta);
+        numConst(myDelta, expectedType, v);
+        v.add(expectedType);
+    }
+
+    public static void numConst(int value, Type type, InstructionAdapter v) {
+        if (type == Type.FLOAT_TYPE) {
+            v.fconst(value);
         }
-        else if (expectedType == Type.FLOAT_TYPE) {
-            v.fconst(myDelta);
+        else if (type == Type.DOUBLE_TYPE) {
+            v.dconst(value);
         }
-        else if (expectedType == Type.DOUBLE_TYPE) {
-            v.dconst(myDelta);
+        else if (type == Type.LONG_TYPE) {
+            v.lconst(value);
+        }
+        else if (type == Type.CHAR_TYPE || type == Type.BYTE_TYPE || type == Type.SHORT_TYPE || type == Type.INT_TYPE) {
+            v.iconst(value);
         }
         else {
-            v.iconst(myDelta);
-            v.add(Type.INT_TYPE);
-            StackValue.coerce(Type.INT_TYPE, expectedType, v);
-            return;
+            throw new IllegalArgumentException("Primitive numeric type expected, got: " + type);
         }
-        v.add(expectedType);
+    }
+
+    public static void genIncrement(Type expectedType, Type baseType, int myDelta, InstructionAdapter v) {
+        genIncrement(baseType, myDelta, v);
+        StackValue.coerce(baseType, expectedType, v);
     }
 
     public static void swap(InstructionAdapter v, Type stackTop, Type afterTop) {
