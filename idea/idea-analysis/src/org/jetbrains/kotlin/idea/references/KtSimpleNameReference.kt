@@ -153,7 +153,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (expression !is KtNameReferenceExpression) return expression
         if (expression.parent is KtThisExpression || expression.parent is KtSuperExpression) return expression // TODO: it's a bad design of PSI tree, we should change it
 
-        val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as KtNameReferenceExpression
+        val newExpression = expression.changeQualifiedName(fqName)
         val newQualifiedElement = newExpression.getQualifiedElement()
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
@@ -177,7 +177,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
      * Result is either the same as original element, or [[KtQualifiedExpression]], or [[KtUserType]]
      * Note that FqName may not be empty
      */
-    private fun KtNameReferenceExpression.changeQualifiedName(fqName: FqName): KtElement {
+    private fun KtNameReferenceExpression.changeQualifiedName(fqName: FqName): KtNameReferenceExpression {
         assert(!fqName.isRoot) { "Can't set empty FqName for element $this" }
 
         val shortName = fqName.shortName().render()
@@ -190,13 +190,17 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().render()}.$fqNameBase" else fqNameBase
 
         val elementToReplace = getQualifiedElement()
-        return when (elementToReplace) {
+
+        val newElement = when (elementToReplace) {
             is KtUserType -> {
                 val typeText = "$text${elementToReplace.typeArgumentList?.text ?: ""}"
                 elementToReplace.replace(psiFactory.createType(typeText).typeElement!!)
             }
             else -> elementToReplace.replace(psiFactory.createExpression(text))
         } as KtElement
+
+        val selector = newElement.getQualifiedElementSelector() ?: error("No selector for $newElement")
+        return selector as KtNameReferenceExpression
     }
 
     override fun getCanonicalText(): String = expression.text
