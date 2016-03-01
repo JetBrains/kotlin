@@ -5932,6 +5932,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nestedMaps.kt")
+        public void testNestedMaps() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/nestedMaps.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overloadedSet.kt")
+        public void testOverloadedSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/overloadedSet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
