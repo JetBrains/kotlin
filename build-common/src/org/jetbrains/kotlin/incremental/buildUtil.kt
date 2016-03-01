@@ -220,13 +220,14 @@ fun mapLookupSymbolsToFiles(
         lookupStorage: LookupStorage,
         lookupSymbols: Iterable<LookupSymbol>,
         log: (String)->Unit,
+        getLogFilePath: (File)->String = { it.canonicalPath },
         excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
 
     for (lookup in lookupSymbols) {
         val affectedFiles = lookupStorage.get(lookup).map(::File).filter { it !in excludes }
-        log("${lookup.scope}#${lookup.name} caused recompilation of: $affectedFiles")
+        log("${lookup.scope}#${lookup.name} caused recompilation of: ${affectedFiles.map(getLogFilePath)}")
         dirtyFiles.addAll(affectedFiles)
     }
 
@@ -237,6 +238,7 @@ fun <Target> mapClassesFqNamesToFiles(
         caches: Iterable<IncrementalCacheImpl<Target>>,
         classesFqNames: Iterable<FqName>,
         log: (String)->Unit,
+        getLogFilePath: (File)->String = { it.canonicalPath },
         excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
@@ -246,7 +248,7 @@ fun <Target> mapClassesFqNamesToFiles(
             val srcFile = cache.getSourceFileIfClass(dirtyClassFqName)
             if (srcFile == null || srcFile in excludes) continue
 
-            log("Class $dirtyClassFqName caused recompilation of: $srcFile")
+            log("Class $dirtyClassFqName caused recompilation of: ${getLogFilePath(srcFile)}")
             dirtyFiles.add(srcFile)
         }
     }

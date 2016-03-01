@@ -161,8 +161,6 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             "compileReleaseUnitTestKotlin" to  "compileReleaseKotlin"
             )
 
-    fun projectRelativePath(f: File) = f.toRelativeString(project.projectDir)
-
     // TODO: find out whether we really need to be able to override destination dir here, and how it should work with destinationDir property
     private val compilerDestinationDir: String get() = if (StringUtils.isEmpty(kotlinOptions.destination)) { kotlinDestinationDir?.path.orEmpty() } else { kotlinOptions.destination }
 
@@ -219,6 +217,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncrementalRequested: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
+
+        fun projectRelativePath(f: File) = f.toRelativeString(project.projectDir)
 
         if (experimentalIncremental) {
             // TODO: consider other ways to pass incremental flag to compiler/builder
@@ -280,7 +280,7 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
 
             if (lookupSymbols.any()) {
                 val kotlinModifiedFilesSet = modifiedKotlinFiles.toHashSet()
-                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(lookupStorage, lookupSymbols, logAction, excludes = kotlinModifiedFilesSet)
+                val dirtyFilesFromLookups = mapLookupSymbolsToFiles(lookupStorage, lookupSymbols, logAction, ::projectRelativePath, excludes = kotlinModifiedFilesSet)
                 modifiedKotlinFiles.addAll(dirtyFilesFromLookups)
             }
 
@@ -434,8 +434,8 @@ open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments>() {
             if (!isIncrementalDecided) break;
 
             val (dirtyLookupSymbols, dirtyClassFqNames) = compilationResult.getDirtyData(caches.values, logAction)
-            sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, excludes = sourcesToCompile) +
-                               mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction)
+            sourcesToCompile = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction, ::projectRelativePath, excludes = sourcesToCompile) +
+                               mapClassesFqNamesToFiles(caches.values, dirtyClassFqNames, logAction, ::projectRelativePath)
 
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
