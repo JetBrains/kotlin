@@ -29,7 +29,7 @@ import javax.swing.Icon
 
 class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = object : FrameworkTypeEx("KOTLIN") {
-        override fun getIcon(): Icon = KotlinIcons.FILE
+        override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 
         override fun getPresentableName(): String = "Kotlin (Java)"
 
