@@ -48,6 +48,8 @@ import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
 sealed class PluginUpdateStatus {
+    val timestamp = System.currentTimeMillis()
+
     object LatestVersionInstalled : PluginUpdateStatus()
 
     class Update(val pluginDescriptor: IdeaPluginDescriptor,
@@ -74,20 +76,22 @@ sealed class PluginUpdateStatus {
 }
 
 class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Disposable {
-    private val INITIAL_UPDATE_DELAY = 5000L
+    private val INITIAL_UPDATE_DELAY = 2000L
+    private val CACHED_REQUEST_DELAY = TimeUnit.DAYS.toMillis(1)
+
     private var updateDelay = INITIAL_UPDATE_DELAY
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
     private val notificationGroup = NotificationGroup("Kotlin plugin updates",  NotificationDisplayType.STICKY_BALLOON, true)
 
     @Volatile private var checkQueued = false
-    @Volatile private var lastStatus: PluginUpdateStatus? = null
+    @Volatile private var lastUpdateStatus: PluginUpdateStatus? = null
 
     fun kotlinFileEdited() {
         if (ApplicationManager.getApplication().isUnitTestMode) return
         if (!UpdateSettings.getInstance().isCheckNeeded) return
 
         val lastUpdateTime = java.lang.Long.parseLong(propertiesComponent.getValue(PROPERTY_NAME, "0"))
-        if (lastUpdateTime == 0L || System.currentTimeMillis() - lastUpdateTime > TimeUnit.DAYS.toMillis(1)) {
+        if (lastUpdateTime == 0L || System.currentTimeMillis() - lastUpdateTime > CACHED_REQUEST_DELAY) {
             queueUpdateCheck { updateStatus ->
                 when (updateStatus) {
                     is PluginUpdateStatus.Update -> notifyPluginUpdateAvailable(updateStatus)
@@ -113,6 +117,19 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
     }
 
+    fun runCachedUpdate(callback: (PluginUpdateStatus) -> Boolean) {
+        ApplicationManager.getApplication().assertIsDispatchThread()
+        val cachedStatus = lastUpdateStatus
+        if (cachedStatus != null && System.currentTimeMillis() - cachedStatus.timestamp < CACHED_REQUEST_DELAY) {
+            if (cachedStatus !is PluginUpdateStatus.CheckFailed) {
+                callback(cachedStatus)
+                return
+            }
+        }
+
+        queueUpdateCheck(callback)
+    }
+
     private fun updateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         var updateStatus: PluginUpdateStatus
         try {
@@ -127,7 +144,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
             updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
         }
 
-        lastStatus = updateStatus
+        lastUpdateStatus = updateStatus
         checkQueued = false
 
         if (updateStatus !is PluginUpdateStatus.CheckFailed) {

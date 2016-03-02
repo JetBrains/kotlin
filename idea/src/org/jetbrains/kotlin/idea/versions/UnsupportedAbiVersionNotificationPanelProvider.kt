@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.idea.framework.getReflectJar
 import org.jetbrains.kotlin.idea.framework.getRuntimeJar
 import org.jetbrains.kotlin.idea.framework.getTestJar
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.text.MessageFormat
 import java.util.*
 import javax.swing.Icon
@@ -178,7 +180,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
     private fun createUpdatePluginLink(answer: ErrorNotificationPanel) {
         answer.createProgressAction("     Check...", "Update plugin") { link, updateLink ->
-            KotlinPluginUpdater.getInstance().runUpdateCheck { pluginUpdateStatus ->
+            KotlinPluginUpdater.getInstance().runCachedUpdate { pluginUpdateStatus ->
                 when (pluginUpdateStatus) {
                     is PluginUpdateStatus.Update -> {
                         link.isVisible = false
@@ -300,7 +302,17 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             val successLink = createActionLabel(successLinkText, {  })
             successLink.isVisible = false
 
-            updater(label, successLink)
+            // Several notification panels can be created almost instantly but we want to postpone deferred checks until
+            // panels are actually visible on screen.
+            myLinksPanel.addComponentListener(object : ComponentAdapter() {
+                var isUpdaterCalled = false
+                override fun componentResized(p0: ComponentEvent?) {
+                    if (!isUpdaterCalled) {
+                        isUpdaterCalled = true
+                        updater(label, successLink)
+                    }
+                }
+            })
         }
     }
 
