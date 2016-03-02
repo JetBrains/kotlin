@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.reference.*;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -564,5 +565,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
         assert descriptor != null : "Missing declaration descriptor: " + PsiUtilsKt.getTextWithLocation(expression);
         return descriptor;
+    }
+
+    @Override
+    public JsNode visitClass(@NotNull KtClass klass, TranslationContext context) {
+        JsInvocation jsClass = ClassTranslator.generateClassCreation(klass, context);
+        DeclarationDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), klass);
+        JsName name = context.getNameForDescriptor(descriptor);
+        return context.define(name, jsClass);
     }
 }

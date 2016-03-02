@@ -399,8 +399,13 @@ public class TranslationContext {
 
     @NotNull
     public JsNameRef define(DeclarationDescriptor descriptor, JsExpression expression) {
-        String suggestedName = TranslationUtils.getSuggestedNameForInnerDeclaration(this, descriptor);
+        String suggestedName = TranslationUtils.getSuggestedNameForInnerDeclaration(staticContext, descriptor);
         return getDefinitionPlace().define(suggestedName, expression);
+    }
+
+    @NotNull
+    public JsNameRef define(JsName name, JsExpression expression) {
+        return getDefinitionPlace().define(name, expression);
     }
 
     @Nullable

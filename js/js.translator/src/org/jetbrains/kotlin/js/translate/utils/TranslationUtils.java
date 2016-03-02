@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.js.translate.context.Namer;
+import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
@@ -263,7 +264,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getSuggestedNameForInnerDeclaration(TranslationContext context, DeclarationDescriptor descriptor) {
+    public static String getSuggestedNameForInnerDeclaration(StaticContext context, DeclarationDescriptor descriptor) {
         String suggestedName = "";
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         //noinspection ConstantConditions

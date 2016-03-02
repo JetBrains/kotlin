@@ -16,11 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.context
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsObjectScope
-import com.google.dart.compiler.backend.js.ast.JsFunction
+import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.staticRef
 
 class DefinitionPlace(
@@ -28,9 +24,9 @@ class DefinitionPlace(
         private val fqName: JsExpression,
         val properties: MutableList<JsPropertyInitializer>
 ) {
-    fun define(suggestedName: String, expression : JsExpression): JsNameRef {
-        val name = scope.declareFreshName(suggestedName)
+    fun define(suggestedName: String, expression : JsExpression) =  define(scope.declareFreshName(suggestedName), expression)
 
+    fun define(name: JsName, expression: JsExpression): JsNameRef {
         if (expression is JsFunction) {
             /** JsInliner should be able
              * to find function by name */
