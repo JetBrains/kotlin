@@ -112,6 +112,10 @@ sealed class KtLightMethodImpl(
 
     override fun getModifierList() = _modifierList
 
+    private val _lightIdentifier = KtLightIdentifier(this, origin as? KtNamedDeclaration)
+
+    override fun getNameIdentifier() = _lightIdentifier
+
     override fun getParameterList() = paramsList.value
 
     override fun getTypeParameterList() = typeParamsList.value

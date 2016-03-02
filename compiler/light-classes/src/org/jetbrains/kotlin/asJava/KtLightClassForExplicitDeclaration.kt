@@ -385,6 +385,10 @@ open class KtLightClassForExplicitDeclaration(
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 
+    private val _lightIdentifier = KtLightIdentifier(this, classOrObject)
+
+    override fun getNameIdentifier() = _lightIdentifier
+
     companion object {
         private val JAVA_API_STUB = Key.create<CachedValue<WithFileStubAndExtraDiagnostics>>("JAVA_API_STUB")
 

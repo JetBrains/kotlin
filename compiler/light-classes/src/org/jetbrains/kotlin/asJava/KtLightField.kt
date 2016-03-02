@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>
 
@@ -41,7 +42,9 @@ sealed class KtLightFieldImpl(
 
     override fun getName() = delegate.name
 
-    override fun getNameIdentifier() = delegate.nameIdentifier
+    private val _lightIdentifier = KtLightIdentifier(this, origin as? KtNamedDeclaration)
+
+    override fun getNameIdentifier() = _lightIdentifier
 
     override fun getDocComment() = delegate.docComment
 
