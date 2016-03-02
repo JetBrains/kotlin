@@ -538,6 +538,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("orWithNewLine.java")
+        public void testOrWithNewLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/orWithNewLine.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("plus.java")
         public void testPlus() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/plus.java");

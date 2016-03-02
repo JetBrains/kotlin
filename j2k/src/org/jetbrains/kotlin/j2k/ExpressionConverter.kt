@@ -614,13 +614,14 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitPolyadicExpression(expression: PsiPolyadicExpression) {
-        val commentsAndSpacesInheritance = CommentsAndSpacesInheritance.LINE_BREAKS
         val args = expression.operands.map {
-            codeConverter.convertExpression(it, expression.type).assignPrototype(it, commentsAndSpacesInheritance)
+            codeConverter.convertExpression(it, expression.type).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS)
         }
         val operators = expression.operands.mapNotNull {
             expression.getTokenBeforeOperand(it)?.let {
-                Operator(it.tokenType).assignPrototype(it, commentsAndSpacesInheritance)
+                val operator = Operator(it.tokenType)
+                val commentsAndSpacesInheritance = if (operator.acceptLineBreakBefore()) CommentsAndSpacesInheritance.LINE_BREAKS else CommentsAndSpacesInheritance.NO_SPACES
+                operator.assignPrototype(it, commentsAndSpacesInheritance)
             }
         }
 
