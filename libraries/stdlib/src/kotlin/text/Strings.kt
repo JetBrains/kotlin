@@ -1187,17 +1187,30 @@ private fun computePrefixFunction(pattern: CharSequence): IntArray {
 }
 
 /**
- * Returns a list of indices where the pattern occurs in this String. This method
+ * Returns a sequence of indices where the char occurs in this CharSequence.
+ *
+ * @param [char] The character to look for in the string
+ * @param [ignoreCase] If true, characters are matched even if one is upper and the other is
+ *                 lower case
+ *
+ * @return A list of indices where the supplied [char] occurs in the text.
+ */
+public fun CharSequence.occurrencesOf(char: Char, ignoreCase: Boolean = false): Sequence<Int> {
+    return indices.asSequence().filter { this[it].equals(char, ignoreCase) }
+}
+
+/**
+ * Returns a sequence of indices where the pattern occurs in this CharSequence. This method
  * searches character by character and thus does not support regular expressions
  * as input for the pattern.
  * For a pattern longer than the text, an empty sequence is returned. If the pattern
- * is empty, all indices are matched.
+ * is empty, all indices plus an empty occurrence at the end are matched.
  *
  * @param [pattern] The pattern to look for in this String. Regular expressions
  *                 are not supported
  * @param [ignoreCase] If true, characters are matched even if one is upper and the other is
  *                 lower case
- * @param [matchOverlapping] If true, also match overlapping occurences.
+ * @param [matchOverlapping] If true, also match overlapping occurrences.
  *
  * @return A list of indices where the supplied [pattern] starts in the text.
  */
@@ -1208,11 +1221,11 @@ public fun CharSequence.occurrencesOf(pattern: CharSequence, ignoreCase: Boolean
     }
 
     if (pattern.isEmpty()) {
-        return indices.asSequence()
+        return (0..length).asSequence()
     }
 
     if (pattern.length == 1) {
-        return indices.asSequence().filter { this[it].equals(pattern[0], ignoreCase) }
+        return occurrencesOf(pattern[0], ignoreCase)
     }
 
     // Non-trivial pattern matching, perform computation

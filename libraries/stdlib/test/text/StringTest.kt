@@ -727,10 +727,16 @@ class StringTest {
         // Special character test
         assertEquals("multi\nline\nstring\nmulti".occurrencesOf("multi").toList(), listOf(0, 18))
 
-        // Single character test
+        // Single character test as string
         assertEquals("aabA".occurrencesOf("a").toList(), listOf(0, 1))
         assertEquals("aabA".occurrencesOf("a", ignoreCase = true).toList(), listOf(0, 1, 3))
         assertEquals("aabA".occurrencesOf("A", ignoreCase = true).toList(), listOf(0, 1, 3))
+
+        // Single character test as character
+        assertEquals("aabA".occurrencesOf('a').toList(), listOf(0, 1))
+        assertEquals("aabA".occurrencesOf('a', ignoreCase = true).toList(), listOf(0, 1, 3))
+        assertEquals("aabA".occurrencesOf('A', ignoreCase = true).toList(), listOf(0, 1, 3))
+
         // Big and small theta
         assertEquals("\u0398\u0398\u0398".occurrencesOf("\u0398").toList(), listOf(0, 1, 2))
         assertEquals("\u03b8\u0398\u0398".occurrencesOf("\u0398").toList(), listOf(1, 2))
@@ -738,9 +744,9 @@ class StringTest {
 
         // Early return test
         assertEquals("z".occurrencesOf("abc").count(), 0)
-        assertEquals("abc".occurrencesOf("").toList(), listOf(0, 1, 2))
+        assertEquals("abc".occurrencesOf("").toList(), listOf(0, 1, 2, 3))
 
-        // Tests for non-overlappning option
+        // Tests for non-overlapping option
         assertEquals("Abaabaaababac".occurrencesOf("abaa", matchOverlapping = false).toList(), listOf(3))
         assertEquals("Abaabaaababac".occurrencesOf("abaa", ignoreCase = true, matchOverlapping = false).toList(), listOf(0))
     }
