@@ -19,12 +19,10 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.light.LightClass
-import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
@@ -57,6 +55,8 @@ open class KtLightClassForExplicitDeclaration(
         protected val classOrObject: KtClassOrObject)
 : KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private var delegate: PsiClass? = null
+
+    private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
     private fun getLocalClassParent(): PsiElement? {
         fun getParentByPsiMethod(method: PsiMethod?, name: String?, forceMethodWrapping: Boolean): PsiElement? {
@@ -384,6 +384,8 @@ open class KtLightClassForExplicitDeclaration(
 
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
+
+    override fun getNameIdentifier() = lightIdentifier
 
     companion object {
         private val JAVA_API_STUB = Key.create<CachedValue<WithFileStubAndExtraDiagnostics>>("JAVA_API_STUB")

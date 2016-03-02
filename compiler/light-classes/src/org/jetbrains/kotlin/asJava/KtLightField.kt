@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 interface KtLightField : PsiField, KtLightDeclaration<KtDeclaration, PsiField>
 
@@ -34,6 +35,8 @@ sealed class KtLightFieldImpl(
         private val delegate: PsiField,
         private val containingClass: KtLightClass
 ) : LightElement(delegate.manager, KotlinLanguage.INSTANCE), KtLightField {
+    private val lightIdentifier = KtLightIdentifier(this, origin as? KtNamedDeclaration)
+
     @Throws(IncorrectOperationException::class)
     override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
 
@@ -41,7 +44,7 @@ sealed class KtLightFieldImpl(
 
     override fun getName() = delegate.name
 
-    override fun getNameIdentifier() = delegate.nameIdentifier
+    override fun getNameIdentifier() = lightIdentifier
 
     override fun getDocComment() = delegate.docComment
 

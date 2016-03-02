@@ -38,6 +38,8 @@ sealed class KtLightMethodImpl(
 ) : LightMethod(delegate.manager, delegate, containingClass), KtLightMethod {
     private val origin = lightMethodOrigin?.originalElement as? KtDeclaration
 
+    private val lightIdentifier = KtLightIdentifier(this, origin as? KtNamedDeclaration)
+
     override fun getContainingClass(): KtLightClass = super.getContainingClass() as KtLightClass
 
     private val paramsList: CachedValue<PsiParameterList> by lazy {
@@ -111,6 +113,8 @@ sealed class KtLightMethodImpl(
     private val _modifierList by lazy { KtLightModifierList(delegate.modifierList, this) }
 
     override fun getModifierList() = _modifierList
+
+    override fun getNameIdentifier() = lightIdentifier
 
     override fun getParameterList() = paramsList.value
 

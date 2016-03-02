@@ -41,6 +41,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     private final PsiParameter delegate;
     private final int index;
     private final KtLightMethod method;
+    private final KtLightIdentifier lightIdentifier;
 
     public KtLightParameter(final PsiParameter delegate, int index, KtLightMethod method) {
         super(getName(delegate, index), delegate.getType(), method, KotlinLanguage.INSTANCE);
@@ -55,6 +56,8 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
                 return delegate.getModifierList();
             }
         };
+
+        lightIdentifier = new KtLightIdentifier(this, getOrigin());
     }
 
     @NotNull
@@ -139,5 +142,10 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
     @Override
     public String getText() {
         return "";
+    }
+
+    @Override
+    public PsiIdentifier getNameIdentifier() {
+        return lightIdentifier;
     }
 }
