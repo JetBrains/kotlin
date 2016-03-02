@@ -1185,12 +1185,106 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testTryBody() = doFunTest(
+            """
+            try<caret>
+            """
+            ,
+            """
+            try {
+                <caret>
+            }
+            """
+    )
+
+    fun testCatchBody() = doFunTest(
+            """
+            try {
+            } catch(e: Exception) <caret>
+            """
+            ,
+            """
+            try {
+            } catch(e: Exception) {
+                <caret>
+            }${" "}
+            """
+    )
+
+    fun testCatchParameter1() = doFunTest(
+            """
+            try {
+            } catch<caret>
+            """
+            ,
+            """
+            try {
+            } catch(<caret>) {
+            }
+            """
+    )
+
+    fun testCatchParameter2() = doFunTest(
+            """
+            try {
+            } catch(<caret>
+            """
+            ,
+            """
+            try {
+            } catch(<caret>) {
+            }
+            """
+    )
+
+    fun testCatchParameter3() = doFunTest(
+            """
+            try {
+            } catch(<caret> {}
+            """
+            ,
+            """
+            try {
+            } catch(<caret>) {
+            }
+            """
+    )
+
+    fun testCatchParameter4() = doFunTest(
+            """
+            try {
+            } catch(e: Exception<caret>
+            """
+            ,
+            """
+            try {
+            } catch(e: Exception) {
+                <caret>
+            }
+            """
+    )
+    fun testFinallyBody() = doFunTest(
+            """
+            try {
+            } catch(e: Exception) {
+            } finally<caret>
+            """
+            ,
+            """
+            try {
+            } catch(e: Exception) {
+            } finally {
+                <caret>
+            }
+            """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----\n${this.trimIndent()}\n//----"
             val withIndent = bodyText.prependIndent("    ")
 
-            return "fun method() {\n${withIndent}\n}"
+            return "fun method() {\n$withIndent\n}"
         }
 
         doTest(before.withFunContext(), after.withFunContext())

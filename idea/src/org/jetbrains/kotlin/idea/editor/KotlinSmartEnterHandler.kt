@@ -49,7 +49,12 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 KotlinFunctionDeclarationBodyFixer(),
 
                 KotlinPropertySetterParametersFixer(),
-                KotlinPropertySetterBodyFixer()
+                KotlinPropertySetterBodyFixer(),
+
+                KotlinTryBodyFixer(),
+                KotlinCatchParameterFixer(),
+                KotlinCatchBodyFixer(),
+                KotlinFinallyBodyFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())
