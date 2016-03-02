@@ -57,7 +57,7 @@ abstract class BaseGradleIT {
             println("Stopping gradle daemon v$ver")
             val wrapperDir = File(resourcesRootFile, "GradleWrapper-$ver")
             val cmd = createGradleCommand(arrayListOf("-stop"))
-            createProcess(cmd, wrapperDir)
+            createProcess(cmd, wrapperDir).waitFor()
         }
 
         fun createProcess(cmd: List<String>, projectDir: File): Process {
