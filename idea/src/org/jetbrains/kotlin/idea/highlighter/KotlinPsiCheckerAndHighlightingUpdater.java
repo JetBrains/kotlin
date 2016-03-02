@@ -16,31 +16,13 @@
 
 package org.jetbrains.kotlin.idea.highlighter;
 
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection;
-import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtParameter;
 
 public class KotlinPsiCheckerAndHighlightingUpdater extends KotlinPsiChecker {
-    @Override
-    public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        try {
-            super.annotate(element, holder);
-            if (element instanceof KtFile) {
-                //noinspection StaticMethodReferencedViaSubclass
-                ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((KtFile) element, false);
-            }
-        }
-        catch (ProcessCanceledException e) {
-            ErrorDuringFileAnalyzeNotificationProviderKt.updateHighlightingResult((KtFile)element.getContainingFile(), false);
-            throw e;
-        }
-    }
-
     @Override
     protected boolean shouldSuppressUnusedParameter(@NotNull KtParameter parameter) {
         PsiElement grandParent = parameter.getParent().getParent();
