@@ -38,6 +38,9 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.*;
@@ -255,6 +258,29 @@ public final class StaticContext {
                 }
             };
 
+            Rule<JsName> localDeclarations = new Rule<JsName>() {
+                @Nullable
+                @Override
+                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!DescriptorUtils.isLocal(descriptor) || !DescriptorUtils.isClass(descriptor)) return null;
+
+                    List<String> parts = new ArrayList<String>();
+                    do {
+                        parts.add(descriptor.getName().asString());
+                        descriptor = descriptor.getContainingDeclaration();
+                    } while (!(descriptor instanceof ClassOrPackageFragmentDescriptor));
+
+                    Collections.reverse(parts);
+                    StringBuilder suggestedName = new StringBuilder(parts.get(0));
+                    for (int i = 1; i < parts.size(); ++i) {
+                        suggestedName.append('$').append(parts.get(i));
+                    }
+
+                    JsScope scope = getScopeForDescriptor(descriptor);
+                    return scope.declareFreshName(suggestedName.toString());
+                }
+            };
+
             Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
                 @Override
                 @Nullable
@@ -368,6 +394,7 @@ public final class StaticContext {
             };
 
             addRule(namesForDynamic);
+            addRule(localDeclarations);
             addRule(namesForStandardClasses);
             addRule(constructorOrCompanionObjectHasTheSameNameAsTheClass);
             addRule(propertyOrPropertyAccessor);
@@ -554,6 +581,9 @@ public final class StaticContext {
                         return null;
                     }
                     DeclarationDescriptor container = descriptor.getContainingDeclaration();
+                    if (container != null && !(container instanceof ClassDescriptor)) {
+                        container = DescriptorUtils.getContainingClass(container);
+                    }
                     if (container == null) {
                         return null;
                     }
@@ -574,6 +604,22 @@ public final class StaticContext {
                 }
             };
 
+            Rule<JsExpression> localClassesHavePackageQualifier = new Rule<JsExpression>() {
+                @Nullable
+                @Override
+                public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!DescriptorUtils.isLocal(descriptor) || !(descriptor instanceof ClassDescriptor)) return null;
+
+                    descriptor = descriptor.getContainingDeclaration();
+                    while (descriptor != null && !(descriptor instanceof ClassOrPackageFragmentDescriptor)) {
+                        descriptor = descriptor.getContainingDeclaration();
+                    }
+                    if (!(descriptor instanceof PackageFragmentDescriptor)) return null;
+
+                    return getQualifiedReference(descriptor);
+                }
+            };
+
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorOrCompanionObjectHasTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
@@ -581,6 +627,7 @@ public final class StaticContext {
             addRule(nativeObjectsHaveNativePartOfFullQualifier);
             addRule(staticMembersHaveContainerQualifier);
             addRule(nestedClassesHaveContainerQualifier);
+            addRule(localClassesHavePackageQualifier);
         }
     }
 
