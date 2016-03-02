@@ -34,5 +34,4 @@ repositories {
 
 dependencies {
     compile  'org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT'
-    compile  'org.jetbrains.kotlin:kotlin-test:0.1-SNAPSHOT'
 }
