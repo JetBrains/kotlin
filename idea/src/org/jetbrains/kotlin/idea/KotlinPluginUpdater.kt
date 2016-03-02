@@ -77,8 +77,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     private val INITIAL_UPDATE_DELAY = 5000L
     private var updateDelay = INITIAL_UPDATE_DELAY
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
-    @Volatile private var checkQueued = false
     private val notificationGroup = NotificationGroup("Kotlin plugin updates",  NotificationDisplayType.STICKY_BALLOON, true)
+
+    @Volatile private var checkQueued = false
+    @Volatile private var lastStatus: PluginUpdateStatus? = null
 
     fun kotlinFileEdited() {
         if (ApplicationManager.getApplication().isUnitTestMode) return
@@ -96,7 +98,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
     }
 
-    fun queueUpdateCheck(callback: (PluginUpdateStatus) -> Boolean) {
+    private fun queueUpdateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         ApplicationManager.getApplication().assertIsDispatchThread()
         if (!checkQueued) {
             checkQueued = true
@@ -125,6 +127,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
             updateStatus = PluginUpdateStatus.fromException("Kotlin plugin update check failed", e)
         }
 
+        lastStatus = updateStatus
         checkQueued = false
 
         if (updateStatus !is PluginUpdateStatus.CheckFailed) {
@@ -144,7 +147,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
     }
 
-    fun checkUpdatesInMainRepository(): PluginUpdateStatus {
+    private fun checkUpdatesInMainRepository(): PluginUpdateStatus {
         val buildNumber = ApplicationInfo.getInstance().build.asString()
         val currentVersion = KotlinPluginUtil.getPluginVersion()
         val os = URLEncoder.encode(SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION, CharsetToolkit.UTF8)
