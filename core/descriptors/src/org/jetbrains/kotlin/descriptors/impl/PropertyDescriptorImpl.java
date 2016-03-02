@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.utils.SmartSet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
@@ -210,7 +213,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     @Nullable
-    private PropertyDescriptor doSubstitute(
+    protected PropertyDescriptor doSubstitute(
             @NotNull TypeSubstitutor originalSubstitutor,
             @NotNull DeclarationDescriptor newOwner,
             @NotNull Modality newModality,
@@ -322,19 +325,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @Nullable PropertyDescriptor original,
             @NotNull Kind kind
     ) {
-        return new PropertyDescriptorImpl(newOwner, original,
-                                          getAnnotations(), newModality, newVisibility,
-                                          isVar(), getName(), kind, SourceElement.NO_SOURCE, isLateInit(), isConst());
-    }
-
-    @NotNull
-    private static Visibility convertVisibility(Visibility orig, Visibility candidate) {
-        if (candidate == Visibilities.INHERITED) {
-            return candidate;
-        }
-
-        Integer result = Visibilities.compare(orig, candidate);
-        return result != null && result < 0 ? candidate : orig;
+        return new PropertyDescriptorImpl(
+                newOwner, original, getAnnotations(), newModality, newVisibility, isVar(), getName(), kind, SourceElement.NO_SOURCE,
+                isLateInit(), isConst()
+        );
     }
 
     @Override

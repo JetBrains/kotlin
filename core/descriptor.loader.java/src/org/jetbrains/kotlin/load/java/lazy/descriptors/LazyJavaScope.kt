@@ -265,12 +265,12 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     private fun createPropertyDescriptor(field: JavaField): PropertyDescriptorImpl {
         val isVar = !field.isFinal
-        val visibility = field.visibility
         val annotations = c.resolveAnnotations(field)
-        val propertyName = field.name
 
-        return JavaPropertyDescriptor(ownerDescriptor, annotations, Modality.FINAL, visibility, isVar, propertyName,
-                                      c.components.sourceElementFactory.source(field), /* original = */ null, /*isConst= */ field.isFinalStatic)
+        return JavaPropertyDescriptor.create(
+                ownerDescriptor, annotations, Modality.FINAL, field.visibility, isVar, field.name,
+                c.components.sourceElementFactory.source(field), /* isConst = */ field.isFinalStatic
+        )
     }
 
     private val JavaField.isFinalStatic: Boolean

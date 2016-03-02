@@ -385,9 +385,9 @@ class LazyJavaClassMemberScope(
     ): JavaPropertyDescriptor {
         val annotations = c.resolveAnnotations(method)
 
-        val propertyDescriptor = JavaPropertyDescriptor(
-                ownerDescriptor, annotations, modality, method.getVisibility(),
-                /* isVar = */ false, method.name, c.components.sourceElementFactory.source(method), /* original */ null,
+        val propertyDescriptor = JavaPropertyDescriptor.create(
+                ownerDescriptor, annotations, modality, method.visibility,
+                /* isVar = */ false, method.name, c.components.sourceElementFactory.source(method),
                 /* isStaticFinal = */ false
         )
 
@@ -419,10 +419,9 @@ class LazyJavaClassMemberScope(
             "for getter is ${getterMethod.modality}, but for setter is ${setterMethod?.modality}"
         }
 
-        val propertyDescriptor = JavaPropertyDescriptor(
+        val propertyDescriptor = JavaPropertyDescriptor.create(
                 ownerDescriptor, Annotations.EMPTY, getterMethod.modality, getterMethod.visibility,
                 /* isVar = */ setterMethod != null, overriddenProperty.name, getterMethod.source,
-                /* original */ null,
                 /* isStaticFinal = */ false
         )
 
