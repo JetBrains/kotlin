@@ -4428,6 +4428,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 }
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/specialBuiltIns")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SpecialBuiltIns extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInSpecialBuiltIns() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/specialBuiltIns"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("getMembersOfStandardJavaClasses.kt")
+            public void testGetMembersOfStandardJavaClasses() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/specialBuiltIns/getMembersOfStandardJavaClasses.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/regressions")

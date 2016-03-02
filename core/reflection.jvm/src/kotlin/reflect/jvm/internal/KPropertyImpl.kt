@@ -25,6 +25,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KotlinReflectionInternalError
 
 internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
     val javaField: Field?
@@ -98,9 +99,9 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
         }
         return false
     }
+
     fun isJvmStaticProperty() =
             property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
-
 
     fun isNotNullProperty() =
             !TypeUtils.isNullableType(property.descriptor.type)
@@ -149,6 +150,10 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
         }
         is JvmPropertySignature.JavaField -> {
             computeFieldCaller(jvmSignature.field)
+        }
+        is JvmPropertySignature.JavaMethodProperty -> {
+            if (!isGetter) throw KotlinReflectionInternalError("Setter requested for special built-in $this")
+            FunctionCaller.InstanceMethod(jvmSignature.method)
         }
     }
 }

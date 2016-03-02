@@ -63,10 +63,7 @@ internal sealed class JvmFunctionSignature {
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {
-        override fun asString(): String =
-                method.name +
-                method.parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")") { it.desc } +
-                method.returnType.desc
+        override fun asString(): String = method.signature
     }
 
     class JavaConstructor(val constructor: Constructor<*>) : JvmFunctionSignature() {
@@ -132,6 +129,10 @@ internal sealed class JvmPropertySignature {
         override fun asString(): String = string
     }
 
+    class JavaMethodProperty(val method: Method) : JvmPropertySignature() {
+        override fun asString(): String = method.signature
+    }
+
     class JavaField(val field: Field) : JvmPropertySignature() {
         override fun asString(): String =
                 JvmAbi.getterName(field.name) +
@@ -139,6 +140,11 @@ internal sealed class JvmPropertySignature {
                 field.type.desc
     }
 }
+
+private val Method.signature: String
+    get() = name +
+            parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")") { it.desc } +
+            returnType.desc
 
 internal object RuntimeTypeMapper {
     fun mapSignature(possiblySubstitutedFunction: FunctionDescriptor): JvmFunctionSignature {
@@ -165,7 +171,7 @@ internal object RuntimeTypeMapper {
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
                 throw KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
-                        "No metadata found for $function")
+                                                    "No metadata found for $function")
             }
             is JavaMethodDescriptor -> {
                 val method = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member ?:
@@ -184,21 +190,25 @@ internal object RuntimeTypeMapper {
     }
 
     fun mapPropertySignature(possiblyOverriddenProperty: PropertyDescriptor): JvmPropertySignature {
-        val property = DescriptorUtils.unwrapFakeOverride(possiblyOverriddenProperty)
+        val property = DescriptorUtils.unwrapFakeOverride(possiblyOverriddenProperty).original
         if (property is DeserializedPropertyDescriptor) {
             val proto = property.proto
             if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
-                throw KotlinReflectionInternalError("No metadata found for $property")
+                // If this property has no JVM signature, it must be from built-ins
+                throw KotlinReflectionInternalError("Reflection on built-in Kotlin types is not yet fully supported. " +
+                                                    "No metadata found for $property")
             }
             return JvmPropertySignature.KotlinProperty(
                     property, proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver, property.typeTable
             )
         }
         else if (property is JavaPropertyDescriptor) {
-            val field = ((property.source as? JavaSourceElement)?.javaElement as? ReflectJavaField)?.member ?:
-                         throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property")
-
-            return JvmPropertySignature.JavaField(field)
+            val element = (property.source as? JavaSourceElement)?.javaElement
+            when (element) {
+                is ReflectJavaField -> return JvmPropertySignature.JavaField(element.member)
+                is ReflectJavaMethod -> return JvmPropertySignature.JavaMethodProperty(element.member)
+                else -> throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property (source = $element)")
+            }
         }
         else throw KotlinReflectionInternalError("Unknown origin of $property (${property.javaClass})")
     }

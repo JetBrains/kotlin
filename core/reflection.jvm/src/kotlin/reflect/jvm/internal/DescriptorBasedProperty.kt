@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.Field
-import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
-import kotlin.reflect.jvm.internal.JvmPropertySignature.KotlinProperty
+import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 
 internal abstract class DescriptorBasedProperty<out R> protected constructor(
         override val container: KDeclarationContainerImpl,
@@ -70,6 +69,7 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
                 }
             }
             is JavaField -> jvmSignature.field
+            is JavaMethodProperty -> null
         }
     }
 
