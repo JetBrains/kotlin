@@ -122,7 +122,11 @@ object J2KPostProcessingRegistrar {
                 val tElement = element as TElement
                 if (intention.applicabilityRange(tElement) == null) return null
                 if (!additionalChecker(tElement)) return null
-                return { intention.applyTo(element, null) }
+                return {
+                    if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
+                        intention.applyTo(element, null)
+                    }
+                }
             }
         })
     }
