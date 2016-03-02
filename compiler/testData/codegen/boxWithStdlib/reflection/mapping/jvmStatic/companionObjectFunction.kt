@@ -1,11 +1,11 @@
-import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.*
 import kotlin.test.*
 
 class C {
     companion object {
-        @static fun foo(s: String): Int = s.length
+        @JvmStatic
+        fun foo(s: String): Int = s.length
     }
 }
 

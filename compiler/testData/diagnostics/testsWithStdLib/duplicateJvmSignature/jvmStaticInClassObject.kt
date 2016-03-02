@@ -1,5 +1,3 @@
-import kotlin.jvm.JvmStatic
-
 open class Base {
     fun foo() {}
 }

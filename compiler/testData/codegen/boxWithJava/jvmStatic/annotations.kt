@@ -1,6 +1,5 @@
 // FILE: Test.java
 
-import java.lang.String;
 import java.lang.annotation.Annotation;
 
 class Test {
@@ -30,8 +29,6 @@ class Test {
 }
 
 // FILE: test.kt
-
-import kotlin.jvm.JvmStatic
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class testAnnotation

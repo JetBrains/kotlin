@@ -1,4 +1,3 @@
-import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.jvm.javaType
 import kotlin.test.assertEquals
@@ -6,7 +5,8 @@ import kotlin.test.assertEquals
 class A(private var foo: String)
 
 object O {
-    private @static var bar: String = ""
+    @JvmStatic
+    private var bar: String = ""
 }
 
 fun box(): String {

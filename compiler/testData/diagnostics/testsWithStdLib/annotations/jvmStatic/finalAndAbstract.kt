@@ -1,6 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-import kotlin.jvm.JvmStatic
-
 abstract class A {
 
     open fun a() {}

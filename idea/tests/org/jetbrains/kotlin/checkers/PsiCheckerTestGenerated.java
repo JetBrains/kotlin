@@ -175,6 +175,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("JvmStaticUsagesRuntime.kt")
+        public void testJvmStaticUsagesRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/JvmStaticUsagesRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LocalObjects.kt")
         public void testLocalObjects() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/LocalObjects.kt");
@@ -232,12 +238,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PackageQualified.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("PlatformStaticUsagesRuntime.kt")
-        public void testPlatformStaticUsagesRuntime() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PlatformStaticUsagesRuntime.kt");
             doTest(fileName);
         }
 

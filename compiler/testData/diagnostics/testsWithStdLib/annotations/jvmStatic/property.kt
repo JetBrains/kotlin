@@ -1,6 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-import kotlin.jvm.JvmStatic
-
 open class B {
     public open val base1 : Int = 1
     public open val base2 : Int = 1

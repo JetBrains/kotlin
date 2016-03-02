@@ -20,8 +20,6 @@ class Test {
 
 // FILE: enumCompanionObject.kt
 
-import kotlin.jvm.JvmStatic
-
 enum class A {
     ;
     companion object {

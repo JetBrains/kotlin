@@ -1,7 +1,6 @@
 // FULL_JDK
 
 import java.lang.reflect.ParameterizedType
-import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.*
 import kotlin.reflect.jvm.javaType
 import kotlin.test.assertEquals
@@ -9,7 +8,8 @@ import kotlin.test.assertEquals
 class A(private var foo: List<String>)
 
 object O {
-    private @static var bar: List<String> = listOf()
+    @JvmStatic
+    private var bar: List<String> = listOf()
 }
 
 fun topLevel(): List<String> = listOf()

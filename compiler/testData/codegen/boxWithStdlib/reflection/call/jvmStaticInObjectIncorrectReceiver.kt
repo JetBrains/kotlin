@@ -1,9 +1,12 @@
-import kotlin.jvm.JvmStatic as static
-
 object Obj {
-    @static fun foo(s: String) {}
-    @static fun bar() {}
-    @static fun sly(obj: Obj) {}
+    @JvmStatic
+    fun foo(s: String) {}
+
+    @JvmStatic
+    fun bar() {}
+
+    @JvmStatic
+    fun sly(obj: Obj) {}
 
     operator fun get(name: String) = Obj::class.members.single { it.name == name }
 }

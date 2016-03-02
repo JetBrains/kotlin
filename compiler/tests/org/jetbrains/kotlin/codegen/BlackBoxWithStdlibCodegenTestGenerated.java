@@ -3324,6 +3324,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("jvmStatic.kt")
+            public void testJvmStatic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/jvmStatic.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("jvmStaticInObjectIncorrectReceiver.kt")
+            public void testJvmStaticInObjectIncorrectReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/jvmStaticInObjectIncorrectReceiver.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("localClassMember.kt")
             public void testLocalClassMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/localClassMember.kt");
@@ -3333,18 +3345,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("memberOfGenericClass.kt")
             public void testMemberOfGenericClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/memberOfGenericClass.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("platformStatic.kt")
-            public void testPlatformStatic() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/platformStatic.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("platformStaticInObjectIncorrectReceiver.kt")
-            public void testPlatformStaticInObjectIncorrectReceiver() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/platformStaticInObjectIncorrectReceiver.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -3405,6 +3405,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("jvmStaticInObject.kt")
+            public void testJvmStaticInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/callBy/jvmStaticInObject.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("manyArgumentsOnlyOneDefault.kt")
             public void testManyArgumentsOnlyOneDefault() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/callBy/manyArgumentsOnlyOneDefault.kt");
@@ -3432,12 +3438,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("ordinaryMethodIsInvokedWhenNoDefaultValuesAreUsed.kt")
             public void testOrdinaryMethodIsInvokedWhenNoDefaultValuesAreUsed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/callBy/ordinaryMethodIsInvokedWhenNoDefaultValuesAreUsed.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("platformStaticInObject.kt")
-            public void testPlatformStaticInObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/callBy/platformStaticInObject.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -3981,23 +3981,23 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic")
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/jvmStatic")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class PlatformStatic extends AbstractBlackBoxCodegenTest {
-                public void testAllFilesPresentInPlatformStatic() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+            public static class JvmStatic extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInJvmStatic() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/mapping/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("companionObjectFunction.kt")
                 public void testCompanionObjectFunction() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic/companionObjectFunction.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/jvmStatic/companionObjectFunction.kt");
                     doTestWithStdlib(fileName);
                 }
 
                 @TestMetadata("objectFunction.kt")
                 public void testObjectFunction() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic/objectFunction.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/jvmStatic/objectFunction.kt");
                     doTestWithStdlib(fileName);
                 }
             }
@@ -4326,9 +4326,9 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("privatePlatformStaticVarInObject.kt")
-            public void testPrivatePlatformStaticVarInObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privatePlatformStaticVarInObject.kt");
+            @TestMetadata("privateJvmStaticVarInObject.kt")
+            public void testPrivateJvmStaticVarInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateJvmStaticVarInObject.kt");
                 doTestWithStdlib(fileName);
             }
 

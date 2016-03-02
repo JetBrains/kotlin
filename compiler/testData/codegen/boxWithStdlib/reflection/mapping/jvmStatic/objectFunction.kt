@@ -1,10 +1,10 @@
-import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
 object O {
-    @static fun foo(s: String): Int = s.length
+    @JvmStatic
+    fun foo(s: String): Int = s.length
 }
 
 fun box(): String {

@@ -22,8 +22,6 @@ class Test {
 
 // FILE: simpleObject.kt
 
-import kotlin.jvm.JvmStatic
-
 object A {
 
     val b: String = "OK"

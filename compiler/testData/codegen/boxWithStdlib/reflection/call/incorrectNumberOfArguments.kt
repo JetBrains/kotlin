@@ -1,4 +1,3 @@
-import kotlin.jvm.JvmStatic as static
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
@@ -11,9 +10,11 @@ class A(private var bar: String = "") {
 }
 
 object O {
-    private @static var baz: String = ""
+    @JvmStatic
+    private var baz: String = ""
 
-    @static fun getBaz() = (O::class.members.single { it.name == "baz" } as KMutableProperty<*>).apply { isAccessible = true }
+    @JvmStatic
+    fun getBaz() = (O::class.members.single { it.name == "baz" } as KMutableProperty<*>).apply { isAccessible = true }
 
     fun getGetBaz() = O::class.members.single { it.name == "getBaz" } as KFunction<*>
 }

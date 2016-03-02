@@ -1,4 +1,3 @@
-import kotlin.jvm.JvmStatic
 class A {
     <!WRONG_ANNOTATION_TARGET!>@JvmStatic<!> constructor() {}
     inner class B {

@@ -1,12 +1,12 @@
-import kotlin.jvm.JvmStatic as static
-
 object Obj {
-    @static fun foo() {}
+    @JvmStatic
+    fun foo() {}
 }
 
 class C {
     companion object {
-        @static fun bar() {}
+        @JvmStatic
+        fun bar() {}
     }
 }
 

@@ -1,6 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-import kotlin.jvm.JvmStatic
-
 class A {
     companion object {
         @JvmStatic fun a1() {
