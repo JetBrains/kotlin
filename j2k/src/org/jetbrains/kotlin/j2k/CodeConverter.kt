@@ -87,10 +87,15 @@ class CodeConverter(
                              isVal).assignPrototype(variable)
     }
 
-    fun convertExpression(expression: PsiExpression?, expectedType: PsiType?): Expression {
+    fun convertExpression(expression: PsiExpression?, expectedType: PsiType?, expectedNullability: Nullability? = null): Expression {
         if (expression == null) return Identifier.Empty
 
         var convertedExpression = convertExpression(expression)
+
+        if (convertedExpression.isNullable && expectedNullability != null && !expectedNullability.isNullable(settings)) {
+            convertedExpression = BangBangExpression.surroundIfNullable(convertedExpression)
+        }
+
         if (expectedType == null || expectedType == PsiType.VOID) return convertedExpression
 
         val actualType = expression.type ?: return convertedExpression

@@ -114,20 +114,18 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         val operationTokenType = expression.operationTokenType
 
+        val expectedNullability = if (operationTokenType in NON_NULL_OPERAND_OPS) Nullability.NotNull else null
+
         val leftOperandExpectedType = getOperandExpectedType(left, right, operationTokenType)
-        var leftConverted = codeConverter.convertExpression(left, leftOperandExpectedType)
+        var leftConverted = codeConverter.convertExpression(left, leftOperandExpectedType, expectedNullability)
         var rightConverted = codeConverter.convertExpression(
                 right,
                 if (leftOperandExpectedType == null)
                     getOperandExpectedType(right, left, operationTokenType)
                 else
-                    null
+                    null,
+                expectedNullability
         )
-
-        if (operationTokenType in NON_NULL_OPERAND_OPS) {
-            leftConverted = BangBangExpression.surroundIfNullable(leftConverted)
-            rightConverted = BangBangExpression.surroundIfNullable(rightConverted)
-        }
 
         if (operationTokenType == JavaTokenType.GTGTGT) {
             result = MethodCallExpression.buildNotNull(leftConverted, "ushr", listOf(rightConverted))
@@ -635,15 +633,16 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
 
         val resolved = expression.resolveMethod()
-        val parameters = resolved?.parameterList?.parameters
-        val expectedTypes = parameters?.map { it.type } ?: listOf()
+        val parameters = resolved?.parameterList?.parameters ?: arrayOf()
 
         val commentsAndSpacesInheritance = CommentsAndSpacesInheritance.LINE_BREAKS
 
-        return if (arguments.size == expectedTypes.size) {
+        return if (arguments.size == parameters.size) {
             arguments.mapIndexed { i, argument ->
-                val converted = codeConverter.convertExpression(argument, expectedTypes[i])
-                val result = if (parameters != null && i == arguments.lastIndex && parameters[i].isVarArgs && argument.type is PsiArrayType)
+                val expectedNullability = typeConverter.variableNullability(parameters[i])
+                val converted = codeConverter.convertExpression(argument, parameters[i].type, expectedNullability)
+
+                val result = if (i == arguments.lastIndex && parameters[i].isVarArgs && argument.type is PsiArrayType)
                     StarExpression(converted)
                 else
                     converted
