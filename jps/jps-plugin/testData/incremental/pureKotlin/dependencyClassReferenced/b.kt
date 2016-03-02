@@ -1,6 +1,6 @@
 package test
 
-fun b(ref: kotlin.test.Asserter) {
+fun b(ref: List<String>) {
     a(ref)
     println(":)")
 }
