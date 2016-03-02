@@ -148,7 +148,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         AS(AS_KEYWORD, AS_SAFE) {
             @Override
             public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-                parser.myJetParsing.parseTypeRef();
+                parser.myKotlinParsing.parseTypeRef();
                 return BINARY_WITH_TYPE;
             }
 
@@ -167,7 +167,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             @Override
             public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
-                    parser.myJetParsing.parseTypeRef();
+                    parser.myKotlinParsing.parseTypeRef();
                     return IS_EXPRESSION;
                 }
 
@@ -257,11 +257,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     }
 
 
-    private final KotlinParsing myJetParsing;
+    private final KotlinParsing myKotlinParsing;
 
-    public KotlinExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, KotlinParsing jetParsing) {
+    public KotlinExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, KotlinParsing kotlinParsing) {
         super(builder);
-        myJetParsing = jetParsing;
+        myKotlinParsing = kotlinParsing;
     }
 
     /*
@@ -337,7 +337,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (at(AT)) {
             if (!parseLocalDeclaration()) {
                 PsiBuilder.Marker expression = mark();
-                myJetParsing.parseAnnotations(DEFAULT);
+                myKotlinParsing.parseAnnotations(DEFAULT);
                 parsePrefixExpression();
                 expression.done(ANNOTATED_EXPRESSION);
             }
@@ -375,8 +375,8 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         if (!at(COLONCOLON)) {
             PsiBuilder.Marker typeReference = mark();
-            myJetParsing.parseUserType();
-            typeReference = myJetParsing.parseNullableTypeSuffix(typeReference);
+            myKotlinParsing.parseUserType();
+            typeReference = myKotlinParsing.parseNullableTypeSuffix(typeReference);
             typeReference.done(TYPE_REFERENCE);
 
             if (!at(COLONCOLON)) {
@@ -396,7 +396,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             if (at(LT)) {
                 PsiBuilder.Marker typeArgumentList = mark();
-                if (myJetParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
+                if (myKotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
                     typeArgumentList.error("Type arguments are not allowed");
                 }
                 else {
@@ -494,7 +494,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
         else if (at(LT)) {
             PsiBuilder.Marker typeArgumentList = mark();
-            if (myJetParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
+            if (myKotlinParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
                 typeArgumentList.done(TYPE_ARGUMENT_LIST);
                 if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) parseValueArgumentList();
                 parseCallWithClosure();
@@ -559,7 +559,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private boolean parseAnnotatedLambda(boolean preferBlock) {
         PsiBuilder.Marker annotated = mark();
 
-        boolean wereAnnotations = myJetParsing.parseAnnotations(DEFAULT);
+        boolean wereAnnotations = myKotlinParsing.parseAnnotations(DEFAULT);
         PsiBuilder.Marker labeled = mark();
 
         boolean wasLabel = isAtLabelDefinitionOrMissingIdentifier();
@@ -837,9 +837,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advanceAt(LPAR);
 
             PsiBuilder.Marker property = mark();
-            myJetParsing.parseModifierList(DEFAULT, TokenSet.create(EQ, RPAR));
+            myKotlinParsing.parseModifierList(DEFAULT, TokenSet.create(EQ, RPAR));
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
-                myJetParsing.parseProperty(true);
+                myKotlinParsing.parseProperty(true);
                 property.done(PROPERTY);
             }
             else {
@@ -959,7 +959,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 error("Expecting a type");
             }
             else {
-                myJetParsing.parseTypeRef();
+                myKotlinParsing.parseTypeRef();
             }
             condition.done(WHEN_CONDITION_IS_PATTERN);
         }
@@ -1020,7 +1020,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decl = mark();
         KotlinParsing.ModifierDetector detector = new KotlinParsing.ModifierDetector();
-        myJetParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
+        myKotlinParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
         IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected());
 
@@ -1153,7 +1153,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             if (at(COLON)) {
                 advance(); // COLON
-                myJetParsing.parseTypeRef(TokenSet.create(ARROW, COMMA));
+                myKotlinParsing.parseTypeRef(TokenSet.create(ARROW, COMMA));
             }
             parameter.done(VALUE_PARAMETER);
 
@@ -1248,17 +1248,17 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         IElementType keywordToken = tt();
         IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD ||  keywordToken == INTERFACE_KEYWORD) {
-            declType = myJetParsing.parseClass(isEnum);
+            declType = myKotlinParsing.parseClass(isEnum);
         }
         else if (keywordToken == FUN_KEYWORD) {
-            declType = myJetParsing.parseFunction();
+            declType = myKotlinParsing.parseFunction();
         }
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            declType = myJetParsing.parseProperty(true);
+            declType = myKotlinParsing.parseProperty(true);
         }
         /*
         else if (keywordToken == TYPE_ALIAS_KEYWORD) {
-            declType = myJetParsing.parseTypeAlias();
+            declType = myKotlinParsing.parseTypeAlias();
         }
         */
         else if (keywordToken == OBJECT_KEYWORD) {
@@ -1274,7 +1274,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 return null;
             }
 
-            myJetParsing.parseObject(NameParsingMode.REQUIRED, true);
+            myKotlinParsing.parseObject(NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
         return declType;
@@ -1343,13 +1343,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 PsiBuilder.Marker parameter = mark();
 
                 if (!at(IN_KEYWORD)) {
-                    myJetParsing.parseModifierList(DEFAULT, TokenSet.create(IN_KEYWORD, RPAR, COLON));
+                    myKotlinParsing.parseModifierList(DEFAULT, TokenSet.create(IN_KEYWORD, RPAR, COLON));
                 }
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
 
                 if (at(LPAR)) {
-                    myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
+                    myKotlinParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
                     parameter.done(DESTRUCTURING_DECLARATION);
                 }
                 else {
@@ -1357,7 +1357,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                     if (at(COLON)) {
                         advance(); // COLON
-                        myJetParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
+                        myKotlinParsing.parseTypeRef(TokenSet.create(IN_KEYWORD));
                     }
                     parameter.done(VALUE_PARAMETER);
                 }
@@ -1420,7 +1420,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         advance(); // TRY_KEYWORD
 
-        myJetParsing.parseBlock();
+        myKotlinParsing.parseBlock();
 
         boolean catchOrFinally = false;
         while (at(CATCH_KEYWORD)) {
@@ -1436,7 +1436,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 PsiBuilder.Marker parameters = mark();
                 expect(LPAR, "Expecting '('", recoverySet);
                 if (!atSet(recoverySet)) {
-                    myJetParsing.parseValueParameter(/*typeRequired = */ true);
+                    myKotlinParsing.parseValueParameter(/*typeRequired = */ true);
                     expect(RPAR, "Expecting ')'", recoverySet);
                 }
                 else {
@@ -1446,7 +1446,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
 
             if (at(LBRACE)) {
-                myJetParsing.parseBlock();
+                myKotlinParsing.parseBlock();
             }
             else {
                 error("Expecting a block: { ... }");
@@ -1460,7 +1460,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             advance(); // FINALLY_KEYWORD
 
-            myJetParsing.parseBlock();
+            myKotlinParsing.parseBlock();
 
             finallyBlock.done(FINALLY);
         }
@@ -1690,7 +1690,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             myBuilder.disableNewlines();
             advance(); // LT
 
-            myJetParsing.parseTypeRef();
+            myKotlinParsing.parseTypeRef();
 
             if (at(GT)) {
                 advance(); // GT
@@ -1767,7 +1767,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();
-        myJetParsing.parseObject(NameParsingMode.PROHIBITED, false); // Body is not optional because of foo(object : A, B)
+        myKotlinParsing.parseObject(NameParsingMode.PROHIBITED, false); // Body is not optional because of foo(object : A, B)
         declaration.done(OBJECT_DECLARATION);
         literal.done(OBJECT_LITERAL);
     }
@@ -1780,7 +1780,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     @Override
     protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
-        return myJetParsing.create(builder);
+        return myKotlinParsing.create(builder);
     }
 
     private boolean interruptedWithNewLine() {
