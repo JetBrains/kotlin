@@ -12,17 +12,20 @@
     <option name="PACKAGE_NAME" value="" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="package" />
+    <option name="TEST_OBJECT" value="pattern" />
     <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -Xmx350m -XX:MaxPermSize=320m" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
     <option name="PASS_PARENT_ENVS" value="true" />
     <option name="TEST_SEARCH_SCOPE">
-      <value defaultName="singleModule" />
+      <value defaultName="moduleWithDependencies" />
     </option>
     <envs />
-    <patterns />
+    <patterns>
+      <pattern testClass="org.jetbrains.kotlin.idea.conversion.copy.*" />
+      <pattern testClass="org.jetbrains.kotlin.j2k.*" />
+    </patterns>
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />
       <option name="TRANSPORT" value="0" />
