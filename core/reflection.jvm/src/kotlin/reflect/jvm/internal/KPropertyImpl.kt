@@ -152,8 +152,12 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
             computeFieldCaller(jvmSignature.field)
         }
         is JvmPropertySignature.JavaMethodProperty -> {
-            if (!isGetter) throw KotlinReflectionInternalError("Setter requested for special built-in $this")
-            FunctionCaller.InstanceMethod(jvmSignature.method)
+            val method =
+                    if (isGetter) jvmSignature.getterMethod
+                    else jvmSignature.setterMethod ?: throw KotlinReflectionInternalError(
+                            "No source found for setter of Java method property: ${jvmSignature.getterMethod}"
+                    )
+            FunctionCaller.InstanceMethod(method)
         }
     }
 }

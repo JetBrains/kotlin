@@ -667,6 +667,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTest(fileName);
         }
 
+        @TestMetadata("overrideKotlinPropertyByJavaMethod.kt")
+        public void testOverrideKotlinPropertyByJavaMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/overrideKotlinPropertyByJavaMethod.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parametersHaveNoNames.kt")
         public void testParametersHaveNoNames() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/parametersHaveNoNames.kt");

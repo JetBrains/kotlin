@@ -129,8 +129,8 @@ internal sealed class JvmPropertySignature {
         override fun asString(): String = string
     }
 
-    class JavaMethodProperty(val method: Method) : JvmPropertySignature() {
-        override fun asString(): String = method.signature
+    class JavaMethodProperty(val getterMethod: Method, val setterMethod: Method?) : JvmPropertySignature() {
+        override fun asString(): String = getterMethod.signature
     }
 
     class JavaField(val field: Field) : JvmPropertySignature() {
@@ -206,7 +206,10 @@ internal object RuntimeTypeMapper {
             val element = (property.source as? JavaSourceElement)?.javaElement
             when (element) {
                 is ReflectJavaField -> return JvmPropertySignature.JavaField(element.member)
-                is ReflectJavaMethod -> return JvmPropertySignature.JavaMethodProperty(element.member)
+                is ReflectJavaMethod -> return JvmPropertySignature.JavaMethodProperty(
+                        element.member,
+                        ((property.setter?.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member
+                )
                 else -> throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property (source = $element)")
             }
         }
