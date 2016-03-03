@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.lang.reflect.Modifier
 import kotlin.reflect.KProperty
 

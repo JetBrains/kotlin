@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.lang.reflect.Modifier
 
 public class A {
@@ -19,7 +21,7 @@ public class A {
             return if (cond.isEmpty()) "OK" else cond.joinToString()
         }
 
-        return "EXCEPTION WAS NOT CATCHED"
+        return "EXCEPTION WAS NOT CAUGHT"
     }
 }
 

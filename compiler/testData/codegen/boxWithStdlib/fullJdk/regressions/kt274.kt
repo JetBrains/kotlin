@@ -1,4 +1,4 @@
-import kotlin.*
+// FULL_JDK
 
 fun box() : String {
     val vector = java.util.Vector<Int>()

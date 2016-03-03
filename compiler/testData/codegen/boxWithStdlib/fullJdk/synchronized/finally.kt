@@ -1,3 +1,5 @@
+// FULL_JDK
+
 fun box(): String {
     val obj = "" as java.lang.Object
 

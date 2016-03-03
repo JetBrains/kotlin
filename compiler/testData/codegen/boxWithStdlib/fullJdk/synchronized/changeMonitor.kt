@@ -1,3 +1,5 @@
+// FULL_JDK
+
 fun box(): String {
     var obj0 = "0" as java.lang.Object
     var obj1 = "1" as java.lang.Object

@@ -35,21 +35,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
-    @TestMetadata("compiler/testData/codegen/boxWithStdlib/againstMultifileStdlib")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AgainstMultifileStdlib extends AbstractBlackBoxCodegenTest {
-        public void testAllFilesPresentInAgainstMultifileStdlib() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/againstMultifileStdlib"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("useStdlib.kt")
-        public void testUseStdlib() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/againstMultifileStdlib/useStdlib.kt");
-            doTestWithStdlib(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1693,18 +1678,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
-        @TestMetadata("genericBackingFieldSignature.kt")
-        public void testGenericBackingFieldSignature() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/genericBackingFieldSignature.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("genericMethodSignature.kt")
-        public void testGenericMethodSignature() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/genericMethodSignature.kt");
-            doTestWithStdlib(fileName);
-        }
-
         @TestMetadata("ifInWhile.kt")
         public void testIfInWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/ifInWhile.kt");
@@ -1726,12 +1699,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("kt2423.kt")
         public void testKt2423() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/kt2423.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("kt2509.kt")
-        public void testKt2509() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/kt2509.kt");
             doTestWithStdlib(fileName);
         }
 
@@ -3825,6 +3792,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("genericBackingFieldSignature.kt")
+            public void testGenericBackingFieldSignature() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature/genericBackingFieldSignature.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("genericMethodSignature.kt")
+            public void testGenericMethodSignature() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature/genericMethodSignature.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("kt5112.kt")
             public void testKt5112() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature/kt5112.kt");
@@ -4534,6 +4513,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("Kt2495Test.kt")
         public void testKt2495Test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/regressions/Kt2495Test.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("kt2509.kt")
+        public void testKt2509() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/regressions/kt2509.kt");
             doTestWithStdlib(fileName);
         }
 

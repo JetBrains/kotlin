@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import javax.xml.parsers.DocumentBuilderFactory

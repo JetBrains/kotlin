@@ -1,3 +1,5 @@
+// FULL_JDK
+
 @file:JvmName("XYZ")
 import java.lang.reflect.Modifier
 

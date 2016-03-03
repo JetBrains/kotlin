@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.util.LinkedList
 
 fun ok1(): Boolean {

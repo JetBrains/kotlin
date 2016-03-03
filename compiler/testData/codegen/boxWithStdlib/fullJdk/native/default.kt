@@ -1,6 +1,6 @@
-package foo
+// FULL_JDK
 
-import kotlin.jvm.*
+package foo
 
 object ObjWithNative {
     external fun foo(x: Int = 1): Double

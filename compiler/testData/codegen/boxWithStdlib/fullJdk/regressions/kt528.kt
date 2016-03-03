@@ -1,3 +1,5 @@
+// FULL_JDK
+
 package mask
 
 import java.io.*

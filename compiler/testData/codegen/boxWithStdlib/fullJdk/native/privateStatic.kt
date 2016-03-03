@@ -1,4 +1,4 @@
-import kotlin.jvm.*
+// FULL_JDK
 
 class C {
     companion object {

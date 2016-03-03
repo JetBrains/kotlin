@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import kotlin.test.assertEquals
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type

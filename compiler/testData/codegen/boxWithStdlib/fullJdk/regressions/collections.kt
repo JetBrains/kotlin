@@ -1,3 +1,5 @@
+// FULL_JDK
+
 package collections
 
 import kotlin.test.assertEquals

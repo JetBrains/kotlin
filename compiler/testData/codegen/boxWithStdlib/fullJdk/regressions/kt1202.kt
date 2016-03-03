@@ -1,3 +1,5 @@
+// FULL_JDK
+
 package testeval
 
 import java.util.*

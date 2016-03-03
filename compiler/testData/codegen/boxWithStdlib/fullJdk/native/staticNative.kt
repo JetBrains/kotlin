@@ -1,6 +1,6 @@
-package foo
+// FULL_JDK
 
-import kotlin.jvm.*
+package foo
 
 class WithNative {
     companion object {

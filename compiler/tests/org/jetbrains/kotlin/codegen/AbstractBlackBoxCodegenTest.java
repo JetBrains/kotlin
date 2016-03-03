@@ -72,8 +72,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 FilesKt.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
         ) ? ConfigurationKind.NO_KOTLIN_REFLECT : ConfigurationKind.ALL;
 
+        TestJdkKind jdkKind = isFullJdkDirectiveDefined(FilesKt.readText(new File(filename), Charsets.UTF_8))
+                              ? TestJdkKind.FULL_JDK
+                              : TestJdkKind.MOCK_JDK;
+
         myEnvironment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                getTestRootDisposable(), configurationKind, getTestJdkKind(filename)
+                getTestRootDisposable(), configurationKind, jdkKind
         );
 
         blackBoxFileByFullPath(filename);
@@ -135,17 +139,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         });
 
         return javaFilePaths;
-    }
-
-    // NOTE: tests under fullJdk/ are run with FULL_JDK instead of MOCK_JDK
-    @NotNull
-    private static TestJdkKind getTestJdkKind(@NotNull String sourcePath) {
-        if (sourcePath.contains("compiler/testData/codegen/boxWithStdlib/fullJdk")) {
-            return TestJdkKind.FULL_JDK;
-        }
-
-        String content = FilesKt.readText(new File(sourcePath), Charsets.UTF_8);
-        return isFullJdkDirectiveDefined(content) ? TestJdkKind.FULL_JDK : TestJdkKind.MOCK_JDK;
     }
 
     private static boolean isFullJdkDirectiveDefined(@NotNull String content) {

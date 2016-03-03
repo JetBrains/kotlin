@@ -1,4 +1,4 @@
-import java.lang.Runtime
+// FULL_JDK
 
 fun box() : String {
     val processors = Runtime.getRuntime()!!.availableProcessors()

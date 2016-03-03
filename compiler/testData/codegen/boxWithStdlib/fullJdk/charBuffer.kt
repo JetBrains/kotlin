@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.nio.CharBuffer
 
 fun box(): String {

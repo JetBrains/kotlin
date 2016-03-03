@@ -1,3 +1,5 @@
+// FULL_JDK
+
 class C {
     companion object {
         val defaultGetter: Int = 1

@@ -1,3 +1,5 @@
+// FULL_JDK
+
 package foo
 
 import kotlin.jvm.*

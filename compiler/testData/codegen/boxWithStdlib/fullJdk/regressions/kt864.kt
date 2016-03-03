@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.io.*
 import java.util.*
 

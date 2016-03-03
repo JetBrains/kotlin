@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import sun.nio.cs.ext.Big5
 import sun.net.spi.nameservice.dns.DNSNameService
 import javax.crypto.Cipher

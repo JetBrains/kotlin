@@ -1,3 +1,5 @@
+// FULL_JDK
+
 import java.net.*
 
 fun String.decodeURI(encoding : String) : String? =

@@ -1,3 +1,5 @@
+// FULL_JDK
+
 fun testProperLineNumber(): String {
     var exceptionCount = 0;
     try {
@@ -7,7 +9,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = (e as java.lang.Throwable).getStackTrace()!!.get(1)
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:4" != actual) {
+        if ("infixCalls.kt:6" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++
@@ -20,7 +22,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:17" != actual) {
+        if ("infixCalls.kt:19" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++
@@ -32,7 +34,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:30" != actual) {
+        if ("infixCalls.kt:32" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++
