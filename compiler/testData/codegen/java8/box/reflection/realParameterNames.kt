@@ -1,3 +1,5 @@
+// WITH_REFLECT
+// JAVAC_OPTIONS: -parameters
 // FILE: J.java
 
 public class J {
@@ -7,7 +9,6 @@ public class J {
 }
 
 // FILE: K.kt
-// JAVAC_OPTIONS: -parameters
 
 import kotlin.test.assertEquals
 
