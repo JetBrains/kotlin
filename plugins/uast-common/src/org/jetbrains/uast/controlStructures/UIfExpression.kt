@@ -1,0 +1,49 @@
+/*
+ * Copyright 2000-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jetbrains.uast
+
+interface UIfExpression : UExpression {
+    val condition: UExpression
+    val thenBranch: UExpression?
+    val elseBranch: UExpression?
+    val isTernary: Boolean
+
+    override fun traverse(handler: UastHandler) {
+        condition.handleTraverse(handler)
+        thenBranch?.handleTraverse(handler)
+        elseBranch?.handleTraverse(handler)
+    }
+
+    override fun logString() = log("UIfExpression", condition, thenBranch, elseBranch)
+    override fun renderString() = buildString {
+        if (isTernary) {
+            append("(" + condition.renderString() + ")")
+            append(" ? ")
+            append("(" + (thenBranch?.renderString() ?: "<noexpr>") + ")")
+            append(" : ")
+            append("(" + (elseBranch?.renderString() ?: "<noexpr>") + ")")
+        } else {
+            append("if (${condition.renderString()}) ")
+            thenBranch?.let { append(it.renderString()) }
+            val elseBranch = elseBranch
+            if (elseBranch != null && elseBranch !is EmptyExpression) {
+                if (thenBranch !is UBlockExpression) append(" ")
+                append("else ")
+                append(elseBranch.renderString())
+            }
+        }
+    }
+}
