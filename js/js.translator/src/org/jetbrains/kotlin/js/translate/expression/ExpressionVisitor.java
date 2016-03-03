@@ -518,8 +518,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression,
-            @NotNull TranslationContext context) {
+    public JsNode visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, @NotNull TranslationContext context) {
         return ClassTranslator.generateObjectLiteral(expression.getObjectDeclaration(), context);
     }
 
@@ -569,8 +568,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     public JsNode visitClass(@NotNull KtClass klass, TranslationContext context) {
-        JsInvocation jsClass = ClassTranslator.generateClassCreation(klass, context);
-        DeclarationDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), klass);
+        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), klass);
+        JsObjectScope scope = new JsObjectScope(context.scope(), descriptor.toString(), "");
+        TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
+
+        JsInvocation jsClass = ClassTranslator.generateClassCreation(klass, classContext);
+
         JsName name = context.getNameForDescriptor(descriptor);
         return context.define(name, jsClass);
     }

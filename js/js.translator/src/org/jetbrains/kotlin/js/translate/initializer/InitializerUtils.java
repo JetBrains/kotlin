@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public final class InitializerUtils {
             @NotNull List<JsStatement> initializers,
             @NotNull TranslationContext context
     ) {
-        JsExpression value = ClassTranslator.generateObjectLiteral(declaration, context);
+        JsExpression value = ClassTranslator.generateObjectDeclaration(declaration, context);
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsExpression expression = assignment(new JsNameRef(descriptor.getName().asString(), JsLiteral.THIS), value);
         initializers.add(expression.makeStmt());
