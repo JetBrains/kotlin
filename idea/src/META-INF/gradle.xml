@@ -1,6 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinAndroidGradleModuleConfigurator"/>
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">

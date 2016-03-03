@@ -38,15 +38,11 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
         doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), new KotlinJavascriptMavenConfigurator());
     }
 
-    public void doTestAndroidGradle(@NotNull String path) throws Exception {
-        doTest(path, path.replace("before", "after"), new KotlinAndroidGradleModuleConfigurator());
-    }
-
     public void doTestGradle(@NotNull String path) throws Exception {
         doTest(path, path.replace("before", "after"), new KotlinGradleModuleConfigurator());
     }
 
-    private void doTest(@NotNull String beforeFile, @NotNull String afterFile, @NotNull KotlinProjectConfigurator configurator) throws Exception {
+    protected void doTest(@NotNull String beforeFile, @NotNull String afterFile, @NotNull KotlinProjectConfigurator configurator) throws Exception {
         configureByFile(beforeFile);
 
         String versionFromFile = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "// VERSION:");
@@ -54,7 +50,8 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
 
         NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(getProject());
         if (configurator instanceof KotlinWithGradleConfigurator) {
-            ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), version, collector);
+            ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), true, version, collector);
+            ((KotlinWithGradleConfigurator) configurator).changeGradleFile((GroovyFile) getFile(), false, version, collector);
         }
         else if (configurator instanceof KotlinMavenConfigurator) {
             ((KotlinMavenConfigurator) configurator).changePomFile(getModule(), getFile(), version, collector);

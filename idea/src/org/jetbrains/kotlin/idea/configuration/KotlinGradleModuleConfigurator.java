@@ -64,6 +64,16 @@ public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator
         addLastExpressionInBlockIfNeeded(SOURCE_SET, sourceSetBlock);
     }
 
+    @Override
+    protected boolean addElementsToFile(@NotNull GroovyFile groovyFile, boolean isTopLevelProjectFile, @NotNull String version) {
+        if (!isTopLevelProjectFile) {
+            addElementsToProjectFile(groovyFile, version);
+            addElementsToModuleFile(groovyFile, version);
+            return true;
+        }
+        return false;
+    }
+
     KotlinGradleModuleConfigurator() {
     }
 }

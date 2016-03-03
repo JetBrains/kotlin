@@ -38,7 +38,6 @@
     <orderEntry type="module" module-name="eval4j" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="idea-analysis" exported="" />
-    <orderEntry type="module" module-name="kotlin-android-plugin" />
     <orderEntry type="module" module-name="js.frontend" />
     <orderEntry type="library" scope="PROVIDED" name="coverage-plugin" level="project" />
     <orderEntry type="module" module-name="util" />

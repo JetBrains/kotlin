@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.android.configure;
 
 import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
@@ -61,6 +62,17 @@ public class KotlinAndroidGradleModuleConfigurator extends KotlinWithGradleConfi
     protected void addSourceSetsBlock(@NotNull GroovyFile file) {
         GrClosableBlock androidBlock = getAndroidBlock(file);
         addLastExpressionInBlockIfNeeded(SOURCE_SET, getSourceSetsBlock(androidBlock));
+    }
+
+    @Override
+    protected boolean addElementsToFile(@NotNull GroovyFile groovyFile, boolean isTopLevelProjectFile, @NotNull String version) {
+        if (isTopLevelProjectFile) {
+            addElementsToProjectFile(groovyFile, version);
+        }
+        else {
+            addElementsToModuleFile(groovyFile, version);
+        }
+        return true;
     }
 
     @NotNull

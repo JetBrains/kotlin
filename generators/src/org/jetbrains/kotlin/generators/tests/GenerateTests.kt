@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
 import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
 import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
 import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
+import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
@@ -568,7 +569,6 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractConfigureProjectByChangingFileTest>() {
-            model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
             model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
             model("configuration/maven", extension = null, recursive = false, testMethod = "doTestWithMaven")
             model("configuration/js-maven", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
@@ -971,6 +971,12 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidFindUsagesTest>() {
             model("android/findUsages", recursive = false, extension = null)
+        }
+    }
+
+    testGroup("idea/kotlin-android-plugin/tests", "idea/testData") {
+        testClass<AbstractConfigureProjectTest>() {
+            model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
         }
     }
 

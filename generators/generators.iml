@@ -33,5 +33,6 @@
     <orderEntry type="module" module-name="container" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="build-common" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin-android-plugin" scope="TEST" />
   </component>
 </module>
