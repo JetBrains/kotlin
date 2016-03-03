@@ -126,7 +126,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         this.asmType = typeMapper.mapClass(classDescriptor);
 
-        visibilityFlag = AsmUtil.getVisibilityAccessFlagForAnonymous(classDescriptor);
+        visibilityFlag = AsmUtil.getVisibilityAccessFlagForClass(classDescriptor);
     }
 
     @Override
@@ -195,7 +195,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                                 erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
                                 Modality.OPEN, erasedInterfaceFunction.getVisibility());
 
-            descriptorForBridges.addOverriddenDescriptor(erasedInterfaceFunction);
+            DescriptorUtilsKt.setSingleOverridden(descriptorForBridges, erasedInterfaceFunction);
             functionCodegen.generateBridges(descriptorForBridges);
         }
 

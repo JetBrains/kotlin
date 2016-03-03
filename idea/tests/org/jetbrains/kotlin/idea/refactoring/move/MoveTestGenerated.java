@@ -419,6 +419,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/moveFromDefaultPackage/moveFromDefaultPackage.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_moveFromDefaultPackage_MoveFromDefaultPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/moveFromDefaultPackage/moveFromDefaultPackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/moveFunctionWithImportsRetained/moveFunctionWithImportsRetained.test")
     public void testKotlin_moveTopLevelDeclarations_misc_moveFunctionWithImportsRetained_MoveFunctionWithImportsRetained() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/moveFunctionWithImportsRetained/moveFunctionWithImportsRetained.test");
@@ -542,6 +548,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
     @TestMetadata("kotlin/moveTopLevelDeclarations/movePrivateProperty/movePrivateProperty.test")
     public void testKotlin_moveTopLevelDeclarations_movePrivateProperty_MovePrivateProperty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePrivateProperty/movePrivateProperty.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/movePrivatePropertyWithDefaultAccessors/movePrivatePropertyWithDefaultAccessors.test")
+    public void testKotlin_moveTopLevelDeclarations_movePrivatePropertyWithDefaultAccessors_MovePrivatePropertyWithDefaultAccessors() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePrivatePropertyWithDefaultAccessors/movePrivatePropertyWithDefaultAccessors.test");
         doTest(fileName);
     }
 

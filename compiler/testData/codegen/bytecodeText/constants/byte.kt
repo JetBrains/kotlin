@@ -1,3 +1,3 @@
-val a: Byte = 1 + 1
+val a: Byte = 1 + 10
 
-// 1 I2B
+// 1 BIPUSH 11

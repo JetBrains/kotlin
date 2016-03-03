@@ -23,9 +23,14 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.operation.InOperationTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 
@@ -144,14 +149,6 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateCondition(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
-        if ((condition instanceof KtWhenConditionIsPattern) || (condition instanceof KtWhenConditionWithExpression)) {
-            return translatePatternCondition(condition, context);
-        }
-        throw new AssertionError("Unsupported when condition " + condition.getClass());
-    }
-
-    @NotNull
-    private JsExpression translatePatternCondition(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
         JsExpression patternMatchExpression = translateWhenConditionToBooleanExpression(condition, context);
         if (isNegated(condition)) {
             return negated(patternMatchExpression);
@@ -167,7 +164,10 @@ public final class WhenTranslator extends AbstractTranslator {
         else if (condition instanceof KtWhenConditionWithExpression) {
             return translateExpressionCondition((KtWhenConditionWithExpression) condition, context);
         }
-        throw new AssertionError("Wrong type of JetWhenCondition");
+        else if (condition instanceof KtWhenConditionInRange) {
+            return translateRangeCondition((KtWhenConditionInRange) condition, context);
+        }
+        throw new AssertionError("Unsupported when condition " + condition.getClass());
     }
 
     @NotNull
@@ -193,6 +193,23 @@ public final class WhenTranslator extends AbstractTranslator {
         else {
             return Translation.patternTranslator(context).translateExpressionPattern(expressionToMatch, patternExpression);
         }
+    }
+
+    @NotNull
+    private JsExpression translateRangeCondition(@NotNull KtWhenConditionInRange condition, @NotNull TranslationContext context) {
+        KtExpression patternExpression = condition.getRangeExpression();
+        assert patternExpression != null : "Expression pattern should have an expression: " +
+                                           PsiUtilsKt.getTextWithLocation(condition);
+
+        JsExpression expressionToMatch = getExpressionToMatch();
+        assert expressionToMatch != null : "Range pattern is only available for 'when (C) { in ... }'  expressions: " +
+                                           PsiUtilsKt.getTextWithLocation(condition);
+
+        Map<KtExpression, JsExpression> subjectAliases = new HashMap<KtExpression, JsExpression>();
+        subjectAliases.put(whenExpression.getSubjectExpression(), expressionToMatch);
+        TranslationContext callContext = context.innerContextWithAliasesForExpressions(subjectAliases);
+        return new InOperationTranslator(callContext, expressionToMatch, condition.getRangeExpression(), condition.getOperationReference())
+                .translate();
     }
 
     @Nullable

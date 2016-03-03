@@ -99,7 +99,7 @@ open class LazyClassMemberScope(
     }
 
     private fun <D : CallableMemberDescriptor> generateFakeOverrides(name: Name, fromSupertypes: Collection<D>, result: MutableCollection<D>, exactDescriptorClass: Class<out D>) {
-        OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, ArrayList(result), thisDescriptor, object : OverridingUtil.DescriptorSink {
+        OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, ArrayList(result), thisDescriptor, object : OverridingStrategy() {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 assert(exactDescriptorClass.isInstance(fakeOverride)) { "Wrong descriptor type in an override: " + fakeOverride + " while expecting " + exactDescriptorClass.simpleName }
                 @Suppress("UNCHECKED_CAST")
@@ -107,9 +107,8 @@ open class LazyClassMemberScope(
             }
 
             override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
-                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent) as KtDeclaration?
-                assert(declaration != null) { "fromCurrent can not be a fake override" }
-                trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromCurrent.getContainingDeclaration().getName().asString()))
+                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(fromCurrent) as? KtDeclaration ?: error("fromCurrent can not be a fake override")
+                trace.report(Errors.CONFLICTING_OVERLOADS.on(declaration, fromCurrent, fromSuper.containingDeclaration))
             }
         })
         OverrideResolver.resolveUnknownVisibilities(result, trace)

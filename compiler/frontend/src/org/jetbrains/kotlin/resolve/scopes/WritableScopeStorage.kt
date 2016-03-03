@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.OverloadUtil
 import java.util.*
 
 abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandler) {
@@ -50,14 +48,32 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
     }
 
     protected fun addFunctionDescriptorInternal(functionDescriptor: FunctionDescriptor) {
-        val descriptorIndex = addDescriptor(functionDescriptor)
+        checkOverloadConflicts(functionDescriptor)
 
+        val name = functionDescriptor.name
+        val descriptorIndex = addDescriptor(functionDescriptor)
         if (functionsByName == null) {
             functionsByName = HashMap(1)
         }
-        val name = functionDescriptor.name
         //TODO: could not use += because of KT-8050
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
+    }
+
+    private fun checkOverloadConflicts(functionDescriptor: FunctionDescriptor) {
+        val name = functionDescriptor.name
+        val originalFunctions = functionsByName(name).orEmpty()
+        val originalVariableOrClass = variableOrClassDescriptorByName(name)
+        val potentiallyConflictingOverloads =
+                if (originalVariableOrClass is ClassDescriptor)
+                    originalFunctions + originalVariableOrClass.constructors
+                else
+                    originalFunctions
+        for (overloadedDescriptor in potentiallyConflictingOverloads) {
+            if (!OverloadUtil.isOverloadable(overloadedDescriptor, functionDescriptor)) {
+                redeclarationHandler.handleConflictingOverloads(functionDescriptor, overloadedDescriptor)
+                break
+            }
+        }
     }
 
     protected fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size): DeclarationDescriptor? {

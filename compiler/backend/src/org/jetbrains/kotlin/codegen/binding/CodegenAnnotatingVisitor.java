@@ -24,10 +24,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.WhenChecker;
-import org.jetbrains.kotlin.codegen.AsmUtil;
-import org.jetbrains.kotlin.codegen.JvmRuntimeTypes;
-import org.jetbrains.kotlin.codegen.SamCodegenUtil;
-import org.jetbrains.kotlin.codegen.SamType;
+import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
@@ -94,15 +91,12 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             @NotNull String name
     ) {
         String simpleName = name.substring(name.lastIndexOf('/') + 1);
-        ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
+        ClassDescriptor classDescriptor = new SyntheticClassDescriptorForLambda(
                 correctContainerForLambda(callableDescriptor, element),
                 Name.special("<closure-" + simpleName + ">"),
-                Modality.FINAL,
-                ClassKind.CLASS,
                 supertypes,
-                KotlinSourceElementKt.toSourceElement(element)
+                element
         );
-        classDescriptor.initialize(MemberScope.Empty.INSTANCE, Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_CALLABLE, callableDescriptor, classDescriptor);
         return classDescriptor;

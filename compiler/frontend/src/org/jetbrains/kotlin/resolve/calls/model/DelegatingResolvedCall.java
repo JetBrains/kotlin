@@ -89,12 +89,6 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
 
     @NotNull
     @Override
-    public Map<ValueParameterDescriptor, ResolvedValueArgument> getUnsubstitutedValueArguments() {
-        return resolvedCall.getUnsubstitutedValueArguments();
-    }
-
-    @NotNull
-    @Override
     public ArgumentMapping getArgumentMapping(@NotNull ValueArgument valueArgument) {
         return resolvedCall.getArgumentMapping(valueArgument);
     }
@@ -120,5 +114,11 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
     @Override
     public boolean isSafeCall() {
         return resolvedCall.isSafeCall();
+    }
+
+    @Nullable
+    @Override
+    public KotlinType getSmartCastDispatchReceiverType() {
+        return resolvedCall.getSmartCastDispatchReceiverType();
     }
 }

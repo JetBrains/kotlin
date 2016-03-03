@@ -1,13 +1,19 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module1/META-INF/module1.kotlin_module
-out/production/module1/a/Module1_AKt.class
+  out/production/module1/META-INF/module1.kotlin_module
+  out/production/module1/a/Module1_AKt.class
 End of files
 Compiling files:
-module1/src/module1_A.kt
+  module1/src/module1_A.kt
 End of files
+Exit code: OK
+------------------------------------------
 Cleaning output files:
-out/production/module2/b/B.class
+  out/production/module2/b/B.class
 End of files
 Compiling files:
-module2/src/module2_B.kt
+  module2/src/module2_B.kt
 End of files
+Exit code: OK
+------------------------------------------

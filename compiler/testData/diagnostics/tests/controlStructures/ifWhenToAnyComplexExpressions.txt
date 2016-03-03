@@ -1,0 +1,7 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun </*0*/ T> fooGeneric(/*0*/ x: T): kotlin.Unit
+public fun println(): kotlin.Unit
+public fun testMixedIfAndWhen(): kotlin.Any
+public fun testWrappedExpressions(): kotlin.Any

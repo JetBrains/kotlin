@@ -1,0 +1,5 @@
+package
+
+public fun bar(): kotlin.String
+public fun fn(): kotlin.String?
+public fun foo(): kotlin.String

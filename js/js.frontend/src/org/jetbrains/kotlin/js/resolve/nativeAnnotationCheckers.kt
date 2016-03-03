@@ -79,7 +79,7 @@ internal abstract class AbstractNativeIndexerChecker(
             if (firstParamClassDescriptor != builtIns.string &&
                 !DescriptorUtils.isSubclass(firstParamClassDescriptor, builtIns.number)
             ) {
-                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.valueParameters.firstOrNull(), indexerKind))
+                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.valueParameters.first(), indexerKind))
             }
         }
 

@@ -55,8 +55,10 @@ class PluginDeclarationProviderFactory(
     }
 
     override fun diagnoseMissingPackageFragment(file: KtFile) {
-        throw IllegalStateException("Cannot find package fragment for file ${file.name} with package ${file.packageFqName}, " +
-                                    "vFile ${file.virtualFile}, nonIndexed ${file in nonIndexedFiles}")
+        val packageFqName = file.packageFqName
+        throw IllegalStateException("Cannot find package fragment for file ${file.name} with package $packageFqName, " +
+                                    "vFile ${file.virtualFile}, nonIndexed ${file in nonIndexedFiles} " +
+                                    "packageExists=${PackageIndexUtil.packageExists(packageFqName, indexedFilesScope, project)}")
     }
 
     // trying to diagnose org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException in completion

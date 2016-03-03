@@ -35,6 +35,12 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     @Override
     FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
+    /**
+     * This method should be used with q Wgreat care, because if descriptor is substituted one, calling 'getOverriddenDescriptors'
+     * may force lazy computation, that's unnecessary in most cases.
+     * So, if 'getOriginal().getOverriddenDescriptors()' is enough for you, please use it instead.
+     * @return
+     */
     @Override
     @NotNull
     Collection<? extends FunctionDescriptor> getOverriddenDescriptors();

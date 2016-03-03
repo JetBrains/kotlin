@@ -66,7 +66,7 @@ class PropertyReferenceCodegen(
         v.defineClass(
                 element,
                 V1_6,
-                ACC_FINAL or ACC_SUPER or AsmUtil.getVisibilityAccessFlagForAnonymous(classDescriptor),
+                ACC_FINAL or ACC_SUPER or AsmUtil.getVisibilityAccessFlagForClass(classDescriptor),
                 asmType.internalName,
                 null,
                 superAsmType.internalName,

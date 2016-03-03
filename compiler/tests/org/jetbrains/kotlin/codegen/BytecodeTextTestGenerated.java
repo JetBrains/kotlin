@@ -376,6 +376,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt7224.kt")
+        public void testKt7224() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/kt7224.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullCheck.kt")
         public void testNullCheck() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/nullCheck.kt");
@@ -583,6 +589,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("kt9532.kt")
         public void testKt9532() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/kt9532.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noInlineNonConst.kt")
+        public void testNoInlineNonConst() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constants/noInlineNonConst.kt");
             doTest(fileName);
         }
 

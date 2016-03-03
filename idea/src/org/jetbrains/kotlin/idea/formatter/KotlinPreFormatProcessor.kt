@@ -18,32 +18,58 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.codeStyle.PreFormatProcessor
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.nextSiblingOfSameType
+import org.jetbrains.kotlin.psi.psiUtil.prevSiblingOfSameType
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-class KotlinPreFormatProcessor : PreFormatProcessor {
-    class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
-        override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
-            if (!range.contains(declaration.textRange)) return
+private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
+    override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+        fun PsiElement.containsToken(type: IElementType) = allChildren.any { it.node.elementType == type }
 
-            if (declaration is KtEnumEntry) return
-            val classBody = declaration.parent as? KtClassBody ?: return
-            val klass = classBody.parent as? KtClass ?: return
-            if (!klass.isEnum()) return
+        if (!range.contains(declaration.textRange)) return
 
+        val classBody = declaration.parent as? KtClassBody ?: return
+        val klass = classBody.parent as? KtClass ?: return
+        if (!klass.isEnum()) return
+
+        var delta = 0
+
+        if (declaration is KtEnumEntry) {
+            val comma = KtPsiFactory(klass).createComma()
+
+            val nextEntry = declaration.nextSiblingOfSameType()
+            if (nextEntry != null && !declaration.containsToken(KtTokens.COMMA)) {
+                classBody.addAfter(comma, declaration)
+                delta += comma.textLength
+            }
+
+            val prevEntry = declaration.prevSiblingOfSameType()
+            if (prevEntry != null && !prevEntry.containsToken(KtTokens.COMMA)) {
+                classBody.addAfter(comma, prevEntry)
+                delta += comma.textLength
+            }
+        }
+        else {
             val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
-            if (lastEntry != null && lastEntry.allChildren.any { it.node.elementType == KtTokens.SEMICOLON }) return
-            if (lastEntry == null && classBody.allChildren.any { it.node.elementType == KtTokens.SEMICOLON }) return
+            if (lastEntry != null && lastEntry.containsToken(KtTokens.SEMICOLON)) return
+            if (lastEntry == null && classBody.containsToken(KtTokens.SEMICOLON)) return
 
             val semicolon = KtPsiFactory(klass).createSemicolon()
             classBody.addAfter(semicolon, lastEntry)
-            range = TextRange(range.startOffset, range.endOffset + semicolon.textLength)
+            delta += semicolon.textLength
         }
-    }
 
+        range = TextRange(range.startOffset, range.endOffset + delta)
+    }
+}
+
+class KotlinPreFormatProcessor : PreFormatProcessor {
     override fun process(element: ASTNode, range: TextRange): TextRange {
         val psi = element.psi ?: return range
         if (!psi.isValid) return range

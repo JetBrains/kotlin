@@ -1,0 +1,16 @@
+class A {
+    companion object {
+        class B {
+
+        }
+
+    }
+
+    fun bar() {
+        foo()
+    }
+
+    fun foo() {
+
+    }
+}

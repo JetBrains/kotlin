@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,17 @@ import org.jetbrains.jps.model.library.JpsOrderRootType;
 import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 class JpsUtils {
     private JpsUtils() {}
+
+    private static final Map<ModuleBuildTarget, Boolean> IS_KOTLIN_JS_MODULE_CACHE = createMapForCaching();
+    private static final Map<String, Boolean> IS_KOTLIN_JS_STDLIB_JAR_CACHE = createMapForCaching();
 
     @NotNull
     static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
@@ -39,13 +46,53 @@ class JpsUtils {
     }
 
     static boolean isJsKotlinModule(@NotNull ModuleBuildTarget target) {
+        Boolean cachedValue = IS_KOTLIN_JS_MODULE_CACHE.get(target);
+        if (cachedValue != null) return cachedValue;
+
+        boolean isKotlinJsModule = isJsKotlinModuleImpl(target);
+        IS_KOTLIN_JS_MODULE_CACHE.put(target, isKotlinJsModule);
+
+        return isKotlinJsModule;
+    }
+
+    private static boolean isJsKotlinModuleImpl(@NotNull ModuleBuildTarget target) {
         Set<JpsLibrary> libraries = getAllDependencies(target).getLibraries();
         for (JpsLibrary library : libraries) {
             for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                if (LibraryUtils.isKotlinJavascriptStdLibrary(JpsPathUtil.urlToFile(root.getUrl())))
-                    return true;
+                String url = root.getUrl();
+
+                Boolean cachedValue = IS_KOTLIN_JS_STDLIB_JAR_CACHE.get(url);
+                if (cachedValue != null) return cachedValue;
+
+                boolean isKotlinJavascriptStdLibrary = LibraryUtils.isKotlinJavascriptStdLibrary(JpsPathUtil.urlToFile(url));
+                IS_KOTLIN_JS_STDLIB_JAR_CACHE.put(url, isKotlinJavascriptStdLibrary);
+                if (isKotlinJavascriptStdLibrary) return true;
             }
         }
         return false;
+    }
+
+    private static <K, V> Map<K,V> createMapForCaching() {
+        if ("true".equalsIgnoreCase(System.getProperty("kotlin.jps.tests"))) {
+            return new AbstractMap<K, V>() {
+                @Override
+                public V put(K key, V value) {
+                    return null;
+                }
+
+                @Override
+                public V get(Object key) {
+                    return null;
+                }
+
+                @NotNull
+                @Override
+                public Set<Entry<K, V>> entrySet() {
+                    return Collections.emptySet();
+                }
+            };
+        }
+
+        return new ConcurrentHashMap<K, V>();
     }
 }

@@ -31,6 +31,11 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
         checkHighlighting(true, false, false);
     }
 
+    public void doTest(@NotNull String... filePath) throws Exception {
+        myFixture.configureByFiles(filePath);
+        checkHighlighting(true, false, false);
+    }
+
     public void doTestWithInfos(@NotNull String filePath) throws Exception {
         try {
             myFixture.configureByFile(filePath);

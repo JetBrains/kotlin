@@ -42,6 +42,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     public var kotlinOptions: T = createBlankArgs()
     public var kotlinDestinationDir: File? = destinationDir
+    var compilerCalled: Boolean = false
 
     private val loggerInstance = Logging.getLogger(this.javaClass)
     override fun getLogger() = loggerInstance
@@ -56,6 +57,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             return
         }
 
+        compilerCalled = true
         populateCommonArgs(args, sources)
         populateTargetSpecificArgs(args)
         callCompiler(args)

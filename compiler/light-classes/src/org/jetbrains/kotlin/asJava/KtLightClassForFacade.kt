@@ -30,6 +30,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.fileHasTopLevelCallables
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -143,7 +144,7 @@ class KtLightClassForFacade private constructor(
 
     override fun getQualifiedName() = facadeClassFqName.asString()
 
-    override fun isValid() = files.all { it.isValid }
+    override fun isValid() = files.all { it.isValid && fileHasTopLevelCallables(it) }
 
     override fun copy() = KtLightClassForFacade(getManager(), facadeClassFqName, searchScope, lightClassDataCache, files, deprecated)
 

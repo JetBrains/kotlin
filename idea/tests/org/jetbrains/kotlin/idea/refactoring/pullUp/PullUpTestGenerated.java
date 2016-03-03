@@ -181,6 +181,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("noVisibilityCheckBetweenMovedMembers.kt")
+        public void testNoVisibilityCheckBetweenMovedMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noVisibilityCheckBetweenMovedMembers.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("outsideOfClass.kt")
         public void testOutsideOfClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/outsideOfClass.kt");
@@ -202,6 +208,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         @TestMetadata("propertyDependenceUnsatisfied.kt")
         public void testPropertyDependenceUnsatisfied() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/propertyDependenceUnsatisfied.kt");
+            doKotlinTest(fileName);
+        }
+
+        @TestMetadata("propertyWithoutLightMethod.kt")
+        public void testPropertyWithoutLightMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/propertyWithoutLightMethod.kt");
             doKotlinTest(fileName);
         }
 

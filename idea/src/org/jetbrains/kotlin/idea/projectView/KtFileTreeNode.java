@@ -34,6 +34,10 @@ public class KtFileTreeNode extends PsiFileNode {
         super(project, value, viewSettings);
     }
 
+    public final KtFile getKtFile() {
+        return (KtFile) getValue();
+    }
+
     @Override
     public Collection<AbstractTreeNode> getChildrenImpl() {
         KtFile file = (KtFile) getValue();

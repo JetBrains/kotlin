@@ -1,0 +1,15 @@
+package
+
+public fun </*0*/ T> foo(/*0*/ a: T): T
+public fun </*0*/ T> test(/*0*/ v: T): T
+public fun </*0*/ T> test2(/*0*/ v: T): T
+public fun </*0*/ T> test3(/*0*/ v: T): T
+public fun </*0*/ T> test4(/*0*/ v: T): T
+public fun </*0*/ T> test5(/*0*/ v: T): T
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

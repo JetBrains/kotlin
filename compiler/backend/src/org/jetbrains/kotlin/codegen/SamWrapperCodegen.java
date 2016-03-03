@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -165,7 +166,7 @@ public class SamWrapperCodegen {
                             originalInterfaceErased.getValueParameters(), originalInterfaceErased.getReturnType(),
                             Modality.OPEN, originalInterfaceErased.getVisibility());
 
-        descriptorForBridges.addOverriddenDescriptor(originalInterfaceErased);
+        DescriptorUtilsKt.setSingleOverridden(descriptorForBridges, originalInterfaceErased);
         codegen.generateBridges(descriptorForBridges);
     }
 

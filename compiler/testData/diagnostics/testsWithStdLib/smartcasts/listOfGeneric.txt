@@ -1,0 +1,3 @@
+package
+
+public fun </*0*/ T : kotlin.Any> foo(/*0*/ o: T): kotlin.collections.Collection<T>

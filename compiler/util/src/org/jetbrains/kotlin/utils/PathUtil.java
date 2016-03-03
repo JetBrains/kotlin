@@ -30,8 +30,6 @@ public class PathUtil {
 
     public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
     public static final String JS_LIB_SRC_JAR_NAME = "kotlin-jslib-sources.jar";
-    public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
-    public static final String ANDROID_SDK_ANNOTATIONS_JAR = "kotlin-android-sdk-annotations.jar";
     public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
     public static final String KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar";
     public static final String KOTLIN_TEST_JAR = "kotlin-test.jar";

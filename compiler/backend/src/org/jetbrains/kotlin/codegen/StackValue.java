@@ -720,8 +720,8 @@ public abstract class StackValue {
 
         @Override
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-            if (value instanceof Integer) {
-                v.iconst((Integer) value);
+            if (value instanceof Integer || value instanceof Byte || value instanceof Short) {
+                v.iconst(((Number) value).intValue());
             }
             else if (value instanceof Long) {
                 v.lconst((Long) value);

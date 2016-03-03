@@ -964,11 +964,11 @@ public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
  */
 public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty char sequence can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -978,12 +978,11 @@ public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
  * to current accumulator value and each character with its index in the original char sequence.
  */
 public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty char sequence can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -1007,7 +1006,7 @@ public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Cha
  */
 public inline fun CharSequence.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)

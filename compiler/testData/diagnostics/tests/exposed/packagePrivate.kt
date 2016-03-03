@@ -30,6 +30,5 @@ package other
 import test.My
 
 class Your {
-    // Ok but dangerous: internal vs package-private in different package
-    internal fun bar() = My.foo()
+    internal fun bar() = <!INACCESSIBLE_TYPE!>My.foo()<!>
 }

@@ -16,4 +16,7 @@
 
 export KOTLIN_COMPILER=org.jetbrains.kotlin.cli.js.K2JSCompiler
 
-"$(dirname "$(which "$0")")"/kotlinc "$@"
+DIR="${BASH_SOURCE[0]%/*}"
+: ${DIR:="."}
+
+"${DIR}"/kotlinc "$@"

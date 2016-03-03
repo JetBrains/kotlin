@@ -122,6 +122,8 @@ public class DefaultErrorMessages {
         MAP.put(EXPOSED_SUPER_CLASS, "Subclass effective visibility ''{0}'' should be the same or less permissive than its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
         MAP.put(EXPOSED_SUPER_INTERFACE, "Sub-interface effective visibility ''{0}'' should be the same or less permissive than its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
 
+        MAP.put(INACCESSIBLE_TYPE, "Type {0} is inaccessible in this context due to: {1}", RENDER_TYPE, RENDER_COLLECTION_OF_TYPES);
+
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
         MAP.put(ACCESSOR_PARAMETER_NAME_SHADOWING, "Accessor parameter name 'field' is shadowed by backing field variable");
@@ -212,6 +214,7 @@ public class DefaultErrorMessages {
 
         MAP.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration");
         MAP.put(COMPONENT_FUNCTION_MISSING, "Destructuring declaration initializer of type {1} must have a ''{0}()'' function", TO_STRING, RENDER_TYPE);
+        MAP.put(COMPONENT_FUNCTION_ON_NULLABLE, "Not nullable value required to call ''{0}()'' function of destructuring declaration initializer", TO_STRING);
         MAP.put(COMPONENT_FUNCTION_AMBIGUITY, "Function ''{0}()'' is ambiguous for this expression: {1}", TO_STRING, AMBIGUOUS_CALLS);
         MAP.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, "''{0}()'' function returns ''{1}'', but ''{2}'' is expected",
                                                                                     TO_STRING, RENDER_TYPE, RENDER_TYPE);
@@ -366,6 +369,7 @@ public class DefaultErrorMessages {
         MAP.put(NEXT_NONE_APPLICABLE, "None of the next() functions is applicable for iterator() of type ''{0}''", RENDER_TYPE);
 
         MAP.put(ITERATOR_MISSING, "For-loop range must have an iterator() method");
+        MAP.put(ITERATOR_ON_NULLABLE, "Not nullable value required to call an iterator() method on for-loop range");
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
         MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);
@@ -607,7 +611,8 @@ public class DefaultErrorMessages {
         MAP.put(MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits multiple interface methods of it",
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
-        MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
+        MAP.put(CONFLICTING_OVERLOADS, "''{0}'' conflicts with another declaration in {1}", COMPACT_WITH_MODIFIERS,
+                DECLARATION_NAME_WITH_KIND);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
@@ -737,7 +742,7 @@ public class DefaultErrorMessages {
         MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(RECURSION_IN_INLINE, "Inline function ''{1}'' cannot be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         //Inline non locals
-        MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(NON_LOCAL_RETURN_NOT_ALLOWED, "Can''t inline ''{0}'' here: it may contain non-local returns. Add ''crossinline'' modifier to parameter declaration ''{0}''", ELEMENT_TEXT);
         MAP.put(INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME);
         MAP.put(NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled");
 

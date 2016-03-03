@@ -4,6 +4,7 @@ fun main(args: Array<String>) {
     callFromTopLevel()
     A().callFromClass()
     A.callFromCompanion()
+    genericCall()
 }
 
 fun callFromTopLevel() {
@@ -140,4 +141,21 @@ inline fun lambdaInInlinedLambdaCall(crossinline f: (Int) -> Unit) {
     }
 }
 
-// RESUME: 35
+fun genericCall() {
+    tick(0) { }
+}
+
+fun <T> back(f: () -> T) {
+    f()
+}
+
+inline fun <V> tick(p: Int, crossinline f: (Int) -> V) {
+    //Breakpoint!
+    f(p)
+    back {
+        //Breakpoint!
+        f(p)
+    }
+}
+
+// RESUME: 37

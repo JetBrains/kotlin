@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtExpression
@@ -41,44 +42,54 @@ class DestructuringDeclarationResolver(
     fun defineLocalVariablesFromMultiDeclaration(
             writableScope: LexicalWritableScope,
             destructuringDeclaration: KtDestructuringDeclaration,
-            receiver: ReceiverValue,
-            reportErrorsOn: KtExpression,
+            receiver: ReceiverValue?,
+            initializer: KtExpression?,
             context: ExpressionTypingContext
     ) {
         for ((componentIndex, entry) in destructuringDeclaration.entries.withIndex()) {
             val componentName = createComponentName(componentIndex + 1)
 
-            val expectedType = getExpectedTypeForComponent(context, entry)
-            val results = fakeCallResolver.resolveFakeCall(context.replaceExpectedType(expectedType), receiver, componentName,
-                                                           entry, reportErrorsOn, FakeCallKind.COMPONENT)
-
-            var componentType: KotlinType? = null
-            if (results.isSuccess) {
-                context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.resultingCall)
-
-                val functionDescriptor = results.resultingDescriptor
-                symbolUsageValidator.validateCall(null, functionDescriptor, context.trace, entry)
-
-                componentType = functionDescriptor.returnType
-                if (componentType != null && !TypeUtils.noExpectedType(expectedType) && !KotlinTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {
-                    context.trace.report(Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(reportErrorsOn, componentName, componentType, expectedType))
-                }
-            }
-            else if (results.isAmbiguity) {
-                context.trace.report(Errors.COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, componentName, results.getResultingCalls()))
-            }
-            else {
-                context.trace.report(Errors.COMPONENT_FUNCTION_MISSING.on(reportErrorsOn, componentName, receiver.getType()))
-            }
-            if (componentType == null) {
-                componentType = ErrorUtils.createErrorType("$componentName() return type")
-            }
+            val componentType = resolveComponentFunctionAndGetType(componentName, context, entry, receiver, initializer)
             val variableDescriptor = localVariableResolver.resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace)
 
             ExpressionTypingUtils.checkVariableShadowing(writableScope, context.trace, variableDescriptor)
 
             writableScope.addVariableDescriptor(variableDescriptor)
         }
+    }
+
+    private fun resolveComponentFunctionAndGetType(
+            componentName: Name,
+            context: ExpressionTypingContext,
+            entry: KtDestructuringDeclarationEntry,
+            receiver: ReceiverValue?,
+            initializer: KtExpression?
+    ): KotlinType {
+        fun errorType() = ErrorUtils.createErrorType("$componentName() return type")
+
+        if (receiver == null || initializer == null) return errorType()
+
+        val expectedType = getExpectedTypeForComponent(context, entry)
+        val results = fakeCallResolver.resolveFakeCall(
+                context.replaceExpectedType(expectedType), receiver, componentName,
+                entry, initializer, FakeCallKind.COMPONENT
+        )
+
+        if (!results.isSuccess) {
+            return errorType()
+        }
+
+        context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.resultingCall)
+
+        val functionDescriptor = results.resultingDescriptor
+        symbolUsageValidator.validateCall(null, functionDescriptor, context.trace, entry)
+
+        val functionReturnType = functionDescriptor.returnType
+        if (functionReturnType != null && !TypeUtils.noExpectedType(expectedType)
+            && !KotlinTypeChecker.DEFAULT.isSubtypeOf(functionReturnType, expectedType) ) {
+            context.trace.report(Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(initializer, componentName, functionReturnType, expectedType))
+        }
+        return functionReturnType ?: errorType()
     }
 
     private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: KtDestructuringDeclarationEntry): KotlinType {

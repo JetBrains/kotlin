@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.resolve;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 
+import static org.jetbrains.kotlin.diagnostics.Errors.CONFLICTING_OVERLOADS;
 import static org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION;
 
 public class TraceBasedRedeclarationHandler implements RedeclarationHandler {
@@ -32,11 +34,27 @@ public class TraceBasedRedeclarationHandler implements RedeclarationHandler {
     
     @Override
     public void handleRedeclaration(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        report(first);
-        report(second);
+        reportRedeclaration(first);
+        reportRedeclaration(second);
     }
 
-    private void report(DeclarationDescriptor descriptor) {
+    @Override
+    public void handleConflictingOverloads(@NotNull CallableMemberDescriptor first, @NotNull CallableMemberDescriptor second) {
+        reportConflictingOverloads(first, second.getContainingDeclaration());
+        reportConflictingOverloads(second, first.getContainingDeclaration());
+    }
+
+    private void reportConflictingOverloads(CallableMemberDescriptor conflicting, DeclarationDescriptor withContainedIn) {
+        PsiElement reportElement = DescriptorToSourceUtils.descriptorToDeclaration(conflicting);
+        if (reportElement != null) {
+            trace.report(CONFLICTING_OVERLOADS.on(reportElement, conflicting, withContainedIn));
+        }
+        else {
+            throw new IllegalStateException("No declaration found for " + conflicting);
+        }
+    }
+
+    private void reportRedeclaration(DeclarationDescriptor descriptor) {
         PsiElement firstElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         if (firstElement != null) {
             trace.report(REDECLARATION.on(firstElement, descriptor.getName().asString()));

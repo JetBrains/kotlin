@@ -26,26 +26,34 @@ fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collect
     }
 }
 
-fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
+private fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
     // TODO type parameters
     // TODO use new type parameters while enhancing other types
     // TODO Propagation into generic type arguments
 
     if (this !is JavaCallableMemberDescriptor) return this
 
-    val enhancedReceiverType =
+    // Fake overrides with one overridden has been enhanced before
+    if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE && original.overriddenDescriptors.size == 1) return this
+
+    val receiverTypeEnhancement =
             if (extensionReceiverParameter != null)
                 parts(isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
             else null
 
-    val enhancedValueParametersTypes = valueParameters.map {
+    val valueParameterEnhancements = valueParameters.map {
         p -> parts(isCovariant = false) { it.valueParameters[p.index].type }.enhance()
     }
 
-    val enhancedReturnType = parts(isCovariant = true) { it.returnType!! }.enhance()
+    val returnTypeEnhancement = parts(isCovariant = true) { it.returnType!! }.enhance()
 
-    @Suppress("UNCHECKED_CAST")
-    return this.enhance(enhancedReceiverType, enhancedValueParametersTypes, enhancedReturnType) as D
+    if ((receiverTypeEnhancement?.wereChanges ?: false)
+            || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }) {
+        @Suppress("UNCHECKED_CAST")
+        return this.enhance(receiverTypeEnhancement?.type, valueParameterEnhancements.map { it.type }, returnTypeEnhancement.type) as D
+    }
+
+    return this
 }
 
 private class SignatureParts(
@@ -53,11 +61,15 @@ private class SignatureParts(
         val fromOverridden: Collection<KotlinType>,
         val isCovariant: Boolean
 ) {
-    fun enhance(): KotlinType {
+    fun enhance(): PartEnhancementResult {
         val qualifiers = fromOverride.computeIndexedQualifiersForOverride(this.fromOverridden, isCovariant)
-        return fromOverride.enhance(qualifiers)
+        return fromOverride.enhance(qualifiers)?.let {
+            enhanced -> PartEnhancementResult(enhanced, wereChanges = true)
+        } ?: PartEnhancementResult(fromOverride, wereChanges = false)
     }
 }
+
+private data class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
 
 private fun <D : CallableMemberDescriptor> D.parts(isCovariant: Boolean, collector: (D) -> KotlinType): SignatureParts {
     return SignatureParts(

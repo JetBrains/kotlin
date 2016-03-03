@@ -32,18 +32,18 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
-class BridgeForBuiltinSpecial<Signature>(
+class BridgeForBuiltinSpecial<Signature : Any>(
         val from: Signature, val to: Signature,
         val isSpecial: Boolean = false,
         val isDelegateToSuper: Boolean = false
 )
 
 object BuiltinSpecialBridgesUtil {
-    @JvmStatic fun <Signature> generateBridgesForBuiltinSpecial(
+    @JvmStatic fun <Signature : Any> generateBridgesForBuiltinSpecial(
             function: FunctionDescriptor,
             signatureByDescriptor: (FunctionDescriptor) -> Signature
     ): Set<BridgeForBuiltinSpecial<Signature>> {
@@ -57,33 +57,39 @@ object BuiltinSpecialBridgesUtil {
         // e.g. `getSize()I`
         val methodItself = signatureByDescriptor(function)
         // e.g. `size()I`
-        val overriddenBuiltinSignature = signatureByDescriptor(overriddenBuiltin)
+        val specialBridgeSignature = signatureByDescriptor(overriddenBuiltin)
 
-        val needGenerateSpecialBridge = needGenerateSpecialBridge(
-                function, reachableDeclarations, overriddenBuiltin, signatureByDescriptor, overriddenBuiltinSignature)
+        val specialBridgeExists = function.getSpecialBridgeSignatureIfExists(signatureByDescriptor) != null
+        val specialBridgesSignaturesInSuperClass = function.overriddenTreeAsSequence(useOriginal = true).mapNotNull {
+            if (it === function) return@mapNotNull null
+            it.getSpecialBridgeSignatureIfExists(signatureByDescriptor)
+        }
+        val isTherePossibleClashWithSpecialBridge =
+                specialBridgeSignature in specialBridgesSignaturesInSuperClass
+                    || reachableDeclarations.any { it.modality == Modality.FINAL && signatureByDescriptor(it) == specialBridgeSignature }
 
-        val specialBridge = if (needGenerateSpecialBridge)
-            BridgeForBuiltinSpecial(overriddenBuiltinSignature, methodItself, isSpecial = true)
+        val specialBridge = if (specialBridgeExists && !isTherePossibleClashWithSpecialBridge)
+            BridgeForBuiltinSpecial(specialBridgeSignature, methodItself, isSpecial = true)
         else null
 
-        val bridgesToGenerate = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
-        bridgesToGenerate.remove(overriddenBuiltinSignature)
+        val commonBridges = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
+        commonBridges.removeAll(specialBridgesSignaturesInSuperClass + specialBridge?.from.singletonOrEmptyList())
 
         val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake)
-        if (superImplementationDescriptor != null || !fake) {
-            bridgesToGenerate.remove(methodItself)
+        if (superImplementationDescriptor != null || !fake || functionHandle.isAbstract) {
+            commonBridges.remove(methodItself)
         }
 
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
                 if (!DescriptorBasedFunctionHandle(overridden).isAbstract) {
-                    bridgesToGenerate.removeAll(findAllReachableDeclarations(overridden).map(signatureByDescriptor))
+                    commonBridges.removeAll(findAllReachableDeclarations(overridden).map(signatureByDescriptor))
                 }
             }
         }
 
         val bridges: MutableSet<BridgeForBuiltinSpecial<Signature>> =
-                (bridgesToGenerate.map { BridgeForBuiltinSpecial(it, overriddenBuiltinSignature) } + specialBridge.singletonOrEmptyList()).toMutableSet()
+                (commonBridges.map { BridgeForBuiltinSpecial(it, specialBridgeSignature) } + specialBridge.singletonOrEmptyList()).toMutableSet()
 
         if (superImplementationDescriptor != null) {
             bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(superImplementationDescriptor), isDelegateToSuper = true))
@@ -92,7 +98,7 @@ object BuiltinSpecialBridgesUtil {
         return bridges
     }
 
-    @JvmStatic fun <Signature> FunctionDescriptor.shouldHaveTypeSafeBarrier(
+    @JvmStatic fun <Signature : Any> FunctionDescriptor.shouldHaveTypeSafeBarrier(
             signatureByDescriptor: (FunctionDescriptor) -> Signature
     ): Boolean {
         if (BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(this) == null) return false
@@ -114,31 +120,24 @@ private fun findSuperImplementationForStubDelegation(function: FunctionDescripto
 private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor): MutableSet<FunctionDescriptor> =
         findAllReachableDeclarations(DescriptorBasedFunctionHandle(functionDescriptor)).map { it.descriptor }.toMutableSet()
 
-private fun <Signature> needGenerateSpecialBridge(
-        functionDescriptor: FunctionDescriptor,
-        reachableDeclarations: Collection<FunctionDescriptor>,
-        specialCallableDescriptor: CallableMemberDescriptor,
-        signatureByDescriptor: (FunctionDescriptor) -> Signature,
-        overriddenBuiltinSignature: Signature
-): Boolean {
-    if (signatureByDescriptor(functionDescriptor) == overriddenBuiltinSignature) return false
-    if (specialCallableDescriptor.modality == Modality.FINAL) return false
+private fun <Signature> CallableMemberDescriptor.getSpecialBridgeSignatureIfExists(
+        signatureByDescriptor: (FunctionDescriptor) -> Signature
+): Signature? {
+    // Ignore itself and non-functions (may be assertion)
+    if (this !is FunctionDescriptor) return null
 
-    // Is there Kotlin superclass that already has generated special bridge
-    if (functionDescriptor.firstOverridden { overridden ->
-        val originalOverridden = overridden.original
-        if (overridden === functionDescriptor
-            || originalOverridden !is FunctionDescriptor
-            || originalOverridden.containingDeclaration is JavaClassDescriptor
-            || DescriptorUtils.isInterface(originalOverridden.containingDeclaration)) return@firstOverridden false
+    // Only Kotlin classes can have special bridges
+    if (containingDeclaration is JavaClassDescriptor || DescriptorUtils.isInterface(containingDeclaration)) return null
 
-        val overriddenSpecial = originalOverridden.getOverriddenBuiltinReflectingJvmDescriptor()?.original ?: return@firstOverridden false
+    // Getting original is necessary here, because we want to determine JVM signature of descriptor as it was declared in containing class
+    val originalOverridden = original
+    val overriddenSpecial = originalOverridden.getOverriddenBuiltinReflectingJvmDescriptor() ?: return null
+    val specialBridgeSignature = signatureByDescriptor(overriddenSpecial)
 
-        signatureByDescriptor(originalOverridden) != signatureByDescriptor(overriddenSpecial)
-    } != null) return false
+    // Does special bridge has different signature
+    if (signatureByDescriptor(originalOverridden) == specialBridgeSignature) return null
 
-    return reachableDeclarations.none { it.modality == Modality.FINAL
-                                        && signatureByDescriptor(it) == overriddenBuiltinSignature }
+    return specialBridgeSignature
 }
 
 fun isValueArgumentForCallToMethodWithTypeCheckBarrier(

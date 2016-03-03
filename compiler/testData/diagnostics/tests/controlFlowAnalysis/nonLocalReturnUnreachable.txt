@@ -1,0 +1,7 @@
+package
+
+public inline fun doCall(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+public fun doSomething(): kotlin.Unit
+public fun test1(/*0*/ nonLocal: kotlin.String): kotlin.String
+public fun test2(): kotlin.Unit
+public fun test3(/*0*/ x: kotlin.Any?): kotlin.Boolean

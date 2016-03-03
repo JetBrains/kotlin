@@ -159,7 +159,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
             val descriptor = descriptorsToProcess.next()
             val constructorPointer = descriptor.source.getPsi()?.createSmartPointer()
             val config = configureChangeSignature(propertyDescriptor)
-            val changeSignature = { runChangeSignature(project, descriptor, config, element, text) }
+            val changeSignature = { runChangeSignature(project, descriptor, config, element.containingClassOrObject!!, text) }
 
             changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
                 val constructorOrClass = constructorPointer?.element
@@ -186,7 +186,10 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 listOf(classDescriptor.unsubstitutedPrimaryConstructor!!)
             }
             else {
-                classDescriptor.secondaryConstructors
+                classDescriptor.secondaryConstructors.filter {
+                    val constructor = it.source.getPsi() as? KtSecondaryConstructor
+                    constructor != null && !constructor.getDelegationCall().isCallToThis
+                }
             }
 
             project.runWithElementsToShortenIsEmptyIgnored {

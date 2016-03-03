@@ -44,14 +44,14 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit, ext: Int.(
     }
 }
 
-inline fun Function1<Int, Unit>.inlineExt() {
+<!NOTHING_TO_INLINE!>inline<!> fun Function1<Int, Unit>.inlineExt() {
     Test().test(){
         invoke(11)
         this.invoke(11)
         this <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
         this(11)
 
-        <!USAGE_IS_NOT_INLINABLE, UNUSED_EXPRESSION!>this<!>
+        <!UNUSED_EXPRESSION!>this<!>
 
         11
     }

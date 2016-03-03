@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.OverridingStrategy;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 
@@ -37,18 +38,35 @@ public final class DescriptorResolverUtils {
     }
 
     @NotNull
-    public static <D extends CallableMemberDescriptor> Collection<D> resolveOverrides(
+    public static <D extends CallableMemberDescriptor> Collection<D> resolveOverridesForNonStaticMembers(
+        @NotNull Name name, @NotNull Collection<D> membersFromSupertypes, @NotNull Collection<D> membersFromCurrent,
+        @NotNull ClassDescriptor classDescriptor, @NotNull ErrorReporter errorReporter
+) {
+        return resolveOverrides(name, membersFromSupertypes, membersFromCurrent, classDescriptor, errorReporter, false);
+    }
+
+    @NotNull
+    public static <D extends CallableMemberDescriptor> Collection<D> resolveOverridesForStaticMembers(
+        @NotNull Name name, @NotNull Collection<D> membersFromSupertypes, @NotNull Collection<D> membersFromCurrent,
+        @NotNull ClassDescriptor classDescriptor, @NotNull ErrorReporter errorReporter
+) {
+        return resolveOverrides(name, membersFromSupertypes, membersFromCurrent, classDescriptor, errorReporter, true);
+    }
+
+    @NotNull
+    private static <D extends CallableMemberDescriptor> Collection<D> resolveOverrides(
             @NotNull Name name,
             @NotNull Collection<D> membersFromSupertypes,
             @NotNull Collection<D> membersFromCurrent,
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull final ErrorReporter errorReporter
+            @NotNull final ErrorReporter errorReporter,
+            final boolean isStaticContext
     ) {
         final Set<D> result = new LinkedHashSet<D>();
 
         OverridingUtil.generateOverridesInFunctionGroup(
                 name, membersFromSupertypes, membersFromCurrent, classDescriptor,
-                new OverridingUtil.DescriptorSink() {
+                new OverridingStrategy() {
                     @Override
                     @SuppressWarnings("unchecked")
                     public void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride) {
@@ -65,6 +83,17 @@ public final class DescriptorResolverUtils {
                     @Override
                     public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
                         // nop
+                    }
+
+                    @Override
+                    public void setOverriddenDescriptors(
+                            @NotNull CallableMemberDescriptor member, @NotNull Collection<? extends CallableMemberDescriptor> overridden
+                    ) {
+                        // do not set overridden descriptors for declared static fields and methods from java
+                        if (isStaticContext && member.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                            return;
+                        }
+                        super.setOverriddenDescriptors(member, overridden);
                     }
                 }
         );

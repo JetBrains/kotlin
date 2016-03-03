@@ -103,7 +103,6 @@ class WriteValueInstruction(
         val rValue: PseudoValue
 ) : AccessValueInstruction(assignment, lexicalScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
-        // as is necessary: see KT-10384
         get() = (receiverValues.keys as Collection<PseudoValue>) + rValue
 
     override fun accept(visitor: InstructionVisitor) {

@@ -31,12 +31,15 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 sealed class MoveDeclarationsDelegate {
     abstract fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo
     abstract fun findUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo>
-    abstract fun collectConflicts(usages: MutableList<UsageInfo>, conflicts: MultiMap<PsiElement, String>)
+    abstract fun collectConflicts(
+            descriptor: MoveDeclarationsDescriptor,
+            usages: MutableList<UsageInfo>,
+            conflicts: MultiMap<PsiElement, String>
+    )
     abstract fun preprocessDeclaration(descriptor: MoveDeclarationsDescriptor, originalDeclaration: KtNamedDeclaration)
     abstract fun preprocessUsages(project: Project, usages: List<UsageInfo>)
 
@@ -48,7 +51,11 @@ sealed class MoveDeclarationsDelegate {
 
         override fun findUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> = emptyList()
 
-        override fun collectConflicts(usages: MutableList<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
+        override fun collectConflicts(
+                descriptor: MoveDeclarationsDescriptor,
+                usages: MutableList<UsageInfo>,
+                conflicts: MultiMap<PsiElement, String>
+        ) {
 
         }
 
@@ -81,44 +88,30 @@ sealed class MoveDeclarationsDelegate {
             return collectOuterInstanceReferences(classToMove)
         }
 
-        override fun collectConflicts(usages: MutableList<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
+        override fun collectConflicts(
+                descriptor: MoveDeclarationsDescriptor,
+                usages: MutableList<UsageInfo>,
+                conflicts: MultiMap<PsiElement, String>
+        ) {
             val usageIterator = usages.iterator()
             while (usageIterator.hasNext()) {
                 val usage = usageIterator.next();
                 val element = usage.element ?: continue
 
-                if (usage is ImplicitCompanionAsDispatchReceiverUsageInfo) {
-                    conflicts.putValue(element, "Implicit companion object will be inaccessible: ${element.text}")
-                    usageIterator.remove()
-                    continue
-                }
-
-                if (usage !is OuterInstanceReferenceUsageInfo) continue
-
-                if (usage.isIndirectOuter) {
-                    conflicts.putValue(element, "Indirect outer instances won't be extracted: ${element.text}")
-                    usageIterator.remove()
-                }
-
-                if (usage !is OuterInstanceReferenceUsageInfo.ImplicitReceiver) continue
-
-                val fullCall = usage.callElement?.let { it.getQualifiedExpressionForSelector() ?: it } ?: continue
-                when {
-                    fullCall is KtQualifiedExpression -> {
-                        conflicts.putValue(
-                                fullCall,
-                                "Qualified call won't be processed: ${fullCall.text}"
-                        )
-                        usageIterator.remove()
+                val isConflict = when (usage) {
+                    is ImplicitCompanionAsDispatchReceiverUsageInfo -> {
+                        if (descriptor.moveTarget !is KotlinMoveTargetForCompanion) {
+                            conflicts.putValue(element, "Implicit companion object will be inaccessible: ${element.text}")
+                        }
+                        true
                     }
 
-                    usage.isDoubleReceiver -> {
-                        conflicts.putValue(
-                                fullCall,
-                                "Call with two implicit receivers won't be processed: ${fullCall.text}"
-                        )
-                        usageIterator.remove()
-                    }
+                    is OuterInstanceReferenceUsageInfo -> usage.reportConflictIfAny(conflicts)
+
+                    else -> false
+                }
+                if (isConflict) {
+                    usageIterator.remove()
                 }
             }
         }

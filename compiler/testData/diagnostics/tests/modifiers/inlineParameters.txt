@@ -4,3 +4,4 @@ public inline fun bar(/*0*/ y: kotlin.Int, /*1*/ crossinline x: kotlin.String): 
 public inline fun correct(/*0*/ noinline x: (kotlin.Int) -> kotlin.Unit, /*1*/ crossinline y: (kotlin.String) -> kotlin.Int): kotlin.Unit
 public inline fun foo(/*0*/ noinline x: kotlin.Int): kotlin.Unit
 public fun gav(/*0*/ noinline x: (kotlin.Int) -> kotlin.Unit, /*1*/ crossinline y: (kotlin.String) -> kotlin.Int): kotlin.Unit
+public inline fun incompatible(/*0*/ crossinline noinline x: () -> kotlin.String): kotlin.Unit

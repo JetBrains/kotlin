@@ -117,19 +117,23 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         KtExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) {
             context.trace.report(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION.on(multiDeclaration));
-            return TypeInfoFactoryKt.noTypeInfo(context);
         }
-        ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(
-                facade, initializer, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
-        KotlinTypeInfo typeInfo = facade.getTypeInfo(initializer, context);
-        if (expressionReceiver == null) {
-            return TypeInfoFactoryKt.noTypeInfo(context);
-        }
+
+        ExpressionReceiver expressionReceiver = initializer != null ? ExpressionTypingUtils.getExpressionReceiver(
+                facade, initializer, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT)) : null;
+
         components.destructuringDeclarationResolver
                 .defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForDestructuringDeclaration(multiDeclaration);
         components.identifierChecker.checkDeclaration(multiDeclaration, context.trace);
-        return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(multiDeclaration, context));
+
+        if (expressionReceiver == null) {
+            return TypeInfoFactoryKt.noTypeInfo(context);
+        }
+        else {
+            return facade.getTypeInfo(initializer, context)
+                    .replaceType(components.dataFlowAnalyzer.checkStatementType(multiDeclaration, context));
+        }
     }
 
     @Override
@@ -257,7 +261,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             if (left instanceof KtArrayAccessExpression) {
                 ExpressionTypingContext contextForResolve = context.replaceScope(scope).replaceBindingTrace(TemporaryBindingTrace.create(
                         context.trace, "trace to resolve array set method for assignment", expression));
-                basic.resolveArrayAccessSetMethod((KtArrayAccessExpression) left, right, contextForResolve, context.trace);
+                basic.resolveImplicitArrayAccessSetMethod((KtArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
             rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
 

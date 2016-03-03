@@ -367,6 +367,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt11163.kt")
+        public void testKt11163() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/kt11163.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6747_identityEquals.kt")
         public void testKt6747_identityEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/kt6747_identityEquals.kt");
@@ -986,6 +992,51 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testUnitNullableCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/unitNullableCast.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LiteralExpressionAsGenericArgument extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInLiteralExpressionAsGenericArgument() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("binaryExpressionCast.kt")
+            public void testBinaryExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/binaryExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("labeledExpressionCast.kt")
+            public void testLabeledExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/labeledExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("parenthesizedExpressionCast.kt")
+            public void testParenthesizedExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/parenthesizedExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("superConstructor.kt")
+            public void testSuperConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/superConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unaryExpressionCast.kt")
+            public void testUnaryExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/unaryExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("vararg.kt")
+            public void testVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/vararg.kt");
+                doTest(fileName);
+            }
         }
     }
 
@@ -1750,6 +1801,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("extensionClosure.kt")
         public void testExtensionClosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/extensionClosure.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt10044.kt")
+        public void testKt10044() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/kt10044.kt");
             doTest(fileName);
         }
 
@@ -5608,6 +5665,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt11117.kt")
+        public void testKt11117() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt11117.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt1136.kt")
         public void testKt1136() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/kt1136.kt");
@@ -5866,6 +5929,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt4991.kt")
         public void testKt4991() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/kt4991.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedMaps.kt")
+        public void testNestedMaps() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/nestedMaps.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overloadedSet.kt")
+        public void testOverloadedSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/overloadedSet.kt");
             doTest(fileName);
         }
 
@@ -7486,6 +7561,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeAtTwoSpecialBridges.kt")
+        public void testRemoveAtTwoSpecialBridges() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/removeAtTwoSpecialBridges.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("throwable.kt")
         public void testThrowable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/throwable.kt");
@@ -8314,6 +8395,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("callProperty.kt")
         public void testCallProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/callProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyWhen.kt")
+        public void testEmptyWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/emptyWhen.kt");
             doTest(fileName);
         }
 

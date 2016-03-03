@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -863,7 +862,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
                     context.trace, "trace to resolve array access set method for unary expression", expression);
             ExpressionTypingContext newContext = context.replaceBindingTrace(temporaryBindingTrace);
-            resolveArrayAccessSetMethod((KtArrayAccessExpression) baseExpression, stubExpression, newContext, context.trace);
+            resolveImplicitArrayAccessSetMethod((KtArrayAccessExpression) baseExpression, stubExpression, newContext, context.trace);
         }
 
         // Resolve the operation reference
@@ -1181,7 +1180,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
             @Override
-            public boolean accept(@Nullable WritableSlice<?, ?> slice, @Nullable Diagnostic diagnostic, Object key) {
+            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
                 // the type of the right (and sometimes left) expression isn't 'Any?' actually
                 if ((key == right || key == left) && slice == EXPRESSION_TYPE_INFO) return false;
 
@@ -1612,7 +1611,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             @NotNull BindingTrace traceForResolveResult
     ) {
-        return resolveArrayAccessSpecialMethod(arrayAccessExpression, rightHandSide, context, traceForResolveResult, false);
+        return resolveArrayAccessSpecialMethod(arrayAccessExpression, rightHandSide, context, traceForResolveResult, false, false);
+    }
+
+    @NotNull
+    /*package*/ KotlinTypeInfo resolveImplicitArrayAccessSetMethod(
+            @NotNull KtArrayAccessExpression arrayAccessExpression,
+            @NotNull KtExpression rightHandSide,
+            @NotNull ExpressionTypingContext context,
+            @NotNull BindingTrace traceForResolveResult
+    ) {
+        return resolveArrayAccessSpecialMethod(arrayAccessExpression, rightHandSide, context, traceForResolveResult, false, true);
     }
 
     @NotNull
@@ -1620,7 +1629,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull KtArrayAccessExpression arrayAccessExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        return resolveArrayAccessSpecialMethod(arrayAccessExpression, null, context, context.trace, true);
+        return resolveArrayAccessSpecialMethod(arrayAccessExpression, null, context, context.trace, true, false);
     }
 
     @NotNull
@@ -1629,7 +1638,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @Nullable KtExpression rightHandSide, //only for 'set' method
             @NotNull ExpressionTypingContext oldContext,
             @NotNull BindingTrace traceForResolveResult,
-            boolean isGet
+            boolean isGet,
+            boolean isImplicit
     ) {
         KtExpression arrayExpression = arrayAccessExpression.getArrayExpression();
         if (arrayExpression == null) return TypeInfoFactoryKt.noTypeInfo(oldContext);
@@ -1660,7 +1670,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             resultTypeInfo = facade.getTypeInfo(rightHandSide, context);
         }
 
-        if (!functionResults.isSingleResult()) {
+        if ((isImplicit && !functionResults.isSuccess()) || !functionResults.isSingleResult()) {
             traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
             return resultTypeInfo.clearType();
         }

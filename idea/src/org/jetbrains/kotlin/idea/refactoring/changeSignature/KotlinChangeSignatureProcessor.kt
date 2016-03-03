@@ -30,6 +30,8 @@ import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplicitReceiverUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import java.util.*
@@ -87,6 +89,8 @@ class KotlinChangeSignatureProcessor(project: Project,
 
         val usageArray = usagesSet.toTypedArray()
         Arrays.sort(usageArray) { u1, u2 ->
+            if (u1 is KotlinImplicitReceiverUsage && u2 is KotlinFunctionCallUsage) return@sort -1
+            if (u2 is KotlinImplicitReceiverUsage && u1 is KotlinFunctionCallUsage) return@sort 1
             val element1 = u1.element
             val element2 = u2.element
             val rank1 = if (element1 != null) element1.textOffset else -1

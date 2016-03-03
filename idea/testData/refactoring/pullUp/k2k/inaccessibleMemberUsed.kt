@@ -6,7 +6,7 @@ class <caret>B: A() {
     // INFO: {"checked": "false"}
     private fun foo() = 1
 
-    // INFO: {"checked": "true"}
+    // INFO: {"checked": "false"}
     private class Z(n: Int)
 
     // INFO: {"checked": "true"}

@@ -36,7 +36,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImpl implements PropertyDescriptor {
     private final Modality modality;
     private Visibility visibility;
-    private final Set<PropertyDescriptor> overriddenProperties = SmartSet.create();
+    private Collection<? extends PropertyDescriptor> overriddenProperties = null;
     private final PropertyDescriptor original;
     private final Kind kind;
     private final boolean lateInit;
@@ -272,7 +272,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         );
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(
-                    newSetter, setter.getValueParameters(), substitutor
+                    newSetter, setter.getValueParameters(), substitutor, /* dropOriginal = */ false
             );
             if (substitutedValueParameters == null) {
                 // The setter is projected out, e.g. in this case:
@@ -295,9 +295,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         substitutedDescriptor.initialize(newGetter, newSetter);
 
         if (copyOverrides) {
-            for (PropertyDescriptor propertyDescriptor : overriddenProperties) {
-                substitutedDescriptor.addOverriddenDescriptor(propertyDescriptor.substitute(substitutor));
+            Collection<CallableMemberDescriptor> overridden = SmartSet.create();
+            for (PropertyDescriptor propertyDescriptor : getOverriddenDescriptors()) {
+                overridden.add(propertyDescriptor.substitute(substitutor));
             }
+            substitutedDescriptor.setOverriddenDescriptors(overridden);
         }
 
         return substitutedDescriptor;
@@ -353,14 +355,15 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     @Override
-    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overridden) {
-        overriddenProperties.add((PropertyDescriptorImpl) overridden);
+    public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
+        //noinspection unchecked
+        this.overriddenProperties = (Collection<? extends PropertyDescriptor>) overriddenDescriptors;
     }
 
     @NotNull
     @Override
     public Collection<? extends PropertyDescriptor> getOverriddenDescriptors() {
-        return overriddenProperties;
+        return overriddenProperties != null ? overriddenProperties : Collections.<PropertyDescriptor>emptyList();
     }
 
     @NotNull

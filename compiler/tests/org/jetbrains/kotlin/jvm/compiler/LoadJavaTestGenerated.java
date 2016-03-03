@@ -1704,6 +1704,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("StaticMembersFromParentClassVisibility.java")
+            public void testStaticMembersFromParentClassVisibility() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClassVisibility.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("StaticMembersFromParentInterface.java")
             public void testStaticMembersFromParentInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentInterface.java");

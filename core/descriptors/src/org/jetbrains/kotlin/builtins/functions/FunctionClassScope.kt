@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -66,7 +67,7 @@ class FunctionClassScope(
                         /* membersFromSupertypes = */ descriptors,
                         /* membersFromCurrent = */ if (isFunction && name == invoke?.name) listOf(invoke) else listOf(),
                         functionClass,
-                        object : OverridingUtil.DescriptorSink {
+                        object : OverridingStrategy() {
                             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                                 OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
                                 result.add(fakeOverride)

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
+import com.intellij.openapi.externalSystem.model.ProjectSystemId;
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.KotlinModuleTypeManager;
@@ -35,5 +37,10 @@ public class KotlinModuleTypeManagerImpl extends KotlinModuleTypeManager {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isGradleModule(@NotNull Module module) {
+        return ExternalSystemApiUtil.isExternalSystemAwareModule(new ProjectSystemId("GRADLE"), module);
     }
 }

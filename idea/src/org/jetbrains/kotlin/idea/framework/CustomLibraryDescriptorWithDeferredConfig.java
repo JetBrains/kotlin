@@ -34,9 +34,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
-import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator;
-import org.jetbrains.kotlin.idea.configuration.RuntimeLibraryFiles;
+import org.jetbrains.kotlin.idea.configuration.*;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
 import org.jetbrains.kotlin.idea.util.projectStructure.ProjectStructureUtilKt;
@@ -129,17 +127,19 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
         }
 
         public void performRequests(@NotNull Project project, @NotNull String relativePath, Library.ModifiableModel model) {
+            NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
             for (CopyFileRequest request : copyFilesRequests) {
                 String destinationPath = FileUtil.isAbsolute(request.toDir) ?
                                          request.toDir :
                                          new File(relativePath, request.toDir).getPath();
 
-                File resultFile = configurator.copyFileToDir(project, request.file, destinationPath);
+                File resultFile = configurator.copyFileToDir(request.file, destinationPath, collector);
 
                 if (request.replaceInLib) {
                     ProjectStructureUtilKt.replaceFileRoot(model, request.file, resultFile);
                 }
             }
+            collector.showNotification();
         }
 
         public void addCopyWithReplaceRequest(@NotNull File file, @NotNull String copyIntoPath) {

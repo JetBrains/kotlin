@@ -19,5 +19,5 @@ public open class Bbb : Aaa {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public const final override /*1*/ val i: kotlin.String = "s"
+    public const final val i: kotlin.String = "s"
 }

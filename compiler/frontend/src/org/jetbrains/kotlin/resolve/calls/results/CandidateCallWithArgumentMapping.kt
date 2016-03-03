@@ -70,7 +70,7 @@ class CandidateCallWithArgumentMapping<D : CallableDescriptor, K> private constr
             var parametersWithDefaultValuesCount = 0
 
             val unsubstitutedValueParameters = call.candidateDescriptor.original.valueParameters
-            for ((valueParameterDescriptor, resolvedValueArgument) in call.unsubstitutedValueArguments.entries) {
+            for ((valueParameterDescriptor, resolvedValueArgument) in call.valueArguments.entries) {
                 if (resolvedValueArgument is DefaultValueArgument) {
                     parametersWithDefaultValuesCount++
                 }

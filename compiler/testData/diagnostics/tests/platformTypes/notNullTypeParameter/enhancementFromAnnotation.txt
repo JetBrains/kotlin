@@ -1,0 +1,30 @@
+package
+
+public /*synthesized*/ fun </*0*/ T : kotlin.Any!> A(/*0*/ function: (T!) -> kotlin.Unit): A<T>
+public fun test(): kotlin.Unit
+
+public interface A</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B</*0*/ E : kotlin.Any!> {
+    public constructor B</*0*/ E : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: E!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class C</*0*/ F : kotlin.Any!> : B<F!>, A<F!> {
+    public constructor C</*0*/ F : kotlin.Any!>()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ fun foo(/*0*/ x: F): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun create(): C<kotlin.String!>!
+}

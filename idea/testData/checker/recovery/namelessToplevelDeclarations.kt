@@ -4,12 +4,12 @@ package<EOLError></EOLError>
 
 }
 
-val<error> </error>: Int = 1
+<error>val<error> </error>: Int = 1</error>
 
 
-class<error> </error>{
+<error>class<error> </error>{
 
-}
+}</error>
 
 interface<error> </error>{
 

@@ -1,1 +1,1 @@
-SwingUtilities { println("a") }
+SwingUtilities.invokeLater { println("a") }

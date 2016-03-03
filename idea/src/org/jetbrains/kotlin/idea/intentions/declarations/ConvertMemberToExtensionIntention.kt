@@ -20,14 +20,23 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiMethodCallExpression
+import com.intellij.psi.PsiReferenceExpression
+import com.intellij.psi.codeStyle.JavaCodeStyleManager
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.util.SmartList
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.setReceiverType
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.quickfix.unblockDocument
+import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
@@ -49,11 +58,25 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
         val file = element.getContainingKtFile()
+        val project = file.project
         val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
+
+        val ktFilesToAddImports = SmartList<KtFile>()
+        val javaCallsToFix = SmartList<PsiMethodCallExpression>()
+        for (ref in ReferencesSearch.search(element)) {
+            when (ref) {
+                is KtReference -> {
+                    val refFile = ref.element.getContainingKtFile()
+                    if (refFile != file) {
+                        ktFilesToAddImports.add(refFile)
+                    }
+                }
+                is PsiReferenceExpression -> javaCallsToFix.addIfNotNull(ref.parent as? PsiMethodCallExpression)
+            }
+        }
 
         val typeParameterList = newTypeParameterList(element)
 
-        val project = element.project
         val psiFactory = KtPsiFactory(element)
 
         val extension = file.addAfter(element, outermostParent) as KtCallableDeclaration
@@ -75,6 +98,8 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
 
         extension.modifierList?.getModifier(KtTokens.PROTECTED_KEYWORD)?.delete()
         extension.modifierList?.getModifier(KtTokens.ABSTRACT_KEYWORD)?.delete()
+        extension.modifierList?.getModifier(KtTokens.OPEN_KEYWORD)?.delete()
+        extension.modifierList?.getModifier(KtTokens.FINAL_KEYWORD)?.delete()
 
         var bodyToSelect: KtExpression? = null
 
@@ -122,6 +147,27 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
                         selectBody(setter)
                     }
                 }
+            }
+        }
+
+        if (ktFilesToAddImports.isNotEmpty()) {
+            val newDescriptor = extension.resolveToDescriptor()
+            val importInsertHelper = ImportInsertHelper.getInstance(project)
+            for (ktFileToAddImport in ktFilesToAddImports) {
+                importInsertHelper.importDescriptor(ktFileToAddImport, newDescriptor)
+            }
+        }
+
+        if (javaCallsToFix.isNotEmpty()) {
+            val lightMethod = extension.toLightMethods().first()
+            for (javaCallToFix in javaCallsToFix) {
+                javaCallToFix.methodExpression.qualifierExpression?.let {
+                    val argumentList = javaCallToFix.argumentList
+                    argumentList.addBefore(it, argumentList.expressions.firstOrNull())
+                }
+
+                val newRef = javaCallToFix.methodExpression.bindToElement(lightMethod)
+                JavaCodeStyleManager.getInstance(project).shortenClassReferences(newRef)
             }
         }
 

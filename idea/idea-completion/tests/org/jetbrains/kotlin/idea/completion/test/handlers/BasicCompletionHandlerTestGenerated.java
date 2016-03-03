@@ -687,6 +687,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeArgsForCall extends AbstractBasicCompletionHandlerTest {
+        @TestMetadata("AfterElse.kt")
+        public void testAfterElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/AfterElse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterElvis.kt")
+        public void testAfterElvis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/AfterElvis.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInTypeArgsForCall() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/typeArgsForCall"), Pattern.compile("^(.+)\\.kt$"), true);
         }

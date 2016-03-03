@@ -1,11 +1,15 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/Utils.class
-out/production/module/test/Utils__Fun2Kt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/Utils.class
+  out/production/module/test/Utils__Fun2Kt.class
 End of files
 Compiling files:
-src/fun2.kt
+  src/fun2.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Platform declaration clash: The following declarations have the same JVM signature (function(Ljava/util/List;)V):
     fun function(list: kotlin.collections.List<kotlin.Any>): kotlin.Unit

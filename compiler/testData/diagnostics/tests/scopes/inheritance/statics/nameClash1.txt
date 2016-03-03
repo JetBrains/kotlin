@@ -17,7 +17,7 @@ public interface B : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public const final override /*1*/ val field: kotlin.String
+    public const final val field: kotlin.String
 }
 
 public open class E : A, B {
@@ -38,5 +38,5 @@ public open class O : A, B {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final override /*2*/ var field: kotlin.Double
+    public final var field: kotlin.Double
 }

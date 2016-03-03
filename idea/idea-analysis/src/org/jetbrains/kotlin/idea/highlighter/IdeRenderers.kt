@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.types.KotlinType
-import kotlin.comparisons.*
+import kotlin.comparisons.compareBy
 
 object IdeRenderers {
 
@@ -35,7 +35,7 @@ object IdeRenderers {
             calls
                 .map { it.resultingDescriptor }
                 .sortedWith(MemberComparator.INSTANCE)
-                .joinToString("") { "<li>" + DescriptorRenderer.HTML.render(it) + "</li>" }
+                .joinToString("") { "<li>${DescriptorRenderer.HTML.render(it)}</li>" }
     }
 
     @JvmField val HTML_RENDER_TYPE: Renderer<KotlinType> = Renderer {
@@ -47,7 +47,7 @@ object IdeRenderers {
             val comparator = compareBy(MemberComparator.INSTANCE) { c: ResolvedCall<*> -> c.resultingDescriptor }
             calls
                 .sortedWith(comparator)
-                .joinToString("") { "<li>" + renderResolvedCall(it) + "</li>" }
+                .joinToString("") { "<li>${renderResolvedCall(it)}</li>" }
     }
 
     @JvmField val HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER: Renderer<InferenceErrorData> = Renderer {

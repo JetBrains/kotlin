@@ -38,8 +38,10 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
-import org.jetbrains.kotlin.idea.configuration.showInfoNotification
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
+import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
+import org.jetbrains.kotlin.idea.framework.getReflectJar
+import org.jetbrains.kotlin.idea.framework.getRuntimeJar
+import org.jetbrains.kotlin.idea.framework.getTestJar
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
@@ -59,7 +61,7 @@ class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) 
 
     override fun libraryPath(): String = PathUtil.KOTLIN_JAVA_REFLECT_JAR
     override fun getLibFile(): File = PathUtil.getKotlinPathsForIdeaPlugin().reflectPath
-    override fun hasLibJarInLibrary(library: Library): Boolean = JavaRuntimePresentationProvider.getReflectJar(library) != null
+    override fun hasLibJarInLibrary(library: Library): Boolean = getReflectJar(library) != null
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect",
                                                                                        AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
 
@@ -74,7 +76,7 @@ class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
 
     override fun libraryPath(): String = PathUtil.KOTLIN_TEST_JAR
     override fun getLibFile(): File = PathUtil.getKotlinPathsForIdeaPlugin().kotlinTestPath
-    override fun hasLibJarInLibrary(library: Library): Boolean = JavaRuntimePresentationProvider.getTestJar(library) != null
+    override fun hasLibJarInLibrary(library: Library): Boolean = getTestJar(library) != null
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test",
                                                                                        AddKotlinLibQuickFix.getKotlinStdlibVersion(module))
 
@@ -152,8 +154,10 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
         val configurator = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
                                    .firstIsInstanceOrNull<KotlinJavaModuleConfigurator>() ?: return
 
+        val collector = createConfigureKotlinNotificationCollector(project)
+
         for (library in findAllUsedLibraries(project).keySet()) {
-            val runtimeJar = JavaRuntimePresentationProvider.getRuntimeJar(library) ?: continue
+            val runtimeJar = getRuntimeJar(library) ?: continue
             if (hasLibJarInLibrary(library)) continue
 
             val model = library.modifiableModel
@@ -165,15 +169,14 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(libIoFile), OrderRootType.CLASSES)
             }
             else {
-                val copied = configurator.copyFileToDir(project, libFile, libFilesDir)!!
+                val copied = configurator.copyFileToDir(libFile, libFilesDir, collector)!!
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(copied), OrderRootType.CLASSES)
             }
 
             model.commit()
-
-            showInfoNotification(
-                    project, "${libraryPath()} was added to the library ${library.name}")
         }
+
+        collector.showNotification()
     }
 
     companion object {

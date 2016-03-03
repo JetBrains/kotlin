@@ -448,7 +448,7 @@ public class ControlStructureTypingUtils {
                 KtExpression expression = (KtExpression) call.getCallElement();
                 if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()
                         || status.hasTypeInferenceIncorporationError()) { // todo after KT-... remove this line
-                    if (Boolean.TRUE != expression.accept(checkTypeVisitor, new CheckTypeContext(context.trace, data.expectedType))) {
+                    if (noTypeCheckingErrorsInExpression(expression, context.trace, data.expectedType)) {
                         KtExpression calleeExpression = call.getCalleeExpression();
                         if (calleeExpression instanceof KtWhenExpression || calleeExpression instanceof KtIfExpression) {
                             if (status.hasConflictingConstraints() || status.hasTypeInferenceIncorporationError()) {
@@ -462,6 +462,14 @@ public class ControlStructureTypingUtils {
                 KtDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, KtNamedDeclaration.class);
                 logError("Expression: " + (parentDeclaration != null ? parentDeclaration.getText() : expression.getText()) +
                          "\nConstraint system status: \n" + ConstraintsUtil.getDebugMessageForStatus(status));
+            }
+
+            private boolean noTypeCheckingErrorsInExpression(
+                    KtExpression expression,
+                    @NotNull BindingTrace trace,
+                    @NotNull KotlinType expectedType
+            ) {
+                return Boolean.TRUE != expression.accept(checkTypeVisitor, new CheckTypeContext(trace, expectedType));
             }
         };
     }

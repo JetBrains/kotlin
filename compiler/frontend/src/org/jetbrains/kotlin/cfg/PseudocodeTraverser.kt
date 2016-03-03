@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.cfg.pseudocodeTraverser
 
 import org.jetbrains.kotlin.cfg.ControlFlowInfo
-import org.jetbrains.kotlin.cfg.pseudocode.*
-import java.util.*
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
+import java.util.*
 
 fun Pseudocode.traverse(
         traversalOrder: TraversalOrder,
@@ -109,26 +109,7 @@ private fun <I : ControlFlowInfo<*>> Pseudocode.collectDataFromSubgraph(
         if (!isLocal && isStart)
             continue
 
-        fun getPreviousIncludingSubGraphInstructions(): Collection<Instruction> {
-            val previous = instruction.getPreviousInstructions(traversalOrder)
-            if (instruction != startInstruction || previousSubGraphInstructions.isEmpty()) {
-                return previous
-            }
-            val result = ArrayList(previous)
-            result.addAll(previousSubGraphInstructions)
-            return result
-        }
-        val previousInstructions = getPreviousIncludingSubGraphInstructions()
-
-        fun updateEdgeDataForInstruction(
-                previousValue: Edges<I>?,
-                newValue: Edges<I>?
-        ) {
-            if (previousValue != newValue && newValue != null) {
-                changed[0] = true
-                edgesMap.put(instruction, newValue)
-            }
-        }
+        val previousInstructions = getPreviousIncludingSubGraphInstructions(instruction, traversalOrder, startInstruction, previousSubGraphInstructions)
 
         if (instruction is LocalFunctionDeclarationInstruction) {
             val subroutinePseudocode = instruction.body
@@ -146,7 +127,7 @@ private fun <I : ControlFlowInfo<*>> Pseudocode.collectDataFromSubgraph(
                         else
                             Edges(updateEdge(lastInstruction, instruction, newValue.incoming),
                                   updateEdge(lastInstruction, instruction, newValue.outgoing))
-                updateEdgeDataForInstruction(previousValue, updatedValue)
+                updateEdgeDataForInstruction(instruction, previousValue, updatedValue, edgesMap, changed)
                 continue
             }
         }
@@ -162,7 +143,30 @@ private fun <I : ControlFlowInfo<*>> Pseudocode.collectDataFromSubgraph(
             }
         }
         val mergedData = mergeEdges(instruction, incomingEdgesData)
-        updateEdgeDataForInstruction(previousDataValue, mergedData)
+        updateEdgeDataForInstruction(instruction, previousDataValue, mergedData, edgesMap, changed)
+    }
+}
+
+private fun getPreviousIncludingSubGraphInstructions(
+        instruction: Instruction,
+        traversalOrder: TraversalOrder,
+        startInstruction: Instruction,
+        previousSubGraphInstructions: Collection<Instruction>
+): Collection<Instruction> {
+    val previous = instruction.getPreviousInstructions(traversalOrder)
+    if (instruction != startInstruction || previousSubGraphInstructions.isEmpty()) {
+        return previous
+    }
+    val result = ArrayList(previous)
+    result.addAll(previousSubGraphInstructions)
+    return result
+}
+
+private fun <I : ControlFlowInfo<*>> updateEdgeDataForInstruction(
+        instruction: Instruction, previousValue: Edges<I>?, newValue: Edges<I>?, edgesMap: MutableMap<Instruction, Edges<I>>, changed: BooleanArray) {
+    if (previousValue != newValue && newValue != null) {
+        changed[0] = true
+        edgesMap.put(instruction, newValue)
     }
 }
 
@@ -208,7 +212,7 @@ fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction 
 fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
         if (traversalOrder == FORWARD) sinkInstruction else enterInstruction
 
-fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): MutableList<Instruction> =
+fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): List<Instruction> =
         if (traversalOrder == FORWARD) instructions else reversedInstructions
 
 fun Instruction.getNextInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =

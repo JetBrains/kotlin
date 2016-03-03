@@ -1448,6 +1448,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("enumEntryAddComma.kt")
+                public void testEnumEntryAddComma() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryAddComma.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("enumEntryHasComma.kt")
+                public void testEnumEntryHasComma() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryHasComma.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("enumEntryNoReceiver.kt")
                 public void testEnumEntryNoReceiver() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/enumEntryNoReceiver.kt");
@@ -2586,6 +2598,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("delegatorToSuperCallNoClass.kt")
             public void testDelegatorToSuperCallNoClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/delegatorToSuperCallNoClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noParametersImplicitSuperCall.kt")
+            public void testNoParametersImplicitSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noParametersImplicitSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noParametersSuperCall.kt")
+            public void testNoParametersSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noParametersSuperCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noParametersThisCall.kt")
+            public void testNoParametersThisCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createSecondaryConstructor/noParametersThisCall.kt");
                 doTest(fileName);
             }
 
@@ -4440,6 +4470,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public static class InitializeWithConstructorParameter extends AbstractQuickFixTest {
         public void testAllFilesPresentInInitializeWithConstructorParameter() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/initializeWithConstructorParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("constructorWithThisDelegation.kt")
+        public void testConstructorWithThisDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/constructorWithThisDelegation.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("localVar.kt")
@@ -7463,6 +7499,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("funInvWithoutParentheses.kt")
             public void testFunInvWithoutParentheses() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToFunctionInvocation/funInvWithoutParentheses.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/variables/changeToPropertyAccess")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ChangeToPropertyAccess extends AbstractQuickFixTest {
+            public void testAllFilesPresentInChangeToPropertyAccess() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToPropertyAccess"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("nonSimpleName.kt")
+            public void testNonSimpleName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyAccess/nonSimpleName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyCall.kt")
+            public void testPropertyCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyAccess/propertyCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyCallWithArguments.kt")
+            public void testPropertyCallWithArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeToPropertyAccess/propertyCallWithArguments.kt");
                 doTest(fileName);
             }
         }

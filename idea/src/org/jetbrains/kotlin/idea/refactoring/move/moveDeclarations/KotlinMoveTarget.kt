@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.getOrPutNullable
@@ -51,6 +54,18 @@ class KotlinMoveTargetForExistingElement(val targetElement: KtElement): KotlinMo
     override fun getOrCreateTargetPsi(originalPsi: PsiElement) = targetElement
 
     override fun getTargetPsiIfExists(originalPsi: PsiElement) = targetElement
+
+    // No additional verification is needed
+    override fun verify(file: PsiFile): String? = null
+}
+
+class KotlinMoveTargetForCompanion(val targetClass: KtClass): KotlinMoveTarget {
+    override val targetContainerFqName = targetClass.getCompanionObjects().firstOrNull()?.fqName
+                                         ?: targetClass.fqName!!.child(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = targetClass.getOrCreateCompanionObject()
+
+    override fun getTargetPsiIfExists(originalPsi: PsiElement) = targetClass.getCompanionObjects().firstOrNull()
 
     // No additional verification is needed
     override fun verify(file: PsiFile): String? = null

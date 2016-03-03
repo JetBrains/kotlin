@@ -58,11 +58,12 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @Nullable Receiver explicitExtensionReceiverForInvoke,
             @NotNull CandidateResolveMode candidateResolveMode,
             boolean isAnnotationContext,
+            boolean isDebuggerContext,
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext,
+              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext,
               collectAllCandidates, callPosition);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
@@ -80,7 +81,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
                 context.callChecker, context.statementFilter, explicitExtensionReceiverForInvoke,
-                candidateResolveMode, context.isAnnotationContext, context.collectAllCandidates, context.callPosition);
+                candidateResolveMode, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
     }
 
     @NotNull
@@ -91,7 +92,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.callChecker, context.statementFilter,
-                null, CandidateResolveMode.FULLY, context.isAnnotationContext, context.collectAllCandidates,
+                null, CandidateResolveMode.FULLY, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
                 context.callPosition);
     }
 
@@ -110,6 +111,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, callChecker, statementFilter,
-                explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, collectAllCandidates, callPosition);
+                explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 }

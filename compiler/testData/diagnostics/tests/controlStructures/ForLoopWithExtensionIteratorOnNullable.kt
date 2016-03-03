@@ -8,7 +8,7 @@ fun test() {
     // Error
     container<!UNSAFE_CALL!>.<!>iterator()
     // for extension iterator, this code compiles, but should not
-    for (s in <!ITERATOR_MISSING!>container<!>) {}
+    for (s in <!ITERATOR_ON_NULLABLE!>container<!>) {}
 }
 class OtherContainer<K>(val k: K) {
     operator fun iterator(): Iterator<K> = null!!
@@ -17,5 +17,5 @@ class OtherContainer<K>(val k: K) {
 fun test2() {
     val other: OtherContainer<String>? = null
     // Error
-    for (s in <!ITERATOR_MISSING!>other<!>) {}
+    for (s in <!ITERATOR_ON_NULLABLE!>other<!>) {}
 }

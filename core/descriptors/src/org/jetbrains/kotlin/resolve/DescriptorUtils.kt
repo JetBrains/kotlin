@@ -106,6 +106,20 @@ val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
         return true
     }
 
+val DeclarationDescriptorWithVisibility.isEffectivelyPrivateApi: Boolean
+    get() {
+        var parent: DeclarationDescriptorWithVisibility? = this
+
+        while (parent != null) {
+            if (Visibilities.isPrivate(parent.visibility)) return true
+
+            parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility::class.java)
+        }
+
+        return false
+    }
+
+
 val DeclarationDescriptor.isInsidePrivateClass: Boolean
     get() {
         var parent = containingDeclaration as? ClassDescriptor
@@ -210,14 +224,14 @@ val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
 fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
 
 fun CallableMemberDescriptor.firstOverridden(
+        useOriginal: Boolean = false,
         predicate: (CallableMemberDescriptor) -> Boolean
 ): CallableMemberDescriptor? {
     var result: CallableMemberDescriptor? = null
     return DFS.dfs(listOf(this),
-                   object : DFS.Neighbors<CallableMemberDescriptor> {
-                       override fun getNeighbors(current: CallableMemberDescriptor?): Iterable<CallableMemberDescriptor> {
-                           return current?.overriddenDescriptors ?: emptyList()
-                       }
+                   { current ->
+                       val descriptor = if (useOriginal) current?.original else current
+                       descriptor?.overriddenDescriptors ?: emptyList()
                    },
                    object : DFS.AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
                        override fun beforeChildren(current: CallableMemberDescriptor) = result == null
@@ -229,4 +243,30 @@ fun CallableMemberDescriptor.firstOverridden(
                        override fun result(): CallableMemberDescriptor? = result
                    }
     )
+}
+
+fun CallableMemberDescriptor.setSingleOverridden(overridden: CallableMemberDescriptor) {
+    overriddenDescriptors = listOf(overridden)
+}
+
+fun CallableMemberDescriptor.overriddenTreeAsSequence(useOriginal: Boolean): Sequence<CallableMemberDescriptor> =
+    with(if (useOriginal) original else this) {
+        sequenceOf(this) + overriddenDescriptors.asSequence().flatMap { it.overriddenTreeAsSequence(useOriginal) }
+    }
+
+fun CallableDescriptor.overriddenTreeUniqueAsSequence(useOriginal: Boolean): Sequence<CallableDescriptor> {
+    val set = hashSetOf<CallableDescriptor>()
+
+    fun CallableDescriptor.doBuildOverriddenTreeAsSequence(): Sequence<CallableDescriptor> {
+        return with(if (useOriginal) original else this) {
+            if (original in set)
+                emptySequence()
+            else {
+                set += original
+                sequenceOf(this) + overriddenDescriptors.asSequence().flatMap { it.doBuildOverriddenTreeAsSequence() }
+            }
+        }
+    }
+
+    return doBuildOverriddenTreeAsSequence()
 }

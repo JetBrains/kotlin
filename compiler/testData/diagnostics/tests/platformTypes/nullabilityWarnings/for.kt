@@ -22,7 +22,7 @@ fun test() {
     val platformJ = J.staticJ
 
     for (x in platformNN) {}
-    for (x in <!ITERATOR_MISSING!>platformN<!>) {}
+    for (x in <!ITERATOR_ON_NULLABLE!>platformN<!>) {}
     for (x in platformJ) {}
 }
 

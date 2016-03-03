@@ -15,6 +15,6 @@ class A(val prop: Int) {
         // EXPRESSION: it
         // RESULT: Unresolved reference: it
         //Breakpoint! (lambdaOrdinal = -1)
-        list.forEach { println(it) }
+        list.map { it * 2 }
     }
 }

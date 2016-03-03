@@ -97,9 +97,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             enhanced.setCompileTimeInitializer(compileTimeInitializer);
         }
 
-        for (PropertyDescriptor descriptor : getOverriddenDescriptors()) {
-            enhanced.addOverriddenDescriptor(descriptor);
-        }
+        enhanced.setOverriddenDescriptors(getOverriddenDescriptors());
 
         enhanced.setType(
                 enhancedReturnType,

@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverrideResolver
-import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -33,9 +32,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 /**
  * Generates exception-throwing stubs for methods from mutable collection classes not implemented in Kotlin classes which inherit only from
@@ -194,7 +191,7 @@ class CollectionStubMethodGenerator(
     ): List<FunctionDescriptor> {
         val result = ArrayList<FunctionDescriptor>()
 
-        OverrideResolver.generateOverridesInAClass(klass, listOf(), object : OverridingUtil.DescriptorSink {
+        OverrideResolver.generateOverridesInAClass(klass, listOf(), object : OverridingStrategy() {
             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                 if (fakeOverride !is FunctionDescriptor) return
                 if (fakeOverride.findOverriddenFromDirectSuperClass(mutableCollectionClass)?.kind == DECLARATION) {

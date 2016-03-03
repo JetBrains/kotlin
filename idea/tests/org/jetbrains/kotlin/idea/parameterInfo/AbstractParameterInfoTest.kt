@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,31 @@ import com.intellij.codeInsight.hint.ShowParameterInfoHandler
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.Assert
 
 abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
-    override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor {
+        val root = KotlinTestUtils.getTestsRoot(this.javaClass)
+        if (root.endsWith("Lib")) {
+            return JdkAndMockLibraryProjectDescriptor(
+                    "$root/sharedLib", true, true, false, false
+            )
+
+        }
+        return ProjectDescriptorWithStdlibSources.INSTANCE
+    }
 
     override fun setUp() {
         super.setUp()

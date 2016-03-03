@@ -142,6 +142,8 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
     @JvmStatic
     fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
+        if (name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
+
         val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
                 ?: return null
 

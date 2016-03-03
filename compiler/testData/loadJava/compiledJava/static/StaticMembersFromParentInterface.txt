@@ -5,9 +5,9 @@ public/*package*/ open class Child : test.Parent1, test.Parent2 {
 
     // Static members
     public const final override /*1*/ /*fake_override*/ val a: kotlin.Int
-    public final override /*1*/ var b: kotlin.String
+    public final var b: kotlin.String!
     public final var c: kotlin.Int
-    public final override /*1*/ var d: kotlin.String
+    public final var d: kotlin.String!
     public const final override /*1*/ /*fake_override*/ val e: kotlin.Int
     public open fun bar(): kotlin.Unit
     public open fun baz(): kotlin.Unit

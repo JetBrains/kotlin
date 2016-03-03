@@ -43,7 +43,7 @@ class TraitDefaultMethodCallChecker : CallChecker {
             if (classifier != null && DescriptorUtils.isInterface(classifier)) {
                 context.trace.report(
                         ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(
-                                PsiTreeUtil.getParentOfType(resolvedCall.getCall().getCallElement(), KtExpression::class.java)
+                                PsiTreeUtil.getParentOfType(resolvedCall.call.callElement, KtExpression::class.java)!!
                         )
                 )
             }

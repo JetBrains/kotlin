@@ -96,7 +96,8 @@ public class ResolutionResultsHandler {
         Set<MutableResolvedCall<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
         successfulAndIncomplete.addAll(successfulCandidates);
         successfulAndIncomplete.addAll(incompleteCandidates);
-        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true, checkArgumentsMode);
+        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(
+                successfulAndIncomplete, true, context.isDebuggerContext, checkArgumentsMode);
         if (results.isSingleResult()) {
             MutableResolvedCall<D> resultingCall = results.getResultingCall();
             resultingCall.getTrace().moveAllMyDataTo(context.trace);
@@ -147,7 +148,7 @@ public class ResolutionResultsHandler {
                     if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
                         return recordFailedInfo(tracing, trace, thisLevel);
                     }
-                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, checkArgumentsMode);
+                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, false, checkArgumentsMode);
                     return recordFailedInfo(tracing, trace, results.getResultingCalls());
                 }
             }
@@ -188,6 +189,7 @@ public class ResolutionResultsHandler {
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenerics,
+            boolean isDebuggerContext,
             @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
         if (candidates.size() == 1) {
@@ -203,14 +205,14 @@ public class ResolutionResultsHandler {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
 
-        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, checkArgumentsMode, false);
+        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, checkArgumentsMode, false, isDebuggerContext);
         if (maximallySpecific != null) {
             return OverloadResolutionResultsImpl.success(maximallySpecific);
         }
 
         if (discriminateGenerics) {
             MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(
-                    noOverrides, checkArgumentsMode, true);
+                    noOverrides, checkArgumentsMode, true, isDebuggerContext);
             if (maximallySpecificGenericsDiscriminated != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
             }

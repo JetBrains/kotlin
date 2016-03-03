@@ -187,7 +187,7 @@ fun <T : KtDeclaration> insertMembersAfter(
                     else if (bound == null && body.declarations.isNotEmpty()) {
                         afterAnchor = body.lBrace!!
                     }
-                    else if (bound != null && afterAnchor.startOffset >= bound.startOffset) {
+                    else if (bound != null && afterAnchor.startOffset > bound.startOffset) {
                         afterAnchor = bound.prevSibling!!
                     }
                 }
@@ -207,6 +207,6 @@ fun <T : KtDeclaration> insertMembersAfter(
     }
 }
 
-fun <T : KtDeclaration> insertMember(editor: Editor, classOrObject: KtClassOrObject, declaration: T): T {
-    return insertMembersAfter(editor, classOrObject, listOf(declaration)).single()
+fun <T : KtDeclaration> insertMember(editor: Editor?, classOrObject: KtClassOrObject, declaration: T, anchor: PsiElement? = null): T {
+    return insertMembersAfter(editor, classOrObject, listOf(declaration), anchor).single()
 }

@@ -2,4 +2,3 @@
 @file:JvmMultifileClass
 
 fun g(x: Int) {}
-

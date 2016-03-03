@@ -14,4 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"$(dirname "$(which "$0")")"/kotlinc "$@"
+DIR="${BASH_SOURCE[0]%/*}"
+: ${DIR:="."}
+
+"${DIR}"/kotlinc "$@"

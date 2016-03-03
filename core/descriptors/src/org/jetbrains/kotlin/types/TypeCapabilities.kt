@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.PossiblyInnerType
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 interface TypeCapability
 
@@ -39,6 +38,14 @@ class SingletonTypeCapabilities(private val clazz: Class<*>, private val typeCap
         if (capabilityClass == clazz) return typeCapability as T
         return null
     }
+}
+
+fun <T : TypeCapability> TypeCapabilities.addCapability(clazz: Class<T>, typeCapability: T): TypeCapabilities {
+    if (getCapability(clazz) === typeCapability) return this
+    val newCapabilities = SingletonTypeCapabilities(clazz, typeCapability)
+    if (this === TypeCapabilities.NONE) return newCapabilities
+
+    return CompositeTypeCapabilities(this, newCapabilities)
 }
 
 inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
@@ -65,9 +72,6 @@ fun oneMoreSpecificThanAnother(a: KotlinType, b: KotlinType) =
 // (i.e. it is not derived from a type parameter), see isTypeVariable
 interface CustomTypeVariable : TypeCapability {
     val isTypeVariable: Boolean
-
-    // If typeParameterDescriptor != null <=> isTypeVariable == true, this is not a type variable
-    val typeParameterDescriptor: TypeParameterDescriptor?
 
     // Throws an exception when isTypeVariable == false
     fun substitutionResult(replacement: KotlinType): KotlinType

@@ -149,6 +149,12 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile(fileName);
     }
 
+    @TestMetadata("protectedFromLambda")
+    public void testProtectedFromLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/protectedFromLambda/");
+        doTestMultiFile(fileName);
+    }
+
     @TestMetadata("samWrappersDifferentFiles")
     public void testSamWrappersDifferentFiles() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles/");

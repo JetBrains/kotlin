@@ -8,11 +8,11 @@ operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.minus(p: T.(p: 
 }
 
 inline operator fun <T, U> Function1<T, U>.plus(p: Function1<T, U>) {
-    <!USAGE_IS_NOT_INLINABLE!>this<!> - <!USAGE_IS_NOT_INLINABLE!>p<!>
+    this - <!USAGE_IS_NOT_INLINABLE!>p<!>
 }
 
 inline operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.plus(p: T.(p: U) -> V) {
-    <!USAGE_IS_NOT_INLINABLE!>this<!> - <!USAGE_IS_NOT_INLINABLE!>p<!>
+    this - <!USAGE_IS_NOT_INLINABLE!>p<!>
 }
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {

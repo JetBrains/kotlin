@@ -142,6 +142,8 @@ fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(): PsiElement? {
 
 inline fun <reified T : PsiElement> T.nextSiblingOfSameType() = PsiTreeUtil.getNextSiblingOfType(this, T::class.java)
 
+inline fun <reified T : PsiElement> T.prevSiblingOfSameType() = PsiTreeUtil.getPrevSiblingOfType(this, T::class.java)
+
 fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
     return PsiTreeUtil.isAncestor(this, element, strict)
 }

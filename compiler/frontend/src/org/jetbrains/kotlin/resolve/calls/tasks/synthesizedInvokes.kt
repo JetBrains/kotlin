@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
@@ -46,9 +47,9 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
                     synthesizedSuperFun.modality,
                     synthesizedSuperFun.visibility,
                     CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-                    true
+                    /* copyOverrides = */ false
             )
-            fakeOverride.addOverriddenDescriptor(synthesizedSuperFun)
+            fakeOverride.setSingleOverridden(synthesizedSuperFun)
             fakeOverride
         }
 

@@ -1,5 +1,5 @@
 package test
 
 public open class ConstructorWithNewTypeParams</*0*/ T : kotlin.Any!> {
-    public constructor ConstructorWithNewTypeParams</*0*/ T : kotlin.Any!>(/*0*/ p0: kotlin.Any!)
+    public constructor ConstructorWithNewTypeParams</*0*/ T : kotlin.Any!, /*1*/ U : kotlin.Any!>(/*0*/ p0: U!)
 }

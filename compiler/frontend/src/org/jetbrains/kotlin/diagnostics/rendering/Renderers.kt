@@ -76,6 +76,19 @@ object Renderers {
 
     @JvmField val NAME: Renderer<Named> = Renderer { it.name.asString() }
 
+    @JvmField val DECLARATION_NAME_WITH_KIND: Renderer<DeclarationDescriptor> = Renderer {
+        val declarationKindWithSpace = when (it) {
+            is PackageFragmentDescriptor -> "package "
+            is ClassDescriptor -> "${it.renderKind()} "
+            is ConstructorDescriptor -> "constructor "
+            is PropertyGetterDescriptor -> "property getter "
+            is PropertySetterDescriptor -> "property setter "
+            is FunctionDescriptor -> "function "
+            else -> throw AssertionError("Unexpected declaration kind: $it")
+        }
+        "$declarationKindWithSpace'${it.name.asString()}'"
+    }
+
     @JvmField val NAME_OF_PARENT_OR_FILE: Renderer<DeclarationDescriptor> = Renderer {
         if (DescriptorUtils.isTopLevelDeclaration(it) && it is DeclarationDescriptorWithVisibility && it.visibility == Visibilities.PRIVATE) {
             "file"

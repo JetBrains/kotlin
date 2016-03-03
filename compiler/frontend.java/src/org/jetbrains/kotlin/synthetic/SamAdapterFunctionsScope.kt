@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
-import org.jetbrains.kotlin.load.java.typeEnhancement.enhanceSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
@@ -47,9 +46,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
         if (!function.hasJavaOriginInHierarchy()) return null //TODO: should we go into base at all?
         if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return null
         if (function.returnType == null) return null
-        //TODO: it's a temporary hack while original returns a function with platform types
-        val enhancedFunction = function.enhanceSignature()
-        return MyFunctionDescriptor.create(enhancedFunction)
+        return MyFunctionDescriptor.create(function)
     }
 
     override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {

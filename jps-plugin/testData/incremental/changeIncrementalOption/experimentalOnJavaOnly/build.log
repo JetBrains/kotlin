@@ -1,6 +1,10 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/A.class
+  out/production/module/A.class
 End of files
+Exit code: NOTHING_DONE
+------------------------------------------
 Compiling files:
-src/A.java
+  src/A.java
 End of files

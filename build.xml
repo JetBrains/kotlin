@@ -312,6 +312,7 @@
                 <arg value="-output"/>
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
+                <arg value="-version"/>
                 <arg value="-meta-info"/>
                 <arg value="-kjsm"/>
                 <arg line="-main noCall"/>
@@ -550,7 +551,9 @@
 
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-compiler"/>
+            <withKotlin modulename="kotlin-compiler">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src refid="compilerSources.path"/>
@@ -608,7 +611,9 @@
 
         <javac2 destdir="${output}/classes/kotlin-build-common" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-build-common"/>
+            <withKotlin modulename="kotlin-build-common">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <src>
                 <pathelement path="build-common/src"/>
@@ -681,7 +686,9 @@
     <target name="android-compiler-plugin">
         <cleandir dir="${output}/classes/android-compiler-plugin"/>
         <javac2 destdir="${output}/classes/android-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-            <withKotlin modulename="kotlin-android-compiler-plugin"/>
+            <withKotlin modulename="kotlin-android-compiler-plugin">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
@@ -706,7 +713,9 @@
         <cleandir dir="${output}/classes/ant"/>
         <javac2 destdir="${output}/classes/ant" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-ant-tools"/>
+            <withKotlin modulename="kotlin-ant-tools">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>
@@ -736,30 +745,6 @@
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
                 <attribute name="Class-Path" value="${compiler.manifest.class.path} kotlin-preloader.jar"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="jdk-annotations">
-        <jar destfile="${kotlin-home}/lib/kotlin-jdk-annotations.jar">
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jdk.annotations}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="android-sdk-annotations">
-        <jar destfile="${kotlin-home}/lib/kotlin-android-sdk-annotations.jar">
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.android.sdk.annotations}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
     </target>
@@ -800,6 +785,7 @@
                 <arg value="-d"/>
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
+                <arg value="-version"/>
                 <arg line="@{additionalOptions}"/>
                 <arg value="-classpath"/>
                 <arg value="${toString:classpath.path}"/>
@@ -984,6 +970,7 @@
             </jarjar>
 
             <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
+                <compilerarg value="-version"/>
                 <compilerarg value="-script"/>
                 <compilerarg value="kotlin/jvm/internal/.*|kotlin/Metadata"/> <!-- Annotations to strip -->
                 <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
@@ -1054,11 +1041,11 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-compiler-plugin"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
@@ -1078,7 +1065,9 @@
 
         <javac2 destdir="${output}/classes/idea-analysis" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
                 source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-for-upsource"/>
+            <withKotlin modulename="kotlin-for-upsource">
+                <compilerarg value="-version"/>
+            </withKotlin>
             <skip pattern="kotlin/jvm/internal/.*"/>
             <skip pattern="kotlin/Metadata"/>
             <src>

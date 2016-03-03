@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -39,8 +38,6 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.AMBIGUOUS_LABEL;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -223,7 +220,7 @@ public class BindingContextUtils {
         map.forEach(new Function3<WritableSlice, Object, Object, Void>() {
             @Override
             public Void invoke(WritableSlice slice, Object key, Object value) {
-                if (filter == null || filter.accept(slice, null, key)) {
+                if (filter == null || filter.accept(slice, key)) {
                     trace.record(slice, key, value);
                 }
 
@@ -234,7 +231,7 @@ public class BindingContextUtils {
         if (!commitDiagnostics) return;
 
         for (Diagnostic diagnostic : diagnostics.getOwnDiagnostics()) {
-            if (filter == null || filter.accept(null, diagnostic, diagnostic.getPsiElement())) {
+            if (filter == null || filter.accept(null, diagnostic.getPsiElement())) {
                 trace.report(diagnostic);
             }
         }

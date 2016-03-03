@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public interface MutableResolvedCall<D extends CallableDescriptor> extends ResolvedCall<D>  {
@@ -64,4 +65,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     //todo remove: use value to parameter map status
     boolean hasInferredReturnType();
+
+    void setSmartCastDispatchReceiverType(@NotNull KotlinType smartCastDispatchReceiverType);
 }

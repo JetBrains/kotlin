@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.utils.CollectionsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
     private List<TypeParameterDescriptor> typeParameters;
@@ -50,7 +48,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isHidden = false;
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
-    private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
+    private Collection<? extends FunctionDescriptor> overriddenFunctions = null;
+    private volatile Function0<Set<FunctionDescriptor>> lazyOverriddenFunctionsTask = null;
     private final FunctionDescriptor original;
     private final Kind kind;
     @Nullable
@@ -165,7 +164,20 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @NotNull
     @Override
     public Collection<? extends FunctionDescriptor> getOverriddenDescriptors() {
-        return overriddenFunctions;
+        performOverriddenLazyCalculationIfNeeded();
+        return overriddenFunctions != null ? overriddenFunctions : Collections.<FunctionDescriptor>emptyList();
+    }
+
+    private void performOverriddenLazyCalculationIfNeeded() {
+        Function0<Set<FunctionDescriptor>> overriddenTask = lazyOverriddenFunctionsTask;
+        if (overriddenTask != null) {
+            overriddenFunctions = overriddenTask.invoke();
+            // Here it's important that this assignment is strictly after previous one
+            // `lazyOverriddenFunctionsTask` is volatile, so when someone will see that it's null,
+            // he can read consistent collection from `overriddenFunctions`,
+            // because it's assignment happens-before of "lazyOverriddenFunctionsTask = null"
+            lazyOverriddenFunctionsTask = null;
+        }
     }
 
     @NotNull
@@ -184,7 +196,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public boolean isOperator() {
         if (isOperator) return true;
 
-        for (FunctionDescriptor descriptor : overriddenFunctions) {
+        for (FunctionDescriptor descriptor : getOriginal().getOverriddenDescriptors()) {
             if (descriptor.isOperator()) return true;
         }
 
@@ -195,7 +207,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public boolean isInfix() {
         if (isInfix) return true;
 
-        for (FunctionDescriptor descriptor : overriddenFunctions) {
+        for (FunctionDescriptor descriptor : getOriginal().getOverriddenDescriptors()) {
             if (descriptor.isInfix()) return true;
         }
 
@@ -223,8 +235,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
-    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
-        overriddenFunctions.add((FunctionDescriptor) overriddenFunction);
+    public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
+        //noinspection unchecked
+        overriddenFunctions = (Collection<? extends FunctionDescriptor>) overriddenDescriptors;
     }
 
     @Override
@@ -291,8 +304,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @Nullable KotlinType newExtensionReceiverParameterType;
         protected @NotNull KotlinType newReturnType;
         protected @Nullable Name name;
-        protected boolean copyOverrides;
-        protected boolean signatureChange;
+        protected boolean copyOverrides = true;
+        protected boolean signatureChange = false;
+        protected boolean preserveSourceElement = false;
+        protected boolean dropOriginalInContainingParts = false;
         private boolean isHiddenToOvercomeSignatureClash;
         private List<TypeParameterDescriptor> newTypeParameters = null;
 
@@ -316,8 +331,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newExtensionReceiverParameterType = newExtensionReceiverParameterType;
             this.newReturnType = newReturnType;
             this.name = name;
-            this.copyOverrides = true;
-            this.signatureChange = false;
             this.isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
         }
 
@@ -392,11 +405,24 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         @NotNull
+        public CopyConfiguration setPreserveSourceElement() {
+            this.preserveSourceElement = true;
+            return this;
+        }
+
+        @NotNull
+        public CopyConfiguration setDropOriginalInContainingParts() {
+            this.dropOriginalInContainingParts = true;
+            return this;
+        }
+
+        @NotNull
         public CopyConfiguration setHidden() {
             isHiddenToOvercomeSignatureClash = true;
             return this;
         }
 
+        @Nullable
         public FunctionDescriptor build() {
             return doSubstitute(this);
         }
@@ -429,10 +455,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected FunctionDescriptor doSubstitute(@NotNull CopyConfiguration configuration) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(
                 configuration.newOwner, configuration.original, configuration.kind, configuration.name,
-                /* preserveSource = */ configuration.signatureChange);
+                configuration.preserveSourceElement);
 
         List<TypeParameterDescriptor> substitutedTypeParameters;
-        TypeSubstitutor substitutor;
+        final TypeSubstitutor substitutor;
 
         if (configuration.newTypeParameters == null) {
             List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
@@ -474,7 +500,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
 
         List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(
-                substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor
+                substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor, configuration.dropOriginalInContainingParts
         );
         if (substitutedValueParameters == null) {
             return null;
@@ -509,9 +535,27 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             substitutedDescriptor.setInitialSignatureDescriptor(initialSignatureSubstituted);
         }
 
-        if (configuration.copyOverrides) {
-            for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
+        if (configuration.copyOverrides && !getOriginal().getOverriddenDescriptors().isEmpty()) {
+            if (configuration.originalSubstitutor.isEmpty()) {
+                Function0<Set<FunctionDescriptor>> overriddenFunctionsTask = lazyOverriddenFunctionsTask;
+                if (overriddenFunctionsTask != null) {
+                    substitutedDescriptor.lazyOverriddenFunctionsTask = overriddenFunctionsTask;
+                }
+                else {
+                    substitutedDescriptor.setOverriddenDescriptors(getOverriddenDescriptors());
+                }
+            }
+            else {
+                substitutedDescriptor.lazyOverriddenFunctionsTask = new Function0<Set<FunctionDescriptor>>() {
+                    @Override
+                    public Set<FunctionDescriptor> invoke() {
+                        SmartSet<FunctionDescriptor> result = SmartSet.create();
+                        for (FunctionDescriptor overriddenFunction : getOverriddenDescriptors()) {
+                            result.add(overriddenFunction.substitute(substitutor));
+                        }
+                        return result;
+                    }
+                };
             }
         }
 
@@ -543,7 +587,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
             FunctionDescriptor substitutedDescriptor,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-            @NotNull TypeSubstitutor substitutor
+            @NotNull TypeSubstitutor substitutor,
+            boolean dropOriginal
     ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(unsubstitutedValueParameters.size());
         for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
@@ -556,7 +601,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             result.add(
                     new ValueParameterDescriptorImpl(
                             substitutedDescriptor,
-                            unsubstitutedValueParameter,
+                            dropOriginal ? null : unsubstitutedValueParameter,
                             unsubstitutedValueParameter.getIndex(),
                             unsubstitutedValueParameter.getAnnotations(),
                             unsubstitutedValueParameter.getName(),

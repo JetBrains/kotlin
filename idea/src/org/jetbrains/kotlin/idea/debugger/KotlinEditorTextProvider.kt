@@ -25,7 +25,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class KotlinEditorTextProvider : EditorTextProvider {
     override fun getEditorText(elementAtCaret: PsiElement): TextWithImports? {
@@ -109,14 +112,23 @@ class KotlinEditorTextProvider : EditorTextProvider {
 
             return when {
                 newExpression is KtExpression -> newExpression
-                jetElement is KtSimpleNameExpression -> jetElement
+                jetElement is KtSimpleNameExpression -> {
+                    val context = jetElement.analyzeAndGetResult().bindingContext
+                    val qualifier = context[BindingContext.QUALIFIER, jetElement]
+                    if (qualifier != null && !DescriptorUtils.isObject(qualifier.descriptor)) {
+                        null
+                    }
+                    else {
+                        jetElement
+                    }
+                }
                 else -> null
             }
 
         }
 
         private val NOT_ACCEPTED_AS_CONTEXT_TYPES =
-                arrayOf(KtUserType::class.java, KtImportDirective::class.java, KtPackageDirective::class.java)
+                arrayOf(KtUserType::class.java, KtImportDirective::class.java, KtPackageDirective::class.java, KtValueArgumentName::class.java)
 
         fun isAcceptedAsCodeFragmentContext(element: PsiElement): Boolean {
             return !NOT_ACCEPTED_AS_CONTEXT_TYPES.contains(element.javaClass as Class<*>) &&

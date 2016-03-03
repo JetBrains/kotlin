@@ -1,24 +1,34 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module1/a/A.class
+  out/production/module1/a/A.class
 End of files
 Compiling files:
-module1/src/module1_A.kt
+  module1/src/module1_A.kt
 End of files
+Exit code: OK
+------------------------------------------
 Cleaning output files:
-out/production/module2/b/B.class
+  out/production/module2/b/B.class
 End of files
 Compiling files:
-module2/src/module2_B.kt
+  module2/src/module2_B.kt
 End of files
+Exit code: OK
+------------------------------------------
 Cleaning output files:
-out/production/module3/c/C.class
+  out/production/module3/c/C.class
 End of files
 Compiling files:
-module3/src/module3_C.kt
+  module3/src/module3_C.kt
 End of files
+Exit code: OK
+------------------------------------------
 Cleaning output files:
-out/production/module4/D/D.class
+  out/production/module4/D/D.class
 End of files
 Compiling files:
-module4/src/module4_D.kt
+  module4/src/module4_D.kt
 End of files
+Exit code: OK
+------------------------------------------

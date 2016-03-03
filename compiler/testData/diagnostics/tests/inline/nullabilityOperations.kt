@@ -4,10 +4,10 @@ inline fun String.submit(action: Function1<Int, Int>) {
 }
 
 inline fun Function1<Int, Int>.submit() {
-    <!USAGE_IS_NOT_INLINABLE!>this<!>?.invoke(11)
-    <!USAGE_IS_NOT_INLINABLE!>this<!>!!.invoke(11)
+    this?.invoke(11)
+    this!!.invoke(11)
 
-    submit(<!USAGE_IS_NOT_INLINABLE!>this<!>!!)
+    submit(this!!)
 }
 
 inline fun submit(action: Function1<Int, Int>) {

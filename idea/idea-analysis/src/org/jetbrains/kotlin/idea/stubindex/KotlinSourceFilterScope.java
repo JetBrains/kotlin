@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.stubindex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 
 public class KotlinSourceFilterScope extends DelegatingGlobalSearchScope {
@@ -84,7 +84,9 @@ public class KotlinSourceFilterScope extends DelegatingGlobalSearchScope {
     private final boolean includeProjectSourceFiles;
     private final boolean includeLibrarySourceFiles;
     private final boolean includeClassFiles;
-    private final boolean isJsProject;
+
+    //NOTE: avoid recomputing in potentially bottleneck 'contains' method
+    private final Ref<Boolean> isJsProjectRef = new Ref<Boolean>();
 
     private KotlinSourceFilterScope(
             @NotNull GlobalSearchScope delegate,
@@ -98,9 +100,7 @@ public class KotlinSourceFilterScope extends DelegatingGlobalSearchScope {
         this.includeProjectSourceFiles = includeProjectSourceFiles;
         this.includeLibrarySourceFiles = includeLibrarySourceFiles;
         this.includeClassFiles = includeClassFiles;
-        //NOTE: avoid recomputing in potentially bottleneck 'contains' method
         this.index = ProjectRootManager.getInstance(project).getFileIndex();
-        this.isJsProject = JsProjectDetector.isJsProject(project);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class KotlinSourceFilterScope extends DelegatingGlobalSearchScope {
     public boolean contains(@NotNull VirtualFile file) {
         if (!super.contains(file)) return false;
         return ProjectRootsUtil.isInContent(
-                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, index, isJsProject
+                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, index, isJsProjectRef
         );
     }
 }

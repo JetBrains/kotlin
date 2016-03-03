@@ -1,18 +1,24 @@
-========== Step #1 ============
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/test/ConstKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/ConstKt.class
 End of files
 Compiling files:
 End of files
+Marked as dirty by Kotlin:
+  src/usage.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/META-INF/module.kotlin_module
-out/production/module/usage/UsageKt.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/usage/UsageKt.class
 End of files
 Compiling files:
-src/usage.kt
+  src/usage.kt
 End of files
+Exit code: ABORT
+------------------------------------------
 COMPILATION FAILED
 Unresolved reference: test
 An annotation parameter must be a compile-time constant

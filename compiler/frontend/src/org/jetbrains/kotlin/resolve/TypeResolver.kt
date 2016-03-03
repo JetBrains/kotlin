@@ -307,7 +307,7 @@ class TypeResolver(
 
         val arguments = resolveTypeProjections(c, ErrorUtils.createErrorType("No type").constructor, type.typeArguments)
         if (!arguments.isEmpty()) {
-            c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), 0))
+            c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.typeArgumentList!!, 0))
         }
 
         val containing = typeParameter.containingDeclaration
@@ -552,10 +552,10 @@ class TypeResolver(
                     val parameterDescriptor = constructor.parameters[i]
                     if (kind != INVARIANT && parameterDescriptor.variance != INVARIANT) {
                         if (kind == parameterDescriptor.variance) {
-                            c.trace.report(REDUNDANT_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()))
+                            c.trace.report(REDUNDANT_PROJECTION.on(argumentElement, constructor.declarationDescriptor!!))
                         }
                         else {
-                            c.trace.report(CONFLICTING_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()))
+                            c.trace.report(CONFLICTING_PROJECTION.on(argumentElement, constructor.declarationDescriptor!!))
                         }
                     }
                 }

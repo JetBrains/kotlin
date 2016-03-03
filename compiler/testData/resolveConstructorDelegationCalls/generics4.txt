@@ -13,7 +13,7 @@ class A<T1, T2 : T1> : B<T1, T2> {
 Resolved call:
 
 Candidate descriptor: constructor B<X, Y : X>(x: X, y: Y) defined in B
-Resulting descriptor: constructor B<X, Y : X>(x: T1, y: T2) defined in B
+Resulting descriptor: constructor B<X, Y : T1>(x: T1, y: T2) defined in B
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 Dispatch receiver = NO_RECEIVER

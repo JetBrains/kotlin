@@ -179,6 +179,7 @@ fun KtBlockExpression.contentRange(): PsiChildRange {
     val last = rBrace!!
             .siblings(forward = false, withItself = false)
             .first { it !is PsiWhiteSpace }
+    if (last == lBrace) return PsiChildRange.EMPTY
     return PsiChildRange(first, last)
 }
 

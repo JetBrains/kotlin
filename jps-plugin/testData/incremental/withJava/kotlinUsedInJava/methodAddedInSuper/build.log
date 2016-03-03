@@ -1,14 +1,20 @@
+================ Step #1 =================
+
 Cleaning output files:
-out/production/module/Super.class
+  out/production/module/Super.class
 End of files
 Compiling files:
-src/Super.kt
+  src/Super.kt
 End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
-out/production/module/Sub.class
+  out/production/module/Sub.class
 End of files
+Exit code: NOTHING_DONE
+------------------------------------------
 Compiling files:
-src/Sub.java
+  src/Sub.java
 End of files
 COMPILATION FAILED
 y() in Sub cannot override y() in Super; overridden method is final

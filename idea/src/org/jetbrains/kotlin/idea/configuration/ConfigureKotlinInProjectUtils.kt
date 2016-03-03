@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
-import com.intellij.notification.Notifications
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -96,8 +93,4 @@ fun getNonConfiguredModules(project: Project, excludeModules: Collection<Module>
     return modulesWithKotlinFiles.filter { module ->
         ableToRunConfigurators.any { !it.isConfigured(module) }
     }
-}
-
-fun showInfoNotification(project: Project, message: String) {
-    Notifications.Bus.notify(Notification("Configure Kotlin: info notification", "Configure Kotlin", message, NotificationType.INFORMATION), project)
 }

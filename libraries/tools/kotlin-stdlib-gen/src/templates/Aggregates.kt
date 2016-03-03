@@ -436,8 +436,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("reduceIndexed(operation: (Int, T, T) -> T)") {
         inline(true)
-        include(CharSequences)
-        exclude(ArraysOfObjects, Iterables, Sequences)
+        only(ArraysOfPrimitives, CharSequences)
 
         doc { f ->
             """
@@ -446,18 +445,19 @@ fun aggregates(): List<GenericFunction> {
             """
         }
         returns("T")
-        body {
-            """
-            val iterator = this.iterator()
-            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+        body { f ->
+            with (DocExtensions) {
+                """
+                if (isEmpty())
+                    throw UnsupportedOperationException("Empty ${f.collection} can't be reduced.")
 
-            var index = 1
-            var accumulator = iterator.next()
-            while (iterator.hasNext()) {
-                accumulator = operation(index++, accumulator, iterator.next())
+                var accumulator = this[0]
+                for (index in 1..lastIndex) {
+                    accumulator = operation(index, accumulator, this[index])
+                }
+                return accumulator
+                """
             }
-            return accumulator
-            """
         }
     }
 
@@ -487,6 +487,20 @@ fun aggregates(): List<GenericFunction> {
             return accumulator
             """
         }
+        body(ArraysOfObjects) { f ->
+            with (DocExtensions) {
+                """
+                if (isEmpty())
+                    throw UnsupportedOperationException("Empty ${f.collection} can't be reduced.")
+
+                var accumulator: S = this[0]
+                for (index in 1..lastIndex) {
+                    accumulator = operation(index, accumulator, this[index])
+                }
+                return accumulator
+                """
+            }
+        }
     }
 
     templates add f("reduceRightIndexed(operation: (Int, T, T) -> T)") {
@@ -500,19 +514,21 @@ fun aggregates(): List<GenericFunction> {
             """
         }
         returns("T")
-        body {
-            """
-            var index = lastIndex
-            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+        body { f ->
+            with (DocExtensions) {
+                """
+                var index = lastIndex
+                if (index < 0) throw UnsupportedOperationException("Empty ${f.collection} can't be reduced.")
 
-            var accumulator = get(index--)
-            while (index >= 0) {
-                accumulator = operation(index, get(index), accumulator)
-                --index
+                var accumulator = get(index--)
+                while (index >= 0) {
+                    accumulator = operation(index, get(index), accumulator)
+                    --index
+                }
+
+                return accumulator
+                """
             }
-
-            return accumulator
-            """
         }
     }
 
@@ -529,40 +545,43 @@ fun aggregates(): List<GenericFunction> {
         typeParam("S")
         typeParam("T: S")
         returns("S")
-        body {
-            """
-            var index = lastIndex
-            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+        body { f ->
+            with (DocExtensions) {
+                """
+                var index = lastIndex
+                if (index < 0) throw UnsupportedOperationException("Empty ${f.collection} can't be reduced.")
 
-            var accumulator: S = get(index--)
-            while (index >= 0) {
-                accumulator = operation(index, get(index), accumulator)
-                --index
+                var accumulator: S = get(index--)
+                while (index >= 0) {
+                    accumulator = operation(index, get(index), accumulator)
+                    --index
+                }
+
+                return accumulator
+                """
             }
-
-            return accumulator
-            """
         }
     }
 
     templates add f("reduce(operation: (T, T) -> T)") {
         inline(true)
-        include(CharSequences)
-        exclude(ArraysOfObjects, Iterables, Sequences)
+        only(ArraysOfPrimitives, CharSequences)
 
         doc { f -> "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
         returns("T")
-        body {
-            """
-            val iterator = this.iterator()
-            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+        body { f ->
+            with (DocExtensions) {
+                """
+                if (isEmpty())
+                    throw UnsupportedOperationException("Empty ${f.collection} can't be reduced.")
 
-            var accumulator = iterator.next()
-            while (iterator.hasNext()) {
-                accumulator = operation(accumulator, iterator.next())
+                var accumulator = this[0]
+                for (index in 1..lastIndex) {
+                    accumulator = operation(accumulator, this[index])
+                }
+                return accumulator
+                """
             }
-            return accumulator
-            """
         }
     }
 
@@ -585,6 +604,20 @@ fun aggregates(): List<GenericFunction> {
             }
             return accumulator
             """
+        }
+        body(ArraysOfObjects) { f ->
+            with (DocExtensions) {
+                """
+                if (isEmpty())
+                    throw UnsupportedOperationException("Empty ${f.collection} can't be reduced.")
+
+                var accumulator: S = this[0]
+                for (index in 1..lastIndex) {
+                    accumulator = operation(accumulator, this[index])
+                }
+                return accumulator
+                """
+            }
         }
     }
 

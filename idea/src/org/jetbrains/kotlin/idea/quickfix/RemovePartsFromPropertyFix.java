@@ -85,8 +85,10 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
+        if (!super.isAvailable(project, editor, file)) return false;
+
         KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
-        return super.isAvailable(project, editor, file) && type != null && !type.isError();
+        return type != null && !type.isError();
     }
 
     @Override

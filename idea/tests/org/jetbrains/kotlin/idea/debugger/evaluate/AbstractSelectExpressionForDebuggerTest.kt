@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
@@ -46,6 +47,8 @@ abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixture
 
         Assert.assertEquals("Another expression should be selected", expected, actualResult)
     }
+
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/debugger/selectExpression";
 }

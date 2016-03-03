@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
@@ -116,13 +117,8 @@ class LazyJavaTypeResolver(
                         ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.presentableText)
                 }
                 is JavaTypeParameter -> {
-                    if (isConstructorTypeParameter()) {
-                        getConstructorTypeParameterSubstitute().getConstructor()
-                    }
-                    else {
-                        typeParameterResolver.resolveTypeParameter(classifier)?.typeConstructor
-                            ?: ErrorUtils.createErrorTypeConstructor("Unresolved Java type parameter: " + javaType.presentableText)
-                    }
+                    typeParameterResolver.resolveTypeParameter(classifier)?.typeConstructor
+                        ?: ErrorUtils.createErrorTypeConstructor("Unresolved Java type parameter: " + javaType.presentableText)
                 }
                 else -> throw IllegalStateException("Unknown classifier kind: $classifier")
             }
@@ -156,24 +152,6 @@ class LazyJavaTypeResolver(
             }
 
             return kotlinDescriptor
-        }
-
-        private fun isConstructorTypeParameter(): Boolean {
-            val classifier = classifier()
-            return classifier is JavaTypeParameter && classifier.getOwner() is JavaConstructor
-        }
-
-        // We do not memoize the results of this method, because it would consume much memory, and the real gain is little:
-        // the case this method accounts for is very rare, no point in optimizing it
-        private fun getConstructorTypeParameterSubstitute(): KotlinType {
-            // If a Java constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
-            // so we replace each type parameter with its representative upper bound (which in Java is also the first bound)
-            val upperBounds = (classifier() as JavaTypeParameter).upperBounds
-            if (upperBounds.isEmpty()) {
-                return c.module.builtIns.nullableAnyType
-            }
-
-            return transformJavaType(upperBounds.first(), UPPER_BOUND.toAttributes())
         }
 
         private fun isRaw(): Boolean {
@@ -210,25 +188,25 @@ class LazyJavaTypeResolver(
                         }
 
                     RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
-                }
-            }
-            if (isConstructorTypeParameter()) {
-                return getConstructorTypeParameterSubstitute().getArguments()
+                }.toReadOnlyList()
             }
 
             if (typeParameters.size != javaType.typeArguments.size) {
                 // Most of the time this means there is an error in the Java code
-                return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }
+                return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.name.asString())) }.toReadOnlyList()
             }
             var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
             return javaType.typeArguments.withIndex().map {
-                javaTypeParameter ->
-                val (i, t) = javaTypeParameter
-                val parameter = if (i >= typeParameters.size)
-                                    ErrorUtils.createErrorTypeParameter(i, "#$i for ${typeConstructor}")
-                                else typeParameters[i]
-                transformToTypeProjection(t, howTheProjectionIsUsed.toAttributes(), parameter)
-            }.toList()
+                indexedArgument ->
+                val (i, javaTypeArgument) = indexedArgument
+
+                assert(i < typeParameters.size) {
+                    "Argument index should be less then type parameters count, but $i > ${typeParameters.size}"
+                }
+
+                val parameter = typeParameters[i]
+                transformToTypeProjection(javaTypeArgument, howTheProjectionIsUsed.toAttributes(), parameter)
+            }.toReadOnlyList()
         }
 
         private fun transformToTypeProjection(
@@ -265,10 +243,7 @@ class LazyJavaTypeResolver(
             // nullability will be taken care of in individual member signatures
             when (classifier()) {
                 is JavaTypeParameter -> {
-                    if (isConstructorTypeParameter())
-                        getConstructorTypeParameterSubstitute().isMarkedNullable()
-                    else
-                        attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
+                    attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 }
                 is JavaClass,
                 null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
@@ -303,9 +278,6 @@ class LazyJavaTypeResolver(
 
             override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
                                                    && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
-
-            override val typeParameterDescriptor: TypeParameterDescriptor? =
-                    if (isTypeVariable) lowerBound.getConstructor().getDeclarationDescriptor() as TypeParameterDescriptor else null
 
             override fun substitutionResult(replacement: KotlinType): KotlinType {
                 return if (replacement.isFlexible()) replacement

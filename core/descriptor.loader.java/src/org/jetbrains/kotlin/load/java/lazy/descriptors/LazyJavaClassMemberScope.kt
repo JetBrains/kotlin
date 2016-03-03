@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.isRemov
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsRenamedInJvmBuiltin
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
-import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForNonStaticMembers
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -225,7 +225,7 @@ class LazyJavaClassMemberScope(
         var specialBuiltinsFromSuperTypes = SmartSet.create<SimpleFunctionDescriptor>()
 
         // Merge functions with same signatures
-        val mergedFunctionFromSuperTypes = DescriptorResolverUtils.resolveOverrides(
+        val mergedFunctionFromSuperTypes = resolveOverridesForNonStaticMembers(
                 name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING)
 
         // add declarations
@@ -251,8 +251,9 @@ class LazyJavaClassMemberScope(
             isSpecialBuiltinName: Boolean
     ) {
 
-        val additionalOverrides =
-                DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter)
+        val additionalOverrides = resolveOverridesForNonStaticMembers(
+                name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter
+        )
 
         if (!isSpecialBuiltinName) {
             result.addAll(additionalOverrides)
@@ -356,7 +357,7 @@ class LazyJavaClassMemberScope(
             searchMethodsInSupertypesWithoutBuiltinMagic(it)
         }
 
-        result.addAll(DescriptorResolverUtils.resolveOverrides(
+        result.addAll(resolveOverridesForNonStaticMembers(
                 name, propertiesFromSupertypes + propertiesOverridesFromSuperTypes, result, ownerDescriptor, c.components.errorReporter))
     }
 
@@ -506,9 +507,14 @@ class LazyJavaClassMemberScope(
                 classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.components.sourceElementFactory.source(constructor)
         )
 
-        val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.valueParameters)
 
-        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility)
+        val c = c.child(constructorDescriptor, constructor, typeParametersIndexOffset = classDescriptor.declaredTypeParameters.size)
+        val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.valueParameters)
+        val constructorTypeParameters =
+                classDescriptor.declaredTypeParameters +
+                constructor.typeParameters.map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
+
+        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility, constructorTypeParameters)
         constructorDescriptor.setHasStableParameterNames(false)
         constructorDescriptor.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
 

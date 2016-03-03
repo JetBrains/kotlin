@@ -69,7 +69,7 @@ public class OverrideResolver {
     public static void generateOverridesInAClass(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull Collection<CallableMemberDescriptor> membersFromCurrent,
-            @NotNull OverridingUtil.DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         List<CallableMemberDescriptor> membersFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
         MultiMap<Name, CallableMemberDescriptor> membersFromCurrentByName = groupDescriptorsByName(membersFromCurrent);
@@ -83,7 +83,7 @@ public class OverrideResolver {
             Collection<CallableMemberDescriptor> fromSupertypes = membersFromSupertypesByName.get(memberName);
             Collection<CallableMemberDescriptor> fromCurrent = membersFromCurrentByName.get(memberName);
 
-            OverridingUtil.generateOverridesInFunctionGroup(memberName, fromSupertypes, fromCurrent, classDescriptor, sink);
+            OverridingUtil.generateOverridesInFunctionGroup(memberName, fromSupertypes, fromCurrent, classDescriptor, strategy);
         }
     }
 

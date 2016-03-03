@@ -102,7 +102,7 @@ class DeclarationResolver(
                     val reportAt =
                             if (declarationOrPackageDirective is KtPackageDirective) declarationOrPackageDirective.getNameIdentifier()
                             else declarationOrPackageDirective
-                    trace.report(Errors.REDECLARATION.on(reportAt, fqName.shortName().asString()))
+                    trace.report(Errors.REDECLARATION.on(reportAt!!, fqName.shortName().asString()))
                 }
             }
         }

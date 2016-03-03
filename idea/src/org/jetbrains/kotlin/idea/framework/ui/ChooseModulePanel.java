@@ -71,7 +71,7 @@ public class ChooseModulePanel {
         allModulesWithKtRadioButton.addActionListener(listener);
         allModulesRadioButton.addActionListener(listener);
 
-        String fullList = StringUtil.join(modules, new Function<Module, String>() {
+        String fullList = StringUtil.join(modulesWithKtFiles, new Function<Module, String>() {
             @Override
             public String fun(Module module) {
                 return module.getName();

@@ -64,10 +64,6 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     @NotNull
     Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments();
 
-    /** Values (arguments) for value parameters, no type parameter substitution */
-    @NotNull
-    Map<ValueParameterDescriptor, ResolvedValueArgument> getUnsubstitutedValueArguments();
-
     /** Values (arguments) for value parameters indexed by parameter index */
     @Nullable
     List<ResolvedValueArgument> getValueArgumentsByIndex();
@@ -85,4 +81,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     DataFlowInfoForArguments getDataFlowInfoForArguments();
 
     boolean isSafeCall();
+
+    @Nullable
+    KotlinType getSmartCastDispatchReceiverType();
 }

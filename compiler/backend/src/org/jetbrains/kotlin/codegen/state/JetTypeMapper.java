@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
+import org.jetbrains.kotlin.load.java.typeEnhancement.TypeEnhancementKt;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
@@ -510,7 +511,8 @@ public class JetTypeMapper {
         PrimitiveType primitiveType = KotlinBuiltIns.getPrimitiveTypeByFqName(fqName);
         if (primitiveType != null) {
             Type asmType = Type.getType(JvmPrimitiveType.get(primitiveType).getDesc());
-            return TypeUtils.isNullableType(type) ? boxType(asmType) : asmType;
+            boolean isNullableInJava = TypeUtils.isNullableType(type) || TypeEnhancementKt.hasEnhancedNullability(type);
+            return isNullableInJava ? boxType(asmType) : asmType;
         }
 
         PrimitiveType arrayElementType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqName);

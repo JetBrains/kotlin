@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,10 @@ class FSOperationsHelper(
         private val chunk: ModuleChunk,
         private val log: Logger
 ) {
-    private var markedDirty = false
+    internal var hasMarkedDirty = false
+        private set
 
-    fun hasMarkedDirty(): Boolean = markedDirty
+    private val buildLogger = compileContext.testingContext?.buildLogger ?: BuildLogger.DO_NOTHING
 
     fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = setOf()) {
         fun shouldMark(file: File): Boolean {
@@ -38,7 +39,7 @@ class FSOperationsHelper(
 
             if (file in excludeFiles) return false
 
-            markedDirty = true
+            hasMarkedDirty = true
             return true
         }
 
@@ -53,7 +54,9 @@ class FSOperationsHelper(
     fun markFiles(files: Iterable<File>, excludeFiles: Set<File> = setOf()) {
         val filesToMark = files.toMutableSet()
         filesToMark.removeAll(excludeFiles)
+
         log.debug("Mark dirty: $filesToMark")
+        buildLogger.markedAsDirty(filesToMark)
 
         for (file in filesToMark) {
             if (!file.exists()) continue
@@ -61,6 +64,6 @@ class FSOperationsHelper(
             FSOperations.markDirty(compileContext, CompilationRound.NEXT, file)
         }
 
-        markedDirty = markedDirty || filesToMark.isNotEmpty()
+        hasMarkedDirty = hasMarkedDirty || filesToMark.isNotEmpty()
     }
 }

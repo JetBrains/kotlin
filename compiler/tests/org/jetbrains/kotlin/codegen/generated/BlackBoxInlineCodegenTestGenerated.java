@@ -632,6 +632,57 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/complexStack")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ComplexStack extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInComplexStack() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("asCheck.1.kt")
+        public void testAsCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complexStack/asCheck.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("asCheck2.1.kt")
+        public void testAsCheck2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complexStack/asCheck2.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simple.1.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complexStack/simple.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simple2.1.kt")
+        public void testSimple2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complexStack/simple2.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simple3.1.kt")
+        public void testSimple3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complexStack/simple3.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simple4.1.kt")
+        public void testSimple4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complexStack/simple4.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("simpleExtension.1.kt")
+        public void testSimpleExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/complexStack/simpleExtension.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/defaultValues")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -866,6 +917,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
     public static class NoInline extends AbstractBlackBoxInlineCodegenTest {
         public void testAllFilesPresentInNoInline() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("extensionReceiver.1.kt")
+        public void testExtensionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/extensionReceiver.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
         }
 
         @TestMetadata("lambdaAsGeneric.1.kt")
@@ -1369,6 +1426,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
+        @TestMetadata("effectivePrivate.1.kt")
+        public void testEffectivePrivate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/effectivePrivate.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("kt6453.1.kt")
         public void testKt6453() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/private/kt6453.1.kt");
@@ -1435,6 +1498,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("capturedLambda2.1.kt")
         public void testCapturedLambda2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/capturedLambda2.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("kt11081.1.kt")
+        public void testKt11081() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt11081.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
 

@@ -22,7 +22,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringSettings
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
@@ -38,13 +37,13 @@ import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -71,8 +70,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
-
-val UNKNOWN_PACKAGE_FQ_NAME = FqNameUnsafe("org.jetbrains.kotlin.idea.refactoring.move.<unknown-package>")
 
 sealed class ContainerInfo() {
     abstract val fqName: FqName?
@@ -183,7 +180,12 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
                 return fqName.asString().let {
                     val prefix = containerFqName.asString()
                     val prefixOffset = it.indexOf(prefix)
-                    val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newContainer.fqName!!.asString()))
+                    val newFqName = if (prefix.isEmpty()) {
+                        FqName("${newContainer.fqName!!.asString()}.$it")
+                    }
+                    else {
+                        FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newContainer.fqName!!.asString()))
+                    }
                     MoveRenameSelfUsageInfo(refExpr.mainReference, declaration, newFqName)
                 }
             }
@@ -449,14 +451,14 @@ sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, val isIndirect
 }
 
 @JvmOverloads
-fun traverseOuterInstanceReferences(innerClass: KtClass, stopAtFirst: Boolean, body: (OuterInstanceReferenceUsageInfo) -> Unit = {}): Boolean {
-    if (!innerClass.isInner()) return false
+fun traverseOuterInstanceReferences(member: KtNamedDeclaration, stopAtFirst: Boolean, body: (OuterInstanceReferenceUsageInfo) -> Unit = {}): Boolean {
+    if (member is KtObjectDeclaration || member is KtClass && !member.isInner()) return false
 
-    val context = innerClass.analyzeFully()
-    val innerClassDescriptor = innerClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
-    val outerClassDescriptor = innerClassDescriptor.containingDeclaration as? ClassDescriptor ?: return false
+    val context = member.analyzeFully()
+    val containingClassOrObject = member.containingClassOrObject ?: return false
+    val outerClassDescriptor = containingClassOrObject.resolveToDescriptor() as ClassDescriptor
     var found = false
-    innerClass.accept(
+    member.accept(
             object : PsiRecursiveElementWalkingVisitor() {
                 private fun getOuterInstanceReference(element: PsiElement): OuterInstanceReferenceUsageInfo? {
                     return when (element) {
@@ -508,6 +510,31 @@ fun traverseOuterInstanceReferences(innerClass: KtClass, stopAtFirst: Boolean, b
     return found
 }
 
-fun collectOuterInstanceReferences(innerClass: KtClass): List<OuterInstanceReferenceUsageInfo> {
-    return SmartList<OuterInstanceReferenceUsageInfo>().apply { traverseOuterInstanceReferences(innerClass, false) { add(it) } }
+fun collectOuterInstanceReferences(member: KtNamedDeclaration): List<OuterInstanceReferenceUsageInfo> {
+    return SmartList<OuterInstanceReferenceUsageInfo>().apply { traverseOuterInstanceReferences(member, false) { add(it) } }
+}
+
+fun OuterInstanceReferenceUsageInfo.reportConflictIfAny(conflicts: MultiMap<PsiElement, String>): Boolean {
+    val element = element ?: return false
+
+    if (isIndirectOuter) {
+        conflicts.putValue(element, "Indirect outer instances won't be extracted: ${element.text}")
+        return true
+    }
+
+    if (this !is OuterInstanceReferenceUsageInfo.ImplicitReceiver) return false
+
+    val fullCall = callElement?.let { it.getQualifiedExpressionForSelector() ?: it } ?: return false
+    return when {
+        fullCall is KtQualifiedExpression -> {
+            conflicts.putValue(fullCall, "Qualified call won't be processed: ${fullCall.text}")
+            true
+        }
+
+        isDoubleReceiver -> {
+            conflicts.putValue(fullCall, "Call with two implicit receivers won't be processed: ${fullCall.text}")
+            true
+        }
+        else -> false
+    }
 }

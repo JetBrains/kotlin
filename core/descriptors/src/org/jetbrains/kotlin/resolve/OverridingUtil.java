@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
 
@@ -83,13 +84,20 @@ public class OverridingUtil {
             @Nullable ClassDescriptor subClassDescriptor,
             boolean checkReturnType
     ) {
-        boolean wasSuccessfulExternalCondition = false;
+        OverrideCompatibilityInfo basicResult = isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, checkReturnType);
+        boolean wasSuccess = basicResult.getResult() == OVERRIDABLE;
+
         for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
+            // Do not run CONFLICTS_ONLY while there was no success
+            if (externalCondition.getContract() == ExternalOverridabilityCondition.Contract.CONFLICTS_ONLY) continue;
+            if (wasSuccess && externalCondition.getContract() == ExternalOverridabilityCondition.Contract.SUCCESS_ONLY) continue;
+
             ExternalOverridabilityCondition.Result result =
                     externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
+
             switch (result) {
                 case OVERRIDABLE:
-                    wasSuccessfulExternalCondition = true;
+                    wasSuccess = true;
                     break;
                 case CONFLICT:
                     return OverrideCompatibilityInfo.conflict("External condition failed");
@@ -101,11 +109,32 @@ public class OverridingUtil {
             }
         }
 
-        if (wasSuccessfulExternalCondition) {
-            return OverrideCompatibilityInfo.success();
+        if (!wasSuccess) {
+            return basicResult;
         }
 
-        return isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, checkReturnType);
+        // Search for conflicts from external conditions
+        for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
+            // Run all conditions that was not run before (i.e. CONFLICTS_ONLY)
+            if (externalCondition.getContract() != ExternalOverridabilityCondition.Contract.CONFLICTS_ONLY) continue;
+
+            ExternalOverridabilityCondition.Result result =
+                    externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
+            switch (result) {
+                case CONFLICT:
+                    return OverrideCompatibilityInfo.conflict("External condition failed");
+                case INCOMPATIBLE:
+                    return OverrideCompatibilityInfo.incompatible("External condition");
+                case OVERRIDABLE:
+                    throw new IllegalStateException(
+                            "Contract violation in " + externalCondition.getClass().getName() + " condition. It's not supposed to end with success");
+                case UNKNOWN:
+                    // do nothing
+                    // go to the next external condition or default override check
+            }
+        }
+
+        return OverrideCompatibilityInfo.success();
     }
 
     @NotNull
@@ -114,24 +143,8 @@ public class OverridingUtil {
             @NotNull CallableDescriptor subDescriptor,
             boolean checkReturnType
     ) {
-        if (superDescriptor instanceof FunctionDescriptor && !(subDescriptor instanceof FunctionDescriptor) ||
-            superDescriptor instanceof PropertyDescriptor && !(subDescriptor instanceof PropertyDescriptor)) {
-            return OverrideCompatibilityInfo.incompatible("Member kind mismatch");
-        }
-
-        if (!(superDescriptor instanceof FunctionDescriptor) && !(superDescriptor instanceof PropertyDescriptor)) {
-            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
-        }
-
-        // TODO: check outside of this method
-        if (!superDescriptor.getName().equals(subDescriptor.getName())) {
-            return OverrideCompatibilityInfo.incompatible("Name mismatch");
-        }
-
-        OverrideCompatibilityInfo receiverAndParameterResult = checkReceiverAndParameterCount(superDescriptor, subDescriptor);
-        if (receiverAndParameterResult != null) {
-            return receiverAndParameterResult;
-        }
+        OverrideCompatibilityInfo basicOverridability = getBasicOverridabilityProblem(superDescriptor, subDescriptor);
+        if (basicOverridability != null) return basicOverridability;
 
         List<KotlinType> superValueParameters = compiledValueParameters(superDescriptor);
         List<KotlinType> subValueParameters = compiledValueParameters(subDescriptor);
@@ -176,6 +189,33 @@ public class OverridingUtil {
         }
 
         return OverrideCompatibilityInfo.success();
+    }
+
+    @Nullable
+    public static OverrideCompatibilityInfo getBasicOverridabilityProblem(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor
+    ) {
+        if (superDescriptor instanceof FunctionDescriptor && !(subDescriptor instanceof FunctionDescriptor) ||
+            superDescriptor instanceof PropertyDescriptor && !(subDescriptor instanceof PropertyDescriptor)) {
+            return OverrideCompatibilityInfo.incompatible("Member kind mismatch");
+        }
+
+        if (!(superDescriptor instanceof FunctionDescriptor) && !(superDescriptor instanceof PropertyDescriptor)) {
+            throw new IllegalArgumentException("This type of CallableDescriptor cannot be checked for overridability: " + superDescriptor);
+        }
+
+        // TODO: check outside of this method
+        if (!superDescriptor.getName().equals(subDescriptor.getName())) {
+            return OverrideCompatibilityInfo.incompatible("Name mismatch");
+        }
+
+        OverrideCompatibilityInfo receiverAndParameterResult = checkReceiverAndParameterCount(superDescriptor, subDescriptor);
+        if (receiverAndParameterResult != null) {
+            return receiverAndParameterResult;
+        }
+
+        return null;
     }
 
     @NotNull
@@ -273,26 +313,27 @@ public class OverridingUtil {
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromSupertypes,
             @NotNull Collection<? extends CallableMemberDescriptor> membersFromCurrent,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         Collection<CallableMemberDescriptor> notOverridden = new LinkedHashSet<CallableMemberDescriptor>(membersFromSupertypes);
 
         for (CallableMemberDescriptor fromCurrent : membersFromCurrent) {
             Collection<CallableMemberDescriptor> bound =
-                    extractAndBindOverridesForMember(fromCurrent, membersFromSupertypes, current, sink);
+                    extractAndBindOverridesForMember(fromCurrent, membersFromSupertypes, current, strategy);
             notOverridden.removeAll(bound);
         }
 
-        createAndBindFakeOverrides(current, notOverridden, sink);
+        createAndBindFakeOverrides(current, notOverridden, strategy);
     }
 
     private static Collection<CallableMemberDescriptor> extractAndBindOverridesForMember(
             @NotNull CallableMemberDescriptor fromCurrent,
             @NotNull Collection<? extends CallableMemberDescriptor> descriptorsFromSuper,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
+        Collection<CallableMemberDescriptor> overridden = SmartSet.create();
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
@@ -300,13 +341,13 @@ public class OverridingUtil {
             switch (result) {
                 case OVERRIDABLE:
                     if (isVisible) {
-                        fromCurrent.addOverriddenDescriptor(fromSupertype);
+                        overridden.add(fromSupertype);
                     }
                     bound.add(fromSupertype);
                     break;
                 case CONFLICT:
                     if (isVisible) {
-                        sink.conflict(fromSupertype, fromCurrent);
+                        strategy.conflict(fromSupertype, fromCurrent);
                     }
                     bound.add(fromSupertype);
                     break;
@@ -314,20 +355,44 @@ public class OverridingUtil {
                     break;
             }
         }
+
+        strategy.setOverriddenDescriptors(fromCurrent, overridden);
+
         return bound;
+    }
+
+    private static boolean allHasSameContainingDeclaration(@NotNull Collection<CallableMemberDescriptor> notOverridden) {
+        if (notOverridden.size() < 2) return true;
+
+        final DeclarationDescriptor containingDeclaration = notOverridden.iterator().next().getContainingDeclaration();
+        return CollectionsKt.all(notOverridden, new Function1<CallableMemberDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(CallableMemberDescriptor descriptor) {
+                return descriptor.getContainingDeclaration() == containingDeclaration;
+            }
+        });
     }
 
     private static void createAndBindFakeOverrides(
             @NotNull ClassDescriptor current,
             @NotNull Collection<CallableMemberDescriptor> notOverridden,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
+        // Optimization: If all notOverridden descriptors have the same containing declaration,
+        // then we can just create fake overrides for them, because they should be matched correctly in their containing declaration
+        if (allHasSameContainingDeclaration(notOverridden)) {
+            for (CallableMemberDescriptor descriptor : notOverridden) {
+                createAndBindFakeOverride(Collections.singleton(descriptor), current, strategy);
+            }
+            return;
+        }
+
         Queue<CallableMemberDescriptor> fromSuperQueue = new LinkedList<CallableMemberDescriptor>(notOverridden);
         while (!fromSuperQueue.isEmpty()) {
             CallableMemberDescriptor notOverriddenFromSuper = VisibilityUtilKt.findMemberWithMaxVisibility(fromSuperQueue);
             Collection<CallableMemberDescriptor> overridables =
-                    extractMembersOverridableInBothWays(notOverriddenFromSuper, fromSuperQueue, sink);
-            createAndBindFakeOverride(overridables, current, sink);
+                    extractMembersOverridableInBothWays(notOverriddenFromSuper, fromSuperQueue, strategy);
+            createAndBindFakeOverride(overridables, current, strategy);
         }
     }
 
@@ -450,7 +515,7 @@ public class OverridingUtil {
     private static void createAndBindFakeOverride(
             @NotNull Collection<CallableMemberDescriptor> overridables,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink sink
+            @NotNull OverridingStrategy strategy
     ) {
         Collection<CallableMemberDescriptor> visibleOverridables = filterVisibleFakeOverrides(current, overridables);
         boolean allInvisible = visibleOverridables.isEmpty();
@@ -475,10 +540,10 @@ public class OverridingUtil {
                                          });
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-        for (CallableMemberDescriptor descriptor : effectiveOverridden) {
-            fakeOverride.addOverriddenDescriptor(descriptor);
-        }
-        sink.addFakeOverride(fakeOverride);
+        strategy.setOverriddenDescriptors(fakeOverride, effectiveOverridden);
+        assert !fakeOverride.getOverriddenDescriptors().isEmpty()
+                : "Overridden descriptors should be set for " + CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+        strategy.addFakeOverride(fakeOverride);
     }
 
     @NotNull
@@ -560,7 +625,7 @@ public class OverridingUtil {
     private static Collection<CallableMemberDescriptor> extractMembersOverridableInBothWays(
             @NotNull final CallableMemberDescriptor overrider,
             @NotNull Queue<CallableMemberDescriptor> extractFrom,
-            @NotNull final DescriptorSink sink
+            @NotNull final OverridingStrategy strategy
     ) {
         return extractMembersOverridableInBothWays(overrider, extractFrom,
                 // ID
@@ -573,7 +638,7 @@ public class OverridingUtil {
                 new Function1<CallableMemberDescriptor, Unit>() {
                     @Override
                     public Unit invoke(CallableMemberDescriptor descriptor) {
-                        sink.conflict(overrider, descriptor);
+                        strategy.conflict(overrider, descriptor);
                         return Unit.INSTANCE;
                     }
                 });
@@ -672,12 +737,6 @@ public class OverridingUtil {
             }
         }
         return maxVisibility;
-    }
-
-    public interface DescriptorSink {
-        void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride);
-
-        void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
     }
 
     public static class OverrideCompatibilityInfo {

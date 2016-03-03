@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cfg;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -53,7 +52,6 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -65,14 +63,12 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.cfg.VariableUseState.*;
 import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
+import static org.jetbrains.kotlin.cfg.VariableUseState.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
-import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
+import static org.jetbrains.kotlin.types.TypeUtils.*;
 
 public class ControlFlowInformationProvider {
 
@@ -689,13 +685,30 @@ public class ControlFlowInformationProvider {
                                             ? ((InstructionWithValue) instruction).getOutputValue()
                                             : null;
                         Pseudocode pseudocode = instruction.getOwner();
-                        boolean isUsedAsExpression = !pseudocode.getUsages(value).isEmpty();
+                        List<Instruction> usages = pseudocode.getUsages(value);
+                        boolean isUsedAsExpression = !usages.isEmpty();
+                        boolean isUsedAsResultOfLambda = isUsedAsResultOfLambda(usages);
                         for (KtElement element : pseudocode.getValueElements(value)) {
                             trace.record(BindingContext.USED_AS_EXPRESSION, element, isUsedAsExpression);
+                            trace.record(BindingContext.USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda);
                         }
                     }
                 }
         );
+    }
+
+    private static boolean isUsedAsResultOfLambda(List<Instruction> usages) {
+        for (Instruction usage : usages) {
+            if (usage instanceof ReturnValueInstruction) {
+                KtElement returnElement = ((ReturnValueInstruction) usage).getElement();
+                PsiElement parentElement = returnElement.getParent();
+                if (!(returnElement instanceof KtReturnExpression ||
+                      parentElement instanceof KtDeclaration && !(parentElement instanceof KtFunctionLiteral))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void checkIfExpressions() {
@@ -718,7 +731,7 @@ public class ControlFlowInformationProvider {
                                     trace.report(INVALID_IF_AS_EXPRESSION.on(ifExpression));
                                 }
                                 else {
-                                    checkImplicitCastOnConditionalExpression(ifExpression, ImmutableList.of(thenExpression, elseExpression));
+                                    checkImplicitCastOnConditionalExpression(ifExpression);
                                 }
                             }
                         }
@@ -727,10 +740,41 @@ public class ControlFlowInformationProvider {
         );
     }
 
-    private void checkImplicitCastOnConditionalExpression(
-            @NotNull KtExpression expression,
-            @NotNull Collection<KtExpression> branchExpressions
+    private static List<KtExpression> collectResultingExpressionsOfConditionalExpression(KtExpression expression) {
+        List<KtExpression> leafBranches = new ArrayList<KtExpression>();
+        collectResultingExpressionsOfConditionalExpressionRec(expression, leafBranches);
+        return leafBranches;
+    }
+
+    private static void collectResultingExpressionsOfConditionalExpressionRec(
+            @Nullable KtExpression expression,
+            @NotNull List<KtExpression> resultingExpressions
     ) {
+        if (expression instanceof KtIfExpression) {
+            KtIfExpression ifExpression = (KtIfExpression) expression;
+            collectResultingExpressionsOfConditionalExpressionRec(ifExpression.getThen(), resultingExpressions);
+            collectResultingExpressionsOfConditionalExpressionRec(ifExpression.getElse(), resultingExpressions);
+        }
+        else if (expression instanceof KtWhenExpression) {
+            KtWhenExpression whenExpression = (KtWhenExpression) expression;
+            for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
+                collectResultingExpressionsOfConditionalExpressionRec(whenEntry.getExpression(), resultingExpressions);
+            }
+        }
+        else if (expression != null){
+            KtExpression resultingExpression = getResultingExpression(expression);
+            if (resultingExpression instanceof KtIfExpression || resultingExpression instanceof KtWhenExpression) {
+                collectResultingExpressionsOfConditionalExpressionRec(resultingExpression, resultingExpressions);
+            }
+            else {
+                resultingExpressions.add(resultingExpression);
+            }
+        }
+    }
+
+    private void checkImplicitCastOnConditionalExpression(@NotNull KtExpression expression) {
+        Collection<KtExpression> branchExpressions = collectResultingExpressionsOfConditionalExpression(expression);
+
         KotlinType expectedExpressionType = trace.get(EXPECTED_EXPRESSION_TYPE, expression);
         if (expectedExpressionType != null && expectedExpressionType != DONT_CARE) return;
 
@@ -739,10 +783,13 @@ public class ControlFlowInformationProvider {
             return;
         }
         if (KotlinBuiltIns.isAnyOrNullableAny(expressionType)) {
+            boolean isUsedAsResultOfLambda = BindingContextUtilsKt.isUsedAsResultOfLambda(expression, trace.getBindingContext());
             for (KtExpression branchExpression : branchExpressions) {
                 if (branchExpression == null) continue;
                 KotlinType branchType = trace.getType(branchExpression);
-                if (branchType == null || KotlinBuiltIns.isAnyOrNullableAny(branchType)) {
+                if (branchType == null
+                    || KotlinBuiltIns.isAnyOrNullableAny(branchType)
+                    || (isUsedAsResultOfLambda && KotlinBuiltIns.isUnitOrNullableUnit(branchType))) {
                     return;
                 }
             }
@@ -798,11 +845,7 @@ public class ControlFlowInformationProvider {
                             KtWhenExpression whenExpression = (KtWhenExpression) element;
 
                             if (BindingContextUtilsKt.isUsedAsExpression(whenExpression, trace.getBindingContext())) {
-                                List<KtExpression> branchExpressions = new ArrayList<KtExpression>(whenExpression.getEntries().size());
-                                for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
-                                    branchExpressions.add(whenEntry.getExpression());
-                                }
-                                checkImplicitCastOnConditionalExpression(whenExpression, branchExpressions);
+                                checkImplicitCastOnConditionalExpression(whenExpression);
                             }
 
                             if (whenExpression.getElseExpression() != null) continue;

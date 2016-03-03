@@ -35,7 +35,7 @@ public open class E : D, I {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ final override /*2*/ var a: kotlin.Int
+    public/*package*/ final var a: kotlin.Int
     public/*package*/ final override /*1*/ /*fake_override*/ var b: kotlin.Int
     public/*package*/ final override /*1*/ /*fake_override*/ var c: kotlin.Int
     public/*package*/ open override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit

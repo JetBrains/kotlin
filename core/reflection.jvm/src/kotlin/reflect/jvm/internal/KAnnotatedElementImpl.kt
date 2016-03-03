@@ -17,6 +17,8 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
+import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaAnnotation
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
 import kotlin.reflect.KAnnotatedElement
 
@@ -24,7 +26,16 @@ internal interface KAnnotatedElementImpl : KAnnotatedElement {
     val annotated: Annotated
 
     override val annotations: List<Annotation>
-        get() = annotated.annotations.map {
-            (it.source as? ReflectAnnotationSource)?.annotation
-        }.filterNotNull()
+        get() = annotated.annotations.mapNotNull {
+            val source = it.source
+            when (source) {
+                is ReflectAnnotationSource -> {
+                    source.annotation
+                }
+                is RuntimeSourceElementFactory.RuntimeSourceElement -> {
+                    (source.javaElement as? ReflectJavaAnnotation)?.annotation
+                }
+                else -> null
+            }
+        }
 }

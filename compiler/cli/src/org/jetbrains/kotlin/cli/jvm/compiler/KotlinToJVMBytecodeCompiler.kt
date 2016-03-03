@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             val ktFiles = CompileEnvironmentUtil.getKtFiles(
-                    environment.project, getAbsolutePaths(directory, module)) { s -> throw IllegalStateException("Should have been checked before: " + s) }
+                    environment.project, getAbsolutePaths(directory, module), configuration) { s -> throw IllegalStateException("Should have been checked before: " + s) }
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
             val moduleOutputDirectory = File(module.getOutputDirectory())
             val generationState = generate(environment, result, ktFiles, module, moduleOutputDirectory,

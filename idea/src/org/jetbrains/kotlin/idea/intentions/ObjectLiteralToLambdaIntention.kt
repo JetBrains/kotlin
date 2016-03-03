@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
@@ -135,6 +136,9 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
                                  ?.parent as? KtCallExpression
         if (parentCall != null && RedundantSamConstructorInspection.samConstructorCallsToBeConverted(parentCall).singleOrNull() == callExpression) {
             RedundantSamConstructorInspection.replaceSamConstructorCall(callExpression)
+            if (MoveLambdaOutsideParenthesesIntention.canMove(parentCall)) {
+                parentCall.moveFunctionLiteralOutsideParentheses()
+            }
         }
         else {
             ShortenReferences.DEFAULT.process(replaced.getContainingKtFile(), replaced.startOffset, callee.endOffset)

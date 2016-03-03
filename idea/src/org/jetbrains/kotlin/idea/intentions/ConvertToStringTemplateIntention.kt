@@ -56,11 +56,19 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
 
     private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
         if (expression.operationToken != KtTokens.PLUS) return false
-        if (!KotlinBuiltIns.isString(expression.analyze().getType(expression))) return false
+        val expressionType = expression.analyze(BodyResolveMode.PARTIAL).getType(expression)
+        if (!KotlinBuiltIns.isString(expressionType)) return false
+        return isSuitable(expression)
+    }
 
-        val left = expression.left ?: return false
-        val right = expression.right ?: return false
-        return !PsiUtilCore.hasErrorElementChild(left) && !PsiUtilCore.hasErrorElementChild(right)
+    private fun isSuitable(expression: KtExpression): Boolean {
+        if (expression is KtBinaryExpression && expression.operationToken == KtTokens.PLUS) {
+            return isSuitable(expression.left ?: return false) && isSuitable(expression.right ?: return false)
+        }
+
+        if (PsiUtilCore.hasErrorElementChild(expression)) return false
+        if (expression.textContains('\n')) return false
+        return true
     }
 
     private fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
@@ -121,6 +129,6 @@ class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention
                 return "$" + (if (forceBraces) "{$expressionText}" else expressionText)
         }
 
-        return "\${" + expressionText.replace("\n+".toRegex(), " ") + "}"
+        return "\${$expressionText}"
     }
 }

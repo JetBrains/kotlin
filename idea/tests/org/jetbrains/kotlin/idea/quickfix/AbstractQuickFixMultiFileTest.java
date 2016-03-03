@@ -336,9 +336,12 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                 List<String> texts = getActionsTexts(availableActions);
                 Collection<HighlightInfo> infos = doHighlighting();
                 fail("Action with text '" + text + "' is not available in test " + testFilePath + "\n" +
-                     "Available actions (" + texts.size() + "): " + texts + "\n" +
-                     availableActions + "\n" +
-                     "Infos:" + infos);
+                     "Available actions (" + texts.size() + "): \n" +
+                     StringUtil.join(texts, "\n") +
+                     "\nActions:\n" +
+                     StringUtil.join(availableActions, "\n") +
+                     "\nInfos:\n" +
+                     StringUtil.join(infos, "\n"));
             }
             else {
                 DirectiveBasedActionUtils.INSTANCE.checkAvailableActionsAreExpected(getFile(), availableActions);

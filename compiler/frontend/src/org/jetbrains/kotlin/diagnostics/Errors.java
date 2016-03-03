@@ -82,6 +82,8 @@ public interface Errors {
     DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_CLASS = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_INTERFACE = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory2<KtExpression, KotlinType, Collection<KotlinType>> INACCESSIBLE_TYPE = DiagnosticFactory2.create(ERROR);
+
     DiagnosticFactory1<KtElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -294,7 +296,7 @@ public interface Errors {
 
     // Members
 
-    DiagnosticFactory2<KtDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS =
+    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> CONFLICTING_OVERLOADS =
             DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     DiagnosticFactory0<KtNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory0.create(WARNING, modifierSetPosition(
@@ -544,6 +546,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtDestructuringDeclaration> INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, KotlinType> COMPONENT_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR, DEFAULT);
+    DiagnosticFactory1<KtExpression, Name> COMPONENT_FUNCTION_ON_NULLABLE = DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, Collection<? extends ResolvedCall<?>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
     DiagnosticFactory3<KtExpression, Name, KotlinType, KotlinType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
 
@@ -586,6 +589,7 @@ public interface Errors {
     DiagnosticFactory1<KtExpression, KotlinType> NEXT_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtExpression> ITERATOR_MISSING = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> ITERATOR_ON_NULLABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> ITERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory2<KtExpression, String, KotlinType> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR);
@@ -770,7 +774,7 @@ public interface Errors {
     //Inline and inlinable parameters
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_PUBLIC_CALL_FROM_PUBLIC_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> PRIVATE_CLASS_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
-    DiagnosticFactory3<KtElement, KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory3.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory1<KtElement, KtElement> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, KtNamedDeclaration, DeclarationDescriptor> NOT_YET_SUPPORTED_IN_INLINE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> NOTHING_TO_INLINE = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<KtElement, KtExpression, DeclarationDescriptor> USAGE_IS_NOT_INLINABLE = DiagnosticFactory2.create(ERROR);

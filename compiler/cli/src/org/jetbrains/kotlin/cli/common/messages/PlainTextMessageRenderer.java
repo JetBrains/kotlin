@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,14 @@ import java.util.Set;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
 public abstract class PlainTextMessageRenderer implements MessageRenderer {
+
+    private static final String KOTLIN_COLORS_ENABLED_PROPERTY = "kotlin.colors.enabled";
+
     // AnsiConsole doesn't check isatty() for stderr (see https://github.com/fusesource/jansi/pull/35).
     // TODO: investigate why ANSI escape codes on Windows only work in REPL for some reason
-    private static final boolean COLOR_ENABLED =
+    public static final boolean COLOR_ENABLED =
             !SystemInfo.isWindows &&
-            !"false".equals(System.getProperty("kotlin.colors.enabled")) &&
+            !"false".equals(System.getProperty(KOTLIN_COLORS_ENABLED_PROPERTY)) &&
             CLibrary.isatty(CLibrary.STDERR_FILENO) != 0;
 
     private static final String LINE_SEPARATOR = LineSeparator.getSystemLineSeparator().getSeparatorString();

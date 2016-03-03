@@ -40,12 +40,6 @@ public interface KotlinPaths {
     File getRuntimeSourcesPath();
 
     @NotNull
-    File getJdkAnnotationsPath();
-
-    @NotNull
-    File getAndroidSdkAnnotationsPath();
-
-    @NotNull
     File getJsStdLibJarPath();
 
     @NotNull

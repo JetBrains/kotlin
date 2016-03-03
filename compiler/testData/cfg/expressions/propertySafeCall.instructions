@@ -10,10 +10,12 @@ L0:
     w(s|<v0>)
   2 mark({ s?.first })
     mark(s?.first)
+    jf(L2)                                                 NEXT:[<END>, r(s) -> <v1>]
     r(s) -> <v1>
     r(first|<v1>) -> <v2>
 L1:
-  1 <END>                                                  NEXT:[<SINK>]
+L2 [result of call]:
+  1 <END>                                                  NEXT:[<SINK>]                                                 PREV:[jf(L2), r(first|<v1>) -> <v2>]
 error:
     <ERROR>                                                PREV:[]
 sink:

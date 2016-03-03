@@ -9959,11 +9959,11 @@ public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <S, T: S> Array<out T>.reduce(operation: (S, T) -> S): S {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator: S = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator: S = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -9972,11 +9972,11 @@ public inline fun <S, T: S> Array<out T>.reduce(operation: (S, T) -> S): S {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -9985,11 +9985,11 @@ public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -9998,11 +9998,11 @@ public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun IntArray.reduce(operation: (Int, Int) -> Int): Int {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -10011,11 +10011,11 @@ public inline fun IntArray.reduce(operation: (Int, Int) -> Int): Int {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun LongArray.reduce(operation: (Long, Long) -> Long): Long {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -10024,11 +10024,11 @@ public inline fun LongArray.reduce(operation: (Long, Long) -> Long): Long {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun FloatArray.reduce(operation: (Float, Float) -> Float): Float {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -10037,11 +10037,11 @@ public inline fun FloatArray.reduce(operation: (Float, Float) -> Float): Float {
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun DoubleArray.reduce(operation: (Double, Double) -> Double): Double {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -10050,11 +10050,11 @@ public inline fun DoubleArray.reduce(operation: (Double, Double) -> Double): Dou
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean): Boolean {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -10063,11 +10063,11 @@ public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean):
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(accumulator, this[index])
     }
     return accumulator
 }
@@ -10077,12 +10077,11 @@ public inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char {
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (Int, S, T) -> S): S {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator: S = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator: S = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10092,12 +10091,11 @@ public inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (Int, S, T) ->
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun ByteArray.reduceIndexed(operation: (Int, Byte, Byte) -> Byte): Byte {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10107,12 +10105,11 @@ public inline fun ByteArray.reduceIndexed(operation: (Int, Byte, Byte) -> Byte):
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun ShortArray.reduceIndexed(operation: (Int, Short, Short) -> Short): Short {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10122,12 +10119,11 @@ public inline fun ShortArray.reduceIndexed(operation: (Int, Short, Short) -> Sho
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun IntArray.reduceIndexed(operation: (Int, Int, Int) -> Int): Int {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10137,12 +10133,11 @@ public inline fun IntArray.reduceIndexed(operation: (Int, Int, Int) -> Int): Int
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun LongArray.reduceIndexed(operation: (Int, Long, Long) -> Long): Long {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10152,12 +10147,11 @@ public inline fun LongArray.reduceIndexed(operation: (Int, Long, Long) -> Long):
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun FloatArray.reduceIndexed(operation: (Int, Float, Float) -> Float): Float {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10167,12 +10161,11 @@ public inline fun FloatArray.reduceIndexed(operation: (Int, Float, Float) -> Flo
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun DoubleArray.reduceIndexed(operation: (Int, Double, Double) -> Double): Double {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10182,12 +10175,11 @@ public inline fun DoubleArray.reduceIndexed(operation: (Int, Double, Double) -> 
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun BooleanArray.reduceIndexed(operation: (Int, Boolean, Boolean) -> Boolean): Boolean {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10197,12 +10189,11 @@ public inline fun BooleanArray.reduceIndexed(operation: (Int, Boolean, Boolean) 
  * to current accumulator value and each element with its index in the original array.
  */
 public inline fun CharArray.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
-    val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
-    var index = 1
-    var accumulator = iterator.next()
-    while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+    if (isEmpty())
+        throw UnsupportedOperationException("Empty array can't be reduced.")
+    var accumulator = this[0]
+    for (index in 1..lastIndex) {
+        accumulator = operation(index, accumulator, this[index])
     }
     return accumulator
 }
@@ -10330,7 +10321,7 @@ public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char {
  */
 public inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (Int, T, S) -> S): S {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator: S = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10345,7 +10336,7 @@ public inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (Int, T, 
  */
 public inline fun ByteArray.reduceRightIndexed(operation: (Int, Byte, Byte) -> Byte): Byte {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10360,7 +10351,7 @@ public inline fun ByteArray.reduceRightIndexed(operation: (Int, Byte, Byte) -> B
  */
 public inline fun ShortArray.reduceRightIndexed(operation: (Int, Short, Short) -> Short): Short {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10375,7 +10366,7 @@ public inline fun ShortArray.reduceRightIndexed(operation: (Int, Short, Short) -
  */
 public inline fun IntArray.reduceRightIndexed(operation: (Int, Int, Int) -> Int): Int {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10390,7 +10381,7 @@ public inline fun IntArray.reduceRightIndexed(operation: (Int, Int, Int) -> Int)
  */
 public inline fun LongArray.reduceRightIndexed(operation: (Int, Long, Long) -> Long): Long {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10405,7 +10396,7 @@ public inline fun LongArray.reduceRightIndexed(operation: (Int, Long, Long) -> L
  */
 public inline fun FloatArray.reduceRightIndexed(operation: (Int, Float, Float) -> Float): Float {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10420,7 +10411,7 @@ public inline fun FloatArray.reduceRightIndexed(operation: (Int, Float, Float) -
  */
 public inline fun DoubleArray.reduceRightIndexed(operation: (Int, Double, Double) -> Double): Double {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10435,7 +10426,7 @@ public inline fun DoubleArray.reduceRightIndexed(operation: (Int, Double, Double
  */
 public inline fun BooleanArray.reduceRightIndexed(operation: (Int, Boolean, Boolean) -> Boolean): Boolean {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -10450,7 +10441,7 @@ public inline fun BooleanArray.reduceRightIndexed(operation: (Int, Boolean, Bool
  */
 public inline fun CharArray.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(index, get(index), accumulator)
@@ -12876,11 +12867,10 @@ public fun CharArray.toTypedArray(): Array<Char> {
  */
 @kotlin.jvm.JvmName("averageOfByte")
 public fun Array<out Byte>.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12891,11 +12881,10 @@ public fun Array<out Byte>.average(): Double {
  */
 @kotlin.jvm.JvmName("averageOfShort")
 public fun Array<out Short>.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12906,11 +12895,10 @@ public fun Array<out Short>.average(): Double {
  */
 @kotlin.jvm.JvmName("averageOfInt")
 public fun Array<out Int>.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12921,11 +12909,10 @@ public fun Array<out Int>.average(): Double {
  */
 @kotlin.jvm.JvmName("averageOfLong")
 public fun Array<out Long>.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12936,11 +12923,10 @@ public fun Array<out Long>.average(): Double {
  */
 @kotlin.jvm.JvmName("averageOfFloat")
 public fun Array<out Float>.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12951,11 +12937,10 @@ public fun Array<out Float>.average(): Double {
  */
 @kotlin.jvm.JvmName("averageOfDouble")
 public fun Array<out Double>.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12965,11 +12950,10 @@ public fun Array<out Double>.average(): Double {
  * Returns an average value of elements in the array.
  */
 public fun ByteArray.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12979,11 +12963,10 @@ public fun ByteArray.average(): Double {
  * Returns an average value of elements in the array.
  */
 public fun ShortArray.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -12993,11 +12976,10 @@ public fun ShortArray.average(): Double {
  * Returns an average value of elements in the array.
  */
 public fun IntArray.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -13007,11 +12989,10 @@ public fun IntArray.average(): Double {
  * Returns an average value of elements in the array.
  */
 public fun LongArray.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -13021,11 +13002,10 @@ public fun LongArray.average(): Double {
  * Returns an average value of elements in the array.
  */
 public fun FloatArray.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -13035,11 +13015,10 @@ public fun FloatArray.average(): Double {
  * Returns an average value of elements in the array.
  */
 public fun DoubleArray.average(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
         count += 1
     }
     return if (count == 0) 0.0 else sum / count
@@ -13050,10 +13029,9 @@ public fun DoubleArray.average(): Double {
  */
 @kotlin.jvm.JvmName("sumOfByte")
 public fun Array<out Byte>.sum(): Int {
-    val iterator = iterator()
     var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13063,10 +13041,9 @@ public fun Array<out Byte>.sum(): Int {
  */
 @kotlin.jvm.JvmName("sumOfShort")
 public fun Array<out Short>.sum(): Int {
-    val iterator = iterator()
     var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13076,10 +13053,9 @@ public fun Array<out Short>.sum(): Int {
  */
 @kotlin.jvm.JvmName("sumOfInt")
 public fun Array<out Int>.sum(): Int {
-    val iterator = iterator()
     var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13089,10 +13065,9 @@ public fun Array<out Int>.sum(): Int {
  */
 @kotlin.jvm.JvmName("sumOfLong")
 public fun Array<out Long>.sum(): Long {
-    val iterator = iterator()
     var sum: Long = 0L
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13102,10 +13077,9 @@ public fun Array<out Long>.sum(): Long {
  */
 @kotlin.jvm.JvmName("sumOfFloat")
 public fun Array<out Float>.sum(): Float {
-    val iterator = iterator()
     var sum: Float = 0.0f
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13115,10 +13089,9 @@ public fun Array<out Float>.sum(): Float {
  */
 @kotlin.jvm.JvmName("sumOfDouble")
 public fun Array<out Double>.sum(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13127,10 +13100,9 @@ public fun Array<out Double>.sum(): Double {
  * Returns the sum of all elements in the array.
  */
 public fun ByteArray.sum(): Int {
-    val iterator = iterator()
     var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13139,10 +13111,9 @@ public fun ByteArray.sum(): Int {
  * Returns the sum of all elements in the array.
  */
 public fun ShortArray.sum(): Int {
-    val iterator = iterator()
     var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13151,10 +13122,9 @@ public fun ShortArray.sum(): Int {
  * Returns the sum of all elements in the array.
  */
 public fun IntArray.sum(): Int {
-    val iterator = iterator()
     var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13163,10 +13133,9 @@ public fun IntArray.sum(): Int {
  * Returns the sum of all elements in the array.
  */
 public fun LongArray.sum(): Long {
-    val iterator = iterator()
     var sum: Long = 0L
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13175,10 +13144,9 @@ public fun LongArray.sum(): Long {
  * Returns the sum of all elements in the array.
  */
 public fun FloatArray.sum(): Float {
-    val iterator = iterator()
     var sum: Float = 0.0f
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }
@@ -13187,10 +13155,9 @@ public fun FloatArray.sum(): Float {
  * Returns the sum of all elements in the array.
  */
 public fun DoubleArray.sum(): Double {
-    val iterator = iterator()
     var sum: Double = 0.0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
+    for (element in this) {
+        sum += element
     }
     return sum
 }

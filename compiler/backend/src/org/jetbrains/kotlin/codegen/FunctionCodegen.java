@@ -400,11 +400,24 @@ public class FunctionCodegen {
             @NotNull Label methodEnd,
             @NotNull OwnerKind ownerKind
     ) {
-        Iterator<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters().iterator();
+        generateLocalVariablesForParameters(mv, jvmMethodSignature, thisType, methodBegin, methodEnd,
+                                            functionDescriptor.getValueParameters(),
+                                            AsmUtil.isStaticMethod(ownerKind, functionDescriptor));
+    }
+
+    public static void generateLocalVariablesForParameters(
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmMethodSignature,
+            @Nullable Type thisType,
+            @NotNull Label methodBegin,
+            @NotNull Label methodEnd,
+            Collection<ValueParameterDescriptor> valueParameters,
+            boolean isStatic
+    ) {
+        Iterator<ValueParameterDescriptor> valueParameterIterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> params = jvmMethodSignature.getValueParameters();
         int shift = 0;
 
-        boolean isStatic = AsmUtil.isStaticMethod(ownerKind, functionDescriptor);
         if (!isStatic) {
             //add this
             if (thisType != null) {
@@ -422,7 +435,7 @@ public class FunctionCodegen {
             String parameterName;
 
             if (kind == JvmMethodParameterKind.VALUE) {
-                ValueParameterDescriptor parameter = valueParameters.next();
+                ValueParameterDescriptor parameter = valueParameterIterator.next();
                 parameterName = parameter.getName().asString();
             }
             else {
@@ -775,6 +788,9 @@ public class FunctionCodegen {
                 ReceiverParameterDescriptor receiverParameter = function.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
                     frameMap.enter(receiverParameter, state.getTypeMapper().mapType(receiverParameter));
+                }
+                else {
+                    frameMap.enterTemp(parameter.getAsmType());
                 }
             }
             else if (parameter.getKind() != JvmMethodParameterKind.VALUE) {

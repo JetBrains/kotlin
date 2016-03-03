@@ -77,6 +77,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("enhancedPrimitives")
+    public void testEnhancedPrimitives() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/enhancedPrimitives/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("inline")
     public void testInline() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/inline/");
@@ -232,6 +238,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("javaTypeIsFunK")
         public void testJavaTypeIsFunK() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/casts/javaTypeIsFunK/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("literalExpressionAsGenericArgument")
+        public void testLiteralExpressionAsGenericArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/casts/literalExpressionAsGenericArgument/");
             doTestWithJava(fileName);
         }
 
@@ -579,6 +591,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     public static class Reflection extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInReflection() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("annotationsOnJavaMembers")
+        public void testAnnotationsOnJavaMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/annotationsOnJavaMembers/");
+            doTestWithJava(fileName);
         }
 
         @TestMetadata("callInstanceJavaMethod")

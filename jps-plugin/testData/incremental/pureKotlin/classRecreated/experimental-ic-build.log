@@ -1,13 +1,17 @@
-========== Step #1 ============
+================ Step #1 =================
 
 Cleaning output files:
-out/production/module/test/A.class
+  out/production/module/test/A.class
 End of files
 Compiling files:
 End of files
+Exit code: OK
+------------------------------------------
 
-========== Step #2 ============
+================ Step #2 =================
 
 Compiling files:
-src/A.kt
+  src/A.kt
 End of files
+Exit code: OK
+------------------------------------------

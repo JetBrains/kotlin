@@ -1,0 +1,17 @@
+package
+
+public val testUsage3: kotlin.Any
+public val testUsage4: kotlin.Any
+public fun foo(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun </*0*/ T> fooGeneric(/*0*/ x: T): kotlin.Unit
+public fun println(): kotlin.Unit
+public fun testResultOfAnonFun1(): kotlin.Any
+public fun testResultOfAnonFun2(): kotlin.Unit
+public fun testResultOfLambda1(): kotlin.Any
+public fun testResultOfLambda2(): kotlin.Any
+public fun testReturn1(): kotlin.Nothing
+public fun testReturn2(): kotlin.Nothing
+public fun testReturnFromAnonFun(): kotlin.Unit
+public fun testUsage1(): kotlin.Any
+public fun testUsage2(): kotlin.Unit
+public fun testUsage2Generic(): kotlin.Unit

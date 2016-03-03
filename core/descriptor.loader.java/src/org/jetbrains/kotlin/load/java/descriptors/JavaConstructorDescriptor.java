@@ -91,12 +91,24 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
 
         assert newName == null : "Attempt to rename constructor: " + this;
 
-        JavaConstructorDescriptor result = new JavaConstructorDescriptor(
-                (ClassDescriptor) newOwner, this, getAnnotations(), isPrimary, kind, getSourceToUseForCopy(preserveSource, original)
-        );
+        JavaConstructorDescriptor result = createDescriptor((ClassDescriptor) newOwner, (JavaConstructorDescriptor) original, kind,
+                                                            getSourceToUseForCopy(preserveSource, original));
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
+    }
+
+    @NotNull
+    protected JavaConstructorDescriptor createDescriptor(
+            @NotNull ClassDescriptor newOwner,
+            @Nullable JavaConstructorDescriptor original,
+            @NotNull Kind kind,
+            @NotNull SourceElement sourceElement
+    ) {
+        return new JavaConstructorDescriptor(
+                newOwner, original, getAnnotations(), isPrimary, kind,
+                sourceElement
+        );
     }
 
     @Override
@@ -106,7 +118,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull List<KotlinType> enhancedValueParametersTypes,
             @NotNull KotlinType enhancedReturnType
     ) {
-        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind(), null, false);
+        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), /* original = */ null, getKind(), null, true);
         // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
         enhanced.initialize(
                 enhancedReceiverType,

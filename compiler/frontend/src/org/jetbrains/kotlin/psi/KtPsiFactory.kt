@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target
 import org.jetbrains.kotlin.resolve.ImportPath
 
 fun KtPsiFactory(project: Project?): KtPsiFactory = KtPsiFactory(project!!)
 fun KtPsiFactory(elementForProject: PsiElement): KtPsiFactory = KtPsiFactory(elementForProject.project)
+
+private val DO_NOT_ANALYZE_NOTIFICATION = "This file was created by KtPsiFactory and should not be analyzed\n" +
+                                          "Use createAnalyzableFile to create file that can be analyzed\n"
 
 var KtFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))
@@ -174,8 +176,7 @@ class KtPsiFactory(private val project: Project) {
     fun createFile(fileName: String, text: String): KtFile {
         val file = doCreateFile(fileName, text)
 
-        file.doNotAnalyze = "This file was created by KtPsiFactory and should not be analyzed\n" +
-                            "Use createAnalyzableFile to create file that can be analyzed\n"
+        file.doNotAnalyze = DO_NOT_ANALYZE_NOTIFICATION
 
         return file
     }

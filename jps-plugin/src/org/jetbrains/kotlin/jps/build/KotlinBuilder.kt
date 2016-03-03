@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.model.JpsProject
-import org.jetbrains.jps.model.JpsSimpleElement
-import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
@@ -78,7 +76,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
         @JvmField val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
-        val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     }
 
@@ -123,30 +120,41 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
     }
 
+
+    override fun chunkBuildFinished(context: CompileContext?, chunk: ModuleChunk?) {
+        super.chunkBuildFinished(context, chunk)
+
+        LOG.debug("------------------------------------------")
+    }
+
     override fun build(
             context: CompileContext,
             chunk: ModuleChunk,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
-        LOG.debug("------------------------------------------")
         val messageCollector = MessageCollectorAdapter(context)
         val fsOperations = FSOperationsHelper(context, chunk, LOG)
 
         try {
-            val exitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
-            LOG.debug("Build result: " + exitCode)
+            val proposedExitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 
-            if (exitCode == OK && fsOperations.hasMarkedDirty()) return ADDITIONAL_PASS_REQUIRED
+            val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
-            return exitCode
+            LOG.info("Build result: " + actualExitCode)
+
+            context.testingContext?.run {
+                buildLogger.buildFinished(actualExitCode)
+            }
+
+            return actualExitCode
         }
         catch (e: StopBuildException) {
-            LOG.debug("Caught exception: " + e)
+            LOG.info("Caught exception: " + e)
             throw e
         }
         catch (e: Throwable) {
-            LOG.debug("Caught exception: " + e)
+            LOG.info("Caught exception: " + e)
 
             messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION,
@@ -251,8 +259,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return OK
         }
 
+        @Suppress("REIFIED_TYPE_UNSAFE_SUBSTITUTION")
         val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass<ModuleBuildTarget>>()
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
+        val additionalPassRequired = updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses, incrementalCaches)
 
         if (!IncrementalCompilation.isEnabled()) {
             return OK
@@ -270,7 +279,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         processChanges(filesToCompile.values().toSet(), allCompiledFiles, dataManager, incrementalCaches.values, changesInfo, fsOperations)
         incrementalCaches.values.forEach { it.cleanDirtyInlineFunctions() }
 
-        return ADDITIONAL_PASS_REQUIRED
+        return if (additionalPassRequired) ADDITIONAL_PASS_REQUIRED else OK
     }
 
     private fun applyActionsOnCacheVersionChange(
@@ -361,7 +370,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
-            return compileToJs(chunk, commonArguments, environment, null, messageCollector, project)
+            return compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
 
         if (IncrementalCompilation.isEnabled()) {
@@ -467,7 +476,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             generatedClasses: List<GeneratedJvmClass<ModuleBuildTarget>>,
             incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCacheImpl>
-    ) {
+    ): Boolean {
         val previousMappings = context.projectDescriptor.dataManager.mappings
         val delta = previousMappings.createDelta()
         val callback = delta.callback
@@ -503,7 +512,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val allCompiled = filesToCompile.values()
         val compiledInThisRound = if (compilationErrors) listOf<File>() else allCompiled
-        JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
+
+        return JavaBuilderUtil.updateMappings(context, delta, dirtyFilesHolder, chunk, allCompiled, compiledInThisRound)
     }
 
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, generatedFiles: List<GeneratedFile<ModuleBuildTarget>>) {
@@ -570,8 +580,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun compileToJs(chunk: ModuleChunk,
                             commonArguments: CommonCompilerArguments,
                             environment: CompilerEnvironment,
-                            incrementalCaches: MutableMap<TargetId, IncrementalCache>?,
-                            messageCollector: MessageCollectorAdapter, project: JpsProject
+                            messageCollector: MessageCollectorAdapter,
+                            project: JpsProject
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
 
@@ -698,7 +708,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             // IDEA can't find these files, and does not display paths in Messages View, so we add the position information
             // to the error message itself:
             val pathname = "" + location.path
-            return if (File(pathname).exists()) "" else " (" + location + ")"
+            return if (File(pathname).exists()) "" else " ($location)"
         }
 
         private fun kind(severity: CompilerMessageSeverity): BuildMessage.Kind {
@@ -847,19 +857,11 @@ private fun withSubtypes(
 }
 
 private fun getLookupTracker(project: JpsProject): LookupTracker {
-    var lookupTracker = LookupTracker.DO_NOTHING
+    val testLookupTracker = project.testingContext?.lookupTracker ?: LookupTracker.DO_NOTHING
 
-    if ("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true)) {
-        val testTracker = project.container.getChild(KotlinBuilder.LOOKUP_TRACKER)?.data
+    if (IncrementalCompilation.isExperimental()) return LookupTrackerImpl(testLookupTracker)
 
-        if (testTracker != null) {
-            lookupTracker = testTracker
-        }
-    }
-
-    if (IncrementalCompilation.isExperimental()) return LookupTrackerImpl(lookupTracker)
-
-    return lookupTracker
+    return testLookupTracker
 }
 
 private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, JpsIncrementalCacheImpl> {

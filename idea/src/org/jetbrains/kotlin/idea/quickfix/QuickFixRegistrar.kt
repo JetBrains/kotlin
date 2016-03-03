@@ -142,6 +142,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         SUPERTYPE_NOT_INITIALIZED.registerFactory(SuperClassNotInitialized)
         FUNCTION_CALL_EXPECTED.registerFactory(ChangeToFunctionInvocationFix)
+        FUNCTION_EXPECTED.registerFactory(ChangeToPropertyAccessFix)
 
         CANNOT_CHANGE_ACCESS_PRIVILEGE.registerFactory(ChangeVisibilityModifierFix)
         CANNOT_WEAKEN_ACCESS_PRIVILEGE.registerFactory(ChangeVisibilityModifierFix)
@@ -297,7 +298,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NEXT_MISSING.registerFactory(CreateNextFunctionActionFactory)
         NEXT_NONE_APPLICABLE.registerFactory(CreateNextFunctionActionFactory)
         ITERATOR_MISSING.registerFactory(CreateIteratorFunctionActionFactory)
-        ITERATOR_MISSING.registerFactory(MissingIteratorExclExclFixFactory)
+        ITERATOR_ON_NULLABLE.registerFactory(MissingIteratorExclExclFixFactory)
         COMPONENT_FUNCTION_MISSING.registerFactory(CreateComponentFunctionActionFactory)
 
         DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(CreatePropertyDelegateAccessorsActionFactory)

@@ -17,12 +17,12 @@ fun example() {
     }();
 
     {
-        if (true) <!IMPLICIT_CAST_TO_ANY!>{}<!> else <!IMPLICIT_CAST_TO_ANY!>false<!>
+        if (true) {} else false
     }();
 
 
     {
-        if (true) <!IMPLICIT_CAST_TO_ANY!>true<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
+        if (true) true else {}
     }()
 
     fun t(): Boolean {

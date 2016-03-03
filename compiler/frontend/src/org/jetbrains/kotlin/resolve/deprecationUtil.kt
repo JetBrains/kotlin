@@ -99,7 +99,7 @@ private fun deprecationByOverridden(root: CallableMemberDescriptor): Deprecation
         visited.add(node)
 
         val deprecatedAnnotation = node.getDeprecationByAnnotation()
-        val overriddenDescriptors = node.overriddenDescriptors
+        val overriddenDescriptors = node.original.overriddenDescriptors
         when {
             deprecatedAnnotation != null -> {
                 deprecations.add(deprecatedAnnotation)

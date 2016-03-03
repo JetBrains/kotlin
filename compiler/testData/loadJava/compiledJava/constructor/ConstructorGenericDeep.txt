@@ -1,5 +1,5 @@
 package test
 
 public open class ConstructorGenericDeep {
-    public constructor ConstructorGenericDeep(/*0*/ p0: java.lang.Class<kotlin.Any!>!)
+    public constructor ConstructorGenericDeep</*0*/ P : kotlin.Any!>(/*0*/ p0: java.lang.Class<P!>!)
 }

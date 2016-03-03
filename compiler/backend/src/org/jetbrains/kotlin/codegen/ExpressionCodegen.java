@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicCallable;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
@@ -83,6 +84,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -1241,10 +1243,22 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     public static ConstantValue<?> getCompileTimeConstant(@NotNull KtExpression expression, @NotNull BindingContext bindingContext) {
+        return getCompileTimeConstant(expression, bindingContext, false);
+    }
+
+    @Nullable
+    public static ConstantValue<?> getCompileTimeConstant(
+            @NotNull KtExpression expression,
+            @NotNull BindingContext bindingContext,
+            boolean checkPure
+    ) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext);
         if (compileTimeValue == null) {
             return null;
         }
+
+        if (compileTimeValue.getUsesNonConstValAsConstant() || (checkPure && !compileTimeValue.getParameters().isPure())) return null;
+
         KotlinType expectedType = bindingContext.getType(expression);
         return compileTimeValue.toConstantValue(expectedType);
     }
@@ -2452,19 +2466,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         TypeParameterMappings mappings = new TypeParameterMappings();
         for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
-
-            KotlinType type = TypeUtils.uncaptureTypeForInlineMapping(entry.getValue());
+            KotlinType type = entry.getValue();
 
             boolean isReified = key.isReified() || InlineUtil.isArrayConstructorWithLambda(resolvedCall.getResultingDescriptor());
 
             Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
             if (typeParameterAndReificationArgument == null) {
+                KotlinType approximatedType = CapturedTypeApproximationKt.approximateCapturedTypes(entry.getValue()).getUpper();
                 // type is not generic
                 BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-                Type asmType = typeMapper.mapTypeParameter(type, signatureWriter);
+                Type asmType = typeMapper.mapTypeParameter(approximatedType, signatureWriter);
 
                 mappings.addParameterMappingToType(
-                        key.getName().getIdentifier(), type, asmType, signatureWriter.toString(), isReified
+                        key.getName().getIdentifier(), approximatedType, asmType, signatureWriter.toString(), isReified
                 );
             }
             else {
@@ -2889,6 +2903,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                               expression.getRight(), reference);
         }
         else {
+            ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+            if (compileTimeConstant != null) {
+                return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
+            }
+
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
             FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
 
@@ -3067,7 +3086,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         StackValue rightValue;
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
-        if (isPrimitive(leftType) && isPrimitive(rightType)) {
+        Callable callable = resolveToCallable((FunctionDescriptor) resolvedCall.getResultingDescriptor(), false, resolvedCall);
+        if (callable instanceof IntrinsicCallable) {
             type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
@@ -3161,6 +3181,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitPrefixExpression(@NotNull KtPrefixExpression expression, @NotNull StackValue receiver) {
+        ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+        if (compileTimeConstant != null) {
+            return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
+        }
+
         DeclarationDescriptor originalOperation = bindingContext.get(REFERENCE_TARGET, expression.getOperationReference());
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
         CallableDescriptor op = resolvedCall.getResultingDescriptor();
@@ -3240,26 +3265,31 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.operation(asmBaseType, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                StackValue value = gen(expression.getBaseExpression());
-                value = StackValue.complexWriteReadReceiver(value);
+                StackValue value = StackValue.complexWriteReadReceiver(gen(expression.getBaseExpression()));
 
-                Type type = expressionType(expression.getBaseExpression());
-                value.put(type, v); // old value
+                value.put(asmBaseType, v);
+                AsmUtil.dup(v, asmBaseType);
 
-                value.dup(v, true);
+                StackValue previousValue = StackValue.local(myFrameMap.enterTemp(asmBaseType), asmBaseType);
+                previousValue.store(StackValue.onStack(asmBaseType), v);
 
                 Type storeType;
                 if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
-                    genIncrement(asmResultType, increment, v);
-                    storeType = type;
+                    genIncrement(asmResultType, asmBaseType, increment, v);
+                    storeType = asmBaseType;
                 }
                 else {
-                    StackValue result = invokeFunction(resolvedCall, StackValue.onStack(type));
+                    StackValue result = invokeFunction(resolvedCall, StackValue.onStack(asmBaseType));
                     result.put(result.type, v);
                     storeType = result.type;
                 }
 
                 value.store(StackValue.onStack(storeType), v, true);
+
+                previousValue.put(asmBaseType, v);
+
+                myFrameMap.leaveTemp(asmBaseType);
+
                 return Unit.INSTANCE;
             }
         });

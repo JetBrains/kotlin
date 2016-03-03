@@ -3,5 +3,5 @@
 import javax.swing.SwingUtilities
 
 fun bar() {
-    SwingUtilities.invokeLater({ throw UnsupportedOperationException() })
+    SwingUtilities.invokeLater { throw UnsupportedOperationException() }
 }

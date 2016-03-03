@@ -50,8 +50,6 @@ import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner;
 import java.io.File;
 import java.util.Collection;
 
-import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt.showInfoNotification;
-
 public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfigurator {
     private static final String[] KOTLIN_VERSIONS = {"0.6.+"};
 
@@ -91,17 +89,19 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         dialog.show();
         if (!dialog.isOK()) return;
 
+        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
         for (Module module : dialog.getModulesToConfigure()) {
             String gradleFilePath = getDefaultPathToBuildGradleFile(module);
             GroovyFile file = getBuildGradleFile(project, gradleFilePath);
             if (file != null && canConfigureFile(file)) {
-                changeGradleFile(file, dialog.getKotlinVersion());
+                changeGradleFile(file, dialog.getKotlinVersion(), collector);
                 OpenFileAction.openFile(gradleFilePath, project);
             }
             else {
                 showErrorMessage(project, "Cannot find build.gradle file for module " + module.getName());
             }
         }
+        collector.showNotification();
     }
 
     public static void addKotlinLibraryToModule(final Module module, final DependencyScope scope, final String groupId, final String artifactId, final String version) {
@@ -149,7 +149,9 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
             VirtualFile virtualFile = gradleFile.getVirtualFile();
             if (virtualFile != null) {
-                showInfoNotification(gradleFile.getProject(), virtualFile.getPath() + " was modified");
+                NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(gradleFile.getProject())
+                        .addMessage(virtualFile.getPath() + " was modified")
+                        .showNotification();
             }
         }
     }
@@ -254,7 +256,11 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return version.contains("SNAPSHOT");
     }
 
-    protected void changeGradleFile(@NotNull final GroovyFile groovyFile, @NotNull final String version) {
+    protected void changeGradleFile(
+            @NotNull final GroovyFile groovyFile,
+            @NotNull final String version,
+            @NotNull NotificationMessageCollector collector
+    ) {
         new WriteCommandAction(groovyFile.getProject()) {
             @Override
             protected void run(@NotNull Result result) {
@@ -266,7 +272,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
         VirtualFile virtualFile = groovyFile.getVirtualFile();
         if (virtualFile != null) {
-            showInfoNotification(groovyFile.getProject(), virtualFile.getPath() + " was modified");
+            collector.addMessage(virtualFile.getPath() + " was modified");
         }
     }
 

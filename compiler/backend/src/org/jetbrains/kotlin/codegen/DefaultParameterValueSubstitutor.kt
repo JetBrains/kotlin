@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -134,6 +135,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         }
 
         if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) {
+            FunctionCodegen.generateLocalVariablesForParameters(mv, signature, null, Label(), Label(), remainingParameters, isStatic)
             mv.visitEnd()
             return
         }
@@ -141,6 +143,9 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         val frameMap = FrameMap()
         val v = InstructionAdapter(mv)
         mv.visitCode()
+
+        val methodBegin = Label()
+        mv.visitLabel(methodBegin)
 
         val methodOwner = typeMapper.mapToCallableMethod(delegateFunctionDescriptor, false).owner
         if (!isStatic) {
@@ -201,6 +206,13 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             v.invokestatic(methodOwner.internalName, defaultMethod.name, defaultMethod.descriptor, false)
         }
         v.areturn(signature.returnType)
+
+        val methodEnd = Label()
+        mv.visitLabel(methodEnd)
+
+        FunctionCodegen.generateLocalVariablesForParameters(mv, signature, null, methodBegin, methodEnd,
+                                                            remainingParameters, isStatic)
+
         FunctionCodegen.endVisit(mv, null, methodElement)
     }
 

@@ -21,7 +21,6 @@ import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlElement;
 import org.jetbrains.android.dom.AndroidAttributeValue;
 import org.jetbrains.android.dom.manifest.Manifest;
@@ -35,6 +34,7 @@ import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.android.AndroidUtilKt;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
 import java.util.ArrayList;
@@ -51,12 +51,7 @@ public class KotlinAndroidGotoDeclarationHandler implements GotoDeclarationHandl
             return null;
         }
 
-        PsiFile file = referenceExpression.getContainingFile();
-        if (file == null) {
-            return null;
-        }
-
-        AndroidFacet facet = AndroidFacet.getInstance(file);
+        AndroidFacet facet = AndroidUtilKt.getAndroidFacetForFile(referenceExpression);
         if (facet == null) {
             return null;
         }

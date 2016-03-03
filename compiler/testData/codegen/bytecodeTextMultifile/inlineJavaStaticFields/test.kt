@@ -31,10 +31,10 @@ fun test() {
 // 1 LDC 9223372036854775807
 // 1 SIPUSH 9000
 // 1 LDC 59000
-// 1 LDC -8
+// 1 BIPUSH -8
 // 1 LDC K
 // 1 LDC 100000
-// 1 LDC 900
+// 1 SIPUSH 901
 // 1 LDC false
 // 1 LDC 36.6
 // 1 LDC 42.4242

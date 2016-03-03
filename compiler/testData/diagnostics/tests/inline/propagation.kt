@@ -24,7 +24,7 @@ inline fun inlineFunWithInvokeClosureNoinline(noinline s: (p: Int) -> Unit, noin
 //ext function
 inline fun Function1<Int, Unit>.inlineExt(ext: Int.(p: Int) -> Unit) {
     subInline(this, ext)
-    subNoInline(<!USAGE_IS_NOT_INLINABLE!>this<!>, <!USAGE_IS_NOT_INLINABLE!>ext<!>)
+    subNoInline(this, <!USAGE_IS_NOT_INLINABLE!>ext<!>)
 }
 
 inline fun Function1<Int, Unit>.inlineExtWithClosure(ext: Int.(p: Int) -> Unit) {

@@ -918,4 +918,11 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
                                             psiFactory.createExpression("5"),
                                             KotlinValVar.Val))
     }
+
+    fun testImplicitReceiverInRecursiveCall() = doTest {
+        receiverParameterInfo = null
+        newParameters[0].name = "a"
+    }
+
+    fun testReceiverInSafeCall() = doTestConflict { receiverParameterInfo = null }
 }

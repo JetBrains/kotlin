@@ -52,23 +52,16 @@ class InlineChecker implements CallChecker {
     private final SimpleFunctionDescriptor descriptor;
     private final Set<CallableDescriptor> inlinableParameters = new LinkedHashSet<CallableDescriptor>();
     private final boolean isEffectivelyPublicApiFunction;
+    private final boolean isEffectivelyPrivateApiFunction;
 
     public InlineChecker(@NotNull SimpleFunctionDescriptor descriptor) {
         assert InlineUtil.isInline(descriptor) : "This extension should be created only for inline functions: " + descriptor;
         this.descriptor = descriptor;
         this.isEffectivelyPublicApiFunction = DescriptorUtilsKt.isEffectivelyPublicApi(descriptor);
-
+        this.isEffectivelyPrivateApiFunction = DescriptorUtilsKt.isEffectivelyPrivateApi(descriptor);
         for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
             if (isInlinableParameter(param)) {
                 inlinableParameters.add(param);
-            }
-        }
-
-        //add extension receiver as inlinable
-        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
-        if (receiverParameter != null) {
-            if (isInlinableParameter(receiverParameter)) {
-                inlinableParameters.add(receiverParameter);
             }
         }
     }
@@ -147,9 +140,7 @@ class InlineChecker implements CallChecker {
         if (argumentCallee != null && inlinableParameters.contains(argumentCallee)) {
             if (InlineUtil.isInline(targetDescriptor) && isInlinableParameter(targetParameterDescriptor)) {
                 if (allowsNonLocalReturns(argumentCallee) && !allowsNonLocalReturns(targetParameterDescriptor)) {
-                    context.trace.report(
-                            NON_LOCAL_RETURN_NOT_ALLOWED.on(argumentExpression, argumentExpression, argumentCallee, descriptor)
-                    );
+                    context.trace.report(NON_LOCAL_RETURN_NOT_ALLOWED.on(argumentExpression, argumentExpression));
                 }
                 else {
                     checkNonLocalReturn(context, argumentCallee, argumentExpression);
@@ -263,7 +254,7 @@ class InlineChecker implements CallChecker {
             @NotNull KtElement expression,
             @NotNull BasicCallResolutionContext context
     ) {
-        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
+        if (!isEffectivelyPrivateApiFunction) {
             if (DescriptorUtilsKt.isInsidePrivateClass(declarationDescriptor)) {
                 context.trace.report(Errors.PRIVATE_CLASS_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
             }
@@ -290,7 +281,7 @@ class InlineChecker implements CallChecker {
         if (!allowsNonLocalReturns(inlinableParameterDescriptor)) return;
 
         if (!checkNonLocalReturnUsage(descriptor, parameterUsage, context.trace)) {
-            context.trace.report(NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage, inlinableParameterDescriptor, descriptor));
+            context.trace.report(NON_LOCAL_RETURN_NOT_ALLOWED.on(parameterUsage, parameterUsage));
         }
     }
 }

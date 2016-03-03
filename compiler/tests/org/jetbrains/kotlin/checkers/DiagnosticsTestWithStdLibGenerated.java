@@ -65,9 +65,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("elvisOnJavaList.kt")
+    public void testElvisOnJavaList() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/elvisOnJavaList.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("elvisOnUnitInLet.kt")
     public void testElvisOnUnitInLet() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/elvisOnUnitInLet.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ifElseJavaList.kt")
+    public void testIfElseJavaList() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/ifElseJavaList.kt");
         doTest(fileName);
     }
 
@@ -98,6 +110,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     @TestMetadata("kt9078.kt")
     public void testKt9078() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kt9078.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt9985.kt")
+    public void testKt9985() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kt9985.kt");
         doTest(fileName);
     }
 
@@ -172,6 +190,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("qualifiedCallValue.kt")
         public void testQualifiedCallValue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/qualifiedCallValue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("strictfpOnClass.kt")
+        public void testStrictfpOnClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/strictfpOnClass.kt");
             doTest(fileName);
         }
 
@@ -1186,6 +1210,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("letUsesOwnReceiver.kt")
         public void testLetUsesOwnReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/letUsesOwnReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("listOfGeneric.kt")
+        public void testListOfGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/smartcasts/listOfGeneric.kt");
             doTest(fileName);
         }
 

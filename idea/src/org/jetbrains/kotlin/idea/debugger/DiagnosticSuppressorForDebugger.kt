@@ -29,10 +29,7 @@ class DiagnosticSuppressorForDebugger : DiagnosticSuppressor {
 
         if (containingFile is KtFile && containingFile.suppressDiagnosticsInDebugMode) {
             val diagnosticFactory = diagnostic.factory
-            return diagnosticFactory == Errors.INVISIBLE_MEMBER ||
-                   diagnosticFactory == Errors.INVISIBLE_REFERENCE ||
-                   diagnosticFactory == Errors.INVISIBLE_SETTER ||
-                   diagnosticFactory == Errors.UNSAFE_CALL
+            return diagnosticFactory == Errors.UNSAFE_CALL
         }
 
         return false

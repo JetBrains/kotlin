@@ -20,6 +20,7 @@ import com.intellij.psi.PsiMember
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.util.classMembers.MemberInfo
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -69,7 +70,8 @@ class KotlinMemberInfo(member: KtNamedDeclaration, val isSuperClass: Boolean = f
 fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
     val declaration = member
     val psiMember: PsiMember? = when (declaration) {
-        is KtNamedFunction, is KtProperty -> declaration.getRepresentativeLightMethod()
+        is KtNamedFunction -> declaration.getRepresentativeLightMethod()
+        is KtProperty -> declaration.getRepresentativeLightMethod() ?: LightClassUtil.getLightClassPropertyMethods(declaration).backingField
         is KtClassOrObject -> declaration.toLightClass()
         else -> null
     }

@@ -42,11 +42,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
+            boolean isDebuggerContext,
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
+              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 
     @NotNull
@@ -63,7 +64,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               new ResolutionResultsCacheImpl(), null,
-                                              callChecker, StatementFilter.NONE, isAnnotationContext, false,
+                                              callChecker, StatementFilter.NONE, isAnnotationContext, false, false,
                                               CallPosition.Unknown.INSTANCE);
     }
 
@@ -76,7 +77,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
                 context.resolutionResultsCache, dataFlowInfoForArguments,
                 context.callChecker,
-                context.statementFilter, context.isAnnotationContext, context.collectAllCandidates, context.callPosition);
+                context.statementFilter, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates, context.callPosition);
     }
 
     @NotNull
@@ -100,14 +101,14 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
+                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 
     @NotNull
     public BasicCallResolutionContext replaceCall(@NotNull Call newCall) {
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, callPosition);
+                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition);
     }
 
     public void performContextDependentCallChecks(@NotNull ResolvedCall<?> resolvedCall) {

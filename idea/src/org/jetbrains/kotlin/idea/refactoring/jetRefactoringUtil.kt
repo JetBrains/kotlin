@@ -417,6 +417,8 @@ fun <T> chooseContainerElementIfNecessary(
 fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KtLightMethod
 
 fun PsiElement.canRefactor(): Boolean {
+    if (!this.isValid) return false
+
     return when {
         this is PsiPackage ->
             directories.any { it.canRefactor() }

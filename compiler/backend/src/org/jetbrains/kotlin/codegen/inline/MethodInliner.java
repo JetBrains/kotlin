@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.SmartHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClosureCodegen;
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.utils.SmartSet;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -285,7 +285,8 @@ public class MethodInliner {
                         super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                     }
                 }
-                else if (ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false))) {
+                else if (ReifiedTypeInliner.isNeedClassReificationMarker(new MethodInsnNode(opcode, owner, name, desc, false)) &&
+                         !isDefaultCompilation()) {
                     // we will put it if needed in anew processing
                 }
                 else {
@@ -372,7 +373,7 @@ public class MethodInliner {
             ) {
                 if (isInliningLambda || InlineCodegenUtil.GENERATE_SMAP) {
                     String varSuffix = inliningContext.isRoot() &&
-                                       !((RootInliningContext) inliningContext).isDefaultCompilation &&
+                                       !isDefaultCompilation() &&
                                        !InlineCodegenUtil.isFakeLocalVariableForInline(name) ?
                                        INLINE_FUN_VAR_SUFFIX : "";
                     String varName = !varSuffix.isEmpty() && name.equals("this") ? name + "_" : name;
@@ -428,20 +429,19 @@ public class MethodInliner {
         catch (AnalyzerException e) {
             throw wrapException(e, node, "couldn't inline method call");
         }
-        Set<AbstractInsnNode> toDelete = new SmartHashSet<AbstractInsnNode>();
-        InstructionsAndFrames instructionsAndFrames = new InstructionsAndFrames(sources, node.instructions);
-        AbstractInsnNode cur = node.instructions.getFirst();
-        int index = 0;
+        Set<AbstractInsnNode> toDelete = SmartSet.create();
+        InsnList instructions = node.instructions;
+        AbstractInsnNode cur = instructions.getFirst();
 
         boolean awaitClassReification = false;
         int currentFinallyDeep = 0;
 
         while (cur != null) {
-            Frame<SourceValue> frame = sources[index];
+            Frame<SourceValue> frame = sources[instructions.indexOf(cur)];
 
             if (frame != null) {
                 if (ReifiedTypeInliner.isNeedClassReificationMarker(cur)) {
-                    awaitClassReification = true;
+                    awaitClassReification = !isDefaultCompilation();
                 }
                 else if (cur.getType() == AbstractInsnNode.METHOD_INSN) {
                     if (InlineCodegenUtil.isFinallyStart(cur)) {
@@ -460,25 +460,11 @@ public class MethodInliner {
                     if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
                         SourceValue sourceValue = frame.getStack(firstParameterIndex);
 
-                        LambdaInfo lambdaInfo = null;
-                        int varIndex = -1;
+                        LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
+                                this, MethodInlinerUtilKt.singleOrNullInsn(sourceValue), true, instructions, sources, toDelete
+                        );
 
-                        if (sourceValue.insns.size() == 1) {
-                            AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                            AbstractInsnNode processingInstruction = insnNode;
-
-                            if (insnNode.getOpcode() == Opcodes.SWAP) {
-                                processingInstruction = InlineCodegenUtil.getPrevMeaningful(insnNode);
-                            }
-                            lambdaInfo = getLambdaIfExistsAndMarkInstructions(processingInstruction, frame, instructionsAndFrames, toDelete);
-                            if (lambdaInfo != null) {
-                                //remove inlinable access
-                                assert processingInstruction != null;
-                                InlineCodegenUtil.removeInterval(node, processingInstruction, insnNode);
-                            }
-                        }
-
-                        invokeCalls.add(new InvokeCall(varIndex, lambdaInfo, currentFinallyDeep));
+                        invokeCalls.add(new InvokeCall(lambdaInfo, currentFinallyDeep));
                     }
                     else if (isAnonymousConstructorCall(owner, name)) {
                         Map<Integer, LambdaInfo> lambdaMapping = new HashMap<Integer, LambdaInfo>();
@@ -486,14 +472,13 @@ public class MethodInliner {
                         int offset = 0;
                         for (int i = 0; i < paramCount; i++) {
                             SourceValue sourceValue = frame.getStack(firstParameterIndex + i);
-                            if (sourceValue.insns.size() == 1) {
-                                AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                                LambdaInfo lambdaInfo = getLambdaIfExistsAndMarkInstructions(insnNode, frame, instructionsAndFrames, toDelete);
-                                if (lambdaInfo != null) {
-                                    lambdaMapping.put(offset, lambdaInfo);
-                                    node.instructions.remove(insnNode);
-                                }
+                            LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
+                                    this, MethodInlinerUtilKt.singleOrNullInsn(sourceValue), false, instructions, sources, toDelete
+                            );
+                            if (lambdaInfo != null) {
+                                lambdaMapping.put(offset, lambdaInfo);
                             }
+
                             offset += i == 0 ? 1 : argTypes[i - 1].getSize();
                         }
 
@@ -520,7 +505,6 @@ public class MethodInliner {
             }
             AbstractInsnNode prevNode = cur;
             cur = cur.getNext();
-            index++;
 
             //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
             if (frame == null) {
@@ -530,13 +514,13 @@ public class MethodInliner {
                     //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
                     //but as result all this labels will be merged into one (see KT-5863)
                 } else {
-                    node.instructions.remove(prevNode);
+                    toDelete.add(prevNode);
                 }
             }
         }
 
         for (AbstractInsnNode insnNode : toDelete) {
-            node.instructions.remove(insnNode);
+            instructions.remove(insnNode);
         }
 
         //clean dead try/catch blocks
@@ -581,41 +565,7 @@ public class MethodInliner {
     }
 
     @Nullable
-    private LambdaInfo getLambdaIfExistsAndMarkInstructions(
-            @Nullable AbstractInsnNode insnNode,
-            @NotNull Frame<SourceValue> localFrame,
-            @NotNull InstructionsAndFrames insAndFrames,
-            @NotNull Set<AbstractInsnNode> toDelete
-    ) {
-        LambdaInfo lambdaInfo = getLambdaIfExists(insnNode);
-
-        if (lambdaInfo == null && insnNode instanceof VarInsnNode && insnNode.getOpcode() == Opcodes.ALOAD) {
-            int varIndex = ((VarInsnNode) insnNode).var;
-            SourceValue local = localFrame.getLocal(varIndex);
-            if (local.insns.size() == 1) {
-                AbstractInsnNode storeIns = local.insns.iterator().next();
-                if (storeIns instanceof VarInsnNode && storeIns.getOpcode() == Opcodes.ASTORE) {
-                    Frame<SourceValue> frame = insAndFrames.get(storeIns);
-                    if (frame != null) {
-                        SourceValue topOfStack = frame.getStack(frame.getStackSize() - 1);
-                        if(topOfStack.insns.size() == 1) {
-                            AbstractInsnNode lambdaAload = topOfStack.insns.iterator().next();
-                            lambdaInfo = getLambdaIfExistsAndMarkInstructions(lambdaAload, frame, insAndFrames, toDelete);
-                            if (lambdaInfo != null) {
-                                toDelete.add(storeIns);
-                                toDelete.add(lambdaAload);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return lambdaInfo;
-    }
-
-    @Nullable
-    private LambdaInfo getLambdaIfExists(@Nullable AbstractInsnNode insnNode) {
+    LambdaInfo getLambdaIfExists(@Nullable AbstractInsnNode insnNode) {
         if (insnNode == null) {
             return null;
         }
@@ -855,4 +805,7 @@ public class MethodInliner {
 
     }
 
+    private boolean isDefaultCompilation() {
+        return inliningContext.isRoot() && ((RootInliningContext) inliningContext).isDefaultCompilation;
+    }
 }

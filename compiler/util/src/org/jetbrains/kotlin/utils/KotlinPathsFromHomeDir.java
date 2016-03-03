@@ -66,18 +66,6 @@ public class KotlinPathsFromHomeDir implements KotlinPaths {
 
     @Override
     @NotNull
-    public File getJdkAnnotationsPath() {
-        return getLibraryFile(PathUtil.JDK_ANNOTATIONS_JAR);
-    }
-
-    @NotNull
-    @Override
-    public File getAndroidSdkAnnotationsPath() {
-        return getLibraryFile(PathUtil.ANDROID_SDK_ANNOTATIONS_JAR);
-    }
-
-    @Override
-    @NotNull
     public File getJsStdLibJarPath() {
         return getLibraryFile(PathUtil.JS_LIB_JAR_NAME);
     }

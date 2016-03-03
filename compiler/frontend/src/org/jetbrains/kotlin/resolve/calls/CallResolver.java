@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -381,10 +381,12 @@ public class CallResolver {
             context.trace.report(NO_CONSTRUCTOR.on(CallUtilKt.getValueArgumentListOrElement(context.call)));
             return checkArgumentTypesAndFail(context);
         }
-        TypeSubstitutor knownSubstitutor = TypeSubstitutor.create(constructedType);
-        Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
-                        context.scope, constructors, context.call, knownSubstitutor);
+
+        Pair<Collection<ResolutionCandidate<CallableDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
+                prepareCandidatesAndContextForConstructorCall(constructedType, context);
+
+        Collection<ResolutionCandidate<CallableDescriptor>> candidates = candidatesAndContext.getFirst();
+        context = candidatesAndContext.getSecond();
 
         return computeTasksFromCandidatesAndResolvedCall(context, functionReference, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER);
     }
@@ -460,11 +462,10 @@ public class CallResolver {
                                   calleeConstructor.getContainingDeclaration().getDefaultType() :
                                   DescriptorUtils.getSuperClassType(currentClassDescriptor);
 
-        TypeSubstitutor knownTypeParametersSubstitutor = TypeSubstitutor.create(superType);
-
-        Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
-                        context.scope, constructors, context.call, knownTypeParametersSubstitutor);
+        Pair<Collection<ResolutionCandidate<CallableDescriptor>>, BasicCallResolutionContext> candidatesAndContext =
+                prepareCandidatesAndContextForConstructorCall(superType, context);
+        Collection<ResolutionCandidate<CallableDescriptor>> candidates = candidatesAndContext.getFirst();
+        context = candidatesAndContext.getSecond();
 
         TracingStrategy tracing = call.isImplicit() ?
                                   new TracingStrategyForImplicitConstructorDelegationCall(call, context.call) :
@@ -479,6 +480,45 @@ public class CallResolver {
         }
 
         return computeTasksFromCandidatesAndResolvedCall(context, candidates, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+    }
+
+    @NotNull
+    private
+    Pair<Collection<ResolutionCandidate<CallableDescriptor>>, BasicCallResolutionContext> prepareCandidatesAndContextForConstructorCall(
+            @NotNull KotlinType superType,
+            @NotNull BasicCallResolutionContext context
+    ) {
+        if (!(superType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
+            return new Pair<Collection<ResolutionCandidate<CallableDescriptor>>, BasicCallResolutionContext>(
+                    Collections.<ResolutionCandidate<CallableDescriptor>>emptyList(), context);
+        }
+
+        ClassDescriptor superClass = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+
+        // If any constructor has type parameter (currently it only can be true for ones from Java), try to infer arguments for them
+        // Otherwise use NO_EXPECTED_TYPE and knownTypeParametersSubstitutor
+        boolean anyConstructorHasDeclaredTypeParameters =
+                anyConstructorHasDeclaredTypeParameters(superType.getConstructor().getDeclarationDescriptor());
+
+        TypeSubstitutor knownTypeParametersSubstitutor = anyConstructorHasDeclaredTypeParameters ? null : TypeSubstitutor.create(superType);
+        if (anyConstructorHasDeclaredTypeParameters) {
+            context = context.replaceExpectedType(superType);
+        }
+
+        Collection<ResolutionCandidate<CallableDescriptor>> candidates =
+                taskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
+                        context.scope, superClass.getConstructors(), context.call, knownTypeParametersSubstitutor);
+
+        return new Pair<Collection<ResolutionCandidate<CallableDescriptor>>, BasicCallResolutionContext>(candidates, context);
+    }
+
+    private static boolean anyConstructorHasDeclaredTypeParameters(@Nullable ClassifierDescriptor classDescriptor) {
+        if (!(classDescriptor instanceof ClassDescriptor)) return false;
+        for (ConstructorDescriptor constructor : ((ClassDescriptor) classDescriptor).getConstructors()) {
+            if (constructor.getTypeParameters().size() > constructor.getContainingDeclaration().getDeclaredTypeParameters().size()) return true;
+        }
+
+        return false;
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(

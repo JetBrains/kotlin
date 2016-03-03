@@ -60,7 +60,6 @@ class CallInstruction private constructor(
         override val receiverValues: Map<PseudoValue, ReceiverValue>,
         val arguments: Map<PseudoValue, ValueParameterDescriptor>
 ) : OperationInstruction(element, lexicalScope, (receiverValues.keys as Collection<PseudoValue>) + arguments.keys), InstructionWithReceivers {
-    // as is necessary above: see KT-10384
 
     constructor (
             element: KtElement,

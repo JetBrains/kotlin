@@ -106,10 +106,10 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     }
 
     companion  object {
-        fun replaceSamConstructorCall(callExpression: KtCallExpression): KtExpression {
+        fun replaceSamConstructorCall(callExpression: KtCallExpression): KtLambdaExpression {
             val functionalArgument = callExpression.samConstructorValueArgument()?.getArgumentExpression()
                                      ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
-            return callExpression.getQualifiedExpressionForSelectorOrThis().replace(functionalArgument) as KtExpression
+            return callExpression.getQualifiedExpressionForSelectorOrThis().replace(functionalArgument) as KtLambdaExpression
         }
 
         private fun canBeReplaced(parentCall: KtCallExpression, samConstructorArguments: List<KtValueArgument>): Boolean {

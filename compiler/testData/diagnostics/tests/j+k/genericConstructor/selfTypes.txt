@@ -1,0 +1,17 @@
+package
+
+public fun test(): kotlin.Unit
+
+public open class R</*0*/ T : R<T!>!> {
+    public constructor R</*0*/ T : R<T!>!, /*1*/ F : R<F!>!>(/*0*/ x: F!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class RImpl : R<RImpl!> {
+    public constructor RImpl()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

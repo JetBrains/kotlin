@@ -1,0 +1,3 @@
+package
+
+public fun foo(): kotlin.Unit

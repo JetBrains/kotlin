@@ -7,6 +7,12 @@
         <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor"/>
         <errorHandler implementation="org.jetbrains.kotlin.plugin.android.AndroidExtensionsReportSubmitter"/>
         <gotoDeclarationHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidGotoDeclarationHandler"/>
+
+        <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.IllegalIdentifierInspection"
+                         displayName="Illegal Android Identifier"
+                         groupName="Kotlin"
+                         enabledByDefault="true"
+                         level="ERROR"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

@@ -1,3 +1,3 @@
-val a: Short = 1 + 1
+val a: Short = 1 + 255
 
-// 1 I2S
+// 1 SIPUSH 256
