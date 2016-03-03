@@ -1,5 +1,10 @@
-fun <T> List<T>?.foo() {}
+fun <T1> List<T1>?.foo() {}
 
-// NB Not a redeclaration
-@JvmName("f1")
-fun <T> List<T>.foo() {}
+@JvmName("foo1")
+fun <T2> List<T2>.foo() {}
+
+
+fun <T1> bar(x: List<T1>) = x
+
+@JvmName("bar1")
+fun <T2> bar(x: List<T2>?) = x

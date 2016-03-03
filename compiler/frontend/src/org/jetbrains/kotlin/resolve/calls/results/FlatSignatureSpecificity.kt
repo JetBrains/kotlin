@@ -37,7 +37,7 @@ fun <T> isSignatureNotLessSpecific(
     if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
 
     val typeParameters = general.typeParameters
-    val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
+    val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl.forSpecificity()
     val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(callHandle, typeParameters)
 
     var numConstraints = 0
