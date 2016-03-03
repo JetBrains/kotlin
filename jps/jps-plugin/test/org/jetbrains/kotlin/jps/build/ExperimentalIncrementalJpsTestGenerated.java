@@ -807,6 +807,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
                 doTest(fileName);
             }
 
+            @TestMetadata("enumEntryAdded")
+            public void testEnumEntryAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryAdded/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntryRemoved")
+            public void testEnumEntryRemoved() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryRemoved/");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaAndKotlinChangedSimultaneously")
             public void testJavaAndKotlinChangedSimultaneously() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaAndKotlinChangedSimultaneously/");
@@ -1120,6 +1132,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("enumEntryAdded")
         public void testEnumEntryAdded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/enumEntryAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumEntryRemoved")
+        public void testEnumEntryRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/enumEntryRemoved/");
             doTest(fileName);
         }
 
