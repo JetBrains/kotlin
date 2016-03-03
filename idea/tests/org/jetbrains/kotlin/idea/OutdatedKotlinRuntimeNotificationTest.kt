@@ -69,6 +69,8 @@ class KotlinRuntimeLibraryUtilTest : TestCase() {
         notOutdated("1.0.0-beta1-001-Idea3-1", "1.0.0-beta1-001")
         notOutdated("1.0.0-beta1-001-Idea3-(1)", "1.0.0-beta1-001")
 
+        notOutdated("1.0.0-release-IJ143-12", "1.0.0")
+
         outdated("1.0.0-beta1-002-Idea141-1", "1.0.0-beta1-001")
         outdated("1.0.0-beta1-010-Idea141-1", "1.0.0-beta1-009")
         outdated("1.0.0-beta1-100-Idea141-1", "1.0.0-beta1-099")

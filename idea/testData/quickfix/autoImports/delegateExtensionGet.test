@@ -21,7 +21,7 @@ class DelegateImpl<T> {
     val value: T = null!!
 }
 
-public fun <T> DelegateImpl<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
+public operator fun <T> DelegateImpl<T>.getValue(thisRef: Any?, property: KProperty<*>): T = value
 
 
 

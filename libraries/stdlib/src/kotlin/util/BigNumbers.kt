@@ -5,6 +5,7 @@ package kotlin
 
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.math.RoundingMode
 
 /**
  * Enables the use of the `+` operator for [BigInteger] instances.
@@ -57,9 +58,12 @@ public inline operator fun BigDecimal.times(other: BigDecimal) : BigDecimal = th
 
 /**
  * Enables the use of the `/` operator for [BigDecimal] instances.
+ *
+ * The scale of the result is the same as the scale of `this` (divident), and for rounding the [RoundingMode.HALF_EVEN]
+ * rounding mode is used.
  */
 @kotlin.internal.InlineOnly
-public inline operator fun BigDecimal.div(other: BigDecimal) : BigDecimal = this.divide(other)
+public inline operator fun BigDecimal.div(other: BigDecimal) : BigDecimal = this.divide(other, RoundingMode.HALF_EVEN)
 
 /**
  * Enables the use of the `%` operator for [BigDecimal] instances.

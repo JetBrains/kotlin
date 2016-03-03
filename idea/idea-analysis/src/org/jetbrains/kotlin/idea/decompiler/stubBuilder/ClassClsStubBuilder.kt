@@ -88,7 +88,9 @@ private class ClassClsStubBuilder(
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
         val classOrObjectStub = doCreateClassOrObjectStub()
         val modifierList = createModifierListForClass(classOrObjectStub)
-        createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
+        if (Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
+            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(classProto, c.nameResolver), modifierList)
+        }
         return classOrObjectStub
     }
 
