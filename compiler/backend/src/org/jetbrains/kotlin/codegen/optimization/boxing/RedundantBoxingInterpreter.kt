@@ -16,163 +16,129 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing;
 
-import com.google.common.collect.ImmutableSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.InsnList;
-import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
+import com.google.common.collect.ImmutableSet
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.InsnList
+import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-class RedundantBoxingInterpreter extends BoxingInterpreter {
-    private static final ImmutableSet<Integer> PERMITTED_OPERATIONS_OPCODES = ImmutableSet.of(
-            Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.POP, Opcodes.DUP, Opcodes.CHECKCAST, Opcodes.INSTANCEOF
-    );
+internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterpreter(insnList) {
 
-    private static final ImmutableSet<Integer> PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER = ImmutableSet.of(
-            Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE
-    );
+    val candidatesBoxedValues = RedundantBoxedValuesCollection()
 
-    private final RedundantBoxedValuesCollection values = new RedundantBoxedValuesCollection();
+    @Throws(AnalyzerException::class)
+    override fun binaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue): BasicValue? {
+        processOperationWithBoxedValue(value1, insn)
+        processOperationWithBoxedValue(value2, insn)
 
-    public RedundantBoxingInterpreter(InsnList insnList) {
-        super(insnList);
+        return super.binaryOperation(insn, value1, value2)
     }
 
-    @Override
-    public BasicValue binaryOperation(
-            @NotNull AbstractInsnNode insn,
-            @NotNull BasicValue value1,
-            @NotNull BasicValue value2
-    ) throws AnalyzerException {
-
-        processOperationWithBoxedValue(value1, insn);
-        processOperationWithBoxedValue(value2, insn);
-
-        return super.binaryOperation(insn, value1, value2);
-    }
-
-    @Override
-    public BasicValue ternaryOperation(
-            @NotNull AbstractInsnNode insn,
-            @NotNull BasicValue value1, @NotNull BasicValue value2, @NotNull BasicValue value3
-    ) throws AnalyzerException {
-
+    @Throws(AnalyzerException::class)
+    override fun ternaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue, value3: BasicValue): BasicValue? {
         // in a valid code only aastore could happen with boxed value
-        processOperationWithBoxedValue(value3, insn);
+        processOperationWithBoxedValue(value3, insn)
 
-        return super.ternaryOperation(insn, value1, value2, value3);
+        return super.ternaryOperation(insn, value1, value2, value3)
     }
 
-    @Nullable
-    @Override
-    public BasicValue unaryOperation(
-            @NotNull AbstractInsnNode insn, @NotNull BasicValue value
-    ) throws AnalyzerException {
+    @Throws(AnalyzerException::class)
+    override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? {
+        if ((insn.opcode == Opcodes.CHECKCAST || insn.opcode == Opcodes.INSTANCEOF) && value is BoxedBasicValue) {
+            val typeInsn = insn as TypeInsnNode
 
-        if ((insn.getOpcode() == Opcodes.CHECKCAST || insn.getOpcode() == Opcodes.INSTANCEOF) &&
-            value instanceof BoxedBasicValue) {
-            TypeInsnNode typeInsn = (TypeInsnNode) insn;
-
-            if (!isSafeCast((BoxedBasicValue) value, typeInsn.desc)) {
-                markValueAsDirty((BoxedBasicValue) value);
+            if (!isSafeCast(value, typeInsn.desc)) {
+                markValueAsDirty(value)
             }
         }
 
-        processOperationWithBoxedValue(value, insn);
+        processOperationWithBoxedValue(value, insn)
 
-        return super.unaryOperation(insn, value);
+        return super.unaryOperation(insn, value)
     }
 
-    private static boolean isSafeCast(@NotNull BoxedBasicValue value, @NotNull String targetInternalName) {
-        if (targetInternalName.equals(Type.getInternalName(Object.class))) return true;
-
-        if (targetInternalName.equals(Type.getInternalName(Number.class))) {
-            return PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(
-                    value.getPrimitiveType().getSort()
-            );
+    @Throws(AnalyzerException::class)
+    override fun copyOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue {
+        if (value is BoxedBasicValue && insn.opcode === Opcodes.ASTORE) {
+            value.addVariableIndex((insn as VarInsnNode).`var`)
         }
 
-        return value.getType().getInternalName().equals(targetInternalName);
+        processOperationWithBoxedValue(value, insn)
+
+        return super.copyOperation(insn, value)
     }
 
-    @Override
-    @NotNull
-    public BasicValue copyOperation(@NotNull AbstractInsnNode insn, @NotNull BasicValue value) throws AnalyzerException {
-        if (value instanceof BoxedBasicValue && insn.getOpcode() == Opcodes.ASTORE) {
-            ((BoxedBasicValue) value).addVariableIndex(((VarInsnNode) insn).var);
-        }
-
-        processOperationWithBoxedValue(value, insn);
-
-        return super.copyOperation(insn, value);
+    fun processPopInstruction(insnNode: AbstractInsnNode, value: BasicValue) {
+        processOperationWithBoxedValue(value, insnNode)
     }
 
-    public void processPopInstruction(@NotNull AbstractInsnNode insnNode, @NotNull BasicValue value) {
-        processOperationWithBoxedValue(value, insnNode);
+    override fun onNewBoxedValue(value: BoxedBasicValue) {
+        candidatesBoxedValues.add(value)
     }
 
-    @Override
-    protected void onNewBoxedValue(@NotNull BoxedBasicValue value) {
-        values.add(value);
-    }
-
-    @Override
-    protected void onUnboxing(
-            @NotNull AbstractInsnNode insn, @NotNull BoxedBasicValue value, @NotNull Type resultType
-    ) {
-        if (value.getPrimitiveType().equals(resultType)) {
-            addAssociatedInsn(value, insn);
+    override fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type) {
+        if (value.primitiveType == resultType) {
+            addAssociatedInsn(value, insn)
         }
         else {
-            value.addUnboxingWithCastTo(insn, resultType);
+            value.addUnboxingWithCastTo(insn, resultType)
         }
     }
 
-    @Override
-    protected void onMethodCallWithBoxedValue(@NotNull BoxedBasicValue value) {
-        markValueAsDirty(value);
+    override fun onMethodCallWithBoxedValue(value: BoxedBasicValue) {
+        markValueAsDirty(value)
     }
 
-    @Override
-    protected void onMergeFail(@NotNull BoxedBasicValue v) {
-        markValueAsDirty(v);
+    override fun onMergeFail(value: BoxedBasicValue) {
+        markValueAsDirty(value)
     }
 
-    @Override
-    protected void onMergeSuccess(
-            @NotNull BoxedBasicValue v, @NotNull BoxedBasicValue w
-    ) {
-        values.merge(v, w);
+    override fun onMergeSuccess(v: BoxedBasicValue, w: BoxedBasicValue) {
+        candidatesBoxedValues.merge(v, w)
     }
 
-    private void processOperationWithBoxedValue(@Nullable BasicValue value, @NotNull AbstractInsnNode insnNode) {
-        if (value instanceof BoxedBasicValue) {
-            if (!PERMITTED_OPERATIONS_OPCODES.contains(insnNode.getOpcode())) {
-                markValueAsDirty((BoxedBasicValue) value);
+    private fun processOperationWithBoxedValue(value: BasicValue?, insnNode: AbstractInsnNode) {
+        if (value is BoxedBasicValue) {
+            if (!PERMITTED_OPERATIONS_OPCODES.contains(insnNode.opcode)) {
+                markValueAsDirty(value)
             }
             else {
-                addAssociatedInsn((BoxedBasicValue) value, insnNode);
+                addAssociatedInsn(value, insnNode)
             }
         }
     }
 
-    private void markValueAsDirty(@NotNull BoxedBasicValue value) {
-        values.remove(value);
+    private fun markValueAsDirty(value: BoxedBasicValue) {
+        candidatesBoxedValues.remove(value)
     }
 
-    private static void addAssociatedInsn(@NotNull BoxedBasicValue value, @NotNull AbstractInsnNode insn) {
-        if (value.isSafeToRemove()) {
-            value.addInsn(insn);
+    companion object {
+        private val PERMITTED_OPERATIONS_OPCODES =
+                ImmutableSet.of(Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.POP, Opcodes.DUP, Opcodes.CHECKCAST, Opcodes.INSTANCEOF)
+
+        private val PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER =
+                ImmutableSet.of(Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE)
+
+        private fun isSafeCast(value: BoxedBasicValue, targetInternalName: String) =
+                when (targetInternalName) {
+                    Type.getInternalName(Any::class.java) ->
+                        true
+                    Type.getInternalName(Number::class.java) -> {
+                        PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(
+                                value.primitiveType.sort)
+                    }
+                    else ->
+                        value.type.internalName.equals(targetInternalName)
+                }
+
+        private fun addAssociatedInsn(value: BoxedBasicValue, insn: AbstractInsnNode) {
+            if (value.isSafeToRemove) {
+                value.addInsn(insn)
+            }
         }
-    }
-
-    @NotNull
-    public RedundantBoxedValuesCollection getCandidatesBoxedValues() {
-        return values;
     }
 }
