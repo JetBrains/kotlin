@@ -104,23 +104,25 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 myEnvironment.getProject(), myFiles.getPsiFiles(), new JvmPackagePartProvider(myEnvironment)
         ).getFactory();
 
-        File kotlinOut;
-        try {
-            kotlinOut = KotlinTestUtils.tmpDir(toString());
-        }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-
-        OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
-
         if (javaSourceDir != null) {
+            // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
+            File kotlinOut;
+            try {
+                kotlinOut = KotlinTestUtils.tmpDir(toString());
+            }
+            catch (IOException e) {
+                throw ExceptionUtilsKt.rethrow(e);
+            }
+
+            OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
+
             File output = CodegenTestUtil.compileJava(
                     findJavaSourcesInDirectory(javaSourceDir), Collections.singletonList(kotlinOut.getPath()), javacOptions
             );
             // Add javac output to classpath so that the created class loader can find generated Java classes
             JvmContentRootsKt.addJvmClasspathRoot(configuration, output);
         }
+
         blackBox();
     }
 
