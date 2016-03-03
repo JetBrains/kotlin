@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -184,6 +184,12 @@ class KtPsiFactory(private val project: Project) {
 
     fun createAnalyzableFile(fileName: String, text: String, contextToAnalyzeIn: PsiElement): KtFile {
         val file = doCreateFile(fileName, text)
+        file.analysisContext = contextToAnalyzeIn
+        return file
+    }
+
+    fun createFileWithLightClassSupport(fileName: String, text: String, contextToAnalyzeIn: PsiElement): KtFile {
+        val file = createPhysicalFile(fileName, text)
         file.analysisContext = contextToAnalyzeIn
         return file
     }
