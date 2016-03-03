@@ -9231,6 +9231,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/toOrdinaryStringLiteral")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ToOrdinaryStringLiteral extends AbstractIntentionTest {
+        public void testAllFilesPresentInToOrdinaryStringLiteral() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/toOrdinaryStringLiteral"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("lineBreakInExpression.kt")
+        public void testLineBreakInExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toOrdinaryStringLiteral/lineBreakInExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("quotesAndSlashes.kt")
+        public void testQuotesAndSlashes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toOrdinaryStringLiteral/quotesAndSlashes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toOrdinaryStringLiteral/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/toRawStringLiteral")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
