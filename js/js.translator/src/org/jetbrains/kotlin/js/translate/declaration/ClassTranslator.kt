@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.DefinitionPlace
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.context.*
 import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
-import org.jetbrains.kotlin.js.translate.expression.withCapturedParameters
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference
@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.KotlinType
@@ -64,9 +65,10 @@ class ClassTranslator private constructor(
     private val descriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
 
     private fun translateObjectLiteralExpression(): JsExpression {
-        getContainingClass(descriptor) ?: return translate(context())
-
-        return translateObjectInsideClass(context())
+        return if (descriptor.containingDeclaration is ClassDescriptor && descriptor.kind == ClassKind.OBJECT)
+            translateObjectInsideClass(context())
+        else
+            translate(context())
     }
 
     private fun translate(declarationContext: TranslationContext = context()): JsInvocation {
@@ -82,28 +84,19 @@ class ClassTranslator private constructor(
         val properties = SmartList<JsPropertyInitializer>()
         val staticProperties = SmartList<JsPropertyInitializer>()
 
-        val isTopLevelDeclaration = context() == context
+        val qualifiedReference = context.getQualifiedReference(descriptor)
+        val scope = context().getScopeForDescriptor(descriptor)
+        val definitionPlace = DefinitionPlace(scope as JsObjectScope, qualifiedReference, staticProperties)
 
-        var qualifiedReference: JsNameRef? = null
-        if (isTopLevelDeclaration) {
-            var definitionPlace: DefinitionPlace? = null
-
-            if (!descriptor.kind.isSingleton && !isAnonymousObject(descriptor)) {
-                qualifiedReference = context.getQualifiedReference(descriptor)
-                val scope = context().getScopeForDescriptor(descriptor)
-                definitionPlace = DefinitionPlace(scope as JsObjectScope, qualifiedReference, staticProperties)
-            }
-
-            context = context.newDeclaration(descriptor, definitionPlace)
-        }
-
+        context = context.newDeclaration(descriptor, definitionPlace)
         context = fixContextForCompanionObjectAccessing(context)
 
         invocationArguments.add(getSuperclassReferences(context))
         val delegationTranslator = DelegationTranslator(classDeclaration, context())
+        var initializer: JsFunction? = null
         if (!isTrait()) {
-            val initializer = ClassInitializerTranslator(classDeclaration, context).generateInitializeMethod(delegationTranslator)
-            invocationArguments.add(if (initializer.body.statements.isEmpty()) JsLiteral.NULL else initializer)
+            initializer = ClassInitializerTranslator(classDeclaration, context).generateInitializeMethod(delegationTranslator)
+            invocationArguments.add(initializer)
         }
 
         translatePropertiesAsConstructorParameters(context, properties)
@@ -129,16 +122,30 @@ class ClassTranslator private constructor(
                 invocationArguments.add(JsLiteral.NULL)
             }
             else {
-                if (qualifiedReference != null) {
-                    // about "prototype" - see http://code.google.com/p/jsdoc-toolkit/wiki/TagLends
-                    invocationArguments.add(JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, JsNameRef("prototype", qualifiedReference)))
-                }
+                // about "prototype" - see http://code.google.com/p/jsdoc-toolkit/wiki/TagLends
+                invocationArguments.add(JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, JsNameRef("prototype", qualifiedReference)))
                 invocationArguments.add(JsObjectLiteral(properties, true))
             }
         }
         if (hasStaticProperties) {
             invocationArguments.add(JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, qualifiedReference))
             invocationArguments.add(JsObjectLiteral(staticProperties, true))
+        }
+
+        val tracker = context.usageTracker()
+        if (tracker != null && initializer != null && tracker.hasCapturedExceptContaining()) {
+            val captured = tracker.capturedDescriptorToJsName
+            val keysAsList = captured.keys.toList()
+            for ((i, key) in keysAsList.withIndex()) {
+                val name = captured[key]!!
+                initializer.parameters.add(i, JsParameter(name))
+                initializer.body.statements.add(i, JsAstUtils.defineSimpleProperty(name.ident, name.makeRef()))
+            }
+            context.putLocalClassClosure(descriptor, keysAsList)
+        }
+
+        if (initializer != null && initializer.body.isEmpty) {
+            invocationArguments.replaceAll { if (it == initializer) JsLiteral.NULL else it }
         }
 
         return invocationArguments
@@ -214,12 +221,30 @@ class ClassTranslator private constructor(
     }
 
     private fun translateObjectInsideClass(outerClassContext: TranslationContext): JsExpression {
-        val function = JsFunction(outerClassContext.scope(), JsBlock(), "initializer for " + descriptor.name.asString())
-        val funContext = outerClassContext.newFunctionBodyWithUsageTracker(function, descriptor)
+        var outerDeclaration = descriptor.containingDeclaration.containingDeclaration
+        if (outerDeclaration != null && outerDeclaration !is ClassDescriptor) {
+            outerDeclaration = DescriptorUtils.getContainingClass(outerDeclaration)
+        }
+        val scope = if (outerDeclaration != null)
+            outerClassContext.getScopeForDescriptor(outerDeclaration)
+        else
+            outerClassContext.rootScope
 
-        function.body.statements.add(JsReturn(translate(funContext)))
+        val classContext = outerClassContext.innerWithUsageTracker(scope, descriptor)
 
-        return function.withCapturedParameters(funContext, outerClassContext, descriptor)
+        var declarationArgs = getClassCreateInvocationArguments(classContext)
+        val jsClass = JsInvocation(context().namer().classCreationMethodReference(), declarationArgs)
+
+        val name = outerClassContext.getNameForDescriptor(descriptor)
+        val constructor = outerClassContext.define(name, jsClass)
+
+        val closure = outerClassContext.getLocalClassClosure(descriptor)
+        var closureArgs = emptyList<JsExpression>()
+        if (closure != null) {
+            closureArgs = closure.map { context().getParameterNameRefForInvocation(it) }.toList()
+        }
+
+        return JsNew(constructor, closureArgs)
     }
 
     private fun generatedBridgeMethods(properties: MutableList<JsPropertyInitializer>) {
@@ -289,6 +314,10 @@ class ClassTranslator private constructor(
         }
 
         @JvmStatic fun generateObjectLiteral(objectDeclaration: KtObjectDeclaration, context: TranslationContext): JsExpression {
+            return ClassTranslator(objectDeclaration, context).translateObjectInsideClass(context)
+        }
+
+        @JvmStatic fun generateObjectDeclaration(objectDeclaration: KtObjectDeclaration, context: TranslationContext): JsExpression {
             return ClassTranslator(objectDeclaration, context).translateObjectLiteralExpression()
         }
 

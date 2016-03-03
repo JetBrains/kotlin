@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -212,11 +210,18 @@ object ConstructorCallCase : FunctionCallCase() {
         val arguments = argumentsInfo.getArguments()
 
         val constructorDescriptor = callableDescriptor as ConstructorDescriptor
+        val classDescriptor = constructorDescriptor.containingDeclaration
+        val closure = context.getLocalClassClosure(classDescriptor)
+        var closureArgs = emptyList<JsExpression>()
+        if (closure != null) {
+            closureArgs = closure.asSequence().map { context.getParameterNameRefForInvocation(it) }.toList()
+        }
+
         if (constructorDescriptor.isPrimary || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
-            return JsNew(functionRef, arguments)
+            return JsNew(functionRef, closureArgs + arguments)
         }
         else {
-            return JsInvocation(functionRef, arguments)
+            return JsInvocation(functionRef, closureArgs + arguments)
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.context;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.HasMetadata;
@@ -97,6 +98,9 @@ public final class StaticContext {
 
     @NotNull
     private final Map<JsScope, JsFunction> scopeToFunction = Maps.newHashMap();
+
+    @NotNull
+    private final Map<ClassDescriptor, List<DeclarationDescriptor>> localClassesClosure = Maps.newHashMap();
 
     @NotNull
     private final Config config;
@@ -262,13 +266,17 @@ public final class StaticContext {
                 @Nullable
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!DescriptorUtils.isLocal(descriptor) || !DescriptorUtils.isClass(descriptor)) return null;
+                    if (!DescriptorUtils.isDescriptorWithLocalVisibility(descriptor) ||
+                        !DescriptorUtils.isClass(descriptor)) {
+                        return null;
+                    }
 
                     List<String> parts = new ArrayList<String>();
                     do {
-                        parts.add(descriptor.getName().asString());
+                        parts.add(descriptor.getName().isSpecial() ? "f" : descriptor.getName().getIdentifier());
                         descriptor = descriptor.getContainingDeclaration();
-                    } while (!(descriptor instanceof ClassOrPackageFragmentDescriptor));
+                    } while (descriptor != null && !(descriptor instanceof ClassOrPackageFragmentDescriptor));
+                    assert descriptor != null;
 
                     Collections.reverse(parts);
                     StringBuilder suggestedName = new StringBuilder(parts.get(0));
@@ -580,10 +588,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof ClassDescriptor)) {
                         return null;
                     }
-                    DeclarationDescriptor container = descriptor.getContainingDeclaration();
-                    if (container != null && !(container instanceof ClassDescriptor)) {
-                        container = DescriptorUtils.getContainingClass(container);
-                    }
+                    DeclarationDescriptor container = getEnclosingNonSingleton(descriptor.getContainingDeclaration());
                     if (container == null) {
                         return null;
                     }
@@ -608,7 +613,9 @@ public final class StaticContext {
                 @Nullable
                 @Override
                 public JsExpression apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!DescriptorUtils.isLocal(descriptor) || !(descriptor instanceof ClassDescriptor)) return null;
+                    if (!DescriptorUtils.isDescriptorWithLocalVisibility(descriptor) || !(descriptor instanceof ClassDescriptor)) {
+                        return null;
+                    }
 
                     descriptor = descriptor.getContainingDeclaration();
                     while (descriptor != null && !(descriptor instanceof ClassOrPackageFragmentDescriptor)) {
@@ -629,6 +636,14 @@ public final class StaticContext {
             addRule(nestedClassesHaveContainerQualifier);
             addRule(localClassesHavePackageQualifier);
         }
+    }
+
+    @Nullable
+    private static ClassDescriptor getEnclosingNonSingleton(@NotNull  DeclarationDescriptor descriptor) {
+        while (descriptor != null && (!(descriptor instanceof ClassDescriptor) || DescriptorUtils.isObject(descriptor))) {
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return (ClassDescriptor) descriptor;
     }
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {
@@ -657,5 +672,15 @@ public final class StaticContext {
             };
             addRule(propertiesInClassHaveNoQualifiers);
         }
+    }
+
+    public void putLocalClassClosure(@NotNull ClassDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
+        localClassesClosure.put(localClass, Lists.newArrayList(closure));
+    }
+
+    @Nullable
+    public List<DeclarationDescriptor> getLocalClassClosure(@NotNull ClassDescriptor localClass) {
+        List<DeclarationDescriptor> result = localClassesClosure.get(localClass);
+        return result != null ? Lists.newArrayList(result) : null;
     }
 }

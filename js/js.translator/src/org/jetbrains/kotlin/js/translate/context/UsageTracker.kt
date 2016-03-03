@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
-import com.google.dart.compiler.backend.js.ast.JsFunctionScope
+import com.google.dart.compiler.backend.js.ast.JsScope
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
@@ -28,7 +28,7 @@ private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 class UsageTracker(
         private val parent: UsageTracker?,
         val containingDescriptor: MemberDescriptor,
-        private val scope: JsFunctionScope
+        private val scope: JsScope
 ) {
 
     private val captured = linkedMapOf<DeclarationDescriptor, JsName>()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
@@ -136,6 +137,13 @@ public class TranslationContext {
     }
 
     @NotNull
+    public TranslationContext innerWithUsageTracker(@NotNull JsScope scope, @NotNull MemberDescriptor descriptor) {
+        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor, scope);
+        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext.inner(), usageTracker, definitionPlace,
+                                      descriptor);
+    }
+
+    @NotNull
     public TranslationContext innerBlock(@NotNull JsBlock block) {
         return new TranslationContext(this, staticContext, dynamicContext.innerBlock(block), aliasingContext, usageTracker, null,
                                       this.declarationDescriptor);
@@ -154,8 +162,7 @@ public class TranslationContext {
 
     @NotNull
     private TranslationContext innerWithAliasingContext(AliasingContext aliasingContext) {
-        return new TranslationContext(this, this.staticContext, this.dynamicContext, aliasingContext, this.usageTracker, null,
-                                      this.declarationDescriptor);
+        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext, usageTracker, null, declarationDescriptor);
     }
 
     @NotNull
@@ -414,10 +421,25 @@ public class TranslationContext {
             usageTracker.used(descriptor);
 
             JsName name = getNameForCapturedDescriptor(usageTracker, descriptor);
-            if (name != null) return name.makeRef();
+            if (name != null) {
+                JsNameRef result = name.makeRef();
+                if (shouldCaptureViaThis()) {
+                    result.setQualifier(JsLiteral.THIS);
+                }
+                return result;
+            }
         }
 
         return null;
+    }
+
+    private boolean shouldCaptureViaThis() {
+        if (declarationDescriptor == null) return false;
+
+        if (DescriptorUtils.isDescriptorWithLocalVisibility(declarationDescriptor)) {
+            return !(declarationDescriptor instanceof FunctionDescriptor);
+        }
+        return true;
     }
 
     @Nullable
@@ -437,5 +459,27 @@ public class TranslationContext {
     @Nullable
     public DeclarationDescriptor getDeclarationDescriptor() {
         return declarationDescriptor;
+    }
+
+    public void putLocalClassClosure(@NotNull ClassDescriptor localClass, @NotNull List<DeclarationDescriptor> closure) {
+        staticContext.putLocalClassClosure(localClass, closure);
+    }
+
+    @Nullable
+    public List<DeclarationDescriptor> getLocalClassClosure(@NotNull ClassDescriptor localClass) {
+        return staticContext.getLocalClassClosure(localClass);
+    }
+
+    @NotNull
+    public JsExpression getParameterNameRefForInvocation(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression alias = getAliasForDescriptor(descriptor);
+        if (alias != null) return alias;
+        if (descriptor instanceof ReceiverParameterDescriptor) return JsLiteral.THIS;
+        return getNameForDescriptor(descriptor).makeRef();
+    }
+
+    @NotNull
+    public JsScope getRootScope() {
+        return staticContext.getRootScope();
     }
 }
