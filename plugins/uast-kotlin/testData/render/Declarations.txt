@@ -1,0 +1,16 @@
+public class Declarations {
+    var a: String = "a"
+
+    public class NestedClass {
+        var b: String = "b"
+
+    }
+    public inner class InnerClass {
+        var c: CharSequence = a
+
+    }
+    public fun func(a: Int, b: String): Int {
+        return (a + 1) * b.length
+    }
+
+}

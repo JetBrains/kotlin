@@ -1,0 +1,19 @@
+UFile (package = null)
+    UClass (Simple, enum = false, interface = false, object = false)
+        UVariable (a, kind = member)
+            UBinaryExpression (+)
+                UBinaryExpression (+)
+                    ULiteralExpression ("text")
+                    ULiteralExpression ("other")
+                ULiteralExpression ("text")
+        UFunction (test, kind = function, paramCount = 0)
+            UBlockExpression
+                UQualifiedExpression
+                    UQualifiedExpression
+                        USimpleReferenceExpression (System)
+                        USimpleReferenceExpression (out)
+                    UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                        USimpleReferenceExpression (println)
+                        UBinaryExpression (/)
+                            ULiteralExpression (5.0f)
+                            ULiteralExpression (2)

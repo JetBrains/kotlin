@@ -1,0 +1,11 @@
+UFile (package = null)
+    UClass (ControlStructures, enum = false, interface = false, object = false)
+        UFunction (test, kind = function, paramCount = 0)
+            UBlockExpression
+                UDeclarationsExpression
+                    UVariable (x, kind = local)
+                        UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                            USimpleReferenceExpression (listOf)
+                            ULiteralExpression ("ABC")
+                USpecialExpressionList (return)
+                    ULiteralExpression (false)
