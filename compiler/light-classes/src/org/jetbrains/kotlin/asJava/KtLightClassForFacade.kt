@@ -49,7 +49,7 @@ class KtLightClassForFacade private constructor(
         private inner class FacadeCacheData {
             val cache = object : SLRUCache<StubCacheKey, CachedValue<KotlinFacadeLightClassData>>(20, 30) {
                 override fun createValue(key: StubCacheKey): CachedValue<KotlinFacadeLightClassData> {
-                    val stubProvider = LightClassDataProviderForFileFacade(project, key.fqName, key.searchScope)
+                    val stubProvider = LightClassDataProviderForFileFacade.ByProjectSource(project, key.fqName, key.searchScope)
                     return CachedValuesManager.getManager(project).createCachedValue<KotlinFacadeLightClassData>(stubProvider, /*trackValue = */false)
                 }
             }
@@ -198,6 +198,19 @@ class KtLightClassForFacade private constructor(
 
             val lightClassDataCache = FacadeStubCache.getInstance(manager.project).get(facadeClassFqName, searchScope)
             return KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
+        }
+
+        fun createForSyntheticFile(
+                manager: PsiManager,
+                facadeClassFqName: FqName,
+                file: KtFile
+        ): KtLightClassForFacade {
+            // TODO: refactor, using cached value doesn't make sense for this case
+            val cachedValue = CachedValuesManager.getManager(manager.project).
+                    createCachedValue<KotlinFacadeLightClassData>(
+                            LightClassDataProviderForFileFacade.ByFile(manager.project, facadeClassFqName, file), /*trackValue = */false
+                    )
+            return KtLightClassForFacade(manager, facadeClassFqName, cachedValue, listOf(file))
         }
     }
 }

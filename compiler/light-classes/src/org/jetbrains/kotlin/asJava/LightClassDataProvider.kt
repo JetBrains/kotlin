@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -281,12 +281,9 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
     }
 }
 
-class LightClassDataProviderForFileFacade(
-        private val project: Project, private val facadeFqName: FqName, private val searchScope: GlobalSearchScope
+sealed class LightClassDataProviderForFileFacade private constructor(
+        protected val project: Project, protected val facadeFqName: FqName
 ) : LightClassDataProvider<KotlinFacadeLightClassData>(project) {
-    override val files: Collection<KtFile>
-        get() = LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
-
     override val packageFqName: FqName
         get() = facadeFqName.parent()
 
@@ -341,6 +338,26 @@ class LightClassDataProviderForFileFacade(
 
     override fun toString(): String {
         return this.javaClass.name + " for $facadeFqName"
+    }
+
+    // create delegate by relevant files in project source using LightClassGenerationSupport
+    class ByProjectSource(
+            project: Project,
+            facadeFqName: FqName,
+            private val searchScope: GlobalSearchScope
+    ) : LightClassDataProviderForFileFacade(project, facadeFqName) {
+        override val files: Collection<KtFile>
+            get() = LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
+    }
+
+    // create delegate by single file
+    class ByFile(
+            project: Project,
+            facadeFqName: FqName,
+            private val file: KtFile
+    ) : LightClassDataProviderForFileFacade(project, facadeFqName) {
+        override val files: Collection<KtFile>
+            get() = listOf(file)
     }
 }
 
