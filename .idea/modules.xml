@@ -60,9 +60,9 @@
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" group="plugins" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-api/lint-api.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-checks/lint-checks.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" filepath="$PROJECT_DIR$/plugins/lint/lint-idea/lint-idea.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" filepath="$PROJECT_DIR$/plugins/plugins-tests/plugins-tests.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
@@ -70,10 +70,10 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/resolution/resolution.iml" filepath="$PROJECT_DIR$/compiler/resolution/resolution.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/serialization/serialization.iml" group="compiler" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/lint/uast-android/uast-android.iml" filepath="$PROJECT_DIR$/plugins/lint/uast-android/uast-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/uast-common/uast-common.iml" filepath="$PROJECT_DIR$/plugins/uast-common/uast-common.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/uast-java/uast-java.iml" filepath="$PROJECT_DIR$/plugins/uast-java/uast-java.iml" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" filepath="$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" group="plugins" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/lint/uast-android/uast-android.iml" filepath="$PROJECT_DIR$/plugins/lint/uast-android/uast-android.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/uast-common/uast-common.iml" filepath="$PROJECT_DIR$/plugins/uast-common/uast-common.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/uast-java/uast-java.iml" filepath="$PROJECT_DIR$/plugins/uast-java/uast-java.iml" group="plugins/lint" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" filepath="$PROJECT_DIR$/plugins/uast-kotlin/uast-kotlin.iml" group="plugins/lint" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/util.runtime/util.runtime.iml" filepath="$PROJECT_DIR$/core/util.runtime/util.runtime.iml" group="core" />
     </modules>
