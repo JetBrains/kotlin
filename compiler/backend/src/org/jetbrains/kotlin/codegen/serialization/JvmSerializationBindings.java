@@ -21,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
-import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
-import org.jetbrains.kotlin.util.slicedMap.SlicedMapImpl;
-import org.jetbrains.kotlin.util.slicedMap.Slices;
+import org.jetbrains.kotlin.util.slicedMap.*;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -47,7 +44,7 @@ public final class JvmSerializationBindings {
         }
     }
 
-    private static final class SerializationMappingSetSlice<K> extends Slices.SetSlice<K> {
+    private static final class SerializationMappingSetSlice<K> extends SetSlice<K> {
         public SerializationMappingSetSlice() {
             super(Slices.ONLY_REWRITE_TO_EQUAL, false);
         }

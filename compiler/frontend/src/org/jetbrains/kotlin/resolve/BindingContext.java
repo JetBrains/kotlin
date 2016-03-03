@@ -157,7 +157,7 @@ public interface BindingContext {
 
     WritableSlice<Box<DeferredType>, Boolean> DEFERRED_TYPE = Slices.createCollectiveSetSlice();
 
-    WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>(DO_NOTHING) {
+    WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new SetSlice<PropertyDescriptor>(DO_NOTHING) {
         @Override
         public Boolean computeValue(
                 SlicedMap map,
@@ -191,7 +191,7 @@ public interface BindingContext {
     };
     WritableSlice<PropertyDescriptor, Boolean> IS_UNINITIALIZED = Slices.createSimpleSetSlice();
 
-    WritableSlice<KtLambdaExpression, Boolean> BLOCK = new Slices.SetSlice<KtLambdaExpression>(DO_NOTHING) {
+    WritableSlice<KtLambdaExpression, Boolean> BLOCK = new SetSlice<KtLambdaExpression>(DO_NOTHING) {
         @Override
         public Boolean computeValue(SlicedMap map, KtLambdaExpression expression, Boolean isBlock, boolean valueNotFound) {
             isBlock = valueNotFound ? false : isBlock;
