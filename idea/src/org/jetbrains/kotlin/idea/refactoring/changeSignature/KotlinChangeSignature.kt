@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,8 +147,7 @@ class KotlinChangeSignature(project: Project,
             append("class Dummy {\n").append(ktSignature).append("{}\n}")
             toString()
         }
-        val dummyFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, dummyFileText).toPsiFile(project) as KtFile
-        dummyFile.analysisContext = originalMethod
+        val dummyFile = KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", dummyFileText, originalMethod)
         val dummyDeclaration = (dummyFile.declarations.first() as KtClass).getBody()!!.declarations.first()
 
         // Convert to PsiMethod which can be used in Change Signature dialog
