@@ -1,0 +1,23 @@
+UFile (package = null)
+    UClass (_Dummy_, enum = false, interface = false, object = false)
+        UClass (Simple, enum = false, interface = false, object = false)
+            UVariable (name, kind = member)
+                EmptyExpression
+            UFunction (Simple, kind = function, paramCount = 1)
+                UBlockExpression
+                    UAssignmentExpression (=)
+                        UQualifiedExpression
+                            UThisExpression
+                            USimpleReferenceExpression (name)
+                        USimpleReferenceExpression (name)
+            UFunction (getName, kind = function, paramCount = 0)
+                UBlockExpression
+                    USpecialExpressionList (return)
+                        USimpleReferenceExpression (name)
+            UFunction (setName, kind = function, paramCount = 1)
+                UBlockExpression
+                    UAssignmentExpression (=)
+                        UQualifiedExpression
+                            UThisExpression
+                            USimpleReferenceExpression (name)
+                        USimpleReferenceExpression (name)

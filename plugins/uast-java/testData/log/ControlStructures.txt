@@ -1,0 +1,101 @@
+UFile (package = null)
+    UClass (_Dummy_, enum = false, interface = false, object = false)
+        UClass (ControlStructures, enum = false, interface = false, object = false)
+            UFunction (main, kind = function, paramCount = 1)
+                UBlockExpression
+                    UIfExpression
+                        UBinaryExpression (===)
+                            UQualifiedExpression
+                                USimpleReferenceExpression (args)
+                                USimpleReferenceExpression (length)
+                            ULiteralExpression (0)
+                        UBlockExpression
+                            USpecialExpressionList (return)
+                            
+                        EmptyExpression
+                    UDeclarationsExpression
+                        UVariable (mode, kind = local)
+                            UIfExpression
+                                UBinaryExpression (===)
+                                    UQualifiedExpression
+                                        USimpleReferenceExpression (args)
+                                        USimpleReferenceExpression (length)
+                                    ULiteralExpression (1)
+                                ULiteralExpression ("singleArg")
+                                ULiteralExpression ("multiArgs")
+                    UForEachExpression (arg)
+                        USimpleReferenceExpression (args)
+                        UBlockExpression
+                            UQualifiedExpression
+                                UQualifiedExpression
+                                    USimpleReferenceExpression (System)
+                                    USimpleReferenceExpression (out)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                    USimpleReferenceExpression (println)
+                                    USimpleReferenceExpression (arg)
+                    UForExpression
+                        UDeclarationsExpression
+                            UVariable (i, kind = local)
+                                ULiteralExpression (0)
+                        UBinaryExpression (<)
+                            USimpleReferenceExpression (i)
+                            UQualifiedExpression
+                                USimpleReferenceExpression (args)
+                                USimpleReferenceExpression (length)
+                        UPrefixExpression (++)
+                            USimpleReferenceExpression (i)
+                        UBlockExpression
+                            UQualifiedExpression
+                                UQualifiedExpression
+                                    USimpleReferenceExpression (System)
+                                    USimpleReferenceExpression (out)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                    USimpleReferenceExpression (println)
+                                    UBinaryExpression (+)
+                                        UBinaryExpression (+)
+                                            USimpleReferenceExpression (i)
+                                            ULiteralExpression (": ")
+                                        UArrayAccessExpression
+                                            USimpleReferenceExpression (args)
+                                            USimpleReferenceExpression (i)
+                    UDeclarationsExpression
+                        UVariable (i, kind = local)
+                            ULiteralExpression (0)
+                    UWhileExpression
+                        UBinaryExpression (<)
+                            USimpleReferenceExpression (i)
+                            UQualifiedExpression
+                                USimpleReferenceExpression (args)
+                                USimpleReferenceExpression (length)
+                        UBlockExpression
+                            UQualifiedExpression
+                                UQualifiedExpression
+                                    USimpleReferenceExpression (System)
+                                    USimpleReferenceExpression (out)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                    USimpleReferenceExpression (println)
+                                    UBinaryExpression (+)
+                                        ULiteralExpression ("Index ")
+                                        USimpleReferenceExpression (i)
+                            UPostfixExpression (++)
+                                USimpleReferenceExpression (i)
+                    UAssignmentExpression (=)
+                        USimpleReferenceExpression (i)
+                        ULiteralExpression (0)
+                    UDoWhileExpression
+                        UBinaryExpression (<)
+                            USimpleReferenceExpression (i)
+                            UQualifiedExpression
+                                USimpleReferenceExpression (args)
+                                USimpleReferenceExpression (length)
+                        UBlockExpression
+                            UQualifiedExpression
+                                UQualifiedExpression
+                                    USimpleReferenceExpression (System)
+                                    USimpleReferenceExpression (out)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                    USimpleReferenceExpression (println)
+                                    USimpleReferenceExpression (i)
+                            UAssignmentExpression (+=)
+                                USimpleReferenceExpression (i)
+                                ULiteralExpression (1)

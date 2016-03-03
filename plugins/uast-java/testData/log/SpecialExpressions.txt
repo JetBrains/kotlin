@@ -1,0 +1,130 @@
+UFile (package = null)
+    UClass (_Dummy_, enum = false, interface = false, object = false)
+        UClass (SpecialExpressions, enum = false, interface = false, object = false)
+            UFunction (test, kind = function, paramCount = 0)
+                UBlockExpression
+                    USpecialExpressionList (assert)
+                        UBinaryExpression (>)
+                            ULiteralExpression (5)
+                            ULiteralExpression (3)
+                        EmptyExpression
+                    USpecialExpressionList (assert)
+                        UBinaryExpression (>)
+                            ULiteralExpression (5)
+                            ULiteralExpression (3)
+                        ULiteralExpression ("Message")
+                    USpecialExpressionList (synchronized)
+                        UThisExpression
+                        UBlockExpression
+                            UQualifiedExpression
+                                UQualifiedExpression
+                                    USimpleReferenceExpression (System)
+                                    USimpleReferenceExpression (out)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                    USimpleReferenceExpression (println)
+                                    ULiteralExpression ("A")
+                    UDeclarationsExpression
+                        UVariable (a, kind = local)
+                            ULiteralExpression (5)
+                        UVariable (b, kind = local)
+                            ULiteralExpression (7)
+                        UVariable (c, kind = local)
+                            EmptyExpression
+                    UWhileExpression
+                        UBinaryExpression (>)
+                            USimpleReferenceExpression (a)
+                            ULiteralExpression (0)
+                        UBlockExpression
+                            UIfExpression
+                                UBinaryExpression (===)
+                                    USimpleReferenceExpression (a)
+                                    ULiteralExpression (3)
+                                UBlockExpression
+                                    USpecialExpressionList (break)
+                                    
+                                EmptyExpression
+                            UIfExpression
+                                UBinaryExpression (===)
+                                    UBinaryExpression (%)
+                                        USimpleReferenceExpression (a)
+                                        ULiteralExpression (5)
+                                    ULiteralExpression (0)
+                                UBlockExpression
+                                    USpecialExpressionList (continue)
+                                    
+                                EmptyExpression
+                            UPostfixExpression (--)
+                                USimpleReferenceExpression (a)
+                    UQualifiedExpression
+                        UThisExpression
+                        UFunctionCallExpression (FUNCTION_CALL, argCount = 0)
+                            USimpleReferenceExpression (test)
+                        
+                    UQualifiedExpression
+                        USuperExpression
+                        UFunctionCallExpression (FUNCTION_CALL, argCount = 0)
+                            USimpleReferenceExpression (hashCode)
+                        
+                    UDeclarationsExpression
+                        UVariable (x, kind = local)
+                            EmptyExpression
+                    USwitchExpression
+                        USimpleReferenceExpression (a)
+                        UBlockExpression
+                            UExpressionSwitchClauseExpression
+                                ULiteralExpression (1)
+                            UBlockExpression
+                                UAssignmentExpression (=)
+                                    USimpleReferenceExpression (x)
+                                    ULiteralExpression ("1")
+                                USpecialExpressionList (break)
+                                
+                            UExpressionSwitchClauseExpression
+                                ULiteralExpression (3)
+                            UAssignmentExpression (=)
+                                USimpleReferenceExpression (x)
+                                ULiteralExpression ("3")
+                            UExpressionSwitchClauseExpression
+                                ULiteralExpression (4)
+                            UAssignmentExpression (=)
+                                USimpleReferenceExpression (x)
+                                ULiteralExpression ("4")
+                            UDefaultSwitchClause
+                            UAssignmentExpression (=)
+                                USimpleReferenceExpression (x)
+                                ULiteralExpression ("")
+                    UIfExpression
+                        UQualifiedExpression
+                            UQualifiedExpression
+                                USimpleReferenceExpression (System)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 2)
+                                    USimpleReferenceExpression (getProperty)
+                                    ULiteralExpression ("abc")
+                                    ULiteralExpression ("")
+                            UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                USimpleReferenceExpression (equals)
+                                ULiteralExpression ("1")
+                        UBlockExpression
+                            USpecialExpressionList (throw)
+                                UFunctionCallExpression (CONSTRUCTOR_CALL, argCount = 1)
+                                    <no element>
+                                    ULiteralExpression ("Err")
+                        EmptyExpression
+                    UTryExpression
+                        UBlockExpression
+                            UQualifiedExpression
+                                USimpleReferenceExpression (Thread)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                    USimpleReferenceExpression (sleep)
+                                    ULiteralExpression (1000)    UCatchClause
+                            UBlockExpression
+                                UBlockExpression
+                            UAssignmentExpression (=)
+                                USimpleReferenceExpression (a)
+                                ULiteralExpression (3)
+                    UBlockExpression
+                        UAssignmentExpression (=)
+                            USimpleReferenceExpression (a)
+                            ULiteralExpression (5)
+                    USpecialExpressionList (return)
+                        ULiteralExpression (true)

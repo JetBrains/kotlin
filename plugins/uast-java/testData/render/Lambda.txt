@@ -1,0 +1,17 @@
+default class _Dummy_ {
+    default inner class Lambda {
+        default fun example(): void {
+            doJob({ arg: String ->
+                arg + arg
+            }, "Mary")
+        }
+
+        default fun doJob(job: Job, arg: String): void {
+            System.out.println(job.doJob(arg))
+        }
+
+    }
+    default abstract interface Job {
+        public fun doJob(arg: String): String = EmptyExpression
+    }
+}
