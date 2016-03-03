@@ -1,0 +1,30 @@
+UFile (package = null)
+    UClass (_Dummy_, enum = false, interface = false, object = false)
+        UClass (Lambda, enum = false, interface = false, object = false)
+            UFunction (example, kind = function, paramCount = 0)
+                UBlockExpression
+                    UFunctionCallExpression (FUNCTION_CALL, argCount = 2)
+                        USimpleReferenceExpression (doJob)
+                        ULambdaExpression
+                            UVariable (arg, kind = parameter)
+                            <no initializer>
+                            UBinaryExpression (+)
+                                USimpleReferenceExpression (arg)
+                                USimpleReferenceExpression (arg)
+                        ULiteralExpression ("Mary")
+            UFunction (doJob, kind = function, paramCount = 2)
+                UBlockExpression
+                    UQualifiedExpression
+                        UQualifiedExpression
+                            USimpleReferenceExpression (System)
+                            USimpleReferenceExpression (out)
+                        UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                            USimpleReferenceExpression (println)
+                            UQualifiedExpression
+                                USimpleReferenceExpression (job)
+                                UFunctionCallExpression (FUNCTION_CALL, argCount = 1)
+                                    USimpleReferenceExpression (doJob)
+                                    USimpleReferenceExpression (arg)
+        UClass (Job, enum = false, interface = true, object = false)
+            UFunction (doJob, kind = function, paramCount = 1)
+                EmptyExpression
