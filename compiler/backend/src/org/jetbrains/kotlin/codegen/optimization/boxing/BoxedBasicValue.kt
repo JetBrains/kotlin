@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
@@ -35,7 +36,7 @@ class BoxedBasicValue(
     private val associatedVariables = HashSet<Int>()
     private val mergedWith = HashSet<BoxedBasicValue>()
 
-    val primitiveType: Type = AsmUtil.unboxType(boxedType)
+    val primitiveType: Type = unboxType(boxedType)
     var isSafeToRemove = true; private set
 
     override fun equals(other: Any?) =
@@ -84,4 +85,15 @@ class BoxedBasicValue(
 
     fun getUnboxingWithCastInsns(): Set<Pair<AbstractInsnNode, Type>> =
             unboxingWithCastInsns
+
+    companion object {
+        private fun unboxType(boxedType: Type): Type {
+            val primitiveType = AsmUtil.unboxPrimitiveTypeOrNull(boxedType)
+            if (primitiveType != null) return primitiveType
+
+            if (boxedType == AsmTypes.K_CLASS_TYPE) return AsmTypes.JAVA_CLASS_TYPE
+
+            throw IllegalArgumentException("Expected primitive type wrapper or KClass, got: $boxedType")
+        }
+    }
 }

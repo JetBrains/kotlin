@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.RangeCodegenUtil
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -49,17 +50,17 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
         val firstArg = values.firstOrNull() ?: return value
 
         return when {
-            isBoxing(insn) -> {
+            insn.isBoxing() -> {
                 createNewBoxing(insn, value.type, null)
             }
-            isUnboxing(insn) && firstArg is BoxedBasicValue -> {
+            insn.isUnboxing() && firstArg is BoxedBasicValue -> {
                 onUnboxing(insn, firstArg, value.type)
                 value
             }
-            isIteratorMethodCallOfProgression(insn, values) -> {
+            insn.isIteratorMethodCallOfProgression(values) -> {
                 ProgressionIteratorBasicValue(getValuesTypeOfProgressionClass(firstArg.type.internalName))
             }
-            isNextMethodCallOfProgressionIterator(insn, values) -> {
+            insn.isNextMethodCallOfProgressionIterator(values) -> {
                 val progressionIterator = firstArg as? ProgressionIteratorBasicValue
                                           ?: throw AssertionError("firstArg should be progression iterator")
                 createNewBoxing(insn, AsmUtil.boxType(progressionIterator.valuesPrimitiveType), progressionIterator)
@@ -120,6 +121,9 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
         private val UNBOXING_METHOD_NAMES =
                 ImmutableSet.of("booleanValue", "charValue", "byteValue", "shortValue", "intValue", "floatValue", "longValue", "doubleValue")
 
+        private val KCLASS_TO_JLCLASS = Type.getMethodDescriptor(AsmTypes.JAVA_CLASS_TYPE, AsmTypes.K_CLASS_TYPE)
+        private val JLCLASS_TO_KCLASS = Type.getMethodDescriptor(AsmTypes.K_CLASS_TYPE, AsmTypes.JAVA_CLASS_TYPE)
+
         private fun isWrapperClassNameOrNumber(internalClassName: String) =
                 isWrapperClassName(internalClassName) || internalClassName == Type.getInternalName(Number::class.java)
 
@@ -129,40 +133,72 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
         private fun buildFqNameByInternal(internalClassName: String) =
                 FqName(Type.getObjectType(internalClassName).className)
 
-        private fun isUnboxing(insn: AbstractInsnNode) =
-                insn.opcode == Opcodes.INVOKEVIRTUAL && run {
-                    val methodInsn = insn as MethodInsnNode
-                    isWrapperClassNameOrNumber(methodInsn.owner) && isUnboxingMethodName(methodInsn.name)
+        private fun AbstractInsnNode.isUnboxing() =
+                isPrimitiveUnboxing() || isJavaLangClassUnboxing()
+
+        private inline fun AbstractInsnNode.isMethodInsnWith(opcode: Int, condition: MethodInsnNode.() -> Boolean): Boolean =
+                if (this.opcode == opcode && this is MethodInsnNode)
+                    this.condition()
+                else
+                    false
+
+        private fun AbstractInsnNode.isPrimitiveUnboxing() =
+                isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
+                    isWrapperClassNameOrNumber(owner) && isUnboxingMethodName(name)
+                }
+
+        private fun AbstractInsnNode.isJavaLangClassUnboxing() =
+                isMethodInsnWith(Opcodes.INVOKESTATIC) {
+                    owner == "kotlin/jvm/JvmClassMappingKt" &&
+                    name == "getJavaClass" &&
+                    desc == KCLASS_TO_JLCLASS
                 }
 
         private fun isUnboxingMethodName(name: String) =
                 UNBOXING_METHOD_NAMES.contains(name)
 
-        private fun isBoxing(insn: AbstractInsnNode) =
-                insn.opcode == Opcodes.INVOKESTATIC && run {
-                    val methodInsn = insn as MethodInsnNode
-                    isWrapperClassName(methodInsn.owner) && methodInsn.name == "valueOf" && run {
-                        val ownerType = Type.getObjectType(methodInsn.owner)
-                        methodInsn.desc == Type.getMethodDescriptor(ownerType, AsmUtil.unboxType(ownerType))
-                    }
+        private fun AbstractInsnNode.isBoxing() =
+                this.isPrimitiveBoxing() || this.isJavaLangClassBoxing()
+
+        private fun AbstractInsnNode.isPrimitiveBoxing() =
+                isMethodInsnWith(Opcodes.INVOKESTATIC) {
+                    isWrapperClassName(owner) &&
+                    name == "valueOf" &&
+                    isBoxingMethodDescriptor()
                 }
 
-        private fun isNextMethodCallOfProgressionIterator(insn: AbstractInsnNode, values: kotlin.collections.List<BasicValue>) =
-                insn.opcode == Opcodes.INVOKEINTERFACE &&
-                values[0] is ProgressionIteratorBasicValue &&
-                (insn as MethodInsnNode).name == "next"
+        private fun MethodInsnNode.isBoxingMethodDescriptor(): Boolean {
+            val ownerType = Type.getObjectType(owner)
+            return desc == Type.getMethodDescriptor(ownerType, AsmUtil.unboxType(ownerType))
+        }
 
-        private fun isIteratorMethodCallOfProgression(insn: AbstractInsnNode, values: kotlin.collections.List<BasicValue>) =
-                insn.opcode == Opcodes.INVOKEINTERFACE && run {
+        private fun AbstractInsnNode.isJavaLangClassBoxing() =
+                isMethodInsnWith(Opcodes.INVOKESTATIC) {
+                    owner == AsmTypes.REFLECTION &&
+                    name == "getOrCreateKotlinClass" &&
+                    desc == JLCLASS_TO_KCLASS
+                }
+
+        private fun AbstractInsnNode.isNextMethodCallOfProgressionIterator(values: List<BasicValue>) =
+                values[0] is ProgressionIteratorBasicValue &&
+                isMethodInsnWith(INVOKEINTERFACE) {
+                    name == "next"
+                }
+
+        private fun AbstractInsnNode.isIteratorMethodCallOfProgression(values: List<BasicValue>) =
+                isMethodInsnWith(INVOKEINTERFACE) {
                     val firstArgType = values[0].type
-                    firstArgType != null && isProgressionClass(firstArgType.internalName) && "iterator" == (insn as MethodInsnNode).name
+                    firstArgType != null &&
+                    isProgressionClass(firstArgType.internalName) &&
+                    name == "iterator"
                 }
 
         private fun isProgressionClass(internalClassName: String) =
                 RangeCodegenUtil.isRangeOrProgression(buildFqNameByInternal(internalClassName))
 
         private fun getValuesTypeOfProgressionClass(progressionClassInternalName: String) =
-                RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(buildFqNameByInternal(progressionClassInternalName))?.let { type ->
+                RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(buildFqNameByInternal(progressionClassInternalName))?.let {
+                    type ->
                     type.typeName.asString()
                 } ?: error("type should be not null")
     }

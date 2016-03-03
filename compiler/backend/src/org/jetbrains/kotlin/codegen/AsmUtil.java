@@ -120,11 +120,16 @@ public class AsmUtil {
 
     @NotNull
     public static Type unboxType(@NotNull Type boxedType) {
-        Type primitiveType = primitiveTypeByBoxedType.get(boxedType);
+        Type primitiveType = unboxPrimitiveTypeOrNull(boxedType);
         if (primitiveType == null) {
             throw new UnsupportedOperationException("Unboxing: " + boxedType);
         }
         return primitiveType;
+    }
+
+    @Nullable
+    public static Type unboxPrimitiveTypeOrNull(@NotNull Type boxedType) {
+        return primitiveTypeByBoxedType.get(boxedType);
     }
 
     public static boolean isIntPrimitive(Type type) {
