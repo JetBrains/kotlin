@@ -1,0 +1,21 @@
+UFile (package = null)
+    UClass (Declarations, enum = false, interface = false, object = false)
+        UVariable (a, kind = member)
+            ULiteralExpression ("a")
+        UClass (NestedClass, enum = false, interface = false, object = false)
+            UVariable (b, kind = member)
+                ULiteralExpression ("b")
+        UClass (InnerClass, enum = false, interface = false, object = false)
+            UVariable (c, kind = member)
+                USimpleReferenceExpression (a)
+        UFunction (func, kind = function, paramCount = 2)
+            UBlockExpression
+                USpecialExpressionList (return)
+                    UBinaryExpression (*)
+                        UParenthesizedExpression
+                            UBinaryExpression (+)
+                                USimpleReferenceExpression (a)
+                                ULiteralExpression (1)
+                        UQualifiedExpression
+                            USimpleReferenceExpression (b)
+                            USimpleReferenceExpression (length)

@@ -1,0 +1,7 @@
+public class ControlStructures {
+    public fun test(): Boolean {
+        var x: List = listOf("ABC")
+        return false
+    }
+
+}

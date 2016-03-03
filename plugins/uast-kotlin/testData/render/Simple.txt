@@ -1,0 +1,9 @@
+public class Simple {
+    var a: String = "text" + "other" + "text"
+    val b = listOf("A")
+
+    public fun test(): Unit {
+        System.out.println(5.0f / 2)
+    }
+
+}
