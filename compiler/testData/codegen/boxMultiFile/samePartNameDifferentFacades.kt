@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: 1/part.kt
 
 @file:JvmName("Foo")

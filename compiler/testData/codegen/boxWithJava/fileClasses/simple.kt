@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: Bar.java
 
 public class Bar {

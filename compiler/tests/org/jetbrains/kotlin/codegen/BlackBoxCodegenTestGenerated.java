@@ -7030,10 +7030,82 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("defaultImplsGenericSignature.kt")
+        public void testDefaultImplsGenericSignature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/defaultImplsGenericSignature.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionLiteralGenericSignature.kt")
         public void testFunctionLiteralGenericSignature() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/functionLiteralGenericSignature.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NoKotlinReflect extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInNoKotlinReflect() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/noKotlinReflect"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("javaClass.kt")
+            public void testJavaClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/javaClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primitiveJavaClass.kt")
+            public void testPrimitiveJavaClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/primitiveJavaClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyGetSetName.kt")
+            public void testPropertyGetSetName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/propertyGetSetName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyInstanceof.kt")
+            public void testPropertyInstanceof() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/propertyInstanceof.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("reifiedTypeJavaClass.kt")
+            public void testReifiedTypeJavaClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/reifiedTypeJavaClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleClassLiterals.kt")
+            public void testSimpleClassLiterals() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/simpleClassLiterals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/methodsFromAny")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class MethodsFromAny extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInMethodsFromAny() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/noKotlinReflect/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("callableReferences.kt")
+                public void testCallableReferences() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/methodsFromAny/callableReferences.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("classReference.kt")
+                public void testClassReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noKotlinReflect/methodsFromAny/classReference.kt");
+                    doTest(fileName);
+                }
+            }
         }
     }
 

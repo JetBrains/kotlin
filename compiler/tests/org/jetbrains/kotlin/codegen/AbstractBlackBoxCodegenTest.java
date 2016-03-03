@@ -51,6 +51,9 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationFor
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
+    private boolean addRuntime = false;
+    private boolean addReflect = false;
+
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
         TestJdkKind jdkKind = TestJdkKind.MOCK_JDK;
@@ -59,18 +62,26 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
                 jdkKind = TestJdkKind.FULL_JDK;
             }
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "NO_KOTLIN_REFLECT")) {
-                configurationKind = ConfigurationKind.NO_KOTLIN_REFLECT;
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
+                addRuntime = true;
+            }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
+                addReflect = true;
             }
 
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
 
+        configurationKind =
+                addReflect ? ConfigurationKind.ALL :
+                addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
+                ConfigurationKind.JDK_ONLY;
+
         compileAndRun(files, javaFilesDir, jdkKind, javacOptions);
     }
 
     protected void doTestWithStdlib(@NotNull String filename) throws Exception {
-        configurationKind = ConfigurationKind.ALL;
+        addReflect = true;
         doTest(filename);
     }
 

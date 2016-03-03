@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: Test.java
 
 import java.lang.annotation.Annotation;

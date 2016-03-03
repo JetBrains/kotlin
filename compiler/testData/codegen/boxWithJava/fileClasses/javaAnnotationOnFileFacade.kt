@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: StringHolder.java
 
 import java.lang.annotation.ElementType;

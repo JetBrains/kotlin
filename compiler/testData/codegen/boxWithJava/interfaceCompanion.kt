@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: CompanionInitialization.java
 
 public class CompanionInitialization {

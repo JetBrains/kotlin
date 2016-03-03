@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: Baz.java
 
 public class Baz {

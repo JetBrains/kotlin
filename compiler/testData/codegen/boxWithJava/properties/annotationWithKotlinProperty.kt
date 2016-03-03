@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: JavaClass.java
 
 import java.lang.annotation.Retention;

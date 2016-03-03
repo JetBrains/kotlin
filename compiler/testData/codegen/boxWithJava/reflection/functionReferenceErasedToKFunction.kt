@@ -1,3 +1,4 @@
+// WITH_REFLECT
 // FILE: J.java
 
 import kotlin.jvm.functions.Function2;

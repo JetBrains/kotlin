@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: box.kt
 
 package test

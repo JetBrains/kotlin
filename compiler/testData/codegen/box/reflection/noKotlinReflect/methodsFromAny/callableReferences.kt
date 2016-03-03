@@ -1,4 +1,4 @@
-// NO_KOTLIN_REFLECT
+// WITH_RUNTIME
 
 import kotlin.reflect.KCallable
 import kotlin.test.*

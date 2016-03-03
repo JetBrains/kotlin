@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: A.java
 
 public class A extends AImpl implements java.util.List<String> {

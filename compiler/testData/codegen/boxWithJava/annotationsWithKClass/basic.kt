@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: Test.java
 
 class OK {}
@@ -14,6 +15,6 @@ import kotlin.reflect.KClass
 annotation class Ann(val arg: KClass<*>)
 
 fun box(): String {
-    val argName = Test::class.java.getAnnotation(Ann::class.java).arg.simpleName ?: "fail 1"
+    val argName = Test::class.java.getAnnotation(Ann::class.java).arg.java.simpleName ?: "fail 1"
     return argName
 }

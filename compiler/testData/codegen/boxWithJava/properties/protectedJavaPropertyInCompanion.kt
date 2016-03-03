@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: JavaBaseClass.java
 
 public class JavaBaseClass {
