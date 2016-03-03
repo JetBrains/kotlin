@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +39,8 @@ import javax.swing.Icon
 class KtLightClassForFacade private constructor(
         manager: PsiManager,
         private val facadeClassFqName: FqName,
-        private val searchScope: GlobalSearchScope,
         private val lightClassDataCache: CachedValue<KotlinFacadeLightClassData>,
-        files: Collection<KtFile>,
-        private val deprecated: Boolean
+        files: Collection<KtFile>
 ) : KtWrappingLightClass(manager), KtJavaMirrorMarker {
 
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
@@ -102,7 +100,7 @@ class KtLightClassForFacade private constructor(
 
     override fun hasModifierProperty(@NonNls name: String) = modifierList.hasModifierProperty(name)
 
-    override fun isDeprecated() = deprecated
+    override fun isDeprecated() = false
 
     override fun isInterface() = false
 
@@ -146,7 +144,7 @@ class KtLightClassForFacade private constructor(
 
     override fun isValid() = files.all { it.isValid && fileHasTopLevelCallables(it) }
 
-    override fun copy() = KtLightClassForFacade(getManager(), facadeClassFqName, searchScope, lightClassDataCache, files, deprecated)
+    override fun copy() = KtLightClassForFacade(getManager(), facadeClassFqName, lightClassDataCache, files)
 
     override fun getDelegate(): PsiClass {
         val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.value.javaFileStub)
@@ -199,7 +197,7 @@ class KtLightClassForFacade private constructor(
             assert(files.isNotEmpty()) { "No files for facade $facadeClassFqName" }
 
             val lightClassDataCache = FacadeStubCache.getInstance(manager.project).get(facadeClassFqName, searchScope)
-            return KtLightClassForFacade(manager, facadeClassFqName, searchScope, lightClassDataCache, files, false)
+            return KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
         }
     }
 }
