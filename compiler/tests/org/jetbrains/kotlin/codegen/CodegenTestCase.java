@@ -73,7 +73,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected CodegenTestFiles myFiles;
     protected ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
-    protected ConfigurationKind configurationKind;
+    protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
 
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,

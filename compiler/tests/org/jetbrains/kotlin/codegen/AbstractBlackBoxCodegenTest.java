@@ -21,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Processor;
 import kotlin.collections.ArraysKt;
 import kotlin.io.FilesKt;
-import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
@@ -57,30 +56,22 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         TestJdkKind jdkKind = TestJdkKind.MOCK_JDK;
         List<String> javacOptions = new ArrayList<String>(0);
         for (TestFile file : files) {
-            if (isFullJdkDirectiveDefined(file.content)) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
                 jdkKind = TestJdkKind.FULL_JDK;
-                break;
             }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "NO_KOTLIN_REFLECT")) {
+                configurationKind = ConfigurationKind.NO_KOTLIN_REFLECT;
+            }
+
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
 
         compileAndRun(files, javaFilesDir, jdkKind, javacOptions);
     }
 
-    protected void doTestWithStdlib(@NotNull String filename) {
-        configurationKind = InTextDirectivesUtils.isDirectiveDefined(
-                FilesKt.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
-        ) ? ConfigurationKind.NO_KOTLIN_REFLECT : ConfigurationKind.ALL;
-
-        TestJdkKind jdkKind = isFullJdkDirectiveDefined(FilesKt.readText(new File(filename), Charsets.UTF_8))
-                              ? TestJdkKind.FULL_JDK
-                              : TestJdkKind.MOCK_JDK;
-
-        myEnvironment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                getTestRootDisposable(), configurationKind, jdkKind
-        );
-
-        blackBoxFileByFullPath(filename);
+    protected void doTestWithStdlib(@NotNull String filename) throws Exception {
+        configurationKind = ConfigurationKind.ALL;
+        doTest(filename);
     }
 
     protected void compileAndRun(
@@ -90,7 +81,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             @NotNull List<String> javacOptions
     ) {
         CompilerConfiguration configuration = compilerConfigurationForTests(
-                ConfigurationKind.ALL, jdkKind, Collections.singletonList(getAnnotationsJar()),
+                configurationKind, jdkKind, Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(new File[] {javaSourceDir})
         );
 
@@ -141,15 +132,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         });
 
         return javaFilePaths;
-    }
-
-    private static boolean isFullJdkDirectiveDefined(@NotNull String content) {
-        return InTextDirectivesUtils.isDirectiveDefined(content, "FULL_JDK");
-    }
-
-    private void blackBoxFileByFullPath(@NotNull String filename) {
-        loadFileByFullPath(filename);
-        blackBox();
     }
 
     protected void blackBox() {
