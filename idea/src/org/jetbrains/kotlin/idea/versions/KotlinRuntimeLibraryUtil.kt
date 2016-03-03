@@ -163,17 +163,16 @@ private enum class LibraryJarDescriptor private constructor(val jarName: String,
     JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false)
 }
 
+private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release")
 @JvmOverloads fun bundledRuntimeVersion(pluginVersion: String = KotlinPluginUtil.getPluginVersion()): String {
     var placeToSplit = -1
 
-    val ideaPatternIndex = StringUtil.indexOf(pluginVersion, "Idea")
-    if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion[ideaPatternIndex - 2])) {
-        placeToSplit = ideaPatternIndex - 1
-    }
-
-    val ijPatternIndex = StringUtil.indexOf(pluginVersion, "IJ")
-    if (ijPatternIndex >= 2 && Character.isDigit(pluginVersion[ijPatternIndex - 2])) {
-        placeToSplit = ijPatternIndex - 1
+    for (separator in PLUGIN_VERSIONS_SEPARATORS) {
+        val ideaPatternIndex = StringUtil.indexOf(pluginVersion, separator)
+        if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion[ideaPatternIndex - 2])) {
+            placeToSplit = ideaPatternIndex - 1
+            break
+        }
     }
 
     if (placeToSplit == -1) {
