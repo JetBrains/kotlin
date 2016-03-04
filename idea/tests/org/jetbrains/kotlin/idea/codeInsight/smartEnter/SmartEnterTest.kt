@@ -1085,6 +1085,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
             """
     )
+
     fun testSetter6() = doFileTest(
             """
             var a : Int = 0
@@ -1263,6 +1264,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             }
             """
     )
+
     fun testFinallyBody() = doFunTest(
             """
             try {
@@ -1275,6 +1277,126 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             } catch(e: Exception) {
             } finally {
                 <caret>
+            }
+            """
+    )
+
+    fun testLambdaParamImplicit1() = doFileTest(
+            """
+            fun foo(a: Any, block: () -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>)
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: () -> Unit) {
+            }
+            fun test() {
+                foo(Any()) {
+                    <caret>
+                }
+            }
+            """
+    )
+
+    fun testLambdaParamImplicit2() = doFileTest(
+            """
+            fun foo(a: Any, block: (Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: (Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()) {
+                    <caret>
+                }
+            }
+            """
+    )
+
+    fun testLambdaParamExplicit1() = doFileTest(
+            """
+            fun foo(a: Any, block: (Any, Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>)
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: (Any, Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()) { x1, x2 ->
+                    <caret>
+                }
+            }
+            """
+    )
+
+    fun testExtensionLambdaParamImplicit1() = doFileTest(
+            """
+            fun foo(a: Any, block: Any.() -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>)
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: Any.() -> Unit) {
+            }
+            fun test() {
+                foo(Any()) {
+                    <caret>
+                }
+            }
+            """
+    )
+
+    fun testExtensionLambdaParamImplicit2() = doFileTest(
+            """
+            fun foo(a: Any, block: Any.(Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: Any.(Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()) {
+                    <caret>
+                }
+            }
+            """
+    )
+
+    fun testExtensionLambdaParamExplicit1() = doFileTest(
+            """
+            fun foo(a: Any, block: Any.(Any, Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>)
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: Any.(Any, Any) -> Unit) {
+            }
+            fun test() {
+                foo(Any()) { x1, x2 ->
+                    <caret>
+                }
             }
             """
     )
