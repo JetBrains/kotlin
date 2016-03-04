@@ -4711,15 +4711,15 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("specialCharsInCharLiteral.kt")
-        public void testSpecialCharsInCharLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/specialCharsInCharLiteral.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("specialCharsInCharLiteral.kt")
+        public void testSpecialCharsInCharLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/specialCharsInCharLiteral.kt");
             doTest(fileName);
         }
 
