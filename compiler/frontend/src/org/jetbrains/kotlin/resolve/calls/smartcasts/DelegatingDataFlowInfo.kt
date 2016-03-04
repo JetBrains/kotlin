@@ -151,7 +151,7 @@ internal class DelegatingDataFlowInfo private constructor(
         return create(this, ImmutableMap.copyOf(nullability), if (newTypeInfo.isEmpty) EMPTY_TYPE_INFO else newTypeInfo, a)
     }
 
-    override fun equate(a: DataFlowValue, b: DataFlowValue): DataFlowInfo {
+    override fun equate(a: DataFlowValue, b: DataFlowValue, sameTypes: Boolean): DataFlowInfo {
         val builder = Maps.newHashMap<DataFlowValue, Nullability>()
         val nullabilityOfA = getPredictableNullability(a)
         val nullabilityOfB = getPredictableNullability(b)
@@ -159,19 +159,22 @@ internal class DelegatingDataFlowInfo private constructor(
         var changed = putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB)) or
                       putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA))
 
+        // NB: == has no guarantees of type equality, see KT-11280 for the example
         val newTypeInfo = newTypeInfo()
-        newTypeInfo.putAll(a, getPredictableTypes(b, false))
-        newTypeInfo.putAll(b, getPredictableTypes(a, false))
-        if (a.type != b.type) {
-            // To avoid recording base types of own type
-            if (!a.type.isSubtypeOf(b.type)) {
-                newTypeInfo.put(a, b.type)
+        if (sameTypes) {
+            newTypeInfo.putAll(a, getPredictableTypes(b, false))
+            newTypeInfo.putAll(b, getPredictableTypes(a, false))
+            if (a.type != b.type) {
+                // To avoid recording base types of own type
+                if (!a.type.isSubtypeOf(b.type)) {
+                    newTypeInfo.put(a, b.type)
+                }
+                if (!b.type.isSubtypeOf(a.type)) {
+                    newTypeInfo.put(b, a.type)
+                }
             }
-            if (!b.type.isSubtypeOf(a.type)) {
-                newTypeInfo.put(b, a.type)
-            }
+            changed = changed or !newTypeInfo.isEmpty
         }
-        changed = changed or !newTypeInfo.isEmpty
 
         return if (!changed) {
             this

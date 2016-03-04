@@ -22,20 +22,25 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
 
@@ -65,9 +70,52 @@ public class DataFlowAnalyzer {
         this.facade = facade;
     }
 
+    // NB: use this method only for functions from 'Any'
+    @Nullable
+    private static FunctionDescriptor getOverriddenDescriptorFromClass(@NotNull FunctionDescriptor descriptor) {
+        if (descriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return descriptor;
+        Collection<? extends FunctionDescriptor> overriddenDescriptors = descriptor.getOverriddenDescriptors();
+        if (overriddenDescriptors.isEmpty()) return descriptor;
+        for (FunctionDescriptor overridden : overriddenDescriptors) {
+            DeclarationDescriptor containingDeclaration = overridden.getContainingDeclaration();
+            if (DescriptorUtils.isClass(containingDeclaration) || DescriptorUtils.isObject(containingDeclaration)) {
+                // Exactly one class should exist in the list
+                return getOverriddenDescriptorFromClass(overridden);
+            }
+        }
+        return null;
+    }
+
+    private static boolean typeHasOverriddenEquals(@NotNull KotlinType type, @NotNull KtElement lookupElement) {
+        Collection<FunctionDescriptor> members = type.getMemberScope().getContributedFunctions(
+                OperatorNameConventions.EQUALS, new KotlinLookupLocation(lookupElement));
+        for (FunctionDescriptor member : members) {
+            KotlinType returnType = member.getReturnType();
+            if (returnType == null || !KotlinBuiltIns.isBoolean(returnType)) continue;
+            if (member.getValueParameters().size() != 1) continue;
+            KotlinType parameterType = member.getValueParameters().iterator().next().getType();
+            if (!KotlinBuiltIns.isNullableAny(parameterType)) continue;
+            FunctionDescriptor fromSuperClass = getOverriddenDescriptorFromClass(member);
+            if (fromSuperClass == null) return false;
+            ClassifierDescriptor superClassDescriptor = (ClassifierDescriptor) fromSuperClass.getContainingDeclaration();
+            // We should have override fun in class other than Any (to prove unknown behaviour)
+            return !KotlinBuiltIns.isAnyOrNullableAny(superClassDescriptor.getDefaultType());
+        }
+        return false;
+    }
+
+    // Returns true if we can prove that 'type' has equals method from 'Any' base type
+    public static boolean typeHasEqualsFromAny(@NotNull KotlinType type, @NotNull KtElement lookupElement) {
+        TypeConstructor constructor = type.getConstructor();
+        // Subtypes can override equals for non-final types
+        if (!constructor.isFinal()) return false;
+        // check whether 'equals' is overriden
+        return !typeHasOverriddenEquals(type, lookupElement);
+    }
+
     @NotNull
     public DataFlowInfo extractDataFlowInfoFromCondition(
-            @Nullable KtExpression condition,
+            @Nullable final KtExpression condition,
             final boolean conditionValue,
             final ExpressionTypingContext context
     ) {
@@ -126,7 +174,9 @@ public class DataFlowAnalyzer {
                     }
                     if (equals != null) {
                         if (equals == conditionValue) { // this means: equals && conditionValue || !equals && !conditionValue
-                            result.set(context.dataFlowInfo.equate(leftValue, rightValue).and(expressionFlowInfo));
+                            boolean byIdentity = operationToken == KtTokens.EQEQEQ || operationToken == KtTokens.EXCLEQEQEQ ||
+                                                 typeHasEqualsFromAny(lhsType, condition);
+                            result.set(context.dataFlowInfo.equate(leftValue, rightValue, byIdentity).and(expressionFlowInfo));
                         }
                         else {
                             result.set(context.dataFlowInfo.disequate(leftValue, rightValue).and(expressionFlowInfo));

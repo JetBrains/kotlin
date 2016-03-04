@@ -335,7 +335,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val expressionDataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, newContext)
         val result = noChange(newContext)
         return ConditionalDataFlowInfo(
-                result.thenInfo.equate(subjectDataFlowValue, expressionDataFlowValue),
+                result.thenInfo.equate(subjectDataFlowValue, expressionDataFlowValue,
+                                       DataFlowAnalyzer.typeHasEqualsFromAny(subjectType, expression)),
                 result.elseInfo.disequate(subjectDataFlowValue, expressionDataFlowValue))
     }
 
