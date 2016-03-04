@@ -6,10 +6,10 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>idl2k</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>0.1-SNAPSHOT</kotlin.version>
+        <kotlin.version>1.1-SNAPSHOT</kotlin.version>
         <antlr.version>4.5</antlr.version>
     </properties>
 

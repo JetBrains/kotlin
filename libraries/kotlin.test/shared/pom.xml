@@ -3,7 +3,7 @@
     <parent>
         <artifactId>kotlin-test-parent</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
-        <version>0.1-SNAPSHOT</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
