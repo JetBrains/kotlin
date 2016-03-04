@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
@@ -398,12 +399,14 @@ fun moveFilesOrDirectories(
                     }
                 }
 
+                val enableSearchReferences = elements.any { ProjectRootsUtil.isInProjectSource(it) }
+
                 if (elementsToMove.isNotEmpty()) {
                     MoveFilesOrDirectoriesProcessor(
                             project,
                             elementsToMove.toTypedArray(),
                             selectedDir,
-                            RefactoringSettings.getInstance().MOVE_SEARCH_FOR_REFERENCES_FOR_FILE,
+                            enableSearchReferences,
                             false,
                             false,
                             moveCallback,
