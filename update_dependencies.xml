@@ -58,11 +58,11 @@
             idea.maven.version="${ideaVersion}"/>
     </target>
 
-    <target name="update_teamcity" depends="fetch-third-party,fetch-annotations">
-        <execute_update_with_idea_teamcity_artifacts
-            teamcity.server.url="https://teamcity.jetbrains.com"
-            build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}-${idea.kotlin.branch}"/>
-    </target>
+    <!--<target name="update_teamcity" depends="fetch-third-party,fetch-annotations">-->
+        <!--<execute_update_with_idea_teamcity_artifacts-->
+            <!--teamcity.server.url="https://teamcity.jetbrains.com"-->
+            <!--build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}-${idea.kotlin.branch}"/>-->
+    <!--</target>-->
 
     <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies for JB local network">
         <execute_update_with_idea_maven_artifacts
