@@ -9,8 +9,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
-        classpath 'org.jetbrains.kotlin:kotlin-android-extensions:0.1-SNAPSHOT'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-SNAPSHOT'
+        classpath 'org.jetbrains.kotlin:kotlin-android-extensions:1.1-SNAPSHOT'
         classpath 'com.android.tools.build:gradle:' + androidToolsVersion
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.+'
     }
@@ -50,5 +50,5 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:0.1-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-SNAPSHOT"
 }
