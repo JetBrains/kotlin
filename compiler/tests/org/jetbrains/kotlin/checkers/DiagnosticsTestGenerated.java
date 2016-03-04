@@ -4481,6 +4481,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("ForLoopMissingLoopParameter.kt")
+                public void testForLoopMissingLoopParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopMissingLoopParameter.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ForLoopWithExtensions.kt")
                 public void testForLoopWithExtensions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopWithExtensions.kt");

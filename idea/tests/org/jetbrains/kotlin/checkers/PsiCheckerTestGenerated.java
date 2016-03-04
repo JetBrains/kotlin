@@ -460,6 +460,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DescructuringDeclarationInForLoop.kt")
+        public void testDescructuringDeclarationInForLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DescructuringDeclarationInForLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DoubleDefine.kt")
         public void testDoubleDefine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DoubleDefine.kt");
@@ -481,6 +487,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("FunctionLiteralInsideAnnotation.kt")
         public void testFunctionLiteralInsideAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunctionLiteralInsideAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionTypes.kt")
+        public void testFunctionTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunctionTypes.kt");
             doTest(fileName);
         }
 

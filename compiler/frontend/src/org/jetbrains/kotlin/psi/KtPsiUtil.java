@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -782,6 +782,11 @@ public class KtPsiUtil {
             declaration = PsiTreeUtil.getParentOfType(declaration, KtNamedDeclaration.class);
         }
         else if (declaration instanceof KtParameter) {
+            KtFunctionType functionType = PsiTreeUtil.getParentOfType(declaration, KtFunctionType.class);
+            if (functionType != null) {
+                return functionType;
+            }
+
             PsiElement parent = declaration.getParent();
 
             // val/var parameter of primary constructor should be considered as local according to containing class
