@@ -629,6 +629,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("defaultImplsGenericSignature")
+        public void testDefaultImplsGenericSignature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/defaultImplsGenericSignature/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("functionReferenceErasedToKFunction")
         public void testFunctionReferenceErasedToKFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/functionReferenceErasedToKFunction/");

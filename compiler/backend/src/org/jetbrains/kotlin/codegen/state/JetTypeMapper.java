@@ -1024,10 +1024,25 @@ public class JetTypeMapper {
             writeVoidReturn(sw);
         }
         else {
-            writeFormalTypeParameters(getDirectMember(f).getTypeParameters(), sw);
+            CallableMemberDescriptor directMember = getDirectMember(f);
+            KotlinType thisIfNeeded = null;
+            if (OwnerKind.DEFAULT_IMPLS == kind) {
+                ReceiverTypeAndTypeParameters receiverTypeAndTypeParameters = TypeMapperUtilsKt.patchTypeParametersForDefaultImplMethod(directMember);
+                writeFormalTypeParameters(CollectionsKt.plus(receiverTypeAndTypeParameters.getTypeParameters(), directMember.getTypeParameters()), sw);
+                thisIfNeeded = receiverTypeAndTypeParameters.getReceiverType();
+            }
+            else {
+                writeFormalTypeParameters(directMember.getTypeParameters(), sw);
+                if (isAccessor(f) && f.getDispatchReceiverParameter() != null) {
+                    thisIfNeeded = ((ClassDescriptor) f.getContainingDeclaration()).getDefaultType();
+                }
+            }
 
             sw.writeParametersStart();
-            writeThisIfNeeded(f, kind, sw);
+            if (thisIfNeeded != null) {
+                writeParameter(sw, JvmMethodParameterKind.THIS, thisIfNeeded, f);
+            }
+
 
             ReceiverParameterDescriptor receiverParameter = f.getExtensionReceiverParameter();
             if (receiverParameter != null) {
@@ -1179,33 +1194,6 @@ public class JetTypeMapper {
         }
 
         return sw.makeJavaGenericSignature();
-    }
-
-    private void writeThisIfNeeded(
-            @NotNull CallableMemberDescriptor descriptor,
-            @NotNull OwnerKind kind,
-            @NotNull BothSignatureWriter sw
-    ) {
-        ClassDescriptor thisType;
-        if (kind == OwnerKind.DEFAULT_IMPLS) {
-            thisType = getTraitImplThisParameterClass((ClassDescriptor) descriptor.getContainingDeclaration());
-        }
-        else if (isAccessor(descriptor) && descriptor.getDispatchReceiverParameter() != null) {
-            thisType = (ClassDescriptor) descriptor.getContainingDeclaration();
-        }
-        else return;
-
-        writeParameter(sw, JvmMethodParameterKind.THIS, thisType.getDefaultType(), descriptor);
-    }
-
-    @NotNull
-    private static ClassDescriptor getTraitImplThisParameterClass(@NotNull ClassDescriptor traitDescriptor) {
-        for (ClassDescriptor descriptor : DescriptorUtils.getSuperclassDescriptors(traitDescriptor)) {
-            if (descriptor.getKind() != ClassKind.INTERFACE) {
-                return descriptor;
-            }
-        }
-        return traitDescriptor;
     }
 
     public void writeFormalTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull BothSignatureWriter sw) {
