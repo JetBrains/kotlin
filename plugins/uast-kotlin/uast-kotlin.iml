@@ -20,5 +20,9 @@
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
     <orderEntry type="module" module-name="uast-android" />
+    <orderEntry type="module" module-name="lint-api" scope="TEST" />
+    <orderEntry type="module" module-name="lint-checks" scope="TEST" />
+    <orderEntry type="module" module-name="lint-idea" scope="TEST" />
+    <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
   </component>
 </module>
