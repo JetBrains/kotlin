@@ -83,7 +83,8 @@ class KotlinUFunction(
         KotlinConverter.convert(type, psi.project, this)
     }
 
-    //TODO
-    override val typeParameterCount = 0
-    override val typeParameters = emptyList<UTypeReference>()
+    override val typeParameterCount: Int
+        get() = psi.typeParameters.size
+
+    override val typeParameters by lz { psi.typeParameters.map { KotlinParameterUTypeReference(it, this) } }
 }
