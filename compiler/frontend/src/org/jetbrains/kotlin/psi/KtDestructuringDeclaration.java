@@ -53,6 +53,11 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtV
         return PsiTreeUtil.getNextSiblingOfType(eqNode.getPsi(), KtExpression.class);
     }
 
+    public boolean isVar() {
+        return getNode().findChildByType(KtTokens.VAR_KEYWORD) != null;
+    }
+
+    @Override
     @Nullable
     public PsiElement getValOrVarKeyword() {
         return findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));

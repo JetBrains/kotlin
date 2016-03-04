@@ -1391,6 +1391,13 @@
                      cleanupTool="false"
                      level="WEAK WARNING"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBeValInspection"
+                     displayName="Local 'var' can be declared as 'val'"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>

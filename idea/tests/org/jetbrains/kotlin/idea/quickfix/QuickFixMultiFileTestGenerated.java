@@ -1581,6 +1581,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
         }
 
+        @TestMetadata("idea/testData/quickfix/variables/changeMutability")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ChangeMutability extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInChangeMutability() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+            }
+
+        }
+
     }
 
 }
