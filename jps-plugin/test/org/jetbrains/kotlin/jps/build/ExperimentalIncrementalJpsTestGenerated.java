@@ -389,6 +389,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("inlinePrivateFunctionAdded")
+        public void testInlinePrivateFunctionAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinePrivateFunctionAdded/");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineTwoFunctionsOneChanged")
         public void testInlineTwoFunctionsOneChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTwoFunctionsOneChanged/");
