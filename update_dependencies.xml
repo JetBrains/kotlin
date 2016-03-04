@@ -6,7 +6,7 @@
 
 
     <property name="kotlin.bootstrap.branch" value="rc"/>
-    <property name="kotlin.bootstrap.branch.locator" value=",branch:rc"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:rc,pinned:true"/>
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
     <property name="kotlin.bootstrap.locator.force" value="true"/>
 
