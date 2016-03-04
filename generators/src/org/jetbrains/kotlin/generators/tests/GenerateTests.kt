@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.generators.tests
 import junit.framework.TestCase
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
-import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
-import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
-import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
-import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
+import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
@@ -136,6 +133,7 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
+import org.jetbrains.kotlin.uast.AbstractKotlinLintTest
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -972,6 +970,12 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidBytecodeShapeTest>() {
             model("codegen/bytecodeShape", recursive = false, extension = null)
+        }
+    }
+
+    testGroup("plugins/uast-kotlin/test", "plugins/uast-kotlin/testData") {
+        testClass<AbstractKotlinLintTest>() {
+            model("lint", excludeParentDirs = true)
         }
     }
 

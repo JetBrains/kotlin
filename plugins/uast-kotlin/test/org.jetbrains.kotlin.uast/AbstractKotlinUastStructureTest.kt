@@ -30,7 +30,7 @@ abstract class AbstractKotlinUastStructureTest : KotlinLightCodeInsightFixtureTe
         val renderFile = File(File(testDataPath, "render"), "$testName.txt")
 
         val psiFile = myFixture.file
-        val uElement = KotlinConverter.convertWithParent(psiFile) ?: error("UFile was not created")
+        val uElement = KotlinUastLanguagePlugin.converter.convertWithParent(psiFile) ?: error("UFile was not created")
 
         val logActual = uElement.logString()
         val renderActual = uElement.renderString()
