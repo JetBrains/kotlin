@@ -40,6 +40,7 @@ val NOT_NULL_ANNOTATIONS = listOf(
         FqName("com.android.annotations.NonNull"),
         FqName("org.eclipse.jdt.annotation.NonNull"),
         FqName("org.checkerframework.checker.nullness.qual.NonNull"),
+        FqName("javax.annotation.Nonnull"),
         FqName("lombok.NonNull")
 )
 
