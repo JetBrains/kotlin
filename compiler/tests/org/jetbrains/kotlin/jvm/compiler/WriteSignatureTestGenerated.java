@@ -482,6 +482,33 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeSignature/defaultImpls")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DefaultImpls extends AbstractWriteSignatureTest {
+        public void testAllFilesPresentInDefaultImpls() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/defaultImpls"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("functionTypeParameterClash.kt")
+        public void testFunctionTypeParameterClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/defaultImpls/functionTypeParameterClash.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionTypeParameterClashWith_I.kt")
+        public void testFunctionTypeParameterClashWith_I() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/defaultImpls/functionTypeParameterClashWith_I.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyTypeParameterClash.kt")
+        public void testPropertyTypeParameterClash() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/defaultImpls/propertyTypeParameterClash.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeSignature/nothing")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
