@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
@@ -75,10 +76,6 @@ object BuiltinSpecialBridgesUtil {
         val commonBridges = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
         commonBridges.removeAll(specialBridgesSignaturesInSuperClass + specialBridge?.from.singletonOrEmptyList())
 
-        val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake)
-        if (superImplementationDescriptor != null || !fake || functionHandle.isAbstract) {
-            commonBridges.remove(methodItself)
-        }
 
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {
@@ -88,12 +85,27 @@ object BuiltinSpecialBridgesUtil {
             }
         }
 
-        val bridges: MutableSet<BridgeForBuiltinSpecial<Signature>> =
-                (commonBridges.map { BridgeForBuiltinSpecial(it, specialBridgeSignature) } + specialBridge.singletonOrEmptyList()).toMutableSet()
+        val bridges: MutableSet<BridgeForBuiltinSpecial<Signature>> = mutableSetOf()
 
+        // Can be null if special builtin is final (e.g. 'name' in Enum)
+        // because there should be no stubs for override in subclasses
+        val superImplementationDescriptor = findSuperImplementationForStubDelegation(function, fake)
         if (superImplementationDescriptor != null) {
             bridges.add(BridgeForBuiltinSpecial(methodItself, signatureByDescriptor(superImplementationDescriptor), isDelegateToSuper = true))
         }
+
+        if (commonBridges.remove(methodItself)) {
+            if (superImplementationDescriptor == null && fake && !functionHandle.isAbstract && methodItself != specialBridgeSignature) {
+                // The only case when superImplementationDescriptor, but method is fake and not abstract is enum members
+                // They have superImplementationDescriptor null because they are final
+
+                // generate non-synthetic bridge 'getOrdinal()' to 'ordinal()' (see test enumAsOrdinaled.kt)
+                bridges.add(BridgeForBuiltinSpecial(methodItself, specialBridgeSignature, isSpecial = false, isDelegateToSuper = false))
+            }
+        }
+
+        bridges.addAll(commonBridges.map { BridgeForBuiltinSpecial(it, methodItself) })
+        bridges.addIfNotNull(specialBridge)
 
         return bridges
     }
