@@ -64,6 +64,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collections;
 import java.util.List;
 
 public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
@@ -202,7 +203,8 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
             Function1<String, Boolean> validator =
                     innerClassBody != null
                     ? new NewDeclarationNameValidator(innerClassBody, (PsiElement) null,
-                                                      NewDeclarationNameValidator.Target.VARIABLES)
+                                                      NewDeclarationNameValidator.Target.VARIABLES,
+                                                      Collections.<KtDeclaration>emptyList())
                     : new CollectingNameValidator();
             List<String> suggestions = KotlinNameSuggester.INSTANCE.suggestNamesByType(getOuterInstanceType(), validator, "outer");
             parameterField.setSuggestions(ArrayUtil.toStringArray(suggestions));

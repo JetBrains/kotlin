@@ -99,6 +99,7 @@ import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.resolve.*
+import org.jetbrains.kotlin.idea.spring.tests.generate.AbstractGenerateSpringDependencyActionTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionHandlerTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceNavigationTest
@@ -813,6 +814,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSpringReferenceNavigationTest>() {
             model("spring/core/references/navigation")
+        }
+
+        testClass<AbstractGenerateSpringDependencyActionTest>() {
+            model("spring/core/generate", pattern = "^([\\w]+)\\.kt$", singleClass = true)
         }
     }
 

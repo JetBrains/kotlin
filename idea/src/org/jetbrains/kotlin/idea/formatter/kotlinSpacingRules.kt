@@ -118,6 +118,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             between(ENUM_ENTRY, SEMICOLON).spaces(0)
 
             beforeInside(FUN, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
+            beforeInside(SECONDARY_CONSTRUCTOR, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             beforeInside(CLASS, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             beforeInside(OBJECT_DECLARATION, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             before(PROPERTY).lineBreakInCode()

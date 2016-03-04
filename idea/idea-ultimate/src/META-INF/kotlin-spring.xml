@@ -22,4 +22,19 @@
                        level="WARNING"
                        implementationClass="org.jetbrains.kotlin.idea.spring.inspections.KotlinSpringFacetCodeInspection"/>
   </extensions>
+
+  <actions>
+      <action id="Kotlin.Spring.Beans.Generate.Setter.Dependency.Action"
+              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanDependencyAction$Setter">
+          <add-to-group anchor="last" group-id="GenerateGroup"/>
+      </action>
+      <action id="Kotlin.Spring.Beans.Generate.Constructor.Dependency.Action"
+              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanDependencyAction$Constructor">
+          <add-to-group anchor="last" group-id="GenerateGroup"/>
+      </action>
+      <action id="Kotlin.Spring.Beans.Generate.Lateinit.Property.Dependency.Action"
+              class="org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanDependencyAction$LateinitProperty">
+          <add-to-group anchor="last" group-id="GenerateGroup"/>
+      </action>
+  </actions>
 </idea-plugin>
