@@ -23,7 +23,8 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
 
     override fun setUp() {
         super.setUp()
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
+        configurationKind = ConfigurationKind.ALL
+        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind)
     }
 
     private fun Class<*>.methodByName(name: String) = declaredMethods.single { it.name == name }

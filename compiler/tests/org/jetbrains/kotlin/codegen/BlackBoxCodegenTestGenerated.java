@@ -1460,6 +1460,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("localFunctionName.kt")
+                public void testLocalFunctionName() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/local/localFunctionName.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localLocal.kt")
                 public void testLocalLocal() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/local/localLocal.kt");

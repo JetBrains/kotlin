@@ -2493,12 +2493,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("localFunctionName.kt")
-            public void testLocalFunctionName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions/localFunctionName.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("platformName.kt")
             public void testPlatformName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions/platformName.kt");

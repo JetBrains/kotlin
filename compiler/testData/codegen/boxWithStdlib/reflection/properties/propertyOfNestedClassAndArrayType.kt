@@ -1,3 +1,5 @@
+import kotlin.reflect.KMutableProperty1
+
 class A {
     class B(val result: String)
 
@@ -8,9 +10,11 @@ class A {
 fun box(): String {
     val a = A()
 
-    (A::q).set(a, arrayOf(arrayOf(A.B("array"))))
+    val aq = A::class.members.single { it.name == "q" } as KMutableProperty1<A, Array<Array<A.B>>>
+    aq.set(a, arrayOf(arrayOf(A.B("array"))))
     if (a.q!![0][0].result != "array") return "Fail array"
 
-    (A::p).set(a, A.B("OK"))
+    val ap = A::class.members.single { it.name == "p" } as KMutableProperty1<A, A.B>
+    ap.set(a, A.B("OK"))
     return a.p!!.result
 }

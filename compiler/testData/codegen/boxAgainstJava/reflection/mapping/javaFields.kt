@@ -1,3 +1,5 @@
+// WITH_REFLECT
+// FULL_JDK
 // FILE: J.java
 
 public class J {
@@ -11,7 +13,6 @@ public class J {
 }
 
 // FILE: 1.kt
-// FULL_JDK
 
 import java.lang.reflect.*
 import kotlin.reflect.*

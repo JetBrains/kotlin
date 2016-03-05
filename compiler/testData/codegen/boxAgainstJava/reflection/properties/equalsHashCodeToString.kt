@@ -1,3 +1,4 @@
+// WITH_REFLECT
 // FILE: test/J.java
 
 package test;

@@ -187,9 +187,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected GeneratedClassLoader createClassLoader() {
         return new GeneratedClassLoader(
                 generateClassesInFile(),
-                configurationKind == ConfigurationKind.NO_KOTLIN_REFLECT ?
-                ForTestCompileRuntime.runtimeJarClassLoader() :
-                ForTestCompileRuntime.runtimeAndReflectJarClassLoader(),
+                configurationKind.getWithReflection()
+                ? ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
+                : ForTestCompileRuntime.runtimeJarClassLoader(),
                 getClassPathURLs()
         );
     }
