@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
@@ -33,6 +33,10 @@ internal val bytecode: ByteArray by lazy {
         stream.close()
     }
 }
+
+private inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
+
+private inline fun <reified T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
 
 private inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
     val result = arrayOfNulls<T>(size)

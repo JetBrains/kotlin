@@ -22,6 +22,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
@@ -195,7 +196,7 @@ public class InlineCodegen extends CallGenerator {
                            : jvmSignature.getAsmMethod();
 
         SMAPAndMethodNode nodeAndSMAP;
-        if (functionDescriptor instanceof FictitiousArrayConstructor) {
+        if (isBuiltInArrayIntrinsic(functionDescriptor)) {
             nodeAndSMAP = InlineCodegenUtil.getMethodNode(
                     IntrinsicArrayConstructorsKt.getBytecode(),
                     asmMethod.getName(),
@@ -265,6 +266,13 @@ public class InlineCodegen extends CallGenerator {
             maxCalcAdapter.visitEnd();
         }
         return nodeAndSMAP;
+    }
+
+    private static boolean isBuiltInArrayIntrinsic(@NotNull FunctionDescriptor functionDescriptor) {
+        if (functionDescriptor instanceof FictitiousArrayConstructor) return true;
+        String name = functionDescriptor.getName().asString();
+        return (name.equals("arrayOf") || name.equals("emptyArray")) &&
+               functionDescriptor.getContainingDeclaration() instanceof BuiltinsPackageFragment;
     }
 
     private InlineResult inlineCall(SMAPAndMethodNode nodeAndSmap) {
