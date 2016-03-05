@@ -15,12 +15,9 @@ class MyArray() {
 fun box() : String {
     val a = MyArray()
     var i = mInt(0)
-      System.out?.println(i)
-    a[i++]// = mInt(1)
-      System.out?.println(i)
+    a[i++]
     a[i++] = mInt(1)
-      System.out?.println(i)
     for (i in 0..9)
-      System.out?.println("ar: ${a[mInt(i)]}")
+        a[mInt(i)]
     return "OK"
 }

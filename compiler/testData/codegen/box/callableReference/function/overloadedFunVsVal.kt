@@ -1,5 +1,4 @@
 import kotlin.reflect.*
-import kotlin.test.assertEquals
 
 class A {
     val x = 1
@@ -12,8 +11,8 @@ val f2: (A) -> String = A::x
 fun box(): String {
     val a = A()
 
-    assertEquals(1, f1.get(a))
-    assertEquals("OK", f2(a))
+    val x1 = f1.get(a)
+    if (x1 != 1) return "Fail 1: $x1"
 
-    return "OK"
+    return f2(a)
 }

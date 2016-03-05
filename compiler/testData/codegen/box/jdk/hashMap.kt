@@ -10,6 +10,6 @@ fun box(): String {
     if (map.size != 4) return "fail 2"
     if (map.get("eeeee") != null) return "fail 3"
     if (!map.containsKey("bb")) return "fail 4"
-    if (map.entries.contains("ffffff" as Any)) return "fail 5"
+    if (map.keys.contains("ffffff")) return "fail 5"
     return "OK"
 }

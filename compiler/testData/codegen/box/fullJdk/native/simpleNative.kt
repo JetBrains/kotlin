@@ -2,8 +2,6 @@
 
 package foo
 
-import kotlin.jvm.*
-
 class WithNative {
     external fun foo()
 }
