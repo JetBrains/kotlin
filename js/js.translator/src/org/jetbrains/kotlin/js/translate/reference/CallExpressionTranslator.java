@@ -55,7 +55,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
         JsExpression callExpression = (new CallExpressionTranslator(expression, receiver, context)).translate();
 
-        if (!resolvedCall.isSafeCall() && shouldBeInlined(expression, context)) {
+        if (shouldBeInlined(expression, context)) {
             setInlineCallMetadata(callExpression, expression, resolvedCall, context);
         }
 
