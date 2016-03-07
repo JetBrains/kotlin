@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: WithoutPrimary.java
 
 class WithoutPrimary {

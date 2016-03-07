@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: JavaClass.java
 
 public abstract class JavaClass {

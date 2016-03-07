@@ -208,10 +208,6 @@ fun main(args: Array<String>) {
             model("codegen/boxAgainstJava")
         }
 
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJavaCodegenTestGenerated") {
-            model("codegen/boxWithJava")
-        }
-
         testClass<AbstractScriptCodegenTest>() {
             model("codegen/script", extension = "kts")
         }

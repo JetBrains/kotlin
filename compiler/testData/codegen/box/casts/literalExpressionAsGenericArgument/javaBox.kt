@@ -17,6 +17,7 @@ public class Box<T> {
 }
 
 // FILE: test.kt
+// See KT-10313: ClassCastException with Generics
 
 fun box(): String {
     val sub = Box<Long>(-1)

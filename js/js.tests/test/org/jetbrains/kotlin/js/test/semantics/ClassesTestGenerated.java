@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClassesTestGenerated extends AbstractClassesTest {
+    @TestMetadata("classCompanionInitializationWithJava.kt")
+    public void ignoredClassCompanionInitializationWithJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classCompanionInitializationWithJava.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("classObjectAsStaticInitializer.kt")
     public void ignoredClassObjectAsStaticInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/classObjectAsStaticInitializer.kt");
@@ -46,6 +52,12 @@ public class ClassesTestGenerated extends AbstractClassesTest {
     @TestMetadata("delegationJava.kt")
     public void ignoredDelegationJava() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/delegationJava.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("interfaceCompanionInitializationWithJava.kt")
+    public void ignoredInterfaceCompanionInitializationWithJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/interfaceCompanionInitializationWithJava.kt");
         doTest(fileName);
     }
 

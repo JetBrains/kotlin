@@ -1,35 +1,33 @@
-// WITH_RUNTIME
+// TARGET_BACKEND: JVM
 // FILE: CompanionInitialization.java
 
 public class CompanionInitialization {
 
     public static Object getCompanion() {
-        return IStatic.Companion;
+        return ConcreteWithStatic.Companion;
     }
 
 }
 
 // FILE: CompanionInitialization.kt
 
-open class Static(): IStatic {
-    val p = IStatic::class.java.getDeclaredField("const").get(null)
-}
+interface IStatic
 
-interface IStatic {
+open class Static(x: IStatic) {
     fun doSth() {
     }
+}
 
-    companion object : Static()  {
-        const val const = 1;
-    }
+class ConcreteWithStatic : IStatic {
+    companion object : Static(ConcreteWithStatic())
 }
 
 fun box(): String {
-    IStatic.doSth()
+    ConcreteWithStatic.doSth()
 
     val companion: Any? = CompanionInitialization.getCompanion()
     if (companion == null) return "fail 1"
-    if (companion != IStatic) return "fail 2"
+    if (companion != ConcreteWithStatic) return "fail 2"
 
     return "OK"
 }
