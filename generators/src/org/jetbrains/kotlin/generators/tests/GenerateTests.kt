@@ -204,10 +204,6 @@ fun main(args: Array<String>) {
             model("codegen/boxInline")
         }
 
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxMultiFileCodegenTestGenerated") {
-            model("codegen/boxMultiFile")
-        }
-
         testClass<AbstractBlackBoxAgainstJavaCodegenTest>() {
             model("codegen/boxAgainstJava")
         }

@@ -5,6 +5,7 @@ fun test2() {
 }
 
 // FILE: main.kt
+// See KT-10690 Exception in kotlin.reflect when trying to get kotlinFunction from javaMethod
 
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
