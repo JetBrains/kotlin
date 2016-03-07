@@ -7501,6 +7501,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("commonBridgesTarget.kt")
+        public void testCommonBridgesTarget() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/commonBridgesTarget.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyList.kt")
         public void testEmptyList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/emptyList.kt");
