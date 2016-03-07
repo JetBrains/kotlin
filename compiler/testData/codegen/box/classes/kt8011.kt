@@ -1,3 +1,5 @@
+// TODO: Enable for JS when it supports local classes.
+// TARGET_BACKEND: JVM
 // WITH_RUNTIME
 
 fun testFun1(str: String): String {

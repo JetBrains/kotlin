@@ -103,6 +103,12 @@ public class ClassesTestGenerated extends AbstractClassesTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kt8011.kt")
+    public void ignoredKt8011() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt8011.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt8011a.kt")
     public void ignoredKt8011a() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/kt8011a.kt");

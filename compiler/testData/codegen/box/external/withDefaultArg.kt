@@ -35,7 +35,7 @@ fun box(): String {
         return "Link error expected on object"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.message != "foo.DefaultKt.topLevel(I)D") return "Fail 3: " + e.message
+        if (e.message != "foo.WithDefaultArgKt.topLevel(I)D") return "Fail 3: " + e.message
     }
     return "OK"
 }
