@@ -1,4 +1,4 @@
-// This test was adapted from compiler/testData/codegen/boxWithStdlib/callableReference/function/.
+// This test was adapted from compiler/testData/codegen/box/callableReference/function/.
 package foo
 
 class A

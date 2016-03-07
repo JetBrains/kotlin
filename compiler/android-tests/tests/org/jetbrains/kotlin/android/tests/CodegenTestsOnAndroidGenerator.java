@@ -106,7 +106,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         p.println("public class ", testClassName, " extends ", baseTestClassName, " {");
         p.pushIndent();
 
-        generateTestMethodsForDirectories(p, new File("compiler/testData/codegen/box"), new File("compiler/testData/codegen/boxWithStdlib"));
+        generateTestMethodsForDirectories(p, new File("compiler/testData/codegen/box"));
 
         p.popIndent();
         p.println("}");
@@ -218,14 +218,9 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     String packageName = file.getPath().replaceAll("\\\\|-|\\.|/", "_");
                     text = changePackage(packageName, text);
 
-                    if (!file.getCanonicalPath().contains("boxWithStdlib")) {
-                        CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, holderMock.environment.getProject());
-                        holderMock.files.add(codegenFile.getPsiFile());
-                    }
-                    else {
-                        CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, holderFull.environment.getProject());
-                        holderFull.files.add(codegenFile.getPsiFile());
-                    }
+                    // TODO: use holderMock when there's no WITH_RUNTIME or WITH_REFLECT in the test
+                    CodegenTestFiles codegenFile = CodegenTestFiles.create(file.getName(), text, holderFull.environment.getProject());
+                    holderFull.files.add(codegenFile.getPsiFile());
 
                     generateTestMethod(printer, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
                 }
