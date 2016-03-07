@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 
 object PackagePartClassUtils {
@@ -57,14 +56,6 @@ object PackagePartClassUtils {
         val partClassName = getFilePartShortName(fileName)
         return packageFqName.child(Name.identifier(partClassName))
     }
-
-    @Deprecated("Migrate to JvmFileClassesProvider")
-    @JvmStatic fun getPackagePartInternalName(file: KtFile): String =
-            JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName
-
-    @Deprecated("Migrate to JvmFileClassesProvider")
-    @JvmStatic fun getPackagePartFqName(file: KtFile): FqName =
-            getPackagePartFqName(file.packageFqName, file.name)
 
     @JvmStatic fun getFilesWithCallables(files: Collection<KtFile>): List<KtFile> =
             files.filter { fileHasTopLevelCallables(it) }

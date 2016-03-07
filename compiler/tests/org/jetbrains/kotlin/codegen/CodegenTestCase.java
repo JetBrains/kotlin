@@ -232,12 +232,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
-    protected Class<?> generateFileClass() {
-        FqName fileClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(myFiles.getPsiFile()).getFileClassFqName();
-        return generateClass(fileClassFqName.asString());
-    }
-
-    @NotNull
     protected Class<?> generateClass(@NotNull String name) {
         try {
             return generateAndCreateClassLoader().loadClass(name);

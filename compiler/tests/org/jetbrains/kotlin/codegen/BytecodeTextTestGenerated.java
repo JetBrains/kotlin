@@ -1159,6 +1159,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nonNullableStringPlus.kt")
+        public void testNonNullableStringPlus() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/nonNullableStringPlus.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableStringPlus.kt")
+        public void testNullableStringPlus() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/nullableStringPlus.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("plusAssign.kt")
         public void testPlusAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/plusAssign.kt");

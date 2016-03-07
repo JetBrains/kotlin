@@ -73,7 +73,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPrivatePropertyInPackage() throws Exception {
         loadText("private val x = 239");
-        Class<?> nsClass = generateFileClass();
+        Class<?> nsClass = generateFacadeClass();
         Field[] fields = nsClass.getDeclaredFields();
         assertEquals(1, fields.length);
         Field field = fields[0];

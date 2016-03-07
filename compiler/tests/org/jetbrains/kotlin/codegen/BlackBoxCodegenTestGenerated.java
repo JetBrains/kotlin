@@ -3124,6 +3124,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noRefToOuter.kt")
+        public void testNoRefToOuter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/noRefToOuter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("recursiveClosure.kt")
         public void testRecursiveClosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/recursiveClosure.kt");
@@ -3433,6 +3439,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("continueInWhile.kt")
+        public void testContinueInWhile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/continueInWhile.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("continueToLabelInFor.kt")
         public void testContinueToLabelInFor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/continueToLabelInFor.kt");
@@ -3472,6 +3484,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("emptyWhile.kt")
         public void testEmptyWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/emptyWhile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("factorialTest.kt")
+        public void testFactorialTest() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/factorialTest.kt");
             doTest(fileName);
         }
 
@@ -4892,6 +4910,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/delegation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Delegation extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInDelegation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("delegationToVal.kt")
+        public void testDelegationToVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/delegation/delegationToVal.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5296,6 +5329,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classForEnumEntry.kt")
+        public void testClassForEnumEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/classForEnumEntry.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("companionObjectInEnum.kt")
         public void testCompanionObjectInEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/companionObjectInEnum.kt");
@@ -5380,21 +5419,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("name.kt")
-        public void testName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/name.kt");
+        @TestMetadata("modifierFlags.kt")
+        public void testModifierFlags() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/modifierFlags.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noClassForSimpleEnum.kt")
+        public void testNoClassForSimpleEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/noClassForSimpleEnum.kt");
             doTest(fileName);
         }
 
         @TestMetadata("objectInEnum.kt")
         public void testObjectInEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/objectInEnum.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("openMethod.kt")
-        public void testOpenMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/openMethod.kt");
             doTest(fileName);
         }
 
@@ -13906,6 +13945,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt309.kt")
+        public void testKt309() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typeMapping/kt309.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3286.kt")
         public void testKt3286() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typeMapping/kt3286.kt");
@@ -14140,6 +14185,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("exceptionOnNoMatch.kt")
+        public void testExceptionOnNoMatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exceptionOnNoMatch.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("exhaustiveBoolean.kt")
         public void testExhaustiveBoolean() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exhaustiveBoolean.kt");
@@ -14209,6 +14260,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("matchNotNullAgainstNullable.kt")
         public void testMatchNotNullAgainstNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/matchNotNullAgainstNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleEntries.kt")
+        public void testMultipleEntries() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/multipleEntries.kt");
             doTest(fileName);
         }
 

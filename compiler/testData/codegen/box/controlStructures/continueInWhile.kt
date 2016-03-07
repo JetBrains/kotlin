@@ -1,4 +1,4 @@
-fun continue_test(i: Int): Int {
+fun foo(i: Int): Int {
   var count = i;
   var result = 0;
   while(count > 0) {
@@ -7,4 +7,10 @@ fun continue_test(i: Int): Int {
     result = result + count;
   }
   return result;
+}
+
+fun box(): String {
+  if (foo(4) != 3) return "Fail 1"
+  if (foo(5) != 7) return "Fail 2"
+  return "OK"
 }
