@@ -5,10 +5,9 @@ public open class I {
     public final fun foo(): kotlin.Unit
 }
 
-public/*package*/ open class J : I {
+public/*package*/ open class J {
     public/*package*/ constructor J()
     public/*package*/ open fun bar(): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
 }
 
 public open class K {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -39,7 +40,7 @@ class LazyJavaTypeParameterDescriptor(
         Variance.INVARIANT,
         /* isReified = */ false,
         index,
-        SourceElement.NO_SOURCE
+        SourceElement.NO_SOURCE, c.components.supertypeLoopChecker
 ) {
 
     override fun resolveUpperBounds(): List<KotlinType> {
@@ -55,9 +56,7 @@ class LazyJavaTypeParameterDescriptor(
         }
     }
 
-    override fun getSupertypeLoopChecker() = c.components.supertypeLoopChecker
-
-    override fun reportCycleError(type: KotlinType) {
+    override fun reportSupertypeLoopError(type: KotlinType) {
         // Do nothing
     }
 }

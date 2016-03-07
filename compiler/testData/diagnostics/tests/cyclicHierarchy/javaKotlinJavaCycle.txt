@@ -1,8 +1,6 @@
 package
 
-public/*package*/ interface A : C {
-    public abstract override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun baz(): kotlin.Unit
+public/*package*/ interface A {
     public abstract fun foo(): kotlin.Unit
 }
 
@@ -10,7 +8,6 @@ public interface B {
     public abstract fun bar(): kotlin.Unit
 }
 
-public/*package*/ interface C : B {
-    public abstract override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
+public/*package*/ interface C {
     public abstract fun baz(): kotlin.Unit
 }

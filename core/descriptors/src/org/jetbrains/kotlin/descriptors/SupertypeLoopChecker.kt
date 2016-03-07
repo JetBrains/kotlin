@@ -22,17 +22,16 @@ import org.jetbrains.kotlin.types.TypeConstructor
 interface SupertypeLoopChecker {
     fun findLoopsInSupertypesAndDisconnect(
             currentTypeConstructor: TypeConstructor,
-            superTypes: MutableCollection<KotlinType>,
+            superTypes: Collection<KotlinType>,
             neighbors: (TypeConstructor) -> Iterable<KotlinType>,
             reportLoop: (KotlinType) -> Unit
-    )
+    ): Collection<KotlinType>
 
     object EMPTY : SupertypeLoopChecker {
         override fun findLoopsInSupertypesAndDisconnect(
                 currentTypeConstructor: TypeConstructor,
-                superTypes: MutableCollection<KotlinType>,
+                superTypes: Collection<KotlinType>,
                 neighbors: (TypeConstructor) -> Iterable<KotlinType>,
-                reportLoop: (KotlinType) -> Unit) {
-        }
+                reportLoop: (KotlinType) -> Unit): Collection<KotlinType> = superTypes
     }
 }

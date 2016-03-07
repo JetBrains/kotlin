@@ -128,16 +128,15 @@ class LazyJavaClassDescriptor(
 
     override fun toString() = "lazy java class $fqName"
 
-    private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor() {
-
+    private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {
         private val parameters = c.storageManager.createLazyValue {
             this@LazyJavaClassDescriptor.computeConstructorTypeParameters()
         }
 
         override fun getParameters(): List<TypeParameterDescriptor> = parameters()
 
-        private val supertypes = c.storageManager.createLazyValue<Collection<KotlinType>> {
-            val javaTypes = jClass.getSupertypes()
+        override fun computeSupertypes(): Collection<KotlinType> {
+            val javaTypes = jClass.supertypes
             val result = ArrayList<KotlinType>(javaTypes.size)
             val incomplete = ArrayList<JavaType>(0)
 
@@ -145,12 +144,12 @@ class LazyJavaClassDescriptor(
 
             for (javaType in javaTypes) {
                 val jetType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
-                if (jetType.isError()) {
+                if (jetType.isError) {
                     incomplete.add(javaType)
                     continue
                 }
 
-                if (jetType.getConstructor() == purelyImplementedSupertype?.getConstructor()) {
+                if (jetType.constructor == purelyImplementedSupertype?.constructor) {
                     continue
                 }
 
@@ -162,12 +161,12 @@ class LazyJavaClassDescriptor(
             result.addIfNotNull(purelyImplementedSupertype)
 
             if (incomplete.isNotEmpty()) {
-                c.components.errorReporter.reportIncompleteHierarchy(getDeclarationDescriptor(), incomplete.map { javaType ->
-                    (javaType as JavaClassifierType).getPresentableText()
+                c.components.errorReporter.reportIncompleteHierarchy(declarationDescriptor, incomplete.map { javaType ->
+                    (javaType as JavaClassifierType).presentableText
                 })
             }
 
-            if (result.isNotEmpty()) result.toReadOnlyList() else listOf(c.module.builtIns.getAnyType())
+            return if (result.isNotEmpty()) result.toReadOnlyList() else listOf(c.module.builtIns.anyType)
         }
 
         private fun getPurelyImplementedSupertype(): KotlinType? {
@@ -179,10 +178,10 @@ class LazyJavaClassDescriptor(
 
             val classDescriptor = c.module.builtIns.getBuiltInClassByFqNameNullable(purelyImplementedFqName) ?: return null
 
-            if (classDescriptor.getTypeConstructor().getParameters().size != getParameters().size) return null
+            if (classDescriptor.typeConstructor.parameters.size != getTypeConstructor().parameters.size) return null
 
-            val parametersAsTypeProjections = getParameters().map {
-                parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.getDefaultType())
+            val parametersAsTypeProjections = getTypeConstructor().parameters.map {
+                parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.defaultType)
             }
 
             return KotlinTypeImpl.create(
@@ -192,17 +191,18 @@ class LazyJavaClassDescriptor(
         }
 
         private fun getPurelyImplementsFqNameFromAnnotation(): FqName? {
-            val annotation = this@LazyJavaClassDescriptor.
-                    getAnnotations().
-                    findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION) ?: return null
+            val annotation =
+                    this@LazyJavaClassDescriptor.getAnnotations().findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION)
+                    ?: return null
 
-            val fqNameString = (annotation.getAllValueArguments().values.singleOrNull() as? StringValue)?.value ?: return null
+            val fqNameString = (annotation.allValueArguments.values.singleOrNull() as? StringValue)?.value ?: return null
             if (!isValidJavaFqName(fqNameString)) return null
 
             return FqName(fqNameString)
         }
 
-        override fun getSupertypes(): Collection<KotlinType> = supertypes()
+        override val supertypeLoopChecker: SupertypeLoopChecker
+            get() = c.components.supertypeLoopChecker
 
         override fun getAnnotations() = Annotations.EMPTY
 

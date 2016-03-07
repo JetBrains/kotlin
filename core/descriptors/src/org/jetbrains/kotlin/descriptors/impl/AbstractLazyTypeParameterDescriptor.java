@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -32,9 +33,11 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             @NotNull Variance variance,
             boolean isReified,
             int index,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            @NotNull SupertypeLoopChecker supertypeLoopChecker
     ) {
-        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, index, source);
+        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, index, source,
+              supertypeLoopChecker);
     }
 
     @Override
