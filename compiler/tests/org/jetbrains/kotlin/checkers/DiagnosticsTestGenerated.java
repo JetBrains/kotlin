@@ -3585,6 +3585,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaJavaCycle.kt")
+            public void testJavaJavaCycle() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/javaJavaCycle.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaJavaNested.kt")
+            public void testJavaJavaNested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/javaJavaNested.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaKotlinJavaCycle.kt")
             public void testJavaKotlinJavaCycle() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/javaKotlinJavaCycle.kt");
@@ -10472,6 +10484,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("var.kt")
                 public void testVar() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/properties/var.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/sam")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Sam extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInSam() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/sam"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("enhancedSamConstructor.kt")
+                public void testEnhancedSamConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/enhancedSamConstructor.kt");
                     doTest(fileName);
                 }
             }

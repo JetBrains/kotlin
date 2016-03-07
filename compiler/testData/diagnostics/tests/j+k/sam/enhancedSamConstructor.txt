@@ -1,17 +1,19 @@
 package
 
-public/*package*/ /*synthesized*/ fun J(/*0*/ function: () -> kotlin.collections.List<kotlin.String>): J
+public /*synthesized*/ fun J(/*0*/ function: (kotlin.String?) -> kotlin.String): J
+public /*synthesized*/ fun J2(/*0*/ function: (kotlin.String?) -> kotlin.String): J2
+public fun main(): kotlin.Unit
 
-public/*package*/ interface J : K {
+public interface J {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*1*/ fun foo(): kotlin.collections.List<kotlin.String>
+    @org.jetbrains.annotations.NotNull() public abstract fun foo(/*0*/ @org.jetbrains.annotations.Nullable() x: kotlin.String?): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface K {
+public interface J2 : J {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): kotlin.collections.List<kotlin.String>
+    public abstract override /*1*/ fun foo(/*0*/ x: kotlin.String?): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

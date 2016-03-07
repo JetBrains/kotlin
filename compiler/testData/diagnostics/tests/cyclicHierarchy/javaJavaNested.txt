@@ -1,0 +1,42 @@
+package
+
+public interface A {
+
+    public interface B {
+        public abstract fun getFoo(): kotlin.Int
+    }
+
+    // Static members
+    public final /*synthesized*/ fun B(/*0*/ function: () -> kotlin.Int): A.B
+}
+
+public interface A0 {
+
+    public interface B {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract fun getFoo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun B(/*0*/ function: () -> kotlin.Int): A0.B
+}
+
+public open class B {
+    public constructor B()
+    public open fun getFoo(): kotlin.Int
+
+    public open class C {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun getFoo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class D {
+    public constructor D()
+    public open fun getFoo(): kotlin.Int
+}

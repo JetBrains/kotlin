@@ -107,9 +107,7 @@ class LazyJavaClassDescriptor(
     override fun getAnnotations() = annotations()
 
     private val functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
-        c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this) { method ->
-            unsubstitutedMemberScope.resolveMethodToFunctionDescriptor(method)
-        }
+        c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this)
     }
 
     private val declaredParameters = c.storageManager.createLazyValue {
