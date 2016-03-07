@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 fun test1() {
@@ -25,4 +27,3 @@ fun box(): String {
     test2()
     return "OK"
 }
-

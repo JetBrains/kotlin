@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.internal.LowPriorityInOverloadResolution
 fun foo(i: Int) = 1

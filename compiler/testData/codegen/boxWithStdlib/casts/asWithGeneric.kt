@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun <T> test1() = null as T
 fun <T> test2(): T {
    val a : Any? = null

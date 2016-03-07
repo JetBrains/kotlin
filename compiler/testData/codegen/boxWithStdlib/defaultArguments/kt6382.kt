@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     return if (A().run() == "Aabc") "OK" else "fail"
 }

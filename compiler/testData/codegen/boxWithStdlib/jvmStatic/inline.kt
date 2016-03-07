@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object A {
 
     @JvmStatic inline fun test(b: String = "OK") : String {

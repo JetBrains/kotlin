@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.assertNull
 import kotlin.test.assertNotNull
 import kotlin.reflect.*

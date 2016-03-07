@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 var lambda = {}
 
 class A {

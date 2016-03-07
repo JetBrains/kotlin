@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.util.*
 
 fun <T> ArrayList<T>.findAll(predicate:  (T) -> Boolean): ArrayList<T> {

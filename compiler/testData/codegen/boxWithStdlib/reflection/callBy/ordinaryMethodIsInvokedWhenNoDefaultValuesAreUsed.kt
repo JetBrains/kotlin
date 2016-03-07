@@ -1,3 +1,4 @@
+// WITH_REFLECT
 // FULL_JDK
 
 import kotlin.test.assertEquals

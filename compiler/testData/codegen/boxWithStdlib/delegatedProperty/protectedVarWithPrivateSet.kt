@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.properties.Delegates
 
 open class A<T : Any> {

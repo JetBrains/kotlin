@@ -1,4 +1,4 @@
-import kotlin.reflect.jvm.*
+// WITH_RUNTIME
 
 abstract class Itr : Iterator<String>
 abstract class MItr : MutableIterator<String>

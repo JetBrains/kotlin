@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object A {
 
     private @JvmStatic fun a(): String {

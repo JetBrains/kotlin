@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.lang.annotation.Annotation
 
 @Retention(AnnotationRetention.RUNTIME)

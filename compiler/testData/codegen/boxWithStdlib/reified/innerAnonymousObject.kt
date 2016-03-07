@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 abstract class A<R> {

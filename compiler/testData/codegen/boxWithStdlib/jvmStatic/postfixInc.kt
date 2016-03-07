@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object A {
 
     @JvmStatic var a: Int = 1

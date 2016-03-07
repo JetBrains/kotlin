@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 inline fun <reified T : Any> jClass() = T::class.java
 inline fun <reified T : Any> jClassArray() = jClass<Array<T>>()
 

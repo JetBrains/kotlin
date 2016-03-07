@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // KT-4485 getGenericInterfaces vs getInterfaces for kotlin classes
 
 class SimpleClass

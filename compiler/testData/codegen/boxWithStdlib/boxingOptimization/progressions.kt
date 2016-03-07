@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 
 import kotlin.test.assertEquals
 
@@ -30,4 +31,3 @@ fun box() : String {
 
     return "OK"
 }
-

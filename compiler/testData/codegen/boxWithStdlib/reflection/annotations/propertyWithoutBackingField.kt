@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 annotation class Ann(val value: String)
 
 @Ann("OK")

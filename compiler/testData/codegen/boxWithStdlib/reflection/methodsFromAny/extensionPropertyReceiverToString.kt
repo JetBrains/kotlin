@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.KProperty1
 import kotlin.test.assertEquals
 

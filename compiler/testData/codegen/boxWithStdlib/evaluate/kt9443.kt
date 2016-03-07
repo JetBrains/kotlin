@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 abstract class BaseClass {
     protected open val menuId: Int = 0
 

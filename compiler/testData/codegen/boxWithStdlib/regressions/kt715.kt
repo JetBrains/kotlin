@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.*
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")

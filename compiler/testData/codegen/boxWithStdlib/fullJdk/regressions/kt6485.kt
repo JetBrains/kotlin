@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FULL_JDK
 
 import kotlin.test.assertEquals

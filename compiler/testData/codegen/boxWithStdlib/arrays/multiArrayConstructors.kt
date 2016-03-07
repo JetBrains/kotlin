@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 fun stringMultiArray(): Array<Array<String>> = Array(3) {

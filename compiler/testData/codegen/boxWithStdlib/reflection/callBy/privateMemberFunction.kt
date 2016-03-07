@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.IllegalCallableAccessException
 import kotlin.reflect.jvm.isAccessible
 

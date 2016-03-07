@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FULL_JDK
 
 package pack

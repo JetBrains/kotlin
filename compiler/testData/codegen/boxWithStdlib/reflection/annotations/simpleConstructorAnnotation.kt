@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 annotation class Primary
 annotation class Secondary
 

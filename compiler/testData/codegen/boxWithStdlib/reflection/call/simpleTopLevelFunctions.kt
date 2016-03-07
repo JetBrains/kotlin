@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 fun String.foo(): Int = length
 
 var state = "Fail"

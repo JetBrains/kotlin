@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 open class A {
     fun foo() = "OK"
 }

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun s0() : Boolean {
     val y = "222"
     val foo = {

@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 object Obj {
     @JvmStatic
     fun foo() {}

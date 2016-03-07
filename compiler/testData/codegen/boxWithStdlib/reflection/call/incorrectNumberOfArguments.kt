@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction

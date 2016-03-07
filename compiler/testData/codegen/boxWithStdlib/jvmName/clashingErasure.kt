@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun <T> List<T>.foo() = "foo"
 
 @JvmName("fooInt")

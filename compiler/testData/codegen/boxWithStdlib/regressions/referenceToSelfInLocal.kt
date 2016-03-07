@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // KT-4351 Cannot resolve reference to self in init of class local to function
 
 fun box(): String {

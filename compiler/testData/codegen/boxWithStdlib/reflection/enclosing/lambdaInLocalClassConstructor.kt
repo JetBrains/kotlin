@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 open class C
 
 fun box(): String {

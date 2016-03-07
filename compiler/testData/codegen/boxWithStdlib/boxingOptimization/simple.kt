@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 inline fun <R> foo(x : R, block : (R) -> R) : R {

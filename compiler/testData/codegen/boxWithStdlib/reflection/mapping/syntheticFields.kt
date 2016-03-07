@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.jvm.kotlin
 
 enum class A {

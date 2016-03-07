@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.util.ArrayList
 
 fun dense(x: Int): Int {
@@ -22,4 +24,3 @@ fun box(): String {
     if (result != "19, 9, 19, 19, 10, 11, 12, 19, 19, 13, 14, 15, 16, 17, 18, 19") return "dense:" + result
     return "OK"
 }
-

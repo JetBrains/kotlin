@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 var holder = ""
 
 fun getA(): A {

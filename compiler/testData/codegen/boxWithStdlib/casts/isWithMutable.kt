@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.util.*
 
 class Itr : Iterator<String> by ArrayList<String>().iterator()

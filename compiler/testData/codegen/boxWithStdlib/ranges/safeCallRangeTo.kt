@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun charRange(x: Char?, y: Char) = x?.rangeTo(y)
 fun byteRange(x: Byte?, y: Byte) = x?.rangeTo(y)
 fun shortRange(x: Short?, y: Short) = x?.rangeTo(y)

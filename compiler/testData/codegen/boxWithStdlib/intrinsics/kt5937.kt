@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 var result = "Fail"
 
 var l = 10L

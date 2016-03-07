@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 object O {
     val f = {}
 }

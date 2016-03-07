@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 inline fun <reified T> foo(x: Any?) = Pair(x is T, x is T?)
 inline fun <reified F> bar(y: Any?) = foo<Array<F>>(y)
 inline fun <reified F> barNullable(y: Any?) = foo<Array<F>?>(y)

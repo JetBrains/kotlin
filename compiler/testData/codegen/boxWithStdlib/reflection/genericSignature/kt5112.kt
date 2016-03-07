@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 package test
 
 class G<T>(val s: T) {

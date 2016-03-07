@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import java.util.Collections
 import kotlin.reflect.*
 import kotlin.test.assertEquals

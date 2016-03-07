@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.assertEquals
 
 fun String.sum(other: String = "b") = this + other

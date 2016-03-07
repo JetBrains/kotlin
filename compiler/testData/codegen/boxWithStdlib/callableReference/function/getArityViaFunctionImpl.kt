@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 import kotlin.jvm.internal.FunctionImpl
 

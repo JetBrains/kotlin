@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object X {
     @JvmStatic val x = "OK"
 

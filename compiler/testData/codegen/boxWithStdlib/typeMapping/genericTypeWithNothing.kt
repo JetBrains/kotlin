@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 package foo
 
 import kotlin.reflect.KClass

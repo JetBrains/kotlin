@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 var _l: Any = ""
 
 var l: Any

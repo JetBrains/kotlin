@@ -1,3 +1,4 @@
+// WITH_REFLECT
 //test for KT-3722 Write correct generic type information for generated fields
 import kotlin.properties.Delegates
 

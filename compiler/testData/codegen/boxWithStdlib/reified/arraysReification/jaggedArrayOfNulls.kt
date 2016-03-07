@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 inline fun <reified T> jaggedArrayOfNulls(): Array<Array<T>?> = arrayOfNulls<Array<T>>(1)
 
 fun box(): String {

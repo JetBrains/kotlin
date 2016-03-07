@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box() : String {
     val a = arrayOfNulls<String>(3)
     a[0] = "a"

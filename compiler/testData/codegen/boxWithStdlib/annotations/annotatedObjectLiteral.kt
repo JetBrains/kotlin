@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 annotation class Ann(val v: String = "???")
 @Ann open class My
 fun box(): String {

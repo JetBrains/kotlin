@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 interface Stream<T> {
     fun iterator(): Iterator<T>
 }

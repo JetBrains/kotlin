@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // Basically this test checks that no captured type used as argument for signature mapping
 class SwOperator<T>: Operator<List<T>, T>
 

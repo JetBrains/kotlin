@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 annotation class Get
 annotation class Set
 annotation class SetParam

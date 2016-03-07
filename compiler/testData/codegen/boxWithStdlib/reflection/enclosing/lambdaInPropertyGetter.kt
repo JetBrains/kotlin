@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 val l: Any
     get() = {}
 

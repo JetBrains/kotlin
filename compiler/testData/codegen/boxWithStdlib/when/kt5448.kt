@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class A
 
 class B(val items: Collection<A>)

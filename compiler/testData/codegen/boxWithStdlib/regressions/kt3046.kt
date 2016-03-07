@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
   val bool = true
   if (bool.javaClass != Boolean::class.java) return "javaClass function on boolean fails"

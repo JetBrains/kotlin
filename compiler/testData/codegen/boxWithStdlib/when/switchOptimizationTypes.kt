@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun intFoo(x: Int): Int {
     return when (x) {
         1 -> 5
@@ -52,5 +54,3 @@ fun box(): String {
     if (result != "5, 6, 7, 8") return "int:" + result
     return "OK"
 }
-
-

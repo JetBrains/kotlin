@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 fun box(): String {
 
     val classInLambda = {

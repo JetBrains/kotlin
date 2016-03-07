@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 fun fn0() {}
 fun fn1(x: Any) {}
 

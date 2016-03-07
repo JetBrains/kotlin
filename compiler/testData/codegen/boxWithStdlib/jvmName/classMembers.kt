@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // See:
 // http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname
 // https://youtrack.jetbrains.com/issue/KT-5524
@@ -115,5 +116,3 @@ fun box(): String {
 
     return "OK"
 }
-
-

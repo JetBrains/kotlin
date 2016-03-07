@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.*
 
 open class A(private val p: Int)

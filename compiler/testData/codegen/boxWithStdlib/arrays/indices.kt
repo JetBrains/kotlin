@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     val a = Array<Int>(5, {it})
     val x = a.indices.iterator()

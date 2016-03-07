@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class B(var s: Int = 0) {
 
 }

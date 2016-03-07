@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 @file:JvmName("Test")
 @file:JvmMultifileClass
 package test

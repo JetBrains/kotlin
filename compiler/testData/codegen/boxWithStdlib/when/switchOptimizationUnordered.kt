@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun foo(x: Int): Int {
     return when (x) {
         2 -> 6

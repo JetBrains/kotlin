@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 data class A(val x: Int) {
   fun hashCode(other: Any): Int = 0
 }

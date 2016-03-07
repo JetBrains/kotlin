@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     val res = (1..3).map { it ->
         if (it == 1)

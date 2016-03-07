@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.collections.AbstractIterator
 
 class MyIterator : AbstractIterator<String>() {

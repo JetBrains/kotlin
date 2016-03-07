@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     val m = hashMapOf<String, String?>()
     m.put("b", null)

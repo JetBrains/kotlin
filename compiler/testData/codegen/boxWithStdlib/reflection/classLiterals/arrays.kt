@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.*
 import kotlin.reflect.KClass
 

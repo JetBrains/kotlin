@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class A {
     fun foo(x: Int, y: Int) = x + y
 }

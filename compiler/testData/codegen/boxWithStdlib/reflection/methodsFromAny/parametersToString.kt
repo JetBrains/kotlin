@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.*
 
 fun Int.foo(s: String) {}

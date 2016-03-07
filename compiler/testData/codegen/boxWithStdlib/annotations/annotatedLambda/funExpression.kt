@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.lang.reflect.Method
 import kotlin.test.assertEquals
 

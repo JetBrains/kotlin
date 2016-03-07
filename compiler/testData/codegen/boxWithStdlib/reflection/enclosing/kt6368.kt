@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import java.util.HashMap
 
 interface R {

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 annotation class A
 
 @Target(AnnotationTarget.CLASS)

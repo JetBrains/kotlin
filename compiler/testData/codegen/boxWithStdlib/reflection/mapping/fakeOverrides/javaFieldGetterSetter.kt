@@ -1,3 +1,4 @@
+// WITH_REFLECT
 // KT-8131 Cannot find backing field in ancestor class via reflection
 
 import kotlin.reflect.*

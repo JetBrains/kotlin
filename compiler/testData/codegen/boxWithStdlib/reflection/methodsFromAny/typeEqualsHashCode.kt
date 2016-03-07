@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.KType
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

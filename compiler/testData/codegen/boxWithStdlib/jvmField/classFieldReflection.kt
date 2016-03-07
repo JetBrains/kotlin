@@ -1,6 +1,7 @@
+// WITH_REFLECT
+
 package zzz
 import java.lang.reflect.Field
-import kotlin.reflect.jvm.javaField
 import kotlin.reflect.KProperty1
 import kotlin.test.assertEquals
 

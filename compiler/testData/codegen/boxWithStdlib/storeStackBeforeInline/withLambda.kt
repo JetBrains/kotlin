@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 inline fun bar(x: String, block: (String) -> String) = "def" + block(x)

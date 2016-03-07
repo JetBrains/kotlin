@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // See KT-10107: 'Variable must be initialized' for delegate with private set
 
 class My {
@@ -10,4 +11,3 @@ class My {
 }
 
 fun box() = My().delegate
-

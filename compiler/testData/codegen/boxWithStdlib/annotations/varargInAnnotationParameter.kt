@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(vararg val p: Int)
 

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 package zzz
 import kotlin.reflect.KMutableProperty1
 import kotlin.test.assertEquals

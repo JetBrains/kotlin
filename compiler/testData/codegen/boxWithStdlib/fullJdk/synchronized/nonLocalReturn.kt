@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FULL_JDK
 
 import java.util.concurrent.CountDownLatch

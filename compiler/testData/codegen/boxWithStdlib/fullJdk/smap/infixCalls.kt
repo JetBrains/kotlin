@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FULL_JDK
 
 fun testProperLineNumber(): String {
@@ -9,7 +10,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = (e as java.lang.Throwable).getStackTrace()!!.get(1)
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:6" != actual) {
+        if ("infixCalls.kt:7" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++
@@ -22,7 +23,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:19" != actual) {
+        if ("infixCalls.kt:20" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++
@@ -34,7 +35,7 @@ fun testProperLineNumber(): String {
     catch(e: AssertionError) {
         val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
-        if ("infixCalls.kt:32" != actual) {
+        if ("infixCalls.kt:33" != actual) {
             return "fail 1: ${actual}"
         }
         exceptionCount++

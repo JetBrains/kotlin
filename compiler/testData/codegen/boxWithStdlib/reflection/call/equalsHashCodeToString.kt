@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class A
 
 data class D(val s: String)

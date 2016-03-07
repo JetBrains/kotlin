@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 fun checkLongAB5E(x: Long) = assertEquals(0xAB5EL, x)

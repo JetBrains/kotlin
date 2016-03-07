@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 enum class E {
     VALUE,
     VALUE2

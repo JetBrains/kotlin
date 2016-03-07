@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun fn0() {}
 fun fn1(x: Any) {}
 

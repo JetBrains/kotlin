@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object Test {
     var z = "0"
     var l = 0L

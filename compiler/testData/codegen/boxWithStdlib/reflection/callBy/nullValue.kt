@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.assertNull
 
 fun foo(x: String? = "Fail") {

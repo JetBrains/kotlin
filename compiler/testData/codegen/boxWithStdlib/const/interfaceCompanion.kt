@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 interface KInt {
 
     companion object {

@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.KMutableProperty1
 
 class A {

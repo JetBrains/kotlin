@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 data class B(val x: Int) {
   fun equals(other: B): Boolean = false
 }

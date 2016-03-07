@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 interface A {
     fun f(): String
 }

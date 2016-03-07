@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun testFun1(str: String): String {
     val local = str
 

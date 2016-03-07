@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 package test
 
 internal val noMangling = 1;

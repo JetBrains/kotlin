@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 
 import kotlin.test.assertEquals
 

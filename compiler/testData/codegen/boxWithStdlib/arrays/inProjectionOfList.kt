@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     val x: Array<List<*>> = arrayOf(listOf(1))
     val y : Array<in List<String>> = x

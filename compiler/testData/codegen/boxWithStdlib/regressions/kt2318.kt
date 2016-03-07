@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     Boolean::class.java
     Byte::class.java

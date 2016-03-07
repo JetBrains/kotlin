@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import Game.*
 
 enum class Game {

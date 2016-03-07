@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 operator fun Int.component1(): String {
     return arrayListOf("zero", "one", "two", "three")[this]
 }

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun findPairless(a : IntArray) : Int {
   loop@ for (i in a.indices) {
     for (j in a.indices) {

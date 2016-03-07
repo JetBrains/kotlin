@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class O {
     companion object {
         // Currently we consider <clinit> in class O as the enclosing method of this lambda,

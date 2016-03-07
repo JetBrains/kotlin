@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 package test
 
 open class B

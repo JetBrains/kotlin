@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 const val z = "OK"
 
 annotation class A(val value: String = z)

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 fun simpleIntArray(): Array<Int> = Array(3) { it }
@@ -22,4 +24,3 @@ fun box(): String {
 
     return "OK"
 }
-

@@ -1,3 +1,4 @@
+// WITH_REFLECT
 // KT-4234
 
 fun box(): String {

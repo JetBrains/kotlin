@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class C(val i: Int) {
     var status = "fail"
 

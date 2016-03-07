@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import O.p
 import O.f
 import C.Companion.p1

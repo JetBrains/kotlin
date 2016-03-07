@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 interface I1
 interface I2
 open class C

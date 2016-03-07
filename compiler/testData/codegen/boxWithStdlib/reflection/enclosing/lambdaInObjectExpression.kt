@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 interface C {
     val a: Any
 }

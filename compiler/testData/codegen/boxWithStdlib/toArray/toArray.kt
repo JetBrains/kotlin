@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.util.Arrays
 
 class MyCollection<T>(val delegate: Collection<T>): Collection<T> by delegate

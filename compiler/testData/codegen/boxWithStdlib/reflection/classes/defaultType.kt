@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.defaultType
 import kotlin.reflect.jvm.javaType
 import kotlin.test.assertEquals

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class A {
     @JvmField public val field = "OK";
 

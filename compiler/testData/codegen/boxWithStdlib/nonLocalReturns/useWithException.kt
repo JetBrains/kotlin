@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.io.Closeable
 import kotlin.test.assertTrue
 import kotlin.test.fail

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun foo(): Int {
     var sum = 0
     for (c in "239")

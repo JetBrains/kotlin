@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 open class A {
     @JvmField public val publicField = "1";
     @JvmField internal val internalField = "2";

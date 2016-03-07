@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class B<M>
 
 interface A<T, Y : B<T>> {

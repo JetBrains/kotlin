@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     val aByte = arrayListOf<Byte>(1)
     var bByte: Byte = 1

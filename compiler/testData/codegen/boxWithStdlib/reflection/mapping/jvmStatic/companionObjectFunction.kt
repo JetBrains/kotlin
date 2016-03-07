@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.*
 import kotlin.test.*

@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.KClass
 
 inline fun <reified T : Any> check(expected: String) {

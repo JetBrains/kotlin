@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class A(value: Int = 1)
 
 fun box(): String {

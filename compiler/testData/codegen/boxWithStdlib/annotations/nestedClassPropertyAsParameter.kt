@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 @Ann(A.B.i) class MyClass
 
 fun box(): String {

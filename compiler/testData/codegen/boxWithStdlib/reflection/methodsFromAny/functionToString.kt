@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 package test
 
 import kotlin.test.assertEquals

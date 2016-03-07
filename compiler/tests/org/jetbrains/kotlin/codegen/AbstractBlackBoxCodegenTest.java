@@ -81,7 +81,6 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     protected void doTestWithStdlib(@NotNull String filename) throws Exception {
-        addReflect = true;
         doTest(filename);
     }
 

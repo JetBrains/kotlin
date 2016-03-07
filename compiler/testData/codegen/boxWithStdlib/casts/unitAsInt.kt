@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun foo() {}
 
 fun box(): String {

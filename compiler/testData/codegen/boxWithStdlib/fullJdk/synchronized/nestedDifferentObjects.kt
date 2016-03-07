@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     val obj = "" as java.lang.Object
     val obj2 = "1" as java.lang.Object

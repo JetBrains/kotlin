@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 fun foo(x: Int, y: Int = 2) = x + y
 
 fun box(): String {

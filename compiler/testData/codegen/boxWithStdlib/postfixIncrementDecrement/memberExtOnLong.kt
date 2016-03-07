@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 object ExtProvider {
     operator fun Long.get(i: Int) = this
     operator fun Long.set(i: Int, newValue: Long) {}

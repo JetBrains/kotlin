@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class A {
     class Nested(val result: String)
     inner class Inner(val result: String)

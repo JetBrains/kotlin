@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun <E : Enum<E>> Byte.toEnum(clazz : Class<E>) : E =
     (clazz.getMethod("values").invoke(null) as Array<E>)[this.toInt()]
 

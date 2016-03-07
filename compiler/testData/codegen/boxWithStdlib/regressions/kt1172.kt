@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 package test.regressions.kt1172
 
 import kotlin.concurrent.*

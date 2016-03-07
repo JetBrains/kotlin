@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun unsupported(): Nothing = throw UnsupportedOperationException()
 
 class Weird : Iterator<String>, MutableIterable<String>, MutableMap.MutableEntry<String, String> {

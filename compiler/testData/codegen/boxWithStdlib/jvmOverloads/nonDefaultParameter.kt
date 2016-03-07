@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class C {
     @kotlin.jvm.JvmOverloads public fun foo(o: String, k: String = "K"): String {
         return o + k

@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.*
 import kotlin.reflect.jvm.*
 

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.*
 
 fun <T> copyArray(vararg data: T): Array<out T> = data

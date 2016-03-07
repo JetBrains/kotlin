@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 open class A<T>(val t: T) {
     fun foo() = t
 }

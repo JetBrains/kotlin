@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class A(val result: String)
 
 fun box(): String {

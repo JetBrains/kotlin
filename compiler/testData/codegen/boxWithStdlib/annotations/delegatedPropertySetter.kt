@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.reflect.KProperty
 
 @Retention(AnnotationRetention.RUNTIME)

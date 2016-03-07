@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 data class A(val x: Int) {
   fun toString(other: Any): String = ""
 }

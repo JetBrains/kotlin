@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertEquals
 
 inline fun<reified T> Array<Any>.filterIsInstance(): List<T> {

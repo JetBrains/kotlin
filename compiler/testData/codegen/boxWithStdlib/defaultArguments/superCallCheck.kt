@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 
 fun def(i: Int = 0): Int {
     return i;

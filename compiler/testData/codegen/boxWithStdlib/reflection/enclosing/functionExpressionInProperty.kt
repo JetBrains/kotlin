@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 val property = fun () {}
 
 fun box(): String {

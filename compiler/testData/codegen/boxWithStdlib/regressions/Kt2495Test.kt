@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 package regressions
 
 fun f(xs: Iterator<Int>): Int {

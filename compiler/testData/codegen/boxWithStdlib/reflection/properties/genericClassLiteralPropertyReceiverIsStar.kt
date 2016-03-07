@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.reflect.*
 
 class A<T> {

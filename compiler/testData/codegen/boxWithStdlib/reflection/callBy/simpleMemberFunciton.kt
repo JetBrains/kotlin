@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class A(val result: String = "OK") {
     fun foo(x: Int = 42): String {
         assert(x == 42) { x }

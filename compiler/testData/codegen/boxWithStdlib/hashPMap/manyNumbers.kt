@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import java.util.*
 import kotlin.reflect.jvm.internal.pcollections.HashPMap
 import kotlin.test.*

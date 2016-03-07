@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.assertEquals
 
 fun String?.foo(x: Int, y: Array<Int>, z: IntArray, w: List<Map<Any, A<*>>>) {}

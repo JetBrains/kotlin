@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.util.Arrays
 
 fun getCopyToArray(): Array<Int> = Arrays.asList(2, 3, 9).toTypedArray()

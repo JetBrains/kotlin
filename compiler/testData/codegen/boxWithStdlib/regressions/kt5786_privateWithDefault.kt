@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun box(): String {
     run {
         test("ok")

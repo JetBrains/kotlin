@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class C {
     fun foo(): Any {
         return {}

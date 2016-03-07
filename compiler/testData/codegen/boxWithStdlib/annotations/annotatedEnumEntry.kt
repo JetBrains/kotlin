@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // KT-5665
 
 @Retention(AnnotationRetention.RUNTIME)

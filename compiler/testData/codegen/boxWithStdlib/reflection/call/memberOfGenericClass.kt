@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 var result = "Fail"
 
 class A<T> {

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import kotlin.test.assertFalse
 
 @JvmField public val field = "OK";

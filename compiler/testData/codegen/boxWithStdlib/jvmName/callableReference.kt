@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 @JvmName("bar")
 fun foo() = "foo"
 

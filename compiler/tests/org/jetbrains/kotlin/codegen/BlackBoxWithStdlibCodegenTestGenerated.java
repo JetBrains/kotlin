@@ -320,12 +320,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/getArityViaFunctionImpl.kt");
                 doTestWithStdlib(fileName);
             }
-
-            @TestMetadata("listOfStringsMapLength.kt")
-            public void testListOfStringsMapLength() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/listOfStringsMapLength.kt");
-                doTestWithStdlib(fileName);
-            }
         }
     }
 

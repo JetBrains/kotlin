@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 class C {
     @kotlin.jvm.JvmOverloads public fun foo(d1: Double, d2: Double, status: String = "OK"): String {
         return if (d1 + d2 == 3.0) status else "fail"

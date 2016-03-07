@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 import java.util.ArrayList
 
 // KT-2823 TypeCastException has no message

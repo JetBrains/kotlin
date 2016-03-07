@@ -1,6 +1,7 @@
+// WITH_RUNTIME
+
 package zzz
 import java.lang.reflect.Field
-import kotlin.reflect.jvm.javaField
 import kotlin.test.assertEquals
 import kotlin.reflect.KProperty0
 

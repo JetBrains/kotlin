@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 @file:StringHolder("OK")
 @file:JvmName("FileClass")
 

@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.assertEquals
 
 fun foo(a: String, b: String = "b", c: String, d: String = "d", e: String) =

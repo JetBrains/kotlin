@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.reflect.jvm.jvmName

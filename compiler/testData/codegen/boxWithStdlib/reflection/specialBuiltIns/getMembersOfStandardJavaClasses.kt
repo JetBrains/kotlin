@@ -1,3 +1,4 @@
+// WITH_REFLECT
 // FULL_JDK
 // See KT-11258 Incorrect resolution sequence for Java field
 

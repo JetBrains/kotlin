@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Simple(val value: String)
 

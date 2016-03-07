@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 inline fun <reified T> foo(x: Any?) = Pair(x is T, x is T?)
 
 fun box(): String {

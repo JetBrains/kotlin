@@ -1,3 +1,5 @@
+// WITH_REFLECT
+
 class Z<T> {}
 
 class TParam {}

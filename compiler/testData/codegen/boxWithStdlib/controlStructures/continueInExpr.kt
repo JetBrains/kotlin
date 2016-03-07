@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun concatNonNulls(strings: List<String?>): String {
     var result = ""
     for (str in strings) {
