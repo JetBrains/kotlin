@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiled
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
+import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
@@ -521,6 +522,10 @@ fun main(args: Array<String>) {
             model("codeInsight/unwrapAndRemove/unwrapFinally", testMethod = "doTestFinallyUnwrapper")
             model("codeInsight/unwrapAndRemove/removeFinally", testMethod = "doTestFinallyRemover")
             model("codeInsight/unwrapAndRemove/unwrapLambda", testMethod = "doTestLambdaUnwrapper")
+        }
+
+        testClass<AbstractBackspaceHandlerTest>() {
+            model("editor/backspaceHandler")
         }
 
         testClass<AbstractQuickDocProviderTest>() {

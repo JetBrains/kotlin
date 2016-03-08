@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 
-public class KotlinCommenterTest extends AbstractEditorTest {
+public class KotlinCommenterTest extends LightCodeInsightTestCase {
     private static final String BASE_PATH =
             new File(PluginTestCaseBase.getTestDataPathBase(), "/editor/commenter/").getAbsolutePath();
 
@@ -45,8 +45,15 @@ public class KotlinCommenterTest extends AbstractEditorTest {
         check();
     }
 
-    @Override
-    protected String getBasePath() {
-        return BASE_PATH;
+    private void configure() throws Exception {
+        configureFromFileText("a.kt", loadFile(getTestName(true) + ".kt"));
+    }
+
+    private void check() throws Exception {
+        checkResultByText(loadFile(getTestName(true) + "_after.kt"));
+    }
+
+    protected static String loadFile(String name) throws Exception {
+        return FileUtil.loadFile(new File(BASE_PATH, name), true);
     }
 }

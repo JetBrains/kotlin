@@ -14,31 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.editor
+package org.jetbrains.kotlin.idea.editor.backspaceHandler
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.EditorTestUtil
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import com.intellij.testFramework.LightCodeInsightTestCase
 import java.io.File
 
-class StringTemplateBackspaceHandlerTest : AbstractEditorTest() {
-    val path = File(PluginTestCaseBase.getTestDataPathBase(), "/editor/stringTemplateBackspaceHandler/").getAbsolutePath()
-
-    override fun getBasePath(): String? {
-        return path
-    }
-
-    fun testStringTemplateBrackets() {
-        doTest()
-    }
-
-    fun testEscapedStringTemplate() {
-        doTest()
-    }
-
-    fun doTest() {
-        configure()
+open class AbstractBackspaceHandlerTest : LightCodeInsightTestCase() {
+    fun doTest(path: String) {
+        configureFromFileText("a.kt", loadFile(path))
         EditorTestUtil.executeAction(getEditor(), IdeActions.ACTION_EDITOR_BACKSPACE)
-        check()
+        checkResultByText(loadFile(path + ".after"))
     }
+
+    private fun loadFile(path: String) = FileUtil.loadFile(File(path), true)
 }
