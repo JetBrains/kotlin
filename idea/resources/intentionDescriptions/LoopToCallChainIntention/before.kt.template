@@ -1,0 +1,8 @@
+fun foo(list: List<String>): String? {
+    <spot>for (s in list) {
+        if (s.length > 0) {
+            return s
+        }
+    }
+    return null</spot>
+}

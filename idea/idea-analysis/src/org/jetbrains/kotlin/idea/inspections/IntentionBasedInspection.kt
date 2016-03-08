@@ -37,18 +37,22 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
 ) : AbstractKotlinInspection() {
 
     constructor(
-            intention: SelfTargetingRangeIntention<TElement>
-    ) : this(listOf(IntentionData(intention)), null, intention.elementType)
+            intention: SelfTargetingRangeIntention<TElement>,
+            problemText: String? = null
+    ) : this(listOf(IntentionData(intention)), problemText, intention.elementType)
 
     constructor(
             intention: SelfTargetingRangeIntention<TElement>,
-            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean
-    ) : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
+            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+            problemText: String? = null
+    ) : this(listOf(IntentionData(intention, additionalChecker)), problemText, intention.elementType)
 
     constructor(
             intention: SelfTargetingRangeIntention<TElement>,
-            additionalChecker: (TElement) -> Boolean
-    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) } )), null, intention.elementType)
+            additionalChecker: (TElement) -> Boolean,
+            problemText: String? = null
+    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) } )), problemText, intention.elementType)
+
 
 
     data class IntentionData<TElement : PsiElement>(
