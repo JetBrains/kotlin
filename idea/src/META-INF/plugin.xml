@@ -1335,7 +1335,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocMissingDocumentationInspection"
                      displayName="Missing KDoc comments for public declarations"
                      groupName="Kotlin"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
     />
 
