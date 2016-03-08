@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.idea.editor.fixers
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -29,8 +31,15 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinLastLambdaParameterFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
-        if (element !is KtCallExpression) return
+        if (element is KtCallExpression) {
+            addBracesIfNecessary(editor, element, processor)
+        }
+        else if (element is LeafPsiElement) {
+            registerErrorIfNecessary(element, processor)
+        }
+    }
 
+    private fun addBracesIfNecessary(editor: Editor, element: KtCallExpression, processor: KotlinSmartEnterHandler) {
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
 
@@ -47,16 +56,16 @@ class KotlinLastLambdaParameterFixer : SmartEnterProcessorWithFixers.Fixer<Kotli
                     offset++
                 }
 
-                var arity = type.constructor.parameters.size - 1
-                if (KotlinBuiltIns.isExactExtensionFunctionType(type)) arity--
-
-                if (arity <= 1) {
-                    doc.insertString(offset, "{\n}")
-                } else {
-                    val params = (1..arity).map { "x$it" }.joinToString(", ")
-                    doc.insertString(offset, "{ $params ->\n}")
-                }
+                doc.insertString(offset, "{  }")
+                processor.registerUnresolvedError(offset + 2)
             }
         }
+    }
+
+    private fun registerErrorIfNecessary(element: LeafPsiElement, processor: KotlinSmartEnterHandler) {
+        if(element.elementType != KtTokens.LBRACE) return
+        if(element.parent?.parent?.parent?.parent !is KtCallExpression) return
+
+        processor.registerUnresolvedError(element.endOffset + 1)
     }
 }

@@ -1281,7 +1281,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
-    fun testLambdaParamImplicit1() = doFileTest(
+    fun testLambdaParam() = doFileTest(
             """
             fun foo(a: Any, block: () -> Unit) {
             }
@@ -1294,49 +1294,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             fun foo(a: Any, block: () -> Unit) {
             }
             fun test() {
-                foo(Any()) {
-                    <caret>
-                }
-            }
-            """
-    )
-
-    fun testLambdaParamImplicit2() = doFileTest(
-            """
-            fun foo(a: Any, block: (Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()<caret>
-            }
-            """
-            ,
-            """
-            fun foo(a: Any, block: (Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()) {
-                    <caret>
-                }
-            }
-            """
-    )
-
-    fun testLambdaParamExplicit1() = doFileTest(
-            """
-            fun foo(a: Any, block: (Any, Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()<caret>)
-            }
-            """
-            ,
-            """
-            fun foo(a: Any, block: (Any, Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()) { x1, x2 ->
-                    <caret>
-                }
+                foo(Any()) { <caret> }
             }
             """
     )
@@ -1354,49 +1312,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             fun foo(a: Any, block: Any.() -> Unit) {
             }
             fun test() {
-                foo(Any()) {
-                    <caret>
-                }
-            }
-            """
-    )
-
-    fun testExtensionLambdaParamImplicit2() = doFileTest(
-            """
-            fun foo(a: Any, block: Any.(Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()<caret>
-            }
-            """
-            ,
-            """
-            fun foo(a: Any, block: Any.(Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()) {
-                    <caret>
-                }
-            }
-            """
-    )
-
-    fun testExtensionLambdaParamExplicit1() = doFileTest(
-            """
-            fun foo(a: Any, block: Any.(Any, Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()<caret>)
-            }
-            """
-            ,
-            """
-            fun foo(a: Any, block: Any.(Any, Any) -> Unit) {
-            }
-            fun test() {
-                foo(Any()) { x1, x2 ->
-                    <caret>
-                }
+                foo(Any()) { <caret> }
             }
             """
     )
