@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun foo(list: List<String>) {
+    <caret>var result: String? = list.firstOrNull { it.length > 0 }
+
+    result += "1"
+}

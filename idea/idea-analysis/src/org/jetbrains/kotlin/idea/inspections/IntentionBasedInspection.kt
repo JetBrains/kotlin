@@ -40,24 +40,21 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
 ) : AbstractKotlinInspection() {
 
     constructor(
-            intention: KClass<out SelfTargetingRangeIntention<TElement>>
-    ) : this(listOf(IntentionData(intention)), null)
-
-    constructor(
             intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean
-    ) : this(listOf(IntentionData(intention, additionalChecker)), null)
-
-    constructor(
-            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            additionalChecker: (TElement) -> Boolean
-    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) })), null)
-
-    constructor(
-            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            problemText: String?
+            problemText: String? = null
     ) : this(listOf(IntentionData(intention)), problemText)
 
+    constructor(
+            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
+            additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean,
+            problemText: String? = null
+    ) : this(listOf(IntentionData(intention, additionalChecker)), problemText)
+
+    constructor(
+            intention: KClass<out SelfTargetingRangeIntention<TElement>>,
+            additionalChecker: (TElement) -> Boolean,
+            problemText: String? = null
+    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) })), problemText)
 
     data class IntentionData<TElement : PsiElement>(
             val intention: KClass<out SelfTargetingRangeIntention<TElement>>,
@@ -103,7 +100,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
                         if (fixes == null) {
                             fixes = SmartList<LocalQuickFix>()
                         }
-                        fixes!!.add(IntentionBasedQuickFix(intention, intention.text, additionalChecker, targetElement))
+                        fixes.add(IntentionBasedQuickFix(intention, intention.text, additionalChecker, targetElement))
                     }
                 }
 

@@ -25,12 +25,12 @@ import java.util.*
 class KtForLoopInReference(element: KtForExpression) : KtMultiReference<KtForExpression>(element) {
 
     override fun getRangeInElement(): TextRange {
-        val inKeywordNode = expression.inKeywordNode
-        if (inKeywordNode == null)
+        val inKeyword = expression.inKeyword
+        if (inKeyword == null)
             return TextRange.EMPTY_RANGE
 
-        val offset = inKeywordNode.psi!!.startOffsetInParent
-        return TextRange(offset, offset + inKeywordNode.textLength)
+        val offset = inKeyword.startOffsetInParent
+        return TextRange(offset, offset + inKeyword.textLength)
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {

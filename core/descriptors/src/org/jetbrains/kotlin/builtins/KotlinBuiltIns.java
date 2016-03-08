@@ -696,6 +696,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public KotlinType getIterableType() {
+        return getIterable().getDefaultType();
+    }
+
+    @NotNull
     public KotlinType getArrayElementType(@NotNull KotlinType arrayType) {
         if (isArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {

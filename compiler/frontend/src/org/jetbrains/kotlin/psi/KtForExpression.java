@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -48,7 +49,12 @@ public class KtForExpression extends KtLoopExpression {
     }
 
     @Nullable @IfNotParsed
-    public ASTNode getInKeywordNode() {
-        return getNode().findChildByType(KtTokens.IN_KEYWORD);
+    public PsiElement getInKeyword() {
+        return findChildByType(KtTokens.IN_KEYWORD);
+    }
+
+    @NotNull
+    public PsiElement getForKeyword() {
+        return findChildByType(KtTokens.FOR_KEYWORD);
     }
 }
