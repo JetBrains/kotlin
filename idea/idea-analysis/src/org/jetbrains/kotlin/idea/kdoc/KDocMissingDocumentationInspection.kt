@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -73,16 +74,6 @@ class KDocMissingDocumentationInspection(): AbstractKotlinInspection() {
             declaration.addBefore(KDocElementFactory(project).createKDocFromText("/**  */"), declaration.firstChild)
             val editor = descriptor.psiElement.findExistingEditor()
             editor?.caretModel?.moveToOffset(declaration.startOffset + 4)
-        }
-
-        private fun PsiElement.findExistingEditor(): Editor? {
-            val file = containingFile?.virtualFile ?: return null
-            val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
-
-            val editorFactory = EditorFactory.getInstance()
-
-            val editors = editorFactory.getEditors(document)
-            return if (editors.isEmpty()) null else editors[0]
         }
     }
 }
