@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
 public abstract class AbstractClassTypeConstructor implements TypeConstructor {
-    private boolean hashCodeComputed;
+    private volatile boolean hashCodeComputed;
     private int hashCode;
 
     @Override
     public final int hashCode() {
         if (!hashCodeComputed) {
-            hashCodeComputed = true;
             hashCode = hashCode(this);
+            hashCodeComputed = true;
         }
         return hashCode;
     }
