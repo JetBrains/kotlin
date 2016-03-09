@@ -20,6 +20,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.SystemInfo;
 import com.sampullara.cli.Args;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +37,23 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Properties;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> {
+    static {
+        if (SystemInfo.isWindows) {
+            Properties properties = System.getProperties();
+
+            properties.setProperty("idea.io.use.nio2", Boolean.TRUE.toString());
+
+            if (!(SystemInfo.isJavaVersionAtLeast("1.7") && !"1.7.0-ea".equals(SystemInfo.JAVA_VERSION))) {
+                properties.setProperty("idea.io.use.fallback", Boolean.TRUE.toString());
+            }
+        }
+    }
+
     @NotNull
     private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
 
@@ -181,11 +195,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                     ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
                     exitCode = severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
                 }
-                catch(CompilationCanceledException e) {
+                catch (CompilationCanceledException e) {
                     messageCollector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", CompilerMessageLocation.NO_LOCATION);
                     return ExitCode.OK;
                 }
-                catch(RuntimeException e) {
+                catch (RuntimeException e) {
                     Throwable cause = e.getCause();
                     if (cause instanceof CompilationCanceledException) {
                         messageCollector
