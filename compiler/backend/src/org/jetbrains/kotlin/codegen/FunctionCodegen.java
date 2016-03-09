@@ -60,7 +60,10 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
@@ -273,13 +276,14 @@ public class FunctionCodegen {
                 }
             }
             else if (kind == JvmMethodParameterKind.RECEIVER) {
-                ReceiverParameterDescriptor receiver = ((functionDescriptor instanceof PropertyAccessorDescriptor)
-                                             ? ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty()
-                                             : functionDescriptor).getExtensionReceiverParameter();
+                ReceiverParameterDescriptor receiver = JvmCodegenUtil.getDirectMember(functionDescriptor).getExtensionReceiverParameter();
+
                 if (receiver != null) {
                     AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
                     Annotated targetedAnnotations = new AnnotatedWithOnlyTargetedAnnotations(receiver.getType());
                     annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), RECEIVER);
+
+                    annotationCodegen.genAnnotations(receiver, parameterSignature.getAsmType());
                 }
             }
         }
