@@ -116,12 +116,12 @@ class NewResolveOldInference(
             Candidate(ResolutionCandidateStatus(diagnostics), resolvedCall)
         }
         if (basicCallContext.collectAllCandidates) {
-            val allCandidates = towerResolver.run(listOf(TowerData.Empty), KnownResultProcessor(resolvedCandidates),
+            val allCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolvedCandidates),
                                                   TowerResolver.AllCandidatesCollector { it.candidateStatus }, useOrder = false)
             return allCandidatesResult(allCandidates) as OverloadResolutionResultsImpl<D>
         }
 
-        val processedCandidates = towerResolver.run(listOf(TowerData.Empty), KnownResultProcessor(resolvedCandidates),
+        val processedCandidates = towerResolver.runWithEmptyTowerData(KnownResultProcessor(resolvedCandidates),
                                                     TowerResolver.SuccessfulResultCollector { it.candidateStatus }, useOrder = true)
 
         return convertToOverloadResults(processedCandidates, tracing, basicCallContext) as OverloadResolutionResultsImpl<D>
