@@ -1085,6 +1085,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
             """
     )
+
     fun testSetter6() = doFileTest(
             """
             var a : Int = 0
@@ -1263,6 +1264,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             }
             """
     )
+
     fun testFinallyBody() = doFunTest(
             """
             try {
@@ -1275,6 +1277,42 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             } catch(e: Exception) {
             } finally {
                 <caret>
+            }
+            """
+    )
+
+    fun testLambdaParam() = doFileTest(
+            """
+            fun foo(a: Any, block: () -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>)
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: () -> Unit) {
+            }
+            fun test() {
+                foo(Any()) { <caret>}
+            }
+            """
+    )
+
+    fun testExtensionLambdaParam() = doFileTest(
+            """
+            fun foo(a: Any, block: Any.() -> Unit) {
+            }
+            fun test() {
+                foo(Any()<caret>)
+            }
+            """
+            ,
+            """
+            fun foo(a: Any, block: Any.() -> Unit) {
+            }
+            fun test() {
+                foo(Any()) { <caret>}
             }
             """
     )
