@@ -1,0 +1,3 @@
+package a
+
+interface A

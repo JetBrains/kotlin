@@ -1,0 +1,4 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:10:21: error: type mismatch: inferred type is A but String was expected
+    val x: String = b.foo()
+                    ^
+COMPILATION_ERROR

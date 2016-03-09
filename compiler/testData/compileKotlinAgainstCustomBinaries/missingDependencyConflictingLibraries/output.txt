@@ -1,0 +1,7 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:7:17: error: type mismatch: inferred type is A<String>.Inner<Int, Unit> but A<Int, String, Double>.Inner<B2> was expected
+    b2.consumeA(b1.produceA())
+                ^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:11:18: error: type mismatch: inferred type is AA<Int>.Inner<Unit, String> but AA<Int, Unit>.Inner<String> was expected
+    b2.consumeAA(b1.produceAA())
+                 ^
+COMPILATION_ERROR

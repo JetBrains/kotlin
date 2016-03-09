@@ -71,10 +71,13 @@ class TypeDeserializer(
 
     fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor =
             when {
-                proto.hasClassName() ->
+                proto.hasClassName() -> {
                     classDescriptors(proto.className)?.typeConstructor
+                    ?: c.components.notFoundClasses.get(proto, c.nameResolver, c.typeTable)
+                }
                 proto.hasTypeParameter() ->
                     typeParameterTypeConstructor(proto.typeParameter)
+                    ?: ErrorUtils.createErrorType("Unknown type parameter ${proto.typeParameter}").constructor
                 proto.hasTypeParameterName() -> {
                     val container = c.containingDeclaration
                     val typeParameters = when (container) {
@@ -86,20 +89,8 @@ class TypeDeserializer(
                     val parameter = typeParameters.find { it.name.asString() == name }
                     parameter?.typeConstructor ?: ErrorUtils.createErrorType("Deserialized type parameter $name in $container").constructor
                 }
-                else ->
-                    null
-            } ?: ErrorUtils.createErrorType(presentableTextForErrorType(proto)).constructor
-
-    internal fun presentableTextForErrorType(proto: ProtoBuf.Type): String = when {
-        proto.hasClassName() ->
-            c.nameResolver.getClassId(proto.className).asSingleFqName().asString()
-        proto.hasTypeParameter() ->
-            "Unknown type parameter ${proto.typeParameter}"
-        proto.hasTypeParameterName() ->
-            "Unknown type parameter ${c.nameResolver.getString(proto.typeParameterName)}"
-        else ->
-            "Unknown type"
-    }
+                else -> ErrorUtils.createErrorType("Unknown type").constructor
+            }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =
             typeParameterDescriptors().get(typeParameterId)?.typeConstructor ?:

@@ -88,6 +88,4 @@ class DeserializedType(
     }
 
     private class PossiblyInnerTypeCapabilityImpl(override val possiblyInnerType: PossiblyInnerType?) : PossiblyInnerTypeCapability
-
-    fun getPresentableText(): String = typeDeserializer.presentableTextForErrorType(typeProto)
 }
