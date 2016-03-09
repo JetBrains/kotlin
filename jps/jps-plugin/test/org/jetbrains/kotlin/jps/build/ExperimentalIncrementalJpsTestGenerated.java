@@ -287,9 +287,57 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
-        @TestMetadata("defaultArguments")
-        public void testDefaultArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultArguments/");
+        @TestMetadata("defaultArgumentInConstructorAdded")
+        public void testDefaultArgumentInConstructorAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultArgumentInConstructorAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultArgumentInConstructorRemoved")
+        public void testDefaultArgumentInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultArgumentInConstructorRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueAdded")
+        public void testDefaultValueAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueChanged")
+        public void testDefaultValueChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInConstructorAdded")
+        public void testDefaultValueInConstructorAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInConstructorChanged")
+        public void testDefaultValueInConstructorChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInConstructorRemoved")
+        public void testDefaultValueInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueRemoved1")
+        public void testDefaultValueRemoved1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueRemoved1/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueRemoved2")
+        public void testDefaultValueRemoved2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueRemoved2/");
             doTest(fileName);
         }
 
@@ -1228,6 +1276,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("multiModuleCircular")
         public void testMultiModuleCircular() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleCircular/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiModuleDefaultArgumentInConstructorRemoved")
+        public void testMultiModuleDefaultArgumentInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleDefaultArgumentInConstructorRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiModuleDefaultValueInConstructorRemoved")
+        public void testMultiModuleDefaultValueInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/classHierarchyAffected/multiModuleDefaultValueInConstructorRemoved/");
             doTest(fileName);
         }
 
