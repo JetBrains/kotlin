@@ -1,0 +1,7 @@
+changes in test/A: MEMBERS
+    [argumentAdded, argumentRemoved, valueAdded, valueRemoved]
+changes in test/ConstructorArgumentAdded: CLASS_SIGNATURE
+changes in test/ConstructorArgumentRemoved: CLASS_SIGNATURE
+changes in test/ConstructorValueAdded: CLASS_SIGNATURE
+changes in test/ConstructorValueChanged: NONE
+changes in test/ConstructorValueRemoved: CLASS_SIGNATURE
