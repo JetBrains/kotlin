@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
 
 public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     public FunctionsHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
@@ -73,9 +71,13 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                 NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.DYNAMIC_FUNCTION_CALL);
             }
             else if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                NameHighlighter.highlightName(holder, callee, containedInFunctionClassOrSubclass(calleeDescriptor)
-                                                            ? KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
-                                                            : KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
+                DeclarationDescriptor container = calleeDescriptor.getContainingDeclaration();
+                boolean containedInFunctionClassOrSubclass =
+                        container instanceof ClassDescriptor &&
+                        KotlinBuiltIns.isFunctionOrExtensionFunctionType(((ClassDescriptor) container).getDefaultType());
+                NameHighlighter.highlightName(holder, callee, containedInFunctionClassOrSubclass
+                                                              ? KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
+                                                              : KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
             }
             else {
                 if (calleeDescriptor instanceof ConstructorDescriptor) {
@@ -95,26 +97,5 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
         }
 
         super.visitCallExpression(expression);
-    }
-
-    private static boolean containedInFunctionClassOrSubclass(DeclarationDescriptor calleeDescriptor) {
-        DeclarationDescriptor parent = calleeDescriptor.getContainingDeclaration();
-        if (!(parent instanceof ClassDescriptor)) {
-            return false;
-        }
-
-        KotlinType defaultType = ((ClassDescriptor) parent).getDefaultType();
-
-        if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(defaultType)) {
-            return true;
-        }
-
-        for (KotlinType supertype : TypeUtils.getAllSupertypes(defaultType)) {
-            if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

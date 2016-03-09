@@ -39,13 +39,13 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
         val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
         return element
                 .guessTypes(context, resolutionFacade.moduleDescriptor)
-                .filter { KotlinBuiltIns.isExactFunctionType(it) || KotlinBuiltIns.isExactExtensionFunctionType(it) }
+                .filter(KotlinBuiltIns::isExactFunctionOrExtensionFunctionType)
                 .mapNotNull {
                     val expectedReceiverType = KotlinBuiltIns.getReceiverType(it)
                     val actualReceiverTypeRef = element.typeReference
                     val receiverTypeInfo = actualReceiverTypeRef?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo.Empty
                     val returnTypeInfo = TypeInfo(KotlinBuiltIns.getReturnTypeFromFunctionType(it), Variance.OUT_VARIANCE)
-                    val containers = element.getExtractionContainers(includeAll = true).ifEmpty { return@mapNotNull  null }
+                    val containers = element.getExtractionContainers(includeAll = true).ifEmpty { return@mapNotNull null }
                     val parameterInfos = SmartList<ParameterInfo>().apply {
                         if (actualReceiverTypeRef == null && expectedReceiverType != null) {
                             add(ParameterInfo(TypeInfo(expectedReceiverType, Variance.IN_VARIANCE)))
