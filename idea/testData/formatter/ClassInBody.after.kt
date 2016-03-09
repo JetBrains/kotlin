@@ -12,8 +12,7 @@ class A {
     }
 }
 
-fun foo() {
-    // abc
+fun foo() { // abc
     class B
 }
 

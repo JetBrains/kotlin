@@ -47,6 +47,7 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "        return 0\n" +
                         "    }\n" +
                         "    private fun foo2():Int {\n" +
+                        "// todo: something\n" +
                         "        try {" +
                         "            return foo1(12, 13, 14)\n" +
                         "        }" +
@@ -148,6 +149,7 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
             case WRAPPING_AND_BRACES_SETTINGS:
                 consumer.showStandardOptions(
                         // "ALIGN_MULTILINE_CHAINED_METHODS",
+                        "KEEP_FIRST_COLUMN_COMMENT",
                         "ALIGN_MULTILINE_EXTENDS_LIST",
                         "ALIGN_MULTILINE_PARAMETERS",
                         "ALIGN_MULTILINE_PARAMETERS_IN_CALLS",

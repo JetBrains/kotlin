@@ -35,9 +35,9 @@ fun test3() {
 
 fun testWithComments() {
     val abc = ArrayList<Int>()
-            //  .map {
-            //      it * 2
-            //  }
+//  .map {
+//      it * 2
+//  }
             .filter {
                 it > 4
             }

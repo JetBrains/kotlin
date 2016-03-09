@@ -17,7 +17,6 @@ fun main(args: Array<String>)
     /*2*/
 
 
-
     /*3*/
     {
     }

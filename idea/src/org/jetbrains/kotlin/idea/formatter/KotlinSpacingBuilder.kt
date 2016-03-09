@@ -24,6 +24,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -62,12 +63,16 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
             return null
         }
 
-        fun inPosition(parent: IElementType? = null, left: IElementType? = null, right: IElementType? = null): CustomSpacingBuilder {
+        fun inPosition(parent: IElementType? = null, left: IElementType? = null, right: IElementType? = null,
+                       parentSet: TokenSet? = null, leftSet: TokenSet? = null, rightSet: TokenSet? = null): CustomSpacingBuilder {
             conditions.add {
                 p, l, r ->
                 (parent == null || p.node!!.elementType == parent) &&
                 (left == null || l.node!!.elementType == left) &&
-                (right == null || r.node!!.elementType == right)
+                (right == null || r.node!!.elementType == right) &&
+                (parentSet == null || parentSet.contains(p.node!!.elementType)) &&
+                (leftSet == null || leftSet.contains(l.node!!.elementType)) &&
+                (rightSet == null || rightSet.contains(r.node!!.elementType))
             }
             return this
         }

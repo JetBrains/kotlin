@@ -288,6 +288,11 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                 spacingForLeftBrace(right.node!!.firstChildNode)
             }
 
+            if (kotlinCommonSettings.KEEP_FIRST_COLUMN_COMMENT) {
+                inPosition(rightSet = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT)).spacing(
+                        Spacing.createKeepingFirstColumnSpacing(0, Integer.MAX_VALUE, settings.KEEP_LINE_BREAKS, kotlinCommonSettings.KEEP_BLANK_LINES_IN_CODE))
+            }
+
             inPosition(parent = IF, right = THEN).customRule(leftBraceRuleIfBlockIsWrapped)
             inPosition(parent = IF, right = ELSE).customRule(leftBraceRuleIfBlockIsWrapped)
 

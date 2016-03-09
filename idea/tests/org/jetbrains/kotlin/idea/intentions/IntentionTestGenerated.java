@@ -7241,6 +7241,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeBracesFromIfWithCommentedCode.kt")
+        public void testRemoveBracesFromIfWithCommentedCode() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/removeBracesFromIfWithCommentedCode.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("while.kt")
         public void testWhile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/while.kt");
