@@ -249,7 +249,8 @@ public class AnonymousObjectTransformer {
                         new InlineCallSiteInfo(
                                 anonymousObjectGen.getOwnerInternalName(),
                                 sourceNode.name,
-                                isConstructor ? anonymousObjectGen.getNewConstructorDescriptor() : sourceNode.desc)
+                                isConstructor ? anonymousObjectGen.getNewConstructorDescriptor() : sourceNode.desc),
+                        null
                 );
 
         InlineResult result = inliner.doInline(deferringVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);

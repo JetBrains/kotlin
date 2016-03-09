@@ -289,13 +289,14 @@ public class InlineCodegen extends CallGenerator {
 
         InliningContext info = new RootInliningContext(
                 expressionMap, state, codegen.getInlineNameGenerator().subGenerator(jvmSignature.getAsmMethod().getName()),
-                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings,
-                AnnotationUtilKt.hasInlineOnlyAnnotation(functionDescriptor)
-        );
+                codegen.getContext(), callElement, getInlineCallSiteInfo(), reifiedTypeInliner, typeParameterMappings);
 
-        MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
-                                                  "Method inlining " + callElement.getText(),
-                                                  createNestedSourceMapper(nodeAndSmap), info.getCallSiteInfo()); //with captured
+        MethodInliner inliner = new MethodInliner(
+                node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
+                "Method inlining " + callElement.getText(),
+                createNestedSourceMapper(nodeAndSmap), info.getCallSiteInfo(),
+                AnnotationUtilKt.hasInlineOnlyAnnotation(functionDescriptor) ? new InlineOnlySmapSkipper(codegen) : null
+        ); //with captured
 
         LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
 

@@ -1773,6 +1773,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
+    public int getLastLineNumber() {
+        return myLastLineNumber;
+    }
+
     private void doFinallyOnReturn(@NotNull Label afterReturnLabel) {
         if(!blockStackElements.isEmpty()) {
             BlockStackElement stackElement = blockStackElements.peek();
