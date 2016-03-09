@@ -20,9 +20,11 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
@@ -30,10 +32,9 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public abstract class AbstractTypeParameterDescriptor extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
     public static final List<KotlinType> FALLBACK_UPPER_BOUNDS_ON_RECURSION =
@@ -133,14 +134,61 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     }
 
     @NotNull
+    protected TypeConstructor createTypeConstructor() {
+        return new TypeConstructor() {
+            @NotNull
+            @Override
+            public Collection<KotlinType> getSupertypes() {
+                return AbstractTypeParameterDescriptor.this.getUpperBounds();
+            }
+
+            @NotNull
+            @Override
+            public List<TypeParameterDescriptor> getParameters() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public boolean isFinal() {
+                return false;
+            }
+
+            @Override
+            public boolean isDenotable() {
+                return true;
+            }
+
+            @Override
+            public ClassifierDescriptor getDeclarationDescriptor() {
+                return AbstractTypeParameterDescriptor.this;
+            }
+
+            @NotNull
+            @Override
+            public Annotations getAnnotations() {
+                return AbstractTypeParameterDescriptor.this.getAnnotations();
+            }
+
+            @NotNull
+            @Override
+            public KotlinBuiltIns getBuiltIns() {
+                return DescriptorUtilsKt.getBuiltIns(AbstractTypeParameterDescriptor.this);
+            }
+
+            @Override
+            public String toString() {
+                return getName().toString();
+            }
+        };
+    }
+
+
+    @NotNull
     protected abstract SupertypeLoopChecker getSupertypeLoopChecker();
     protected abstract void reportCycleError(@NotNull KotlinType type);
 
     @NotNull
     protected abstract List<KotlinType> resolveUpperBounds();
-
-    @NotNull
-    protected abstract TypeConstructor createTypeConstructor();
 
     @NotNull
     @Override
