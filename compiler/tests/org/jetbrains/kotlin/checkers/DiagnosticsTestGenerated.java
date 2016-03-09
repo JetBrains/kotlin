@@ -5088,6 +5088,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("deprecatedConstructor.kt")
+            public void testDeprecatedConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("deprecatedError.kt")
             public void testDeprecatedError() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedError.kt");
