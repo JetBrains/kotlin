@@ -1294,12 +1294,12 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             fun foo(a: Any, block: () -> Unit) {
             }
             fun test() {
-                foo(Any()) { <caret> }
+                foo(Any()) { <caret>}
             }
             """
     )
 
-    fun testExtensionLambdaParamImplicit1() = doFileTest(
+    fun testExtensionLambdaParam() = doFileTest(
             """
             fun foo(a: Any, block: Any.() -> Unit) {
             }
@@ -1312,7 +1312,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             fun foo(a: Any, block: Any.() -> Unit) {
             }
             fun test() {
-                foo(Any()) { <caret> }
+                foo(Any()) { <caret>}
             }
             """
     )
