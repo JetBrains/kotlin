@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -39,9 +42,9 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
@@ -199,14 +202,23 @@ private fun createReflectionTypeForProperty(
     return reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, descriptor.isVar)
 }
 
-private fun bindFunctionReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
+private fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
     val functionDescriptor = AnonymousFunctionDescriptor(
             context.scope.ownerDescriptor,
             Annotations.EMPTY,
             CallableMemberDescriptor.Kind.DECLARATION,
-            expression.toSourceElement())
+            expression.toSourceElement()
+    )
 
-    FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, referenceType, null, Modality.FINAL, Visibilities.PUBLIC)
+    functionDescriptor.initialize(
+            KotlinBuiltIns.getReceiverType(type),
+            null,
+            emptyList(),
+            KotlinBuiltIns.getValueParameters(functionDescriptor, type),
+            KotlinBuiltIns.getReturnTypeFromFunctionType(type),
+            Modality.FINAL,
+            Visibilities.PUBLIC
+    )
 
     context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
 }

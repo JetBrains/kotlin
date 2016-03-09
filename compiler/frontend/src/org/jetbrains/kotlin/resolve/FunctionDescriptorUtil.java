@@ -19,24 +19,15 @@ package org.jetbrains.kotlin.resolve;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FunctionDescriptorUtil {
     private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitution() {
-
         @Override
         public TypeProjection get(@NotNull KotlinType key) {
             return null;
@@ -61,7 +52,9 @@ public class FunctionDescriptorUtil {
     }
 
     @NotNull
-    public static LexicalScope getFunctionInnerScope(@NotNull LexicalScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
+    public static LexicalScope getFunctionInnerScope(
+            @NotNull LexicalScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace
+    ) {
         return getFunctionInnerScope(outerScope, descriptor, new TraceBasedLocalRedeclarationChecker(trace));
     }
 
@@ -87,81 +80,8 @@ public class FunctionDescriptorUtil {
                                     });
     }
 
-    public static void initializeFromFunctionType(
-            @NotNull FunctionDescriptorImpl functionDescriptor,
-            @NotNull KotlinType functionType,
-            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility
-    ) {
-
-        assert KotlinBuiltIns.isFunctionOrExtensionFunctionType(functionType);
-        functionDescriptor.initialize(KotlinBuiltIns.getReceiverType(functionType),
-                                      dispatchReceiverParameter,
-                                      Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                      KotlinBuiltIns.getValueParameters(functionDescriptor, functionType),
-                                      KotlinBuiltIns.getReturnTypeFromFunctionType(functionType),
-                                      modality,
-                                      visibility);
-    }
-
+    @SuppressWarnings("unchecked")
     public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {
         return (D) candidate.substitute(MAKE_TYPE_PARAMETERS_FRESH);
-    }
-
-    /**
-     * Returns function's copy with new parameter list. Note that parameters may belong to other methods or have incorrect "index" property
-     * -- it will be fixed by this function.
-     */
-    @NotNull
-    public static FunctionDescriptor replaceFunctionParameters(
-            @NotNull FunctionDescriptor function,
-            @NotNull List<ValueParameterDescriptor> newParameters
-    ) {
-        FunctionDescriptorImpl descriptor = SimpleFunctionDescriptorImpl.create(
-                function.getContainingDeclaration(),
-                function.getAnnotations(),
-                function.getName(),
-                function.getKind(),
-                SourceElement.NO_SOURCE
-        );
-        List<ValueParameterDescriptor> parameters = new ArrayList<ValueParameterDescriptor>(newParameters.size());
-        int idx = 0;
-        for (ValueParameterDescriptor parameter : newParameters) {
-            KotlinType returnType = parameter.getReturnType();
-            assert returnType != null;
-
-            parameters.add(
-                    new ValueParameterDescriptorImpl(
-                            descriptor,
-                            null,
-                            idx,
-                            parameter.getAnnotations(),
-                            parameter.getName(),
-                            returnType,
-                            parameter.declaresDefaultValue(),
-                            parameter.isCrossinline(),
-                            parameter.isNoinline(),
-                            parameter.getVarargElementType(),
-                            SourceElement.NO_SOURCE
-                    )
-            );
-            idx++;
-        }
-        ReceiverParameterDescriptor receiver = function.getExtensionReceiverParameter();
-        descriptor.initialize(
-                receiver == null ? null : receiver.getType(),
-                function.getDispatchReceiverParameter(),
-                function.getTypeParameters(),
-                parameters,
-                function.getReturnType(),
-                function.getModality(),
-                function.getVisibility());
-        descriptor.setOperator(function.isOperator());
-        descriptor.setInfix(function.isInfix());
-        descriptor.setExternal(function.isExternal());
-        descriptor.setInline(function.isInline());
-        descriptor.setTailrec(function.isTailrec());
-        return descriptor;
     }
 }

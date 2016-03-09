@@ -27,6 +27,8 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -37,9 +39,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.resolve.findMemberWithMaxVisibility
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -122,7 +123,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
             matchParameters(ParameterChooser.MatchNames, superParameters, parameters, newParameters, matched, used)
             matchParameters(ParameterChooser.MatchTypes, superParameters, parameters, newParameters, matched, used)
 
-            val newFunction = FunctionDescriptorUtil.replaceFunctionParameters(
+            val newFunction = replaceFunctionParameters(
                     superFunction.copy(
                             function.containingDeclaration,
                             Modality.OPEN,
@@ -182,6 +183,44 @@ class ChangeMemberFunctionSignatureFix private constructor(
             return containingClass.defaultType.supertypes()
                     .flatMap { supertype -> supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) }
                     .filter { it.kind.isReal && it.isOverridable }
+        }
+
+        /**
+         * Returns function's copy with new parameter list.
+         * Note that parameters may belong to other methods or have incorrect "index" property -- it will be fixed by this function.
+         */
+        private fun replaceFunctionParameters(
+                function: FunctionDescriptor,
+                newParameters: List<ValueParameterDescriptor>
+        ): FunctionDescriptor {
+            val descriptor = SimpleFunctionDescriptorImpl.create(
+                    function.containingDeclaration,
+                    function.annotations,
+                    function.name,
+                    function.kind,
+                    SourceElement.NO_SOURCE
+            )
+
+            val parameters = newParameters.withIndex().map {
+                val (index, parameter) = it
+                ValueParameterDescriptorImpl(
+                        descriptor, null, index,
+                        parameter.annotations, parameter.name, parameter.returnType!!, parameter.declaresDefaultValue(),
+                        parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, SourceElement.NO_SOURCE
+                )
+            }
+
+            return descriptor.apply {
+                initialize(
+                        function.extensionReceiverParameter?.type, function.dispatchReceiverParameter,
+                        function.typeParameters, parameters, function.returnType, function.modality, function.visibility
+                )
+                isOperator = function.isOperator
+                isInfix = function.isInfix
+                isExternal = function.isExternal
+                isInline = function.isInline
+                isTailrec = function.isTailrec
+            }
         }
     }
 
