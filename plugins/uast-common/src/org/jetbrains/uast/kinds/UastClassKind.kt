@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast
 
-class UastModifier(val name: String) {
+package org.jetbrains.uast.kinds
+
+open class UastClassKind(val text: String) {
+    class UastCompanionObject(val default: Boolean) : UastClassKind("companion object")
+
     companion object {
         @JvmField
-        val ABSTRACT = UastModifier("abstract")
+        val CLASS = UastClassKind("class")
+
         @JvmField
-        val STATIC = UastModifier("static")
+        val INTERFACE = UastClassKind("interface")
+
         @JvmField
-        val FINAL = UastModifier("final")
+        val ANNOTATION = UastClassKind("annotation")
+
+        @JvmField
+        val ENUM = UastClassKind("enum")
+
+        @JvmField
+        val OBJECT = UastClassKind("object")
     }
 }

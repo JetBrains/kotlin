@@ -29,6 +29,7 @@ import org.jetbrains.uast.UastUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.kinds.UastClassKind;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collection;
@@ -74,7 +75,7 @@ public class IntellijRegistrationDetector extends RegistrationDetector implement
   private void check(UastAndroidContext context, UClass clz) {
     for (UClass current = clz.getSuperClass(context); current != null; current = current.getSuperClass(context)) {
       // Ignore abstract classes
-      if (clz.hasModifier(UastModifier.ABSTRACT) || clz.isObject() || clz.isInterface() || clz.isEnum() || clz.isAnnotation()) {
+      if (clz.hasModifier(UastModifier.ABSTRACT) || clz.getKind() != UastClassKind.CLASS) {
         continue;
       }
       String fqcn = current.getFqName();

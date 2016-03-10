@@ -17,6 +17,7 @@ package org.jetbrains.uast.java
 
 import com.intellij.psi.*
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastClassKind
 import org.jetbrains.uast.psi.PsiElementBacked
 import java.util.*
 
@@ -39,17 +40,18 @@ class JavaUClass(
     override val fqName: String?
         get() = psi.qualifiedName
 
-    override val isEnum: Boolean
-        get() = psi.isEnum
+    override val kind by lz {
+        when {
+            psi.isEnum -> UastClassKind.ENUM
+            psi.isAnnotationType -> UastClassKind.ANNOTATION
+            psi.isInterface -> UastClassKind.INTERFACE
+            psi is PsiAnonymousClass -> UastClassKind.OBJECT
+            else -> UastClassKind.CLASS
+        }
+    }
 
-    override val isInterface: Boolean
-        get() = psi.isInterface
-
-    override val isAnnotation: Boolean
-        get() = psi.isAnnotationType
-
-    override val isObject: Boolean
-        get() = psi is PsiAnonymousClass
+    override val companions: List<UClass>
+        get() = emptyList()
 
     override val isAnonymous: Boolean
         get() = psi is PsiAnonymousClass
@@ -65,11 +67,7 @@ class JavaUClass(
     override val visibility: UastVisibility
         get() = psi.getVisibility()
 
-    override fun hasModifier(modifier: UastModifier) = when (modifier) {
-        UastModifier.INNER -> !psi.hasModifierProperty(PsiModifier.STATIC) && !isTopLevel()
-        else -> psi.hasModifier(modifier)
-    }
-
+    override fun hasModifier(modifier: UastModifier) = psi.hasModifier(modifier)
     override val annotations by lz { psi.modifierList.getAnnotations(this) }
 
     override val declarations by lz {

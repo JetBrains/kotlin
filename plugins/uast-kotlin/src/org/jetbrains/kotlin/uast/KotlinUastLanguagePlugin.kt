@@ -70,7 +70,7 @@ internal object KotlinConverter : UastConverter {
     }
 
     internal fun convert(element: KtDeclaration, parent: UElement): UDeclaration? = when (element) {
-        is KtClassOrObject -> KotlinUClass(element, parent)
+        is KtClassOrObject -> convert(element, parent)
         is KtAnonymousInitializer -> KotlinAnonymousInitializerUFunction(element, parent)
         is KtConstructor<*> -> KotlinConstructorUFunction(element, parent)
         is KtFunction -> KotlinUFunction(element, parent)
@@ -158,6 +158,10 @@ internal object KotlinConverter : UastConverter {
 
     internal fun convert(element: KtParameter, parent: UElement) : UVariable {
         return KotlinParameterUVariable(element, parent)
+    }
+
+    internal fun convert(element: KtClassOrObject, parent: UElement) : UClass {
+        return KotlinUClass(element, parent)
     }
 
     internal fun convert(element: KotlinType, project: Project, parent: UElement?): UType {

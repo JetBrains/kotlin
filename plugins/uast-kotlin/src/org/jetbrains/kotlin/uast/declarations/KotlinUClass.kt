@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kinds.UastClassKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUClass(
@@ -48,17 +50,25 @@ class KotlinUClass(
     override val fqName: String?
         get() = psi.fqName?.asString()
 
-    override val isEnum: Boolean
-        get() = (psi as? KtClass)?.isEnum() ?: false
+    override val kind by lz {
+        when {
+            psi.isAnnotation() -> UastClassKind.ANNOTATION
+            (psi as? KtObjectDeclaration)?.isCompanion() ?: false -> {
+                if (psi.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString())
+                    KotlinClassKinds.DEFAULT_COMPANION_OBJECT
+                else
+                    KotlinClassKinds.NAMED_COMPANION_OBJECT
+            }
+            psi is KtObjectDeclaration -> UastClassKind.OBJECT
+            (psi as? KtClass)?.isInterface() ?: false -> UastClassKind.INTERFACE
+            (psi as? KtClass)?.isEnum() ?: false -> UastClassKind.ENUM
+            else -> UastClassKind.CLASS
+        }
+    }
 
-    override val isInterface: Boolean
-        get() = (psi as? KtClass)?.isInterface() ?: false
-
-    override val isObject: Boolean
-        get() = psi is KtObjectDeclaration
-
-    override val isAnnotation: Boolean
-        get() = psi.isAnnotation()
+    override val companions by lz {
+        (psi as? KtClass)?.getCompanionObjects()?.map { KotlinConverter.convert(it, this) } ?: emptyList()
+    }
 
     override val isAnonymous = false
 

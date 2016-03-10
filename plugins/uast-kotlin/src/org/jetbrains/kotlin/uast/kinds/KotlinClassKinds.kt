@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2016 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.uast
 
-class UastModifier(val name: String) {
-    companion object {
-        @JvmField
-        val ABSTRACT = UastModifier("abstract")
-        @JvmField
-        val STATIC = UastModifier("static")
-        @JvmField
-        val FINAL = UastModifier("final")
-    }
+package org.jetbrains.kotlin.uast
+
+import org.jetbrains.uast.kinds.UastClassKind
+
+object KotlinClassKinds {
+    @JvmField
+    val DEFAULT_COMPANION_OBJECT = UastClassKind.UastCompanionObject(true)
+
+    @JvmField
+    val NAMED_COMPANION_OBJECT = UastClassKind.UastCompanionObject(false)
 }

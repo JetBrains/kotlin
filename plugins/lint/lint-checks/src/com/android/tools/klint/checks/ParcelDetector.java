@@ -30,6 +30,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.kinds.UastClassKind;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -82,14 +83,14 @@ public class ParcelDetector extends Detector implements UastScanner {
         @Override
         public boolean visitClass(@NotNull UClass node) {
             // Only applies to concrete classes
-            if (node.isInterface() || node.hasModifier(UastModifier.ABSTRACT)) {
+            if (node.getKind() != UastClassKind.CLASS || node.hasModifier(UastModifier.ABSTRACT)) {
                 return true;
             }
 
             for (UType reference : node.getSuperTypes()) {
                 String name = reference.getName();
                 if (name.equals("Parcelable")) {
-                    UVariable field = UastUtils.findProperty(node, "CREATOR");
+                    UVariable field = UastUtils.findStaticMemberOfType(node, "CREATOR", UVariable.class);
                     if (field == null) {
                         // Make doubly sure that we're really implementing
                         // android.os.Parcelable

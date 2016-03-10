@@ -15,13 +15,14 @@
  */
 package org.jetbrains.uast
 
+import org.jetbrains.uast.kinds.UastClassKind
+
 interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
-    val isEnum: Boolean
-    val isInterface: Boolean
-    val isObject: Boolean
     val isAnonymous: Boolean
-    val isAnnotation: Boolean
     val visibility: UastVisibility
+    val kind: UastClassKind
+
+    val companions: List<UClass>
 
     val internalName: String?
 
@@ -52,14 +53,7 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
     }
 
     override fun renderString(): String {
-        val keyword = when {
-            isEnum -> "enum"
-            isInterface -> "interface"
-            isObject -> "object"
-            else -> "class"
-        }
-
-        val modifiers = listOf(UastModifier.ABSTRACT, UastModifier.FINAL, UastModifier.INNER)
+        val modifiers = listOf(UastModifier.ABSTRACT, UastModifier.FINAL, UastModifier.STATIC)
                 .filter { hasModifier(it) }.joinToString(" ") { it.name }.let { if (it.isBlank()) it else "$it " }
 
         val name = if (isAnonymous) "" else " $name"
@@ -70,22 +64,20 @@ interface UClass : UDeclaration, UFqNamed, UModifierOwner, UAnnotated {
             append("\n}")
         }
 
-        return "${visibility.name} " + modifiers + keyword + name + " " + declarations
+        return "${visibility.name} " + modifiers + kind.text + name + " " + declarations
     }
 
-    override fun logString() = "UClass ($name, enum = $isEnum, interface = $isInterface, object = $isObject)\n" + declarations.logString()
+    override fun logString() = "UClass ($name, kind = ${kind.text})\n" + declarations.logString()
 }
 
 object UClassNotResolved : UClass {
-    override val isEnum = false
-    override val isInterface = false
-    override val isObject = false
     override val isAnonymous = true
-    override val isAnnotation = false
+    override val kind = UastClassKind.CLASS
     override val visibility = UastVisibility.PRIVATE
     override val superTypes = emptyList<UType>()
     override val declarations = emptyList<UDeclaration>()
     override fun isSubclassOf(name: String) = false
+    override val companions = emptyList<UClass>()
 
     override val nameElement = null
     override val parent = null
