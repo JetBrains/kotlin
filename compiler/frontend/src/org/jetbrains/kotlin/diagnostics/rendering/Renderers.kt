@@ -433,6 +433,9 @@ object Renderers {
 
     @JvmField val FQ_NAMES_IN_TYPES = DescriptorRenderer.FQ_NAMES_IN_TYPES.asRenderer()
     @JvmField val COMPACT = DescriptorRenderer.COMPACT.asRenderer()
+    @JvmField val WITHOUT_MODIFIERS = DescriptorRenderer.withOptions {
+        modifiers = emptySet()
+    }.asRenderer()
     @JvmField val SHORT_NAMES_IN_TYPES = DescriptorRenderer.SHORT_NAMES_IN_TYPES.asRenderer()
     @JvmField val COMPACT_WITH_MODIFIERS = DescriptorRenderer.COMPACT_WITH_MODIFIERS.asRenderer()
     @JvmField val DEPRECATION_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions {

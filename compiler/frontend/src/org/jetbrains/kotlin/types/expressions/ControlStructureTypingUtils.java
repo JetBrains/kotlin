@@ -542,7 +542,7 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
-        public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {
+        public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount, @NotNull CallableDescriptor descriptor) {
             logError();
         }
 
