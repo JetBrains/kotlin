@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,14 +103,13 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount) {
+    public void wrongNumberOfTypeArguments(
+            @NotNull BindingTrace trace, int expectedTypeArgumentCount, @NotNull CallableDescriptor descriptor
+    ) {
         KtTypeArgumentList typeArgumentList = call.getTypeArgumentList();
-        if (typeArgumentList != null) {
-            trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(typeArgumentList, expectedTypeArgumentCount));
-        }
-        else {
-            trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(reference, expectedTypeArgumentCount));
-        }
+        trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(
+                typeArgumentList != null ? typeArgumentList : reference, expectedTypeArgumentCount, descriptor
+        ));
     }
 
     @Override

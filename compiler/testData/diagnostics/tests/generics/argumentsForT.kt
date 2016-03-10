@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-fun <T> foo(t: T<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, Int><!>) {}
+fun <T> foo(t: T<!TYPE_ARGUMENTS_NOT_ALLOWED!><String, Int><!>) {}
 
 interface A
 class B<T: A>
-fun <T> foo1(t: T<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><B<<!UPPER_BOUND_VIOLATED!>String<!>>><!>) {}
+fun <T> foo1(t: T<!TYPE_ARGUMENTS_NOT_ALLOWED!><B<<!UPPER_BOUND_VIOLATED!>String<!>>><!>) {}

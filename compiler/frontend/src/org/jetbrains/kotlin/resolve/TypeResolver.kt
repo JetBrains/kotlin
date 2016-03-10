@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -306,7 +306,7 @@ class TypeResolver(
 
         val arguments = resolveTypeProjections(c, ErrorUtils.createErrorType("No type").constructor, type.typeArguments)
         if (!arguments.isEmpty()) {
-            c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.typeArgumentList!!, 0))
+            c.trace.report(TYPE_ARGUMENTS_NOT_ALLOWED.on(type.typeArgumentList!!, "for type parameters"))
         }
 
         val containing = typeParameter.containingDeclaration
@@ -445,7 +445,10 @@ class TypeResolver(
 
             if (currentArguments.size != currentParameters.size) {
                 c.trace.report(
-                        WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifierPart.typeArguments ?: qualifierPart.expression, currentParameters.size))
+                        WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(
+                                qualifierPart.typeArguments ?: qualifierPart.expression, currentParameters.size, classDescriptorChain[index]
+                        )
+                )
                 return null
             }
 
@@ -461,7 +464,7 @@ class TypeResolver(
 
         for (qualifierPart in nonClassQualifierParts) {
             if (qualifierPart.typeArguments != null) {
-                c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifierPart.typeArguments, 0))
+                c.trace.report(TYPE_ARGUMENTS_NOT_ALLOWED.on(qualifierPart.typeArguments, "here"))
                 return null
             }
         }
@@ -471,7 +474,7 @@ class TypeResolver(
             val typeParametersToSpecify =
                     parameters.subList(result.size, parameters.size).takeWhile { it.original.containingDeclaration is ClassDescriptor }
             if (typeParametersToSpecify.any { parameter -> !parameter.isDeclaredInScope(c) }) {
-                c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifierParts.last().expression, parameters.size))
+                c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifierParts.last().expression, parameters.size, classDescriptor))
                 return null
             }
         }
