@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -27,14 +26,20 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
-class KotlinUSimpleReferenceExpression(
+open class KotlinUSimpleReferenceExpression(
         override val psi: PsiElement,
         override val identifier: String,
         override val parent: UElement
-) : USimpleReferenceExpression, PsiElementBacked, KotlinTypeHelper, NoEvaluate {
+) : USimpleReferenceExpression, PsiElementBacked, KotlinTypeHelper, KotlinEvaluateHelper {
     override fun resolve(context: UastContext) = context.convert(
             psi.references.firstOrNull()?.resolve()) as? UDeclaration
 }
+
+class KotlinNameUSimpleReferenceExpression(
+        psi: PsiElement,
+        identifier: String,
+        parent: UElement
+) : KotlinUSimpleReferenceExpression(psi, identifier, parent)
 
 class KotlinClassViaConstructorUSimpleReferenceExpression(
         override val psi: KtCallExpression,
