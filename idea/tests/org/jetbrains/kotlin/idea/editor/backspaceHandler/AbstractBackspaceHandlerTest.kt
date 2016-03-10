@@ -22,7 +22,7 @@ import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
 import java.io.File
 
-open class AbstractBackspaceHandlerTest : LightCodeInsightTestCase() {
+abstract class AbstractBackspaceHandlerTest : LightCodeInsightTestCase() {
     fun doTest(path: String) {
         configureFromFileText("a.kt", loadFile(path))
         EditorTestUtil.executeAction(getEditor(), IdeActions.ACTION_EDITOR_BACKSPACE)
