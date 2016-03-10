@@ -3,8 +3,8 @@ package kotlin.js
 //TODO: declare using number
 @native
 public class MathClass() {
-    public val PI : Double = noImpl;
-    public fun random() : Double = noImpl;
+    public val PI : Double = noImpl
+    public fun random() : Double = noImpl
     public fun abs(value : Double) : Double = noImpl
     public fun acos(value : Double) : Double = noImpl
     public fun asin(value : Double) : Double = noImpl
@@ -27,4 +27,4 @@ public class MathClass() {
 }
 
 @native
-public val Math: MathClass = MathClass();
+public val Math: MathClass = MathClass()
