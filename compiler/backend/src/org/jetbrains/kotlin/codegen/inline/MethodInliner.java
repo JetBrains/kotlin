@@ -177,9 +177,9 @@ public class MethodInliner {
             private void handleAnonymousObjectGeneration() {
                 anonymousObjectGen = iterator.next();
 
-                if (anonymousObjectGen.shouldRegenerate()) {
+                if (anonymousObjectGen.shouldRegenerate(isSameModule)) {
                     //TODO: need poping of type but what to do with local funs???
-                    String oldClassName = anonymousObjectGen.getOwnerInternalName();
+                    String oldClassName = anonymousObjectGen.getOldClassName();
                     String newClassName = inliningContext.nameGenerator.genLambdaClassName();
                     remapper.addMapping(oldClassName, newClassName);
                     AnonymousObjectTransformer transformer =
@@ -272,7 +272,7 @@ public class MethodInliner {
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     assert anonymousObjectGen != null : "<init> call not corresponds to new call" + owner + " " + name;
-                    if (anonymousObjectGen.shouldRegenerate()) {
+                    if (anonymousObjectGen.shouldRegenerate(isSameModule)) {
                         //put additional captured parameters on stack
                         for (CapturedParamDesc capturedParamDesc : anonymousObjectGen.getAllRecapturedParameters()) {
                             visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
@@ -283,7 +283,7 @@ public class MethodInliner {
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.getParent() instanceof RegeneratedClassContext) {
-                            inliningContext.getParent().typeRemapper.addAdditionalMappings(anonymousObjectGen.getOwnerInternalName(), newInternalName);
+                            inliningContext.getParent().typeRemapper.addAdditionalMappings(anonymousObjectGen.getOldClassName(), newInternalName);
                         }
 
                         anonymousObjectGen = null;
@@ -502,7 +502,7 @@ public class MethodInliner {
                     if (isAnonymousSingletonLoad(owner, fieldInsnNode.name)) {
                         anonymousObjectGenerations.add(
                                 new AnonymousObjectGeneration(
-                                        owner, isSameModule, awaitClassReification, isAlreadyRegenerated(owner), true
+                                        owner, awaitClassReification, isAlreadyRegenerated(owner), true
                                 )
                         );
                         awaitClassReification = false;
@@ -552,15 +552,15 @@ public class MethodInliner {
 
     @NotNull
     private AnonymousObjectGeneration buildConstructorInvocation(
-            @NotNull String owner,
+            @NotNull String anonymousType,
             @NotNull String desc,
             @NotNull Map<Integer, LambdaInfo> lambdaMapping,
             boolean needReification
     ) {
         return new AnonymousObjectGeneration(
-                owner, needReification, isSameModule, lambdaMapping,
+                anonymousType, needReification, lambdaMapping,
                 inliningContext.classRegeneration,
-                isAlreadyRegenerated(owner),
+                isAlreadyRegenerated(anonymousType),
                 desc,
                 false
         );

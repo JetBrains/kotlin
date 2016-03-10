@@ -32,8 +32,6 @@ public class AnonymousObjectGeneration {
 
     private final Map<Integer, LambdaInfo> lambdasToInline;
 
-    private final boolean isSameModule;
-
     private Type newLambdaType;
 
     private String newConstructorDescriptor;
@@ -50,7 +48,6 @@ public class AnonymousObjectGeneration {
     AnonymousObjectGeneration(
             @NotNull String ownerInternalName,
             boolean needReification,
-            boolean isSameModule,
             @NotNull Map<Integer, LambdaInfo> lambdasToInline,
             boolean capturedOuterRegenerated,
             boolean alreadyRegenerated,
@@ -60,7 +57,6 @@ public class AnonymousObjectGeneration {
         this.ownerInternalName = ownerInternalName;
         this.constructorDesc = constructorDesc;
         this.lambdasToInline = lambdasToInline;
-        this.isSameModule = isSameModule;
         this.capturedOuterRegenerated = capturedOuterRegenerated;
         this.needReification = needReification;
         this.alreadyRegenerated = alreadyRegenerated;
@@ -68,21 +64,21 @@ public class AnonymousObjectGeneration {
     }
 
     public AnonymousObjectGeneration(
-            @NotNull String ownerInternalName, boolean isSameModule, boolean needReification,
+            @NotNull String ownerInternalName, boolean needReification,
             boolean alreadyRegenerated,
             boolean isStaticOrigin
     ) {
         this(
-                ownerInternalName, needReification, isSameModule,
+                ownerInternalName, needReification,
                 new HashMap<Integer, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin
         );
     }
 
-    public String getOwnerInternalName() {
+    public String getOldClassName() {
         return ownerInternalName;
     }
 
-    public boolean shouldRegenerate() {
+    public boolean shouldRegenerate(boolean isSameModule) {
         return !alreadyRegenerated && (
                 !lambdasToInline.isEmpty() || !isSameModule || capturedOuterRegenerated || needReification
         );

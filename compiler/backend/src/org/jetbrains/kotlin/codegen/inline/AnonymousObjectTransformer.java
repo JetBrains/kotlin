@@ -244,10 +244,10 @@ public class AnonymousObjectTransformer {
                         inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                         remapper,
                         isSameModule,
-                        "Transformer for " + anonymousObjectGen.getOwnerInternalName(),
+                        "Transformer for " + anonymousObjectGen.getOldClassName(),
                         sourceMapper,
                         new InlineCallSiteInfo(
-                                anonymousObjectGen.getOwnerInternalName(),
+                                anonymousObjectGen.getOldClassName(),
                                 sourceNode.name,
                                 isConstructor ? anonymousObjectGen.getNewConstructorDescriptor() : sourceNode.desc),
                         null
@@ -390,7 +390,7 @@ public class AnonymousObjectTransformer {
         CapturedParamOwner owner = new CapturedParamOwner() {
             @Override
             public Type getType() {
-                return Type.getObjectType(anonymousObjectGen.getOwnerInternalName());
+                return Type.getObjectType(anonymousObjectGen.getOldClassName());
             }
         };
 
