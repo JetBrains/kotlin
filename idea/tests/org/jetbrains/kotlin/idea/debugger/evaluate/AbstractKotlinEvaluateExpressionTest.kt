@@ -355,7 +355,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 val evaluator =
                         EvaluatorBuilderImpl.build(TextWithImportsImpl(codeFragmentKind, text, "", KotlinFileType.INSTANCE),
                                                    contextElement,
-                                                   sourcePosition)
+                                                   sourcePosition,
+                                                   project)
 
 
                 if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
