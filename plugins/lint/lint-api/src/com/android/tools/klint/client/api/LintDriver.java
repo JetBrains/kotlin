@@ -1445,7 +1445,7 @@ public class LintDriver {
             if (ideaProject == null) {
                 return;
             }
-            List<UastConverter> converters = mClient.getConverters();
+            List<UastLanguagePlugin> plugins = mClient.getLanguagePlugins();
 
             for (JavaContext context : contexts) {
                 fireEvent(LintListener.EventType.SCANNING_FILE, context);
@@ -1456,10 +1456,10 @@ public class LintDriver {
                         UastVisitor customVisitor = scanner.createUastVisitor(context);
                         if (customVisitor != null) {
                             UastChecker.INSTANCE.checkWithCustomHandler(
-                                    ideaProject, context.file, converters, customVisitor);
+                                    ideaProject, context.file, plugins, customVisitor);
                         } else {
                             UastChecker.INSTANCE.check(
-                                    ideaProject, context.file, (UastScanner)check, converters, context);
+                                    ideaProject, context.file, (UastScanner)check, plugins, context);
                         }
                     }
                 }
@@ -1498,7 +1498,7 @@ public class LintDriver {
         }
 
         UastChecker checker = UastChecker.INSTANCE;
-        List<UastConverter> converters = project.getClient().getConverters();
+        List<UastLanguagePlugin> plugins = project.getClient().getLanguagePlugins();
 
         for (File file : files) {
             if (!file.isFile()) {
@@ -1506,7 +1506,7 @@ public class LintDriver {
             }
 
             String path = file.getPath();
-            if (!path.endsWith(DOT_JAVA) && !UastConverterUtils.isFileSupported(converters, path)) {
+            if (!path.endsWith(DOT_JAVA) && !UastConverterUtils.isFileSupported(plugins, path)) {
                 continue;
             }
 
@@ -1516,9 +1516,9 @@ public class LintDriver {
             for (UastScanner detector : detectors) {
                 UastVisitor customHandler = detector.createUastVisitor(context);
                 if (customHandler != null) {
-                    checker.checkWithCustomHandler(intellijProject, file, converters, customHandler);
+                    checker.checkWithCustomHandler(intellijProject, file, plugins, customHandler);
                 } else {
-                    checker.check(intellijProject, file, detector, converters, context);
+                    checker.check(intellijProject, file, detector, plugins, context);
                 }
             }
         }
@@ -2043,9 +2043,8 @@ public class LintDriver {
         }
 
         @Override
-        public List<UastConverter> getConverters() {
-            return mDelegate.getConverters();
-
+        public List<UastLanguagePlugin> getLanguagePlugins() {
+            return mDelegate.getLanguagePlugins();
         }
     }
 

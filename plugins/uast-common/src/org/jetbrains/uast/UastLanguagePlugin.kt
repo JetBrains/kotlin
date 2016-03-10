@@ -22,9 +22,18 @@ interface UastConverter {
     fun isFileSupported(path: String): Boolean
 }
 
+interface UastLanguagePlugin {
+    val converter: UastConverter
+    val additionalCheckers: List<UastAdditionalChecker>
+}
+
+interface UastAdditionalChecker {
+    operator fun invoke(element: UElement, handler: UastHandler, context: UastContext)
+}
+
 object UastConverterUtils {
     @JvmStatic
-    fun isFileSupported(converters: List<UastConverter>, path: String): Boolean {
-        return converters.any { it.isFileSupported(path) }
+    fun isFileSupported(converters: List<UastLanguagePlugin>, path: String): Boolean {
+        return converters.any { it.converter.isFileSupported(path) }
     }
 }

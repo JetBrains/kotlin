@@ -16,22 +16,18 @@
 
 package com.android.tools.klint.client.api;
 
-import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.uast.UastConverter;
+import org.jetbrains.uast.UastLanguagePlugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class LintLanguageExtension {
+public abstract class LintLanguageExtension implements UastLanguagePlugin {
     public static final ExtensionPointName<LintLanguageExtension> EP_NAME =
-        ExtensionPointName.create("com.android.tools.lint.client.api.lintLanguageExtension");
-
-    @NonNull
-    public abstract UastConverter getConverter();
+        ExtensionPointName.create("com.android.tools.klint.client.api.lintLanguageExtension");
 
     public static boolean isFileSupported(@Nullable Project project, String path) {
         LintLanguageExtension[] extensions = getExtensions(project);
@@ -44,16 +40,14 @@ public abstract class LintLanguageExtension {
         return false;
     }
 
-    public static List<UastConverter> getConverters(@Nullable Project project) {
+    public static List<UastLanguagePlugin> getPlugins(@Nullable Project project) {
         if (project == null) {
             return Collections.emptyList();
         }
 
         LintLanguageExtension[] languageExtensions = project.getExtensions(EP_NAME);
-        List<UastConverter> converters = new ArrayList<UastConverter>(languageExtensions.length);
-        for (LintLanguageExtension extension : languageExtensions) {
-            converters.add(extension.getConverter());
-        }
+        List<UastLanguagePlugin> converters = new ArrayList<UastLanguagePlugin>(languageExtensions.length);
+        Collections.addAll(converters, languageExtensions);
         return converters;
     }
 

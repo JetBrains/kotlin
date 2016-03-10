@@ -63,7 +63,7 @@ import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.uast.UastConverter;
+import org.jetbrains.uast.UastLanguagePlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,11 +87,11 @@ public class IntellijLintClient extends com.android.tools.klint.client.api.LintC
   @Nullable protected Map<com.android.tools.klint.detector.api.Project, Module> myModuleMap;
 
   @NonNull
-  private List<UastConverter> myConverters;
+  private List<UastLanguagePlugin> myPlugins;
 
   protected IntellijLintClient(@NonNull Project project) {
     myProject = project;
-    myConverters = LintLanguageExtension.getConverters(project);
+    myPlugins = LintLanguageExtension.getPlugins(project);
   }
 
   /** Creates a lint client for batch inspections */
@@ -393,8 +393,8 @@ public class IntellijLintClient extends com.android.tools.klint.client.api.LintC
   }
 
   @Override
-  public List<UastConverter> getConverters() {
-    return myConverters;
+  public List<UastLanguagePlugin> getLanguagePlugins() {
+    return myPlugins;
   }
 
   // Overridden such that lint doesn't complain about missing a bin dir property in the event

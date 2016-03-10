@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lint
+package org.jetbrains.uast.check
 
-import com.android.tools.klint.client.api.LintLanguageExtension
-import org.jetbrains.kotlin.uast.KotlinConverter
+import org.jetbrains.uast.UastAdditionalChecker
 
-class KotlinLintLanguageExtension : LintLanguageExtension() {
-    override fun getConverter() = KotlinConverter
-}
+interface AndroidUastAdditionalChecker : UastAdditionalChecker

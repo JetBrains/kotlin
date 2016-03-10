@@ -19,7 +19,12 @@ package org.jetbrains.uast.java
 import com.intellij.psi.*
 import org.jetbrains.uast.*
 
-object JavaConverter : UastConverter {
+object JavaUastLanguagePlugin : UastLanguagePlugin {
+    override val converter: UastConverter = JavaConverter
+    override val additionalCheckers = emptyList<UastAdditionalChecker>()
+}
+
+internal object JavaConverter : UastConverter {
     override fun isFileSupported(path: String): Boolean {
         return path.endsWith(".java", ignoreCase = true)
     }

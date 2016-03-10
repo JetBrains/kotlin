@@ -17,8 +17,9 @@
 package org.jetbrains.android.inspections.klint
 
 import com.android.tools.klint.client.api.LintLanguageExtension
-import org.jetbrains.kotlin.uast.KotlinConverter
+import org.jetbrains.kotlin.uast.KotlinUastLanguagePlugin
 
 class KotlinLintLanguageExtension : LintLanguageExtension() {
-    override fun getConverter() = KotlinConverter
+    override val converter = KotlinUastLanguagePlugin.converter
+    override val additionalCheckers = KotlinUastLanguagePlugin.additionalCheckers
 }

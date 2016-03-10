@@ -40,7 +40,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
-import org.jetbrains.uast.UastConverter;
+import org.jetbrains.uast.UastLanguagePlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -386,7 +386,7 @@ public abstract class LintClient {
         return null;
     }
 
-    public List<UastConverter> getConverters() {
+    public List<UastLanguagePlugin> getLanguagePlugins() {
         return Collections.emptyList();
     }
 

@@ -155,8 +155,8 @@ public class JavaContext extends Context implements UastAndroidContext {
 
     @NotNull
     @Override
-    public List<UastConverter> getConverters() {
-        return getClient().getConverters();
+    public List<UastLanguagePlugin> getLanguagePlugins() {
+        return getClient().getLanguagePlugins();
     }
 
     @org.jetbrains.annotations.Nullable
