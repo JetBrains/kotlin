@@ -27,5 +27,6 @@ class JavaUImportStatement(
     override val nameToImport: String?
         get() = psi.qualifiedName
 
-    override val isStarImport = false
+    override val isStarImport: Boolean
+        get() = false
 }

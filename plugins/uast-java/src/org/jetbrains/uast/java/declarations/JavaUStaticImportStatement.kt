@@ -27,5 +27,6 @@ class JavaUStaticImportStatement(
     override val nameToImport: String?
         get() = psi.referenceName
 
-    override val isStarImport = true
+    override val isStarImport: Boolean
+        get() = true
 }

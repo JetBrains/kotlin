@@ -48,8 +48,11 @@ class JavaUClass(
     override val isAnnotation: Boolean
         get() = psi.isAnnotationType
 
-    override val isObject = psi is PsiAnonymousClass
-    override val isAnonymous = psi is PsiAnonymousClass
+    override val isObject: Boolean
+        get() = psi is PsiAnonymousClass
+
+    override val isAnonymous: Boolean
+        get() = psi is PsiAnonymousClass
 
     override val internalName = null
 
@@ -120,14 +123,21 @@ private class JavaUAnonymousClassConstructor(
     override val typeParameterCount: Int
         get() = psi.typeParameters.size
 
-    override val returnType = null
+    override val returnType: UType?
+        get() = null
+
     override val body = EmptyExpression(this)
-    override val visibility = UastVisibility.LOCAL
+
+    override val visibility: UastVisibility
+        get() = UastVisibility.LOCAL
 
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
 
-    override val nameElement = null
-    override val name = "<init>"
+    override val nameElement: UElement?
+        get() = null
+
+    override val name: String
+        get() = "<init>"
 }
 
 private class JavaUAnonymousClassConstructorParameter(
@@ -136,8 +146,15 @@ private class JavaUAnonymousClassConstructorParameter(
         override val parent: UElement
 ) : UVariable, NoAnnotations, NoModifiers {
     override val initializer by lz { JavaConverter.convert(psi.expressions[index], this) }
-    override val kind = UastVariableKind.VALUE_PARAMETER
+
+    override val kind: UastVariableKind
+        get() = UastVariableKind.VALUE_PARAMETER
+
     override val type by lz { JavaConverter.convert(psi.expressionTypes[index], this) }
-    override val nameElement = null
-    override val name = "p$index"
+
+    override val nameElement: UElement?
+        get() = null
+
+    override val name: String
+        get() = "p$index"
 }

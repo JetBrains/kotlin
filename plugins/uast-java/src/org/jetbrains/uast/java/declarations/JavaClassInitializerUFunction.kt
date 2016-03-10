@@ -23,17 +23,34 @@ class JavaClassInitializerUFunction(
         override val psi: PsiClassInitializer,
         override val parent: UElement
 ) : UFunction, PsiElementBacked, NoAnnotations, NoModifiers {
-    override val kind = UastFunctionKind.INITIALIZER
-    override val valueParameters = emptyList<UVariable>()
-    override val valueParameterCount = 0
-    override val typeParameters = emptyList<UTypeReference>()
-    override val typeParameterCount = 0
-    override val returnType = null
+    override val kind: UastFunctionKind.UastInitializerKind
+        get() = JavaFunctionKinds.STATIC_INITIALIZER
+
+    override val valueParameters: List<UVariable>
+        get() = emptyList()
+
+    override val valueParameterCount: Int
+        get() = 0
+
+    override val typeParameters: List<UTypeReference>
+        get() = emptyList()
+
+    override val typeParameterCount: Int
+        get() = 0
+
+    override val returnType: UType?
+        get() = null
+
     override val body by lz { JavaConverter.convert(psi.body, this) }
 
-    override val visibility = UastVisibility.LOCAL
-    override val nameElement = null
-    override val name = "<static>"
+    override val visibility: UastVisibility
+        get() = UastVisibility.LOCAL
+
+    override val nameElement: UElement?
+        get() = null
+
+    override val name: String
+        get() = "<static>"
 
     override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
 }

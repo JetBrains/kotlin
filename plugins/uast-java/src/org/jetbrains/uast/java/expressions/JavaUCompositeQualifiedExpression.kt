@@ -28,7 +28,8 @@ class JavaUCompositeQualifiedExpression(
     override lateinit var selector: UExpression
         internal set
 
-    override val accessType = UastQualifiedExpressionAccessType.SIMPLE
+    override val accessType: UastQualifiedExpressionAccessType
+        get() = UastQualifiedExpressionAccessType.SIMPLE
 
     override fun resolve(context: UastContext): UDeclaration? {
         val selector = selector

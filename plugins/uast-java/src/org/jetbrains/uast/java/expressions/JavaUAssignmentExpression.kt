@@ -25,6 +25,9 @@ class JavaUAssignmentExpression(
         override val parent: UElement
 ) : UAssignmentExpression, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
     override val reference by lz { JavaConverter.convert(psi.lExpression, this) }
-    override val operator = psi.operationSign.text
+
+    override val operator: String
+        get() = psi.operationSign.text
+
     override val value by lz { JavaConverter.convertOrEmpty(psi.rExpression, this) }
 }
