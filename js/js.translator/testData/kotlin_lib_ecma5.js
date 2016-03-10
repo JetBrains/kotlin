@@ -311,6 +311,7 @@ var Kotlin = {};
             metadata.type = Kotlin.TYPE.OBJECT;
             Object.defineProperty(this, $o.className, {value: obj});
             defineNestedTypes(obj, klass.$metadata$.types);
+            copyProperties(obj, metadata.staticMembers);
             if (metadata.baseClass != null) {
                 constructor.baseInitializer = metadata.baseClass;
             }
