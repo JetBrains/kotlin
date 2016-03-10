@@ -27,5 +27,7 @@ class JavaULiteralExpression(
     override val text by lz { psi.text }
     override fun evaluate() = psi.value
     override val value by lz { evaluate() }
-    override val isNull = text == "null"
+
+    override val isNull: Boolean
+        get() = text == "null"
 }

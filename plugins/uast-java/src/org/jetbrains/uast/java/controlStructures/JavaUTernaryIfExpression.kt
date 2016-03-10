@@ -27,5 +27,7 @@ class JavaUTernaryIfExpression(
     override val condition by lz { JavaConverter.convert(psi.condition, this) }
     override val thenBranch by lz { JavaConverter.convertOrEmpty(psi.thenExpression, this) }
     override val elseBranch by lz { JavaConverter.convertOrEmpty(psi.elseExpression, this) }
-    override val isTernary = true
+
+    override val isTernary: Boolean
+        get() = true
 }

@@ -28,5 +28,7 @@ class JavaUIfExpression(
     override val condition by lz { JavaConverter.convertOrEmpty(psi.condition, this) }
     override val thenBranch by lz { JavaConverter.convertOrEmpty(psi.thenBranch, this) }
     override val elseBranch by lz { JavaConverter.convertOrEmpty(psi.elseBranch, this) }
-    override val isTernary = false
+
+    override val isTernary: Boolean
+        get() = false
 }

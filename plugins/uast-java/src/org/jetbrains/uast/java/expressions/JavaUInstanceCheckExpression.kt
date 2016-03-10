@@ -27,6 +27,9 @@ class JavaUInstanceCheckExpression(
 ) : UBinaryExpressionWithType, PsiElementBacked, JavaTypeHelper, JavaEvaluateHelper {
     override val operand by lz { JavaConverter.convertOrEmpty(psi.operand, this) }
     override val type by lz { JavaConverter.convert(psi.checkType?.type, this) }
-    override val operationKind = UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
+
+    override val operationKind: UastBinaryExpressionWithTypeKind.InstanceCheck
+        get() = UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
+
     override fun evaluate() = null
 }

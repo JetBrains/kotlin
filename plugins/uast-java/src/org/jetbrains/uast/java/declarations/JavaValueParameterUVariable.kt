@@ -28,8 +28,12 @@ class JavaValueParameterUVariable(
 
     override val nameElement by lz { JavaConverter.convert(psi.nameIdentifier, this) }
     override val type by lz { JavaConverter.convert(psi.type, this) }
-    override val initializer = null
-    override val kind = UastVariableKind.VALUE_PARAMETER
+
+    override val initializer: UExpression?
+        get() = null
+
+    override val kind: UastVariableKind
+        get() = UastVariableKind.VALUE_PARAMETER
 
     override val annotations by lz { psi.modifierList.getAnnotations(this) }
 }
