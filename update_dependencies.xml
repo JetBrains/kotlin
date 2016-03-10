@@ -696,7 +696,7 @@
                         <file file="@{idea.dir}/lib/jdom.jar"/>
                         <file file="@{idea.dir}/lib/jna.jar"/>
                         <file file="@{idea.dir}/lib/log4j.jar"/>
-                        <file file="@{idea.dir}/lib/xstream-1.4.3.jar"/>
+                        <file file="@{idea.dir}/lib/xstream-1.4.8.jar"/>
                         <file file="@{idea.dir}/lib/xpp3-1.1.4-min.jar"/>
                         <file file="@{idea.dir}/lib/jsr166e.jar"/>
                         <file file="@{idea.dir}/lib/asm-all.jar"/>
