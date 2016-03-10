@@ -93,6 +93,10 @@ public class QuickFixFactoryForTypeMismatchError extends KotlinIntentionActionsF
             return Collections.emptyList();
         }
 
+        if (TypeUtilsKt.isPrimitiveNumberType(expressionType) && TypeUtilsKt.isPrimitiveNumberType(expectedType)) {
+            actions.add(new NumberConversionFix(expression, expectedType));
+        }
+
         // We don't want to cast a cast or type-asserted expression:
         if (!(expression instanceof KtBinaryExpressionWithTypeRHS) && !(expression.getParent() instanceof KtBinaryExpressionWithTypeRHS)) {
             actions.add(new CastExpressionFix(expression, expectedType));

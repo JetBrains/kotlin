@@ -55,6 +55,7 @@ fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 fun KotlinType.isNullableAny(): Boolean = KotlinBuiltIns.isNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
+fun KotlinType.isPrimitiveNumberType(): Boolean = KotlinBuiltIns.isPrimitiveType(this) && !isBoolean()
 fun KotlinType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
@@ -71,6 +72,7 @@ fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.D
 
 fun KotlinType.cannotBeReified(): Boolean =
         KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic() || this.isCaptured()
+
 fun KotlinType.unsafeAsReifiedArgument(): Boolean = arguments.any { !it.isStarProjection }
 
 fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypeProjection {
