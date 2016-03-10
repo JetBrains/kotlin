@@ -142,16 +142,6 @@ var Kotlin = {};
     }
 
     /**
-     * @this {{object_initializer$: (function(): Object)}}
-     * @returns {Object}
-     */
-    function class_object() {
-        var object = this.object_initializer$();
-        Object.defineProperty(this, "object", {value: object});
-        return object;
-    }
-
-    /**
      * @param {(Array|Object|null)=} bases
      * @param {(function(new: T, ?, ?, ?, ?, ?, ?, ?): T)|null=} constructor
      * @param {Object=} properties
@@ -186,7 +176,6 @@ var Kotlin = {};
 
         constructor.$metadata$ = metadata;
         constructor.prototype = prototypeObj;
-        Object.defineProperty(constructor, "object", {get: class_object, configurable: true});
         return constructor;
     };
 
@@ -204,14 +193,6 @@ var Kotlin = {};
         }
     }
 
-    Kotlin.createObjectNow = function (bases, constructor, functions, staticProperties) {
-        var noNameClass = Kotlin.createClassNow(bases, constructor, functions, staticProperties);
-        var obj = new noNameClass();
-        noNameClass.$metadata$.type = Kotlin.TYPE.OBJECT;
-        defineNestedTypes(obj, noNameClass.$metadata$.types);
-        return obj;
-    };
-
     Kotlin.createTraitNow = function (bases, properties, staticProperties) {
         var obj = function () {};
 
@@ -222,7 +203,6 @@ var Kotlin = {};
         obj.prototype = {};
         Object.defineProperties(obj.prototype, obj.$metadata$.properties);
         copyProperties(obj.prototype, obj.$metadata$.functions);
-        Object.defineProperty(obj, "object", {get: class_object, configurable: true});
 
         defineNestedTypes(obj, obj.$metadata$.types);
         return obj;
@@ -248,6 +228,9 @@ var Kotlin = {};
         function $o() {
             var klass = Kotlin.createClassNow(getBases(basesFun), constructor, properties, staticProperties);
             Object.defineProperty(this, $o.className, {value: klass});
+            if (staticProperties && staticProperties.object_initializer$) {
+                staticProperties.object_initializer$(klass);
+            }
             return klass;
         }
 
@@ -267,29 +250,28 @@ var Kotlin = {};
         staticProperties = staticProperties || {};
 
         // TODO use Object.assign
-        staticProperties.object_initializer$ = function () {
+        staticProperties.object_initializer$ = function (cls) {
             var enumEntryList = enumEntries();
             var i = 0;
             var values = [];
             for (var entryName in enumEntryList) {
                 if (enumEntryList.hasOwnProperty(entryName)) {
                     var entryObject = enumEntryList[entryName];
-                    values[i] = entryObject;
-                    entryObject.ordinal$ = i;
+                    values.push(entryObject);
+                    entryObject.ordinal$ = i++;
                     entryObject.name$ = entryName;
-                    i++;
+                    cls[entryName] = entryObject;
                 }
             }
             enumEntryList.values$ = values;
-            return enumEntryList;
         };
 
         staticProperties.values = function () {
-            return this.object.values$;
+            return this.values$;
         };
 
         staticProperties.valueOf_61zpoe$ = function (name) {
-            return this.object[name];
+            return this[name];
         };
 
         return Kotlin.createClass(basesFun, constructor, properties, staticProperties)
@@ -321,7 +303,23 @@ var Kotlin = {};
      * @template T
      */
     Kotlin.createObject = function (basesFun, constructor, functions, staticProperties) {
-        return Kotlin.createObjectNow(getBases(basesFun), constructor, functions, staticProperties);
+        constructor = constructor || function() {};
+        function $o() {
+            var klass = Kotlin.createClassNow(getBases(basesFun), null, functions, staticProperties);
+            var obj = new klass();
+            var metadata = klass.$metadata$;
+            metadata.type = Kotlin.TYPE.OBJECT;
+            Object.defineProperty(this, $o.className, {value: obj});
+            defineNestedTypes(obj, klass.$metadata$.types);
+            if (metadata.baseClass != null) {
+                constructor.baseInitializer = metadata.baseClass;
+            }
+            constructor.apply(obj);
+            return obj;
+        }
+
+        $o.type = Kotlin.TYPE.INIT_FUN;
+        return $o;
     };
 
     Kotlin.callGetter = function (thisObject, klass, propertyName) {

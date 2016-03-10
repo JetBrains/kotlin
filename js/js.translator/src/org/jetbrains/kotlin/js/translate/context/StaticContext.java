@@ -310,9 +310,7 @@ public final class StaticContext {
             Rule<JsName> constructorOrCompanionObjectHasTheSameNameAsTheClass = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary() ||
-                        DescriptorUtils.isCompanionObject(descriptor)
-                    ) {
+                    if (descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary()) {
                         //noinspection ConstantConditions
                         return getNameForDescriptor(descriptor.getContainingDeclaration());
                     }
@@ -588,7 +586,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof ClassDescriptor)) {
                         return null;
                     }
-                    DeclarationDescriptor container = getEnclosingNonSingleton(descriptor.getContainingDeclaration());
+                    DeclarationDescriptor container = getEnclosing(descriptor.getContainingDeclaration());
                     if (container == null) {
                         return null;
                     }
@@ -596,16 +594,7 @@ public final class StaticContext {
                     if (isNativeObject(descriptor)) {
                         return null;
                     }
-                    ClassDescriptor cls = (ClassDescriptor) descriptor;
-                    if (cls.getKind() == ClassKind.ENUM_ENTRY || cls.getKind() == ClassKind.OBJECT) {
-                        return null;
-                    }
-
-                    JsExpression result = getQualifiedReference(container);
-                    if (DescriptorUtils.isCompanionObject(container)) {
-                        result = Namer.getCompanionObjectAccessor(result);
-                    }
-                    return applySideEffects(result, descriptor);
+                    return getQualifiedReference(container);
                 }
             };
 
@@ -639,8 +628,8 @@ public final class StaticContext {
     }
 
     @Nullable
-    private static ClassDescriptor getEnclosingNonSingleton(@NotNull  DeclarationDescriptor descriptor) {
-        while (descriptor != null && (!(descriptor instanceof ClassDescriptor) || DescriptorUtils.isObject(descriptor))) {
+    private static ClassDescriptor getEnclosing(@Nullable DeclarationDescriptor descriptor) {
+        while (descriptor != null && !(descriptor instanceof ClassDescriptor)) {
             descriptor = descriptor.getContainingDeclaration();
         }
         return (ClassDescriptor) descriptor;

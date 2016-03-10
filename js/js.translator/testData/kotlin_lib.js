@@ -905,10 +905,10 @@
                 return this.start.toString() + '..' + this.endInclusive;
             }
         }, {
-            object_initializer$: function () {
-                return { EMPTY : new this(1, 0) };
-            }
-    });
+            Companion: Kotlin.createObject(null, function () {
+                this.EMPTY = new Kotlin.NumberRange(1, 0);
+            })
+        });
 
 
 
@@ -983,11 +983,11 @@
             toString: function () {
                 return this.start.toString() + '..' + this.endInclusive;
             }
-       }, {
-           object_initializer$: function () {
-               return { EMPTY : new this(Kotlin.Long.ONE, Kotlin.Long.ZERO) };
-           }
-   });
+        }, {
+            Companion: Kotlin.createObject(null, function () {
+                this.EMPTY = new Kotlin.LongRange(Kotlin.Long.ONE, Kotlin.Long.ZERO);
+            })
+        });
 
 
 
@@ -1057,10 +1057,10 @@
                 return this.start.toString() + '..' + this.endInclusive;
             }
         }, {
-            object_initializer$: function () {
-                return { EMPTY : new this(Kotlin.toChar(1), Kotlin.toChar(0)) };
-            }
-    });
+            Companion: Kotlin.createObject(null, function () {
+                this.EMPTY = new Kotlin.CharRange(Kotlin.toChar(1), Kotlin.toChar(0));
+            })
+        });
 
 
     /**
