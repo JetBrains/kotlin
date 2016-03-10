@@ -59,7 +59,7 @@ import java.util.Map;
  * @author Eugene.Kudelevsky
  */
 class AndroidLintGlobalInspectionContext implements GlobalInspectionContextExtension<AndroidLintGlobalInspectionContext> {
-  static final Key<AndroidLintGlobalInspectionContext> ID = Key.create("AndroidLintGlobalInspectionContext");
+  static final Key<AndroidLintGlobalInspectionContext> ID = Key.create("AndroidKlintGlobalInspectionContext");
   private Map<Issue, Map<File, List<ProblemData>>> myResults;
 
   @NotNull
