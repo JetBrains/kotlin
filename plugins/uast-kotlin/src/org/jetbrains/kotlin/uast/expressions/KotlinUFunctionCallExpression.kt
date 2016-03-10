@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.uast
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -44,7 +43,7 @@ class KotlinUFunctionCallExpression(
     override val functionReference by lz {
         val calleeExpression = psi.calleeExpression ?: return@lz null
         val name = (calleeExpression as? KtSimpleNameExpression)?.getReferencedName() ?: return@lz null
-        KotlinUSimpleReferenceExpression(calleeExpression, name, this)
+        KotlinNameUSimpleReferenceExpression(calleeExpression, name, this)
     }
 
     override val valueArgumentCount: Int
