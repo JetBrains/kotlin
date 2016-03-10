@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,16 +150,21 @@ fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
 fun KtExpression.isDotReceiver(): Boolean =
         (parent as? KtDotQualifiedExpression)?.getReceiverExpression() == this
 
-fun KtElement.getCalleeHighlightingRange(): TextRange {
-    val annotationEntry: KtAnnotationEntry =
+fun KtReferenceExpression.getHighlightingRange(): TextRange {
+    // include '@' symbol if the reference is the first segment of KtAnnotationEntry
+    // if "Deprecated" is highlighted then '@' should be highlighted too in "@Deprecated"
+    val annotationEntry =
             PsiTreeUtil.getParentOfType<KtAnnotationEntry>(
                     this, KtAnnotationEntry::class.java, /* strict = */false, KtValueArgumentList::class.java
-            ) ?: return textRange
+            )
 
-    val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
-                      ?: annotationEntry.getCalleeExpression()!!.startOffset
-
-    return TextRange(startOffset, annotationEntry.getCalleeExpression()!!.endOffset)
+    val atSymbol = annotationEntry?.atSymbol
+    return if (atSymbol != null && atSymbol.endOffset == this.startOffset) {
+         TextRange(atSymbol.startOffset, this.endOffset)
+    }
+    else {
+        this.textRange
+    }
 }
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
