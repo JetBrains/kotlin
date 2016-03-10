@@ -39,7 +39,7 @@ import com.intellij.psi.PsiElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidContext;
-import org.jetbrains.uast.java.JavaConverter;
+import org.jetbrains.uast.java.JavaUastLanguagePlugin;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 /**
@@ -581,11 +581,12 @@ public abstract class PermissionRequirement {
             PsiElementFactory factory = JavaPsiFacade.getInstance(
               context.getClient().getProject()).getElementFactory();
 
-            UElement node = JavaConverter.INSTANCE.convertWithParent(factory.createClassFromText(
-              "class Test { void test() {\n"
-              + "boolean result = " + value
-              + ";\n}\n}"
-              , null).getContainingFile());
+            UElement node = JavaUastLanguagePlugin.INSTANCE.getConverter().
+                    convertWithParent(factory.createClassFromText(
+                      "class Test { void test() {\n"
+                      + "boolean result = " + value
+                      + ";\n}\n}"
+                      , null).getContainingFile());
 
             if (node != null) {
                 final AtomicReference<UExpression> reference = new AtomicReference<UExpression>();

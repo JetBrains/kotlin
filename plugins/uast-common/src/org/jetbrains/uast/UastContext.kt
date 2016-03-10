@@ -16,15 +16,15 @@
 package org.jetbrains.uast
 
 interface UastContext {
-    val converters: List<UastConverter>
+    val languagePlugins: List<UastLanguagePlugin>
 
     fun convert(element: Any?): UElement? {
         if (element == null) {
             return null
         }
 
-        for (converter in converters) {
-            val uelement = converter.convertWithParent(element)
+        for (plugin in languagePlugins) {
+            val uelement = plugin.converter.convertWithParent(element)
             if (uelement != null) {
                 return uelement
             }

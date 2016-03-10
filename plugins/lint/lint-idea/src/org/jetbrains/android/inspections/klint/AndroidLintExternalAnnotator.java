@@ -148,7 +148,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
       } else if (fileType == StdFileTypes.PROPERTIES) {
         scope = Scope.PROPERTY_SCOPE;
       } else {
-        if (UastConverterUtils.isFileSupported(client.getConverters(), mainFile.getPath())) {
+        if (UastConverterUtils.isFileSupported(client.getLanguagePlugins(), mainFile.getPath())) {
           scope = Scope.JAVA_FILE_SCOPE;
         } else {
           // #collectionInformation above should have prevented this

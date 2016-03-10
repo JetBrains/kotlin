@@ -25,9 +25,15 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.uast.lint.PropertyAsCallAndroidUastAdditionalChecker
 import org.jetbrains.uast.*
 
-object KotlinConverter : UastConverter {
+object KotlinUastLanguagePlugin : UastLanguagePlugin {
+    override val converter: UastConverter = KotlinConverter
+    override val additionalCheckers = listOf(PropertyAsCallAndroidUastAdditionalChecker())
+}
+
+internal object KotlinConverter : UastConverter {
     override fun isFileSupported(path: String) = path.endsWith(".kt", false) || path.endsWith(".kts", false)
 
     override fun convert(element: Any?, parent: UElement): UElement? {
@@ -142,7 +148,7 @@ object KotlinConverter : UastConverter {
         is KtBlockExpression -> KotlinUBlockExpression(expression, parent)
         is KtConstantExpression -> KotlinULiteralExpression(expression, parent)
         is KtTryExpression -> KotlinUTryExpression(expression, parent)
-        is KtArrayAccessExpression -> KotlinUArrayAccess(expression, parent)
+        is KtArrayAccessExpression -> KotlinUArrayAccessExpression(expression, parent)
         is KtLambdaExpression -> KotlinULambdaExpression(expression, parent)
         is KtBinaryExpressionWithTypeRHS -> KotlinUBinaryExpressionWithType(expression, parent)
 
@@ -166,7 +172,7 @@ object KotlinConverter : UastConverter {
 
     internal fun asSimpleReference(element: PsiElement?, parent: UElement): USimpleReferenceExpression? {
         if (element == null) return null
-        return KotlinUSimpleReferenceExpression(element, KtPsiUtil.unquoteIdentifier(element.text), parent)
+        return KotlinNameUSimpleReferenceExpression(element, KtPsiUtil.unquoteIdentifier(element.text), parent)
     }
 
     internal fun convertOrEmpty(expression: KtExpression?, parent: UElement): UExpression {

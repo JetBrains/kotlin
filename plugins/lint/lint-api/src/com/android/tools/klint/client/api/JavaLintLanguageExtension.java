@@ -16,12 +16,23 @@
 
 package com.android.tools.klint.client.api;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UastAdditionalChecker;
 import org.jetbrains.uast.UastConverter;
-import org.jetbrains.uast.java.JavaConverter;
+import org.jetbrains.uast.java.JavaUastLanguagePlugin;
+
+import java.util.List;
 
 public class JavaLintLanguageExtension extends LintLanguageExtension {
+    @NotNull
     @Override
     public UastConverter getConverter() {
-        return JavaConverter.INSTANCE;
+        return JavaUastLanguagePlugin.INSTANCE.getConverter();
+    }
+
+    @NotNull
+    @Override
+    public List<UastAdditionalChecker> getAdditionalCheckers() {
+        return JavaUastLanguagePlugin.INSTANCE.getAdditionalCheckers();
     }
 }

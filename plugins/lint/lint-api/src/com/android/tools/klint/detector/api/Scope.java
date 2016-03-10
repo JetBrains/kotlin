@@ -203,7 +203,7 @@ public enum Scope {
                         scope.add(BINARY_RESOURCE_FILE);
                         scope.add(RESOURCE_FOLDER);
                     } else if (UastConverterUtils.isFileSupported(
-                            project.getClient().getConverters(), name)) {
+                            project.getClient().getLanguagePlugins(), name)) {
                         scope.add(SOURCE_FILE);
                     }
                 }
