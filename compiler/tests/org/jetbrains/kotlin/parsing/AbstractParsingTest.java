@@ -38,10 +38,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public abstract class AbstractParsingTest extends ParsingTestCase {
-    static {
-        System.setProperty("idea.platform.prefix", "Idea");
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();

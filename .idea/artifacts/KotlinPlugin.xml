@@ -47,6 +47,7 @@
           <element id="module-output" name="idea-repl" />
           <element id="module-output" name="idea-live-templates" />
           <element id="module-output" name="resolution" />
+          <element id="module-output" name="idea-ultimate" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
