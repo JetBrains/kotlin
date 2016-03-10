@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,32 +20,27 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsic;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
-public class CompanionObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public class CompanionObjectIntrinsicAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
     @NotNull
-    /*package*/ static CompanionObjectAccessTranslator newInstance(
+    /*package*/ static CompanionObjectIntrinsicAccessTranslator newInstance(
             @NotNull KtSimpleNameExpression expression,
             @NotNull TranslationContext context
     ) {
         DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert referenceDescriptor != null : "JetSimpleName expression must reference a descriptor " + expression.getText();
-        return new CompanionObjectAccessTranslator(referenceDescriptor, context);
+        return new CompanionObjectIntrinsicAccessTranslator(referenceDescriptor, context);
     }
 
     /*package*/ static boolean isCompanionObjectReference(
@@ -53,32 +48,21 @@ public class CompanionObjectAccessTranslator extends AbstractTranslator implemen
             @NotNull TranslationContext context
     ) {
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
-        return descriptor instanceof ClassDescriptor && !AnnotationsUtils.isNativeObject(descriptor);
+        return descriptor instanceof ClassDescriptor && context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor).exists();
     }
 
     @NotNull
     private final JsExpression referenceToCompanionObject;
 
-    private CompanionObjectAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+    private CompanionObjectIntrinsicAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
         this.referenceToCompanionObject = generateReferenceToCompanionObject(descriptor, context);
     }
 
     @NotNull
     private static JsExpression generateReferenceToCompanionObject(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
-        if (descriptor instanceof ClassDescriptor) {
-            ObjectIntrinsic objectIntrinsic = context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor);
-            if (objectIntrinsic.exists()) {
-                return objectIntrinsic.apply(context);
-            }
-        }
-
-        JsExpression fqReference = translateAsFQReference(descriptor, context);
-        if (isNonCompanionObject(descriptor) || isEnumEntry(descriptor)) {
-            return fqReference;
-        }
-
-        return Namer.getCompanionObjectAccessor(fqReference);
+        ObjectIntrinsic objectIntrinsic = context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor);
+        return objectIntrinsic.apply(context);
     }
 
     @Override

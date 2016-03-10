@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.declaration;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -30,21 +28,19 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.createCompanionObjectInitializer;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     protected final List<JsPropertyInitializer> result;
-    protected final List<JsPropertyInitializer> staticResult;
-    protected final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();
+    private final List<JsPropertyInitializer> staticResult;
+    private final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();
 
     public DeclarationBodyVisitor(@NotNull List<JsPropertyInitializer> result, @NotNull List<JsPropertyInitializer> staticResult) {
         this.result = result;
@@ -88,15 +84,11 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
 
     @Override
     public Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, TranslationContext context) {
-        if (!declaration.isCompanion()) {
-            // parsed it in initializer visitor => no additional actions are needed
-            return null;
-        }
-        JsExpression value = ClassTranslator.generateClassCreation(declaration, context);
+        JsExpression object = ClassTranslator.generateObjectDeclaration(declaration, context);
+        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), declaration);
+        JsName objName = context.getNameForDescriptor(descriptor);
+        staticResult.add(new JsPropertyInitializer(objName.makeRef(), object));
 
-        ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
-        JsFunction fun = TranslationUtils.simpleReturnFunction(context.getScopeForDescriptor(descriptor), value);
-        staticResult.add(createCompanionObjectInitializer(fun, context));
         return null;
     }
 

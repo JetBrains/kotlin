@@ -32,11 +32,9 @@ import org.jetbrains.kotlin.js.translate.context.*
 import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
-import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
@@ -64,12 +62,8 @@ class ClassTranslator private constructor(
 
     private val descriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
 
-    private fun translateObjectLiteralExpression(): JsExpression {
-        return if (descriptor.containingDeclaration is ClassDescriptor && descriptor.kind == ClassKind.OBJECT)
-            translateObjectInsideClass(context())
-        else
-            translate(context())
-    }
+    // TODO: eliminate
+    private fun translateObjectLiteralExpression() = translate(context())
 
     private fun translate(declarationContext: TranslationContext = context()): JsInvocation {
         return JsInvocation(context().namer().classCreateInvocation(descriptor), getClassCreateInvocationArguments(declarationContext))
@@ -152,22 +146,6 @@ class ClassTranslator private constructor(
     }
 
     private fun fixContextForCompanionObjectAccessing(context: TranslationContext): TranslationContext {
-        // In Kotlin we can access to companion object members without qualifier just by name, but we should translate it to access with FQ name.
-        // So create alias for companion object receiver parameter.
-        val companionObjectDescriptor = descriptor.companionObjectDescriptor
-        if (companionObjectDescriptor != null) {
-            val referenceToClass = translateAsFQReference(companionObjectDescriptor.containingDeclaration, context)
-            val companionObjectAccessor = Namer.getCompanionObjectAccessor(referenceToClass)
-            val companionObjectReceiver = getReceiverParameterForDeclaration(companionObjectDescriptor)
-            context.aliasingContext().registerAlias(companionObjectReceiver, companionObjectAccessor)
-        }
-
-        // Overlap alias of companion object receiver for accessing from containing class(see previous if block),
-        // because inside companion object we should use simple name for access.
-        if (isCompanionObject(descriptor)) {
-            return context.innerContextWithAliased(descriptor.thisAsReceiverParameter, JsLiteral.THIS)
-        }
-
         return context
     }
 

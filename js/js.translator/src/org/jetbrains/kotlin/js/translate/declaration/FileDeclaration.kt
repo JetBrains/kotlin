@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate
 import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForProperty
 import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.psi.KtClass
@@ -56,7 +56,14 @@ class FileDeclarationVisitor(
     }
 
     override fun visitObjectDeclaration(declaration: KtObjectDeclaration, context: TranslationContext?): Void? {
-        InitializerUtils.generateObjectInitializer(declaration, initializerStatements, context!!)
+        context!!
+
+        // TODO: avoid duplication with superclass
+        val obj = ClassTranslator.generateObjectDeclaration(declaration, context)
+        val descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), declaration)
+        val objName = context.getNameForDescriptor(descriptor)
+        result.add(JsPropertyInitializer(objName.makeRef(), obj))
+
         return null
     }
 

@@ -280,7 +280,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsExpression visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression,
             @NotNull TranslationContext context) {
-        return ReferenceTranslator.translateSimpleNameWithQualifier(expression, null, context).source(expression);
+        return ReferenceTranslator.translateSimpleName(expression, context).source(expression);
     }
 
     @Override

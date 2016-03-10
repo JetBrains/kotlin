@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,16 @@ package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.js.translate.context.Namer;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.isBackingFieldReference;
 
@@ -40,43 +37,8 @@ public final class ReferenceTranslator {
     }
 
     @NotNull
-    public static JsExpression translateSimpleName(@NotNull KtSimpleNameExpression expression,
-            @NotNull TranslationContext context) {
+    public static JsExpression translateSimpleName(@NotNull KtSimpleNameExpression expression, @NotNull TranslationContext context) {
         return getAccessTranslator(expression, context).translateAsGet();
-    }
-
-    @NotNull
-    public static JsExpression translateSimpleNameWithQualifier(
-            @NotNull KtSimpleNameExpression expression,
-            @Nullable JsExpression qualifier,
-            @NotNull TranslationContext context
-    ) {
-        JsExpression simpleName = translateSimpleName(expression, context);
-
-        // Ignore qualifier if expression is EnumEntry or companion object reference and always use FQ name.
-        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
-        //TODO: should go away when objects inside classes are supported
-        if (descriptor != null && DescriptorUtils.isCompanionObject(descriptor) && !AnnotationsUtils.isNativeObject(descriptor)) {
-            return simpleName;
-        }
-        if (descriptor instanceof ClassDescriptor) {
-            ClassDescriptor entryClass = (ClassDescriptor) descriptor;
-            if (entryClass.getKind() == ClassKind.ENUM_ENTRY) {
-                if (!AnnotationsUtils.isNativeObject(entryClass)) {
-                    DeclarationDescriptor enumClass = entryClass.getContainingDeclaration();
-                    qualifier = Namer.getCompanionObjectAccessor(translateAsFQReference(enumClass, context));
-                }
-            }
-            else if (DescriptorUtils.isClassOrEnumClass(entryClass)) {
-                qualifier = null;
-            }
-        }
-
-        if (qualifier != null) { // TODO: hack for nested Object
-            setQualifier(simpleName, qualifier);
-        }
-
-        return simpleName;
     }
 
     @NotNull
@@ -95,27 +57,20 @@ public final class ReferenceTranslator {
                 return alias;
             }
         }
-        return context.getNameForDescriptor(descriptor).makeRef();
+        return context.getQualifiedReference(descriptor);
     }
 
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull KtSimpleNameExpression referenceExpression,
-            @NotNull TranslationContext context) {
-        return getAccessTranslator(referenceExpression, null, context);
-    }
-
-    @NotNull
-    public static AccessTranslator getAccessTranslator(@NotNull KtSimpleNameExpression referenceExpression,
-            @Nullable JsExpression receiver,
             @NotNull TranslationContext context) {
         if (isBackingFieldReference(getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression))) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
         if (canBePropertyAccess(referenceExpression, context)) {
-            return VariableAccessTranslator.newInstance(context, referenceExpression, receiver);
+            return VariableAccessTranslator.newInstance(context, referenceExpression, null);
         }
-        if (CompanionObjectAccessTranslator.isCompanionObjectReference(referenceExpression, context)) {
-            return CompanionObjectAccessTranslator.newInstance(referenceExpression, context);
+        if (CompanionObjectIntrinsicAccessTranslator.isCompanionObjectReference(referenceExpression, context)) {
+            return CompanionObjectIntrinsicAccessTranslator.newInstance(referenceExpression, context);
         }
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }
