@@ -70,7 +70,9 @@ class UsageTracker(
         val suggestedName = when (this) {
             is ReceiverParameterDescriptor -> this.getNameForCapturedReceiver()
             is TypeParameterDescriptor -> Namer.isInstanceSuggestedName(this)
-            else -> getSuggestedName(this)
+
+            // Append 'closure$' prefix to avoid name clash between closure and member fields in case of local classes
+            else -> "closure\$${getSuggestedName(this)}"
         }
 
         return scope.declareFreshName(suggestedName)
