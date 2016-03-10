@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AnonymousObjectGeneration {
+public class AnonymousObjectRegenerationInfo extends RegenerationInfo {
 
     private final String ownerInternalName;
 
@@ -45,7 +45,7 @@ public class AnonymousObjectGeneration {
     private final boolean alreadyRegenerated;
     private final boolean isStaticOrigin;
 
-    AnonymousObjectGeneration(
+    AnonymousObjectRegenerationInfo(
             @NotNull String ownerInternalName,
             boolean needReification,
             @NotNull Map<Integer, LambdaInfo> lambdasToInline,
@@ -63,7 +63,7 @@ public class AnonymousObjectGeneration {
         this.isStaticOrigin = isStaticOrigin;
     }
 
-    public AnonymousObjectGeneration(
+    public AnonymousObjectRegenerationInfo(
             @NotNull String ownerInternalName, boolean needReification,
             boolean alreadyRegenerated,
             boolean isStaticOrigin
@@ -74,10 +74,13 @@ public class AnonymousObjectGeneration {
         );
     }
 
+    @NotNull
+    @Override
     public String getOldClassName() {
         return ownerInternalName;
     }
 
+    @Override
     public boolean shouldRegenerate(boolean isSameModule) {
         return !alreadyRegenerated && (
                 !lambdasToInline.isEmpty() || !isSameModule || capturedOuterRegenerated || needReification
@@ -88,8 +91,10 @@ public class AnonymousObjectGeneration {
         return lambdasToInline;
     }
 
-    public Type getNewLambdaType() {
-        return newLambdaType;
+    @NotNull
+    @Override
+    public String getNewClassName() {
+        return newLambdaType.getInternalName();
     }
 
     public void setNewLambdaType(Type newLambdaType) {
