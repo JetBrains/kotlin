@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeKt;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -51,6 +53,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
+import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -394,8 +397,18 @@ public class FunctionCodegen {
             int indexOfLambdaOrdinal = name.lastIndexOf("$");
             if (indexOfLambdaOrdinal > 0) {
                 int lambdaOrdinal = Integer.parseInt(name.substring(indexOfLambdaOrdinal + 1));
+
+                KtElement functionArgument = parentCodegen.element;
+                String functionName = "unknown";
+                if (functionArgument instanceof KtFunction) {
+                    ValueParameterDescriptor inlineArgumentDescriptor =
+                            InlineUtil.getInlineArgumentDescriptor((KtFunction) functionArgument, parentCodegen.bindingContext);
+                    if (inlineArgumentDescriptor != null) {
+                        functionName = inlineArgumentDescriptor.getContainingDeclaration().getName().asString();
+                    }
+                }
                 mv.visitLocalVariable(
-                        JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT + lambdaOrdinal,
+                        JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT + lambdaOrdinal +  "$" + functionName,
                         Type.INT_TYPE.getDescriptor(), null,
                         methodBegin, methodEnd,
                         lambdaFakeIndex);

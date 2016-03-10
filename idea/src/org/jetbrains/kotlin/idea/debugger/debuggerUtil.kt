@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
 
 fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariable>): Boolean {
@@ -36,16 +38,27 @@ fun numberOfInlinedFunctions(visibleVariables: List<LocalVariable>): Int {
 
 fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debugProcess: DebugProcessImpl): Boolean {
     val visibleVariables = location.visibleVariables(debugProcess)
-    val lambdaOrdinalIndex = runReadAction { lambdaOrdinalIndex(inlineArgument) }
+
+    val context = KotlinDebuggerCaches.getOrCreateTypeMapper(inlineArgument).bindingContext
+
+    val lambdaOrdinal = runReadAction { lambdaOrdinalByArgument(inlineArgument, context) }
     val markerLocalVariables = visibleVariables.filter { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) }
-    return markerLocalVariables.firstOrNull { lambdaOrdinal(it.name()) == lambdaOrdinalIndex } != null
+
+    val functionName = runReadAction { functionNameByArgument(inlineArgument, context) }
+
+    return markerLocalVariables.firstOrNull {
+        lambdaOrdinalByLocalVariable(it.name()) == lambdaOrdinal && functionNameByLocalVariable(it.name()) == functionName
+    } != null
 }
 
-private fun lambdaOrdinalIndex(elementAt: KtFunction): Int {
-    val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(elementAt)
-
-    val type = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, elementAt)
+private fun lambdaOrdinalByArgument(elementAt: KtFunction, context: BindingContext): Int {
+    val type = CodegenBinding.asmTypeForAnonymousClass(context, elementAt)
     return type.className.substringAfterLast("$").toInt()
+}
+
+private fun functionNameByArgument(elementAt: KtFunction, context: BindingContext): String {
+    val inlineArgumentDescriptor = InlineUtil.getInlineArgumentDescriptor(elementAt, context)
+    return inlineArgumentDescriptor?.containingDeclaration?.name?.asString() ?: "unknown"
 }
 
 private fun Location.visibleVariables(debugProcess: DebugProcessImpl): List<LocalVariable> {
@@ -53,13 +66,19 @@ private fun Location.visibleVariables(debugProcess: DebugProcessImpl): List<Loca
     return stackFrame.visibleVariables()
 }
 
-private fun lambdaOrdinal(name: String): Int {
-    return try {
-        return name.substringAfter(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT).toInt()
+private fun lambdaOrdinalByLocalVariable(name: String): Int {
+    try {
+        val nameWithoutPrefix = name.removePrefix(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
+        return Integer.parseInt(nameWithoutPrefix.substringBefore("$", nameWithoutPrefix))
     }
     catch(e: NumberFormatException) {
-        0
+        return 0
     }
+}
+
+private fun functionNameByLocalVariable(name: String): String {
+    val nameWithoutPrefix = name.removePrefix(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
+    return nameWithoutPrefix.substringAfterLast("$", "unknown")
 }
 
 private class MockStackFrame(private val location: Location, private val vm: VirtualMachine) : StackFrame {

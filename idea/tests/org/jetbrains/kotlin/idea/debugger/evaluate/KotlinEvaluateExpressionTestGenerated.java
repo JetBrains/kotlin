@@ -229,6 +229,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("nestedInlineArguments.kt")
+        public void testNestedInlineArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/nestedInlineArguments.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("onClassHeader.kt")
         public void testOnClassHeader() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/onClassHeader.kt");

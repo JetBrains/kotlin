@@ -13,3 +13,6 @@
 - Place comments from the middle of the call to the end
 - Drop line breaks between operator arguments (except '+', "-", "&&" and "||")
 - Add non-null assertions on call site for non-null parameters
+
+### IDE
+- Debugger can distinguish nested inline arguments
