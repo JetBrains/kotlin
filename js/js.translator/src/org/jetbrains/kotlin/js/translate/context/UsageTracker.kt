@@ -22,6 +22,7 @@ import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.kotlin.js.translate.utils.ManglingUtils.getSuggestedName
 import com.google.dart.compiler.backend.js.ast.JsScope
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
@@ -59,11 +60,21 @@ class UsageTracker(
     }
 
     private fun captureIfNeed(descriptor: DeclarationDescriptor?) {
-        if (descriptor == null || isCaptured(descriptor) || isAncestor(containingDescriptor, descriptor, /* strict = */ true)) return
+        if (descriptor == null || isCaptured(descriptor) || isAncestor(containingDescriptor, descriptor, /* strict = */ true) ||
+            isSingletonReceiver(descriptor)) return
 
         parent?.captureIfNeed(descriptor)
 
         captured[descriptor] = descriptor.getJsNameForCapturedDescriptor()
+    }
+
+    private fun isSingletonReceiver(descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor !is ReceiverParameterDescriptor) return false
+
+        val value = descriptor.value
+        if (value !is ImplicitReceiver) return false
+
+        return DescriptorUtils.isObject(value.declarationDescriptor)
     }
 
     private fun DeclarationDescriptor.getJsNameForCapturedDescriptor(): JsName {
