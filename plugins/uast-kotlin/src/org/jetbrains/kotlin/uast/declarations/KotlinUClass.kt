@@ -79,8 +79,13 @@ class KotlinUClass(
 
     override val declarations by lz {
         val primaryConstructor = psi.getPrimaryConstructor()?.let { KotlinConverter.convert(it, this) }
+        val anonymousInitializers = psi.getAnonymousInitializers().map { KotlinConverter.convert(it, this) }.filterNotNull()
         val declarations = psi.declarations.map { KotlinConverter.convert(it, this) }.filterNotNull()
-        if (primaryConstructor != null) listOf(primaryConstructor) + declarations else declarations
+
+        if (primaryConstructor != null)
+            listOf(primaryConstructor) + declarations + anonymousInitializers
+        else
+            declarations + anonymousInitializers
     }
 
     override val superTypes by lz {

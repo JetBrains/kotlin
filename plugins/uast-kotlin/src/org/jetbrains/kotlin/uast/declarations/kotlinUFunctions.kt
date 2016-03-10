@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -87,4 +89,43 @@ class KotlinUFunction(
         get() = psi.typeParameters.size
 
     override val typeParameters by lz { psi.typeParameters.map { KotlinParameterUTypeReference(it, this) } }
+}
+
+class KotlinAnonymousInitializerUFunction(
+        override val psi: KtAnonymousInitializer,
+        override val parent: UElement
+) : UFunction, PsiElementBacked {
+    override val kind = KotlinFunctionKinds.INIT_BLOCK
+
+    override val valueParameters: List<UVariable>
+        get() = emptyList()
+
+    override val valueParameterCount: Int
+        get() = 0
+
+    override val typeParameters: List<UTypeReference>
+        get() = emptyList()
+
+    override val typeParameterCount: Int
+        get() = 0
+
+    override val returnType: UType?
+        get() = null
+
+    override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
+
+    override val visibility: UastVisibility
+        get() = UastVisibility.PRIVATE
+
+    override fun getSuperFunctions(context: UastContext) = emptyList<UFunction>()
+
+    override val nameElement by lz { KotlinPsiElementStub(psi.node.findChildByType(KtTokens.INIT_KEYWORD)?.psi ?: psi, this) }
+
+    override val name: String
+        get() = "<init>"
+
+    override fun hasModifier(modifier: UastModifier) = false
+
+    override val annotations: List<UAnnotation>
+        get() = emptyList()
 }

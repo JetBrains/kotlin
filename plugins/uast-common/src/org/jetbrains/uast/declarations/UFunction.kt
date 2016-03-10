@@ -47,7 +47,7 @@ interface UFunction : UDeclaration, UModifierOwner, UAnnotated {
         return "${visibility.name} fun " + typeParameters + name + "(" + valueParameters + ")" + returnType + body
     }
 
-    override fun logString() = "UFunction ($name, kind = ${kind.name}, " +
+    override fun logString() = "UFunction ($name, kind = ${kind.text}, " +
             "paramCount = $valueParameterCount)\n" + body.logString().withMargin
 }
 
