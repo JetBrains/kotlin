@@ -20,9 +20,9 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
 
 ## Editing Kotlin
 
- * [Kotlin IntelliJ IDEA Plugin](http://hadihariri.com/2012/02/17/the-kotlin-journey-part-i-getting-things-set-up/)
+ * [Kotlin IntelliJ IDEA Plugin](https://kotlinlang.org/docs/tutorials/getting-started.html)
  * [Kotlin Eclipse Plugin](http://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
- * [Kotlin TextMate Bundle](https://github.com/k33g/kotlin-textmate-bundle#readme)
+ * [Kotlin TextMate Bundle](https://github.com/vkostyukov/kotlin-sublime-package)
 
 ## Building
 
