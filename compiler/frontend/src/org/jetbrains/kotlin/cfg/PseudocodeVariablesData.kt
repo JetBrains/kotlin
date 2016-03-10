@@ -155,12 +155,19 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 TraversalOrder.BACKWARD, true, UseControlFlowInfo()
         ) {
             instruction: Instruction, incomingEdgesData: Collection<UseControlFlowInfo> ->
-            val enterResult = UseControlFlowInfo()
-            for (edgeData in incomingEdgesData) {
-                for (entry in edgeData.entries) {
-                    val variableDescriptor = entry.key
-                    val variableUseState = entry.value
-                    enterResult.put(variableDescriptor, variableUseState.merge(enterResult[variableDescriptor]))
+            val enterResult: UseControlFlowInfo
+
+            if (incomingEdgesData.size == 1) {
+                enterResult = incomingEdgesData.single()
+            }
+            else {
+                enterResult = UseControlFlowInfo()
+                for (edgeData in incomingEdgesData) {
+                    for (entry in edgeData.entries) {
+                        val variableDescriptor = entry.key
+                        val variableUseState = entry.value
+                        enterResult.put(variableDescriptor, variableUseState.merge(enterResult[variableDescriptor]))
+                    }
                 }
             }
             val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, bindingContext)
@@ -207,6 +214,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         private fun mergeIncomingEdgesDataForInitializers(
                 incomingEdgesData: Collection<InitControlFlowInfo>
         ): InitControlFlowInfo {
+            if (incomingEdgesData.size == 1) return incomingEdgesData.single()
             val variablesInScope = Sets.newHashSet<VariableDescriptor>()
             for (edgeData in incomingEdgesData) {
                 variablesInScope.addAll(edgeData.keys)
