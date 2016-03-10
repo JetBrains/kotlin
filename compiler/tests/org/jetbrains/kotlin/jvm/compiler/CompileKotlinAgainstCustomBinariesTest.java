@@ -291,7 +291,11 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     public void testMissingDependencySimple() throws Exception {
-        doTestBrokenKotlinLibrary("library", "a/A.class", "a/A$Inner.class");
+        doTestBrokenKotlinLibrary("library", "a/A.class");
+    }
+
+    public void testMissingDependencyDifferentCases() throws Exception {
+        doTestBrokenKotlinLibrary("library", "a/A.class");
     }
 
     public void testMissingDependencyConflictingLibraries() throws Exception {

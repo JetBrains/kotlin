@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 
@@ -35,13 +34,9 @@ class CallReturnsArrayOfNothingChecker : CallChecker {
     }
 
     private fun KotlinType?.containsArrayOfNothing(): Boolean {
-        // if this.isComputing is true, it means that resolve
-        // has run into recursion, so checking for Array<Nothing> is meaningless anyway,
-        // and error about recursion will be reported later
-        if (this == null || this is DeferredType && this.isComputing) return false
+        if (this == null || isComputingDeferredType(this)) return false
 
-        if (isArrayOfNothing()) return true
-
-        return arguments.any { !it.isStarProjection && it.type.containsArrayOfNothing() }
+        return isArrayOfNothing() ||
+               arguments.any { !it.isStarProjection && it.type.containsArrayOfNothing() }
     }
 }

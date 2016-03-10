@@ -41,8 +41,7 @@ fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
     return map
 }
 
-
-public inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> V): V {
+inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> V): V {
     return if (!containsKey(key)) {
         val answer = defaultValue()
         put(key, answer)
@@ -69,6 +68,10 @@ fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> {
 
 fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
     return HashSet(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
+}
+
+fun <E> newLinkedHashSetWithExpectedSize(expectedSize: Int): LinkedHashSet<E> {
+    return LinkedHashSet(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
 }
 
 fun <T> Collection<T>.toReadOnlyList(): List<T> =

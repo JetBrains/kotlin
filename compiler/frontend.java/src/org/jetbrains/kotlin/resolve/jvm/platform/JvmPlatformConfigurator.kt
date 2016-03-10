@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-
 object JvmPlatformConfigurator : PlatformConfigurator(
         DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(
@@ -51,7 +50,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 JavaClassOnCompanionChecker(),
                 ProtectedInSuperClassCompanionCallChecker(),
                 UnsupportedSyntheticCallableReferenceChecker(),
-                SuperCallWithDefaultArgumentsChecker()
+                SuperCallWithDefaultArgumentsChecker(),
+                MissingDependencyClassChecker()
         ),
 
         additionalTypeCheckers = listOf(
