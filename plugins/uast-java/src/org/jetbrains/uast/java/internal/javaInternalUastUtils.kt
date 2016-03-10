@@ -22,7 +22,8 @@ import org.jetbrains.uast.*
 
 private val MODIFIER_MAP = mapOf(
         UastModifier.ABSTRACT to PsiModifier.ABSTRACT,
-        UastModifier.FINAL to PsiModifier.FINAL
+        UastModifier.FINAL to PsiModifier.FINAL,
+        UastModifier.STATIC to PsiModifier.STATIC
 )
 
 internal fun PsiModifierListOwner.hasModifier(modifier: UastModifier): Boolean {

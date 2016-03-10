@@ -16,6 +16,8 @@
 @file:JvmName("UastUtils")
 package org.jetbrains.uast
 
+import org.jetbrains.uast.kinds.UastClassKind
+
 tailrec fun UElement?.getContainingClass(): UClass? {
     val parent = this?.parent ?: return null
     if (parent is UClass) return parent
@@ -126,4 +128,21 @@ fun <T: UElement> UElement.getParentOfType(clazz: Class<T>): T? {
 
     @Suppress("UNCHECKED_CAST")
     return findParent(this) as T
+}
+
+fun <T> UClass.findStaticMemberOfType(name: String, type: Class<out T>): T? {
+    for (companion in companions) {
+        val classKind = companion.kind as? UastClassKind.UastCompanionObject ?: continue
+        if (!classKind.default) continue
+
+        val member = companion.declarations.firstOrNull { it.name == name && type.isInstance(it) }
+        @Suppress("UNCHECKED_CAST")
+        if (member != null) return member as T
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    return declarations.firstOrNull {
+        it.name == name && it is UModifierOwner
+                && it.hasModifier(UastModifier.STATIC) && type.isInstance(it)
+    } as T
 }

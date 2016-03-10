@@ -84,8 +84,7 @@ public class HandlerDetector extends Detector implements UastScanner {
 
     @Override
     public void visitClass(UastAndroidContext context, UClass node) {
-        boolean x = node.hasModifier(UastModifier.INNER);
-        if (!node.hasModifier(UastModifier.INNER)) {
+        if (node.hasModifier(UastModifier.STATIC)) {
             return;
         }
 

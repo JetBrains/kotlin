@@ -38,6 +38,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.kinds.UastClassKind;
 
 /**
  * Looks for custom views that do not define the view constructors needed by UI builders
@@ -114,11 +115,12 @@ public class ViewConstructorDetector extends Detector implements UastScanner {
     @Override
     public void visitClass(UastAndroidContext context, UClass node) {
         // Only applies to concrete and not abstract classes
-        if (node.isObject() || node.isInterface() || node.isEnum() || node.hasModifier(UastModifier.ABSTRACT)) {
+        UastClassKind kind = node.getKind();
+        if (kind != UastClassKind.CLASS || node.hasModifier(UastModifier.ABSTRACT)) {
             return;
         }
 
-        if (UastUtils.getContainingClass(node) != null && node.hasModifier(UastModifier.INNER)) {
+        if (UastUtils.getContainingClass(node) != null && !node.hasModifier(UastModifier.STATIC)) {
             // Ignore inner classes that aren't static: we can't create these
             // anyway since we'd need the outer instance
             return;

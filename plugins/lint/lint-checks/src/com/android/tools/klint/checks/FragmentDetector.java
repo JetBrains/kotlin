@@ -36,6 +36,7 @@ import org.jetbrains.uast.*;
 import org.jetbrains.uast.check.UastAndroidUtils;
 import org.jetbrains.uast.check.UastAndroidContext;
 import org.jetbrains.uast.check.UastScanner;
+import org.jetbrains.uast.kinds.UastClassKind;
 
 /**
  * Checks that Fragment subclasses can be instantiated via
@@ -90,7 +91,7 @@ public class FragmentDetector extends Detector implements UastScanner {
 
     @Override
     public void visitClass(UastAndroidContext context, UClass cls) {
-        if (cls.hasModifier(UastModifier.ABSTRACT) || cls.isInterface()) {
+        if (cls.hasModifier(UastModifier.ABSTRACT) || cls.getKind() != UastClassKind.CLASS) {
             return;
         }
 
@@ -101,7 +102,7 @@ public class FragmentDetector extends Detector implements UastScanner {
             return;
         }
 
-        if (UastUtils.getContainingClass(cls) != null && cls.hasModifier(UastModifier.INNER)) {
+        if (UastUtils.getContainingClass(cls) != null && !cls.hasModifier(UastModifier.STATIC)) {
             String message = String.format(
               "This fragment inner class should be static (%1$s)", cls.getName());
             context.report(ISSUE, cls, UastAndroidUtils.getLocation(cls.getNameElement()), message);
