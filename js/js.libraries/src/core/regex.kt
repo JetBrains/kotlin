@@ -147,7 +147,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
      * @param limit The maximum number of times the split can occur.
      */
     public fun split(input: CharSequence, limit: Int = 0): List<String> {
-        require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+        require(limit >= 0) { "Limit must be non-negative, but was $limit" }
         val matches = findAll(input).let { if (limit == 0) it else it.take(limit - 1) }
         val result = ArrayList<String>()
         var lastStart = 0
@@ -166,8 +166,10 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     companion object {
         /** Returns a literal regex for the specified [literal] string. */
         public fun fromLiteral(literal: String): Regex = Regex(escape(literal))
+
         /** Returns a literal pattern for the specified [literal] string. */
         public fun escape(literal: String): String = literal.nativeReplace(patternEscape, "\\$&")
+
         /** Returns a literal replacement exression for the specified [literal] string. */
         public fun escapeReplacement(literal: String): String = literal.nativeReplace(replacementEscape, "$$$$")
 
@@ -190,7 +192,7 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
     val match = exec(input)
     if (match == null) return null
     val reMatch = match as RegExpMatch
-    val range = reMatch.index..lastIndex-1
+    val range = reMatch.index..lastIndex - 1
 
     return object : MatchResult {
         override val range: IntRange = range

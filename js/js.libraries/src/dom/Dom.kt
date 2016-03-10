@@ -73,7 +73,7 @@ fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
 @Deprecated("Use non-null function instead with elvis", ReplaceWith("this?.asList() ?: emptyList()"))
 fun NodeList?.asList(): List<Node> = this?.asList() ?: emptyList()
 
-fun NodeList.asList() : List<Node> = NodeListAsList(this)
+fun NodeList.asList(): List<Node> = NodeListAsList(this)
 
 @Deprecated("Use asElementList() instead", ReplaceWith("this?.asElementList() ?: emptyList()"))
 fun NodeList?.toElementList(): List<Element> = this?.asElementList() ?: emptyList()
@@ -86,6 +86,7 @@ fun NodeList.asElementList(): List<Element> = if (length == 0) emptyList() else 
 
 @Suppress("UNCHECKED_CAST")
 fun List<Node>.filterElements(): List<Element> = filter { it.isElement } as List<Element>
+
 fun NodeList.filterElements(): List<Element> = asList().filterElements()
 
 private class NodeListAsList(private val delegate: NodeList) : AbstractList<Node>() {
@@ -149,7 +150,7 @@ private class PreviousSiblings(private var node: Node) : Iterable<Node> {
 /**
  * it is *true* when [Node.nodeType] is TEXT_NODE or CDATA_SECTION_NODE
  */
-val Node.isText : Boolean
+val Node.isText: Boolean
     get() = nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
 
 

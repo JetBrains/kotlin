@@ -21,7 +21,7 @@ internal class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
     //private val lock = Any()
 
     //TODO: Synchronize with the synchonized() method
-    override fun iterator(): Iterator<T>  {
+    override fun iterator(): Iterator<T> {
         val sequence = sequenceRef ?: throw IllegalStateException("This sequence can be consumed only once.")
         sequenceRef = null
         return sequence.iterator()

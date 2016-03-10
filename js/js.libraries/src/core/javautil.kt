@@ -24,7 +24,7 @@ private val DEFAULT_LOAD_FACTOR = 0.75f
 
 @library
 public interface Comparator<T> {
-    public fun compare(obj1: T, obj2: T): Int;
+    public fun compare(obj1: T, obj2: T): Int
 }
 
 public inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Comparator<T> = object : Comparator<T> {

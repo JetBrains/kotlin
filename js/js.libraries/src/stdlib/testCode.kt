@@ -4,7 +4,7 @@ package kotlin.test
  * Comments out a block of test code until it is implemented while keeping a link to the code
  * to implement in your unit test output
  */
-public fun todo(block: ()-> Any) {
+public fun todo(block: () -> Any) {
     // println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
     println("TODO at " + block)
 }
@@ -15,7 +15,7 @@ public fun todo(block: ()-> Any) {
  */
 public var asserter: Asserter = QUnitAsserter()
 
-public class QUnitAsserter(): Asserter {
+public class QUnitAsserter() : Asserter {
 
     public override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
         assertTrue(actual, lazyMessage())

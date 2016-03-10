@@ -1,6 +1,6 @@
 package kotlin.js
 
-import java.util.*;
+import java.util.*
 
 @native
 public val noImpl: Nothing
@@ -16,18 +16,22 @@ public val undefined: Nothing? = noImpl
 
 @library
 public fun println() {}
+
 @library
-public fun println(s : Any?) {}
+public fun println(s: Any?) {}
+
 @library
-public fun print(s : Any?) {}
+public fun print(s: Any?) {}
 
 //TODO: consistent parseInt
 @native
 public fun parseInt(s: String, radix: Int = 10): Int = noImpl
+
 @library
-public fun safeParseInt(s : String) : Int? = noImpl
+public fun safeParseInt(s: String): Int? = noImpl
+
 @library
-public fun safeParseDouble(s : String) : Double? = noImpl
+public fun safeParseDouble(s: String): Double? = noImpl
 
 @native
 public fun js(code: String): dynamic = noImpl
