@@ -18,7 +18,7 @@ Analysis & diagnostics issues fixed:
 - [KT-9985](https://youtrack.jetbrains.com/issue/KT-9985)  Correct handling of safe call arguments in generic functions
 - [KT-10856](https://youtrack.jetbrains.com/issue/KT-10856) Diagnostic about projected out member is reported correctly on calls with smart cast receiver
 - [KT-5190](https://youtrack.jetbrains.com/issue/KT-5190)  Calls of Java 8 Stream.collect
-- [KT-11109](https://youtrack.jetbrains.com/issue/KT-11109) Strictfp annotation is prohibited on a class
+- [KT-11109](https://youtrack.jetbrains.com/issue/KT-11109) Warning is reported on Strictfp annotation on a class because it's not supported yet
 - [KT-10686](https://youtrack.jetbrains.com/issue/KT-10686) Support generic constructors defined in Java
 - [KT-6958](https://youtrack.jetbrains.com/issue/KT-6958)  Fixed resolution for overloaded functions with extension lambdas
 - [KT-10765](https://youtrack.jetbrains.com/issue/KT-10765) Correct handling of overload conflict between constructor and function in JPS
