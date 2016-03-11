@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.org.objectweb.asm.Type
-
-import java.util.HashMap
+import java.util.*
 
 class AnonymousObjectRegenerationInfo internal constructor(
 		private val ownerInternalName: String,
@@ -27,9 +25,12 @@ class AnonymousObjectRegenerationInfo internal constructor(
 		private val capturedOuterRegenerated: Boolean,
 		private val alreadyRegenerated: Boolean,
 		val constructorDesc: String?,
-		private val isStaticOrigin: Boolean) : RegenerationInfo() {
+		private val isStaticOrigin: Boolean,
+		private val nameGenerator: NameGenerator) : RegenerationInfo() {
 
-	private var newLambdaType: Type? = null
+	private val newLambdaType: String by lazy {
+		nameGenerator.genLambdaClassName()
+	}
 
 	var newConstructorDescriptor: String? = null
 
@@ -38,11 +39,14 @@ class AnonymousObjectRegenerationInfo internal constructor(
 	var capturedLambdasToInline: Map<String, LambdaInfo>? = null
 
 	constructor(
-			ownerInternalName: String, needReification: Boolean,
+			ownerInternalName: String,
+			needReification: Boolean,
 			alreadyRegenerated: Boolean,
-			isStaticOrigin: Boolean) : this(
+			isStaticOrigin: Boolean,
+			nameGenerator: NameGenerator
+	) : this(
 			ownerInternalName, needReification,
-			HashMap<Int, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin) {
+			HashMap<Int, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator) {
 	}
 
 	override fun getOldClassName(): String {
@@ -60,11 +64,6 @@ class AnonymousObjectRegenerationInfo internal constructor(
 	}
 
 	override fun getNewClassName(): String {
-		return newLambdaType!!.internalName
+		return newLambdaType
 	}
-
-	fun setNewLambdaType(newLambdaType: Type) {
-		this.newLambdaType = newLambdaType
-	}
-
 }

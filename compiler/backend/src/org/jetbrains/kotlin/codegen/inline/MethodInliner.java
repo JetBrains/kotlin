@@ -180,7 +180,7 @@ public class MethodInliner {
                 if (anonymousObjectGen.shouldRegenerate(isSameModule)) {
                     //TODO: need poping of type but what to do with local funs???
                     String oldClassName = anonymousObjectGen.getOldClassName();
-                    String newClassName = inliningContext.nameGenerator.genLambdaClassName();
+                    String newClassName = anonymousObjectGen.getNewClassName();
                     remapper.addMapping(oldClassName, newClassName);
                     AnonymousObjectTransformer transformer =
                             new AnonymousObjectTransformer((AnonymousObjectRegenerationInfo) anonymousObjectGen,
@@ -500,7 +500,8 @@ public class MethodInliner {
                     if (isAnonymousSingletonLoad(owner, fieldInsnNode.name)) {
                         anonymousObjectRegenerations.add(
                                 new AnonymousObjectRegenerationInfo(
-                                        owner, awaitClassReification, isAlreadyRegenerated(owner), true
+                                        owner, awaitClassReification, isAlreadyRegenerated(owner), true,
+                                        inliningContext.nameGenerator
                                 )
                         );
                         awaitClassReification = false;
@@ -560,7 +561,8 @@ public class MethodInliner {
                 inliningContext.classRegeneration,
                 isAlreadyRegenerated(anonymousType),
                 desc,
-                false
+                false,
+                inliningContext.nameGenerator
         );
     }
 
