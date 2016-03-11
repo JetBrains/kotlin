@@ -1,8 +1,8 @@
 package foo
-import foo
+ import foo
 
 
 fun main(args: Array<String>) {
     1 + 1
-println()
+ println()
 }

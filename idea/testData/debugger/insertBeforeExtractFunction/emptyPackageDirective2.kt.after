@@ -1,6 +1,6 @@
 
-import foo.*
-fun main(args: Array<String>) {
+ import foo.*
+ fun main(args: Array<String>) {
     1 + 1
-println()
+ println()
 }

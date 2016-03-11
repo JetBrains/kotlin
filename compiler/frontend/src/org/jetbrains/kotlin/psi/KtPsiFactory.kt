@@ -143,7 +143,7 @@ class KtPsiFactory(private val project: Project) {
 
     // Remove when all Java usages are rewritten to Kotlin
     fun createNewLine(): PsiElement {
-        return createWhiteSpace("\n")
+        return createWhiteSpace("\n ")
     }
 
     fun createNewLine(lineBreaks: Int): PsiElement {
