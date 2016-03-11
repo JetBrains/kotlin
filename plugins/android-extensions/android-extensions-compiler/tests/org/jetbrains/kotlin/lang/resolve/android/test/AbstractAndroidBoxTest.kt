@@ -65,7 +65,7 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     override fun codegenTestBasePath(): String {
-        return "plugins/android-compiler-plugin/testData/codegen/"
+        return "plugins/android-extensions/android-extensions-compiler/testData/codegen/"
     }
 
     private fun doMultiFileTest(path: String, additionalFiles: Collection<String>? = null) {
@@ -93,7 +93,7 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         myFiles = CodegenTestFiles.create(
                 myEnvironment!!.project,
                 ArrayUtil.toStringArray(files),
-                KotlinTestUtils.getHomeDirectory() + "/plugins/android-compiler-plugin/testData"
+                KotlinTestUtils.getHomeDirectory() + "/plugins/android-extensions/android-extensions-compiler/testData"
         )
         blackBox();
     }

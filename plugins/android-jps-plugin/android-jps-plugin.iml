@@ -11,7 +11,7 @@
     <orderEntry type="module" module-name="jps-plugin" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="jps" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="android-plugin" level="project" />
-    <orderEntry type="module" module-name="android-compiler-plugin" />
+    <orderEntry type="module" module-name="android-extensions-compiler" />
     <orderEntry type="module" module-name="util" scope="PROVIDED" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />

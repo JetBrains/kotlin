@@ -1,7 +1,7 @@
 -d
 $TEMP_DIR$
 -Xplugin
-dist/kotlinc/lib/android-compiler-plugin.jar
+dist/kotlinc/lib/android-extensions-compiler.jar
 -P
 plugin\:org.jetbrains.kotlin.android\:package=com.myapp
 $TESTDATA_DIR$/pluginSimple.kt

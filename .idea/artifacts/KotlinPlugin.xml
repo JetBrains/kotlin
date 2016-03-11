@@ -57,7 +57,7 @@
           <element id="module-output" name="android-idea-plugin" />
         </element>
         <element id="archive" name="kotlin-android-extensions-compiler-plugin.jar">
-          <element id="module-output" name="android-compiler-plugin" />
+          <element id="module-output" name="android-extensions-compiler" />
         </element>
       </element>
       <element id="directory" name="kotlinc">

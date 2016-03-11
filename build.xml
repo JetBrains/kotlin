@@ -719,15 +719,15 @@
         </jar>
     </target>
 
-    <target name="android-compiler-plugin">
-        <cleandir dir="${output}/classes/android-compiler-plugin"/>
-        <javac2 destdir="${output}/classes/android-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-            <withKotlin modulename="kotlin-android-compiler-plugin">
+    <target name="android-extensions-compiler">
+        <cleandir dir="${output}/classes/android-extensions/android-extensions-compiler"/>
+        <javac2 destdir="${output}/classes/android-extensions/android-extensions-compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <withKotlin modulename="kotlin-android-extensions-compiler">
                 <compilerarg value="-version"/>
             </withKotlin>
             <skip pattern="kotlin/Metadata"/>
             <src>
-                <pathelement path="plugins/android-compiler-plugin/src"/>
+                <pathelement path="plugins/android-extensions/android-extensions-compiler/src"/>
             </src>
             <classpath>
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
@@ -737,10 +737,10 @@
             </classpath>
         </javac2>
 
-        <jar destfile="${kotlin-home}/lib/android-compiler-plugin.jar">
-            <fileset dir="${output}/classes/android-compiler-plugin"/>
+        <jar destfile="${kotlin-home}/lib/android-extensions-compiler.jar">
+            <fileset dir="${output}/classes/android-extensions/android-extensions-compiler"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <fileset dir="${basedir}/plugins/android-compiler-plugin/src" includes="META-INF/services/**"/>
+            <fileset dir="${basedir}/plugins/android-extensions/android-extensions-compiler/src" includes="META-INF/services/**"/>
         </jar>
     </target>
 
@@ -1074,11 +1074,11 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build-common,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,daemon-client,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-compiler-plugin"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"

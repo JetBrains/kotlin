@@ -24,7 +24,7 @@
     <orderEntry type="module" module-name="js.dart-ast" scope="TEST" />
     <orderEntry type="module" module-name="js.frontend" scope="TEST" />
     <orderEntry type="module" module-name="util" scope="TEST" />
-    <orderEntry type="module" module-name="android-compiler-plugin" scope="TEST" />
+    <orderEntry type="module" module-name="android-extensions-compiler" scope="TEST" />
     <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
     <orderEntry type="module" module-name="android-jps-plugin" scope="TEST" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />

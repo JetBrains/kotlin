@@ -57,7 +57,7 @@
                         <phase>compile</phase>
                         <configuration>
                             <tasks>
-                                <unzip src="${kotlin-sdk}/lib/android-compiler-plugin.jar" dest="target/classes/" />
+                                <unzip src="${kotlin-sdk}/lib/android-extensions-compiler.jar" dest="target/classes/" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -79,7 +79,7 @@
                         </goals>
                         <configuration>
                             <classifier>sources</classifier>
-                            <classesDirectory>${basedir}/../../../plugins/android-compiler-plugin/src</classesDirectory>
+                            <classesDirectory>${basedir}/../../../plugins/android-extensions/android-extensions-compiler/src</classesDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -935,7 +935,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/android-compiler-plugin/tests", "plugins/android-compiler-plugin/testData") {
+    testGroup("plugins/android-extensions/android-extensions-compiler/tests", "plugins/android-extensions/android-extensions-compiler/testData") {
         testClass<AbstractAndroidSyntheticPropertyDescriptorTest>() {
             model("descriptors", recursive = false, extension = null)
         }
