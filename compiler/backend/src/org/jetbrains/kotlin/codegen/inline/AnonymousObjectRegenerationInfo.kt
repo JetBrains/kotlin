@@ -14,127 +14,57 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap
 
-public class AnonymousObjectRegenerationInfo extends RegenerationInfo {
+class AnonymousObjectRegenerationInfo internal constructor(
+		private val ownerInternalName: String,
+		private val needReification: Boolean,
+		val lambdasToInline: Map<Int, LambdaInfo>,
+		private val capturedOuterRegenerated: Boolean,
+		private val alreadyRegenerated: Boolean,
+		val constructorDesc: String?,
+		private val isStaticOrigin: Boolean) : RegenerationInfo() {
 
-    private final String ownerInternalName;
+	private var newLambdaType: Type? = null
 
-    private final String constructorDesc;
+	var newConstructorDescriptor: String? = null
 
-    private final Map<Integer, LambdaInfo> lambdasToInline;
+	var allRecapturedParameters: List<CapturedParamDesc>? = null
 
-    private Type newLambdaType;
+	var capturedLambdasToInline: Map<String, LambdaInfo>? = null
 
-    private String newConstructorDescriptor;
+	constructor(
+			ownerInternalName: String, needReification: Boolean,
+			alreadyRegenerated: Boolean,
+			isStaticOrigin: Boolean) : this(
+			ownerInternalName, needReification,
+			HashMap<Int, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin) {
+	}
 
-    private List<CapturedParamDesc> allRecapturedParameters;
+	override fun getOldClassName(): String {
+		return ownerInternalName
+	}
 
-    private Map<String, LambdaInfo> capturedLambdasToInline;
+	override fun shouldRegenerate(sameModule: Boolean): Boolean {
+		return !alreadyRegenerated && (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification)
+	}
 
-    private final boolean capturedOuterRegenerated;
-    private final boolean needReification;
-    private final boolean alreadyRegenerated;
-    private final boolean isStaticOrigin;
+	override fun canRemoveAfterTransformation(): Boolean {
+		// Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
+		// because it can be local function from outer scope
+		return !isStaticOrigin
+	}
 
-    AnonymousObjectRegenerationInfo(
-            @NotNull String ownerInternalName,
-            boolean needReification,
-            @NotNull Map<Integer, LambdaInfo> lambdasToInline,
-            boolean capturedOuterRegenerated,
-            boolean alreadyRegenerated,
-            @Nullable String constructorDesc,
-            boolean isStaticOrigin
-    ) {
-        this.ownerInternalName = ownerInternalName;
-        this.constructorDesc = constructorDesc;
-        this.lambdasToInline = lambdasToInline;
-        this.capturedOuterRegenerated = capturedOuterRegenerated;
-        this.needReification = needReification;
-        this.alreadyRegenerated = alreadyRegenerated;
-        this.isStaticOrigin = isStaticOrigin;
-    }
+	override fun getNewClassName(): String {
+		return newLambdaType!!.internalName
+	}
 
-    public AnonymousObjectRegenerationInfo(
-            @NotNull String ownerInternalName, boolean needReification,
-            boolean alreadyRegenerated,
-            boolean isStaticOrigin
-    ) {
-        this(
-                ownerInternalName, needReification,
-                new HashMap<Integer, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin
-        );
-    }
-
-    @NotNull
-    @Override
-    public String getOldClassName() {
-        return ownerInternalName;
-    }
-
-    @Override
-    public boolean shouldRegenerate(boolean isSameModule) {
-        return !alreadyRegenerated && (
-                !lambdasToInline.isEmpty() || !isSameModule || capturedOuterRegenerated || needReification
-        );
-    }
-
-    @Override
-    public boolean canRemoveAfterTransformation() {
-        // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
-        // because it can be local function from outer scope
-        return !isStaticOrigin;
-    }
-
-    public Map<Integer, LambdaInfo> getLambdasToInline() {
-        return lambdasToInline;
-    }
-
-    @NotNull
-    @Override
-    public String getNewClassName() {
-        return newLambdaType.getInternalName();
-    }
-
-    public void setNewLambdaType(Type newLambdaType) {
-        this.newLambdaType = newLambdaType;
-    }
-
-    public String getNewConstructorDescriptor() {
-        return newConstructorDescriptor;
-    }
-
-    public void setNewConstructorDescriptor(String newConstructorDescriptor) {
-        this.newConstructorDescriptor = newConstructorDescriptor;
-    }
-
-    public List<CapturedParamDesc> getAllRecapturedParameters() {
-        return allRecapturedParameters;
-    }
-
-    public void setAllRecapturedParameters(List<CapturedParamDesc> allRecapturedParameters) {
-        this.allRecapturedParameters = allRecapturedParameters;
-    }
-
-    public Map<String, LambdaInfo> getCapturedLambdasToInline() {
-        return capturedLambdasToInline;
-    }
-
-    public void setCapturedLambdasToInline(Map<String, LambdaInfo> capturedLambdasToInline) {
-        this.capturedLambdasToInline = capturedLambdasToInline;
-    }
-
-    @Nullable
-    public String getConstructorDesc() {
-        return constructorDesc;
-    }
+	fun setNewLambdaType(newLambdaType: Type) {
+		this.newLambdaType = newLambdaType
+	}
 
 }
