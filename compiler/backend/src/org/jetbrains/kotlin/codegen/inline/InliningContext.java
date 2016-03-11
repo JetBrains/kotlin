@@ -77,14 +77,14 @@ public class InliningContext {
         return subInline(generator, additionalTypeMappings, isInliningLambda);
     }
 
-    public InliningContext subInlineWithClassRegeneration(@NotNull NameGenerator generator,
+    public InliningContext subInlineWithClassRegeneration(
+            @NotNull NameGenerator generator,
             @NotNull Map<String, String> newTypeMappings,
-            @NotNull AnonymousObjectGeneration anonymousObjectGeneration,
             @NotNull InlineCallSiteInfo callSiteInfo
     ) {
         return new RegeneratedClassContext(this, expressionMap, state, generator,
                                            TypeRemapper.createFrom(typeRemapper, newTypeMappings),
-                                           reifedTypeInliner, isInliningLambda, anonymousObjectGeneration, callSiteInfo);
+                                           reifedTypeInliner, isInliningLambda, callSiteInfo);
     }
 
     public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings, boolean isInliningLambda) {

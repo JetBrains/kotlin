@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import java.util.Map;
 
 public class RegeneratedClassContext extends InliningContext {
-    private final AnonymousObjectGeneration anonymousObjectGeneration;
     private InlineCallSiteInfo callSiteInfo;
 
     public RegeneratedClassContext(
@@ -34,11 +33,9 @@ public class RegeneratedClassContext extends InliningContext {
             @NotNull TypeRemapper typeRemapper,
             @NotNull ReifiedTypeInliner reifiedTypeInliner,
             boolean isInliningLambda,
-            @NotNull AnonymousObjectGeneration anonymousObjectGeneration,
             @NotNull InlineCallSiteInfo callSiteInfo
     ) {
         super(parent, map, state, nameGenerator, typeRemapper, reifiedTypeInliner, isInliningLambda, true);
-        this.anonymousObjectGeneration = anonymousObjectGeneration;
         this.callSiteInfo = callSiteInfo;
     }
 

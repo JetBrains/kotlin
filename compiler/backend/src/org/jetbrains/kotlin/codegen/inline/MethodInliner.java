@@ -188,7 +188,6 @@ public class MethodInliner {
                                                                    .subInlineWithClassRegeneration(
                                                                            inliningContext.nameGenerator,
                                                                            currentTypeMapping,
-                                                                           anonymousObjectGen,
                                                                            inlineCallSiteInfo),
                                                            isSameModule, Type.getObjectType(newClassName)
                             );
