@@ -42,5 +42,11 @@
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="idea" />
     <orderEntry type="module" module-name="generators" scope="TEST" />
+    <orderEntry type="library" scope="PROVIDED" name="spring-support" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="javaee-support" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="persistence-support" level="project" />
+    <orderEntry type="library" name="database-support" level="project" />
+    <orderEntry type="library" name="css-support" level="project" />
+    <orderEntry type="library" name="jsp-support" level="project" />
   </component>
 </module>

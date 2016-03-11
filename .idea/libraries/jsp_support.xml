@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jsp-support">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/jsp/lib/jsp-impl.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
