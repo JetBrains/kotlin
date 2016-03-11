@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="persistence-support">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/PersistenceSupport/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/src_persistence-openapi.zip!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/PersistenceSupport/lib" recursive="false" />
+  </library>
+</component>
