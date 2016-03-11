@@ -24,6 +24,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.ExternalLibraryDescriptor;
+import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -198,33 +199,41 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return null;
     }
 
-    protected static void addElementsToProjectFile(@NotNull GroovyFile file, @NotNull String version) {
+    protected static boolean addElementsToProjectFile(@NotNull GroovyFile file, @NotNull String version) {
+        boolean wasModified;
+
         GrClosableBlock buildScriptBlock = getBuildScriptBlock(file);
-        addFirstExpressionInBlockIfNeeded(VERSION.replace(VERSION_TEMPLATE, version), buildScriptBlock);
+        wasModified = addFirstExpressionInBlockIfNeeded(VERSION.replace(VERSION_TEMPLATE, version), buildScriptBlock);
 
         GrClosableBlock buildScriptRepositoriesBlock = getBuildScriptRepositoriesBlock(file);
         if (isSnapshot(version)) {
-            addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY, buildScriptRepositoriesBlock);
+            wasModified |= addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY, buildScriptRepositoriesBlock);
         }
         else if (!isRepositoryConfigured(buildScriptRepositoriesBlock)) {
-            addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, buildScriptRepositoriesBlock);
+            wasModified |= addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, buildScriptRepositoriesBlock);
         }
 
         GrClosableBlock buildScriptDependenciesBlock = getBuildScriptDependenciesBlock(file);
-        addLastExpressionInBlockIfNeeded(CLASSPATH, buildScriptDependenciesBlock);
+        wasModified |= addLastExpressionInBlockIfNeeded(CLASSPATH, buildScriptDependenciesBlock);
+
+        return wasModified;
     }
 
-    protected void addElementsToModuleFile(@NotNull GroovyFile file, @NotNull String version) {
+    protected boolean addElementsToModuleFile(@NotNull GroovyFile file, @NotNull String version) {
+        boolean wasModified = false;
+
         if (!file.getText().contains(getApplyPluginDirective())) {
             GrExpression apply = GroovyPsiElementFactory.getInstance(file.getProject()).createExpressionFromText(getApplyPluginDirective());
             GrApplicationStatement applyStatement = getApplyStatement(file);
             if (applyStatement != null) {
                 file.addAfter(apply, applyStatement);
+                wasModified = true;
             }
             else {
                 GrClosableBlock buildScript = getBlockByName(file, "buildscript");
                 if (buildScript != null) {
                     file.addAfter(apply, buildScript.getParent());
+                    wasModified = true;
                 }
                 else {
                     GrStatement[] statements = file.getStatements();
@@ -234,22 +243,26 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
                     else {
                         file.addAfter(apply, file.getFirstChild());
                     }
+                    wasModified = true;
                 }
             }
         }
 
         GrClosableBlock repositoriesBlock = getRepositoriesBlock(file);
         if (isSnapshot(version)) {
-            addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY, repositoriesBlock);
+            wasModified |= addLastExpressionInBlockIfNeeded(SNAPSHOT_REPOSITORY, repositoriesBlock);
         }
         else if (!isRepositoryConfigured(repositoriesBlock)) {
-            addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, repositoriesBlock);
+            wasModified |= addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL, repositoriesBlock);
         }
 
         GrClosableBlock dependenciesBlock = getDependenciesBlock(file);
-        addLastExpressionInBlockIfNeeded(LIBRARY, dependenciesBlock);
+        Module module = FileIndexFacade.getInstance(file.getProject()).getModuleForFile(file.getVirtualFile());
+        wasModified |= addExpressionInBlockIfNeeded(LIBRARY, dependenciesBlock, false, !ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module));
 
-        addSourceSetsBlock(file);
+        wasModified |= addSourceSetsBlock(file);
+
+        return wasModified;
     }
 
     private static boolean isRepositoryConfigured(GrClosableBlock repositoriesBlock) {
@@ -258,7 +271,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     protected abstract String getApplyPluginDirective();
 
-    protected abstract void addSourceSetsBlock(@NotNull GroovyFile file);
+    protected abstract boolean addSourceSetsBlock(@NotNull GroovyFile file);
 
     protected abstract boolean addElementsToFile(
             @NotNull GroovyFile groovyFile,
@@ -312,7 +325,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         }.execute();
 
         VirtualFile virtualFile = groovyFile.getVirtualFile();
-        if (virtualFile != null) {
+        if (virtualFile != null && isModified[0]) {
             collector.addMessage(virtualFile.getPath() + " was modified");
         }
         return isModified[0];
@@ -369,12 +382,12 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return block;
     }
 
-    protected static void addLastExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
-        addExpressionInBlockIfNeeded(text, block, false);
+    protected static boolean addLastExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
+        return addExpressionInBlockIfNeeded(text, block, false, false);
     }
 
-    private static void addFirstExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
-        addExpressionInBlockIfNeeded(text, block, true);
+    private static boolean addFirstExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
+        return addExpressionInBlockIfNeeded(text, block, true, false);
     }
 
     @Nullable
@@ -392,8 +405,8 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return null;
     }
 
-    private static void addExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block, boolean isFirst) {
-        if (block.getText().contains(text)) return;
+    private static boolean addExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block, boolean isFirst, boolean forceInsert) {
+        if (!forceInsert && block.getText().contains(text)) return false;
         GrExpression newStatement = GroovyPsiElementFactory.getInstance(block.getProject()).createExpressionFromText(text);
         CodeStyleManager.getInstance(block.getProject()).reformat(newStatement);
         GrStatement[] statements = block.getStatements();
@@ -409,6 +422,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
                 block.addAfter(newStatement, firstChild);
             }
         }
+        return true;
     }
 
     @Nullable

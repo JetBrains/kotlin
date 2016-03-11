@@ -3,6 +3,7 @@
 ## 1.1
 
 ## 1.0.2
+- Show only changed files in notification "Kotlin not configured"
 
 ### JVM
 - Remove the compiler option "Xmultifile-facades-open"
