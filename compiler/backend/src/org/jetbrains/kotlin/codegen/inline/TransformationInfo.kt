@@ -18,19 +18,19 @@ package org.jetbrains.kotlin.codegen.inline
 
 import java.util.*
 
-abstract class RegenerationInfo() {
+interface TransformationInfo {
 
-	abstract val oldClassName: String
+	val oldClassName: String
 
-	abstract val newClassName: String
+	val newClassName: String
 
-	abstract fun shouldRegenerate(sameModule: Boolean): Boolean
+	fun shouldRegenerate(sameModule: Boolean): Boolean
 
-	abstract fun canRemoveAfterTransformation(): Boolean
+	fun canRemoveAfterTransformation(): Boolean
 
 }
 
-class WhenMappingRegenerationInfo(override val oldClassName: String, val nameGenerator: NameGenerator) : RegenerationInfo() {
+class WhenMappingTransformationInfo(override val oldClassName: String, val nameGenerator: NameGenerator) : TransformationInfo {
 
 	override val newClassName by lazy {
 		nameGenerator.genLambdaClassName() + oldClassName.substringAfterLast("/")
@@ -45,7 +45,7 @@ class WhenMappingRegenerationInfo(override val oldClassName: String, val nameGen
 	}
 }
 
-class AnonymousObjectRegenerationInfo internal constructor(
+class AnonymousObjectTransformationInfo internal constructor(
 		override val oldClassName: String,
 		private val needReification: Boolean,
 		val lambdasToInline: Map<Int, LambdaInfo>,
@@ -53,7 +53,7 @@ class AnonymousObjectRegenerationInfo internal constructor(
 		private val alreadyRegenerated: Boolean,
 		val constructorDesc: String?,
 		private val isStaticOrigin: Boolean,
-		private val nameGenerator: NameGenerator) : RegenerationInfo() {
+		private val nameGenerator: NameGenerator) : TransformationInfo {
 
 	 override val newClassName: String by lazy {
 		nameGenerator.genLambdaClassName()

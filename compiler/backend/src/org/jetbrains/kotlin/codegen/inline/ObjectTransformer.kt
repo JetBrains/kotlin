@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Type
 
-abstract class ObjectTransformer<T : RegenerationInfo>(val regenerationInfo: T, val state: GenerationState) {
+abstract class ObjectTransformer<T : TransformationInfo>(val transformationInfo: T, val state: GenerationState) {
 
     abstract fun doTransform(info: T, parentRemapper: FieldRemapper): InlineResult
 
@@ -33,7 +33,7 @@ abstract class ObjectTransformer<T : RegenerationInfo>(val regenerationInfo: T, 
     protected fun createRemappingClassBuilderViaFactory(inliningContext: InliningContext): ClassBuilder {
         val classBuilder = state.factory.newVisitor(
                 JvmDeclarationOrigin.NO_ORIGIN,
-                Type.getObjectType(regenerationInfo.newClassName),
+                Type.getObjectType(transformationInfo.newClassName),
                 inliningContext.root.callElement.containingFile
         )
 
@@ -44,20 +44,20 @@ abstract class ObjectTransformer<T : RegenerationInfo>(val regenerationInfo: T, 
 
 
     fun createClassReader(): ClassReader {
-        return InlineCodegenUtil.buildClassReaderByInternalName(state, regenerationInfo.oldClassName)
+        return InlineCodegenUtil.buildClassReaderByInternalName(state, transformationInfo.oldClassName)
     }
 
 }
 
 class WhenMappingTransformer(
-        whenObjectRegenerationInfo: WhenMappingRegenerationInfo,
+        whenObjectRegenerationInfo: WhenMappingTransformationInfo,
         state: GenerationState,
         val inliningContext: InliningContext
-) : ObjectTransformer<WhenMappingRegenerationInfo>(whenObjectRegenerationInfo, state) {
+) : ObjectTransformer<WhenMappingTransformationInfo>(whenObjectRegenerationInfo, state) {
 
-    override fun doTransform(info: WhenMappingRegenerationInfo, parentRemapper: FieldRemapper): InlineResult {
+    override fun doTransform(info: WhenMappingTransformationInfo, parentRemapper: FieldRemapper): InlineResult {
         val classReader = createClassReader()
-        //TODO add additional check that it's when mapping
+        //TODO add additional check that class is when mapping
 
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
         classReader.accept(object : ClassVisitor(InlineCodegenUtil.API, classBuilder.visitor) {
