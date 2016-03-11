@@ -52,8 +52,6 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
     private final Type oldObjectType;
 
-    private final Type newLambdaType;
-
     private final boolean isSameModule;
 
     private final Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
@@ -61,8 +59,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
     public AnonymousObjectTransformer(
             @NotNull AnonymousObjectTransformationInfo transformationInfo,
             @NotNull InliningContext inliningContext,
-            boolean isSameModule,
-            @NotNull Type newLambdaType
+            boolean isSameModule
     ) {
         super(transformationInfo, inliningContext.state);
         this.isSameModule = isSameModule;
@@ -70,12 +67,11 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         this.typeMapper = state.getTypeMapper();
         this.inliningContext = inliningContext;
         this.oldObjectType = Type.getObjectType(transformationInfo.getOldClassName());
-        this.newLambdaType = newLambdaType;
     }
 
     @Override
     @NotNull
-    public InlineResult doTransform(@NotNull AnonymousObjectTransformationInfo transformationInfo, @NotNull FieldRemapper parentRemapper) {
+    public InlineResult doTransform(@NotNull FieldRemapper parentRemapper) {
         final List<InnerClassNode> innerClassNodes = new ArrayList<InnerClassNode>();
         ClassBuilder classBuilder = createRemappingClassBuilderViaFactory(inliningContext);
         final List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
@@ -161,7 +157,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         for (MethodNode next : methodsToTransform) {
             MethodVisitor deferringVisitor = newMethod(classBuilder, next);
             InlineResult funResult =
-                    inlineMethodAndUpdateGlobalResult(transformationInfo, parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false);
+                    inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false);
 
             Type returnType = Type.getReturnType(next.desc);
             if (!AsmUtil.isPrimitive(returnType)) {
@@ -178,7 +174,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             method.visitEnd();
         }
 
-        generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, transformationInfo, parentRemapper, additionalFakeParams);
+        generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, parentRemapper, additionalFakeParams);
 
         SourceMapper.Companion.flushToClassBuilder(sourceMapper, classBuilder);
 
@@ -201,14 +197,13 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
     @NotNull
     private InlineResult inlineMethodAndUpdateGlobalResult(
-            @NotNull AnonymousObjectTransformationInfo transformationInfo,
             @NotNull FieldRemapper parentRemapper,
             @NotNull MethodVisitor deferringVisitor,
             @NotNull MethodNode next,
             @NotNull ParametersBuilder allCapturedParamBuilder,
             boolean isConstructor
     ) {
-        InlineResult funResult = inlineMethod(transformationInfo, parentRemapper, deferringVisitor, next, allCapturedParamBuilder, isConstructor);
+        InlineResult funResult = inlineMethod(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, isConstructor);
         transformationResult.addAllClassesToRemove(funResult);
         transformationResult.getReifiedTypeParametersUsages().mergeAll(funResult.getReifiedTypeParametersUsages());
         return funResult;
@@ -216,7 +211,6 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
     @NotNull
     private InlineResult inlineMethod(
-            @NotNull AnonymousObjectTransformationInfo transformationInfo,
             @NotNull FieldRemapper parentRemapper,
             @NotNull MethodVisitor deferringVisitor,
             @NotNull MethodNode sourceNode,
@@ -227,7 +221,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         Parameters parameters = isConstructor ? capturedBuilder.buildParameters() : getMethodParametersWithCaptured(capturedBuilder, sourceNode);
 
         RegeneratedLambdaFieldRemapper remapper =
-                new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
+                new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), transformationInfo.getNewClassName(),
                                                    parameters, transformationInfo.getCapturedLambdasToInline(),
                                                    parentRemapper, isConstructor);
 
@@ -257,7 +251,6 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             @NotNull ClassBuilder classBuilder,
             @NotNull ParametersBuilder allCapturedBuilder,
             @NotNull ParametersBuilder constructorInlineBuilder,
-            @NotNull AnonymousObjectTransformationInfo transformationInfo,
             @NotNull FieldRemapper parentRemapper,
             @NotNull List<CapturedParamInfo> constructorAdditionalFakeParams
     ) {
@@ -293,7 +286,8 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
         //initialize captured fields
         List<NewJavaField> newFieldsWithSkipped = TransformationUtilsKt.getNewFieldsToGenerate(allCapturedBuilder.listCaptured());
-        List<FieldInfo> fieldInfoWithSkipped = TransformationUtilsKt.transformToFieldInfo(newLambdaType, newFieldsWithSkipped);
+        List<FieldInfo> fieldInfoWithSkipped = TransformationUtilsKt.transformToFieldInfo(
+                Type.getObjectType(transformationInfo.getNewClassName()), newFieldsWithSkipped);
 
         int paramIndex = 0;
         InstructionAdapter capturedFieldInitializer = new InstructionAdapter(constructorVisitor);
@@ -323,7 +317,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             }
         }
 
-        inlineMethodAndUpdateGlobalResult(transformationInfo, parentRemapper, capturedFieldInitializer, constructor, constructorInlineBuilder, true);
+        inlineMethodAndUpdateGlobalResult(parentRemapper, capturedFieldInitializer, constructor, constructorInlineBuilder, true);
         constructorVisitor.visitEnd();
         AsmUtil.genClosureFields(TransformationUtilsKt.toNameTypePair(TransformationUtilsKt.filterSkipped(newFieldsWithSkipped)), classBuilder);
     }

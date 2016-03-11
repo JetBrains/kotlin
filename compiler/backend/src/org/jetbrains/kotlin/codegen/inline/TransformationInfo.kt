@@ -16,73 +16,91 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import java.util.*
 
 interface TransformationInfo {
 
-	val oldClassName: String
+    val oldClassName: String
 
-	val newClassName: String
+    val newClassName: String
 
-	fun shouldRegenerate(sameModule: Boolean): Boolean
+    fun shouldRegenerate(sameModule: Boolean): Boolean
 
-	fun canRemoveAfterTransformation(): Boolean
+    fun canRemoveAfterTransformation(): Boolean
 
+    fun createTransformer(
+            inliningContext: InliningContext,
+            sameModule: Boolean
+    ): ObjectTransformer<*>
 }
 
-class WhenMappingTransformationInfo(override val oldClassName: String, val nameGenerator: NameGenerator) : TransformationInfo {
+class WhenMappingTransformationInfo(
+        override val oldClassName: String,
+        val nameGenerator: NameGenerator,
+        val alreadyRegenerated: Boolean,
+        val fieldNode: FieldInsnNode
+) : TransformationInfo {
 
-	override val newClassName by lazy {
-		nameGenerator.genLambdaClassName() + oldClassName.substringAfterLast("/")
-	}
+    override val newClassName by lazy {
+        nameGenerator.genLambdaClassName() + oldClassName.substringAfterLast("/")
+    }
 
-	override fun shouldRegenerate(sameModule: Boolean): Boolean {
-		throw UnsupportedOperationException()
-	}
+    override fun shouldRegenerate(sameModule: Boolean): Boolean {
+        return !alreadyRegenerated && !sameModule
+    }
 
-	override fun canRemoveAfterTransformation(): Boolean {
-		return true
-	}
+    override fun canRemoveAfterTransformation(): Boolean {
+        return true
+    }
+
+    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> {
+        return WhenMappingTransformer(this, inliningContext);
+    }
 }
 
 class AnonymousObjectTransformationInfo internal constructor(
-		override val oldClassName: String,
-		private val needReification: Boolean,
-		val lambdasToInline: Map<Int, LambdaInfo>,
-		private val capturedOuterRegenerated: Boolean,
-		private val alreadyRegenerated: Boolean,
-		val constructorDesc: String?,
-		private val isStaticOrigin: Boolean,
-		private val nameGenerator: NameGenerator) : TransformationInfo {
+        override val oldClassName: String,
+        private val needReification: Boolean,
+        val lambdasToInline: Map<Int, LambdaInfo>,
+        private val capturedOuterRegenerated: Boolean,
+        private val alreadyRegenerated: Boolean,
+        val constructorDesc: String?,
+        private val isStaticOrigin: Boolean,
+        nameGenerator: NameGenerator) : TransformationInfo {
 
-	 override val newClassName: String by lazy {
-		nameGenerator.genLambdaClassName()
-	}
+    override val newClassName: String by lazy {
+        nameGenerator.genLambdaClassName()
+    }
 
-	var newConstructorDescriptor: String? = null
+    lateinit var newConstructorDescriptor: String
 
-	var allRecapturedParameters: List<CapturedParamDesc>? = null
+    lateinit var allRecapturedParameters: List<CapturedParamDesc>
 
-	var capturedLambdasToInline: Map<String, LambdaInfo>? = null
+    lateinit var capturedLambdasToInline: Map<String, LambdaInfo>
 
-	constructor(
-			ownerInternalName: String,
-			needReification: Boolean,
-			alreadyRegenerated: Boolean,
-			isStaticOrigin: Boolean,
-			nameGenerator: NameGenerator
-	) : this(
-			ownerInternalName, needReification,
-			HashMap<Int, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator) {
-	}
+    constructor(
+            ownerInternalName: String,
+            needReification: Boolean,
+            alreadyRegenerated: Boolean,
+            isStaticOrigin: Boolean,
+            nameGenerator: NameGenerator
+    ) : this(
+            ownerInternalName, needReification,
+            HashMap<Int, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator) {
+    }
 
-	override fun shouldRegenerate(sameModule: Boolean): Boolean {
-		return !alreadyRegenerated && (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification)
-	}
+    override fun shouldRegenerate(sameModule: Boolean): Boolean {
+        return !alreadyRegenerated && (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification)
+    }
 
-	override fun canRemoveAfterTransformation(): Boolean {
-		// Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
-		// because it can be local function from outer scope
-		return !isStaticOrigin
-	}
+    override fun canRemoveAfterTransformation(): Boolean {
+        // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
+        // because it can be local function from outer scope
+        return !isStaticOrigin
+    }
+
+    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> {
+        return AnonymousObjectTransformer(this, inliningContext, sameModule);
+    }
 }

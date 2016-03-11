@@ -24,8 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class WhenByEnumsMapping {
-    private static final String MAPPING_ARRAY_FIELD_PREFIX = "$EnumSwitchMapping$";
-    private static final String MAPPINGS_CLASS_NAME_POSTFIX = "$WhenMappings";
+    public static final String MAPPING_ARRAY_FIELD_PREFIX = "$EnumSwitchMapping$";
+    public static final String MAPPINGS_CLASS_NAME_POSTFIX = "$WhenMappings";
 
     private final Map<EnumValue, Integer> map = new LinkedHashMap<EnumValue, Integer>();
     private final ClassDescriptor enumClassDescriptor;

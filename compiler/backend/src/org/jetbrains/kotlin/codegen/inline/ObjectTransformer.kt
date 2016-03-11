@@ -17,15 +17,19 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.util.*
 
-abstract class ObjectTransformer<T : TransformationInfo>(val transformationInfo: T, val state: GenerationState) {
+abstract class ObjectTransformer<T : TransformationInfo>(@JvmField val transformationInfo: T, val state: GenerationState) {
 
-    abstract fun doTransform(info: T, parentRemapper: FieldRemapper): InlineResult
+    abstract fun doTransform(parentRemapper: FieldRemapper): InlineResult
 
     @JvmField
     val transformationResult = InlineResult.create()
@@ -51,23 +55,72 @@ abstract class ObjectTransformer<T : TransformationInfo>(val transformationInfo:
 
 class WhenMappingTransformer(
         whenObjectRegenerationInfo: WhenMappingTransformationInfo,
-        state: GenerationState,
         val inliningContext: InliningContext
-) : ObjectTransformer<WhenMappingTransformationInfo>(whenObjectRegenerationInfo, state) {
+) : ObjectTransformer<WhenMappingTransformationInfo>(whenObjectRegenerationInfo, inliningContext.state) {
 
-    override fun doTransform(info: WhenMappingTransformationInfo, parentRemapper: FieldRemapper): InlineResult {
+    override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val classReader = createClassReader()
         //TODO add additional check that class is when mapping
 
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
+        /*MAPPING File could contains mappings for several enum classes, we should filter one*/
+        val methodNodes = arrayListOf<MethodNode>()
+        val fieldNode = transformationInfo.fieldNode
         classReader.accept(object : ClassVisitor(InlineCodegenUtil.API, classBuilder.visitor) {
-            override fun visit(version: Int, access: Int, name: String, signature: String, superName: String, interfaces: Array<String>) {
+            override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?) {
                 InlineCodegenUtil.assertVersionNotGreaterThanJava6(version, name)
                 super.visit(version, access, name, signature, superName, interfaces)
             }
+
+            override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
+                return if (name.equals(fieldNode.name)) {
+                    super.visitField(access, name, desc, signature, value)
+                }
+                else {
+                    null
+                }
+            }
+
+            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+                val methodNode = MethodNode(access, name, desc, signature, exceptions)
+                methodNodes.add(methodNode)
+                return methodNode
+            }
         }, ClassReader.SKIP_FRAMES)
+
+        assert(methodNodes.size == 1, { "When mapping ${fieldNode.owner} class should contain only one method but: " + methodNodes.joinToString { it.name } })
+
+        var transformedNode = cutOtherMappings(methodNodes.first())
+        val result = classBuilder.visitor.visitMethod(transformedNode.access, transformedNode.name, transformedNode.desc, transformedNode.signature, transformedNode.exceptions.toTypedArray())
+        transformedNode.accept(result)
 
         return transformationResult
     }
+
+
+    private fun cutOtherMappings(node: MethodNode): MethodNode {
+        val myArrayAccess = InsnSequence(node.instructions).first {
+            it is FieldInsnNode && it.name.equals(transformationInfo.fieldNode.name)
+        }
+
+        val myValuesAccess = generateSequence(myArrayAccess) { it.previous }.first {
+            isValues(it)
+        }
+
+        val nextValuesOrEnd = generateSequence(myArrayAccess) { it.next }.first {
+            isValues(it) || it.opcode == Opcodes.RETURN
+        }
+
+        val result = MethodNode(node.access, node.name, node.desc, node.signature, node.exceptions.toTypedArray())
+        InsnSequence(myValuesAccess, nextValuesOrEnd).forEach { it.accept(result) }
+        result.visitInsn(Opcodes.RETURN)
+
+        return result
+    }
+
+    private fun isValues(node: AbstractInsnNode) = node is MethodInsnNode &&
+                                                   node.opcode == Opcodes.INVOKESTATIC &&
+                                                   node.name == "values" &&
+                                                   node.desc == "()[" + Type.getObjectType(node.owner).descriptor
 }
 

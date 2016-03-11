@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
@@ -242,6 +243,10 @@ public class InlineCodegenUtil {
 
     public static boolean isAnonymousConstructorCall(@NotNull String internalName, @NotNull String methodName) {
         return "<init>".equals(methodName) && isAnonymousClass(internalName);
+    }
+
+    public static boolean isWhenMappingAccess(@NotNull String internalName, @NotNull String fieldName) {
+        return fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) && internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX);
     }
 
     public static boolean isAnonymousSingletonLoad(@NotNull String internalName, @NotNull String fieldName) {

@@ -169,6 +169,39 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnumWhen extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInEnumWhen() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("callSite.kt")
+            public void testCallSite() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/callSite.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("declSite.kt")
+            public void testDeclSite() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/declSite.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("declSiteSeveralMappings.kt")
+            public void testDeclSiteSeveralMappings() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/declSiteSeveralMappings.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("declSiteSeveralMappingsDifOrder.kt")
+            public void testDeclSiteSeveralMappingsDifOrder() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen/declSiteSeveralMappingsDifOrder.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
