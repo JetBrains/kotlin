@@ -125,6 +125,11 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         return null;
     }
 
+    @Override
+    protected boolean isRunInWriteAction() {
+        return true;
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {

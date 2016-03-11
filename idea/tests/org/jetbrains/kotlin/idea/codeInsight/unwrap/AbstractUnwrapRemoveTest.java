@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.codeInsight.unwrap;
 
 import com.intellij.codeInsight.unwrap.Unwrapper;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -89,10 +90,18 @@ public abstract class AbstractUnwrapRemoveTest extends LightCodeInsightTestCase 
                 new KotlinUnwrapDescriptor().collectUnwrappers(getProject(), getEditor(), getFile());
 
         if (isApplicableExpected) {
-            Pair<PsiElement, Unwrapper> selectedUnwrapperWithPsi = unwrappersWithPsi.get(optionIndex);
+            final Pair<PsiElement, Unwrapper> selectedUnwrapperWithPsi = unwrappersWithPsi.get(optionIndex);
             assertEquals(unwrapperClass, selectedUnwrapperWithPsi.second.getClass());
 
-            selectedUnwrapperWithPsi.second.unwrap(getEditor(), selectedUnwrapperWithPsi.first);
+            final PsiElement first = selectedUnwrapperWithPsi.first;
+
+            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                @Override
+                public void run() {
+                    selectedUnwrapperWithPsi.second.unwrap(getEditor(), first);
+                }
+            });
+
             checkResultByFile(path + ".after");
         } else {
             assertTrue(
