@@ -9987,6 +9987,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("differentFilename.kt")
+            public void testDifferentFilename() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/differentFilename.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumGetOrdinal.kt")
             public void testEnumGetOrdinal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/enumGetOrdinal.kt");
@@ -10149,6 +10155,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt7523.kt")
+            public void testKt7523() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/kt7523.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("mutableIterator.kt")
             public void testMutableIterator() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/mutableIterator.kt");
@@ -10291,6 +10303,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public void testUnboxingNulls() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/UnboxingNulls.kt");
                 doTest(fileName);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/brokenCode")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class BrokenCode extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInBrokenCode() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/brokenCode"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("classDuplicates.kt")
+                public void testClassDuplicates() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/brokenCode/classDuplicates.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("fieldDuplicates.kt")
+                public void testFieldDuplicates() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/brokenCode/fieldDuplicates.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides")
