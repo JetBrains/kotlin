@@ -46,7 +46,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             p.println(javaClass.simpleName, ": dynamic candidates for " + call)
         }
 
-        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
             if (isAugmentedAssignmentConvention(name)) return listOf()
             if (call.callType == Call.CallType.INVOKE
                 && call.valueArgumentList == null && call.functionLiteralArguments.isEmpty()) {

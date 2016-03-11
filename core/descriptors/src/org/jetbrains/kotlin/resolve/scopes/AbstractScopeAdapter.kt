@@ -33,7 +33,7 @@ abstract class AbstractScopeAdapter : MemberScope {
             else
                 workerScope
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         return workerScope.getContributedFunctions(name, location)
     }
 

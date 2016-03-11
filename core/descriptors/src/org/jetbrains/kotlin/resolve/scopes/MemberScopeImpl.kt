@@ -26,7 +26,7 @@ abstract class MemberScopeImpl : MemberScope {
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = emptyList()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptyList()

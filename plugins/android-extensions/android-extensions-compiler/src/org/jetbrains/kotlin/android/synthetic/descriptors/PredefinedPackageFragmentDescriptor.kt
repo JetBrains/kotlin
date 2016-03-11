@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.android.synthetic.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -31,10 +34,10 @@ class PredefinedPackageFragmentDescriptor(
         module: ModuleDescriptor,
         private val storageManager: StorageManager,
         val subpackages: List<PackageFragmentDescriptor> = emptyList(),
-        private val descriptors: (PredefinedPackageFragmentDescriptor) -> Collection<DeclarationDescriptor> = { emptyList() }
+        private val functions: (PredefinedPackageFragmentDescriptor) -> Collection<SimpleFunctionDescriptor> = { emptyList() }
 ) : PackageFragmentDescriptorImpl(module, FqName(fqName)) {
-    private val calculatedDescriptors = storageManager.createLazyValue {
-        descriptors(this)
+    private val calculatedFunctions = storageManager.createLazyValue {
+        functions(this)
     }
 
     private val scope = PredefinedScope()
@@ -42,15 +45,14 @@ class PredefinedPackageFragmentDescriptor(
 
     inner class PredefinedScope : MemberScopeImpl() {
         @Suppress("UNCHECKED_CAST")
-        override fun getContributedVariables(name: Name, location: LookupLocation) =
-                calculatedDescriptors().filter { it is PropertyDescriptor && it.name == name } as List<PropertyDescriptor>
+        override fun getContributedVariables(name: Name, location: LookupLocation) = emptyList<PropertyDescriptor>()
 
         @Suppress("UNCHECKED_CAST")
         override fun getContributedFunctions(name: Name, location: LookupLocation) =
-                calculatedDescriptors().filter { it is FunctionDescriptor && it.name == name } as List<FunctionDescriptor>
+                calculatedFunctions().filter { it.name == name }
 
         override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) =
-                calculatedDescriptors().filter { nameFilter(it.name) && kindFilter.accepts(it) }
+                calculatedFunctions().filter { nameFilter(it.name) && kindFilter.accepts(it) }
 
         override fun printScopeStructure(p: Printer) {
             p.println(javaClass.simpleName)

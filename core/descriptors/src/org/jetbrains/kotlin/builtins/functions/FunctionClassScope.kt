@@ -48,8 +48,8 @@ class FunctionClassScope(
         return allDescriptors()
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        return allDescriptors().filterIsInstance<FunctionDescriptor>().filter { it.name == name }
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+        return allDescriptors().filterIsInstance<SimpleFunctionDescriptor>().filter { it.name == name }
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {

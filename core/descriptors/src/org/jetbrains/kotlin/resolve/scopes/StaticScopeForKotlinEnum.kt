@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
@@ -34,14 +35,14 @@ class StaticScopeForKotlinEnum(private val containingClass: ClassDescriptor) : M
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) = null // TODO
 
-    private val functions: List<FunctionDescriptor> by lazy {
+    private val functions: List<SimpleFunctionDescriptor> by lazy {
         listOf(createEnumValueOfMethod(containingClass), createEnumValuesMethod(containingClass))
     }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = functions
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) =
-            functions.filterTo(ArrayList<FunctionDescriptor>(1)) { it.name == name }
+            functions.filterTo(ArrayList<SimpleFunctionDescriptor>(1)) { it.name == name }
 
     override fun printScopeStructure(p: Printer) {
         p.println("Static scope for $containingClass")

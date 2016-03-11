@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 private class XmlSourceElement(override val psi: PsiElement) : PsiSourceElement
 
-internal fun genClearCacheFunction(packageFragmentDescriptor: PackageFragmentDescriptor, receiverType: KotlinType): FunctionDescriptor {
+internal fun genClearCacheFunction(packageFragmentDescriptor: PackageFragmentDescriptor, receiverType: KotlinType): SimpleFunctionDescriptor {
     val function = object : AndroidSyntheticFunction, SimpleFunctionDescriptorImpl(
             packageFragmentDescriptor,
             null,

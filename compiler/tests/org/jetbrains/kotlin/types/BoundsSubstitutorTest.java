@@ -20,6 +20,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -72,7 +73,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     private void doTest(String text, String expected) {
         KtFile jetFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile("fun.kt", text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
-        Collection<FunctionDescriptor> functions =
+        Collection<SimpleFunctionDescriptor> functions =
                 module.getPackage(FqName.ROOT).getMemberScope().getContributedFunctions(Name.identifier("f"), NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Many functions defined";
         FunctionDescriptor function = ContainerUtil.getFirstItem(functions);

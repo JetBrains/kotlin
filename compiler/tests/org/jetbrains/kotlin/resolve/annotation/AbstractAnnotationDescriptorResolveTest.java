@@ -169,7 +169,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     protected static FunctionDescriptor getFunctionDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name) {
         Name functionName = Name.identifier(name);
         MemberScope memberScope = packageView.getMemberScope();
-        Collection<FunctionDescriptor> functions = memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
+        Collection<SimpleFunctionDescriptor> functions = memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + packageView.getName();
         return functions.iterator().next();
     }
@@ -178,7 +178,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     private static FunctionDescriptor getFunctionDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name functionName = Name.identifier(name);
         MemberScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-        Collection<FunctionDescriptor> functions = memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
+        Collection<SimpleFunctionDescriptor> functions = memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + classDescriptor.getName();
         return functions.iterator().next();
     }

@@ -26,6 +26,7 @@ import java.lang.reflect.Modifier
 interface MemberScope : ResolutionScope {
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor>
 
     /**
      * Is supposed to be used in tests and debug only

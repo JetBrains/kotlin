@@ -48,7 +48,7 @@ abstract class DeserializedMemberScope protected constructor(
             }
 
     private val functions =
-            c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
+            c.storageManager.createMemoizedFunction<Name, Collection<SimpleFunctionDescriptor>> { computeFunctions(it) }
     private val properties =
             c.storageManager.createMemoizedFunction<Name, Collection<PropertyDescriptor>> { computeProperties(it) }
 
@@ -63,7 +63,7 @@ abstract class DeserializedMemberScope protected constructor(
         return map
     }
 
-    private fun computeFunctions(name: Name): Collection<FunctionDescriptor> {
+    private fun computeFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
         val protos = functionProtos()[ProtoKey(name, isExtension = false)].orEmpty() +
                      functionProtos()[ProtoKey(name, isExtension = true)].orEmpty()
 
@@ -75,10 +75,10 @@ abstract class DeserializedMemberScope protected constructor(
         return descriptors.toReadOnlyList()
     }
 
-    protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
+    protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         recordLookup(name, location)
         return functions(name)
     }

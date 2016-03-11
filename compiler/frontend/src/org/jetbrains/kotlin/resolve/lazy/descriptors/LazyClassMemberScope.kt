@@ -120,26 +120,26 @@ open class LazyClassMemberScope(
         OverrideResolver.resolveUnknownVisibilities(result, trace)
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         // TODO: this should be handled by lazy function descriptors
         val functions = super.getContributedFunctions(name, location)
         resolveUnknownVisibilitiesForMembers(functions)
         return functions
     }
 
-    override fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>) {
+    override fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>) {
         val location = NoLookupLocation.FOR_ALREADY_TRACKED
 
-        val fromSupertypes = Lists.newArrayList<FunctionDescriptor>()
+        val fromSupertypes = Lists.newArrayList<SimpleFunctionDescriptor>()
         for (supertype in thisDescriptor.typeConstructor.supertypes) {
             fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, location))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location)
-        generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor::class.java)
+        generateFakeOverrides(name, fromSupertypes, result, SimpleFunctionDescriptor::class.java)
     }
 
-    private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name, location: LookupLocation) {
+    private fun generateDataClassMethods(result: MutableCollection<SimpleFunctionDescriptor>, name: Name, location: LookupLocation) {
         if (!thisDescriptor.isData) return
 
         val constructor = getPrimaryConstructor() ?: return
@@ -319,8 +319,8 @@ open class LazyClassMemberScope(
     override fun toString() = "lazy scope for class ${thisDescriptor.name}"
 
     companion object {
-        private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
-            override fun extract(extractFrom: KotlinType, name: Name): Collection<FunctionDescriptor> {
+        private val EXTRACT_FUNCTIONS: MemberExtractor<SimpleFunctionDescriptor> = object : MemberExtractor<SimpleFunctionDescriptor> {
+            override fun extract(extractFrom: KotlinType, name: Name): Collection<SimpleFunctionDescriptor> {
                 return extractFrom.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             }
         }

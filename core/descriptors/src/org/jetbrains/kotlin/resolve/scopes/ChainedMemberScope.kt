@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
@@ -35,7 +36,7 @@ class ChainedMemberScope(
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = getFromAllScopes(scopes) { it.getContributedVariables(name, location) }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor>
             = getFromAllScopes(scopes) { it.getContributedFunctions(name, location) }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)

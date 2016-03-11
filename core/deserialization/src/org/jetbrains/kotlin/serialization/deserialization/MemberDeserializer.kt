@@ -139,7 +139,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         return lowSixBits + rest
     }
 
-    fun loadFunction(proto: ProtoBuf.Function): FunctionDescriptor {
+    fun loadFunction(proto: ProtoBuf.Function): SimpleFunctionDescriptor {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
         val annotations = getAnnotations(proto, flags, AnnotatedCallableKind.FUNCTION)
         val receiverAnnotations = if (proto.hasReceiver())

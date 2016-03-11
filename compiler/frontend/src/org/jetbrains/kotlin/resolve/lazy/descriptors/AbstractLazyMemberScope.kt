@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import com.google.common.collect.Sets
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +46,7 @@ protected constructor(
 
     protected val storageManager: StorageManager = c.storageManager
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
-    private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> = storageManager.createMemoizedFunction { doGetFunctions(it) }
+    private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> = storageManager.createMemoizedFunction { doGetFunctions(it) }
     private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> = storageManager.createMemoizedFunction { doGetProperties(it) }
 
     private fun resolveClassDescriptor(name: Name): List<ClassDescriptor> {
@@ -66,13 +63,13 @@ protected constructor(
         return classDescriptors(name).firstOrNull()
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         recordLookup(name, location)
         return functionDescriptors(name)
     }
 
-    private fun doGetFunctions(name: Name): Collection<FunctionDescriptor> {
-        val result = Sets.newLinkedHashSet<FunctionDescriptor>()
+    private fun doGetFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
+        val result = Sets.newLinkedHashSet<SimpleFunctionDescriptor>()
 
         val declarations = declarationProvider.getFunctionDeclarations(name)
         for (functionDeclaration in declarations) {
@@ -92,7 +89,7 @@ protected constructor(
 
     protected abstract fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope
 
-    protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
+    protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<SimpleFunctionDescriptor>)
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         recordLookup(name, location)

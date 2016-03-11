@@ -203,8 +203,8 @@ class DeserializedClassDescriptor(
         override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
                                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors()
 
-        override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
-            val fromSupertypes = ArrayList<FunctionDescriptor>()
+        override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
+            val fromSupertypes = ArrayList<SimpleFunctionDescriptor>()
             for (supertype in classDescriptor.getTypeConstructor().supertypes) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }

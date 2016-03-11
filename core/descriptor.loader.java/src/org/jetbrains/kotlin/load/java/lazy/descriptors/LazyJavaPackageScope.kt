@@ -138,7 +138,7 @@ class LazyJavaPackageScope(
         return deserializedPackageScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): List<SimpleFunctionDescriptor> {
         // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
         recordLookup(name, location)
         return deserializedPackageScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)

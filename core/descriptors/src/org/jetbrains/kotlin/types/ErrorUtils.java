@@ -184,15 +184,20 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        @SuppressWarnings({"unchecked"}) // KT-9898 Impossible implement kotlin interface in java
+        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
+        // method is covariantly overridden in Kotlin, but collections in Java are invariant
+        @SuppressWarnings({"unchecked"})
         public Set getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             return ERROR_PROPERTY_GROUP;
         }
 
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
-            return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
+        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
+        // method is covariantly overridden in Kotlin, but collections in Java are invariant
+        @SuppressWarnings({"unchecked"})
+        public Set getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+            return Collections.singleton(createErrorFunction(this));
         }
 
         @NotNull
@@ -236,7 +241,10 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
+        // method is covariantly overridden in Kotlin, but collections in Java are invariant
+        @SuppressWarnings({"unchecked"})
+        public Collection getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 

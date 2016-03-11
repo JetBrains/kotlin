@@ -50,7 +50,7 @@ public class CodegenUtil {
             @NotNull ClassifierDescriptor returnedClassifier,
             @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
-        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getContributedFunctions(name, NoLookupLocation.FROM_BACKEND);
+        Collection<SimpleFunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getContributedFunctions(name, NoLookupLocation.FROM_BACKEND);
         for (FunctionDescriptor function : functions) {
             if (!CallResolverUtilKt.isOrOverridesSynthesized(function)
                 && function.getTypeParameters().isEmpty()

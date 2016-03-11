@@ -203,7 +203,7 @@ public class SignaturesPropagationData {
         Method autoSignature = null;
         boolean autoMethodContainsVararg = SignaturePropagationUtilKt.containsVarargs(autoMethodDescriptor);
         for (KotlinType supertype : containingClass.getTypeConstructor().getSupertypes()) {
-            Collection<FunctionDescriptor> superFunctionCandidates =
+            Collection<SimpleFunctionDescriptor> superFunctionCandidates =
                     supertype.getMemberScope().getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
 
             if (!autoMethodContainsVararg && !SignaturePropagationUtilKt.containsAnyNotTrivialSignature(superFunctionCandidates)) continue;

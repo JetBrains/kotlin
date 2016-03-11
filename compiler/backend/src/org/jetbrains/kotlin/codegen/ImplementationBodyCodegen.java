@@ -413,7 +413,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private boolean isGenericToArrayPresent() {
-        Collection<FunctionDescriptor> functions =
+        Collection<SimpleFunctionDescriptor> functions =
                 descriptor.getDefaultType().getMemberScope().getContributedFunctions(Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND);
         for (FunctionDescriptor function : functions) {
             if (CallResolverUtilKt.isOrOverridesSynthesized(function)) {

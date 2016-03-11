@@ -178,14 +178,14 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     private class EnumEntryScope extends MemberScopeImpl {
-        private final MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> functions;
+        private final MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> functions;
         private final MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> properties;
         private final NotNullLazyValue<Collection<DeclarationDescriptor>> allDescriptors;
 
         public EnumEntryScope(@NotNull StorageManager storageManager) {
-            this.functions = storageManager.createMemoizedFunction(new Function1<Name, Collection<FunctionDescriptor>>() {
+            this.functions = storageManager.createMemoizedFunction(new Function1<Name, Collection<SimpleFunctionDescriptor>>() {
                 @Override
-                public Collection<FunctionDescriptor> invoke(Name name) {
+                public Collection<SimpleFunctionDescriptor> invoke(Name name) {
                     return computeFunctions(name);
                 }
             });
@@ -206,25 +206,32 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        @SuppressWarnings({"unchecked"}) // KT-9898 Impossible implement kotlin interface in java
+        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
+        // method is covariantly overridden in Kotlin, but collections in Java are invariant
+        @SuppressWarnings({"unchecked"})
         public Collection getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             return properties.invoke(name);
         }
 
         @NotNull
-        @SuppressWarnings("unchecked")
+        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
+        // method is covariantly overridden in Kotlin, but collections in Java are invariant
+        @SuppressWarnings({"unchecked"})
         private Collection<PropertyDescriptor> computeProperties(@NotNull Name name) {
             return resolveFakeOverrides(name, (Collection) getSupertypeScope().getContributedVariables(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
         }
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
+        // method is covariantly overridden in Kotlin, but collections in Java are invariant
+        @SuppressWarnings({"unchecked"})
+        public Collection getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             return functions.invoke(name);
         }
 
         @NotNull
-        private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
+        private Collection<SimpleFunctionDescriptor> computeFunctions(@NotNull Name name) {
             return resolveFakeOverrides(name, getSupertypeScope().getContributedFunctions(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
         }
 

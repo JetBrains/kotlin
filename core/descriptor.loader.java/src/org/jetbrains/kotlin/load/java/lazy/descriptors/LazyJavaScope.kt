@@ -72,7 +72,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
 
-    private val functions = c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> {
+    private val functions = c.storageManager.createMemoizedFunction<Name, Collection<SimpleFunctionDescriptor>> {
         name ->
         val result = LinkedHashSet<SimpleFunctionDescriptor>()
 
@@ -214,7 +214,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
         recordLookup(name, location)
         return functions(name)
     }
