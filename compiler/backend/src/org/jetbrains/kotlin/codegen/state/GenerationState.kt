@@ -53,7 +53,7 @@ class GenerationState @JvmOverloads constructor(
         val files: List<KtFile>,
         disableCallAssertions: Boolean = true,
         disableParamAssertions: Boolean = true,
-        val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
+        val generateDeclaredClassFilter: GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
         val useTypeTableInSerializer: Boolean = false,
@@ -68,7 +68,8 @@ class GenerationState @JvmOverloads constructor(
         val outDirectory: File? = null,
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val progress: Progress = Progress.DEAF,
-        private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
+        private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
+        dumpBinarySignatureMappingTo: File? = null
 ) {
     abstract class GenerateClassFilter {
         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
@@ -122,7 +123,7 @@ class GenerationState @JvmOverloads constructor(
     val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
     val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
     val factory: ClassFileFactory
-    private val duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
+    private lateinit var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
 
     val replSpecific = ForRepl()
 
@@ -147,22 +148,20 @@ class GenerationState @JvmOverloads constructor(
     val rootContext: CodegenContext<*> = RootContext(this)
 
     init {
-        val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
-        duplicateSignatureFactory = BuilderFactoryForDuplicateSignatureDiagnostics(
-                optimizationClassBuilderFactory, this.bindingContext, diagnostics, fileClassesProvider,
-                getIncrementalCacheForThisTarget(),
-                this.moduleName)
+        this.interceptedBuilderFactory = builderFactory
+                .wrapWith(
+                    { OptimizationClassBuilderFactory(it, disableOptimization) },
+                    { BuilderFactoryForDuplicateSignatureDiagnostics(
+                            it, this.bindingContext, diagnostics, fileClassesProvider,
+                            getIncrementalCacheForThisTarget(),
+                            this.moduleName).apply { duplicateSignatureFactory = this } },
+                    { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
+                    { dumpBinarySignatureMappingTo?.let { destination -> SignatureDumpingBuilderFactory(it, destination) } ?: it }
+                )
+                .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { builderFactory, extension ->
+                    extension.interceptClassBuilderFactory(builderFactory, bindingContext, diagnostics)
+                }
 
-        var interceptedBuilderFactory: ClassBuilderFactory
-                = BuilderFactoryForDuplicateClassNameDiagnostics(duplicateSignatureFactory, diagnostics)
-
-        val interceptExtensions = ClassBuilderInterceptorExtension.getInstances(project)
-
-        for (extension in interceptExtensions) {
-            interceptedBuilderFactory = extension.interceptClassBuilderFactory(interceptedBuilderFactory, bindingContext, diagnostics)
-        }
-
-        this.interceptedBuilderFactory = interceptedBuilderFactory
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)
     }
 
@@ -214,3 +213,9 @@ fun GenerationStateEventCallback(block: (GenerationState) -> Unit): GenerationSt
         object : GenerationStateEventCallback {
             override fun invoke(s: GenerationState) = block(s)
         }
+
+private fun ClassBuilderFactory.wrapWith(vararg wrappers: (ClassBuilderFactory) -> ClassBuilderFactory): ClassBuilderFactory =
+        wrappers.fold(this) { builderFactory, wrapper -> wrapper(builderFactory) }
+
+private inline fun <T> ClassBuilderFactory.wrapWith(elements: Iterable<T>, wrapper: (ClassBuilderFactory, T) -> ClassBuilderFactory): ClassBuilderFactory =
+        elements.fold(this, wrapper)
