@@ -53,15 +53,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfigurator {
-    protected static final String VERSION_TEMPLATE = "$VERSION$";
+    private static final String VERSION_TEMPLATE = "$VERSION$";
 
     protected static final String CLASSPATH = "classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"";
     protected static final String SNAPSHOT_REPOSITORY = "maven {\nurl 'http://oss.sonatype.org/content/repositories/snapshots'\n}";
-    public static final String MAVEN_CENTRAL = "mavenCentral()\n";
-    public static final String JCENTER = "jcenter()\n";
+    private static final String MAVEN_CENTRAL = "mavenCentral()\n";
+    private static final String JCENTER = "jcenter()\n";
     public static final String LIBRARY = "compile \"org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version\"";
     protected static final String SOURCE_SET = "main.java.srcDirs += 'src/main/kotlin'\n";
-    protected static final String VERSION = String.format("ext.kotlin_version = '%s'", VERSION_TEMPLATE);
+    private static final String VERSION = String.format("ext.kotlin_version = '%s'", VERSION_TEMPLATE);
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
@@ -198,7 +198,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return null;
     }
 
-    protected void addElementsToProjectFile(@NotNull GroovyFile file, @NotNull String version) {
+    protected static void addElementsToProjectFile(@NotNull GroovyFile file, @NotNull String version) {
         GrClosableBlock buildScriptBlock = getBuildScriptBlock(file);
         addFirstExpressionInBlockIfNeeded(VERSION.replace(VERSION_TEMPLATE, version), buildScriptBlock);
 
@@ -252,7 +252,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         addSourceSetsBlock(file);
     }
 
-    private boolean isRepositoryConfigured(GrClosableBlock repositoriesBlock) {
+    private static boolean isRepositoryConfigured(GrClosableBlock repositoriesBlock) {
         return repositoriesBlock.getText().contains(MAVEN_CENTRAL) || repositoriesBlock.getText().contains(JCENTER);
     }
 
@@ -266,12 +266,12 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
             @NotNull String version
     );
 
-    protected static boolean canConfigureFile(@NotNull GroovyFile file) {
+    private static boolean canConfigureFile(@NotNull GroovyFile file) {
         return WritingAccessProvider.isPotentiallyWritable(file.getVirtualFile(), null);
     }
 
     @Nullable
-    protected static GroovyFile getBuildGradleFile(Project project, String path) {
+    private static GroovyFile getBuildGradleFile(Project project, String path) {
         VirtualFile file = VfsUtil.findFileByIoFile(new File(path), true);
         if (file == null) {
             return null;
@@ -282,16 +282,16 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     }
 
     @NotNull
-    protected static String getTopLevelProjectFilePath(@NotNull Project project) {
+    private static String getTopLevelProjectFilePath(@NotNull Project project) {
         return project.getBasePath() + "/" + GradleConstants.DEFAULT_SCRIPT_NAME;
     }
 
     @NotNull
-    protected static String getModuleFilePath(@NotNull Module module) {
+    private static String getModuleFilePath(@NotNull Module module) {
         return new File(module.getModuleFilePath()).getParent() + "/" + GradleConstants.DEFAULT_SCRIPT_NAME;
     }
 
-    protected static boolean isSnapshot(@NotNull String version) {
+    private static boolean isSnapshot(@NotNull String version) {
         return version.contains("SNAPSHOT");
     }
 
@@ -319,7 +319,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     }
 
     @NotNull
-    protected static GrClosableBlock getDependenciesBlock(@NotNull GrStatementOwner file) {
+    private static GrClosableBlock getDependenciesBlock(@NotNull GrStatementOwner file) {
         return getBlockOrCreate(file, "dependencies");
     }
 
@@ -329,24 +329,24 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     }
 
     @NotNull
-    protected static GrClosableBlock getBuildScriptBlock(@NotNull GrStatementOwner file) {
+    private static GrClosableBlock getBuildScriptBlock(@NotNull GrStatementOwner file) {
         return getBlockOrCreate(file, "buildscript");
     }
 
     @NotNull
-    protected static GrClosableBlock getBuildScriptDependenciesBlock(@NotNull GrStatementOwner file) {
+    private static GrClosableBlock getBuildScriptDependenciesBlock(@NotNull GrStatementOwner file) {
         GrClosableBlock buildScript = getBuildScriptBlock(file);
         return getBlockOrCreate(buildScript, "dependencies");
     }
 
     @NotNull
-    protected static GrClosableBlock getBuildScriptRepositoriesBlock(@NotNull GrStatementOwner file) {
+    private static GrClosableBlock getBuildScriptRepositoriesBlock(@NotNull GrStatementOwner file) {
         GrClosableBlock buildScript = getBuildScriptBlock(file);
         return getBlockOrCreate(buildScript, "repositories");
     }
 
     @NotNull
-    protected static GrClosableBlock getRepositoriesBlock(@NotNull GrStatementOwner file) {
+    private static GrClosableBlock getRepositoriesBlock(@NotNull GrStatementOwner file) {
         return getBlockOrCreate(file, "repositories");
     }
 
@@ -373,7 +373,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         addExpressionInBlockIfNeeded(text, block, false);
     }
 
-    protected static void addFirstExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
+    private static void addFirstExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
         addExpressionInBlockIfNeeded(text, block, true);
     }
 
@@ -424,7 +424,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return null;
     }
 
-    protected static void showErrorMessage(@NotNull Project project, @Nullable String message) {
+    private static void showErrorMessage(@NotNull Project project, @Nullable String message) {
         Messages.showErrorDialog(project,
                                  "<html>Couldn't configure kotlin-gradle plugin automatically.<br/>" +
                                  (message != null ? message : "") +
