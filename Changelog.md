@@ -52,7 +52,7 @@ JS translator issues fixed:
 New features:
 
 - Compatibility with IDEA 2016
-- Kotlin Education Plugin (for IDEA 2016) ???
+- Kotlin Education Plugin (for IDEA 2016)
 - [KT-9752](https://youtrack.jetbrains.com/issue/KT-9752)  More usable file chooser for "Move declaration to another file"
 - [KT-9697](https://youtrack.jetbrains.com/issue/KT-9697)  Move method to companion object and back
 
