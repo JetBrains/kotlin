@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.configuration;
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.openapi.application.Result;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.ExternalLibraryDescriptor;
-import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -84,40 +84,45 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     }
 
     @Override
-    public void configure(@NotNull Project project, Collection<Module> excludeModules) {
-        ConfigureDialogWithModulesAndVersion dialog =
+    public void configure(@NotNull final Project project, Collection<Module> excludeModules) {
+        final ConfigureDialogWithModulesAndVersion dialog =
                 new ConfigureDialogWithModulesAndVersion(project, this, excludeModules);
 
         dialog.show();
         if (!dialog.isOK()) return;
 
-        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
-        Set<GroovyFile> changedFiles = new HashSet<GroovyFile>();
-        GroovyFile projectGradleFile = getBuildGradleFile(project, getTopLevelProjectFilePath(project));
-        if (projectGradleFile != null && canConfigureFile(projectGradleFile)) {
-            boolean isModified = changeGradleFile(projectGradleFile, true, dialog.getKotlinVersion(), collector);
-            if (isModified) {
-                changedFiles.add(projectGradleFile);
-            }
-        }
-
-        for (Module module : dialog.getModulesToConfigure()) {
-            GroovyFile file = getBuildGradleFile(project, getModuleFilePath(module));
-            if (file != null && canConfigureFile(file)) {
-                boolean isModified = changeGradleFile(file, false, dialog.getKotlinVersion(), collector);
-                if (isModified) {
-                    changedFiles.add(file);
+        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+            @Override
+            public void run() {
+                NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
+                Set<GroovyFile> changedFiles = new HashSet<GroovyFile>();
+                GroovyFile projectGradleFile = getBuildGradleFile(project, getTopLevelProjectFilePath(project));
+                if (projectGradleFile != null && canConfigureFile(projectGradleFile)) {
+                    boolean isModified = changeGradleFile(projectGradleFile, true, dialog.getKotlinVersion(), collector);
+                    if (isModified) {
+                        changedFiles.add(projectGradleFile);
+                    }
                 }
-            }
-            else {
-                showErrorMessage(project, "Cannot find build.gradle file for module " + module.getName());
-            }
-        }
 
-        for (GroovyFile file : changedFiles) {
-            OpenFileAction.openFile(file.getVirtualFile(), project);
-        }
-        collector.showNotification();
+                for (Module module : dialog.getModulesToConfigure()) {
+                    GroovyFile file = getBuildGradleFile(project, getModuleFilePath(module));
+                    if (file != null && canConfigureFile(file)) {
+                        boolean isModified = changeGradleFile(file, false, dialog.getKotlinVersion(), collector);
+                        if (isModified) {
+                            changedFiles.add(file);
+                        }
+                    }
+                    else {
+                        showErrorMessage(project, "Cannot find build.gradle file for module " + module.getName());
+                    }
+                }
+
+                for (GroovyFile file : changedFiles) {
+                    OpenFileAction.openFile(file.getVirtualFile(), project);
+                }
+                collector.showNotification();
+            }
+        }, "Configure Kotlin", null);
     }
 
     public static void addKotlinLibraryToModule(final Module module, final DependencyScope scope, final ExternalLibraryDescriptor libraryDescriptor) {
@@ -257,8 +262,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         }
 
         GrClosableBlock dependenciesBlock = getDependenciesBlock(file);
-        Module module = FileIndexFacade.getInstance(file.getProject()).getModuleForFile(file.getVirtualFile());
-        wasModified |= addExpressionInBlockIfNeeded(LIBRARY, dependenciesBlock, false, !ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module));
+        wasModified |= addExpressionInBlockIfNeeded(LIBRARY, dependenciesBlock, false);
 
         wasModified |= addSourceSetsBlock(file);
 
@@ -383,11 +387,11 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     }
 
     protected static boolean addLastExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
-        return addExpressionInBlockIfNeeded(text, block, false, false);
+        return addExpressionInBlockIfNeeded(text, block, false);
     }
 
     private static boolean addFirstExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block) {
-        return addExpressionInBlockIfNeeded(text, block, true, false);
+        return addExpressionInBlockIfNeeded(text, block, true);
     }
 
     @Nullable
@@ -405,8 +409,8 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         return null;
     }
 
-    private static boolean addExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block, boolean isFirst, boolean forceInsert) {
-        if (!forceInsert && block.getText().contains(text)) return false;
+    private static boolean addExpressionInBlockIfNeeded(@NotNull String text, @NotNull GrClosableBlock block, boolean isFirst) {
+        if (block.getText().contains(text)) return false;
         GrExpression newStatement = GroovyPsiElementFactory.getInstance(block.getProject()).createExpressionFromText(text);
         CodeStyleManager.getInstance(block.getProject()).reformat(newStatement);
         GrStatement[] statements = block.getStatements();
