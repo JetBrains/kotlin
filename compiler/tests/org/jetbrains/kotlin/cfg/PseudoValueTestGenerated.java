@@ -210,6 +210,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("InfiniteLoops.kt")
+            public void testInfiniteLoops() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/InfiniteLoops.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localAndNonlocalReturnsWithFinally.kt")
             public void testLocalAndNonlocalReturnsWithFinally() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/localAndNonlocalReturnsWithFinally.kt");

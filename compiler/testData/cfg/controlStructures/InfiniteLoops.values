@@ -1,0 +1,28 @@
+== unreachable ==
+fun unreachable() {}
+---------------------
+=====================
+== a ==
+fun a() {
+    do {
+    } while (true)
+    unreachable()
+}
+---------------------
+                                        <v1>: *   NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+true                                    <v0>: *   NEW: r(true) -> <v0>
+unreachable()                           <v2>: *   NEW: call(unreachable(), unreachable) -> <v2>
+{ do { } while (true) unreachable() }   <v2>: *   COPY
+=====================
+== b ==
+fun b() {
+    while (true) {
+    }
+    unreachable()
+}
+---------------------
+                                     <v1>: *         NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+true                                 <v0>: Boolean   NEW: r(true) -> <v0>
+unreachable()                        <v2>: *         NEW: call(unreachable(), unreachable) -> <v2>
+{ while (true) { } unreachable() }   <v2>: *         COPY
+=====================

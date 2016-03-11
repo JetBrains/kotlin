@@ -7,12 +7,13 @@ fun test(b: Boolean) {
 }
 ---------------------
                                                    <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](b: Boolean) -> <v0>
+                                                   <v6>: *         NEW: magic[VALUE_CONSUMER](true|<v5>) -> <v6>
 b                                                  <v1>: Boolean   NEW: r(b) -> <v1>
 break                                              !<v2>: *
 if (b) break                                       <v3>: *         NEW: merge(if (b) break|!<v2>) -> <v3>
 continue                                           !<v4>: *
 { if (b) break; continue; }                        !<v4>: *        COPY
-true                                               <v5>: Boolean   NEW: r(true) -> <v5>
-do { if (b) break; continue; } while (true)        !<v6>: *
-{ do { if (b) break; continue; } while (true); }   !<v6>: *        COPY
+true                                               <v5>: *         NEW: r(true) -> <v5>
+do { if (b) break; continue; } while (true)        !<v7>: *
+{ do { if (b) break; continue; } while (true); }   !<v7>: *        COPY
 =====================

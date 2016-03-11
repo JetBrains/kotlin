@@ -2877,6 +2877,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("infiniteLoops.kt")
+            public void testInfiniteLoops() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/infiniteLoops.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("initializationInLambda.kt")
             public void testInitializationInLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLambda.kt");

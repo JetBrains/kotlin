@@ -15,7 +15,7 @@ L0:
   3 mark(do { if (b) break; continue; } while (true))
 L2 [loop entry point]:
 L4 [body entry point]:
-    mark({ if (b) break; continue; })                         PREV:[mark(do { if (b) break; continue; } while (true)), jt(L2|<v5>)]
+    mark({ if (b) break; continue; })                         PREV:[mark(do { if (b) break; continue; } while (true)), jmp(L2)]
     mark(if (b) break)
     r(b) -> <v1>
     jf(L7|<v1>)                                               NEXT:[read (Unit), jmp(L3)]
@@ -29,9 +29,10 @@ L8 ['if' expression result]:
 L5 [body exit point]:
 L6 [condition entry point]:
     r(true) -> <v5>
-    jt(L2|<v5>)                                               NEXT:[read (Unit), mark({ if (b) break; continue; })]
+    magic[VALUE_CONSUMER](true|<v5>) -> <v6>
+    jmp(L2)                                                   NEXT:[mark({ if (b) break; continue; })]
 L3 [loop exit point]:
-    read (Unit)                                               PREV:[jmp(L3), jt(L2|<v5>)]
+    read (Unit)                                               PREV:[jmp(L3)]
 L1:
   1 <END>                                                     NEXT:[<SINK>]
 error:

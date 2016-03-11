@@ -1,0 +1,11 @@
+package
+
+public fun a(): kotlin.Unit
+public fun b(): kotlin.Unit
+public fun c(): kotlin.Unit
+public fun d(): kotlin.Unit
+public fun f(/*0*/ cond: kotlin.Boolean): kotlin.Unit
+public fun g(): kotlin.Int
+public fun h(): kotlin.Int
+public fun unreachable(): kotlin.Unit
+public fun use(/*0*/ arg: kotlin.Any): kotlin.Any

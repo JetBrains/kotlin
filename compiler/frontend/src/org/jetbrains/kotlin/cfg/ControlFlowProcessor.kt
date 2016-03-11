@@ -716,8 +716,16 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             generateInstructions(expression.body)
             builder.exitLoopBody(expression)
             builder.bindLabel(loopInfo.conditionEntryPoint)
-            generateInstructions(expression.condition)
-            builder.jumpOnTrue(loopInfo.entryPoint, expression, builder.getBoundValue(expression.condition))
+            val condition = expression.condition
+            generateInstructions(condition)
+            if (!CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace.bindingContext, true)) {
+                builder.jumpOnTrue(loopInfo.entryPoint, expression, builder.getBoundValue(expression.condition))
+            }
+            else {
+                assert(condition != null) { "Invalid do / while condition: " + expression.text }
+                createSyntheticValue(condition!!, MagicKind.VALUE_CONSUMER, condition)
+                builder.jump(loopInfo.entryPoint, expression)
+            }
             builder.bindLabel(loopInfo.exitPoint)
             builder.loadUnit(expression)
             builder.exitLexicalScope(expression)

@@ -1,0 +1,76 @@
+== unreachable ==
+fun unreachable() {}
+---------------------
+L0:
+  1 <START>
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
+== a ==
+fun a() {
+    do {
+    } while (true)
+    unreachable()
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ do { } while (true) unreachable() })
+  3 mark(do { } while (true))
+L2 [loop entry point]:
+L4 [body entry point]:
+    mark({ })                                      PREV:[mark(do { } while (true)), jmp(L2)]
+    read (Unit)
+L5 [body exit point]:
+L6 [condition entry point]:
+    r(true) -> <v0>
+    magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+    jmp(L2)                                        NEXT:[mark({ })]
+L3 [loop exit point]:
+-   read (Unit)                                    PREV:[]
+- 2 mark(unreachable())                            PREV:[]
+-   call(unreachable(), unreachable) -> <v2>       PREV:[]
+L1:
+  1 <END>                                          NEXT:[<SINK>]                                         PREV:[]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================
+== b ==
+fun b() {
+    while (true) {
+    }
+    unreachable()
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ while (true) { } unreachable() })
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(true) -> <v0>                             PREV:[mark({ while (true) { } unreachable() }), jmp(L2)]
+    mark(while (true) { })
+    magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+L4 [body entry point]:
+  3 mark({ })
+    read (Unit)
+  2 jmp(L2)                                     NEXT:[r(true) -> <v0>]
+L3 [loop exit point]:
+L5 [body exit point]:
+-   read (Unit)                                 PREV:[]
+-   mark(unreachable())                         PREV:[]
+-   call(unreachable(), unreachable) -> <v2>    PREV:[]
+L1:
+  1 <END>                                       NEXT:[<SINK>]                                      PREV:[]
+error:
+    <ERROR>                                     PREV:[]
+sink:
+    <SINK>                                      PREV:[<ERROR>, <END>]
+=====================
