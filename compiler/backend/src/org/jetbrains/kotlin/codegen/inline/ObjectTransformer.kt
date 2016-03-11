@@ -33,7 +33,7 @@ abstract class ObjectTransformer<T : RegenerationInfo>(val regenerationInfo: T, 
     protected fun createRemappingClassBuilderViaFactory(inliningContext: InliningContext): ClassBuilder {
         val classBuilder = state.factory.newVisitor(
                 JvmDeclarationOrigin.NO_ORIGIN,
-                Type.getObjectType(regenerationInfo.getNewClassName()),
+                Type.getObjectType(regenerationInfo.newClassName),
                 inliningContext.root.callElement.containingFile
         )
 
@@ -44,7 +44,7 @@ abstract class ObjectTransformer<T : RegenerationInfo>(val regenerationInfo: T, 
 
 
     fun createClassReader(): ClassReader {
-        return InlineCodegenUtil.buildClassReaderByInternalName(state, regenerationInfo.getOldClassName())
+        return InlineCodegenUtil.buildClassReaderByInternalName(state, regenerationInfo.oldClassName)
     }
 
 }

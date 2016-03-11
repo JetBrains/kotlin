@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.codegen.inline
 
 abstract class RegenerationInfo() {
 
-    abstract fun getOldClassName(): String
+    abstract val oldClassName: String
 
-    abstract fun getNewClassName(): String
+    abstract val newClassName: String
 
     abstract fun shouldRegenerate(sameModule: Boolean): Boolean
 
@@ -28,22 +28,14 @@ abstract class RegenerationInfo() {
 
 }
 
-class WhenMappingRegenerationInfo(val oldName: String, val nameGenerator: NameGenerator) : RegenerationInfo() {
+class WhenMappingRegenerationInfo(override val oldClassName: String, val nameGenerator: NameGenerator) : RegenerationInfo() {
 
-    val newName by lazy {
-        nameGenerator.genLambdaClassName() + oldName
+    override val newClassName by lazy {
+        nameGenerator.genLambdaClassName() + oldClassName.substringAfterLast("/")
     }
 
     override fun shouldRegenerate(sameModule: Boolean): Boolean {
         throw UnsupportedOperationException()
-    }
-
-    override fun getOldClassName(): String {
-        return oldName
-    }
-
-    override fun getNewClassName(): String {
-        return newName
     }
 
     override fun canRemoveAfterTransformation(): Boolean {

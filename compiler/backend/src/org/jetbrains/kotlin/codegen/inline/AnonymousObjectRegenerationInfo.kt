@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import java.util.*
 
 class AnonymousObjectRegenerationInfo internal constructor(
-		private val ownerInternalName: String,
+		override val oldClassName: String,
 		private val needReification: Boolean,
 		val lambdasToInline: Map<Int, LambdaInfo>,
 		private val capturedOuterRegenerated: Boolean,
@@ -28,7 +28,7 @@ class AnonymousObjectRegenerationInfo internal constructor(
 		private val isStaticOrigin: Boolean,
 		private val nameGenerator: NameGenerator) : RegenerationInfo() {
 
-	private val newLambdaType: String by lazy {
+	 override val newClassName: String by lazy {
 		nameGenerator.genLambdaClassName()
 	}
 
@@ -49,10 +49,6 @@ class AnonymousObjectRegenerationInfo internal constructor(
 			HashMap<Int, LambdaInfo>(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator) {
 	}
 
-	override fun getOldClassName(): String {
-		return ownerInternalName
-	}
-
 	override fun shouldRegenerate(sameModule: Boolean): Boolean {
 		return !alreadyRegenerated && (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification)
 	}
@@ -61,9 +57,5 @@ class AnonymousObjectRegenerationInfo internal constructor(
 		// Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
 		// because it can be local function from outer scope
 		return !isStaticOrigin
-	}
-
-	override fun getNewClassName(): String {
-		return newLambdaType
 	}
 }

@@ -191,7 +191,6 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
 
         classBuilder.done();
 
-        regenerationInfo.setNewLambdaType(newLambdaType);
         return transformationResult;
     }
 
