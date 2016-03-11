@@ -23,11 +23,16 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.formatter.FormatSettingsUtil;
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover;
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.SettingsConfigurator;
 
 import java.io.File;
 
@@ -80,19 +85,35 @@ public abstract class AbstractCodeMoverTest extends LightCodeInsightTestCase {
         assertEquals("Invalid applicability", isApplicableExpected, info.toMove2 != null);
 
         if (isApplicableExpected) {
-            invokeAndCheck(path, down);
+            invokeAndCheck(fileText, path, down);
         }
     }
 
-    private void invokeAndCheck(@NotNull String path, final boolean down) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                EditorAction action = down ? new MoveStatementDownAction() : new MoveStatementUpAction();
-                action.actionPerformed(getEditor(), getCurrentEditorDataContext());
+    private void invokeAndCheck(@NotNull String fileText, @NotNull String path, final boolean down) {
+        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings();
+        SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(fileText, codeStyleSettings);
+        configurator.configureSettings();
+
+        try {
+            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                @Override
+                public void run() {
+                    EditorAction action = down ? new MoveStatementDownAction() : new MoveStatementUpAction();
+                    action.actionPerformed(getEditor(), getCurrentEditorDataContext());
+                }
+            });
+
+            String afterFilePath = path + ".after";
+            try {
+                checkResultByFile(afterFilePath);
             }
-        });
-        checkResultByFile(path + ".after");
+            catch (ComparisonFailure e) {
+                KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
+            }
+        }
+        finally {
+            codeStyleSettings.clearCodeStyleSettings();
+        }
     }
 
     @NotNull

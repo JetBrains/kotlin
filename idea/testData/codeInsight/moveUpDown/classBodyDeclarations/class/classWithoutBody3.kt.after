@@ -2,6 +2,6 @@
 class D {
 
     // MOVE: down
-    // class A
+// class A
     <caret>class A
 }
