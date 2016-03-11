@@ -17,8 +17,7 @@ internal class A /* just a sample name*/ : Runnable /* let's implement Runnable 
 
         // end of printing
 
-        if (p > 0) {
-            // do this only when p > 0
+        if (p > 0) { // do this only when p > 0
             // we print 4 and return
             println("3")
             return  // do not continue

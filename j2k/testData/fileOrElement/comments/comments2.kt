@@ -9,8 +9,7 @@ internal class A {
         val /*int*/ a /* it's a */ = 2 /* it's 2 */ + 1 /* it's 1 */ // variable a declared
     } // end of foo
 
-    fun /* we return int*/ foo(/*int*/ p: Int/* parameter p */): Int {
-        /* body is empty */
+    fun /* we return int*/ foo(/*int*/ p: Int/* parameter p */): Int { /* body is empty */
     }
 
     private /*it's private*/ val field = 0
