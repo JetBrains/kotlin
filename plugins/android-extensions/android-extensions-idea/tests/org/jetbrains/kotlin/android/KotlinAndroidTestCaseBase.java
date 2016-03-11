@@ -52,7 +52,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
     protected Sdk androidSdk;
     protected VirtualFile androidJar;
 
-    private static final String TEST_DATA_PROJECT_RELATIVE = "/plugins/android-idea-plugin/testData/android";
+    private static final String TEST_DATA_PROJECT_RELATIVE = "/plugins/android-extensions/android-extensions-idea/testData/android";
 
     protected KotlinAndroidTestCaseBase() {
         IdeaTestCase.initPlatformPrefix();

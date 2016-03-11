@@ -25,7 +25,7 @@
     <orderEntry type="module" module-name="js.frontend" scope="TEST" />
     <orderEntry type="module" module-name="util" scope="TEST" />
     <orderEntry type="module" module-name="android-extensions-compiler" scope="TEST" />
-    <orderEntry type="module" module-name="android-idea-plugin" scope="TEST" />
+    <orderEntry type="module" module-name="android-extensions-idea" scope="TEST" />
     <orderEntry type="module" module-name="android-jps-plugin" scope="TEST" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="idea-completion" scope="TEST" />

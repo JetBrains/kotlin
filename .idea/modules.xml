@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Kotlin.iml" filepath="$PROJECT_DIR$/Kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-compiler/android-extensions-compiler.iml" group="plugins" />
-      <module fileurl="file://$PROJECT_DIR$/plugins/android-idea-plugin/android-idea-plugin.iml" filepath="$PROJECT_DIR$/plugins/android-idea-plugin/android-idea-plugin.iml" group="plugins" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" filepath="$PROJECT_DIR$/plugins/android-extensions/android-extensions-idea/android-extensions-idea.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/plugins/android-jps-plugin/android-jps-plugin.iml" filepath="$PROJECT_DIR$/plugins/android-jps-plugin/android-jps-plugin.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/android-studio/android-studio.iml" filepath="$PROJECT_DIR$/android-studio/android-studio.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/android-tests/android-tests.iml" filepath="$PROJECT_DIR$/compiler/android-tests/android-tests.iml" group="compiler" />

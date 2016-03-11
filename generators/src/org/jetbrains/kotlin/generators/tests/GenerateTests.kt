@@ -956,7 +956,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/android-idea-plugin/tests", "plugins/android-idea-plugin/testData") {
+    testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
         testClass<AbstractAndroidCompletionTest>() {
             model("android/completion", recursive = false, extension = null)
         }

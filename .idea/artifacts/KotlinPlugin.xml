@@ -54,7 +54,7 @@
         </element>
         <element id="library" level="project" name="markdown" />
         <element id="archive" name="kotlin-android-extensions-plugin.jar">
-          <element id="module-output" name="android-idea-plugin" />
+          <element id="module-output" name="android-extensions-idea" />
         </element>
         <element id="archive" name="kotlin-android-extensions-compiler-plugin.jar">
           <element id="module-output" name="android-extensions-compiler" />
