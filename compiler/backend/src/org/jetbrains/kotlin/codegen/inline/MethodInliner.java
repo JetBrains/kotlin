@@ -196,10 +196,8 @@ public class MethodInliner {
                     result.addAllClassesToRemove(transformResult);
                     result.addChangedType(oldClassName, newClassName);
 
-                    if (inliningContext.isInliningLambda && !anonymousObjectGen.isStaticOrigin()) {
+                    if (inliningContext.isInliningLambda && anonymousObjectGen.canRemoveAfterTransformation()) {
                         // this class is transformed and original not used so we should remove original one after inlining
-                        // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
-                        // because it can be local function from outer scope
                         result.addClassToRemove(oldClassName);
                     }
 
