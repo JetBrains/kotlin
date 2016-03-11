@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="css-support">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/CSS/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/src_css-api.zip!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/CSS/lib" recursive="false" />
+  </library>
+</component>

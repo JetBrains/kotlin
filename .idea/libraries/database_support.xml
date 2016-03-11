@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="database-support">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/plugins/DatabaseTools/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/src/src_database-openapi.zip!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/plugins/DatabaseTools/lib" recursive="false" />
+  </library>
+</component>
