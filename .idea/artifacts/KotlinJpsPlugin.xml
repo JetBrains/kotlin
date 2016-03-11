@@ -23,7 +23,7 @@
       <element id="module-output" name="daemon-common" />
       <element id="module-output" name="deserialization" />
       <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/native-platform-uberjar.jar" path-in-jar="/" />
-      <element id="module-output" name="android-jps-plugin" />
+      <element id="module-output" name="android-extensions-jps" />
       <element id="module-output" name="build-common" />
     </root>
   </artifact>

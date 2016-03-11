@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.android.jps
 
-import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
-import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.jps.incremental.CompileContext
-import org.jetbrains.jps.model.module.JpsModule
-import java.io.File
-import org.jetbrains.jps.android.AndroidJpsUtil
 import com.intellij.util.PathUtil
+import org.jetbrains.jps.android.AndroidJpsUtil
+import org.jetbrains.jps.incremental.CompileContext
+import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.kotlin.jps.build.KotlinJpsCompilerArgumentsProvider
 import org.w3c.dom.Document
+import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
 class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
@@ -70,7 +70,7 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
                         val libDirectory = File(PathUtil.getJarPathForClass(javaClass)).parentFile.parentFile
                         File(libDirectory, JAR_FILE_NAME).absolutePath
                     } else {
-                        // We're in tests now (in out/production/android-jps-plugin)
+                        // We're in tests now (in out/production/android-extensions/android-extensions-jps)
                         val kotlinProjectDirectory = File(PathUtil.getJarPathForClass(javaClass)).parentFile.parentFile.parentFile
                         File(kotlinProjectDirectory, "dist/kotlinc/lib/$JAR_FILE_NAME").absolutePath
                     })

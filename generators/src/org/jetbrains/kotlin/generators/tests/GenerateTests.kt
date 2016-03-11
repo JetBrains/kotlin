@@ -980,7 +980,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("plugins/android-jps-plugin/tests", "plugins/android-jps-plugin/testData") {
+    testGroup("plugins/android-extensions/android-extensions-jps/tests", "plugins/android-extensions/android-extensions-jps/testData") {
         testClass<AbstractAndroidJpsTestCase>() {
             model("android", recursive = false, extension = null)
         }

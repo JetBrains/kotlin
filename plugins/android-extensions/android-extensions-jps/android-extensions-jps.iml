@@ -19,14 +19,14 @@
     <orderEntry type="module-library" scope="TEST">
       <library name="idea-gradle-plugin">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../../ideaSDK/plugins/gradle/lib" />
+          <root url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../ideaSDK/plugins/gradle/lib" />
+          <root url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" />
         </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/../../ideaSDK/plugins/gradle/lib" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/../../ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
+        <jarDirectory url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>
