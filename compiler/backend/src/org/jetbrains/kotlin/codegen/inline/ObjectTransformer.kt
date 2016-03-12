@@ -66,14 +66,14 @@ class WhenMappingTransformer(
         val methodNodes = arrayListOf<MethodNode>()
         val fieldNode = transformationInfo.fieldNode
         classReader.accept(object : ClassVisitor(InlineCodegenUtil.API, classBuilder.visitor) {
-            override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?) {
+            override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 InlineCodegenUtil.assertVersionNotGreaterThanJava6(version, name)
-                super.visit(version, access, name, signature, superName, interfaces)
+                classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
             }
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
                 return if (name.equals(fieldNode.name)) {
-                    super.visitField(access, name, desc, signature, value)
+                    classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, value)
                 }
                 else {
                     null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
@@ -40,6 +41,19 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @NotNull
     protected ClassBuilder getDelegate() {
         return builder;
+    }
+
+    @Override
+    public void defineClass(
+            @Nullable PsiElement origin,
+            int version,
+            int access,
+            @NotNull String name,
+            @Nullable String signature,
+            @NotNull String superName,
+            @NotNull String[] interfaces
+    ) {
+        super.defineClass(origin, version, access, remapper.mapType(name), remapper.mapSignature(signature, false), remapper.mapType(superName), remapper.mapTypes(interfaces));
     }
 
     @Override

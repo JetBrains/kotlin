@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.FieldInfo;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
@@ -73,14 +74,14 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
     @NotNull
     public InlineResult doTransform(@NotNull FieldRemapper parentRemapper) {
         final List<InnerClassNode> innerClassNodes = new ArrayList<InnerClassNode>();
-        ClassBuilder classBuilder = createRemappingClassBuilderViaFactory(inliningContext);
+        final ClassBuilder classBuilder = createRemappingClassBuilderViaFactory(inliningContext);
         final List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
 
         createClassReader().accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 InlineCodegenUtil.assertVersionNotGreaterThanJava6(version, name);
-                super.visit(version, access, name, signature, superName, interfaces);
+                classBuilder.defineClass(null, version, access, name, signature, superName, interfaces);
             }
 
             @Override
@@ -112,7 +113,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
                 if (InlineCodegenUtil.isCapturedFieldName(name)) {
                     return null;
                 } else {
-                    return super.visitField(access, name, desc, signature, value);
+                    return classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, name, desc, signature, value);
                 }
             }
 
