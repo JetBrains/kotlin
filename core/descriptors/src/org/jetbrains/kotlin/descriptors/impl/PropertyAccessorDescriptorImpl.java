@@ -29,8 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescriptorNonRootImpl implements PropertyAccessorDescriptor {
-
-    private final boolean hasBody;
     private final boolean isDefault;
     private final boolean isExternal;
     private final Modality modality;
@@ -46,7 +44,6 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
             @NotNull PropertyDescriptor correspondingProperty,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            boolean hasBody,
             boolean isDefault,
             boolean isExternal,
             Kind kind,
@@ -56,15 +53,9 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         this.modality = modality;
         this.visibility = visibility;
         this.correspondingProperty = correspondingProperty;
-        this.hasBody = hasBody;
         this.isDefault = isDefault;
         this.isExternal = isExternal;
         this.kind = kind;
-    }
-
-    @Override
-    public boolean hasBody() {
-        return hasBody;
     }
 
     @Override

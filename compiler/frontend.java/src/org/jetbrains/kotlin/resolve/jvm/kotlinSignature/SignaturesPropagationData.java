@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
@@ -71,7 +72,9 @@ public class SignaturesPropagationData {
                 createAutoMethodDescriptor(containingClass, method, autoReturnType, autoValueParameters, autoTypeParameters);
 
         superFunctions = getSuperFunctionsForMethod(method, autoMethodDescriptor, containingClass);
-        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters);
+        modifiedValueParameters = superFunctions.isEmpty()
+                                  ? new ValueParameters(null, autoValueParameters, /* stableParameterNames = */false)
+                                  : modifyValueParametersAccordingToSuperMethods(autoValueParameters);
     }
 
     @NotNull
@@ -197,11 +200,20 @@ public class SignaturesPropagationData {
 
         // TODO: Add propagation for other kotlin descriptors (KT-3621)
         Name name = method.getName();
-        JvmMethodSignature autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
+        Method autoSignature = null;
+        boolean autoMethodContainsVararg = SignaturePropagationUtilKt.containsVarargs(autoMethodDescriptor);
         for (KotlinType supertype : containingClass.getTypeConstructor().getSupertypes()) {
-            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
+            Collection<FunctionDescriptor> superFunctionCandidates =
+                    supertype.getMemberScope().getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
+
+            if (!autoMethodContainsVararg && !SignaturePropagationUtilKt.containsAnyNotTrivialSignature(superFunctionCandidates)) continue;
+
+            if (autoSignature == null) {
+                autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
+            }
+
             for (FunctionDescriptor candidate : superFunctionCandidates) {
-                JvmMethodSignature candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
+                Method candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (KotlinToJvmSignatureMapperKt.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
                     superFunctions.add(candidate);
                 }

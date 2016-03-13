@@ -59,7 +59,7 @@ public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
  */
 public fun CharSequence.first(): Char {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty.")
+        throw NoSuchElementException("Char sequence is empty.")
     return this[0]
 }
 
@@ -69,7 +69,7 @@ public fun CharSequence.first(): Char {
  */
 public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found.")
+    throw NoSuchElementException("Char sequence contains no character matching the predicate.")
 }
 
 /**
@@ -132,7 +132,7 @@ public inline fun CharSequence.indexOfLast(predicate: (Char) -> Boolean): Int {
  */
 public fun CharSequence.last(): Char {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty.")
+        throw NoSuchElementException("Char sequence is empty.")
     return this[lastIndex]
 }
 
@@ -145,7 +145,7 @@ public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
         val element = this[index]
         if (predicate(element)) return element
     }
-    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+    throw NoSuchElementException("Char sequence contains no character matching the predicate.")
 }
 
 /**
@@ -171,9 +171,9 @@ public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
  */
 public fun CharSequence.single(): Char {
     return when (length) {
-        0 -> throw NoSuchElementException("Collection is empty.")
+        0 -> throw NoSuchElementException("Char sequence is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element.")
+        else -> throw IllegalArgumentException("Char sequence has more than one element.")
     }
 }
 
@@ -185,12 +185,12 @@ public inline fun CharSequence.single(predicate: (Char) -> Boolean): Char {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
+            if (found) throw IllegalArgumentException("Char sequence contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
+    if (!found) throw NoSuchElementException("Char sequence contains no character matching the predicate.")
     return single as Char
 }
 
@@ -222,7 +222,7 @@ public inline fun CharSequence.singleOrNull(predicate: (Char) -> Boolean): Char?
  * Returns a subsequence of this char sequence with the first [n] characters removed.
  */
 public fun CharSequence.drop(n: Int): CharSequence {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     return subSequence(n.coerceAtMost(length), length)
 }
 
@@ -230,7 +230,7 @@ public fun CharSequence.drop(n: Int): CharSequence {
  * Returns a string with the first [n] characters removed.
  */
 public fun String.drop(n: Int): String {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     return substring(n.coerceAtMost(length))
 }
 
@@ -238,7 +238,7 @@ public fun String.drop(n: Int): String {
  * Returns a subsequence of this char sequence with the last [n] characters removed.
  */
 public fun CharSequence.dropLast(n: Int): CharSequence {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     return take((length - n).coerceAtLeast(0))
 }
 
@@ -246,7 +246,7 @@ public fun CharSequence.dropLast(n: Int): CharSequence {
  * Returns a string with the last [n] characters removed.
  */
 public fun String.dropLast(n: Int): String {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     return take((length - n).coerceAtLeast(0))
 }
 
@@ -306,6 +306,8 @@ public inline fun String.filter(predicate: (Char) -> Boolean): String {
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
+ * @param [predicate] function that takes the index of a character and the character itself
+ * and returns the result of predicate evaluation on the character.
  */
 public inline fun CharSequence.filterIndexed(predicate: (Int, Char) -> Boolean): CharSequence {
     return filterIndexedTo(StringBuilder(), predicate)
@@ -313,6 +315,8 @@ public inline fun CharSequence.filterIndexed(predicate: (Int, Char) -> Boolean):
 
 /**
  * Returns a string containing only those characters from the original string that match the given [predicate].
+ * @param [predicate] function that takes the index of a character and the character itself
+ * and returns the result of predicate evaluation on the character.
  */
 public inline fun String.filterIndexed(predicate: (Int, Char) -> Boolean): String {
     return filterIndexedTo(StringBuilder(), predicate).toString()
@@ -320,6 +324,8 @@ public inline fun String.filterIndexed(predicate: (Int, Char) -> Boolean): Strin
 
 /**
  * Appends all characters matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of a character and the character itself
+ * and returns the result of predicate evaluation on the character.
  */
 public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (Int, Char) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -402,7 +408,7 @@ public inline fun String.slice(indices: Iterable<Int>): String {
  * Returns a subsequence of this char sequence containing the first [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter.
  */
 public fun CharSequence.take(n: Int): CharSequence {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     return subSequence(0, n.coerceAtMost(length))
 }
 
@@ -410,7 +416,7 @@ public fun CharSequence.take(n: Int): CharSequence {
  * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
  */
 public fun String.take(n: Int): String {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     return substring(0, n.coerceAtMost(length))
 }
 
@@ -418,7 +424,7 @@ public fun String.take(n: Int): String {
  * Returns a subsequence of this char sequence containing the last [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter.
  */
 public fun CharSequence.takeLast(n: Int): CharSequence {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     val length = length
     return subSequence(length - n.coerceAtMost(length), length)
 }
@@ -427,7 +433,7 @@ public fun CharSequence.takeLast(n: Int): CharSequence {
  * Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter.
  */
 public fun String.takeLast(n: Int): String {
-    require(n >= 0, { "Requested character count $n is less than zero." })
+    require(n >= 0) { "Requested character count $n is less than zero." }
     val length = length
     return substring(length - n.coerceAtMost(length))
 }
@@ -604,6 +610,7 @@ public fun CharSequence.toSet(): Set<Char> {
 /**
  * Returns a [SortedSet] of all characters.
  */
+@kotlin.jvm.JvmVersion
 public fun CharSequence.toSortedSet(): SortedSet<Char> {
     return toCollection(TreeSet<Char>())
 }
@@ -687,6 +694,8 @@ public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
 /**
  * Returns a list containing the results of applying the given [transform] function
  * to each character and its index in the original char sequence.
+ * @param [transform] function that takes the index of a character and the character itself
+ * and returns the result of the transform applied to the character.
  */
 public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(length), transform)
@@ -695,6 +704,8 @@ public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each character and its index in the original char sequence.
+ * @param [transform] function that takes the index of a character and the character itself
+ * and returns the result of the transform applied to the character.
  */
 public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (Int, Char) -> R?): List<R> {
     return mapIndexedNotNullTo(ArrayList<R>(), transform)
@@ -703,6 +714,8 @@ public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (Int, Char
 /**
  * Applies the given [transform] function to each character and its index in the original char sequence
  * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of a character and the character itself
+ * and returns the result of the transform applied to the character.
  */
 public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (Int, Char) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
@@ -712,6 +725,8 @@ public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexed
 /**
  * Applies the given [transform] function to each character and its index in the original char sequence
  * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of a character and the character itself
+ * and returns the result of the transform applied to the character.
  */
 public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
     var index = 0
@@ -807,6 +822,8 @@ public inline fun <R> CharSequence.fold(initial: R, operation: (R, Char) -> R): 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
  * to current accumulator value and each character with its index in the original char sequence.
+ * @param [operation] function that takes the index of a character, current accumulator value
+ * and the character itself, and calculates the next accumulator value.
  */
 public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (Int, R, Char) -> R): R {
     var index = 0
@@ -830,6 +847,8 @@ public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, R) ->
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
  * to each character with its index in the original char sequence and current accumulator value.
+ * @param [operation] function that takes the index of a character, the character itself
+ * and current accumulator value, and calculates the next accumulator value.
  */
 public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (Int, Char, R) -> R): R {
     var index = lastIndex
@@ -850,6 +869,8 @@ public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
 
 /**
  * Performs the given [action] on each character, providing sequential index with the character.
+ * @param [action] function that takes the index of a character and the character itself
+ * and performs the desired action on the character.
  */
 public inline fun CharSequence.forEachIndexed(action: (Int, Char) -> Unit): Unit {
     var index = 0
@@ -976,6 +997,8 @@ public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
 /**
  * Accumulates value starting with the first character and applying [operation] from left to right
  * to current accumulator value and each character with its index in the original char sequence.
+ * @param [operation] function that takes the index of a character, current accumulator value
+ * and the character itself and calculates the next accumulator value.
  */
 public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
     if (isEmpty())
@@ -992,7 +1015,7 @@ public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Cha
  */
 public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Char {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -1003,6 +1026,8 @@ public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Cha
 /**
  * Accumulates value starting with last character and applying [operation] from right to left
  * to each character with its index in the original char sequence and current accumulator value.
+ * @param [operation] function that takes the index of a character, the character itself
+ * and current accumulator value, and calculates the next accumulator value.
  */
 public inline fun CharSequence.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
     var index = lastIndex

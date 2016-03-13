@@ -299,6 +299,12 @@ public class InlineJsTestGenerated extends AbstractInlineJsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("safeCall.kt")
+    public void testSafeCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/safeCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("severalClosures.kt")
     public void testSeveralClosures() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inline/cases/severalClosures.kt");

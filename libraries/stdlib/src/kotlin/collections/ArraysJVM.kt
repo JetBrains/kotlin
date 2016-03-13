@@ -18,7 +18,9 @@ public inline fun ByteArray.toString(charset: Charset): String = String(this, ch
  * Allocates an array of runtime type `T` having its size equal to the size of this collection
  * and populates the array with the elements of this collection.
  */
+@Suppress("UNCHECKED_CAST")
 public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     val thisCollection = this as java.util.Collection<T>
     return thisCollection.toArray(arrayOfNulls<T>(thisCollection.size())) as Array<T>
 }
@@ -28,5 +30,6 @@ public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: ar
 
 /** Internal unsafe construction of array based on reference array type */
 internal fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
+    @Suppress("UNCHECKED_CAST")
     return java.lang.reflect.Array.newInstance(reference.javaClass.componentType, size) as Array<T>
 }

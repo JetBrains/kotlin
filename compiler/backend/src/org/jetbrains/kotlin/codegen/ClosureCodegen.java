@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -131,7 +132,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @Override
     protected void generateDeclaration() {
-        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
+        JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
         if (samType != null) {
             typeMapper.writeFormalTypeParameters(samType.getType().getConstructor().getParameters(), sw);
         }
@@ -177,8 +178,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         }
 
         generateBridge(
-                typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(),
-                typeMapper.mapSignature(funDescriptor).getAsmMethod()
+                typeMapper.mapAsmMethod(erasedInterfaceFunction),
+                typeMapper.mapAsmMethod(funDescriptor)
         );
 
         functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), funDescriptor, strategy);
@@ -334,7 +335,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                Method method = typeMapper.mapSignature(descriptor.getOriginal()).getAsmMethod();
+                Method method = typeMapper.mapAsmMethod(descriptor.getOriginal());
                 iv.aconst(method.getName() + method.getDescriptor());
                 iv.areturn(JAVA_STRING_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getSignature", element);
@@ -404,7 +405,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @NotNull
     public static List<FieldInfo> calculateConstructorParameters(
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull CalculatedClosure closure,
             @NotNull Type ownerType
     ) {

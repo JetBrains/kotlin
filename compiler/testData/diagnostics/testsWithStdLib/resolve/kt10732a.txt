@@ -1,0 +1,6 @@
+package
+
+public fun </*0*/ T1> bar(/*0*/ x: kotlin.collections.List<T1>): kotlin.collections.List<T1>
+@kotlin.jvm.JvmName(name = "bar1") public fun </*0*/ T2> bar(/*0*/ x: kotlin.collections.List<T2>?): kotlin.collections.List<T2>?
+public fun </*0*/ T1> kotlin.collections.List<T1>?.foo(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "foo1") public fun </*0*/ T2> kotlin.collections.List<T2>.foo(): kotlin.Unit

@@ -1,0 +1,16 @@
+apply plugin: "kotlin"
+
+repositories {
+  mavenCentral()
+  maven {
+    url 'file://' + pathToKotlinPlugin
+  }
+}
+
+dependencies {
+    compile project(':projA')
+}
+
+compileKotlin {
+    experimentalIncremental = incrementalOption
+}

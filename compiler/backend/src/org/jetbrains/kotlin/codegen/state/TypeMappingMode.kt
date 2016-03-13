@@ -61,6 +61,11 @@ internal class TypeMappingMode private constructor(
 
 
         @JvmStatic
+        fun getModeForReturnTypeNoGeneric(
+                isAnnotationMethod: Boolean
+        ) = if (isAnnotationMethod) VALUE_FOR_ANNOTATION else DEFAULT
+
+        @JvmStatic
         fun getOptimalModeForValueParameter(
                 type: KotlinType
         ) = getOptimalModeForSignaturePart(type, isForAnnotationParameter = false, canBeUsedInSupertypePosition = true)

@@ -142,6 +142,16 @@ open class Operator(val operatorType: IElementType): Expression() {
 
     fun asString() = asString(operatorType)
 
+    fun acceptLineBreakBefore(): Boolean {
+        return when(operatorType) {
+            JavaTokenType.ANDAND,
+            JavaTokenType.OROR,
+            JavaTokenType.PLUS,
+            JavaTokenType.MINUS -> true
+            else -> false
+        }
+    }
+
     private fun asString(tokenType: IElementType): String {
         return when(tokenType) {
             JavaTokenType.EQ -> "="

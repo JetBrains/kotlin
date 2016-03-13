@@ -252,7 +252,7 @@ public class FileTreeWalk private constructor(
      */
     public fun maxDepth(depth: Int): FileTreeWalk {
         if (depth <= 0)
-            throw IllegalArgumentException("Use positive depth value")
+            throw IllegalArgumentException("depth must be positive, but was $depth.")
         return FileTreeWalk(start, direction, onEnter, onLeave, onFail, depth)
     }
 }

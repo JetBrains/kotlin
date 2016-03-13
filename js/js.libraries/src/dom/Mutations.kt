@@ -48,7 +48,7 @@ fun Element.addText(text: String): Element = appendText(text)
 /**
  * Creates text node and append it to the element
  */
-fun Element.appendText(text: String, doc : Document? = null): Element {
+fun Element.appendText(text: String, doc: Document? = null): Element {
     appendChild(ownerDocument(doc).createTextNode(text))
     return this
 }

@@ -71,10 +71,10 @@ public class DescriptorFactory {
             @NotNull Visibility visibility,
             @NotNull SourceElement sourceElement
     ) {
-        PropertySetterDescriptorImpl setterDescriptor =
-                new PropertySetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
-                                                 visibility, !isDefault, isDefault, isExternal,
-                                                 CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement);
+        PropertySetterDescriptorImpl setterDescriptor = new PropertySetterDescriptorImpl(
+                propertyDescriptor, annotations, propertyDescriptor.getModality(), visibility, isDefault, isExternal,
+                CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement
+        );
         setterDescriptor.initializeDefault();
         return setterDescriptor;
     }
@@ -103,10 +103,12 @@ public class DescriptorFactory {
             @NotNull Annotations annotations,
             boolean isDefault,
             boolean isExternal,
-            @NotNull SourceElement sourceElement) {
-        return new PropertyGetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
-                                                propertyDescriptor.getVisibility(), !isDefault, isDefault, isExternal,
-                                                CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement);
+            @NotNull SourceElement sourceElement
+    ) {
+        return new PropertyGetterDescriptorImpl(
+                propertyDescriptor, annotations, propertyDescriptor.getModality(), propertyDescriptor.getVisibility(),
+                isDefault, isExternal, CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement
+        );
     }
 
     @NotNull

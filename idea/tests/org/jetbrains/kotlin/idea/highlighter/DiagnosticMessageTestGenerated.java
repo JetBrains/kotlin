@@ -65,6 +65,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("complexTypeMismatchWithTypeParameters.kt")
+    public void testComplexTypeMismatchWithTypeParameters() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/complexTypeMismatchWithTypeParameters.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("conflictingOverloadsClass.kt")
     public void testConflictingOverloadsClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");
@@ -167,15 +173,45 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("noneApplicableHtml.kt")
+    public void testNoneApplicableHtml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicableHtml.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noneApplicableTxt.kt")
+    public void testNoneApplicableTxt() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/noneApplicableTxt.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("numberValueTypes.kt")
     public void testNumberValueTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/numberValueTypes.kt");
         doTest(fileName);
     }
 
+    @TestMetadata("overloadResolutionAmbiguityHtml.kt")
+    public void testOverloadResolutionAmbiguityHtml() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/overloadResolutionAmbiguityHtml.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("overloadResolutionAmbiguityTxt.kt")
+    public void testOverloadResolutionAmbiguityTxt() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/overloadResolutionAmbiguityTxt.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("renderCollectionOfTypes.kt")
     public void testRenderCollectionOfTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/renderCollectionOfTypes.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("returnTypeMismatchOnOverride.kt")
+    public void testReturnTypeMismatchOnOverride() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/returnTypeMismatchOnOverride.kt");
         doTest(fileName);
     }
 
@@ -212,6 +248,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("typeMismatchWithNothing.kt")
     public void testTypeMismatchWithNothing() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchWithNothing.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeMismatchWithTypeParameters.kt")
+    public void testTypeMismatchWithTypeParameters() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/typeMismatchWithTypeParameters.kt");
         doTest(fileName);
     }
 

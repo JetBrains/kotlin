@@ -17,8 +17,13 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.DiagnosedRange;
@@ -28,16 +33,17 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class CheckerTestUtilTest extends KotlinLiteFixture {
-
-    public CheckerTestUtilTest() {
-        super("diagnostics/checkerTestUtil");
+public class CheckerTestUtilTest extends KotlinTestWithEnvironment {
+    @NotNull
+    private static String getTestDataPath() {
+        return KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil";
     }
 
     @Override
@@ -45,10 +51,30 @@ public class CheckerTestUtilTest extends KotlinLiteFixture {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL);
     }
 
-
     protected void doTest(TheTest theTest) throws Exception {
-        prepareForTest("test");
-        theTest.test(getFile());
+        String text = KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt");
+        theTest.test(createCheckAndReturnPsiFile("test.kt", text, getProject()));
+    }
+
+    @NotNull
+    public static KtFile createCheckAndReturnPsiFile(@NotNull String fileName, @NotNull String text, @NotNull Project project) {
+        KtFile myFile = KotlinTestUtils.createFile(fileName, text, project);
+        ensureParsed(myFile);
+        assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
+        assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));
+        //noinspection ConstantConditions
+        assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
+        assertEquals("psi text mismatch", text, myFile.getText());
+        return myFile;
+    }
+
+    private static void ensureParsed(PsiFile file) {
+        file.accept(new PsiElementVisitor() {
+            @Override
+            public void visitElement(@NotNull PsiElement element) {
+                element.acceptChildren(this);
+            }
+        });
     }
 
     public void testEquals() throws Exception {
@@ -132,7 +158,7 @@ public class CheckerTestUtilTest extends KotlinLiteFixture {
         AbstractDiagnosticsTest test = new AbstractDiagnosticsTest() {
             {setUp();}
         };
-        test.doTest(myFullDataPath + File.separatorChar + "test_with_diagnostic.kt");
+        test.doTest(getTestDataPath() + File.separatorChar + "test_with_diagnostic.kt");
     }
 
     private static abstract class TheTest {

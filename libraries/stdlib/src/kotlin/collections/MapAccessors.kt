@@ -13,9 +13,8 @@ import kotlin.internal.Exact
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1
-        = getOrImplicitDefault(property.name) as V1
+        = @Suppress("UNCHECKED_CAST", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE") (getOrImplicitDefault(property.name) as V1)
 
 /**
  * Returns the value of the property for the given object from this mutable map.
@@ -27,9 +26,8 @@ public inline operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef:
  */
 @kotlin.jvm.JvmName("getVar")
 @kotlin.internal.InlineOnly
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline operator fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: KProperty<*>): V
-        = getOrImplicitDefault(property.name) as V
+        = @Suppress("UNCHECKED_CAST", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE") (getOrImplicitDefault(property.name) as V)
 
 /**
  * Stores the value of the property for the given object in this mutable map.

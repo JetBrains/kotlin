@@ -1,0 +1,15 @@
+// "Implement interface" "true"
+// SHOULD_BE_AVAILABLE_AFTER_EXECUTION
+
+class Container {
+    private interface Base {
+        var z: Double
+    }
+
+    class BaseImpl : Base {
+        override var z: Double
+            get() = throw UnsupportedOperationException()
+            set(value) {
+            }
+    }
+}

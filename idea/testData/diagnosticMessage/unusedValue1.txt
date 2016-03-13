@@ -1,2 +1,2 @@
 <!-- unusedValue1 -->
-The value '239' assigned to 'var x: kotlin.Int defined in unusedValue' is never used
+The value '239' assigned to 'var x: Int defined in unusedValue' is never used

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Ref;
-import com.intellij.util.lang.UrlClassLoader;
+import kotlin.io.FilesKt;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,19 +25,21 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
-import java.io.InputStream;
-
-import static org.jetbrains.kotlin.codegen.CodegenTestUtil.compileJava;
+import java.util.Collections;
 
 public class OuterClassGenTest extends CodegenTestCase {
-
-    private static final String TEST_FOLDER = "outerClassInfo";
+    @NotNull
+    @Override
+    protected String getPrefix() {
+        return "outerClassInfo";
+    }
 
     public void testClass() throws Exception {
         doTest("foo.Foo", "outerClassInfo");
@@ -151,15 +153,15 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) throws Exception {
-        File javaClassesTempDirectory = compileJava(TEST_FOLDER + "/" + testDataFile + ".java");
-
-        UrlClassLoader javaClassLoader = UrlClassLoader.build().urls(javaClassesTempDirectory.toURI().toURL()).get();
+        File javaOut = CodegenTestUtil.compileJava(
+                Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
+                Collections.<String>emptyList(),
+                Collections.<String>emptyList()
+        );
 
         String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";
-        InputStream javaClassStream = javaClassLoader.getResourceAsStream(javaClassPath);
-        assert javaClassStream != null : "Couldn't find class bytecode " + javaClassPath;
 
-        ClassReader javaReader =  new ClassReader(javaClassStream);
+        ClassReader javaReader = new ClassReader(FilesKt.readBytes(new File(javaOut, javaClassPath)));
         ClassReader kotlinReader = getKotlinClassReader(classFqName.replace('.', '/').replace("$", "\\$"), testDataFile);
 
         checkInfo(kotlinReader, javaReader);
@@ -186,15 +188,16 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     @NotNull
     private ClassReader getKotlinClassReader(@Language("RegExp") @NotNull String internalNameRegexp, @NotNull String testDataFile) {
-        loadFile(TEST_FOLDER + "/" + testDataFile + ".kt");
+        loadFile(getPrefix() + "/" + testDataFile + ".kt");
         OutputFileCollection outputFiles = generateClassesInFile();
         for (OutputFile file : outputFiles.asList()) {
             if (file.getRelativePath().matches(internalNameRegexp + "\\.class")) {
                 return new ClassReader(file.asByteArray());
             }
         }
-        throw new AssertionError("Couldn't find class by regexp: " + internalNameRegexp + " in:\n" + StringsKt
-                .join(outputFiles.asList(), "\n"));
+        throw new AssertionError(
+                "Couldn't find class by regexp: " + internalNameRegexp + " in:\n" + StringsKt.join(outputFiles.asList(), "\n")
+        );
     }
 
     private static void checkInfo(@NotNull ClassReader kotlinReader, @NotNull ClassReader javaReader) {

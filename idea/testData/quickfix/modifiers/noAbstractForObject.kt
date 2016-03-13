@@ -2,7 +2,7 @@
 // ACTION: Create test
 // ACTION: Implement members
 // ACTION: Move 'Some' to separate file
-// ERROR: Object 'Some' must be declared abstract or implement abstract member public abstract fun foo(): kotlin.Unit defined in T
+// ERROR: Object 'Some' must be declared abstract or implement abstract member public abstract fun foo(): Unit defined in T
 interface T {
     fun foo()
 }

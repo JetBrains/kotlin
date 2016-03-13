@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -28,12 +27,11 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
-public class KotlinOverloadTest extends KotlinLiteFixture {
-
+public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     private final ModuleDescriptor root = KotlinTestUtils.createEmptyModule("<test_root>");
     private FunctionDescriptorResolver functionDescriptorResolver;
 
@@ -98,18 +96,15 @@ public class KotlinOverloadTest extends KotlinLiteFixture {
                 "fun a(a : Int?) : Int",
                 "fun a(a : Int) : Int");
 
-        assertNotOverloadable(
+        assertOverloadable(
                 "fun <T> a(a : Int) : Int",
                 "fun a(a : Int) : Int");
 
-        // TODO
-        /*
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : T1> a(a : T1) : T1",
                 "fun <T, Y> a(a : T) : T");
-        */
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : T1> a(a : T1) : T1",
                 "fun <T, Y : T> a(a : Y) : T");
 
@@ -117,30 +112,27 @@ public class KotlinOverloadTest extends KotlinLiteFixture {
                 "fun <T1, X : T1> a(a : T1) : X",
                 "fun <T, Y : T> a(a : T) : T");
 
-        // TODO
-        /*
         assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
-        */
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<in T>> a(a : Array<in T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<*>> a(a : Array<in T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<out T>) : T");
 
-        assertOverloadable(
+        assertNotOverloadable(
                 "fun <T1, X : Array<out T1>> a(a : Array<*>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
 

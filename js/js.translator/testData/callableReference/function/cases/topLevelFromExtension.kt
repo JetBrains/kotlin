@@ -1,4 +1,4 @@
-// This test was adapted from compiler/testData/codegen/boxWithStdlib/callableReference/function/.
+// This test was adapted from compiler/testData/codegen/box/callableReference/function/.
 package foo
 
 fun <T> run(arg1: T, arg2: T, funRef:(T,T) -> T): T {

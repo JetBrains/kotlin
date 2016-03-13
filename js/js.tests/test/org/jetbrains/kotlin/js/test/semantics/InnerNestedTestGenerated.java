@@ -31,6 +31,18 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class InnerNestedTestGenerated extends AbstractInnerNestedTest {
+    @TestMetadata("innerGenericClassFromJava.kt")
+    public void ignoredInnerGenericClassFromJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerGenericClassFromJava.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("innerJavaClass.kt")
+    public void ignoredInnerJavaClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerJavaClass.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInInnerNested() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^(.+)\\.kt$"), true);
     }

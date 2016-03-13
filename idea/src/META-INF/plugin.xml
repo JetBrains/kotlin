@@ -31,6 +31,9 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
     </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener</implementation-class>
+    </component>
   </project-components>
 
   <application-components>
@@ -233,9 +236,6 @@
     <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"
-                    serviceImplementation="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
                     serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
 
@@ -266,9 +266,6 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"/>
-
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.KotlinOutOfBlockCompletionModificationTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinOutOfBlockCompletionModificationTracker"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
                     serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
@@ -458,6 +455,7 @@
                           id="KotlinEnterHandler" order="before EnterBetweenBracesHandler"/>
     <lang.smartEnterProcessor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinBackspaceHandler"/>
+    <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinStringTemplateBackspaceHandler"/>
 
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
@@ -533,6 +531,8 @@
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider"/>
 
+    <library.javaSourceRootDetector implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceRootDetector"/>
+
     <typeHierarchyProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.hierarchy.KotlinTypeHierarchyProvider"/>
     <callHierarchyProvider
         language="kotlin"
@@ -582,10 +582,7 @@
     <indexPatternBuilder implementation="org.jetbrains.kotlin.idea.search.KotlinIndexPatternBuilder"/>
 
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
-    <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupEnvironmentNotificationProvider"/>
-
-    <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener"/>
 
     <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
@@ -1175,6 +1172,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.CreateKotlinSubClassIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupName="Kotlin"
@@ -1328,6 +1330,13 @@
                      displayName="Unresolved reference in KDoc"
                      groupName="Kotlin"
                      enabledByDefault="true"
+                     level="WARNING"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocMissingDocumentationInspection"
+                     displayName="Missing KDoc comments for public declarations"
+                     groupName="Kotlin"
+                     enabledByDefault="false"
                      level="WARNING"
     />
 

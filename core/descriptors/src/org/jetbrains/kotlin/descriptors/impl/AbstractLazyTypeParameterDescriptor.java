@@ -17,22 +17,13 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.Variance;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypeParameterDescriptor {
     public AbstractLazyTypeParameterDescriptor(
@@ -42,59 +33,11 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             @NotNull Variance variance,
             boolean isReified,
             int index,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            @NotNull SupertypeLoopChecker supertypeLoopChecker
     ) {
-        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, index, source);
-    }
-
-    @NotNull
-    @Override
-    protected TypeConstructor createTypeConstructor() {
-        return new TypeConstructor() {
-            @NotNull
-            @Override
-            public Collection<KotlinType> getSupertypes() {
-                return AbstractLazyTypeParameterDescriptor.this.getUpperBounds();
-            }
-
-            @NotNull
-            @Override
-            public List<TypeParameterDescriptor> getParameters() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public boolean isFinal() {
-                return false;
-            }
-
-            @Override
-            public boolean isDenotable() {
-                return true;
-            }
-
-            @Override
-            public ClassifierDescriptor getDeclarationDescriptor() {
-                return AbstractLazyTypeParameterDescriptor.this;
-            }
-
-            @NotNull
-            @Override
-            public Annotations getAnnotations() {
-                return AbstractLazyTypeParameterDescriptor.this.getAnnotations();
-            }
-
-            @NotNull
-            @Override
-            public KotlinBuiltIns getBuiltIns() {
-                return DescriptorUtilsKt.getBuiltIns(AbstractLazyTypeParameterDescriptor.this);
-            }
-
-            @Override
-            public String toString() {
-                return getName().toString();
-            }
-        };
+        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, index, source,
+              supertypeLoopChecker);
     }
 
     @Override

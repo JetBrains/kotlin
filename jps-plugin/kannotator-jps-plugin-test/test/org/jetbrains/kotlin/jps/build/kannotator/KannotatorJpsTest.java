@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.kotlin.incremental.testingUtils.ClassFilesComparisonKt;
 import org.jetbrains.kotlin.jps.build.AbstractKotlinJpsBuildTestCase;
-import org.jetbrains.kotlin.jps.build.classFilesComparison.ClassFilesComparisonKt;
 
 import java.io.File;
 import java.io.IOException;

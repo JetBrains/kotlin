@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
 import org.jetbrains.kotlin.name.ClassId
@@ -34,19 +33,12 @@ class LazyJavaPackageFragment(
         LazyJavaPackageScope(c, jPackage, this)
     }
 
-    private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
-        javaClass: JavaClass ->
-        LazyJavaClassDescriptor(c, this, javaClass.fqName!!, javaClass)
-    }
-
     internal val kotlinBinaryClasses by c.storageManager.createLazyValue {
         c.components.packageMapper.findPackageParts(fqName.asString()).mapNotNull {
             val classId = ClassId(fqName, Name.identifier(it))
             c.components.kotlinClassFinder.findKotlinClass(classId)
         }
     }
-
-    internal fun resolveTopLevelClass(javaClass: JavaClass) = topLevelClasses(javaClass)
 
     override fun getMemberScope() = scope
 

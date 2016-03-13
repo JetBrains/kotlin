@@ -508,6 +508,57 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JvmStatic extends AbstractDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInJvmStatic() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("constOrJvmFieldProperty.kt")
+            public void testConstOrJvmFieldProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/constOrJvmFieldProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorProperty.kt")
+            public void testConstructorProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/constructorProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructors.kt")
+            public void testConstructors() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/constructors.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("finalAndAbstract.kt")
+            public void testFinalAndAbstract() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/finalAndAbstract.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functions.kt")
+            public void testFunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/functions.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFun.kt")
+            public void testLocalFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/localFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/property.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -555,57 +606,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("kClassOutArrayInAnnotationsOutVariance.kt")
             public void testKClassOutArrayInAnnotationsOutVariance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/kClass/kClassOutArrayInAnnotationsOutVariance.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class PlatformStatic extends AbstractDiagnosticsTestWithStdLib {
-            public void testAllFilesPresentInPlatformStatic() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("constOrJvmFieldProperty.kt")
-            public void testConstOrJvmFieldProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/constOrJvmFieldProperty.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("constructorProperty.kt")
-            public void testConstructorProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/constructorProperty.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("constructors.kt")
-            public void testConstructors() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/constructors.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("finalAndAbstract.kt")
-            public void testFinalAndAbstract() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/finalAndAbstract.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("functions.kt")
-            public void testFunctions() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/functions.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("localFun.kt")
-            public void testLocalFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/localFun.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("property.kt")
-            public void testProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/property.kt");
                 doTest(fileName);
             }
         }
@@ -691,33 +691,33 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("jvmNames.kt")
+        public void testJvmNames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmNames.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("jvmNamesDuplicate.kt")
+        public void testJvmNamesDuplicate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmNamesDuplicate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jvmOverloads.kt")
         public void testJvmOverloads() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmOverloads.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("platformNames.kt")
-        public void testPlatformNames() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformNames.kt");
+        @TestMetadata("jvmStaticInClassObject.kt")
+        public void testJvmStaticInClassObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmStaticInClassObject.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("platformNamesDuplicate.kt")
-        public void testPlatformNamesDuplicate() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformNamesDuplicate.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("platformStaticInClassObject.kt")
-        public void testPlatformStaticInClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformStaticInClassObject.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("platformStaticInObject.kt")
-        public void testPlatformStaticInObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/platformStaticInObject.kt");
+        @TestMetadata("jvmStaticInObject.kt")
+        public void testJvmStaticInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature/jvmStaticInObject.kt");
             doTest(fileName);
         }
 
@@ -1123,6 +1123,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("kt10103.kt")
         public void testKt10103() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/kt10103.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt10732a.kt")
+        public void testKt10732a() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/kt10732a.kt");
             doTest(fileName);
         }
 

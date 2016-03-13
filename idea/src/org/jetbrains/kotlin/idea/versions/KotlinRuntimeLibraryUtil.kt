@@ -31,6 +31,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.PathUtil.getLocalPath
@@ -42,31 +44,34 @@ import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil
+import org.jetbrains.kotlin.idea.framework.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.utils.JsBinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.IOException
 
-fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<VirtualFile> {
+fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<BinaryVersionedFile<JvmMetadataVersion>> {
     return getLibraryRootsWithAbiIncompatibleVersion(
-            module, KotlinMetadataVersionIndex,
+            module,
+            JvmMetadataVersion.INSTANCE,
+            KotlinMetadataVersionIndex,
             { version -> !version.isCompatible() })
 }
 
-fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<VirtualFile> {
+fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<BinaryVersionedFile<JsBinaryVersion>> {
     return getLibraryRootsWithAbiIncompatibleVersion(
-            module, KotlinJavaScriptAbiVersionIndex,
+            module,
+            JsBinaryVersion.INSTANCE,
+            KotlinJavaScriptAbiVersionIndex,
             { version -> !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.minor) })       // TODO: support major.minor.patch version in JS metadata
 }
 
-
-fun updateLibraries(
-        project: Project,
-        libraries: Collection<Library>) {
+fun updateLibraries(project: Project, libraries: Collection<Library>) {
     ApplicationManager.getApplication().invokeLater {
         val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator? ?:
                                error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
@@ -77,26 +82,26 @@ fun updateLibraries(
         val collector = createConfigureKotlinNotificationCollector(project)
 
         for (library in libraries) {
-            if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
-                updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
-                updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
-                updateJar(project, JavaRuntimePresentationProvider.getTestJar(library), LibraryJarDescriptor.TEST_JAR)
+            if (isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
+                updateJar(project, getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
+                updateJar(project, getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
+                updateJar(project, getTestJar(library), LibraryJarDescriptor.TEST_JAR)
 
                 if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
                     kJvmConfigurator.copySourcesToPathFromLibrary(library, collector)
                 }
                 else {
-                    updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
+                    updateJar(project, getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
                 }
             }
-            else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
-                updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
+            else if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
+                updateJar(project, getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
 
                 if (kJsConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
                     kJsConfigurator.copySourcesToPathFromLibrary(library, collector)
                 }
                 else {
-                    updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
+                    updateJar(project, getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
                 }
             }
         }
@@ -158,17 +163,16 @@ private enum class LibraryJarDescriptor private constructor(val jarName: String,
     JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false)
 }
 
+private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release")
 @JvmOverloads fun bundledRuntimeVersion(pluginVersion: String = KotlinPluginUtil.getPluginVersion()): String {
     var placeToSplit = -1
 
-    val ideaPatternIndex = StringUtil.indexOf(pluginVersion, "Idea")
-    if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion[ideaPatternIndex - 2])) {
-        placeToSplit = ideaPatternIndex - 1
-    }
-
-    val ijPatternIndex = StringUtil.indexOf(pluginVersion, "IJ")
-    if (ijPatternIndex >= 2 && Character.isDigit(pluginVersion[ijPatternIndex - 2])) {
-        placeToSplit = ijPatternIndex - 1
+    for (separator in PLUGIN_VERSIONS_SEPARATORS) {
+        val ideaPatternIndex = StringUtil.indexOf(pluginVersion, separator)
+        if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion[ideaPatternIndex - 2])) {
+            placeToSplit = ideaPatternIndex - 1
+            break
+        }
     }
 
     if (placeToSplit == -1) {
@@ -215,10 +219,13 @@ internal fun replaceFile(updatedFile: File, replacedJarFile: VirtualFile) {
     }
 }
 
-private fun getLibraryRootsWithAbiIncompatibleVersion(
+data class BinaryVersionedFile<out T : BinaryVersion>(val file: VirtualFile, val version: T, val supportedVersion: T)
+
+private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
         module: Module,
-        index: ScalarIndexExtension<BinaryVersion>,
-        checkVersion: (BinaryVersion) -> Boolean): Collection<VirtualFile> {
+        supportedVersion: T,
+        index: ScalarIndexExtension<T>,
+        checkVersion: (T) -> Boolean): Collection<BinaryVersionedFile<T>> {
     val id = index.name
 
     val moduleWithAllDependencies = setOf(module) + ModuleUtil.getAllDependentModules(module)
@@ -227,7 +234,7 @@ private fun getLibraryRootsWithAbiIncompatibleVersion(
 
     val allVersions = FileBasedIndex.getInstance().getAllKeys(id, module.project)
     val badVersions = allVersions.filter(checkVersion).toHashSet()
-    val badRoots = Sets.newHashSet<VirtualFile>()
+    val badRoots = Sets.newHashSet<BinaryVersionedFile<T>>()
     val fileIndex = ProjectFileIndex.SERVICE.getInstance(module.project)
 
     for (version in badVersions) {
@@ -236,7 +243,7 @@ private fun getLibraryRootsWithAbiIncompatibleVersion(
             val libraryRoot = fileIndex.getClassRootForFile(indexedFile) ?:
                     error("Only library roots were requested, and only class files should be indexed with KotlinAbiVersionIndex key. " +
                           "File: ${indexedFile.path}")
-            badRoots.add(getLocalFile(libraryRoot))
+            badRoots.add(BinaryVersionedFile(getLocalFile(libraryRoot), version, supportedVersion))
         }
     }
 
@@ -248,3 +255,12 @@ fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
                              jarName + " is not found. Make sure plugin is properly installed.",
                              "No Runtime Found")
 }
+
+fun getKotlinRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
+    return runReadAction {
+        project.runWithAlternativeResolveEnabled {
+            JavaPsiFacade.getInstance(project).findClass("kotlin.Unit", scope)
+        }
+    }
+}
+

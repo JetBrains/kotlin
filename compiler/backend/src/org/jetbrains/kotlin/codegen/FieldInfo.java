@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -32,7 +32,7 @@ public class FieldInfo {
     private static final CompanionObjectMapping COMPANION_OBJECT_MAPPING = new CompanionObjectMapping(JvmPlatform.INSTANCE.getBuiltIns());
 
     @NotNull
-    public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
+    public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper) {
         if (!classDescriptor.getKind().isSingleton() || DescriptorUtils.isEnumEntry(classDescriptor)) {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
@@ -51,7 +51,7 @@ public class FieldInfo {
     @NotNull
     public static FieldInfo createSingletonViaInstance(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull JetTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         Type type = typeMapper.mapType(classDescriptor);
         return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);

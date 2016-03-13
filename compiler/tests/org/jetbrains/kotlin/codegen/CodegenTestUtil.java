@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.utils.StringsKt;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -29,9 +27,11 @@ import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -106,11 +105,6 @@ public class CodegenTestUtil {
     }
 
     @NotNull
-    public static File compileJava(@NotNull String filename, @NotNull String... additionalClasspath) {
-        return compileJava(Collections.singletonList(filename), Arrays.asList(additionalClasspath), Collections.<String>emptyList());
-    }
-
-    @NotNull
     public static File compileJava(
             @NotNull List<String> fileNames,
             @NotNull List<String> additionalClasspath,
@@ -130,10 +124,10 @@ public class CodegenTestUtil {
             ));
             options.addAll(additionalOptions);
 
-            List<File> fileList = Lists.transform(fileNames, new Function<String, File>() {
+            List<File> fileList = CollectionsKt.map(fileNames, new Function1<String, File>() {
                 @Override
-                public File apply(@Nullable String input) {
-                    return new File(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + input);
+                public File invoke(String input) {
+                    return new File(input);
                 }
             });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDynamicType;
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
-import org.jetbrains.kotlin.psi.KtTypeParameter;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
@@ -36,6 +33,12 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (parent instanceof KtSuperExpression || parent instanceof KtThisExpression) {
+            // Do nothing: 'super' and 'this' are highlighted as a keyword
+            return;
+        }
+
         if (NameHighlighter.INSTANCE.getNamesHighlightingEnabled()) {
             DeclarationDescriptor referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
             if (referenceTarget instanceof ConstructorDescriptor) {
@@ -58,7 +61,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightAnnotation(@NotNull KtSimpleNameExpression expression) {
-        TextRange toHighlight = KtPsiUtilKt.getCalleeHighlightingRange(expression);
+        TextRange toHighlight = KtPsiUtilKt.getHighlightingRange(expression);
         NameHighlighter.highlightName(holder, toHighlight, KotlinHighlightingColors.ANNOTATION);
     }
 

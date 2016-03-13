@@ -16,27 +16,20 @@
 
 package org.jetbrains.kotlin.checkers;
 
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
-import java.io.File;
-import java.util.Arrays;
-
 public abstract class AbstractDiagnosticsWithFullJdkTest extends AbstractDiagnosticsTest {
+    @NotNull
     @Override
-    protected KotlinCoreEnvironment createEnvironment() {
-        File javaFilesDir = createJavaFilesDir();
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(),
-                                                    KotlinTestUtils.compilerConfigurationForTests(
-                                                            ConfigurationKind.ALL,
-                                                            TestJdkKind.FULL_JDK,
-                                                            Arrays.asList(KotlinTestUtils.getAnnotationsJar()),
-                                                            Arrays.asList(javaFilesDir)
-                                                    ),
-                                                    EnvironmentConfigFiles.JVM_CONFIG_FILES);
+    protected ConfigurationKind getConfigurationKind() {
+        return ConfigurationKind.ALL;
+    }
+
+    @NotNull
+    @Override
+    protected TestJdkKind getTestJdkKind() {
+        return TestJdkKind.FULL_JDK;
     }
 }
-

@@ -1,6 +1,6 @@
 // FILE: first.before.kt
 // "Import" "true"
-// ERROR: Expression 'Some()' of type 'some.Some' cannot be invoked as a function. The function invoke() is not found
+// ERROR: Expression 'Some()' of type 'Some' cannot be invoked as a function. The function invoke() is not found
 
 package testing
 
@@ -14,7 +14,7 @@ fun testing() {
 
 // FILE: second.kt
 // "Import" "true"
-// ERROR: Expression 'Some()' of type 'some.Some' cannot be invoked as a function. The function invoke() is not found
+// ERROR: Expression 'Some()' of type 'Some' cannot be invoked as a function. The function invoke() is not found
 
 package some
 
@@ -26,7 +26,7 @@ operator fun Some.invoke(s: String) {}
 
 // FILE: first.after.kt
 // "Import" "true"
-// ERROR: Expression 'Some()' of type 'some.Some' cannot be invoked as a function. The function invoke() is not found
+// ERROR: Expression 'Some()' of type 'Some' cannot be invoked as a function. The function invoke() is not found
 
 package testing
 

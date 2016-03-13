@@ -50,8 +50,8 @@ import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
-import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

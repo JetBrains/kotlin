@@ -50,7 +50,7 @@ private class CloseableEventListener(
         private val listener: EventListener,
         private val name: String,
         private val capture: Boolean
-                                    ) : Closeable {
+) : Closeable {
     public override fun close() {
         target.removeEventListener(name, listener, capture)
     }

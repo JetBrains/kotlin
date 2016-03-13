@@ -14,7 +14,8 @@ import java.util.*
  * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean = (this as MutableCollection<T>).remove(element)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean
+        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).remove(element)
 
 /**
  * Removes all of this collection's elements that are also contained in the specified collection.
@@ -24,7 +25,8 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).removeAll(elements)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean
+        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).removeAll(elements)
 
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
@@ -34,7 +36,8 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).retainAll(elements)
+public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean
+        = @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).retainAll(elements)
 
 /**
  * Adds the specified [element] to this mutable collection.

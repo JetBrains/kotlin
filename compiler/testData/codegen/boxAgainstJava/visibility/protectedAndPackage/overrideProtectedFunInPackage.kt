@@ -1,8 +1,20 @@
+// FILE: protectedPack/J.java
+
+package protectedPack;
+
+public class J {
+    protected String foo() {
+        return "fail";
+    }
+}
+
+// FILE: 1.kt
+
 package protectedPackKotlin
 
-import protectedPack.overrideProtectedFunInPackage
+import protectedPack.J
 
-class Derived: overrideProtectedFunInPackage() {
+class Derived : J() {
     protected override fun foo(): String? {
         return "OK"
     }

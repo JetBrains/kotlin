@@ -315,7 +315,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                                                           Modality.FINAL,
                                                           visibility,
                                                           false,
-                                                          false,
                                                           getMethod.isExternal,
                                                           CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                           null,
@@ -327,7 +326,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                                                  setMethod.annotations,
                                                  Modality.FINAL,
                                                  syntheticExtensionVisibility(setMethod),
-                                                 false,
                                                  false,
                                                  setMethod.isExternal,
                                                  CallableMemberDescriptor.Kind.SYNTHESIZED,
@@ -351,7 +349,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         }
 
         override fun substitute(originalSubstitutor: TypeSubstitutor): PropertyDescriptor? {
-            val descriptor = super<PropertyDescriptorImpl>.substitute(originalSubstitutor) as MyPropertyDescriptor
+            val descriptor = super.substitute(originalSubstitutor) as MyPropertyDescriptor
             if (descriptor == this) return descriptor
 
             val classTypeParameters = (getMethod.containingDeclaration as ClassDescriptor).typeConstructor.parameters

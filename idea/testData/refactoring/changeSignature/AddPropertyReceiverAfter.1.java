@@ -1,15 +1,17 @@
+<caret>import org.jetbrains.annotations.NotNull;
+
 import java.lang.Override;
 
 public class J extends A {
     private int p;
 
     @Override
-    public int getP(String receiver) {
+    public int getP(@NotNull String receiver) {
         return p;
     }
 
     @Override
-    public void setP(String receiver, int value) {
+    public void setP(@NotNull String receiver, int value) {
         p = value;
     }
 }

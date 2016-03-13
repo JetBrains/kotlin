@@ -489,9 +489,8 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             position: QualifierPosition
     ): Pair<PackageViewDescriptor, Int> {
         val possiblePackagePrefixSize = path.indexOfFirst { it.typeArguments != null }.let { if (it == -1) path.size else it + 1 }
-        var fqName = path.subList(0, possiblePackagePrefixSize).fold(FqName.ROOT) { fqName, qualifierPart ->
-            fqName.child(qualifierPart.name)
-        }
+        var fqName = FqName.fromSegments(path.subList(0, possiblePackagePrefixSize).map { it.name.asString() })
+
         var prefixSize = possiblePackagePrefixSize
         while (!fqName.isRoot) {
             val packageDescriptor = getPackage(fqName)

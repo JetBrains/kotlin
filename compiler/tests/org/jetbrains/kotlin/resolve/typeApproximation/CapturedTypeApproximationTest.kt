@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfN
 import java.io.File
 import java.util.*
 
-class CapturedTypeApproximationTest() : KotlinLiteFixture() {
-
-    override fun getTestDataPath() = "compiler/testData/capturedTypeApproximation/"
+class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
+    private val testDataPath: String
+        get() = KotlinTestUtils.getTestDataPathBase() + "/capturedTypeApproximation/"
 
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 

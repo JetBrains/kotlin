@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.codegen.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 public class AnonymousClassContext extends ClassContext {
 
     public AnonymousClassContext(
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull ClassDescriptor contextDescriptor,
             @NotNull OwnerKind contextKind,
             @Nullable CodegenContext parentContext,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,15 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 
-abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
+abstract class DescriptorRenderer {
     fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
         val options = (this as DescriptorRendererImpl).options.copy()
         options.changeOptions()
         options.lock()
         return DescriptorRendererImpl(options)
     }
+
+    abstract fun renderMessage(message: String): String
 
     abstract fun renderType(type: KotlinType): String
 
@@ -46,7 +48,7 @@ abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
     abstract fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget? = null): String
 
-    override abstract fun render(declarationDescriptor: DeclarationDescriptor): String
+    abstract fun render(declarationDescriptor: DeclarationDescriptor): String
 
     abstract fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
 
@@ -103,14 +105,14 @@ abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
         @JvmField val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             modifiers = emptySet()
-            nameShortness = NameShortness.SHORT
+            classifierNamePolicy = ClassifierNamePolicy.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
         @JvmField val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
-            nameShortness = NameShortness.SHORT
+            classifierNamePolicy = ClassifierNamePolicy.SHORT
             withoutTypeParameters = true
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             receiverAfterName = true
@@ -124,13 +126,13 @@ abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
         }
 
         @JvmField val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
-            nameShortness = NameShortness.SHORT
+            classifierNamePolicy = ClassifierNamePolicy.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
         @JvmField val DEBUG_TEXT: DescriptorRenderer = withOptions {
             debugMode = true
-            nameShortness = NameShortness.FULLY_QUALIFIED
+            classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
             modifiers = DescriptorRendererModifier.ALL
         }
 
@@ -160,7 +162,7 @@ abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
 }
 
 interface DescriptorRendererOptions {
-    var nameShortness: NameShortness
+    var classifierNamePolicy: ClassifierNamePolicy
     var withDefinedIn: Boolean
     var modifiers: Set<DescriptorRendererModifier>
     var startFromName: Boolean
@@ -224,12 +226,6 @@ object ExcludedTypeAnnotations {
 enum class RenderingFormat {
     PLAIN,
     HTML
-}
-
-enum class NameShortness {
-    SHORT,
-    FULLY_QUALIFIED,
-    SOURCE_CODE_QUALIFIED // for local declarations qualified up to function scope
 }
 
 enum class OverrideRenderingPolicy {

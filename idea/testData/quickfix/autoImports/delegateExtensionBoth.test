@@ -1,7 +1,7 @@
 // FILE: first.before.kt
 // "Import" "true"
-// ERROR: Missing 'getValue(testing.BigTest, kotlin.reflect.KProperty<*>)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
-// ERROR: Missing 'setValue(testing.BigTest, kotlin.reflect.KProperty<*>, [ERROR : Type from delegate])' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+// ERROR: Missing 'getValue(BigTest, KProperty<*>)' method on delegate of type 'DelegateImpl<Int>'
+// ERROR: Missing 'setValue(BigTest, KProperty<*>, [ERROR : Type from delegate])' method on delegate of type 'DelegateImpl<Int>'
 
 package testing
 
@@ -27,8 +27,8 @@ public operator fun <T> DelegateImpl<T>.setValue(thisRef: Any, property: KProper
 
 // FILE: first.after.kt
 // "Import" "true"
-// ERROR: Missing 'getValue(testing.BigTest, kotlin.reflect.KProperty<*>)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
-// ERROR: Missing 'setValue(testing.BigTest, kotlin.reflect.KProperty<*>, [ERROR : Type from delegate])' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+// ERROR: Missing 'getValue(BigTest, KProperty<*>)' method on delegate of type 'DelegateImpl<Int>'
+// ERROR: Missing 'setValue(BigTest, KProperty<*>, [ERROR : Type from delegate])' method on delegate of type 'DelegateImpl<Int>'
 
 package testing
 

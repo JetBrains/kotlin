@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
@@ -24,9 +25,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription;
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
+import org.jetbrains.kotlin.idea.framework.KotlinLibraryUtilKt;
+import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.utils.KotlinPaths;
@@ -37,7 +37,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        return ProjectStructureUtil.hasKotlinRuntimeInScope(module);
+        return ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module);
     }
 
     @NotNull
@@ -96,7 +96,7 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Nullable
     @Override
     protected String getOldSourceRootUrl(@NotNull Library library) {
-        VirtualFile runtimeJarPath = JavaRuntimePresentationProvider.getRuntimeJar(library);
+        VirtualFile runtimeJarPath = KotlinLibraryUtilKt.getRuntimeJar(library);
         return runtimeJarPath != null ? runtimeJarPath.getUrl() + "src" : null;
     }
 
@@ -107,9 +107,13 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         }
 
         LibraryScope scope = new LibraryScope(project, library);
-        return KotlinRuntimeLibraryCoreUtil.getKotlinRuntimeMarkerClass(project, scope) != null;
+        return KotlinRuntimeLibraryUtilKt.getKotlinRuntimeMarkerClass(project, scope) != null;
     }
 
     KotlinJavaModuleConfigurator() {
+    }
+
+    public static KotlinJavaModuleConfigurator getInstance() {
+        return Extensions.findExtension(EP_NAME, KotlinJavaModuleConfigurator.class);
     }
 }

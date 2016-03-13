@@ -77,4 +77,14 @@
       <option name="FONT_TYPE" value="0" />
     </value>
   </option>
+  <option name="KOTLIN_PACKAGE_FUNCTION_CALL">
+    <value>
+      <option name="FONT_TYPE" value="2" />
+    </value>
+  </option>
+  <option name="KOTLIN_TYPE_PARAMETER">
+    <value>
+      <option name="FOREGROUND" value="20999d" />
+    </value>
+  </option>
 </list>

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.codegen.ClosureCodegen;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.utils.SmartSet;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -58,7 +58,7 @@ public class MethodInliner {
 
     private final InlineCallSiteInfo inlineCallSiteInfo;
 
-    private final JetTypeMapper typeMapper;
+    private final KotlinTypeMapper typeMapper;
 
     private final List<InvokeCall> invokeCalls = new ArrayList<InvokeCall>();
 
@@ -71,7 +71,7 @@ public class MethodInliner {
 
     private int lambdasFinallyBlocks;
 
-    private final boolean skipSmap;
+    private final InlineOnlySmapSkipper inlineOnlySmapSkipper;
 
     /*
      *
@@ -88,7 +88,8 @@ public class MethodInliner {
             boolean isSameModule,
             @NotNull String errorPrefix,
             @NotNull SourceMapper sourceMapper,
-            @NotNull InlineCallSiteInfo inlineCallSiteInfo
+            @NotNull InlineCallSiteInfo inlineCallSiteInfo,
+            @Nullable InlineOnlySmapSkipper smapSkipper //non null only for root
     ) {
         this.node = node;
         this.parameters = parameters;
@@ -100,7 +101,7 @@ public class MethodInliner {
         this.inlineCallSiteInfo = inlineCallSiteInfo;
         this.typeMapper = inliningContext.state.getTypeMapper();
         this.result = InlineResult.create();
-        skipSmap = inliningContext instanceof RootInliningContext && ((RootInliningContext) inliningContext).skipSmap;
+        this.inlineOnlySmapSkipper = smapSkipper;
     }
 
     public InlineResult doInline(
@@ -162,7 +163,7 @@ public class MethodInliner {
         final Iterator<AnonymousObjectGeneration> iterator = anonymousObjectGenerations.iterator();
 
         final TypeRemapper remapper = TypeRemapper.createFrom(currentTypeMapping);
-        RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(
+        final RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(
                 resultNode.access,
                 resultNode.desc,
                 resultNode,
@@ -252,7 +253,7 @@ public class MethodInliner {
                                                               inliningContext.subInlineLambda(info),
                                                               newCapturedRemapper, true /*cause all calls in same module as lambda*/,
                                                               "Lambda inlining " + info.getLambdaClassType().getInternalName(),
-                                                              mapper, inlineCallSiteInfo);
+                                                              mapper, inlineCallSiteInfo, null);
 
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
                     InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift);//TODO add skipped this and receiver
@@ -260,12 +261,15 @@ public class MethodInliner {
 
                     //return value boxing/unboxing
                     Method bridge =
-                            typeMapper.mapSignature(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
-                    Method delegate = typeMapper.mapSignature(info.getFunctionDescriptor()).getAsmMethod();
+                            typeMapper.mapAsmMethod(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor()));
+                    Method delegate = typeMapper.mapAsmMethod(info.getFunctionDescriptor());
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
                     setLambdaInlining(false);
                     addInlineMarker(this, false);
                     mapper.endMapping();
+                    if (inlineOnlySmapSkipper != null) {
+                        inlineOnlySmapSkipper.markCallSiteLineNumber(remappingMethodAdapter);
+                    }
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     assert anonymousObjectGen != null : "<init> call not corresponds to new call" + owner + " " + name;
@@ -341,7 +345,7 @@ public class MethodInliner {
         node.instructions.resetLabels();
         MethodNode transformedNode = new MethodNode(InlineCodegenUtil.API, node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
 
-            private final boolean GENERATE_DEBUG_INFO = InlineCodegenUtil.GENERATE_SMAP && !skipSmap;
+            private final boolean GENERATE_DEBUG_INFO = InlineCodegenUtil.GENERATE_SMAP && inlineOnlySmapSkipper == null;
 
             private final boolean isInliningLambda = nodeRemapper.isInsideInliningLambda();
 

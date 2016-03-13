@@ -32,7 +32,7 @@ public operator fun BufferedInputStream.iterator(): ByteIterator =
             public override fun nextByte(): Byte {
                 prepareNext()
                 if (finished)
-                    throw NoSuchElementException("Input stream is over")
+                    throw NoSuchElementException("Input stream is over.")
                 val res = nextByte.toByte()
                 nextPrepared = false
                 return res

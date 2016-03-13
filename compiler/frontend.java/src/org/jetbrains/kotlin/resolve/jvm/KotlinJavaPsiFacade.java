@@ -40,12 +40,15 @@ import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.name.ClassId;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 public class KotlinJavaPsiFacade {
@@ -107,6 +110,17 @@ public class KotlinJavaPsiFacade {
                 PsiClass aClass = finder.findClass(qualifiedName, scope);
                 if (aClass != null) return aClass;
             }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
+        KotlinPsiElementFinderWrapper[] finders = finders();
+
+        if (finders.length == 1) {
+            return ((KotlinPsiElementFinderImpl) finders[0]).knownClassNamesInPackage(packageFqName);
         }
 
         return null;
@@ -326,6 +340,15 @@ public class KotlinJavaPsiFacade {
                 return ((KotlinCliJavaFileManager) javaFileManager).findClass(classId, scope);
             }
             return findClass(classId.asSingleFqName().asString(), scope);
+        }
+
+        @Nullable
+        public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
+            if (isCliFileManager) {
+                return ((KotlinCliJavaFileManager) javaFileManager).knownClassNamesInPackage(packageFqName);
+            }
+
+            return null;
         }
 
         @Override

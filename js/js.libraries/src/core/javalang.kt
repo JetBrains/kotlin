@@ -1,10 +1,10 @@
 package java.lang
 
 @library
-open public class Error(message: String? = null): Throwable(message) {}
+open public class Error(message: String? = null) : Throwable(message) {}
 
 @library
-open public class Exception(message: String? = null): Throwable(message) {}
+open public class Exception(message: String? = null) : Throwable(message) {}
 
 @library
 open public class RuntimeException(message: String? = null) : Exception(message) {}
@@ -32,7 +32,7 @@ public class AssertionError(message: String? = null) : Error(message) {}
 
 @library
 public interface Runnable {
-    public open fun run() : Unit;
+    public open fun run(): Unit
 }
 
 public fun Runnable(action: () -> Unit): Runnable = object : Runnable {

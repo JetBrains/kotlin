@@ -21,13 +21,22 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.storage.StorageManager;
 
-public abstract class AbstractClassTypeConstructor implements TypeConstructor {
+import java.util.Collection;
+import java.util.Collections;
+
+public abstract class AbstractClassTypeConstructor extends AbstractTypeConstructor implements TypeConstructor {
     private boolean hashCodeComputed;
     private int hashCode;
+
+    public AbstractClassTypeConstructor(@NotNull StorageManager storageManager) {
+        super(storageManager);
+    }
 
     @Override
     public final int hashCode() {
@@ -92,5 +101,21 @@ public abstract class AbstractClassTypeConstructor implements TypeConstructor {
     private static boolean hasMeaningfulFqName(@NotNull ClassifierDescriptor descriptor) {
         return !ErrorUtils.isError(descriptor) &&
                !DescriptorUtils.isLocal(descriptor);
+    }
+
+    @NotNull
+    @Override
+    protected Collection<KotlinType> getAdditionalNeighboursInSupertypeGraph() {
+        // We suppose that there is an edge from C to A in graph when disconnecting loops in supertypes,
+        // because such cyclic declarations should be prohibited (see §10.2.1 of Kotlin spec)
+        // class A : B {
+        //   static class C {}
+        // }
+        // class B : A.C {}
+        DeclarationDescriptor containingDeclaration = getDeclarationDescriptor().getContainingDeclaration();
+        if (containingDeclaration instanceof ClassDescriptor) {
+            return Collections.singleton(((ClassDescriptor) containingDeclaration).getDefaultType());
+        }
+        return Collections.emptyList();
     }
 }

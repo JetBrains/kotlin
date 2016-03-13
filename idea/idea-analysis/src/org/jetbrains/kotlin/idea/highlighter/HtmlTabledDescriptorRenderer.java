@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,20 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer;
+import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext;
+import org.jetbrains.kotlin.diagnostics.rendering.SmartDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.RenderersUtilKt;
-import org.jetbrains.kotlin.renderer.*;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
+import org.jetbrains.kotlin.renderer.RenderingFormat;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -43,7 +50,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     @NotNull
     @Override
-    public Renderer<KotlinType> getTypeRenderer() {
+    public DiagnosticParameterRenderer<KotlinType> getTypeRenderer() {
         return IdeRenderers.HTML_RENDER_TYPE;
     }
 
@@ -90,9 +97,10 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     @Override
     protected void renderTable(TableRenderer table, StringBuilder result) {
         if (table.rows.isEmpty()) return;
+
+        RenderingContext context = computeRenderingContext(table);
+
         int rowsNumber = countColumnNumber(table);
-
-
         result.append("<table>");
         for (TableRow row : table.rows) {
             result.append("<tr>");
@@ -103,11 +111,11 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             }
             if (row instanceof DescriptorRow) {
                 tdSpace(result);
-                tdRightBoldColspan(result, 2, DESCRIPTOR_IN_TABLE.render(((DescriptorRow) row).descriptor));
+                tdRightBoldColspan(result, 2, DESCRIPTOR_IN_TABLE.render(((DescriptorRow) row).descriptor, context));
             }
             if (row instanceof FunctionArgumentsRow) {
                 FunctionArgumentsRow functionArgumentsRow = (FunctionArgumentsRow) row;
-                renderFunctionArguments(functionArgumentsRow.receiverType, functionArgumentsRow.argumentTypes, functionArgumentsRow.isErrorPosition, result);
+                renderFunctionArguments(functionArgumentsRow.receiverType, functionArgumentsRow.argumentTypes, functionArgumentsRow.isErrorPosition, result, context);
             }
             result.append("</tr>");
         }
@@ -120,7 +128,8 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             @Nullable KotlinType receiverType,
             @NotNull List<KotlinType> argumentTypes,
             Predicate<ConstraintPosition> isErrorPosition,
-            StringBuilder result
+            StringBuilder result,
+            @NotNull RenderingContext context
     ) {
         boolean hasReceiver = receiverType != null;
         tdSpace(result);
@@ -130,7 +139,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (isErrorPosition.apply(RECEIVER_POSITION.position())) {
                 error = true;
             }
-            receiver = "receiver: " + RenderersUtilKt.renderStrong(getTypeRenderer().render(receiverType), error);
+            receiver = "receiver: " + RenderersUtilKt.renderStrong(getTypeRenderer().render(receiverType, context), error);
         }
         td(result, receiver);
         td(result, hasReceiver ? "arguments: " : "");
@@ -147,7 +156,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (isErrorPosition.apply(VALUE_PARAMETER_POSITION.position(i))) {
                 error = true;
             }
-            String renderedArgument = getTypeRenderer().render(argumentType);
+            String renderedArgument = getTypeRenderer().render(argumentType, context);
 
             tdRight(result, RenderersUtilKt.renderStrong(renderedArgument, error) + (iterator.hasNext() ? RenderersUtilKt.renderStrong(",") : ""));
             i++;
@@ -202,7 +211,8 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         }
     };
 
-    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = DescriptorRenderer.Companion.withOptions(
+    private static final DiagnosticParameterRenderer<DeclarationDescriptor>
+            DESCRIPTOR_IN_TABLE = new SmartDescriptorRenderer(DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
@@ -212,7 +222,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
                     options.setTextFormat(RenderingFormat.HTML);
                     return Unit.INSTANCE;
                 }
-            });
+            }));
 
     private static void td(StringBuilder builder, String text) {
         builder.append("<td style=\"white-space:nowrap;\">").append(text).append("</td>");

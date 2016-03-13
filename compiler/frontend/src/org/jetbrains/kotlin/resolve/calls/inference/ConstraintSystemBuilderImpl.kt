@@ -37,7 +37,12 @@ import org.jetbrains.kotlin.types.typeUtil.defaultProjections
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import java.util.*
 
-class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
+class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystemBuilderImpl.Mode.INFERENCE) : ConstraintSystem.Builder {
+    enum class Mode {
+        INFERENCE,
+        SPECIFICITY
+    }
+
     internal data class Constraint(
             val kind: ConstraintKind, val subtype: KotlinType, val superType: KotlinType, val position: ConstraintPosition
     )
@@ -217,15 +222,13 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
                 generateTypeParameterBound(superType, subType, constraintKind.bound.reverse(), constraintContext)
                 return
             }
-            // if subType is nullable and superType is not nullable, unsafe call or type mismatch error will be generated later,
-            // but constraint system should be solved anyway
-            val subTypeNotNullable = if (constraintContext.initial) TypeUtils.makeNotNullable(subType) else subType
-            val superTypeNotNullable = if (constraintContext.initial) TypeUtils.makeNotNullable(superType) else superType
+            val subType2 = simplifyType(subType, constraintContext.initial)
+            val superType2 = simplifyType(superType, constraintContext.initial)
             val result = if (constraintKind == EQUAL) {
-                typeCheckingProcedure.equalTypes(subTypeNotNullable, superTypeNotNullable)
+                typeCheckingProcedure.equalTypes(subType2, superType2)
             }
             else {
-                typeCheckingProcedure.isSubtypeOf(subTypeNotNullable, superType)
+                typeCheckingProcedure.isSubtypeOf(subType2, superType)
             }
             if (!result) errors.add(newTypeInferenceOrParameterConstraintError(constraintPosition))
         }
@@ -236,6 +239,15 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
         simplifyConstraint(newSubType, superType)
     }
+
+    private fun simplifyType(type: KotlinType, isInitialConstraint: Boolean): KotlinType =
+            if (mode == Mode.SPECIFICITY || !isInitialConstraint)
+                type
+            else {
+                // if subType is nullable and superType is not nullable, unsafe call or type mismatch error will be generated later,
+                // but constraint system should be solved anyway
+                TypeUtils.makeNotNullable(type)
+            }
 
     internal fun addBound(
             typeVariable: TypeVariable,
@@ -392,6 +404,10 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
     override fun build(): ConstraintSystem {
         return ConstraintSystemImpl(allTypeParameterBounds, usedInBounds, errors, initialConstraints, typeVariableSubstitutors)
+    }
+
+    companion object {
+        fun forSpecificity() = ConstraintSystemBuilderImpl(Mode.SPECIFICITY)
     }
 }
 

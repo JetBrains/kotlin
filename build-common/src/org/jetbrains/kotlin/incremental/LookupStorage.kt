@@ -171,7 +171,7 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         flush(false)
     }
 
-    @TestOnly fun dump(lookupSymbols: Set<LookupSymbol>): String {
+    @TestOnly fun dump(lookupSymbols: Set<LookupSymbol>, basePath: File? = null): String {
         flush(false)
 
         val sb = StringBuilder()
@@ -188,7 +188,7 @@ open class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
                 lookup.toString()
             }
 
-            val value = fileIds.map { idToFile[it]?.absolutePath ?: it.toString() }.sorted().joinToString(", ")
+            val value = fileIds.map { idToFile[it]?.let { if (basePath == null) it.absolutePath else it.toRelativeString(basePath) } ?: it.toString() }.sorted().joinToString(", ")
             p.println("$key -> $value")
         }
 

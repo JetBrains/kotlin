@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.assertThrows;
 
@@ -32,87 +29,11 @@ public class ControlStructuresTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    @NotNull
-    @Override
-    protected String getPrefix() {
-        return "controlStructures";
-    }
-
-    public void testIf() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        assertEquals(15, main.invoke(null, true));
-        assertEquals(20, main.invoke(null, false));
-    }
-
-    public void testSingleBranchIf() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        assertEquals(15, main.invoke(null, true));
-        assertEquals(20, main.invoke(null, false));
-    }
-
-    public void testWhile() throws Exception {
-        factorialTest("controlStructures/while.kt");
-    }
-
-    public void testDoWhile() throws Exception {
-        factorialTest("controlStructures/doWhile.kt");
-    }
-
-    public void testBreak() throws Exception {
-        factorialTest("controlStructures/break.kt");
-    }
-
-    private void factorialTest(String name) throws Exception {
-        loadFile(name);
-        Method main = generateFunction();
-        assertEquals(6, main.invoke(null, 3));
-        assertEquals(120, main.invoke(null, 5));
-    }
-
-    public void testContinue() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        assertEquals(3, main.invoke(null, 4));
-        assertEquals(7, main.invoke(null, 5));
-    }
-
-    public void testIfNoElse() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        assertEquals(5, main.invoke(null, 5, true));
-        assertEquals(10, main.invoke(null, 5, false));
-    }
-
     public void testCondJumpOnStack() throws Exception {
         loadText("import java.lang.Boolean as jlBoolean; fun foo(a: String): Int = if (jlBoolean.parseBoolean(a)) 5 else 10");
         Method main = generateFunction();
         assertEquals(5, main.invoke(null, "true"));
         assertEquals(10, main.invoke(null, "false"));
-    }
-
-    public void testFor() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
-        assertEquals("IntelliJ IDEA", main.invoke(null, args));
-    }
-
-    public void testIfBlock() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
-        assertEquals("TTT", main.invoke(null, args));
-        args = Arrays.asList("JetBrains");
-        assertEquals("F", main.invoke(null, args));
-    }
-
-    public void testForInArray() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        String[] args = new String[] { "IntelliJ", " ", "IDEA" };
-        assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
     }
 
     public void testForInRange() throws Exception {
@@ -127,24 +48,6 @@ public class ControlStructuresTest extends CodegenTestCase {
         loadText("fun foo() { throw Exception(); }");
         Method main = generateFunction();
         assertThrows(main, Exception.class, null);
-    }
-
-    public void testTryCatch() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        assertEquals("no message", main.invoke(null, "0"));
-        assertEquals("For input string: \"a\"", main.invoke(null, "a"));
-    }
-
-    public void testTryFinally() throws Exception {
-        loadFile();
-        Method main = generateFunction();
-        StringBuilder sb = new StringBuilder();
-        main.invoke(null, sb, "9");
-        assertEquals("foo9bar", sb.toString());
-        sb = new StringBuilder();
-        assertThrows(main, NumberFormatException.class, null, sb, "x");
-        assertEquals("foobar", sb.toString());
     }
 
     public void testCompareToZero() throws Exception {

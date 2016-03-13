@@ -114,20 +114,18 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         val operationTokenType = expression.operationTokenType
 
+        val expectedNullability = if (operationTokenType in NON_NULL_OPERAND_OPS) Nullability.NotNull else null
+
         val leftOperandExpectedType = getOperandExpectedType(left, right, operationTokenType)
-        var leftConverted = codeConverter.convertExpression(left, leftOperandExpectedType)
+        var leftConverted = codeConverter.convertExpression(left, leftOperandExpectedType, expectedNullability)
         var rightConverted = codeConverter.convertExpression(
                 right,
                 if (leftOperandExpectedType == null)
                     getOperandExpectedType(right, left, operationTokenType)
                 else
-                    null
+                    null,
+                expectedNullability
         )
-
-        if (operationTokenType in NON_NULL_OPERAND_OPS) {
-            leftConverted = BangBangExpression.surroundIfNullable(leftConverted)
-            rightConverted = BangBangExpression.surroundIfNullable(rightConverted)
-        }
 
         if (operationTokenType == JavaTokenType.GTGTGT) {
             result = MethodCallExpression.buildNotNull(leftConverted, "ushr", listOf(rightConverted))
@@ -413,10 +411,17 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             }
         }
 
-        result = MethodCallExpression(codeConverter.convertExpression(methodExpr),
+        /* We move prototypes from methodExpression to full expression because
+         * it could contains comments inside, and then we paste them at the end of expression
+         * In the case of call, we should paste them after parenthesis
+         * ex. Foo./*comment*/bar() -> Foo.bar() /*comment*/
+         */
+        val methodExpression = codeConverter.convertExpression(methodExpr)
+        result = MethodCallExpression(methodExpression,
                                       convertArguments(expression),
                                       typeArguments,
-                                      isNullable)
+                                      isNullable).assignPrototypesFrom(methodExpression)
+        methodExpression.assignNoPrototype()
     }
 
     private fun KtLightMethod.isKotlinExtensionFunction(): Boolean {
@@ -607,13 +612,14 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitPolyadicExpression(expression: PsiPolyadicExpression) {
-        val commentsAndSpacesInheritance = CommentsAndSpacesInheritance.LINE_BREAKS
         val args = expression.operands.map {
-            codeConverter.convertExpression(it, expression.type).assignPrototype(it, commentsAndSpacesInheritance)
+            codeConverter.convertExpression(it, expression.type).assignPrototype(it, CommentsAndSpacesInheritance.LINE_BREAKS)
         }
         val operators = expression.operands.mapNotNull {
             expression.getTokenBeforeOperand(it)?.let {
-                Operator(it.tokenType).assignPrototype(it, commentsAndSpacesInheritance)
+                val operator = Operator(it.tokenType)
+                val commentsAndSpacesInheritance = if (operator.acceptLineBreakBefore()) CommentsAndSpacesInheritance.LINE_BREAKS else CommentsAndSpacesInheritance.NO_SPACES
+                operator.assignPrototype(it, commentsAndSpacesInheritance)
             }
         }
 
@@ -627,15 +633,16 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
 
         val resolved = expression.resolveMethod()
-        val parameters = resolved?.parameterList?.parameters
-        val expectedTypes = parameters?.map { it.type } ?: listOf()
+        val parameters = resolved?.parameterList?.parameters ?: arrayOf()
 
         val commentsAndSpacesInheritance = CommentsAndSpacesInheritance.LINE_BREAKS
 
-        return if (arguments.size == expectedTypes.size) {
+        return if (arguments.size == parameters.size) {
             arguments.mapIndexed { i, argument ->
-                val converted = codeConverter.convertExpression(argument, expectedTypes[i])
-                val result = if (parameters != null && i == arguments.lastIndex && parameters[i].isVarArgs && argument.type is PsiArrayType)
+                val expectedNullability = typeConverter.variableNullability(parameters[i])
+                val converted = codeConverter.convertExpression(argument, parameters[i].type, expectedNullability)
+
+                val result = if (i == arguments.lastIndex && parameters[i].isVarArgs && argument.type is PsiArrayType)
                     StarExpression(converted)
                 else
                     converted

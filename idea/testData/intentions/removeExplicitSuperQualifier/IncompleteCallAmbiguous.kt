@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: None of the following functions can be called with the arguments supplied: <br>public final fun foo(p: kotlin.Int): kotlin.Unit defined in B<br>public open fun foo(p: kotlin.String): kotlin.Unit defined in B
+// ERROR: None of the following functions can be called with the arguments supplied: <br>public final fun foo(p: Int): Unit defined in B<br>public open fun foo(p: String): Unit defined in B
 
 open class B {
     open fun foo(p: String){}

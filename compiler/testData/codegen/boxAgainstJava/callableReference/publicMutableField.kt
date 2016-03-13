@@ -1,4 +1,10 @@
-import publicMutableField as A
+// FILE: A.java
+
+public class A {
+    public int field = 239;
+}
+
+// FILE: 1.kt
 
 fun box(): String {
     val a = A()

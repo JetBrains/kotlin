@@ -1,3 +1,15 @@
+// FILE: JavaAnn.java
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface JavaAnn {
+    String value();
+}
+
+// FILE: 1.kt
+
 @JavaAnn("value") class MyClass
 
 fun box(): String {

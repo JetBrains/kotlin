@@ -16,12 +16,33 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
+import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.FqName
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.IllegalCallableAccessException
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
+
+internal fun ClassDescriptor.toJavaClass(): Class<*>? {
+    val source = source
+    return when (source) {
+        is KotlinJvmBinarySourceElement -> {
+            (source.binaryClass as ReflectKotlinClass).klass
+        }
+        is RuntimeSourceElementFactory.RuntimeSourceElement -> {
+            (source.javaElement as ReflectJavaClass).element
+        }
+        else -> {
+            // This is a built-in class
+            null
+        }
+    }
+}
 
 // TODO: wrap other exceptions
 internal inline fun <R> reflectionCall(block: () -> R): R =
@@ -34,7 +55,7 @@ internal inline fun <R> reflectionCall(block: () -> R): R =
 
 internal fun Any?.asKFunctionImpl(): KFunctionImpl? =
         this as? KFunctionImpl ?:
-        (this as? FunctionReference)?.compute() as? KFunctionImpl //
+        (this as? FunctionReference)?.compute() as? KFunctionImpl
 
 internal fun Any?.asKPropertyImpl(): KPropertyImpl<*>? =
         this as? KPropertyImpl<*> ?:

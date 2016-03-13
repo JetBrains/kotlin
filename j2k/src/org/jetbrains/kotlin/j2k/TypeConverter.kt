@@ -72,13 +72,13 @@ class TypeConverter(val converter: Converter) {
             = convertType(method.returnType, methodNullability(method), methodMutability(method)).assignPrototype(method.returnTypeElement)
 
     fun variableNullability(variable: PsiVariable): Nullability
-            = nullabilityFlavor.forVariableType(variable)
+            = nullabilityFlavor.forVariableType(variable, true)
 
     fun methodNullability(method: PsiMethod): Nullability
             = nullabilityFlavor.forMethodReturnType(method)
 
     fun variableMutability(variable: PsiVariable): Mutability
-            = mutabilityFlavor.forVariableType(variable)
+            = mutabilityFlavor.forVariableType(variable, true)
 
     fun methodMutability(method: PsiMethod): Mutability
             = mutabilityFlavor.forMethodReturnType(method)
@@ -117,15 +117,15 @@ class TypeConverter(val converter: Converter) {
         open fun forVariableTypeAfterUsageSearch(variable: PsiVariable): T = default
         open fun fromMethodBody(body: PsiCodeBlock): T = default
 
-        fun forVariableType(variable: PsiVariable): T {
+        fun forVariableType(variable: PsiVariable, checkScope: Boolean): T {
             val cached = cache[variable]
             if (cached != null) return cached
-            val value = withRecursionPrevention(variable) { forVariableTypeNoCache(variable) }
+            val value = withRecursionPrevention(variable) { forVariableTypeNoCache(variable, checkScope) }
             cache[variable] = value
             return value
         }
 
-        private fun forVariableTypeNoCache(variable: PsiVariable): T {
+        private fun forVariableTypeNoCache(variable: PsiVariable, checkScope: Boolean): T {
             if (variable is PsiEnumConstant) return forEnumConstant
 
             val variableType = variable.type
@@ -135,6 +135,10 @@ class TypeConverter(val converter: Converter) {
             value = fromAnnotations(variable)
             if (value != default) return value
 
+            if (checkScope && !converter.inConversionScope(variable)) {
+                return value
+            }
+
             if (variable is PsiParameter) {
                 val scope = variable.declarationScope
                 if (scope is PsiMethod) {
@@ -143,7 +147,7 @@ class TypeConverter(val converter: Converter) {
                     val superSignatures = scope.hierarchicalMethodSignature.superSignatures
                     value = superSignatures.map { signature ->
                         val params = signature.method.parameterList.parameters
-                        if (paramIndex < params.size) forVariableType(params[paramIndex]) else default
+                        if (paramIndex < params.size) forVariableType(params[paramIndex], false) else default
                     }.firstOrNull { it != default } ?: default
                     if (value != default) return value
                 }

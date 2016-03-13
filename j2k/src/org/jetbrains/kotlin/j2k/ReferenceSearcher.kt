@@ -72,5 +72,5 @@ object EmptyReferenceSearcher: ReferenceSearcher {
     override fun hasInheritors(`class`: PsiClass) = false
     override fun hasOverrides(method: PsiMethod) = false
     override fun findUsagesForExternalCodeProcessing(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference>
-            = throw UnsupportedOperationException()
+            = emptyList()
 }

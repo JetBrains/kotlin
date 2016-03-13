@@ -1,4 +1,8 @@
-import jClass2kClass as J
+// FILE: J.java
+
+public class J {}
+
+// FILE: 1.kt
 
 import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals

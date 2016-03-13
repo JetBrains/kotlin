@@ -32,7 +32,8 @@ import java.util.List;
 
 public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements JavaCallableMemberDescriptor {
     private final boolean isStaticFinal;
-    public JavaPropertyDescriptor(
+
+    protected JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
@@ -41,12 +42,44 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             @NotNull Name name,
             @NotNull SourceElement source,
             @Nullable PropertyDescriptor original,
+            @NotNull Kind kind,
             boolean isStaticFinal
     ) {
-        super(containingDeclaration, original, annotations, modality, visibility, isVar, name, Kind.DECLARATION, source,
+        super(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
               /* lateInit = */ false, /* isConst = */ false);
 
         this.isStaticFinal = isStaticFinal;
+    }
+
+    @NotNull
+    public static JavaPropertyDescriptor create(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            @NotNull Modality modality,
+            @NotNull Visibility visibility,
+            boolean isVar,
+            @NotNull Name name,
+            @NotNull SourceElement source,
+            boolean isStaticFinal
+    ) {
+        return new JavaPropertyDescriptor(
+                containingDeclaration, annotations, modality, visibility, isVar, name, source, null, Kind.DECLARATION, isStaticFinal
+        );
+    }
+
+    @NotNull
+    @Override
+    protected PropertyDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @NotNull Modality newModality,
+            @NotNull Visibility newVisibility,
+            @Nullable PropertyDescriptor original,
+            @NotNull Kind kind
+    ) {
+        return new JavaPropertyDescriptor(
+                newOwner, getAnnotations(), newModality, newVisibility, isVar(), getName(), SourceElement.NO_SOURCE, original,
+                kind, isStaticFinal
+        );
     }
 
     @Override
@@ -70,6 +103,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 getName(),
                 getSource(),
                 getOriginal(),
+                getKind(),
                 isStaticFinal
         );
 
@@ -78,7 +112,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (getter != null) {
             newGetter = new PropertyGetterDescriptorImpl(
                     enhanced, getter.getAnnotations(), getter.getModality(), getter.getVisibility(),
-                    getter.hasBody(), getter.isDefault(), getter.isExternal(), getKind(), getter, getter.getSource());
+                    getter.isDefault(), getter.isExternal(), getKind(), getter, getter.getSource()
+            );
             newGetter.setInitialSignatureDescriptor(getter.getInitialSignatureDescriptor());
             newGetter.initialize(enhancedReturnType);
         }
@@ -88,7 +123,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         if (setter != null) {
             newSetter = new PropertySetterDescriptorImpl(
                     enhanced, setter.getAnnotations(), setter.getModality(), setter.getVisibility(),
-                    setter.hasBody(), setter.isDefault(), setter.isExternal(), getKind(), setter, setter.getSource());
+                    setter.isDefault(), setter.isExternal(), getKind(), setter, setter.getSource()
+            );
             newSetter.setInitialSignatureDescriptor(newSetter.getInitialSignatureDescriptor());
             newSetter.initialize(setter.getValueParameters().get(0));
         }

@@ -23,7 +23,7 @@ fun filtering(): List<GenericFunction> {
         returns("List<T>")
         body {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return toList()
             val list: ArrayList<T>
             if (this is Collection<*>) {
@@ -54,7 +54,7 @@ fun filtering(): List<GenericFunction> {
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0) { "Requested element count $n is less than zero." }
             return when {
                 n == 0 -> this
                 this is DropTakeSequence -> this.drop(n)
@@ -68,14 +68,14 @@ fun filtering(): List<GenericFunction> {
         returns(Strings, CharSequences) { "SELF" }
         body(Strings, CharSequences) { f ->
             """
-            require(n >= 0, { "Requested character count $n is less than zero." })
+            require(n >= 0) { "Requested character count $n is less than zero." }
             return ${subsequence(f, "n.coerceAtMost(length)")}
             """
         }
 
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0)
                 return toList()
             if (n >= size)
@@ -96,7 +96,7 @@ fun filtering(): List<GenericFunction> {
         returns("List<T>")
         body {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
             if (this is Collection<T> && n >= size) return toList()
             var count = 0
@@ -115,7 +115,7 @@ fun filtering(): List<GenericFunction> {
         returns(Strings, CharSequences) { "SELF" }
         body(Strings, CharSequences) { f ->
             """
-            require(n >= 0, { "Requested character count $n is less than zero." })
+            require(n >= 0) { "Requested character count $n is less than zero." }
             return ${subsequence(f, "0", "n.coerceAtMost(length)")}
             """
         }
@@ -124,7 +124,7 @@ fun filtering(): List<GenericFunction> {
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0) { "Requested element count $n is less than zero." }
             return when {
                 n == 0 -> emptySequence()
                 this is DropTakeSequence -> this.take(n)
@@ -156,23 +156,16 @@ fun filtering(): List<GenericFunction> {
 
         doc { "Returns a list containing all elements except last [n] elements." }
         returns("List<T>")
-        body {
+        body { f ->
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
-            return take((size - n).coerceAtLeast(0))
+            require(n >= 0) { "Requested ${f.doc.element} count $n is less than zero." }
+            return take((${f.code.size} - n).coerceAtLeast(0))
             """
         }
 
         doc(Strings) { "Returns a string with the last [n] characters removed." }
         doc(CharSequences) { "Returns a subsequence of this char sequence with the last [n] characters removed." }
         returns(Strings, CharSequences) { "SELF" }
-
-        body(Strings, CharSequences) {
-            """
-            require(n >= 0, { "Requested character count $n is less than zero." })
-            return take((length - n).coerceAtLeast(0))
-            """
-        }
 
     }
 
@@ -187,7 +180,7 @@ fun filtering(): List<GenericFunction> {
         returns(Strings, CharSequences) { "SELF" }
         body(Strings, CharSequences) { f ->
             """
-            require(n >= 0, { "Requested character count $n is less than zero." })
+            require(n >= 0) { "Requested character count $n is less than zero." }
             val length = length
             return ${subsequence(f, "length - n.coerceAtMost(length)")}
             """
@@ -195,7 +188,7 @@ fun filtering(): List<GenericFunction> {
 
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
             val size = size
             if (n >= size) return toList()
@@ -406,7 +399,13 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterIndexed(predicate: (Int, T) -> Boolean)") {
         inline(true)
 
-        doc { f -> "Returns a ${f.mapResult} containing only ${f.element.pluralize()} matching the given [predicate]." }
+        doc { f ->
+            """
+            Returns a ${f.mapResult} containing only ${f.element.pluralize()} matching the given [predicate].
+            @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of predicate evaluation on the ${f.element}.
+            """
+        }
         returns("List<T>")
         body {
             """
@@ -414,7 +413,13 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing only those characters from the original ${f.collection} that match the given [predicate]." }
+        doc(CharSequences, Strings) { f ->
+            """
+            Returns a ${f.collection} containing only those characters from the original ${f.collection} that match the given [predicate].
+            @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of predicate evaluation on the ${f.element}.
+            """
+        }
         returns(CharSequences, Strings) { "SELF" }
         body(CharSequences, Strings) { f -> """return filterIndexedTo(StringBuilder(), predicate)${toResult(f)}""" }
 
@@ -434,7 +439,12 @@ fun filtering(): List<GenericFunction> {
 
         include(CharSequences)
 
-        doc { f -> "Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination]." }
+        doc { f ->
+            """
+            Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination].
+            @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of predicate evaluation on the ${f.element}.
+            """ }
         typeParam("C : TCollection")
         returns("C")
 
@@ -512,6 +522,7 @@ fun filtering(): List<GenericFunction> {
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
+            @Suppress("UNCHECKED_CAST")
             return filterNot { it == null } as Sequence<T>
             """
         }

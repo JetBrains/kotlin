@@ -1,5 +1,5 @@
-// ERROR: 'public open fun foo(): kotlin.Unit' conflicts with another declaration in class 'C'
-// ERROR: 'public open fun foo(): kotlin.Unit' conflicts with another declaration in class 'C'
+// ERROR: 'public open fun foo(): Unit' conflicts with another declaration in class 'C'
+// ERROR: 'public open fun foo(): Unit' conflicts with another declaration in class 'C'
 interface I {
     open fun foo(){}
 }

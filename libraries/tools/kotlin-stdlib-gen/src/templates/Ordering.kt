@@ -102,6 +102,7 @@ fun ordering(): List<GenericFunction> {
             """
                 if (this is Collection) {
                     if (size <= 1) return this.toMutableList()
+                    @Suppress("CAST_NEVER_SUCCEEDS")
                     return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
                 }
                 return toMutableList().apply { sort() }
@@ -231,6 +232,7 @@ fun ordering(): List<GenericFunction> {
             """
              if (this is Collection) {
                 if (size <= 1) return this.toMutableList()
+                @Suppress("CAST_NEVER_SUCCEEDS")
                 return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
             }
             return toMutableList().apply { sortWith(comparator) }

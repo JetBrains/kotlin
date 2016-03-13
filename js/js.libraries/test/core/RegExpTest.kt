@@ -38,7 +38,6 @@ class RegExpTest {
         assertFalse(re2.global)
         assertFalse(re2.ignoreCase)
         assertFalse(re2.multiline)
-        
     }
 
     @test fun regExpTest() {
@@ -68,7 +67,5 @@ class RegExpTest {
         assertEquals(null, noMatch)
         assertEquals(0, re.lastIndex)
     }
-
-
 
 }

@@ -9,7 +9,7 @@ import java.lang.IllegalStateException
  * Throws an [IllegalArgumentException] if the [value] is false.
  */
 @kotlin.internal.InlineOnly
-public inline fun require(value: Boolean): Unit = require(value) { "Failed requirement" }
+public inline fun require(value: Boolean): Unit = require(value) { "Failed requirement." }
 
 /**
  * Throws an [IllegalArgumentException] with the result of calling [lazyMessage] if the [value] is false.
@@ -28,7 +28,7 @@ public inline fun require(value: Boolean, lazyMessage: () -> Any): Unit {
  * Throws an [IllegalArgumentException] if the [value] is null. Otherwise returns the not null value.
  */
 @kotlin.internal.InlineOnly
-public inline fun <T:Any> requireNotNull(value: T?): T = requireNotNull(value) { "Required value was null" }
+public inline fun <T:Any> requireNotNull(value: T?): T = requireNotNull(value) { "Required value was null." }
 
 /**
  * Throws an [IllegalArgumentException] with the result of calling [lazyMessage] if the [value] is null. Otherwise
@@ -50,7 +50,7 @@ public inline fun <T:Any> requireNotNull(value: T?, lazyMessage: () -> Any): T {
  * Throws an [IllegalStateException] if the [value] is false.
  */
 @kotlin.internal.InlineOnly
-public inline fun check(value: Boolean): Unit = check(value) { "Check failed" }
+public inline fun check(value: Boolean): Unit = check(value) { "Check failed." }
 
 /**
  * Throws an [IllegalStateException] with the result of calling [lazyMessage] if the [value] is false.
@@ -70,7 +70,7 @@ public inline fun check(value: Boolean, lazyMessage: () -> Any): Unit {
  * returns the not null value.
  */
 @kotlin.internal.InlineOnly
-public inline fun <T:Any> checkNotNull(value: T?): T = checkNotNull(value) { "Required value was null" }
+public inline fun <T:Any> checkNotNull(value: T?): T = checkNotNull(value) { "Required value was null." }
 
 /**
  * Throws an [IllegalStateException] with the result of calling [lazyMessage]  if the [value] is null. Otherwise

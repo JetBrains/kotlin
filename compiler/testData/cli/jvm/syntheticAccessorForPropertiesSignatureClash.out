@@ -1,71 +1,71 @@
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:1:7: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
-    fun <get-foo>(): kotlin.Int
-    fun `access$getFoo$p`(a: A): kotlin.Int
+    fun <get-foo>(): Int
+    fun `access$getFoo$p`(a: A): Int
 class A {
       ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:1:7: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA;I)V):
-    fun <set-foo>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setFoo$p`(a: A, d: kotlin.Int): kotlin.Unit
+    fun <set-foo>(<set-?>: Int): Unit
+    fun `access$setFoo$p`(a: A, d: Int): Unit
 class A {
       ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:1:7: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$cp()I):
-    fun <get-foo>(): kotlin.Int
-    fun `access$getFoo$cp`(): kotlin.Int
+    fun <get-foo>(): Int
+    fun `access$getFoo$cp`(): Int
 class A {
       ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:1:7: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$cp(I)V):
-    fun <set-foo>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setFoo$cp`(d: kotlin.Int): kotlin.Unit
+    fun <set-foo>(<set-?>: Int): Unit
+    fun `access$setFoo$cp`(d: Int): Unit
 class A {
       ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:1:7: error: platform declaration clash: The following declarations have the same JVM signature (access$getBar$lp(LA;)I):
-    fun <get-bar>(): kotlin.Int
-    fun `access$getBar$lp`(a: A): kotlin.Int
+    fun <get-bar>(): Int
+    fun `access$getBar$lp`(a: A): Int
 class A {
       ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:5:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA;)I):
-    fun <get-foo>(): kotlin.Int
-    fun `access$getFoo$p`(a: A): kotlin.Int
+    fun <get-foo>(): Int
+    fun `access$getFoo$p`(a: A): Int
     fun `access$getFoo$p`(a: A): Int = 1
     ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:6:5: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA;I)V):
-    fun <set-foo>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setFoo$p`(a: A, d: kotlin.Int): kotlin.Unit
+    fun <set-foo>(<set-?>: Int): Unit
+    fun `access$setFoo$p`(a: A, d: Int): Unit
     fun `access$setFoo$p`(a: A, d: Int) {}
     ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$cp()I):
-    fun <get-foo>(): kotlin.Int
-    fun `access$getFoo$cp`(): kotlin.Int
+    fun <get-foo>(): Int
+    fun `access$getFoo$cp`(): Int
     fun `access$getFoo$cp`(): Int = 1
     ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:10:5: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$cp(I)V):
-    fun <set-foo>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setFoo$cp`(d: kotlin.Int): kotlin.Unit
+    fun <set-foo>(<set-?>: Int): Unit
+    fun `access$setFoo$cp`(d: Int): Unit
     fun `access$setFoo$cp`(d: Int) {}
     ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:16:5: error: platform declaration clash: The following declarations have the same JVM signature (access$getBar$lp(LA;)I):
-    fun <get-bar>(): kotlin.Int
-    fun `access$getBar$lp`(a: A): kotlin.Int
+    fun <get-bar>(): Int
+    fun `access$getBar$lp`(a: A): Int
     fun `access$getBar$lp`(a: A): Int = 7
     ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:18:15: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA$Companion;)I):
-    fun <get-foo>(): kotlin.Int
-    fun `access$getFoo$p`(p: A.Companion): kotlin.Int
+    fun <get-foo>(): Int
+    fun `access$getFoo$p`(p: A.Companion): Int
     companion object {
               ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:18:15: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA$Companion;I)V):
-    fun <set-foo>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setFoo$p`(p: A.Companion, d: kotlin.Int): kotlin.Unit
+    fun <set-foo>(<set-?>: Int): Unit
+    fun `access$setFoo$p`(p: A.Companion, d: Int): Unit
     companion object {
               ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:28:9: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA$Companion;)I):
-    fun <get-foo>(): kotlin.Int
-    fun `access$getFoo$p`(p: A.Companion): kotlin.Int
+    fun <get-foo>(): Int
+    fun `access$getFoo$p`(p: A.Companion): Int
         fun `access$getFoo$p`(p: A.Companion): Int = 1
         ^
 compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:29:9: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA$Companion;I)V):
-    fun <set-foo>(<set-?>: kotlin.Int): kotlin.Unit
-    fun `access$setFoo$p`(p: A.Companion, d: kotlin.Int): kotlin.Unit
+    fun <set-foo>(<set-?>: Int): Unit
+    fun `access$setFoo$p`(p: A.Companion, d: Int): Unit
         fun `access$setFoo$p`(p: A.Companion, d: Int) {}
         ^
 COMPILATION_ERROR

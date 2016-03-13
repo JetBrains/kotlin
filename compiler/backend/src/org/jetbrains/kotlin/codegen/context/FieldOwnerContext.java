@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AccessorForPropertyDescriptor;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
@@ -54,7 +54,7 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
         PropertyDescriptor descriptor = possiblySubstitutedDescriptor.getOriginal();
         assert descriptor.getKind().isReal() : "Only declared properties can have backing fields: " + descriptor;
 
-        String defaultPropertyName = JetTypeMapper.mapDefaultFieldName(descriptor, isDelegated);
+        String defaultPropertyName = KotlinTypeMapper.mapDefaultFieldName(descriptor, isDelegated);
 
         Map<PropertyDescriptor, String> descriptor2Name = fieldNames.get(defaultPropertyName);
         if (descriptor2Name == null) {

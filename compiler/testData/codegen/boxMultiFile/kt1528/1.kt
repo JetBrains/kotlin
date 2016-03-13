@@ -1,1 +1,0 @@
-fun box() = foo()

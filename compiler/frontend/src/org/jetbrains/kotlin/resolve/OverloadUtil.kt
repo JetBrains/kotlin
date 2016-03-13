@@ -21,16 +21,17 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE
+import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
+import org.jetbrains.kotlin.resolve.calls.results.SpecificityComparisonCallbacks
+import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
+import org.jetbrains.kotlin.resolve.calls.results.varargParameterPosition
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeIntersector
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.oneMoreSpecificThanAnother
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 object OverloadUtil {
-
     /**
      * Does not check names.
      */
@@ -41,22 +42,32 @@ object OverloadUtil {
         if (aCategory != bCategory) return true
         if (a !is CallableDescriptor || b !is CallableDescriptor) return false
 
-        OverridingUtil.checkReceiverAndParameterCount(a, b)?.let { return it.result == INCOMPATIBLE }
+        return checkOverloadability(a, b)
+    }
 
-        val aValueParameters = OverridingUtil.compiledValueParameters(a)
-        val bValueParameters = OverridingUtil.compiledValueParameters(b)
+    private object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
+        override fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean =
+                false
+    }
 
-        for ((aType, bType) in aValueParameters.zip(bValueParameters)) {
-            // TODO: check type parameters, create a substitution and compare parameter types according to it, like in OverridingUtil
-            val superValueParameterType = aType.upperBound
-            val subValueParameterType = bType.upperBound
-            if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType) ||
-                oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
-                return true
-            }
-        }
+    private fun checkOverloadability(a: CallableDescriptor, b: CallableDescriptor): Boolean {
+        if (a.hasLowPriorityInOverloadResolution() != b.hasLowPriorityInOverloadResolution()) return true
 
-        return false
+        // NB this makes generic and non-generic declarations with equivalent signatures non-conflicting
+        // E.g., 'fun <T> foo()' and 'fun foo()'.
+        // They can be disambiguated by providing explicit type parameters.
+        if (a.typeParameters.isEmpty() != b.typeParameters.isEmpty()) return true
+
+        if (ErrorUtils.containsErrorType(a) || ErrorUtils.containsErrorType(b)) return true
+        if (a.varargParameterPosition() != b.varargParameterPosition()) return true
+
+        val aSignature = FlatSignature.createFromCallableDescriptor(a)
+        val bSignature = FlatSignature.createFromCallableDescriptor(b)
+
+        val aIsNotLessSpecificThanB = isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks)
+        val bIsNotLessSpecificThanA = isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks)
+
+        return !(aIsNotLessSpecificThanB && bIsNotLessSpecificThanA)
     }
 
     private enum class DeclarationCategory {
@@ -84,16 +95,6 @@ object OverloadUtil {
                 else ->
                     error("Unexpected declaration kind: $a")
             }
-
-    private val KotlinType.upperBound: KotlinType
-        get() {
-            val classifier = constructor.declarationDescriptor
-            return when (classifier) {
-                is ClassDescriptor -> this
-                is TypeParameterDescriptor -> TypeIntersector.getUpperBoundsAsType(classifier)
-                else -> error("Unknown type constructor: $this")
-            }
-        }
 
     @JvmStatic fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,

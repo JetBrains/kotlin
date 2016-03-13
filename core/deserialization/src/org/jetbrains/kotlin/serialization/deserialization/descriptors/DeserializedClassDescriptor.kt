@@ -137,28 +137,6 @@ class DeserializedClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
 
-    private fun computeSupertypes(): Collection<KotlinType> {
-        val result = ArrayList<KotlinType>(classProto.supertypeCount)
-        val unresolved = ArrayList<DeserializedType>(0)
-
-        for (supertypeProto in classProto.supertypes(c.typeTable)) {
-            val supertype = c.typeDeserializer.type(supertypeProto)
-            if (supertype.isError) {
-                unresolved.add(supertype.upperIfFlexible() as? DeserializedType ?: error("Not a deserialized type: $supertype"))
-            }
-            else {
-                result.add(supertype)
-            }
-        }
-
-        result.addAll(c.components.additionalSupertypes.forClass(this))
-
-        if (unresolved.isNotEmpty()) {
-            c.components.errorReporter.reportIncompleteHierarchy(this, unresolved.map(DeserializedType::getPresentableText))
-        }
-
-        return result.toReadOnlyList()
-    }
 
     internal fun hasNestedClass(name: Name): Boolean {
         return name in nestedClasses.nestedClassNames
@@ -170,18 +148,36 @@ class DeserializedClassDescriptor(
 
     override fun getDeclaredTypeParameters() = c.typeDeserializer.ownTypeParameters
 
-    private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor() {
-        private val supertypes = c.storageManager.createLazyValue {
-            computeSupertypes()
-        }
-
+    private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor(c.storageManager) {
         private val parameters = c.storageManager.createLazyValue {
             this@DeserializedClassDescriptor.computeConstructorTypeParameters()
         }
 
-        override fun getParameters() = parameters()
+        override fun computeSupertypes(): Collection<KotlinType> {
+            val result = ArrayList<KotlinType>(classProto.supertypeCount)
+            val unresolved = ArrayList<DeserializedType>(0)
 
-        override fun getSupertypes() = supertypes()
+            for (supertypeProto in classProto.supertypes(c.typeTable)) {
+                val supertype = c.typeDeserializer.type(supertypeProto)
+                if (supertype.isError) {
+                    unresolved.add(supertype.upperIfFlexible() as? DeserializedType ?: error("Not a deserialized type: $supertype"))
+                }
+                else {
+                    result.add(supertype)
+                }
+            }
+
+            result.addAll(c.components.additionalSupertypes.forClass(this@DeserializedClassDescriptor))
+
+            if (unresolved.isNotEmpty()) {
+                c.components.errorReporter.reportIncompleteHierarchy(
+                        this@DeserializedClassDescriptor, unresolved.map(DeserializedType::getPresentableText))
+            }
+
+            return result.toReadOnlyList()
+        }
+
+        override fun getParameters() = parameters()
 
         override fun isFinal(): Boolean = isFinalClass
 
@@ -192,6 +188,10 @@ class DeserializedClassDescriptor(
         override fun getAnnotations(): Annotations = Annotations.EMPTY // TODO
 
         override fun toString() = getName().toString()
+
+        override val supertypeLoopChecker: SupertypeLoopChecker
+            // TODO: inject implementation
+            get() = SupertypeLoopChecker.EMPTY
     }
 
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.functionList, classProto.propertyList) {

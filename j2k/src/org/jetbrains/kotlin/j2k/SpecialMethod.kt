@@ -414,7 +414,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     }
 
     protected fun convertWithChangedName(name: String, qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-            = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), name, codeConverter.convertExpressions(arguments), typeArgumentsConverted)
+            = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), name, arguments.map { codeConverter.convertExpression(it, null, Nullability.NotNull) }, typeArgumentsConverted)
 
     protected fun convertMethodCallWithReceiverCast(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression? {
         val convertedArguments = arguments.map { codeConverter.convertExpression(it) }
@@ -475,7 +475,7 @@ private fun addIgnoreCaseArgument(
     val ignoreCaseExpression = ignoreCaseArgument?.let { codeConverter.convertExpression(it) } ?: LiteralExpression("true").assignNoPrototype()
     val ignoreCaseArgumentExpression = AssignmentExpression(Identifier("ignoreCase").assignNoPrototype(), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
     return MethodCallExpression.build(codeConverter.convertExpression(qualifier), methodName,
-                                      codeConverter.convertExpressions(arguments) + ignoreCaseArgumentExpression,
+                                      arguments.map { codeConverter.convertExpression(it, null, Nullability.NotNull) } + ignoreCaseArgumentExpression,
                                       typeArgumentsConverted, false)
 }
 

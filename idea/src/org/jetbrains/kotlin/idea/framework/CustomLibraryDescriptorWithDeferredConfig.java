@@ -162,9 +162,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        KotlinWithLibraryConfigurator configurator =
-                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(configuratorName);
-        assert configurator != null : "Configurator with name " + configuratorName + " should exists";
+        KotlinWithLibraryConfigurator configurator = getConfigurator();
 
         deferredCopyFileRequests = new DeferredCopyFileRequests(configurator);
 
@@ -213,6 +211,21 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
         }
 
         return createConfiguration(Arrays.asList(runtimeJar, reflectJar), runtimeSrcJar);
+    }
+
+    @NotNull
+    private KotlinWithLibraryConfigurator getConfigurator() {
+        KotlinWithLibraryConfigurator configurator =
+                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(configuratorName);
+        assert configurator != null : "Configurator with name " + configuratorName + " should exists";
+        return configurator;
+    }
+
+    // Implements an API added in IDEA 16
+    @Nullable
+    public NewLibraryConfiguration createNewLibraryWithDefaultSettings(@Nullable VirtualFile contextDirectory) {
+        RuntimeLibraryFiles files = getConfigurator().getExistingJarFiles();
+        return createConfiguration(Arrays.asList(files.getRuntimeJar(), files.getReflectJar()), files.getRuntimeSourcesJar());
     }
 
     @NotNull

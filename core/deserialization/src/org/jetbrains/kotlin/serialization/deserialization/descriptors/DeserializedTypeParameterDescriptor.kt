@@ -34,7 +34,7 @@ class DeserializedTypeParameterDescriptor(
         index: Int
 ) : AbstractLazyTypeParameterDescriptor(
         c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),
-        Deserialization.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE
+        Deserialization.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY
 ) {
     private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
         c.components.annotationAndConstantLoader
@@ -54,8 +54,6 @@ class DeserializedTypeParameterDescriptor(
         }
     }
 
-    override fun getSupertypeLoopChecker() = SupertypeLoopChecker.EMPTY
-
-    override fun reportCycleError(type: KotlinType) = throw IllegalStateException(
+    override fun reportSupertypeLoopError(type: KotlinType) = throw IllegalStateException(
             "There should be no cycles for deserialized type parameters, but found for: $this")
 }

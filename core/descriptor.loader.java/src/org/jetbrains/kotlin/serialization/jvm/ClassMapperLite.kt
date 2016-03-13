@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-// The purpose of this class is to map Kotlin classes to JVM bytecode desc strings, as JetTypeMapper does in the backend.
+// The purpose of this class is to map Kotlin classes to JVM bytecode desc strings, as KotlinTypeMapper does in the backend.
 // It's used as an optimization during serialization/deserialization: if there's no JVM signature for a method/property/constructor,
 // it means that the JVM signature should be trivially computable from the Kotlin signature with this class.
-// It's not required to support everything in JetTypeMapper, but the more it does, the more we save on JVM signatures in proto metadata.
+// It's not required to support everything in KotlinTypeMapper, but the more it does, the more we save on JVM signatures in proto metadata.
 // Note that improving the behavior of this class may break binary compatibility of code compiled by Kotlin, because it may make
 // the new compiler skip writing the signatures it now thinks are trivial, and the old compiler would recreate them incorrectly.
 object ClassMapperLite {

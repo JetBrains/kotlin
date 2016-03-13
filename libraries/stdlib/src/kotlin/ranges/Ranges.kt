@@ -30,5 +30,5 @@ public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Comp
 
 
 internal fun checkStepIsPositive(isPositive: Boolean, step: Number) {
-    if (!isPositive) throw IllegalArgumentException("Step must be positive, was: $step")
+    if (!isPositive) throw IllegalArgumentException("Step must be positive, was: $step.")
 }

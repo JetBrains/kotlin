@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiClass
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.pom.PomManager
+import com.intellij.pom.PomModelAspect
+import com.intellij.pom.event.PomModelEvent
+import com.intellij.pom.event.PomModelListener
+import com.intellij.pom.tree.TreeAspect
+import com.intellij.pom.tree.events.TreeChangeEvent
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.impl.PsiModificationTrackerImpl
-import com.intellij.psi.impl.PsiTreeChangeEventImpl
-import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.*
-import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -33,84 +34,40 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
-    private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
-
-    override fun treeChanged(event: PsiTreeChangeEventImpl) {
-        if (event.file !is KtFile) return
-
-        when (event.code) {
-            BEFORE_CHILDREN_CHANGE,
-            BEFORE_PROPERTY_CHANGE,
-            BEFORE_CHILD_MOVEMENT,
-            BEFORE_CHILD_REPLACEMENT,
-            BEFORE_CHILD_ADDITION,
-            BEFORE_CHILD_REMOVAL -> {
-                // skip
+class KotlinCodeBlockModificationListener(
+        modificationTracker: PsiModificationTracker,
+        private val project: Project,
+        private val treeAspect: TreeAspect
+) {
+    init {
+        val model = PomManager.getModel(project)
+        @Suppress("NAME_SHADOWING")
+        val modificationTracker = modificationTracker as PsiModificationTrackerImpl
+        model.addModelListener(object: PomModelListener {
+            override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
+                return aspect == treeAspect
             }
 
-            CHILD_ADDED,
-            CHILD_REMOVED,
-            CHILD_REPLACED -> {
-                processChange(event.parent, event.oldChild, event.child)
-            }
-
-            CHILDREN_CHANGED -> {
-                if (!event.isGenericChange) {
-                    processChange(event.parent, event.parent, null)
+            override fun modelChanged(event: PomModelEvent) {
+                val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
+                val file = changeSet.rootElement.psi.containingFile as? KtFile ?: return
+                if (changeSet.changedElements.any { !isInsideCodeBlock(it.psi) }) {
+                    if (file.isPhysical) {
+                        modificationTracker.incCounter()
+                    }
+                    incOutOfBlockModificationCount(file)
                 }
             }
-
-            CHILD_MOVED,
-            PROPERTY_CHANGED -> {
-                myModificationTracker.incCounter()
-            }
-
-            else -> LOG.error("Unknown code:" + event.code)
-        }
-    }
-
-    private fun processChange(parent: PsiElement?, child1: PsiElement?, child2: PsiElement?) {
-        try {
-            if (!isInsideCodeBlock(parent)) {
-                if (parent != null && parent.containingFile is KtFile) {
-                    myModificationTracker.incCounter()
-                }
-                else {
-                    myModificationTracker.incOutOfCodeBlockModificationCounter()
-                }
-                return
-            }
-
-            if (containsClassesInside(child1) || (child2 != child1 && containsClassesInside(child2))) {
-                myModificationTracker.incCounter()
-            }
-        }
-        catch (e: PsiInvalidElementAccessException) {
-            myModificationTracker.incCounter() // Shall not happen actually, just a pre-release paranoia
-        }
+        })
     }
 
     companion object {
-        private val LOG = Logger.getInstance("#org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener")
-
-        private fun containsClassesInside(element: PsiElement?): Boolean {
-            if (element == null) return false
-            if (element is PsiClass) return true
-
-            var child = element.firstChild
-            while (child != null) {
-                if (containsClassesInside(child)) return true
-                child = child.nextSibling
-            }
-
-            return false
+        private fun incOutOfBlockModificationCount(file: KtFile) {
+            val count = file.getUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT) ?: 0
+            file.putUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT, count + 1)
         }
 
-        fun isInsideCodeBlock(element: PsiElement?): Boolean {
-            if (element is PsiFileSystemItem) return false
-            if (element == null || element.parent == null) return true
-
+        private fun isInsideCodeBlock(element: PsiElement): Boolean {
             //TODO: other types
             val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
             if (blockDeclaration.parents.any { it !is KtClassBody && it !is KtClassOrObject && it !is KtFile }) return false // should not be local declaration
@@ -149,3 +106,8 @@ class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTr
         )
     }
 }
+
+private val FILE_OUT_OF_BLOCK_MODIFICATION_COUNT = Key<Long>("FILE_OUT_OF_BLOCK_MODIFICATION_COUNT")
+
+val KtFile.outOfBlockModificationCount: Long
+    get() = getUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT) ?: 0

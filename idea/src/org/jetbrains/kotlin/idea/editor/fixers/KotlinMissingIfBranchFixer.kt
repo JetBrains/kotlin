@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.editor.fixers
 
 import com.intellij.lang.SmartEnterProcessorWithFixers
-import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
 
 class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
@@ -32,7 +32,7 @@ class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSma
         val elseKeyword = element.elseKeyword
 
         if (elseKeyword != null) {
-            if (elseBranch == null || elseBranch !is KtBlockExpression && elseBranch.startLine(editor.document) > elseKeyword.startLine(editor.document)) {
+            if (elseBranch == null || elseBranch !is KtBlockExpression && elseBranch.startLine(document) > elseKeyword.startLine(document)) {
                 document.insertString(elseKeyword.range.end, "{}")
                 return
             }
@@ -41,11 +41,10 @@ class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSma
         val thenBranch = element.then
         if (thenBranch is KtBlockExpression) return
 
-        val rParen = element.rightParenthesis
-        if (rParen == null) return
+        val rParen = element.rightParenthesis ?: return
 
         var transformingOneLiner = false
-        if (thenBranch != null && thenBranch.startLine(editor.document) == element.startLine(editor.document)) {
+        if (thenBranch != null && thenBranch.startLine(document) == element.startLine(document)) {
             if (element.condition != null) return
             transformingOneLiner = true
         }

@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
@@ -45,7 +45,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.frontend.di.InjectionKt.createLazyResolveSession;
 
-public class DefaultModalityModifiersTest extends KotlinLiteFixture {
+public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
     private final DefaultModalityModifiersTestCase tc = new DefaultModalityModifiersTestCase();
 
     @Override

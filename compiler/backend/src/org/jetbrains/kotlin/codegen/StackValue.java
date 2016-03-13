@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -590,7 +590,7 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static Field enumEntry(@NotNull ClassDescriptor descriptor, @NotNull JetTypeMapper typeMapper) {
+    public static Field enumEntry(@NotNull ClassDescriptor descriptor, @NotNull KotlinTypeMapper typeMapper) {
         DeclarationDescriptor enumClass = descriptor.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
         Type type = typeMapper.mapType((ClassDescriptor) enumClass);
@@ -598,11 +598,11 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static Field singleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
+    public static Field singleton(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper) {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper), none());
     }
 
-    public static Field singletonViaInstance(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+    public static Field singletonViaInstance(ClassDescriptor classDescriptor, KotlinTypeMapper typeMapper) {
         return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper), none());
     }
 
@@ -980,7 +980,7 @@ public abstract class StackValue {
             }
         }
 
-        public static boolean isStandardStack(@NotNull JetTypeMapper typeMapper, @Nullable ResolvedCall<?> call, int valueParamsSize) {
+        public static boolean isStandardStack(@NotNull KotlinTypeMapper typeMapper, @Nullable ResolvedCall<?> call, int valueParamsSize) {
             if (call == null) {
                 return true;
             }
@@ -1408,7 +1408,7 @@ public abstract class StackValue {
                 @NotNull ResolvedCall<?> resolvedCall,
                 @Nullable ReceiverParameterDescriptor dispatchReceiver,
                 @Nullable ReceiverParameterDescriptor extensionReceiver,
-                @NotNull JetTypeMapper typeMapper,
+                @NotNull KotlinTypeMapper typeMapper,
                 @Nullable Callable callableMethod,
                 @NotNull GenerationState state
         ) {

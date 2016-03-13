@@ -23,6 +23,7 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constra
 /**
  * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
  */
+@kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
 public inline fun<T> Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
 
@@ -316,7 +317,7 @@ internal class TakeSequence<T> (
 ) : Sequence<T>, DropTakeSequence<T> {
 
     init {
-        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
+        require (count >= 0) { "count must be non-negative, but was $count." }
     }
 
     override fun drop(n: Int): Sequence<T> = if (n >= count) emptySequence() else SubSequence(sequence, n, count)
@@ -394,7 +395,7 @@ internal class DropSequence<T> (
         private val count: Int
 ) : Sequence<T>, DropTakeSequence<T> {
     init {
-        require (count >= 0) { throw IllegalArgumentException("count should be non-negative, but is $count") }
+        require (count >= 0) { "count must be non-negative, but was $count." }
     }
 
     override fun drop(n: Int): Sequence<T> = DropSequence(sequence, count + n)

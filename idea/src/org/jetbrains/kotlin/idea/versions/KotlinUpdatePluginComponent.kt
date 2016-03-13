@@ -77,11 +77,11 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
     }
 
     private fun requestFullJarUpdate(jarFilePath: File) {
-        val localVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(jarFilePath)
+        val localVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(jarFilePath) ?: return
 
         // Build and update JarHandler
-        val jarFile = JarFileSystem.getInstance()!!.getJarRootForLocalFile(localVirtualFile!!)
-        VfsUtilCore.visitChildrenRecursively(jarFile!!, object : VirtualFileVisitor<Any?>() {})
+        val jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(localVirtualFile) ?: return
+        VfsUtilCore.visitChildrenRecursively(jarFile, object : VirtualFileVisitor<Any?>() {})
         ((jarFile as NewVirtualFile)).markDirtyRecursively()
 
         // Synchronous refresh lead to deadlocks during components initialization KT-4584

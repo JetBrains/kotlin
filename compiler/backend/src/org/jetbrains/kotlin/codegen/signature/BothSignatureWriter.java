@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,15 @@ package org.jetbrains.kotlin.codegen.signature;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor;
 import org.jetbrains.org.objectweb.asm.signature.SignatureWriter;
 import org.jetbrains.org.objectweb.asm.util.CheckSignatureAdapter;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.Variance;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class BothSignatureWriter {
+public class BothSignatureWriter extends JvmSignatureWriter {
     public enum Mode {
         METHOD(CheckSignatureAdapter.METHOD_SIGNATURE),
         CLASS(CheckSignatureAdapter.CLASS_SIGNATURE),
@@ -49,17 +43,7 @@ public class BothSignatureWriter {
     private final SignatureWriter signatureWriter = new SignatureWriter();
     private final SignatureVisitor signatureVisitor;
 
-    private final List<JvmMethodParameterSignature> kotlinParameterTypes = new ArrayList<JvmMethodParameterSignature>();
-
-    private int jvmCurrentTypeArrayLevel;
-    private Type jvmCurrentType;
-    private Type jvmReturnType;
-
-    private JvmMethodParameterKind currentParameterKind;
-
     private boolean generic = false;
-
-    private int currentSignatureSize = 0;
 
     public BothSignatureWriter(@NotNull Mode mode) {
         this.signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
@@ -82,64 +66,49 @@ public class BothSignatureWriter {
     /**
      * Shortcut
      */
+    @Override
     public void writeAsmType(Type asmType) {
-        switch (asmType.getSort()) {
-            case Type.OBJECT:
-                writeClassBegin(asmType);
-                writeClassEnd();
-                return;
-            case Type.ARRAY:
-                writeArrayType();
-                writeAsmType(asmType.getElementType());
-                writeArrayEnd();
-                return;
-            default:
-                signatureVisitor().visitBaseType(asmType.getDescriptor().charAt(0));
-                writeAsmType0(asmType);
+        if (asmType.getSort() != Type.OBJECT && asmType.getSort() != Type.ARRAY) {
+            signatureVisitor().visitBaseType(asmType.getDescriptor().charAt(0));
         }
+        super.writeAsmType(asmType);
     }
 
-    private String makeArrayPrefix() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < jvmCurrentTypeArrayLevel; ++i) {
-            sb.append('[');
-        }
-        return sb.toString();
-    }
 
-    private void writeAsmType0(Type type) {
-        if (jvmCurrentType == null) {
-            jvmCurrentType = Type.getType(makeArrayPrefix() + type.getDescriptor());
-        }
-    }
-
+    @Override
     public void writeClassBegin(Type asmType) {
         signatureVisitor().visitClassType(asmType.getInternalName());
-        writeAsmType0(asmType);
+        super.writeClassBegin(asmType);
     }
 
+    @Override
     public void writeOuterClassBegin(Type resultingAsmType, String outerInternalName) {
         signatureVisitor().visitClassType(outerInternalName);
-        writeAsmType0(resultingAsmType);
+        super.writeOuterClassBegin(resultingAsmType, outerInternalName);
     }
 
+    @Override
     public void writeInnerClass(String name) {
         signatureVisitor().visitInnerClassType(name);
+        super.writeInnerClass(name);
     }
 
+    @Override
     public void writeClassEnd() {
         signatureVisitor().visitEnd();
+        super.writeClassEnd();
     }
 
+    @Override
     public void writeArrayType() {
         push(signatureVisitor().visitArrayType());
-        if (jvmCurrentType == null) {
-            ++jvmCurrentTypeArrayLevel;
-        }
+        super.writeArrayType();
     }
 
+    @Override
     public void writeArrayEnd() {
         pop();
+        super.writeArrayEnd();
     }
 
     private static char toJvmVariance(@NotNull Variance variance) {
@@ -151,56 +120,70 @@ public class BothSignatureWriter {
         }
     }
 
+    @Override
     public void writeTypeArgument(@NotNull Variance projectionKind) {
         push(signatureVisitor().visitTypeArgument(toJvmVariance(projectionKind)));
-
         generic = true;
+        super.writeTypeArgument(projectionKind);
     }
 
+    @Override
     public void writeUnboundedWildcard() {
         signatureVisitor().visitTypeArgument();
-
         generic = true;
+        super.writeUnboundedWildcard();
     }
 
+    @Override
     public void writeTypeArgumentEnd() {
         pop();
+        super.writeTypeArgumentEnd();
     }
 
+    @Override
     public void writeTypeVariable(Name name, Type asmType) {
         signatureVisitor().visitTypeVariable(name.asString());
         generic = true;
-        writeAsmType0(asmType);
+        super.writeTypeVariable(name, asmType);
     }
 
+    @Override
     public void writeFormalTypeParameter(String name) {
         signatureVisitor().visitFormalTypeParameter(name);
-
         generic = true;
+        super.writeFormalTypeParameter(name);
     }
 
+    @Override
     public void writeClassBound() {
         push(signatureVisitor().visitClassBound());
+        super.writeClassBound();
     }
 
+    @Override
     public void writeClassBoundEnd() {
         pop();
+        super.writeClassBoundEnd();
     }
 
+    @Override
     public void writeInterfaceBound() {
         push(signatureVisitor().visitInterfaceBound());
+        super.writeInterfaceBound();
     }
 
+    @Override
     public void writeInterfaceBoundEnd() {
         pop();
+        super.writeInterfaceBoundEnd();
     }
 
+    @Override
     public void writeParametersStart() {
-        // hacks
-        jvmCurrentType = null;
-        jvmCurrentTypeArrayLevel = 0;
+        super.writeParametersStart();
     }
 
+    @Override
     public void writeParameterType(JvmMethodParameterKind parameterKind) {
         // This magic mimics the behavior of javac that enum constructor have these synthetic parameters in erased signature, but doesn't
         // have them in generic signature. IDEA, javac and their friends rely on this behavior.
@@ -213,67 +196,60 @@ public class BothSignatureWriter {
         else {
             push(signatureVisitor().visitParameterType());
         }
-
-        this.currentParameterKind = parameterKind;
+        super.writeParameterType(parameterKind);
     }
 
+    @Override
     public void writeParameterTypeEnd() {
         pop();
-
-        kotlinParameterTypes.add(new JvmMethodParameterSignature(jvmCurrentType, currentParameterKind));
-        currentSignatureSize += jvmCurrentType.getSize();
-
-        currentParameterKind = null;
-        jvmCurrentType = null;
-        jvmCurrentTypeArrayLevel = 0;
+        super.writeParameterTypeEnd();
     }
 
+    @Override
     public void writeReturnType() {
         push(signatureVisitor().visitReturnType());
+        super.writeReturnType();
     }
 
+    @Override
     public void writeReturnTypeEnd() {
         pop();
-
-        jvmReturnType = jvmCurrentType;
-        jvmCurrentType = null;
-        jvmCurrentTypeArrayLevel = 0;
+        super.writeReturnTypeEnd();
     }
 
+    @Override
     public void writeSuperclass() {
         push(signatureVisitor().visitSuperclass());
+        super.writeSuperclass();
     }
 
+    @Override
     public void writeSuperclassEnd() {
         pop();
+        super.writeSuperclassEnd();
     }
 
+    @Override
     public void writeInterface() {
         push(signatureVisitor().visitInterface());
+        super.writeInterface();
     }
 
+    @Override
     public void writeInterfaceEnd() {
         pop();
+        super.writeInterfaceEnd();
     }
 
-
+    @Override
     @Nullable
     public String makeJavaGenericSignature() {
         return generic ? signatureWriter.toString() : null;
     }
 
-    @NotNull
-    public JvmMethodSignature makeJvmMethodSignature(@NotNull String name, boolean skipGenericSignature) {
-        List<Type> types = new ArrayList<Type>(kotlinParameterTypes.size());
-        for (JvmMethodParameterSignature parameter : kotlinParameterTypes) {
-            types.add(parameter.getAsmType());
-        }
-        Method asmMethod = new Method(name, jvmReturnType, types.toArray(new Type[types.size()]));
-        return new JvmMethodSignature(asmMethod, !skipGenericSignature ? makeJavaGenericSignature() : null, kotlinParameterTypes);
-    }
-
-    public int getCurrentSignatureSize() {
-        return currentSignatureSize;
+    @Override
+    public boolean skipGenericSignature() {
+        return false;
     }
 
     @Override

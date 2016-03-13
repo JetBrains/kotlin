@@ -1,2 +1,2 @@
 <!-- renderCollectionOfTypes1 -->
-Expected 2 parameters of types kotlin.collections.List<kotlin.Int>, java.util.ArrayList<kotlin.String>
+Expected 2 parameters of types List<Int>, ArrayList<String>

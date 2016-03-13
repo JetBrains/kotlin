@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.junit.Assert
@@ -80,8 +81,7 @@ private fun testLightClass(project: Project, testDataPath: String, normalize: (S
                         .replace("java.lang.String s)", "java.lang.String p)")
                         .replace("java.lang.String s1", "java.lang.String p1")
                         .replace("java.lang.String s2", "java.lang.String p2")
-                        .removeLinesStartingWith("@kotlin.jvm.internal.")
-                        .removeLinesStartingWith("@kotlin.Metadata")
+                        .removeLinesStartingWith("@" + JvmAnnotationNames.METADATA_FQ_NAME.asString())
                         .run(normalize)
             }
     )

@@ -1,3 +1,11 @@
+// FILE: JavaInterface.java
+
+interface JavaInterface {
+    void foo(Runnable r);
+}
+
+// FILE: 1.kt
+
 class Impl: JavaInterface {
     override fun foo(r: Runnable?) {
         r?.run()

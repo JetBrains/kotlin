@@ -1,2 +1,2 @@
 <!-- expectedNothingDueToProjections1 -->
-Out-projected type 'kotlin.collections.MutableCollection<out kotlin.CharSequence>' prohibits the use of 'public abstract fun add(element: E): kotlin.Boolean defined in kotlin.collections.MutableCollection'
+Out-projected type 'MutableCollection<out CharSequence>' prohibits the use of 'public abstract fun add(element: E): Boolean defined in kotlin.collections.MutableCollection'

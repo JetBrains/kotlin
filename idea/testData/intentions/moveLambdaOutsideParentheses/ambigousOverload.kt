@@ -1,5 +1,5 @@
 // IS_AVAILABLE: true
-// ERROR: None of the following functions can be called with the arguments supplied: <br>public fun bar(a: kotlin.Int = ..., f: (kotlin.Int) -> kotlin.Int): kotlin.Unit defined in root package<br>public fun bar(a: kotlin.Int, b: kotlin.Int, f: (kotlin.Int) -> kotlin.Int): kotlin.Unit defined in root package
+// ERROR: None of the following functions can be called with the arguments supplied: <br>public fun bar(a: Int = ..., f: (Int) -> Int): Unit defined in root package<br>public fun bar(a: Int, b: Int, f: (Int) -> Int): Unit defined in root package
 // ERROR: Unresolved reference: it
 // SKIP_ERRORS_AFTER
 

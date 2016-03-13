@@ -1,0 +1,14 @@
+// "Implement abstract class" "true"
+// SHOULD_BE_AVAILABLE_AFTER_EXECUTION
+
+class Container {
+    inner abstract class Base {
+        abstract fun foo(): String
+    }
+
+    inner class BaseImpl : Base() {
+        override fun foo(): String {
+            throw UnsupportedOperationException()
+        }
+    }
+}

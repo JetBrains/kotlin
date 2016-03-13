@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,15 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.tests.di.createContainerForTests
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
-abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
-
+abstract class AbstractConstraintSystemTest : KotlinTestWithEnvironment() {
     private var _typeResolver: TypeResolver? = null
     private val typeResolver: TypeResolver
         get() = _typeResolver!!
@@ -58,17 +57,16 @@ abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
     override fun tearDown() {
         _typeResolver = null
         _testDeclarations = null
-        super<KotlinLiteFixture>.tearDown()
+        super.tearDown()
     }
 
-    override fun getTestDataPath(): String {
-        return super.getTestDataPath() + "/constraintSystem/"
-    }
+    private val testDataPath: String
+        get() = KotlinTestUtils.getTestDataPathBase() + "/constraintSystem/"
 
     private fun analyzeDeclarations(): ConstraintSystemTestData {
         val fileName = "declarations.kt"
 
-        val psiFile = createPsiFile(null, fileName, loadFile(fileName))!!
+        val psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(testDataPath, fileName), project)
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
         return ConstraintSystemTestData(bindingContext, project, typeResolver)
     }
@@ -110,7 +108,7 @@ abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
         val system = builder.build()
 
-        val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(system)
+        val resultingStatus = Renderers.renderConstraintSystem(system, shortTypeBounds = true)
 
         val resultingSubstitutor = system.resultingSubstitutor
         val result = typeParameterDescriptors.map {

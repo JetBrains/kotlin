@@ -1,9 +1,9 @@
 // ERROR: 'return' is not allowed here
-// ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Unit was expected
+// ERROR: Type mismatch: inferred type is String but Unit was expected
 // ERROR: 'return' is not allowed here
-// ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Unit was expected
+// ERROR: Type mismatch: inferred type is String but Unit was expected
 // ERROR: 'return' is not allowed here
-// ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Unit was expected
+// ERROR: Type mismatch: inferred type is String but Unit was expected
 class Java8Class {
     fun foo0(r: Function0<String>) {
     }

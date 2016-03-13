@@ -51,8 +51,6 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurator {
-    private static final String[] KOTLIN_VERSIONS = {KotlinVersion.VERSION};
-
     public static final String NAME = "maven";
 
     private static final String GROUP_ID = "org.jetbrains.kotlin";
@@ -112,7 +110,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
     @Override
     public void configure(@NotNull Project project, Collection<Module> excludeModules) {
         ConfigureDialogWithModulesAndVersion dialog =
-                new ConfigureDialogWithModulesAndVersion(project, this, KOTLIN_VERSIONS, excludeModules);
+                new ConfigureDialogWithModulesAndVersion(project, this, excludeModules);
 
         dialog.show();
         if (!dialog.isOK()) return;

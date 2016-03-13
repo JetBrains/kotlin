@@ -1,4 +1,4 @@
-'internal open val member: kotlin.Int defined in test.ClassBB1' has no access to 'internal abstract val member: kotlin.Int defined in test.ClassB1', so it cannot override it at line 14, column 14
+'internal open val member: Int defined in test.ClassBB1' has no access to 'internal abstract val member: Int defined in test.ClassB1', so it cannot override it at line 14, column 14
 'public' subclass exposes its 'internal' supertype InternalClass1 at line 8, column 36
 'public' subclass exposes its 'internal' supertype InternalClass2 at line 18, column 36
 'public' subclass exposes its 'internal' supertype InternalClass2 at line 19, column 15

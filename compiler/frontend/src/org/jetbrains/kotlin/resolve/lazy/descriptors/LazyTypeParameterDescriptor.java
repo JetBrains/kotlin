@@ -52,22 +52,16 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
                 typeParameter.getVariance(),
                 typeParameter.hasModifier(KtTokens.REIFIED_KEYWORD),
                 index,
-                KotlinSourceElementKt.toSourceElement(typeParameter)
-        );
+                KotlinSourceElementKt.toSourceElement(typeParameter),
+                c.getSupertypeLoopChecker());
         this.c = c;
         this.typeParameter = typeParameter;
 
         this.c.getTrace().record(BindingContext.TYPE_PARAMETER, typeParameter, this);
     }
 
-    @NotNull
     @Override
-    protected SupertypeLoopChecker getSupertypeLoopChecker() {
-        return c.getSupertypeLoopChecker();
-    }
-
-    @Override
-    protected void reportCycleError(@NotNull KotlinType type) {
+    protected void reportSupertypeLoopError(@NotNull KotlinType type) {
         for (KtTypeReference typeReference : getAllUpperBounds()) {
             if (resolveBoundType(typeReference).getConstructor().equals(type.getConstructor())) {
                 c.getTrace().report(Errors.CYCLIC_GENERIC_UPPER_BOUND.on(typeReference));

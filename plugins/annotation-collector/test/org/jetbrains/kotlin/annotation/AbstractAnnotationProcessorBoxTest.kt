@@ -21,20 +21,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 import java.io.StringWriter
-import java.io.Writer
-import org.junit.Assert.*
 
 abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
-
-    fun doTest(path: String) {
+    override fun doTest(path: String) {
         val testName = getTestName(true)
         val fileName = path + testName + ".kt"
         val supportInheritedAnnotations = testName.startsWith("inherited")
@@ -76,5 +71,4 @@ abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
 
         override val annotationFilterList = listOf<String>()
     }
-
 }

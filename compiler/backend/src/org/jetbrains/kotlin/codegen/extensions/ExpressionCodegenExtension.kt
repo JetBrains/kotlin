@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.extensions
 
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -31,7 +31,7 @@ interface ExpressionCodegenExtension {
             "org.jetbrains.kotlin.expressionCodegenExtension", ExpressionCodegenExtension::class.java)
 
     class Context(
-            val typeMapper: JetTypeMapper,
+            val typeMapper: KotlinTypeMapper,
             val v: InstructionAdapter
     )
 

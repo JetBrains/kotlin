@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD;
@@ -28,10 +28,10 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.canHaveOuter;
 
 public class ClassContext extends FieldOwnerContext<ClassDescriptor> {
-    private final JetTypeMapper typeMapper;
+    private final KotlinTypeMapper typeMapper;
 
     public ClassContext(
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull ClassDescriptor contextDescriptor,
             @NotNull OwnerKind contextKind,
             @Nullable CodegenContext parentContext,

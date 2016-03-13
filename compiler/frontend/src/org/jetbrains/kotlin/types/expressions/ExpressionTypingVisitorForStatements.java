@@ -261,7 +261,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             if (left instanceof KtArrayAccessExpression) {
                 ExpressionTypingContext contextForResolve = context.replaceScope(scope).replaceBindingTrace(TemporaryBindingTrace.create(
                         context.trace, "trace to resolve array set method for assignment", expression));
-                basic.resolveArrayAccessSetMethod((KtArrayAccessExpression) left, right, contextForResolve, context.trace);
+                basic.resolveImplicitArrayAccessSetMethod((KtArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
             rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
 

@@ -68,12 +68,12 @@ class LazyJavaPackageFragmentProvider(
                 return outerClassScope?.getContributedClassifier(javaClass.name, NoLookupLocation.FROM_JAVA_LOADER) as? ClassDescriptor
             }
 
-            val kotlinResult = c.resolveKotlinBinaryClass(c.components.kotlinClassFinder.findKotlinClass(javaClass))
-            if (kotlinResult is KotlinClassLookupResult.Found) return kotlinResult.descriptor
-
             if (fqName == null) return null
 
-            return getPackageFragment(fqName.parent())?.resolveTopLevelClass(javaClass)
+            val packageFragment = getPackageFragment(fqName.parent()) ?: return null
+            return packageFragment
+                           .getMemberScope()
+                           .findClassifierByJavaClass(javaClass, NoLookupLocation.FROM_JAVA_LOADER)
         }
     }
 }

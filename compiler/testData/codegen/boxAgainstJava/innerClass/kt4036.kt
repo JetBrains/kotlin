@@ -1,5 +1,17 @@
+// FILE: Foo.java
+
+public class Foo {
+    public class Inner1$class {
+    }
+
+    public class Inner2$class {
+    }
+}
+
+// FILE: 1.kt
+
 fun box(): String {
-    kt4036().`Inner1$class`()
-    kt4036().`Inner2$class`()
+    Foo().`Inner1$class`()
+    Foo().`Inner2$class`()
     return "OK"
 }

@@ -56,28 +56,6 @@ public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeC
         };
     }
 
-    @NotNull
-    public static TypeConstructorImpl createForTypeParameter(
-            @NotNull TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull Annotations annotations,
-            boolean isFinal,
-            @NotNull String debugName,
-            @NotNull List<? extends TypeParameterDescriptor> parameters,
-            @NotNull Collection<KotlinType> supertypes
-    ) {
-        return new TypeConstructorImpl(typeParameterDescriptor, annotations, isFinal, debugName, parameters, supertypes) {
-            @Override
-            public int hashCode() {
-                return System.identityHashCode(this);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                return this == obj;
-            }
-        };
-    }
-
     private final List<TypeParameterDescriptor> parameters;
     private final Collection<KotlinType> supertypes;
     private final String debugName;

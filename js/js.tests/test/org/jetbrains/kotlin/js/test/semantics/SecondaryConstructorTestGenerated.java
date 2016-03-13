@@ -55,9 +55,33 @@ public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstruc
         doTest(fileName);
     }
 
+    @TestMetadata("withGenerics.kt")
+    public void ignoredWithGenerics() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withGenerics.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("withNonLocalReturn.kt")
     public void ignoredWithNonLocalReturn() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withNonLocalReturn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("withPrimary.kt")
+    public void ignoredWithPrimary() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withPrimary.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("withVarargs.kt")
+    public void ignoredWithVarargs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withVarargs.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("withoutPrimary.kt")
+    public void ignoredWithoutPrimary() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withoutPrimary.kt");
         doTest(fileName);
     }
 

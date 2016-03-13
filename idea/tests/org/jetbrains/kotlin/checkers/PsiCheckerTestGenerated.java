@@ -175,6 +175,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("JvmStaticUsagesRuntime.kt")
+        public void testJvmStaticUsagesRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/JvmStaticUsagesRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LocalObjects.kt")
         public void testLocalObjects() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/LocalObjects.kt");
@@ -232,12 +238,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PackageQualified.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("PlatformStaticUsagesRuntime.kt")
-        public void testPlatformStaticUsagesRuntime() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PlatformStaticUsagesRuntime.kt");
             doTest(fileName);
         }
 
@@ -472,6 +472,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DescructuringDeclarationInForLoop.kt")
+        public void testDescructuringDeclarationInForLoop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DescructuringDeclarationInForLoop.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DoubleDefine.kt")
         public void testDoubleDefine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/DoubleDefine.kt");
@@ -493,6 +499,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("FunctionLiteralInsideAnnotation.kt")
         public void testFunctionLiteralInsideAnnotation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunctionLiteralInsideAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionTypes.kt")
+        public void testFunctionTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunctionTypes.kt");
             doTest(fileName);
         }
 
@@ -727,6 +739,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         public static class FunctionAndProperty extends AbstractPsiCheckerTest {
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ambiguous.kt")
+            public void testAmbiguous() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/ambiguous.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("class.kt")

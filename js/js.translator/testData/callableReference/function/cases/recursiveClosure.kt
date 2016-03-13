@@ -1,4 +1,4 @@
-// This test was adapted from compiler/testData/codegen/boxWithStdlib/callableReference/function/local/.
+// This test was adapted from compiler/testData/codegen/box/callableReference/function/local/.
 package foo
 
 fun foo(until: Int): String {

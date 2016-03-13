@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import org.jetbrains.kotlin.incremental.testingUtils.Modification
+
 open class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
     fun testRenameModule() {
         doTest("jps-plugin/testData/incremental/custom/renameModule/")

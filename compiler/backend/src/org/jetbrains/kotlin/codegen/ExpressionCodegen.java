@@ -43,9 +43,10 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
@@ -79,7 +80,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -92,6 +92,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
@@ -110,7 +111,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> implements LocalLookup {
     private final GenerationState state;
-    final JetTypeMapper typeMapper;
+    final KotlinTypeMapper typeMapper;
     private final BindingContext bindingContext;
 
     public final InstructionAdapter v;
@@ -1485,8 +1486,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 assert constructors.size() == 1 : "Unexpected number of constructors for class: " + classDescriptor + " " + constructors;
                 ConstructorDescriptor constructorDescriptor = CollectionsKt.single(constructors);
 
-                JvmMethodSignature constructor = typeMapper.mapSignature(SamCodegenUtil.resolveSamAdapter(constructorDescriptor));
-                v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor(), false);
+                Method constructor = typeMapper.mapAsmMethod(SamCodegenUtil.resolveSamAdapter(constructorDescriptor));
+                v.invokespecial(type.getInternalName(), "<init>", constructor.getDescriptor(), false);
                 return Unit.INSTANCE;
             }
         });
@@ -1770,6 +1771,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             //if it used as argument of infix call (in this case lineNumber for simple inlineCall also would be reset)
             myLastLineNumber = -1;
         }
+    }
+
+    public int getLastLineNumber() {
+        return myLastLineNumber;
     }
 
     private void doFinallyOnReturn(@NotNull Label afterReturnLabel) {
@@ -2253,7 +2258,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
         }
         else {
-            fieldName = JetTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
+            fieldName = KotlinTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
         }
 
         return StackValue.property(propertyDescriptor, backingFieldOwner,
@@ -2520,7 +2525,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (typeParameterAndReificationArgument == null) {
                 KotlinType approximatedType = CapturedTypeApproximationKt.approximateCapturedTypes(entry.getValue()).getUpper();
                 // type is not generic
-                BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
+                JvmSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
                 Type asmType = typeMapper.mapTypeParameter(approximatedType, signatureWriter);
 
                 mappings.addParameterMappingToType(
@@ -2838,12 +2843,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public static StackValue generateClassLiteralReference(@NotNull JetTypeMapper typeMapper, @NotNull KotlinType type) {
+    public static StackValue generateClassLiteralReference(@NotNull KotlinTypeMapper typeMapper, @NotNull KotlinType type) {
         return generateClassLiteralReference(typeMapper, type, null);
     }
 
     @NotNull
-    private static StackValue generateClassLiteralReference(@NotNull final JetTypeMapper typeMapper, @NotNull final KotlinType type, @Nullable final ExpressionCodegen codegen) {
+    private static StackValue generateClassLiteralReference(@NotNull final KotlinTypeMapper typeMapper, @NotNull final KotlinType type, @Nullable final ExpressionCodegen codegen) {
         return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -3318,26 +3323,31 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.operation(asmBaseType, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                StackValue value = gen(expression.getBaseExpression());
-                value = StackValue.complexWriteReadReceiver(value);
+                StackValue value = StackValue.complexWriteReadReceiver(gen(expression.getBaseExpression()));
 
-                Type type = expressionType(expression.getBaseExpression());
-                value.put(type, v); // old value
+                value.put(asmBaseType, v);
+                AsmUtil.dup(v, asmBaseType);
 
-                value.dup(v, true);
+                StackValue previousValue = StackValue.local(myFrameMap.enterTemp(asmBaseType), asmBaseType);
+                previousValue.store(StackValue.onStack(asmBaseType), v);
 
                 Type storeType;
                 if (isPrimitiveNumberClassDescriptor && AsmUtil.isPrimitive(asmBaseType)) {
-                    genIncrement(asmResultType, increment, v);
-                    storeType = type;
+                    genIncrement(asmResultType, asmBaseType, increment, v);
+                    storeType = asmBaseType;
                 }
                 else {
-                    StackValue result = invokeFunction(resolvedCall, StackValue.onStack(type));
+                    StackValue result = invokeFunction(resolvedCall, StackValue.onStack(asmBaseType));
                     result.put(result.type, v);
                     storeType = result.type;
                 }
 
                 value.store(StackValue.onStack(storeType), v, true);
+
+                previousValue.put(asmBaseType, v);
+
+                myFrameMap.leaveTemp(asmBaseType);
+
                 return Unit.INSTANCE;
             }
         });

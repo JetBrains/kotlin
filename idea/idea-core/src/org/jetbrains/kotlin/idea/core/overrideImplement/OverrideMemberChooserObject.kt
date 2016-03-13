@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
     renderDefaultValues = false
     modifiers = setOf(DescriptorRendererModifier.OVERRIDE)
     withDefinedIn = false
-    nameShortness = NameShortness.SOURCE_CODE_QUALIFIED
+    classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED
     overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
     unitReturnType = false
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES

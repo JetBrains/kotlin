@@ -40,7 +40,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 Deserialization.modality(Flags.MODALITY.get(flags)),
                 Deserialization.visibility(Flags.VISIBILITY.get(flags)),
                 Flags.IS_VAR.get(flags),
-                c.nameResolver.getName(proto.getName()),
+                c.nameResolver.getName(proto.name),
                 Deserialization.memberKind(Flags.MEMBER_KIND.get(flags)),
                 Flags.IS_LATEINIT.get(flags),
                 Flags.IS_CONST.get(flags),
@@ -75,16 +75,15 @@ class MemberDeserializer(private val c: DeserializationContext) {
                         getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
                         Deserialization.modality(Flags.MODALITY.get(getterFlags)),
                         Deserialization.visibility(Flags.VISIBILITY.get(getterFlags)),
-                        /* hasBody = */ isNotDefault,
                         /* isDefault = */ !isNotDefault,
                         /* isExternal = */ isExternal,
-                        property.getKind(), null, SourceElement.NO_SOURCE
+                        property.kind, null, SourceElement.NO_SOURCE
                 )
             }
             else {
                 DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
             }
-            getter.initialize(property.getReturnType())
+            getter.initialize(property.returnType)
             getter
         }
         else {
@@ -101,10 +100,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
                         getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
                         Deserialization.modality(Flags.MODALITY.get(setterFlags)),
                         Deserialization.visibility(Flags.VISIBILITY.get(setterFlags)),
-                        /* hasBody = */ isNotDefault,
                         /* isDefault = */ !isNotDefault,
                         /* isExternal = */ isExternal,
-                        property.getKind(), null, SourceElement.NO_SOURCE
+                        property.kind, null, SourceElement.NO_SOURCE
                 )
                 val setterLocal = local.childContext(setter, listOf())
                 val valueParameters = setterLocal.memberDeserializer.valueParameters(

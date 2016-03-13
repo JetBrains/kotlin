@@ -18,26 +18,23 @@ package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils;
 import org.jetbrains.kotlin.load.java.descriptors.*;
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver;
-import org.jetbrains.kotlin.load.java.structure.*;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.types.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 
 public class SingleAbstractMethodUtils {
@@ -95,19 +92,23 @@ public class SingleAbstractMethodUtils {
         return DescriptorUtilsKt.getBuiltIns(function).getFunctionType(Annotations.Companion.getEMPTY(), null, parameterTypes, returnType);
     }
 
-    private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
+    @Nullable
+    public static FunctionDescriptor getSingleAbstractMethodOrNull(@NotNull ClassDescriptor klass) {
         if (klass.getKind() != ClassKind.INTERFACE) {
-            return false;
+            return null;
         }
 
         List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass.getDefaultType());
         if (abstractMembers.size() == 1) {
             CallableMemberDescriptor member = abstractMembers.get(0);
             if (member instanceof SimpleFunctionDescriptor) {
-                return member.getTypeParameters().isEmpty();
+                return member.getTypeParameters().isEmpty()
+                       ? (FunctionDescriptor) member
+                       : null;
             }
         }
-        return false;
+
+        return null;
     }
 
     @NotNull
@@ -115,7 +116,7 @@ public class SingleAbstractMethodUtils {
             @NotNull DeclarationDescriptor owner,
             @NotNull JavaClassDescriptor samInterface
     ) {
-        assert isSamInterface(samInterface) : samInterface;
+        assert getSingleAbstractMethodOrNull(samInterface) != null : samInterface;
 
         SamConstructorDescriptor result = new SamConstructorDescriptor(owner, samInterface);
 
@@ -282,29 +283,6 @@ public class SingleAbstractMethodUtils {
         return new TypeParameters(typeParameters, typeParametersSubstitutor);
     }
 
-    // Returns null if not SAM interface
-    @Nullable
-    public static JavaMethod getSamInterfaceMethod(@NotNull JavaClass javaClass) {
-        FqName fqName = javaClass.getFqName();
-        if (fqName == null || fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) {
-            return null;
-        }
-        if (!javaClass.isInterface() || javaClass.isAnnotationType()) {
-            return null;
-        }
-
-        return findOnlyAbstractMethod(javaClass);
-    }
-
-    @Nullable
-    private static JavaMethod findOnlyAbstractMethod(@NotNull JavaClass javaClass) {
-        OnlyAbstractMethodFinder finder = new OnlyAbstractMethodFinder();
-        if (finder.find(javaClass.getDefaultType())) {
-            return finder.getFoundMethod();
-        }
-        return null;
-    }
-
     private static class TypeParameters {
         public final List<TypeParameterDescriptor> descriptors;
         public final TypeSubstitutor substitutor;
@@ -323,88 +301,5 @@ public class SingleAbstractMethodUtils {
         );
     }
 
-    private static class OnlyAbstractMethodFinder {
-        private static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
-        private JavaMethod foundMethod;
-        private JavaTypeSubstitutor foundClassSubstitutor;
-
-        private boolean find(@NotNull JavaClassifierType classifierType) {
-            JavaTypeSubstitutor classSubstitutor = classifierType.getSubstitutor();
-            JavaClassifier classifier = classifierType.getClassifier();
-            if (classifier == null) {
-                return false; // can't resolve class -> not a SAM interface
-            }
-            assert classifier instanceof JavaClass : "Classifier should be a class here: " + classifier;
-            JavaClass javaClass = (JavaClass) classifier;
-            if (OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
-                return true;
-            }
-            for (JavaMethod method : javaClass.getMethods()) {
-
-                //skip java 8 default methods
-                if (!method.isAbstract()) {
-                    continue;
-                }
-
-                if (DescriptorResolverUtils.isObjectMethod(method)) { // e.g., ignore toString() declared in interface
-                    continue;
-                }
-                if (!method.getTypeParameters().isEmpty()) {
-                    return false; // if interface has generic methods, it is not a SAM interface
-                }
-
-                if (foundMethod == null) {
-                    foundMethod = method;
-                    foundClassSubstitutor = classSubstitutor;
-                    continue;
-                }
-
-                if (!areSignaturesErasureEqual(method, classSubstitutor, foundMethod, foundClassSubstitutor)) {
-                    return false; // different signatures
-                }
-            }
-
-            for (JavaClassifierType t : classifierType.getSupertypes()) {
-                if (!find(t)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /**
-         * @see com.intellij.psi.util.MethodSignatureUtil#areSignaturesErasureEqual
-         */
-        private static boolean areSignaturesErasureEqual(
-                @NotNull JavaMethod method1,
-                @NotNull JavaTypeSubstitutor substitutor1,
-                @NotNull JavaMethod method2,
-                @NotNull JavaTypeSubstitutor substitutor2
-        ) {
-            if (!method1.getName().equals(method2.getName())) return false;
-
-            Collection<JavaValueParameter> parameters1 = method1.getValueParameters();
-            Collection<JavaValueParameter> parameters2 = method2.getValueParameters();
-            if (parameters1.size() != parameters2.size()) return false;
-
-            for (Iterator<JavaValueParameter> it1 = parameters1.iterator(), it2 = parameters2.iterator(); it1.hasNext(); ) {
-                JavaValueParameter param1 = it1.next();
-                JavaValueParameter param2 = it2.next();
-                if (param1.isVararg() != param2.isVararg()) return false;
-
-                JavaType type1 = JavaResolverUtils.erasure(substitutor1.substitute(param1.getType()), substitutor1);
-                JavaType type2 = JavaResolverUtils.erasure(substitutor2.substitute(param2.getType()), substitutor2);
-                if (!(type1 == null ? type2 == null : type1.equals(type2))) return false;
-            }
-
-            return true;
-        }
-
-        @Nullable
-        private JavaMethod getFoundMethod() {
-            return foundMethod;
-        }
-    }
 }

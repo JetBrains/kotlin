@@ -113,6 +113,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inlineJavaStaticFields.kt")
+    public void testInlineJavaStaticFields() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineJavaStaticFields.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("intConstantNotNull.kt")
     public void testIntConstantNotNull() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/intConstantNotNull.kt");
@@ -158,6 +164,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("javaExtensionPropertyIntrinsic.kt")
     public void testJavaExtensionPropertyIntrinsic() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/javaExtensionPropertyIntrinsic.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("javaStatics.kt")
+    public void testJavaStatics() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/javaStatics.kt");
         doTest(fileName);
     }
 
@@ -248,6 +260,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("noWrapperForMethodReturningPrimitive.kt")
     public void testNoWrapperForMethodReturningPrimitive() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/noWrapperForMethodReturningPrimitive.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("partMembersCall.kt")
+    public void testPartMembersCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/partMembersCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("partMembersInline.kt")
+    public void testPartMembersInline() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/partMembersInline.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("preEvaluateInlineJavaStaticFields.kt")
+    public void testPreEvaluateInlineJavaStaticFields() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/preEvaluateInlineJavaStaticFields.kt");
         doTest(fileName);
     }
 
@@ -379,6 +409,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("fold.kt")
         public void testFold() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/fold.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassInAnnotation.kt")
+        public void testKClassInAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/kClassInAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kClassInAnnotationEscaping.kt")
+        public void testKClassInAnnotationEscaping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization/kClassInAnnotationEscaping.kt");
             doTest(fileName);
         }
 
@@ -1114,6 +1156,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("interpolation.kt")
         public void testInterpolation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/interpolation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonNullableStringPlus.kt")
+        public void testNonNullableStringPlus() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/nonNullableStringPlus.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableStringPlus.kt")
+        public void testNullableStringPlus() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/nullableStringPlus.kt");
             doTest(fileName);
         }
 

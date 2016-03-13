@@ -118,22 +118,4 @@ public class Slices {
             return new BasicWritableSlice<K, V>(rewritePolicy);
         }
     }
-
-    public static class SetSlice<K> extends BasicWritableSlice<K, Boolean> {
-
-        protected SetSlice(RewritePolicy rewritePolicy) {
-            this(rewritePolicy, false);
-        }
-
-        protected SetSlice(RewritePolicy rewritePolicy, boolean collective) {
-            super(rewritePolicy, collective);
-        }
-
-        @Override
-        public Boolean computeValue(SlicedMap map, K key, Boolean value, boolean valueNotFound) {
-            Boolean result = super.computeValue(map, key, value, valueNotFound);
-            return result != null ? result : false;
-        }
-    }
-
 }

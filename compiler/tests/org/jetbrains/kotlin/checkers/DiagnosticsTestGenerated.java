@@ -3585,6 +3585,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaJavaCycle.kt")
+            public void testJavaJavaCycle() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/javaJavaCycle.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaJavaNested.kt")
+            public void testJavaJavaNested() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/javaJavaNested.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaKotlinJavaCycle.kt")
             public void testJavaKotlinJavaCycle() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/javaKotlinJavaCycle.kt");
@@ -4493,6 +4505,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("ForLoopMissingLoopParameter.kt")
+                public void testForLoopMissingLoopParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopMissingLoopParameter.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ForLoopWithExtensions.kt")
                 public void testForLoopWithExtensions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForLoopWithExtensions.kt");
@@ -5079,6 +5097,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("componentUsage.kt")
             public void testComponentUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/componentUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("deprecatedConstructor.kt")
+            public void testDeprecatedConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/deprecatedConstructor.kt");
                 doTest(fileName);
             }
 
@@ -10464,6 +10488,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/sam")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Sam extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInSam() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/sam"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("enhancedSamConstructor.kt")
+                public void testEnhancedSamConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/enhancedSamConstructor.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -11646,6 +11685,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("InconsistentGetSet.kt")
+            public void testInconsistentGetSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/InconsistentGetSet.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("IteratorAmbiguity.kt")
             public void testIteratorAmbiguity() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorsOverloading/IteratorAmbiguity.kt");
@@ -11689,6 +11734,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         public static class Overload extends AbstractDiagnosticsTest {
             public void testAllFilesPresentInOverload() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/overload"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ConflictingOlverloadsGenericFunctions.kt")
+            public void testConflictingOlverloadsGenericFunctions() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/ConflictingOlverloadsGenericFunctions.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("ConflictingOverloadsFunsDifferentReturnInClass.kt")
@@ -16452,6 +16503,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("propertyToNotNull.kt")
             public void testPropertyToNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/propertyToNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeAs.kt")
+            public void testSafeAs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safeAs.kt");
                 doTest(fileName);
             }
 

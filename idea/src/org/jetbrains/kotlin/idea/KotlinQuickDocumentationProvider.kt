@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.NameShortness
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -84,7 +84,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
         private val LOG = Logger.getInstance(KotlinQuickDocumentationProvider::class.java)
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
-            nameShortness = NameShortness.SHORT
+            classifierNamePolicy = ClassifierNamePolicy.SHORT
             renderCompanionObjectName = true
         }
 

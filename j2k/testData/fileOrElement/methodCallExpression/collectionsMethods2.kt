@@ -1,5 +1,5 @@
-// ERROR: Null can not be a value of a non-null type kotlin.String
-// ERROR: Null can not be a value of a non-null type kotlin.String
+// ERROR: Null can not be a value of a non-null type String
+// ERROR: Null can not be a value of a non-null type String
 import java.util.*
 
 internal class A {

@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.psi.injection
 
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.junit.Assert.*
-import com.intellij.openapi.util.TextRange
-import java.util.HashMap
-import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import java.util.*
 
-class StringInjectionHostTest: KotlinLiteFixture() {
+class StringInjectionHostTest : KotlinTestWithEnvironment() {
     fun testRegular() {
         with (quoted("")) {
             checkInjection("", mapOf(0 to 1))
@@ -125,8 +124,9 @@ class StringInjectionHostTest: KotlinLiteFixture() {
         assertFalse(createLiteralTextEscaper().isOneLine)
     }
 
-    //todo[nik] make private when KT-6382 is fixed
-    fun KtStringTemplateExpression.checkInjection(decoded: String, targetToSourceOffsets: Map<Int,Int>, rangeInHost: TextRange? = null) {
+    private fun KtStringTemplateExpression.checkInjection(
+            decoded: String, targetToSourceOffsets: Map<Int, Int>, rangeInHost: TextRange? = null
+    ) {
         assertTrue(isValidHost)
         for (prefix in listOf("", "prefix")) {
             val escaper = createLiteralTextEscaper()

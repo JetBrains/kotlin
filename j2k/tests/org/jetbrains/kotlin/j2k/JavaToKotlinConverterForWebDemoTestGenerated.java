@@ -43,6 +43,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/annotations"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("annotationArrayArgument.java")
+        public void testAnnotationArrayArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationArrayArgument.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("annotationDefault.java")
+        public void testAnnotationDefault() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationDefault.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("annotationInterface1.java")
         public void testAnnotationInterface1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface1.java");
@@ -526,6 +538,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("orWithNewLine.java")
+        public void testOrWithNewLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/orWithNewLine.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("plus.java")
         public void testPlus() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/plus.java");
@@ -959,6 +977,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class Comments extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInComments() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/comments"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("commentInsideCall.java")
+        public void testCommentInsideCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/commentInsideCall.java");
+            doTest(fileName);
         }
 
         @TestMetadata("comments.java")
@@ -3469,6 +3493,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("nullableField.java")
+        public void testNullableField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/nullableField.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("NullableIntNoCrash.java")
         public void testNullableIntNoCrash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/NullableIntNoCrash.java");
@@ -3817,6 +3847,57 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("projections.java")
         public void testProjections() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/projections/projections.java");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("j2k/testData/fileOrElement/protected")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Protected extends AbstractJavaToKotlinConverterForWebDemoTest {
+        public void testAllFilesPresentInProtected() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/protected"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("constructorProperty.java")
+        public void testConstructorProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/constructorProperty.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inheritorsSamePackage.java")
+        public void testInheritorsSamePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/inheritorsSamePackage.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlyProtectedConstructor.java")
+        public void testOnlyProtectedConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/onlyProtectedConstructor.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("protectedInSamePackage.java")
+        public void testProtectedInSamePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/protectedInSamePackage.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("severalInheritors.java")
+        public void testSeveralInheritors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/severalInheritors.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superInSamePackage.java")
+        public void testSuperInSamePackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/superInSamePackage.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usages.java")
+        public void testUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/protected/usages.java");
             doTest(fileName);
         }
     }

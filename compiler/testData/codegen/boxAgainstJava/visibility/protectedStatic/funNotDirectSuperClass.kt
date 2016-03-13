@@ -1,12 +1,21 @@
-open class A : funNotDirectSuperClass() {}
+// FILE: J.java
 
-class Derived(): A() {
+public class J {
+    protected static String protectedFun() {
+        return "OK";
+    }
+}
+
+// FILE: 1.kt
+
+open class A : J() {}
+
+class Derived : A() {
     fun test(): String {
-        return funNotDirectSuperClass.protectedFun()!!
+        return J.protectedFun()!!
     }
 }
 
 fun box(): String {
-   return Derived().test()
+    return Derived().test()
 }
-

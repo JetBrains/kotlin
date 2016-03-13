@@ -122,15 +122,15 @@ abstract class IntentionBasedInspection<TElement : KtElement>(
             editor?.caretModel?.moveToOffset(startElement.textOffset)
             intention.applyTo(startElement as TElement, editor)
         }
-
-        private fun PsiElement.findExistingEditor(): Editor? {
-            val file = containingFile?.virtualFile ?: return null
-            val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
-
-            val editorFactory = EditorFactory.getInstance()
-
-            val editors = editorFactory.getEditors(document)
-            return if (editors.isEmpty()) null else editors[0]
-        }
     }
+}
+
+fun PsiElement.findExistingEditor(): Editor? {
+    val file = containingFile?.virtualFile ?: return null
+    val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
+
+    val editorFactory = EditorFactory.getInstance()
+
+    val editors = editorFactory.getEditors(document)
+    return if (editors.isEmpty()) null else editors[0]
 }

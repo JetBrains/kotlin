@@ -81,8 +81,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                                         && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
             val extension = annotations.any { annotation ->
-                val fqName = annotation.asSingleFqName()
-                fqName == KotlinBuiltIns.FQ_NAMES.extensionFunctionType || fqName == KotlinBuiltIns.FQ_NAMES.deprecatedExtensionAnnotation
+                annotation.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extensionFunctionType
             }
             createFunctionTypeStub(parent, type, extension)
             return

@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.lang.resolve.android.test
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
+import org.jetbrains.kotlin.test.TestJdkKind
 
 abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 
@@ -39,6 +38,7 @@ abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
         createAndroidAPIEnvironment(path)
         loadFileByFullPath(fileName)
         val expected = readExpectedOccurrences(fileName)
-        countAndCompareActualOccurrences(expected)
+        val actual = generateToText()
+        checkGeneratedTextAgainstExpectedOccurrences(actual, expected)
     }
 }

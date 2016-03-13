@@ -2,7 +2,6 @@ package templates
 
 import templates.Family.*
 
-
 fun elements(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
@@ -14,7 +13,7 @@ fun elements(): List<GenericFunction> {
         doc { f -> "Returns `true` if [element] is found in the ${f.collection}." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Boolean")
-        body(Iterables) {
+        body(Iterables) { f ->
             """
                 if (this is Collection)
                     return contains(element)
@@ -327,12 +326,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> {
-                    if (isEmpty())
-                        throw NoSuchElementException("Collection is empty.")
-                    else
-                        return this[0]
-                }
+                is List -> return this.first()
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -342,10 +336,10 @@ fun elements(): List<GenericFunction> {
             }
             """
         }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { f ->
             """
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty.")
+                throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
             return this[0]
             """
         }
@@ -401,10 +395,10 @@ fun elements(): List<GenericFunction> {
         doc { f -> """Returns the first ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
         returns("T")
-        body {
+        body { f ->
             """
             for (element in this) if (predicate(element)) return element
-            throw NoSuchElementException("No element matching predicate was found.")
+            throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
             """
         }
     }
@@ -438,12 +432,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> {
-                    if (isEmpty())
-                        throw NoSuchElementException("Collection is empty.")
-                    else
-                        return this[this.lastIndex]
-                }
+                is List -> return this.last()
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -467,10 +456,10 @@ fun elements(): List<GenericFunction> {
             return last
             """
         }
-        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { f ->
             """
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty.")
+                throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
             return this[lastIndex]
             """
         }
@@ -541,18 +530,18 @@ fun elements(): List<GenericFunction> {
                     found = true
                 }
             }
-            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+            if (!found) throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
             return last as T
             """
         }
 
-        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects, Lists) {
+        body(CharSequences, ArraysOfPrimitives, ArraysOfObjects, Lists) { f ->
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]
                 if (predicate(element)) return element
             }
-            throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+            throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
             """
         }
     }
@@ -605,11 +594,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> return when (size) {
-                    0 -> throw NoSuchElementException("Collection is empty.")
-                    1 -> this[0]
-                    else -> throw IllegalArgumentException("Collection has more than one element.")
-                }
+                is List -> return this.single()
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -633,21 +618,12 @@ fun elements(): List<GenericFunction> {
             return single
             """
         }
-        body(CharSequences) {
+        body(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives) { f ->
             """
-            return when (length) {
-                0 -> throw NoSuchElementException("Collection is empty.")
+            return when (${f.code.size}) {
+                0 -> throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
                 1 -> this[0]
-                else -> throw IllegalArgumentException("Collection has more than one element.")
-            }
-            """
-        }
-        body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            return when (size) {
-                0 -> throw NoSuchElementException("Collection is empty.")
-                1 -> this[0]
-                else -> throw IllegalArgumentException("Collection has more than one element.")
+                else -> throw IllegalArgumentException("${f.doc.collection.capitalize()} has more than one element.")
             }
             """
         }
@@ -700,18 +676,18 @@ fun elements(): List<GenericFunction> {
         include(CharSequences)
         doc { f -> "Returns the single ${f.element} matching the given [predicate], or throws exception if there is no or more than one matching ${f.element}." }
         returns("T")
-        body {
+        body { f ->
             """
             var single: T? = null
             var found = false
             for (element in this) {
                 if (predicate(element)) {
-                    if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
+                    if (found) throw IllegalArgumentException("${f.doc.collection.capitalize()} contains more than one matching element.")
                     single = element
                     found = true
                 }
             }
-            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
+            if (!found) throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the predicate.")
             return single as T
             """
         }

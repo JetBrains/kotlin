@@ -21,25 +21,27 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.SmartList
 
 class SupertypeLoopCheckerImpl : SupertypeLoopChecker {
     override fun findLoopsInSupertypesAndDisconnect(
             currentTypeConstructor: TypeConstructor,
-            superTypes: MutableCollection<KotlinType>,
+            superTypes: Collection<KotlinType>,
             neighbors: (TypeConstructor) -> Iterable<KotlinType>,
             reportLoop: (KotlinType) -> Unit
-    ) {
-
+    ): Collection<KotlinType> {
         val graph = DFS.Neighbors<TypeConstructor> { node -> neighbors(node).map { it.constructor } }
 
-        val iterator = superTypes.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (isReachable(item.constructor, currentTypeConstructor, graph)) {
-                iterator.remove()
-                reportLoop(item)
+        val superTypesToRemove = SmartList<KotlinType>()
+
+        for (superType in superTypes) {
+            if (isReachable(superType.constructor, currentTypeConstructor, graph)) {
+                superTypesToRemove.add(superType)
+                reportLoop(superType)
             }
         }
+
+        return if (superTypesToRemove.isEmpty()) superTypes else superTypes - superTypesToRemove
     }
 }
 

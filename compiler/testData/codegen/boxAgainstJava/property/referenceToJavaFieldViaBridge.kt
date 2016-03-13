@@ -1,8 +1,16 @@
+// FILE: test/D.java
 
-import test.referenceToJavaFieldViaBridge
+package test;
 
-class A : referenceToJavaFieldViaBridge() {
+public class D {
+    protected String field = "OK";
+}
 
+// FILE: 1.kt
+
+import test.D
+
+class A : D() {
     fun a(): String {
         return {field!!}()
     }

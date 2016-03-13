@@ -1,5 +1,5 @@
 // "Add 'kotlin.Any' as upper bound for E" "true"
-// ERROR: Type parameter bound for U in fun <T : kotlin.Any, U : kotlin.Any> foo(x: T, y: U): kotlin.Int<br> is not satisfied: inferred type F is not a subtype of kotlin.Any
+// ERROR: Type parameter bound for U in fun <T : Any, U : Any> foo(x: T, y: U): Int<br> is not satisfied: inferred type F is not a subtype of Any
 
 fun <T : Any, U: Any> foo(x: T, y: U) = 1
 

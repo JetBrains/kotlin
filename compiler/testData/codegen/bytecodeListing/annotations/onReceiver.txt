@@ -1,8 +1,8 @@
 @kotlin.Metadata
 public final class A {
     public method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method f(@Ann p0: java.lang.String): java.lang.String
-    public final @org.jetbrains.annotations.NotNull method getP(@Ann p0: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method f(@Ann @org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getP(@Ann @org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
 }
 
 @java.lang.annotation.Retention
@@ -11,6 +11,6 @@ public abstract class Ann
 
 @kotlin.Metadata
 public final class OnReceiverKt {
-    public final static @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann @org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method topLevelF(@Ann @org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
 }

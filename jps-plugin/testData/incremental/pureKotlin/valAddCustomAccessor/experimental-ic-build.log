@@ -20,4 +20,4 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Smart cast to 'kotlin.Int' is impossible, because 'a.x' is a property that has open or custom getter
+Smart cast to 'Int' is impossible, because 'a.x' is a property that has open or custom getter

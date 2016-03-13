@@ -18,11 +18,16 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import kotlin.reflect.KCallable
 
 internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl() {
@@ -36,7 +41,12 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
     internal val scope: MemberScope get() = descriptor().memberScope
 
     override val members: Collection<KCallable<*>>
-        get() = getMembers(scope, declaredOnly = false, nonExtensions = true, extensions = true).toList()
+        get() = getMembers(scope, declaredOnly = false, nonExtensions = true, extensions = true).filter { member ->
+            val callableDescriptor = member.descriptor as DeserializedCallableMemberDescriptor
+            val packageFragment = callableDescriptor.containingDeclaration as PackageFragmentDescriptor
+            val source = (packageFragment as? LazyJavaPackageFragment)?.source as? KotlinJvmBinaryPackageSourceElement
+            (source?.getContainingBinaryClass(callableDescriptor) as? ReflectKotlinClass)?.klass == jClass
+        }.toList()
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()

@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
-import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
@@ -30,22 +31,17 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
-
 public abstract class AbstractTypeParameterDescriptor extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
-    public static final List<KotlinType> FALLBACK_UPPER_BOUNDS_ON_RECURSION =
-            Collections.singletonList(ErrorUtils.createErrorType("Recursion while calculating upper bounds"));
-
     private final Variance variance;
     private final boolean reified;
     private final int index;
 
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
     private final NotNullLazyValue<KotlinType> defaultType;
-    private final NotNullLazyValue<List<KotlinType>> upperBounds;
 
     protected AbstractTypeParameterDescriptor(
             @NotNull final StorageManager storageManager,
@@ -55,7 +51,8 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
             @NotNull Variance variance,
             boolean isReified,
             int index,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            @NotNull final SupertypeLoopChecker supertypeLoopChecker
     ) {
         super(containingDeclaration, annotations, name, source);
         this.variance = variance;
@@ -65,7 +62,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         this.typeConstructor = storageManager.createLazyValue(new Function0<TypeConstructor>() {
             @Override
             public TypeConstructor invoke() {
-                return createTypeConstructor();
+                return new TypeParameterTypeConstructor(storageManager, supertypeLoopChecker);
             }
         });
         this.defaultType = storageManager.createLazyValue(new Function0<KotlinType>() {
@@ -85,62 +82,12 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 );
             }
         });
-        this.upperBounds = storageManager.createLazyValueWithPostCompute(
-                new Function0<List<KotlinType>>() {
-                    @Override
-                    public List<KotlinType> invoke() {
-                        return resolveUpperBounds();
-                    }
-                },
-                new Function1<Boolean, List<KotlinType>>() {
-                    @Override
-                    public List<KotlinType> invoke(Boolean aBoolean) {
-                        return FALLBACK_UPPER_BOUNDS_ON_RECURSION;
-                    }
-                },
-                new Function1<List<KotlinType>, Unit>() {
-                    @Override
-                    public Unit invoke(List<KotlinType> types) {
-                        getSupertypeLoopChecker().findLoopsInSupertypesAndDisconnect(
-                                getTypeConstructor(),
-                                types,
-                                new Function1<TypeConstructor, Iterable<? extends KotlinType>>() {
-                                    @Override
-                                    public Iterable<? extends KotlinType> invoke(TypeConstructor typeConstructor) {
-                                        if (typeConstructor.getDeclarationDescriptor() instanceof AbstractTypeParameterDescriptor) {
-                                            return ((AbstractTypeParameterDescriptor) typeConstructor.getDeclarationDescriptor())
-                                                    .resolveUpperBounds();
-                                        }
-                                        return typeConstructor.getSupertypes();
-                                    }
-                                },
-                                new Function1<KotlinType, Unit>() {
-                                    @Override
-                                    public Unit invoke(KotlinType type) {
-                                        reportCycleError(type);
-                                        return Unit.INSTANCE;
-                                    }
-                                }
-                        );
-
-                        if (types.isEmpty()) {
-                            types.add(ErrorUtils.createErrorType("Cyclic upper bounds"));
-                        }
-
-                        return null;
-                    }
-                });
     }
 
-    @NotNull
-    protected abstract SupertypeLoopChecker getSupertypeLoopChecker();
-    protected abstract void reportCycleError(@NotNull KotlinType type);
+    protected abstract void reportSupertypeLoopError(@NotNull KotlinType type);
 
     @NotNull
     protected abstract List<KotlinType> resolveUpperBounds();
-
-    @NotNull
-    protected abstract TypeConstructor createTypeConstructor();
 
     @NotNull
     @Override
@@ -166,12 +113,12 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     @NotNull
     @Override
     public List<KotlinType> getUpperBounds() {
-        return upperBounds.invoke();
+        return ((TypeParameterTypeConstructor) getTypeConstructor()).getSupertypes();
     }
 
     @NotNull
     @Override
-    public TypeConstructor getTypeConstructor() {
+    public final TypeConstructor getTypeConstructor() {
         return typeConstructor.invoke();
     }
 
@@ -191,5 +138,77 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterDescriptor(this, data);
+    }
+
+    private class TypeParameterTypeConstructor extends AbstractTypeConstructor {
+
+        private final SupertypeLoopChecker supertypeLoopChecker;
+
+        public TypeParameterTypeConstructor(@NotNull StorageManager storageManager, SupertypeLoopChecker supertypeLoopChecker) {
+            super(storageManager);
+            this.supertypeLoopChecker = supertypeLoopChecker;
+        }
+
+        @NotNull
+        @Override
+        protected Collection<KotlinType> computeSupertypes() {
+            return resolveUpperBounds();
+        }
+
+        @NotNull
+        @Override
+        public List<TypeParameterDescriptor> getParameters() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public boolean isFinal() {
+            return false;
+        }
+
+        @Override
+        public boolean isDenotable() {
+            return true;
+        }
+
+        @NotNull
+        @Override
+        public ClassifierDescriptor getDeclarationDescriptor() {
+            return AbstractTypeParameterDescriptor.this;
+        }
+
+        @NotNull
+        @Override
+        public Annotations getAnnotations() {
+            return AbstractTypeParameterDescriptor.this.getAnnotations();
+        }
+
+        @NotNull
+        @Override
+        public KotlinBuiltIns getBuiltIns() {
+            return DescriptorUtilsKt.getBuiltIns(AbstractTypeParameterDescriptor.this);
+        }
+
+        @Override
+        public String toString() {
+            return getName().toString();
+        }
+
+        @NotNull
+        @Override
+        protected SupertypeLoopChecker getSupertypeLoopChecker() {
+            return supertypeLoopChecker;
+        }
+
+        @Override
+        protected void reportSupertypeLoopError(@NotNull KotlinType type) {
+            AbstractTypeParameterDescriptor.this.reportSupertypeLoopError(type);
+        }
+
+        @Nullable
+        @Override
+        protected KotlinType defaultSupertypeIfEmpty() {
+            return ErrorUtils.createErrorType("Cyclic upper bounds");
+        }
     }
 }

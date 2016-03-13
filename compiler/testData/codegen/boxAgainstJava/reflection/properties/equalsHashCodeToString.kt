@@ -1,11 +1,27 @@
+// WITH_REFLECT
+// FILE: test/J.java
+
+package test;
+
+public class J {
+    public final boolean b;
+    public char c;
+
+    public J() {
+        this.b = false;
+        this.c = '0';
+    }
+}
+
+// FILE: 1.kt
+
 package test
 
 import kotlin.test.*
-import test.equalsHashCodeToString as J
 
 fun box(): String {
-    assertEquals("val test.equalsHashCodeToString.b: kotlin.Boolean", (J::b).toString())
-    assertEquals("var test.equalsHashCodeToString.c: kotlin.Char", (J::c).toString())
+    assertEquals("val test.J.b: kotlin.Boolean", (J::b).toString())
+    assertEquals("var test.J.c: kotlin.Char", (J::c).toString())
 
     assertTrue(J::b == J::b)
     assertFalse(J::c == J::b)

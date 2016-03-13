@@ -50,7 +50,8 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
     override fun getKeyDescriptor() = KEY_DESCRIPTOR
 
     protected fun indexer(f: (FileContent) -> FqName?): DataIndexer<FqName, Void, FileContent> =
-            DataIndexer {
+            // See KT-11323
+            DataIndexer<FqName, Void, FileContent> {
                 try {
                     val fqName = f(it)
                     if (fqName != null) {

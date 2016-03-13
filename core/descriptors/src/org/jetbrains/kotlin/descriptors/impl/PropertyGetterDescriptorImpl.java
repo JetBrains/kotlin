@@ -38,16 +38,14 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
-            boolean hasBody,
             boolean isDefault,
             boolean isExternal,
             @NotNull Kind kind,
             @Nullable PropertyGetterDescriptor original,
             @NotNull SourceElement source
-    )
-    {
+    ) {
         super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"),
-              hasBody, isDefault, isExternal, kind, source);
+              isDefault, isExternal, kind, source);
         this.original = original != null ? original : this;
     }
     

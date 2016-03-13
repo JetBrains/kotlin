@@ -1,0 +1,5 @@
+// "Create subclass" "true"
+// SHOULD_BE_AVAILABLE_AFTER_EXECUTION
+
+open class Base<T : Any, L : List<T>>
+class BaseImpl<T : Any, L : List<T>> : Base<T, L>()

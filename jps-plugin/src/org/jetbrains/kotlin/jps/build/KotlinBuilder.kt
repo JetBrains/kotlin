@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.JsLibraryUtils
@@ -773,88 +772,20 @@ private fun CompilationResult.doProcessChangesUsingLookups(
         compiledFiles: Set<File>,
         dataManager: BuildDataManager,
         fsOperations: FSOperationsHelper,
-        caches: Collection<IncrementalCacheImpl<*>>
+        caches: Iterable<IncrementalCacheImpl<ModuleBuildTarget>>
 ) {
-    val dirtyLookupSymbols = HashSet<LookupSymbol>()
-    val dirtyClassesFqNames = HashSet<FqName>()
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
-    val allCaches: Sequence<IncrementalCacheImpl<*>> = caches.asSequence().flatMap { it.dependentsWithThis }
+    val allCaches = caches.flatMap { it.thisWithDependentCaches }
+    val logAction = { logStr: String -> KotlinBuilder.LOG.debug(logStr) }
 
-    KotlinBuilder.LOG.debug("Start processing changes")
+    logAction("Start processing changes")
 
-    for (change in changes) {
-        KotlinBuilder.LOG.debug("Process $change")
-
-        if (change is ChangeInfo.SignatureChanged) {
-            val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, allCaches)
-
-            for (classFqName in fqNames) {
-                assert(!classFqName.isRoot) { "classFqName is root when processing $change" }
-
-                val scope = classFqName.parent().asString()
-                val name = classFqName.shortName().identifier
-                dirtyLookupSymbols.add(LookupSymbol(name, scope))
-            }
-        }
-        else if (change is ChangeInfo.MembersChanged) {
-            val fqNames = withSubtypes(change.fqName, allCaches)
-            // need to recompile subtypes because changed member might break override
-            dirtyClassesFqNames.addAll(fqNames)
-
-            change.names.forAllPairs(fqNames) { name, fqName ->
-                dirtyLookupSymbols.add(LookupSymbol(name, fqName.asString()))
-            }
-        }
-    }
-
-    val dirtyFiles = HashSet<File>()
-
-    for (lookup in dirtyLookupSymbols) {
-        val affectedFiles = lookupStorage.get(lookup).map(::File)
-
-        KotlinBuilder.LOG.debug { "${lookup.scope}#${lookup.name} caused recompilation of: $affectedFiles" }
-
-        dirtyFiles.addAll(affectedFiles)
-    }
-
-    for (cache in allCaches) {
-        for (dirtyClassFqName in dirtyClassesFqNames) {
-            val srcFile = cache.getSourceFileIfClass(dirtyClassFqName) ?: continue
-            dirtyFiles.add(srcFile)
-        }
-    }
-
+    val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(allCaches, logAction)
+    val dirtyFiles = mapLookupSymbolsToFiles(lookupStorage, dirtyLookupSymbols, logAction) +
+                     mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, logAction)
     fsOperations.markFiles(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
-    KotlinBuilder.LOG.debug("End of processing changes")
-}
 
-/**
- * Returns type with its subtypes transitively
- *
- * For example:
- *    open class A
- *    open class B : A()
- *    class C : B()
- * withSubtypes(A) will return [A, B, C]
- */
-private fun withSubtypes(
-        typeFqName: FqName,
-        caches: Sequence<IncrementalCacheImpl<*>>
-): Set<FqName> {
-    val types = LinkedList(listOf(typeFqName))
-    val subtypes = hashSetOf<FqName>()
-
-    while (types.isNotEmpty()) {
-        val unprocessedType = types.pollFirst()
-
-        caches.flatMap { it.getSubtypesOf(unprocessedType) }
-              .filter { it !in subtypes }
-              .forEach { types.addLast(it) }
-
-        subtypes.add(unprocessedType)
-    }
-
-    return subtypes
+    logAction("End of processing changes")
 }
 
 private fun getLookupTracker(project: JpsProject): LookupTracker {
@@ -946,14 +877,6 @@ private fun hasKotlinDirtyOrRemovedFiles(
     if (!KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder).isEmpty) return true
 
     return chunk.targets.any { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isNotEmpty() }
-}
-
-private inline fun <T, R> Iterable<T>.forAllPairs(other: Iterable<R>, fn: (T, R)->Unit) {
-    for (t in this) {
-        for (r in other) {
-            fn(t, r)
-        }
-    }
 }
 
 private inline fun Logger.debug(message: ()->String) {

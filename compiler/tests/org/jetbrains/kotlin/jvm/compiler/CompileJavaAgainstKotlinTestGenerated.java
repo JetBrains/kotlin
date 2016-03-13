@@ -137,6 +137,39 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         }
     }
 
+    @TestMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmStatic extends AbstractCompileJavaAgainstKotlinTest {
+        public void testAllFilesPresentInJvmStatic() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("simpleCompanionObject.kt")
+        public void testSimpleCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleCompanionObjectProperty.kt")
+        public void testSimpleCompanionObjectProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleCompanionObjectProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleObject.kt")
+        public void testSimpleObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleObjectProperty.kt")
+        public void testSimpleObjectProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/jvmStatic/simpleObjectProperty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -422,39 +455,6 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws/TraitMembers.kt");
                 doTest(fileName);
             }
-        }
-    }
-
-    @TestMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class PlatformStatic extends AbstractCompileJavaAgainstKotlinTest {
-        public void testAllFilesPresentInPlatformStatic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("simpleClassObject.kt")
-        public void testSimpleClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleClassObject.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simpleClassObjectProperty.kt")
-        public void testSimpleClassObjectProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleClassObjectProperty.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simpleObject.kt")
-        public void testSimpleObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleObject.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simpleObjectProperty.kt")
-        public void testSimpleObjectProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/platformStatic/simpleObjectProperty.kt");
-            doTest(fileName);
         }
     }
 

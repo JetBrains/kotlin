@@ -65,7 +65,6 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
 }
 
 class PackageParts(val packageFqName: String) {
-
     val parts = linkedSetOf<String>()
 
     override fun equals(other: Any?) =
@@ -74,15 +73,18 @@ class PackageParts(val packageFqName: String) {
     override fun hashCode() =
             packageFqName.hashCode() * 31 + parts.hashCode()
 
+    override fun toString() =
+            parts.toString()
+
     companion object {
-        @JvmStatic fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
+        @JvmStatic
+        fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
             if (this.parts.isNotEmpty()) {
                 val packageParts = JvmPackageTable.PackageParts.newBuilder()
-                packageParts.setPackageFqName(this.packageFqName)
+                packageParts.packageFqName = this.packageFqName
                 packageParts.addAllClassName(this.parts.sorted())
                 builder.addPackageParts(packageParts)
             }
         }
     }
 }
-

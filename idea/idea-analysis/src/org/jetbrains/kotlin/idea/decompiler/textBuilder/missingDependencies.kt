@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.utils.Printer
 
-private class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
+private class PackageFragmentWithMissingDependencies(fqName: FqName, moduleDescriptor: ModuleDescriptor) :
         PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
     override fun getMemberScope(): MemberScope {
         return ScopeWithMissingDependencies(fqName, this)

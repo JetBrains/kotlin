@@ -40,6 +40,8 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
         // We don't know which packages our class loader has and has not, so we behave as if it contains any package in the world
         return ReflectJavaPackage(fqName)
     }
+
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
 }
 
 fun ClassLoader.tryLoadClass(fqName: String) =

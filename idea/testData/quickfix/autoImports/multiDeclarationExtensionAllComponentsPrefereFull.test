@@ -1,7 +1,7 @@
 // FILE: first.before.kt
 // "Import" "true"
-// ERROR: Destructuring declaration initializer of type some.Some must have a 'component1()' function
-// ERROR: Destructuring declaration initializer of type some.Some must have a 'component2()' function
+// ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
+// ERROR: Destructuring declaration initializer of type Some must have a 'component2()' function
 
 package testing
 
@@ -35,8 +35,8 @@ operator fun Some.component1() = 1
 
 // FILE: first.after.kt
 // "Import" "true"
-// ERROR: Destructuring declaration initializer of type some.Some must have a 'component1()' function
-// ERROR: Destructuring declaration initializer of type some.Some must have a 'component2()' function
+// ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
+// ERROR: Destructuring declaration initializer of type Some must have a 'component2()' function
 
 package testing
 

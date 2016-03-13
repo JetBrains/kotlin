@@ -30,6 +30,8 @@ fun mapping(): List<GenericFunction> {
             """
             Returns a ${f.mapResult} containing the results of applying the given [transform] function
             to each ${f.element} and its index in the original ${f.collection}.
+            @param [transform] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of the transform applied to the ${f.element}.
             """
         }
         typeParam("R")
@@ -115,6 +117,8 @@ fun mapping(): List<GenericFunction> {
             """
             Returns a ${f.mapResult} containing only the non-null results of applying the given [transform] function
             to each ${f.element} and its index in the original ${f.collection}.
+            @param [transform] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of the transform applied to the ${f.element}.
             """
         }
         body {
@@ -158,6 +162,8 @@ fun mapping(): List<GenericFunction> {
             """
             Applies the given [transform] function to each ${f.element} and its index in the original ${f.collection}
             and appends the results to the given [destination].
+            @param [transform] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of the transform applied to the ${f.element}.
             """
         }
         typeParam("R")
@@ -207,6 +213,8 @@ fun mapping(): List<GenericFunction> {
             """
             Applies the given [transform] function to each ${f.element} and its index in the original ${f.collection}
             and appends only the non-null results to the given [destination].
+            @param [transform] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of the transform applied to the ${f.element}.
             """
         }
         body {

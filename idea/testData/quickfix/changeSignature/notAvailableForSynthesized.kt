@@ -1,5 +1,5 @@
 // "class org.jetbrains.kotlin.idea.quickfix.AddFunctionParametersFix" "false"
-//ERROR: Too many arguments for public final operator fun component1(): kotlin.Int defined in Data
+//ERROR: Too many arguments for public final operator fun component1(): Int defined in Data
 
 data class Data(val i: Int) {}
 

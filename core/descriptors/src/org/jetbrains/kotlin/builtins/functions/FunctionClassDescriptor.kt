@@ -106,9 +106,8 @@ class FunctionClassDescriptor(
 
     override fun getDeclaredTypeParameters() = parameters
 
-    private inner class FunctionTypeConstructor : AbstractClassTypeConstructor() {
-
-        private val supertypes = storageManager.createLazyValue {
+    private inner class FunctionTypeConstructor : AbstractClassTypeConstructor(storageManager) {
+        override fun computeSupertypes(): Collection<KotlinType> {
             val result = ArrayList<KotlinType>(2)
 
             fun add(packageFragment: PackageFragmentDescriptor, name: Name) {
@@ -136,12 +135,10 @@ class FunctionClassDescriptor(
                 add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
             }
 
-            result.toReadOnlyList()
+            return result.toReadOnlyList()
         }
 
         override fun getParameters() = this@FunctionClassDescriptor.parameters
-
-        override fun getSupertypes(): Collection<KotlinType> = supertypes()
 
         override fun getDeclarationDescriptor() = this@FunctionClassDescriptor
         override fun isDenotable() = true
@@ -149,6 +146,9 @@ class FunctionClassDescriptor(
         override fun getAnnotations() = Annotations.EMPTY
 
         override fun toString() = declarationDescriptor.toString()
+
+        override val supertypeLoopChecker: SupertypeLoopChecker
+            get() = SupertypeLoopChecker.EMPTY
     }
 
     override fun toString() = name.asString()

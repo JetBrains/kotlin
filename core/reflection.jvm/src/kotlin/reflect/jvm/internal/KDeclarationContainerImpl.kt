@@ -25,10 +25,9 @@ import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
-import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.util.*
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
-import kotlin.reflect.KCallable
 import kotlin.reflect.KotlinReflectionInternalError
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
@@ -46,8 +45,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    fun getMembers(scope: MemberScope, declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> {
-        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Unit>() {
+    fun getMembers(scope: MemberScope, declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallableImpl<*>> {
+        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>?, Unit>() {
             private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
                 if (declaredOnly && !descriptor.kind.isReal) return true
 
@@ -58,15 +57,15 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 return false
             }
 
-            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallable<*>? {
+            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*>? {
                 return if (skipCallable(descriptor)) null else createProperty(descriptor)
             }
 
-            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallable<*>? {
+            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*>? {
                 return if (skipCallable(descriptor)) null else KFunctionImpl(this@KDeclarationContainerImpl, descriptor)
             }
 
-            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallable<*>? {
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallableImpl<*>? {
                 throw IllegalStateException("No constructors should appear in this scope: $descriptor")
             }
         }
@@ -108,6 +107,25 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 }
 
         if (properties.size != 1) {
+            // Try working around the case of a Java class with a field 'foo' and a method 'getFoo' which overrides Kotlin property 'foo'.
+            // Such class has two property descriptors with the name 'foo' in its scope and they may be indistinguishable from each other.
+            // However, it's not possible to write 'A::foo' if they're indistinguishable; overload resolution would not be able to choose
+            // between the two. So we assume that one of the properties must have a greater visibility than the other, and try loading
+            // that one first.
+            // Note that this heuristic may result in _incorrect behavior_ if a KProperty object for a less visible property is obtained
+            // by other means (through reflection API) and then the soft-referenced descriptor instance for that property is invalidated
+            // because there's no more memory left. In that case the KProperty object will now point to another (more visible) property.
+            // TODO: consider writing additional info (besides signature) to property reference objects to distinguish them in this case
+
+            val mostVisibleProperties = properties
+                    .groupBy { it.visibility }
+                    .toSortedMap(Comparator { first, second ->
+                        Visibilities.compare(first, second) ?: 0
+                    }).values.last()
+            if (mostVisibleProperties.size == 1) {
+                return mostVisibleProperties.first()
+            }
+
             val debugText = "'$name' (JVM signature: $signature)"
             throw KotlinReflectionInternalError(
                     if (properties.isEmpty()) "Property $debugText not resolved in $this"
@@ -233,18 +251,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
         return result
-    }
-
-    // TODO: check resulting field's type
-    fun findFieldBySignature(name: String, isCompanionOfClass: Boolean): Field? {
-        val owner = if (isCompanionOfClass) jClass.enclosingClass else jClass
-
-        return try {
-            owner.getDeclaredField(name)
-        }
-        catch (e: NoSuchFieldException) {
-            null
-        }
     }
 
     companion object {

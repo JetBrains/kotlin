@@ -46,7 +46,7 @@ class InlineCodegenForDefaultBody(
             DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile
     )
 
-    private val jvmSignature = state.typeMapper.mapSignature(functionDescriptor, context.contextKind)
+    private val jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, context.contextKind)
 
     init {
         assert(InlineUtil.isInline(function)) {

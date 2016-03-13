@@ -1,11 +1,25 @@
+// FILE: protectedPack/J.java
+
+package protectedPack;
+
+public class J {
+    protected static class Inner {
+        public String foo() {
+            return "OK";
+        }
+    }
+}
+
+// FILE: 1.kt
+
 package protectedPack
 
-class Derived(): protectedStaticClass() {
+class Derived : J() {
     fun test(): String {
-        return protectedStaticClass.Inner().foo()!!
+        return J.Inner().foo()!!
     }
 }
 
 fun box(): String {
-   return Derived().test()
+    return Derived().test()
 }

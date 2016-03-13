@@ -27,9 +27,9 @@ private object DoubleCompanionObject {
 private object FloatCompanionObject {
     val MIN_VALUE: Float = js("Number.MIN_VALUE")
     val MAX_VALUE: Float = js("Number.MAX_VALUE")
-    val POSITIVE_INFINITY : Float = js("Number.POSITIVE_INFINITY")
-    val NEGATIVE_INFINITY : Float = js("Number.NEGATIVE_INFINITY")
-    val NaN : Float = js("Number.NaN")
+    val POSITIVE_INFINITY: Float = js("Number.POSITIVE_INFINITY")
+    val NEGATIVE_INFINITY: Float = js("Number.NEGATIVE_INFINITY")
+    val NaN: Float = js("Number.NaN")
 }
 
 private object IntCompanionObject {
@@ -62,4 +62,5 @@ private object CharCompanionObject {
 }
 
 private object StringCompanionObject {}
+
 private object EnumCompanionObject {}

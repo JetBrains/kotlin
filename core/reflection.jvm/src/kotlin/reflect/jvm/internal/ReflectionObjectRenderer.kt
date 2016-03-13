@@ -34,7 +34,7 @@ internal object ReflectionObjectRenderer {
         }
     }
 
-    private fun StringBuilder.appendReceiversAndName(callable: CallableDescriptor) {
+    private fun StringBuilder.appendReceivers(callable: CallableDescriptor) {
         val dispatchReceiver = callable.dispatchReceiverParameter
         val extensionReceiver = callable.extensionReceiverParameter
 
@@ -44,8 +44,6 @@ internal object ReflectionObjectRenderer {
         if (addParentheses) append("(")
         appendReceiverType(extensionReceiver)
         if (addParentheses) append(")")
-
-        append(renderer.renderName(callable.name))
     }
 
     fun renderCallable(descriptor: CallableDescriptor): String {
@@ -60,7 +58,8 @@ internal object ReflectionObjectRenderer {
     fun renderProperty(descriptor: PropertyDescriptor): String {
         return buildString {
             append(if (descriptor.isVar) "var " else "val ")
-            appendReceiversAndName(descriptor)
+            appendReceivers(descriptor)
+            append(renderer.renderName(descriptor.name))
 
             append(": ")
             append(renderType(descriptor.type))
@@ -70,7 +69,8 @@ internal object ReflectionObjectRenderer {
     fun renderFunction(descriptor: FunctionDescriptor): String {
         return buildString {
             append("fun ")
-            appendReceiversAndName(descriptor)
+            appendReceivers(descriptor)
+            append(renderer.renderName(descriptor.name))
 
             descriptor.valueParameters.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
                 renderType(it.type) // TODO: vararg
@@ -78,6 +78,19 @@ internal object ReflectionObjectRenderer {
 
             append(": ")
             append(renderType(descriptor.returnType!!))
+        }
+    }
+
+    fun renderLambda(invoke: FunctionDescriptor): String {
+        return buildString {
+            appendReceivers(invoke)
+
+            invoke.valueParameters.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
+                renderType(it.type)
+            }
+
+            append(" -> ")
+            append(renderType(invoke.returnType!!))
         }
     }
 

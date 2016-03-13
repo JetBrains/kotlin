@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,12 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
-import org.jetbrains.kotlin.renderer.NameShortness;
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.io.File;
@@ -55,13 +55,13 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
-public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLiteFixture {
+public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTestWithEnvironment {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setVerbose(true);
-                    options.setNameShortness(NameShortness.SHORT);
+                    options.setClassifierNamePolicy(ClassifierNamePolicy.SHORT.INSTANCE);
                     options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE;
                 }

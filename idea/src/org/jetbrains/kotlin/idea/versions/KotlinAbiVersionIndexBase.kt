@@ -29,24 +29,24 @@ import java.io.DataOutput
 /**
  * Important! This is not a stub-based index. And it has its own version
  */
-abstract class KotlinAbiVersionIndexBase<T>(
+abstract class KotlinAbiVersionIndexBase<T, V : BinaryVersion>(
         private val classOfIndex: Class<T>,
-        private val createBinaryVersion: (IntArray) -> BinaryVersion
-) : ScalarIndexExtension<BinaryVersion>() {
+        protected val createBinaryVersion: (IntArray) -> V
+) : ScalarIndexExtension<V>() {
 
-    override fun getName() = ID.create<BinaryVersion, Void>(classOfIndex.canonicalName)
+    override fun getName() = ID.create<V, Void>(classOfIndex.canonicalName)
 
-    override fun getKeyDescriptor(): KeyDescriptor<BinaryVersion> = object : KeyDescriptor<BinaryVersion> {
-        override fun isEqual(val1: BinaryVersion, val2: BinaryVersion): Boolean = val1 == val2
+    override fun getKeyDescriptor(): KeyDescriptor<V> = object : KeyDescriptor<V> {
+        override fun isEqual(val1: V, val2: V): Boolean = val1 == val2
 
-        override fun getHashCode(value: BinaryVersion): Int = value.hashCode()
+        override fun getHashCode(value: V): Int = value.hashCode()
 
-        override fun read(input: DataInput): BinaryVersion {
+        override fun read(input: DataInput): V {
             val size = DataInputOutputUtil.readINT(input)
             return createBinaryVersion((0..size - 1).map { DataInputOutputUtil.readINT(input) }.toIntArray())
         }
 
-        override fun save(output: DataOutput, value: BinaryVersion) {
+        override fun save(output: DataOutput, value: V) {
             val array = value.toArray()
             DataInputOutputUtil.writeINT(output, array.size)
             for (number in array) {

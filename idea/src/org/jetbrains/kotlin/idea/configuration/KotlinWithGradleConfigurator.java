@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory;
@@ -52,8 +51,6 @@ import java.io.File;
 import java.util.Collection;
 
 public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfigurator {
-    private static final String[] KOTLIN_VERSIONS = {"0.6.+"};
-
     protected static final String VERSION_TEMPLATE = "$VERSION$";
 
     protected static final String CLASSPATH = "classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"";
@@ -65,7 +62,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        if (ProjectStructureUtil.hasKotlinRuntimeInScope(module)) {
+        if (ConfigureKotlinInProjectUtilsKt.hasKotlinRuntimeInScope(module)) {
             return true;
         }
 
@@ -85,7 +82,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     @Override
     public void configure(@NotNull Project project, Collection<Module> excludeModules) {
         ConfigureDialogWithModulesAndVersion dialog =
-                new ConfigureDialogWithModulesAndVersion(project, this, KOTLIN_VERSIONS, excludeModules);
+                new ConfigureDialogWithModulesAndVersion(project, this, excludeModules);
 
         dialog.show();
         if (!dialog.isOK()) return;
@@ -387,7 +384,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         Messages.showErrorDialog(project,
                                  "<html>Couldn't configure kotlin-gradle plugin automatically.<br/>" +
                                  (message != null ? message : "") +
-                                 "See manual installation instructions <a href=\"http://confluence.jetbrains.com/display/Kotlin/Kotlin+Build+Tools#KotlinBuildTools-Gradle\">here</a></html>",
+                                 "See manual installation instructions <a href=\"https://kotlinlang.org/docs/reference/using-gradle.html\">here</a></html>",
                                  "Configure Kotlin-Gradle Plugin");
     }
 }

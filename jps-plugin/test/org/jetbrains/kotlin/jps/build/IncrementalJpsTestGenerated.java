@@ -287,9 +287,57 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("defaultArguments")
-        public void testDefaultArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultArguments/");
+        @TestMetadata("defaultArgumentInConstructorAdded")
+        public void testDefaultArgumentInConstructorAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultArgumentInConstructorAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultArgumentInConstructorRemoved")
+        public void testDefaultArgumentInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultArgumentInConstructorRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueAdded")
+        public void testDefaultValueAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueChanged")
+        public void testDefaultValueChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInConstructorAdded")
+        public void testDefaultValueInConstructorAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInConstructorChanged")
+        public void testDefaultValueInConstructorChanged() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInConstructorRemoved")
+        public void testDefaultValueInConstructorRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueInConstructorRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueRemoved1")
+        public void testDefaultValueRemoved1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueRemoved1/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueRemoved2")
+        public void testDefaultValueRemoved2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/defaultValueRemoved2/");
             doTest(fileName);
         }
 
@@ -386,6 +434,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("inlineModifiedWithUsage")
         public void testInlineModifiedWithUsage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineModifiedWithUsage/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlinePrivateFunctionAdded")
+        public void testInlinePrivateFunctionAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinePrivateFunctionAdded/");
             doTest(fileName);
         }
 
@@ -804,6 +858,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("constantUnchanged")
             public void testConstantUnchanged() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantUnchanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntryAdded")
+            public void testEnumEntryAdded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryAdded/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntryRemoved")
+            public void testEnumEntryRemoved() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryRemoved/");
                 doTest(fileName);
             }
 

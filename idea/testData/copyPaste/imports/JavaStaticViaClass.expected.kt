@@ -1,4 +1,4 @@
-// ERROR: Expression 'staticField' of type 'kotlin.Int' cannot be invoked as a function. The function invoke() is not found
+// ERROR: Expression 'staticField' of type 'Int' cannot be invoked as a function. The function invoke() is not found
 package to
 
 import a.JavaF

@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 val FunctionDescriptor.sourceFilePath: String
     get() {
@@ -34,7 +37,7 @@ val FunctionDescriptor.sourceFilePath: String
         return containingFile?.virtualFile?.canonicalPath!!
     }
 
-fun FunctionDescriptor.getClassFilePath(typeMapper: JetTypeMapper, cache: IncrementalCache): String {
+fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: IncrementalCache): String {
     val container = containingDeclaration as? DeclarationDescriptorWithSource
     val source = container?.source
 
@@ -59,6 +62,19 @@ fun FunctionDescriptor.getClassFilePath(typeMapper: JetTypeMapper, cache: Increm
             val implementationOwnerType = typeMapper.mapImplementationOwner(this)
             val className = implementationOwnerType.internalName
             cache.getClassFilePath(className)
+        }
+    }
+}
+
+class InlineOnlySmapSkipper(codegen: ExpressionCodegen) {
+
+    val callLineNumber = codegen.lastLineNumber
+
+    fun markCallSiteLineNumber(mv: MethodVisitor) {
+        if (callLineNumber >= 0) {
+            val label = Label()
+            mv.visitLabel(label)
+            mv.visitLineNumber(callLineNumber, label)
         }
     }
 }

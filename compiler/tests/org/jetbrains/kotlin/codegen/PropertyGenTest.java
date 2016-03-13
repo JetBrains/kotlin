@@ -73,7 +73,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPrivatePropertyInPackage() throws Exception {
         loadText("private val x = 239");
-        Class<?> nsClass = generateFileClass();
+        Class<?> nsClass = generateFacadeClass();
         Field[] fields = nsClass.getDeclaredFields();
         assertEquals(1, fields.length);
         Field field = fields[0];
@@ -84,7 +84,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldPropertyAccess() throws Exception {
-        loadFile("properties/fieldPropertyAccess.kt");
+        loadFile();
         Method method = generateFunction("increment");
         assertEquals(1, method.invoke(null));
         assertEquals(2, method.invoke(null));
@@ -157,7 +157,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt1846() {
-        loadFile("regressions/kt1846.kt");
+        loadFile();
         Class<?> aClass = generateClass("A");
         try {
             aClass.getMethod("getV1");
@@ -177,7 +177,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt2589() throws Exception {
-        loadFile("regressions/kt2589.kt");
+        loadFile();
         Class<?> aClass = generateClass("Foo");
         assertTrue((aClass.getModifiers() & Opcodes.ACC_FINAL) == 0);
 
@@ -199,7 +199,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt2677() throws Exception {
-        loadFile("regressions/kt2677.kt");
+        loadFile();
         Class<?> derived = generateClass("DerivedWeatherReport");
         Class<?> weatherReport = derived.getSuperclass();
 
@@ -232,7 +232,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPrivateClassPropertyAccessors() throws Exception {
-        loadFile("properties/privateClassPropertyAccessors.kt");
+        loadFile();
         Class<?> c = generateClass("C");
         findDeclaredMethodByName(c, "getValWithGet");
         findDeclaredMethodByName(c, "getVarWithGetSet");

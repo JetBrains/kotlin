@@ -3,7 +3,7 @@ compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference: b
     bar()
     ^
 compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
-public fun kotlin.String.replaceIndent(newIndent: kotlin.String = ...): kotlin.String defined in kotlin.text
+public fun String.replaceIndent(newIndent: String = ...): String defined in kotlin.text
 (note: this may be caused by the fact that some classes compiled with an incompatible version of Kotlin were found in the classpath. Such classes cannot be loaded properly by this version of Kotlin compiler. See below for more information)
     1.replaceIndent(2, 3)
       ^

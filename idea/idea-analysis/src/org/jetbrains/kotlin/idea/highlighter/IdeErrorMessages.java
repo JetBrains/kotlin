@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.TypeMismatchDueToTypeProjectionsData;
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
+import org.jetbrains.kotlin.diagnostics.rendering.*;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallDataHtmlRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.MultiRenderer;
 
 import java.net.URL;
 
@@ -76,11 +71,13 @@ public class IdeErrorMessages {
                     @NotNull
                     @Override
                     public String[] render(@NotNull TypeMismatchDueToTypeProjectionsData object) {
+                        RenderingContext context = RenderingContext
+                                .of(object.getExpectedType(), object.getExpressionType(), object.getReceiverType(), object.getCallableDescriptor());
                         return new String[] {
-                                HTML_RENDER_TYPE.render(object.getExpectedType()),
-                                HTML_RENDER_TYPE.render(object.getExpressionType()),
-                                HTML_RENDER_TYPE.render(object.getReceiverType()),
-                                DescriptorRenderer.HTML.render(object.getCallableDescriptor())
+                                HTML_RENDER_TYPE.render(object.getExpectedType(), context),
+                                HTML_RENDER_TYPE.render(object.getExpressionType(), context),
+                                HTML_RENDER_TYPE.render(object.getReceiverType(), context),
+                                HTML.render(object.getCallableDescriptor(), context)
                         };
                     }
                 });
@@ -114,30 +111,30 @@ public class IdeErrorMessages {
                                            "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
-                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML);
         MAP.put(RETURN_TYPE_MISMATCH_ON_INHERITANCE, "<html>Return types of inherited members are incompatible:<br/>{0},<br/>{1}</html>",
-                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                HTML, HTML);
 
         MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, "<html>Property type is ''{0}'', which is not a subtype type of overridden<br/>" +
-                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML);
         MAP.put(VAR_TYPE_MISMATCH_ON_OVERRIDE, "<html>Var-property type is ''{0}'', which is not a type of overridden<br/>" +
-                                                    "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+                                                    "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML);
         MAP.put(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, "<html>Types of inherited properties are incompatible:<br/>{0},<br/>{1}</html>",
-                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                HTML, HTML);
         MAP.put(VAR_TYPE_MISMATCH_ON_INHERITANCE, "<html>Types of inherited var-properties do not match:<br/>{0},<br/>{1}</html>",
-                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                HTML, HTML);
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
-                                       "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                                       "{1}</html>", HTML, HTML);
         MAP.put(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, "<html>Val-property cannot override var-property<br />" +
-                                       "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                                       "{1}</html>", HTML, HTML);
 
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "<html>{0} must be declared abstract or implement abstract member<br/>" +
                                                  "{1}</html>", RENDER_CLASS_OR_OBJECT,
-                DescriptorRenderer.HTML);
+                HTML);
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
-                RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
+                RENDER_CLASS_OR_OBJECT, HTML);
         MAP.put(CONFLICTING_OVERLOADS, "<html>''{0}''<br />conflicts with another declaration in {1}</html>",
                 IdeRenderers.HTML_COMPACT_WITH_MODIFIERS, Renderers.DECLARATION_NAME_WITH_KIND);
 

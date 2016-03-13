@@ -41,7 +41,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 OverloadsAnnotationChecker(),
                 JvmFieldApplicabilityChecker(),
                 TypeParameterBoundIsNotArrayChecker(),
-                JvmSyntheticApplicabilityChecker()
+                JvmSyntheticApplicabilityChecker(),
+                StrictfpApplicabilityChecker()
         ),
 
         additionalCallCheckers = listOf(

@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.versions.getKotlinRuntimeMarkerClass
 import org.jetbrains.kotlin.utils.ifEmpty
 
 fun isProjectConfigured(project: Project): Boolean {
@@ -56,10 +61,17 @@ fun showConfigureKotlinNotificationIfNeeded(module: Module) {
 }
 
 fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
-    val modules = getModulesWithKotlinFiles(project) - excludeModules
-    if (modules.all { isModuleConfigured(it) }) return
-
-    ConfigureKotlinNotificationManager.notify(project, excludeModules)
+    ApplicationManager.getApplication().executeOnPooledThread {
+        val notificationString = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
+            val modules = getModulesWithKotlinFiles(project) - excludeModules
+            if (modules.all { isModuleConfigured(it) }) null else ConfigureKotlinNotification.getNotificationString(project, excludeModules)
+        })
+        if (notificationString != null) {
+            ApplicationManager.getApplication().invokeLater {
+                ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationString))
+            }
+        }
+    }
 }
 
 fun getAbleToRunConfigurators(project: Project): Collection<KotlinProjectConfigurator> {
@@ -93,4 +105,17 @@ fun getNonConfiguredModules(project: Project, excludeModules: Collection<Module>
     return modulesWithKotlinFiles.filter { module ->
         ableToRunConfigurators.any { !it.isConfigured(module) }
     }
+}
+
+fun hasKotlinRuntimeInScope(module: Module): Boolean {
+    val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
+    return getKotlinRuntimeMarkerClass(module.project, scope) != null
+}
+
+fun hasKotlinFilesOnlyInTests(module: Module): Boolean {
+    return !hasKotlinFilesInSources(module) && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
+}
+
+fun hasKotlinFilesInSources(module: Module): Boolean {
+    return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
 }

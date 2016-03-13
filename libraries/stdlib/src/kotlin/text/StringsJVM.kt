@@ -151,7 +151,7 @@ public inline fun String.Companion.format(locale: Locale, format: String, vararg
  */
 public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
 {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+    require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
     return regex.split(this, if (limit == 0) -1 else limit).asList()
 }
 

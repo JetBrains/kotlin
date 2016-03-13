@@ -28,13 +28,13 @@ import java.util.List;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findListWithPrefixes;
 
 public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTestCase {
-
     @Override
     public void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @Override
     protected void doTest(String path) throws IOException {
         loadFileByFullPath(path);
 

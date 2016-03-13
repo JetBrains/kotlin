@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.performCompletionWithOutOfBlockTracking
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionSession
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -254,17 +253,13 @@ class KotlinCompletionContributor : CompletionContributor() {
                 val context = position.getUserData(CompletionContext.COMPLETION_CONTEXT_KEY)!!
                 val correctedOffset = context.offsetMap.getOffset(STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET)
                 val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
-                performCompletionWithOutOfBlockTracking(position) {
-                    doComplete(correctedParameters, toFromOriginalFileMapper, result,
-                               lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
-                }
+                doComplete(correctedParameters, toFromOriginalFileMapper, result,
+                           lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
                 return
             }
         }
 
-        performCompletionWithOutOfBlockTracking(position) {
-            doComplete(parameters, toFromOriginalFileMapper, result)
-        }
+        doComplete(parameters, toFromOriginalFileMapper, result)
     }
 
     private fun doComplete(

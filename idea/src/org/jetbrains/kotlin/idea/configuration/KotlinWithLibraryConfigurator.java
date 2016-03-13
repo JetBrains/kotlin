@@ -114,6 +114,14 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         collector.showNotification();
     }
 
+    public void configureSilently(@NotNull Project project) {
+        String defaultPathToJar = getDefaultPathToJarFile(project);
+        NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
+        for (Module module : ModuleManager.getInstance(project).getModules()) {
+            configureModuleWithLibrary(module, defaultPathToJar, null, collector);
+        }
+    }
+
     protected void configureModuleWithLibrary(
             @NotNull Module module,
             @NotNull String defaultPath,
@@ -357,7 +365,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @NotNull
     private static DependencyScope getDependencyScope(@NotNull Module module) {
-        if (ProjectStructureUtil.hasKotlinFilesOnlyInTests(module)) {
+        if (ConfigureKotlinInProjectUtilsKt.hasKotlinFilesOnlyInTests(module)) {
             return DependencyScope.TEST;
         }
         return DependencyScope.COMPILE;

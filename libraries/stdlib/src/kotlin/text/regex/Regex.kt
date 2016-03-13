@@ -61,7 +61,7 @@ public enum class RegexOption(override val value: Int, override val mask: Int = 
     /** Enables Unix lines mode.
      * In this mode, only the `'\n'` is recognized as a line terminator.
      */
-    UNIX_LINES(Pattern.UNIX_LINES), // TODO: Remove this
+    UNIX_LINES(Pattern.UNIX_LINES),
 
     /** Permits whitespace and comments in pattern. */
     COMMENTS(Pattern.COMMENTS),
@@ -187,7 +187,7 @@ internal constructor(private val nativePattern: Pattern) {
      * Zero by default means no limit is set.
      */
     public fun split(input: CharSequence, limit: Int = 0): List<String> {
-        require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
+        require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
         return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
     }
 
@@ -234,8 +234,8 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
     override val groups: MatchGroupCollection = object : MatchGroupCollection {
         override val size: Int get() = matchResult.groupCount() + 1
         override fun isEmpty(): Boolean = false
-        override fun contains(o: MatchGroup?): Boolean = this.any({ it == o })
-        override fun containsAll(c: Collection<MatchGroup?>): Boolean = c.all({contains(it)})
+        override fun contains(element: MatchGroup?): Boolean = this.any { it == element }
+        override fun containsAll(elements: Collection<MatchGroup?>): Boolean = elements.all { contains(it) }
 
         override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
         override fun get(index: Int): MatchGroup? {

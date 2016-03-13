@@ -1,0 +1,5 @@
+<!-- overloadResolutionAmbiguityTxt1 -->
+Overload resolution ambiguity: 
+public fun <T> foo(b: a.b.String, t: ???): Unit defined in a.b
+public fun foo(i: Int): Unit defined in a.b
+public fun <T> foo(a: kotlin.String, t: ???): Unit defined in a.b

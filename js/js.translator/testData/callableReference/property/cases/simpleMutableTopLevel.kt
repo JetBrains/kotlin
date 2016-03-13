@@ -1,4 +1,4 @@
-// This test was adapted from compiler/testData/codegen/boxWithStdlib/callableReference/property/.
+// This test was adapted from compiler/testData/codegen/box/callableReference/property/.
 package foo
 
 data class Box(val value: String)

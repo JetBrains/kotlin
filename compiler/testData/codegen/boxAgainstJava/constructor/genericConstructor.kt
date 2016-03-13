@@ -1,6 +1,16 @@
-import test.genericConstructor
+// FILE: test/Foo.java
 
-class Subclass : genericConstructor<Int>(42) {
+package test;
+
+public class Foo<T extends Number> {
+    public Foo(T number) {}
+}
+
+// FILE: 1.kt
+
+import test.Foo
+
+class Subclass : Foo<Int>(42) {
 }
 
 fun box(): String {

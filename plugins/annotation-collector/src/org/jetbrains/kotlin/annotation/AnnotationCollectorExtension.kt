@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
@@ -165,7 +166,7 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
         private fun isAnnotationHandled(annotationFqName: String): Boolean {
             return if (annotationFilterEnabled)
                 annotationFilters.any { it.matcher(annotationFqName).matches() }
-            else !annotationFqName.startsWith("kotlin.jvm.internal.") && annotationFqName != "kotlin.Metadata" //apply to all
+            else annotationFqName != JvmAnnotationNames.METADATA_FQ_NAME.asString()
         }
 
         private fun recordClass(packageName: String, className: String) {

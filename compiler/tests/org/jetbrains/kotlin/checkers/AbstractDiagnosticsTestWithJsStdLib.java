@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.checkers;
 
-import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
@@ -55,8 +52,8 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
 
     @Override
     @NotNull
-    protected KotlinCoreEnvironment createEnvironment(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
-        return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES);
+    protected List<String> getEnvironmentConfigFiles() {
+        return EnvironmentConfigFiles.JS_CONFIG_FILES;
     }
 
     @Override
@@ -84,7 +81,7 @@ public abstract class AbstractDiagnosticsTestWithJsStdLib extends AbstractDiagno
     protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
         ModuleDescriptorImpl module = createModule("<kotlin-js-test-module>", storageManager);
 
-        List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();;
+        List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
         dependencies.add(module);
 
         for (ModuleDescriptorImpl moduleDescriptor : config.getModuleDescriptors()) {

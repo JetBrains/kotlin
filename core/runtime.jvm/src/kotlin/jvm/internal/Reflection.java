@@ -74,6 +74,10 @@ public class Reflection {
         return kClasses;
     }
 
+    public static String renderLambdaToString(Lambda lambda) {
+        return factory.renderLambdaToString(lambda);
+    }
+
     // Functions
 
     public static KFunction function(FunctionReference f) {

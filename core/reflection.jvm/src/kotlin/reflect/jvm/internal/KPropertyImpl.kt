@@ -18,8 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
@@ -27,11 +25,10 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KotlinReflectionInternalError
 
 internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
     val javaField: Field?
-
-    val container: KDeclarationContainerImpl
 
     val signature: String
 
@@ -53,6 +50,8 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     abstract class Getter<out R> : Accessor<R>(), KProperty.Getter<R>, KCallableImpl<R> {
         override val name: String get() = "<get-${property.name}>"
+
+        override val container: KDeclarationContainerImpl get() = property.container
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default getter created this way won't have any source information
@@ -76,6 +75,8 @@ internal interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<
 
         override val name: String get() = "<set-${property.name}>"
 
+        override val container: KDeclarationContainerImpl get() = property.container
+
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default setter created this way won't have any source information
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY)
@@ -98,18 +99,16 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
         }
         return false
     }
+
     fun isJvmStaticProperty() =
             property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
-
 
     fun isNotNullProperty() =
             !TypeUtils.isNullableType(property.descriptor.type)
 
     fun computeFieldCaller(field: Field): FunctionCaller<Field> = when {
         isInsideClassCompanionObject() -> {
-            val containingDeclaration = descriptor.containingDeclaration as ClassDescriptor
-            val sourceElement = containingDeclaration.source as KotlinJvmBinarySourceElement
-            val klass = (sourceElement.binaryClass as ReflectKotlinClass).klass
+            val klass = (descriptor.containingDeclaration as ClassDescriptor).toJavaClass()!!
             if (isGetter) FunctionCaller.ClassCompanionFieldGetter(field, klass)
             else FunctionCaller.ClassCompanionFieldSetter(field, klass)
         }
@@ -151,6 +150,14 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
         }
         is JvmPropertySignature.JavaField -> {
             computeFieldCaller(jvmSignature.field)
+        }
+        is JvmPropertySignature.JavaMethodProperty -> {
+            val method =
+                    if (isGetter) jvmSignature.getterMethod
+                    else jvmSignature.setterMethod ?: throw KotlinReflectionInternalError(
+                            "No source found for setter of Java method property: ${jvmSignature.getterMethod}"
+                    )
+            FunctionCaller.InstanceMethod(method)
         }
     }
 }

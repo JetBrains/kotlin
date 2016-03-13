@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
 internal class DescriptorRendererImpl(
         val options: DescriptorRendererOptionsImpl
 ) : DescriptorRenderer(), DescriptorRendererOptions by options/* this gives access to options without qualifier */ {
-
     init {
         assert(options.isLocked)
     }
@@ -77,7 +77,7 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun renderMessage(message: String): String {
+    override fun renderMessage(message: String): String {
         return when (textFormat) {
             RenderingFormat.PLAIN -> message
             RenderingFormat.HTML -> "<i>$message</i>"
@@ -122,27 +122,7 @@ internal class DescriptorRendererImpl(
         if (ErrorUtils.isError(klass)) {
             return klass.typeConstructor.toString()
         }
-        when (nameShortness) {
-            NameShortness.SHORT -> {
-                val qualifiedNameElements = ArrayList<Name>()
-
-                // for nested classes qualified name should be used
-                var current: DeclarationDescriptor? = klass
-                do {
-                    qualifiedNameElements.add(current!!.name)
-                    current = current.containingDeclaration
-                }
-                while (current is ClassDescriptor)
-
-                return renderFqName(qualifiedNameElements.asReversed())
-            }
-
-            NameShortness.FULLY_QUALIFIED -> return renderFqName(DescriptorUtils.getFqName(klass))
-
-            NameShortness.SOURCE_CODE_QUALIFIED -> return qualifiedNameForSourceCode(klass)
-
-            else -> throw IllegalArgumentException()
-        }
+        return classifierNamePolicy.renderClassifier(klass, this)
     }
 
     /* TYPES RENDERING */
@@ -162,7 +142,7 @@ internal class DescriptorRendererImpl(
                 return renderFlexibleTypeWithBothBounds(type.flexibility().lowerBound, type.flexibility().upperBound)
             }
             else if (flexibleTypesForCode) {
-                val prefix = if (nameShortness == NameShortness.SHORT) "" else Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString() + "."
+                val prefix = if (classifierNamePolicy == ClassifierNamePolicy.SHORT) "" else Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString() + "."
                 return prefix + Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName + lt() + renderNormalizedType(type.flexibility().lowerBound) + ", " + renderNormalizedType(type.flexibility().upperBound) + gt()
             }
             else {
@@ -221,7 +201,8 @@ internal class DescriptorRendererImpl(
             return lowerRendered + "!"
         }
 
-        val kotlinCollectionsPrefix = if (nameShortness != NameShortness.SHORT) "kotlin.collections." else ""
+
+        val kotlinCollectionsPrefix = classifierNamePolicy.renderClassifier(type.builtIns.collection, this).substringBefore("Collection")
         val mutablePrefix = "Mutable"
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
         val simpleCollection = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + mutablePrefix, upperRendered, kotlinCollectionsPrefix, kotlinCollectionsPrefix + "(" + mutablePrefix + ")")
@@ -230,7 +211,7 @@ internal class DescriptorRendererImpl(
         val mutableEntry = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + "MutableMap.MutableEntry", upperRendered, kotlinCollectionsPrefix + "Map.Entry", kotlinCollectionsPrefix + "(Mutable)Map.(Mutable)Entry")
         if (mutableEntry != null) return mutableEntry
 
-        val kotlinPrefix = if (nameShortness != NameShortness.SHORT) "kotlin." else ""
+        val kotlinPrefix = classifierNamePolicy.renderClassifier(type.builtIns.array, this).substringBefore("Array")
         // Foo[] -> Array<(out) Foo!>!
         val array = replacePrefixes(lowerRendered, kotlinPrefix + escape("Array<"), upperRendered, kotlinPrefix + escape("Array<out "), kotlinPrefix + escape("Array<(out) "))
         if (array != null) return array
@@ -297,8 +278,7 @@ internal class DescriptorRendererImpl(
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
         val cd = typeConstructor.declarationDescriptor
         return when (cd) {
-            is TypeParameterDescriptor -> renderName(cd.getName())
-            is ClassDescriptor -> renderClassifierName(cd)
+            is TypeParameterDescriptor, is ClassDescriptor -> renderClassifierName(cd)
             null -> typeConstructor.toString()
             else -> error("Unexpected classifier: " + cd.javaClass)
         }
@@ -623,7 +603,7 @@ internal class DescriptorRendererImpl(
 
         val returnType = function.returnType
         if (!withoutReturnType && (unitReturnType || (returnType == null || !KotlinBuiltIns.isUnit(returnType)))) {
-            builder.append(": ").append(if (returnType == null) "[NULL]" else escape(renderType(returnType)))
+            builder.append(": ").append(if (returnType == null) "[NULL]" else renderType(returnType))
         }
 
         renderWhereSuffix(function.typeParameters, builder)
@@ -634,7 +614,7 @@ internal class DescriptorRendererImpl(
 
         val receiver = callableDescriptor.extensionReceiverParameter
         if (receiver != null) {
-            builder.append(" on ").append(escape(renderType(receiver.type)))
+            builder.append(" on ").append(renderType(receiver.type))
         }
     }
 
@@ -642,7 +622,7 @@ internal class DescriptorRendererImpl(
         val receiver = callableDescriptor.extensionReceiverParameter
         if (receiver != null) {
             val type = receiver.type
-            var result = escape(renderType(type))
+            var result = renderType(type)
             if (shouldRenderAsPrettyFunctionType(type) && !TypeUtils.isNullableType(type)) {
                 result = "($result)"
             }
@@ -678,7 +658,7 @@ internal class DescriptorRendererImpl(
         for (typeParameter in typeParameters) {
             typeParameter.upperBounds
                     .drop(1) // first parameter is rendered by renderTypeParameter
-                    .mapTo(upperBoundStrings) { renderName(typeParameter.name) + " : " + escape(renderType(it)) }
+                    .mapTo(upperBoundStrings) { renderName(typeParameter.name) + " : " + renderType(it) }
         }
 
         if (!upperBoundStrings.isEmpty()) {
@@ -762,12 +742,12 @@ internal class DescriptorRendererImpl(
             builder.append(": ")
         }
 
-        builder.append(escape(renderType(typeToRender)))
+        builder.append(renderType(typeToRender))
 
         renderInitializer(variable, builder)
 
         if (verbose && varargElementType != null) {
-            builder.append(" /*").append(escape(renderType(realType))).append("*/")
+            builder.append(" /*").append(renderType(realType)).append("*/")
         }
     }
 
@@ -790,7 +770,7 @@ internal class DescriptorRendererImpl(
         }
 
         renderName(property, builder)
-        builder.append(": ").append(escape(renderType(property.type)))
+        builder.append(": ").append(renderType(property.type))
 
         renderReceiverAfterName(property, builder)
 

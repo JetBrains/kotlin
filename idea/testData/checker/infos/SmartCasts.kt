@@ -153,13 +153,13 @@ fun getStringLength(obj : Any) : Char? {
 fun toInt(i: Int?): Int = if (i != null) <info descr="Smart cast to kotlin.Int">i</info> else 0
 fun illegalWhenBody(a: Any): Int = when(a) {
     is Int -> <info descr="Smart cast to kotlin.Int">a</info>
-    is String -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is kotlin.Any but kotlin.Int was expected">a</error>
+    is String -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
     else -> 1
 }
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return <info descr="Smart cast to kotlin.Int">a</info>
-        is String -> return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is kotlin.Any but kotlin.Int was expected">a</error>
+        is String -> return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
         else -> return 1
     }
 }
@@ -218,9 +218,9 @@ fun f(): String {
         <info descr="Smart cast to kotlin.String"><info descr="Wrapped into a reference object to be modified when captured in a closure">a</info></info>.compareTo("f")
         val <warning>f</warning>: Function0<String> = {
             <info>a</info> = 42
-            <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is kotlin.Any but kotlin.String was expected">a</error>
+            <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but String was expected">a</error>
         }
-        return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' is a local variable that is captured by a changing closure">a</error>
+        return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'String' is impossible, because 'a' is a local variable that is captured by a changing closure">a</error>
     }
     return ""
 }
@@ -232,13 +232,13 @@ class Mutable(var <info descr="This property has a backing field">x</info>: Stri
 
     fun foo(): String {
         if (x is String) {
-            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'x' is a mutable property that could have been changed by this time">x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'String' is impossible, because 'x' is a mutable property that could have been changed by this time">x</error>
         }
         if (x != null) {
-            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'x' is a mutable property that could have been changed by this time">x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'String' is impossible, because 'x' is a mutable property that could have been changed by this time">x</error>
         }
         if (xx is String) {
-            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'xx' is a property that has open or custom getter">xx</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'String' is impossible, because 'xx' is a property that has open or custom getter">xx</error>
         }
         return ""
     }
@@ -246,7 +246,7 @@ class Mutable(var <info descr="This property has a backing field">x</info>: Stri
     fun bar(other: Mutable): String {
         var y = other
         if (y.x is String) {
-            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'y.x' is a complex expression">y.x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'String' is impossible, because 'y.x' is a complex expression">y.x</error>
         }
         return ""
     }

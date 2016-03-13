@@ -52,7 +52,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
 
     // Avoid errors when some classes are not loaded for some reason
-    private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, incrementalCache,
+    private val typeMapper = KotlinTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, incrementalCache,
                                            IncompatibleClassTracker.DoNothing, moduleName)
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 
@@ -192,8 +192,8 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     private fun FunctionDescriptor.asRawSignature() =
-        with(typeMapper.mapSignature(this)) {
-            RawSignature(asmMethod.name!!, asmMethod.descriptor!!, MemberKind.METHOD)
+        with(typeMapper.mapAsmMethod(this)) {
+            RawSignature(name, descriptor, MemberKind.METHOD)
         }
 
     private fun isOrOverridesSamAdapter(descriptor: CallableMemberDescriptor): Boolean {

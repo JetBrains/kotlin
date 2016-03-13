@@ -1,6 +1,6 @@
 // FILE: first.before.kt
 // "Import" "false"
-// ERROR: Missing 'getValue(kotlin.Nothing?, kotlin.reflect.KProperty<*>)' method on delegate of type 'kotlin.String'
+// ERROR: Missing 'getValue(Nothing?, KProperty<*>)' method on delegate of type 'String'
 
 package b
 

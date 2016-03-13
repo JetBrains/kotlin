@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -120,11 +120,16 @@ public class AsmUtil {
 
     @NotNull
     public static Type unboxType(@NotNull Type boxedType) {
-        Type primitiveType = primitiveTypeByBoxedType.get(boxedType);
+        Type primitiveType = unboxPrimitiveTypeOrNull(boxedType);
         if (primitiveType == null) {
             throw new UnsupportedOperationException("Unboxing: " + boxedType);
         }
         return primitiveType;
+    }
+
+    @Nullable
+    public static Type unboxPrimitiveTypeOrNull(@NotNull Type boxedType) {
+        return primitiveTypeByBoxedType.get(boxedType);
     }
 
     public static boolean isIntPrimitive(Type type) {
@@ -171,7 +176,7 @@ public class AsmUtil {
 
     public static boolean isStaticMethod(OwnerKind kind, CallableMemberDescriptor functionDescriptor) {
         return isStaticKind(kind) ||
-               JetTypeMapper.isStaticAccessor(functionDescriptor) ||
+               KotlinTypeMapper.isStaticAccessor(functionDescriptor) ||
                AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor);
     }
 
@@ -213,7 +218,7 @@ public class AsmUtil {
             flags |= ACC_ABSTRACT;
         }
 
-        if (JetTypeMapper.isAccessor(functionDescriptor)
+        if (KotlinTypeMapper.isAccessor(functionDescriptor)
             || AnnotationUtilKt.hasJvmSyntheticAnnotation(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }
@@ -418,7 +423,7 @@ public class AsmUtil {
         v.athrow();
     }
 
-    public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {
+    public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, KotlinTypeMapper typeMapper) {
         List<Pair<String, Type>> allFields = new ArrayList<Pair<String, Type>>();
 
         ClassifierDescriptor captureThis = closure.getCaptureThis();
@@ -557,22 +562,31 @@ public class AsmUtil {
     }
 
     public static void genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
-        if (expectedType == Type.LONG_TYPE) {
-            v.lconst(myDelta);
+        numConst(myDelta, expectedType, v);
+        v.add(expectedType);
+    }
+
+    public static void numConst(int value, Type type, InstructionAdapter v) {
+        if (type == Type.FLOAT_TYPE) {
+            v.fconst(value);
         }
-        else if (expectedType == Type.FLOAT_TYPE) {
-            v.fconst(myDelta);
+        else if (type == Type.DOUBLE_TYPE) {
+            v.dconst(value);
         }
-        else if (expectedType == Type.DOUBLE_TYPE) {
-            v.dconst(myDelta);
+        else if (type == Type.LONG_TYPE) {
+            v.lconst(value);
+        }
+        else if (type == Type.CHAR_TYPE || type == Type.BYTE_TYPE || type == Type.SHORT_TYPE || type == Type.INT_TYPE) {
+            v.iconst(value);
         }
         else {
-            v.iconst(myDelta);
-            v.add(Type.INT_TYPE);
-            StackValue.coerce(Type.INT_TYPE, expectedType, v);
-            return;
+            throw new IllegalArgumentException("Primitive numeric type expected, got: " + type);
         }
-        v.add(expectedType);
+    }
+
+    public static void genIncrement(Type expectedType, Type baseType, int myDelta, InstructionAdapter v) {
+        genIncrement(baseType, myDelta, v);
+        StackValue.coerce(baseType, expectedType, v);
     }
 
     public static void swap(InstructionAdapter v, Type stackTop, Type afterTop) {
@@ -619,7 +633,7 @@ public class AsmUtil {
 
     private static void genParamAssertion(
             @NotNull InstructionAdapter v,
-            @NotNull JetTypeMapper typeMapper,
+            @NotNull KotlinTypeMapper typeMapper,
             @NotNull FrameMap frameMap,
             @NotNull CallableDescriptor parameter,
             @NotNull String name

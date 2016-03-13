@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
@@ -138,7 +138,7 @@ public class JvmCodegenUtil {
             boolean isDelegated,
             @NotNull MethodContext contextBeforeInline
     ) {
-        if (JetTypeMapper.isAccessor(property)) return false;
+        if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
         // Inline functions can't use direct access because a field may not be visible at the call site
@@ -161,7 +161,7 @@ public class JvmCodegenUtil {
         if (accessor == null) return true;
 
         // If the accessor is non-default (i.e. it has some code) we should call that accessor and not use direct access
-        if (accessor.hasBody()) return false;
+        if (DescriptorPsiUtilsKt.hasBody(accessor)) return false;
 
         // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
         return Visibilities.isPrivate(property.getVisibility()) || accessor.getModality() == FINAL;

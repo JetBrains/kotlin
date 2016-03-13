@@ -1,0 +1,32 @@
+package
+
+public /*synthesized*/ fun A(/*0*/ function: () -> kotlin.Int): A
+public fun foo(): kotlin.Unit
+
+public interface A {
+    public abstract fun getFoo(): kotlin.Int
+}
+
+public open class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public/*package*/ interface B1 : B.B2 {
+        public abstract override /*1*/ fun getFoo(): kotlin.Int
+    }
+
+    public/*package*/ interface B2 {
+        public abstract fun getFoo(): kotlin.Int
+    }
+
+    public/*package*/ interface B3 {
+        public abstract fun getFoo(): kotlin.Int
+    }
+
+    // Static members
+    public/*package*/ final /*synthesized*/ fun B1(/*0*/ function: () -> kotlin.Int): B.B1
+    public/*package*/ final /*synthesized*/ fun B2(/*0*/ function: () -> kotlin.Int): B.B2
+    public/*package*/ final /*synthesized*/ fun B3(/*0*/ function: () -> kotlin.Int): B.B3
+}

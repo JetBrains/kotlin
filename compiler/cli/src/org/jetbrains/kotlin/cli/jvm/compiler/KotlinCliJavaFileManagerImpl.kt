@@ -120,6 +120,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
         return findClassInPsiFile(classNameWithInnerClasses, file)
     }
 
+    override fun knownClassNamesInPackage(packageFqName: FqName) = index.collectKnownClassNamesInPackage(packageFqName)
+
     companion object {
         private val LOG = Logger.getInstance(KotlinCliJavaFileManagerImpl::class.java)
 

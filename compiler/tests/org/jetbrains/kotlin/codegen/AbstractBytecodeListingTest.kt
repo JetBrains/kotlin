@@ -22,8 +22,7 @@ import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
-
-    fun doTest(filename: String) {
+    override fun doTest(filename: String) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         loadFileByFullPath(filename)
         val ktFile = File(filename)

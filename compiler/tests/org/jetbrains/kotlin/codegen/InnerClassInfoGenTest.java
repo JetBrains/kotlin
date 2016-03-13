@@ -38,9 +38,14 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        loadFile("innerClassInfo/" + getTestName(true) + ".kt");
+        loadFile();
+    }
+
+    @NotNull
+    @Override
+    protected String getPrefix() {
+        return "innerClassInfo";
     }
 
     public void testInnerClassInfo() {

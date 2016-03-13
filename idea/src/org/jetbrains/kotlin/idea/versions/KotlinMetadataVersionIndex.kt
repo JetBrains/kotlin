@@ -23,13 +23,12 @@ import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVersionIndex>(
+object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVersionIndex, JvmMetadataVersion>(
         KotlinMetadataVersionIndex::class.java, { JvmMetadataVersion(*it) }
 ) {
     override fun getIndexer() = INDEXER
@@ -46,8 +45,8 @@ object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVers
             KotlinClassHeader.Kind.MULTIFILE_CLASS
     )
 
-    private val INDEXER = DataIndexer<BinaryVersion, Void, FileContent>() { inputData: FileContent ->
-        var version: BinaryVersion? = null
+    private val INDEXER = DataIndexer<JvmMetadataVersion, Void, FileContent>() { inputData: FileContent ->
+        var version: JvmMetadataVersion? = null
         var annotationPresent = false
         var kind: KotlinClassHeader.Kind? = null
 
@@ -62,7 +61,7 @@ object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVers
                         override fun visit(name: String, value: Any) {
                             when (name) {
                                 METADATA_VERSION_FIELD_NAME -> if (value is IntArray) {
-                                    version = JvmMetadataVersion(*value)
+                                    version = createBinaryVersion(value)
                                 }
                                 KIND_FIELD_NAME -> if (value is Int) {
                                     kind = KotlinClassHeader.Kind.getById(value)

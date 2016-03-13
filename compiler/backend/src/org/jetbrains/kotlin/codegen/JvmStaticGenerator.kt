@@ -17,25 +17,24 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class JvmStaticGenerator(
         val descriptor: FunctionDescriptor,
         val declarationOrigin: JvmDeclarationOrigin,
-        val state: GenerationState
+        val state: GenerationState,
+        parentBodyCodegen: ImplementationBodyCodegen
 ) : Function2<ImplementationBodyCodegen, ClassBuilder, Unit> {
     private val typeMapper = state.typeMapper
+
+    init {
+        parentBodyCodegen.getContext().accessibleDescriptor(JvmCodegenUtil.getDirectMember(descriptor), null)
+    }
 
     override fun invoke(codegen: ImplementationBodyCodegen, classBuilder: ClassBuilder) {
         val staticFunctionDescriptor = createStaticFunctionDescriptor(descriptor)
@@ -44,15 +43,9 @@ class JvmStaticGenerator(
         codegen.functionCodegen.generateMethod(
                 Synthetic(originElement, staticFunctionDescriptor),
                 staticFunctionDescriptor,
-                object : FunctionGenerationStrategy() {
-                    override fun generateBody(
-                            mv: MethodVisitor,
-                            frameMap: FrameMap,
-                            signature: JvmMethodSignature,
-                            context: MethodContext,
-                            parentCodegen: MemberCodegen<*>
-                    ) {
-                        val iv = InstructionAdapter(mv)
+                object : FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, descriptor) {
+                    override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                        val iv = codegen.v
                         val classDescriptor = descriptor.containingDeclaration as ClassDescriptor
                         val singletonValue = StackValue.singleton(classDescriptor, typeMapper)
                         singletonValue.put(singletonValue.type, iv)
@@ -62,12 +55,22 @@ class JvmStaticGenerator(
                             iv.load(index, paramType)
                             index += paramType.size
                         }
-
-                        val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
-                                codegen.getContext().accessibleDescriptor(descriptor, /* superCallTarget = */ null),
-                                false
-                        )
-                        syntheticOrOriginalMethod.genInvokeInstruction(iv)
+                        if (descriptor is PropertyAccessorDescriptor) {
+                            val propertyValue = codegen.intermediateValueForProperty(descriptor.correspondingProperty, false, null, StackValue.none())
+                            if (callableDescriptor is PropertyGetterDescriptor) {
+                                propertyValue.put(signature.returnType, iv)
+                            }
+                            else {
+                                propertyValue.store(StackValue.onStack(propertyValue.type), iv, true)
+                            }
+                        }
+                        else {
+                            val syntheticOrOriginalMethod = typeMapper.mapToCallableMethod(
+                                    codegen.context.accessibleDescriptor(descriptor, /* superCallTarget = */ null),
+                                    false
+                            )
+                            syntheticOrOriginalMethod.genInvokeInstruction(iv)
+                        }
                         iv.areturn(asmMethod.returnType)
                     }
                 }

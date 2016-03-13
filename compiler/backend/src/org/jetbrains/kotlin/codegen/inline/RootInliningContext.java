@@ -28,7 +28,6 @@ public class RootInliningContext extends InliningContext {
     public final CodegenContext startContext;
     private final InlineCallSiteInfo inlineCallSiteInfo;
     public final TypeParameterMappings typeParameterMappings;
-    public final boolean skipSmap;
     public final KtElement callElement;
 
     public RootInliningContext(
@@ -39,15 +38,13 @@ public class RootInliningContext extends InliningContext {
             @NotNull KtElement callElement,
             @NotNull InlineCallSiteInfo classNameToInline,
             @NotNull ReifiedTypeInliner inliner,
-            @Nullable TypeParameterMappings typeParameterMappings,
-            boolean skipSmap
+            @Nullable TypeParameterMappings typeParameterMappings
     ) {
         super(null, map, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), inliner, false, false);
         this.callElement = callElement;
         this.startContext = startContext;
         this.inlineCallSiteInfo = classNameToInline;
         this.typeParameterMappings = typeParameterMappings;
-        this.skipSmap = skipSmap;
     }
 
     @Override

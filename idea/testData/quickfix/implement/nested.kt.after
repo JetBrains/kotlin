@@ -1,0 +1,25 @@
+// "Implement interface" "true"
+// SHOULD_BE_AVAILABLE_AFTER_EXECUTION
+
+class Container {
+    interface Base {
+        val x: Boolean
+
+        val y: Double
+            get() = 3.14
+
+        fun foo(): String = ""
+
+        fun bar(z: Int): String
+    }
+}
+
+class BaseImpl : Container.Base {
+    override val x: Boolean
+        get() = throw UnsupportedOperationException()
+
+    override fun bar(z: Int): String {
+        throw UnsupportedOperationException()
+    }
+}
+

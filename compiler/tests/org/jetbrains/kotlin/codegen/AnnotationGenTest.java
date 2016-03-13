@@ -18,27 +18,16 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 
 public class AnnotationGenTest extends CodegenTestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
-    }
-
-    private ClassLoader loadFileGetClassLoader(@NotNull String text) {
-        loadText(text);
-        return generateAndCreateClassLoader();
-    }
-
-    private Class<?> getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
-        return loader.loadClass(PackagePartClassUtils.getPackagePartInternalName(myFiles.getPsiFile()));
     }
 
     public void testVolatileProperty() throws Exception {
@@ -49,34 +38,34 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testPropField() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("@[java.lang.Deprecated] var x = 0");
-        Class<?> srcClass = getPackageSrcClass(loader);
+        loadText("@[java.lang.Deprecated] var x = 0");
+        Class<?> srcClass = generateFacadeClass();
         assertNull(srcClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNull(srcClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
         assertNotNull(srcClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
     public void testPropGetter() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
+        loadText("var x = 0\n" +
                  "@[java.lang.Deprecated] get");
-        Class<?> srcClass = getPackageSrcClass(loader);
+        Class<?> srcClass = generateFacadeClass();
         assertNotNull(srcClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNull(srcClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
         assertNull(srcClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
     public void testPropSetter() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
+        loadText("var x = 0\n" +
                  "@[java.lang.Deprecated] set");
-        Class<?> scrClass = getPackageSrcClass(loader);
+        Class<?> scrClass = generateFacadeClass();
         assertNull(scrClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNotNull(scrClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
         assertNull(scrClass.getDeclaredField("x").getAnnotation(Deprecated.class));
     }
 
     public void testAnnotationForParamInTopLevelFunction() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("fun x(@[java.lang.Deprecated] i: Int) {}");
-        Class<?> srcClass = getPackageSrcClass(loader);
+        loadText("fun x(@[java.lang.Deprecated] i: Int) {}");
+        Class<?> srcClass = generateFacadeClass();
         Method srcClassMethod = srcClass.getMethod("x", int.class);
         assertNotNull(srcClassMethod);
         assertNotNull(getDeprecatedAnnotationFromList(srcClassMethod.getParameterAnnotations()[0]));
@@ -147,18 +136,13 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
     
     public void testAnnotationWithParamForParamInFunction() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("import java.lang.annotation.*\n" +
+        loadText("import java.lang.annotation.*\n" +
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
                  "fun x(@A(\"239\") i: Int) {}");
-        Class<?> packageClass = getPackageSrcClass(loader);
+        Class<?> packageClass = generateFacadeClass();
         Method packageClassMethod = packageClass.getMethod("x", int.class);
         assertNotNull(packageClassMethod);
         assertNotNull(getAnnotationByName(packageClassMethod.getParameterAnnotations()[0], "A"));
-
-        Class<?> srcClass = getPackageSrcClass(loader);
-        Method srcClassMethod = srcClass.getMethod("x", int.class);
-        assertNotNull(srcClassMethod);
-        assertNotNull(getAnnotationByName(srcClassMethod.getParameterAnnotations()[0], "A"));
     }
 
     @Nullable
@@ -189,11 +173,10 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testMethod() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("@[java.lang.Deprecated] fun x () {}");
-        Class<?> srcClass = getPackageSrcClass(loader);
+        loadText("@[java.lang.Deprecated] fun x () {}");
+        Class<?> srcClass = generateFacadeClass();
         Method srcClassMethod = srcClass.getDeclaredMethod("x");
         assertNotNull(srcClassMethod.getAnnotation(Deprecated.class));
-
     }
 
     public void testClass() throws NoSuchFieldException, NoSuchMethodException {

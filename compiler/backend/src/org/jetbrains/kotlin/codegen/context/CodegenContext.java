@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
@@ -317,7 +317,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull ScriptDescriptor script,
             @NotNull List<ScriptDescriptor> earlierScripts,
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull JetTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         return new ScriptContext(typeMapper, script, earlierScripts, classDescriptor, this);
     }
@@ -326,7 +326,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public ClosureContext intoClosure(
             @NotNull FunctionDescriptor funDescriptor,
             @NotNull LocalLookup localLookup,
-            @NotNull JetTypeMapper typeMapper
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         return new ClosureContext(typeMapper, funDescriptor, this, localLookup);
     }

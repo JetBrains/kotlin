@@ -15,12 +15,12 @@ public interface Lazy<out T> {
      * Gets the lazily initialized value of the current Lazy instance.
      * Once the value was initialized it must not change during the rest of lifetime of this Lazy instance.
      */
-    public abstract val value: T
+    public val value: T
     /**
      * Returns `true` if a value for this Lazy instance has been already initialized, and `false` otherwise.
      * Once this function has returned `true` it stays `true` for the rest of lifetime of this Lazy instance.
      */
-    public abstract fun isInitialized(): Boolean
+    public fun isInitialized(): Boolean
 }
 
 /**
@@ -118,13 +118,14 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
         get() {
             val _v1 = _value
             if (_v1 !== UNINITIALIZED_VALUE) {
+                @Suppress("UNCHECKED_CAST")
                 return _v1 as T
             }
 
             return synchronized(lock) {
                 val _v2 = _value
                 if (_v2 !== UNINITIALIZED_VALUE) {
-                     _v2 as T
+                    @Suppress("UNCHECKED_CAST") (_v2 as T)
                 }
                 else {
                     val typedValue = initializer!!()
@@ -153,6 +154,7 @@ internal class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializab
                 _value = initializer!!()
                 initializer = null
             }
+            @Suppress("UNCHECKED_CAST")
             return _value as T
         }
 
@@ -190,6 +192,7 @@ private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Se
                     }
                 }
             }
+            @Suppress("UNCHECKED_CAST")
             return _value as T
         }
 

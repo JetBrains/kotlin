@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -24,18 +25,29 @@ import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import java.io.EOFException
 
 class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
-
-    val roots by lazy {
+    private val notLoadedRoots by lazy(LazyThreadSafetyMode.NONE) {
         env.configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).
                 filterIsInstance<JvmClasspathRoot>().
                 mapNotNull {
                     env.contentRootToVirtualFile(it);
-                }.filter { it.findChild("META-INF") != null }
+                }.filter { it.findChild("META-INF") != null }.toMutableList()
     }
 
+    private val loadedModules: MutableList<ModuleMapping> = SmartList()
+
+    @Synchronized
     override fun findPackageParts(packageFqName: String): List<String> {
+        processNotLoadedRelevantRoots(packageFqName)
+
+        return loadedModules.flatMap { it.findPackageParts(packageFqName)?.parts ?: emptySet<String>() }.distinct()
+    }
+
+    private fun processNotLoadedRelevantRoots(packageFqName: String) {
+        if (notLoadedRoots.isEmpty()) return
+
         val pathParts = packageFqName.split('.')
-        val mappings = roots.filter {
+
+        val relevantRoots = notLoadedRoots.filter {
             //filter all roots by package path existing
             pathParts.fold(it) {
                 parent, part ->
@@ -43,7 +55,10 @@ class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvid
                 else  parent.findChild(part) ?: return@filter false
             }
             true
-        }.mapNotNull {
+        }
+        notLoadedRoots.removeAll(relevantRoots)
+
+        loadedModules.addAll(relevantRoots.mapNotNull {
             it.findChild("META-INF")
         }.flatMap {
             it.children.filter<VirtualFile> { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
@@ -51,10 +66,8 @@ class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvid
             try {
                 ModuleMapping.create(it.contentsToByteArray())
             } catch (e: EOFException) {
-                throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$it', roots: $roots", e)
+                throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$it', roots: $notLoadedRoots", e)
             }
-        }
-
-        return mappings.mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts }.distinct()
+        })
     }
 }

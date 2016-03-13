@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.diagnostics.rendering;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,9 +29,6 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtTypeConstraint;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
-import org.jetbrains.kotlin.renderer.MultiRenderer;
-import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.MappedExtensionProvider;
@@ -45,7 +41,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.kotlin.renderer.DescriptorRenderer.*;
+import static org.jetbrains.kotlin.diagnostics.rendering.RenderingContext.*;
 
 public class DefaultErrorMessages {
 
@@ -96,18 +92,6 @@ public class DefaultErrorMessages {
         return null;
     }
 
-    public static final DescriptorRenderer DEPRECATION_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions(
-            new Function1<DescriptorRendererOptions, Unit>() {
-                @Override
-                public Unit invoke(DescriptorRendererOptions options) {
-                    options.setWithoutTypeParameters(false);
-                    options.setReceiverAfterName(false);
-                    options.setRenderAccessors(true);
-                    return Unit.INSTANCE;
-                }
-            }
-    );
-
     static {
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
@@ -135,16 +119,18 @@ public class DefaultErrorMessages {
                     @NotNull
                     @Override
                     public String[] render(@NotNull TypeMismatchDueToTypeProjectionsData object) {
+                        RenderingContext context =
+                                of(object.getExpectedType(), object.getExpressionType(), object.getReceiverType(), object.getCallableDescriptor());
                         return new String[] {
-                                RENDER_TYPE.render(object.getExpectedType()),
-                                RENDER_TYPE.render(object.getExpressionType()),
-                                RENDER_TYPE.render(object.getReceiverType()),
-                                DescriptorRenderer.FQ_NAMES_IN_TYPES.render(object.getCallableDescriptor())
+                                RENDER_TYPE.render(object.getExpectedType(), context),
+                                RENDER_TYPE.render(object.getExpressionType(), context),
+                                RENDER_TYPE.render(object.getReceiverType(), context),
+                                FQ_NAMES_IN_TYPES.render(object.getCallableDescriptor(), context)
                         };
                     }
                 });
 
-        MAP.put(MEMBER_PROJECTED_OUT, "Out-projected type ''{1}'' prohibits the use of ''{0}''", DescriptorRenderer.FQ_NAMES_IN_TYPES, RENDER_TYPE);
+        MAP.put(MEMBER_PROJECTED_OUT, "Out-projected type ''{1}'' prohibits the use of ''{0}''", FQ_NAMES_IN_TYPES, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
@@ -189,10 +175,10 @@ public class DefaultErrorMessages {
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
         MAP.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", ELEMENT_TEXT);
-        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", new Renderer<BadNamedArgumentsTarget>() {
+        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", new DiagnosticParameterRenderer<BadNamedArgumentsTarget>() {
             @NotNull
             @Override
-            public String render(@NotNull BadNamedArgumentsTarget target) {
+            public String render(@NotNull BadNamedArgumentsTarget target, @NotNull RenderingContext context) {
                 switch (target) {
                     case NON_KOTLIN_FUNCTION:
                         return "non-Kotlin functions";
@@ -327,7 +313,7 @@ public class DefaultErrorMessages {
                 NAME, ELEMENT_TEXT);
         MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "Assignment operators ambiguity: {0}", AMBIGUOUS_CALLS);
 
-        MAP.put(EQUALS_MISSING, "No method 'equals(kotlin.Any?): kotlin.Boolean' available");
+        MAP.put(EQUALS_MISSING, "No method 'equals(Any?): Boolean' available");
         MAP.put(ASSIGNMENT_IN_EXPRESSION_CONTEXT, "Assignments are not expressions, and only expressions are allowed in this context");
         MAP.put(SUPER_IS_NOT_AN_EXPRESSION, "''{0}'' is not an expression, it can only be used on the left-hand side of a dot ('.')", STRING);
         MAP.put(SUPER_CANT_BE_EXTENSION_RECEIVER, "''{0}'' is not an expression, it can not be used as a receiver for extension functions", STRING);
@@ -362,7 +348,7 @@ public class DefaultErrorMessages {
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, "None of the hasNext() functions is applicable for iterator() of type ''{0}''", RENDER_TYPE);
-        MAP.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, "The ''iterator().hasNext()'' function of the loop range must return kotlin.Boolean, but returns {0}", RENDER_TYPE);
+        MAP.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, "The ''iterator().hasNext()'' function of the loop range must return Boolean, but returns {0}", RENDER_TYPE);
 
         MAP.put(NEXT_MISSING, "next() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(NEXT_AMBIGUITY, "next() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
@@ -381,7 +367,7 @@ public class DefaultErrorMessages {
                 STRING, RENDER_TYPE, RENDER_TYPE);
         MAP.put(DELEGATE_PD_METHOD_NONE_APPLICABLE, "''{0}'' method may be missing. None of the following functions will be called: {1}", STRING, AMBIGUOUS_CALLS);
 
-        MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
+        MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return Int, but returns {0}", RENDER_TYPE);
 
         MAP.put(UNDERSCORE_IS_RESERVED, "Names _, __, ___, ..., are reserved in Kotlin");
         MAP.put(INVALID_CHARACTERS, "Name {0}", STRING);
@@ -405,10 +391,10 @@ public class DefaultErrorMessages {
 
         MAP.put(IMPLICIT_CAST_TO_ANY, "Conditional branch result of type {0} is implicitly cast to {1}",
                 RENDER_TYPE, RENDER_TYPE);
-        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new Renderer<KtExpression>() {
+        MAP.put(EXPRESSION_EXPECTED, "{0} is not an expression, and only expressions are allowed here", new DiagnosticParameterRenderer<KtExpression>() {
             @NotNull
             @Override
-            public String render(@NotNull KtExpression expression) {
+            public String render(@NotNull KtExpression expression, @NotNull RenderingContext context) {
                 String expressionType = expression.toString();
                 return expressionType.substring(0, 1) +
                        expressionType.substring(1).toLowerCase();
@@ -456,7 +442,7 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_INITIALIZED_IN_INTERFACE, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_INTERFACE, "An interface may not have a constructor");
-        MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'kotlin.Any'");
+        MAP.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'");
         MAP.put(INTERFACE_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
@@ -501,10 +487,10 @@ public class DefaultErrorMessages {
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");
         MAP.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression");
-        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new Renderer<KtTypeConstraint>() {
+        MAP.put(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER, "{0} does not refer to a type parameter of {1}", new DiagnosticParameterRenderer<KtTypeConstraint>() {
             @NotNull
             @Override
-            public String render(@NotNull KtTypeConstraint typeConstraint) {
+            public String render(@NotNull KtTypeConstraint typeConstraint, @NotNull RenderingContext context) {
                 //noinspection ConstantConditions
                 return typeConstraint.getSubjectTypeParameterName().getReferencedName();
             }
@@ -526,11 +512,13 @@ public class DefaultErrorMessages {
                     @NotNull
                     @Override
                     public String[] render(@NotNull VarianceConflictDiagnosticData data) {
+                        RenderingContext context =
+                                of(data.getTypeParameter(), data.getTypeParameter().getVariance(), data.getOccurrencePosition(), data.getContainingType());
                         return new String[] {
-                            NAME.render(data.getTypeParameter()),
-                            RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance()),
-                            RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition()),
-                            RENDER_TYPE.render(data.getContainingType())
+                            NAME.render(data.getTypeParameter(), context),
+                            RENDER_POSITION_VARIANCE.render(data.getTypeParameter().getVariance(), context),
+                            RENDER_POSITION_VARIANCE.render(data.getOccurrencePosition(), context),
+                            RENDER_TYPE.render(data.getContainingType(), context)
                         };
                     }
                 });
@@ -545,16 +533,16 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, "Type arguments for outer class are redundant when nested class is referenced");
 
         MAP.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is forbidden for catch parameter");
-        MAP.put(GENERIC_THROWABLE_SUBCLASS, "Subclass of 'kotlin.Throwable' may not have type parameters");
+        MAP.put(GENERIC_THROWABLE_SUBCLASS, "Subclass of 'Throwable' may not have type parameters");
 
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "The loop iterates over values of type {0} but the parameter is declared to be {1}", RENDER_TYPE,
                 RENDER_TYPE);
-        MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type kotlin.Boolean, but is of type {0}", RENDER_TYPE);
+        MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type Boolean, but is of type {0}", RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
         MAP.put(IMPLICIT_NOTHING_RETURN_TYPE, "''Nothing'' return type needs to be specified explicitly");
         MAP.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "''Nothing'' property type needs to be specified explicitly");
         MAP.put(IMPLICIT_INTERSECTION_TYPE, "Inferred type {0} is an intersection, please specify the required type explicitly", RENDER_TYPE);
-        MAP.put(EXPECTED_CONDITION, "Expected condition of type kotlin.Boolean");
+        MAP.put(EXPECTED_CONDITION, "Expected condition of type Boolean");
 
         MAP.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE);
         MAP.put(UNCHECKED_CAST, "Unchecked cast: {0} to {1}", RENDER_TYPE, RENDER_TYPE);
@@ -562,10 +550,10 @@ public class DefaultErrorMessages {
         MAP.put(INCONSISTENT_TYPE_PARAMETER_VALUES, "Type parameter {0} of ''{1}'' has inconsistent values: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
         MAP.put(INCONSISTENT_TYPE_PARAMETER_BOUNDS, "Type parameter {0} of ''{1}'' has inconsistent bounds: {2}", NAME, NAME, RENDER_COLLECTION_OF_TYPES);
 
-        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new Renderer<KtSimpleNameExpression>() {
+        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new DiagnosticParameterRenderer<KtSimpleNameExpression>() {
             @NotNull
             @Override
-            public String render(@NotNull KtSimpleNameExpression nameExpression) {
+            public String render(@NotNull KtSimpleNameExpression nameExpression, @NotNull RenderingContext context) {
                 //noinspection ConstantConditions
                 return nameExpression.getReferencedName();
             }
@@ -617,18 +605,18 @@ public class DefaultErrorMessages {
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. " +
                                    "The function '" + OperatorNameConventions.INVOKE.asString() + "()' is not found",
-                ELEMENT_TEXT, new Renderer<KotlinType>() {
+                ELEMENT_TEXT, new DiagnosticParameterRenderer<KotlinType>() {
                     @NotNull
                     @Override
-                    public String render(@NotNull KotlinType type) {
+                    public String render(@NotNull KotlinType type, @NotNull RenderingContext context) {
                         if (type.isError()) return "";
-                        return " of type '" + RENDER_TYPE.render(type) + "'";
+                        return " of type '" + RENDER_TYPE.render(type, context) + "'";
                     }
                 });
-        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT, new Renderer<Boolean>() {
+        MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT, new DiagnosticParameterRenderer<Boolean>() {
             @NotNull
             @Override
-            public String render(@NotNull Boolean hasValueParameters) {
+            public String render(@NotNull Boolean hasValueParameters, @NotNull RenderingContext context) {
                 return hasValueParameters ? "..." : "";
             }
         });
@@ -666,7 +654,7 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT, "Type inference for control flow expression failed. Please specify its type explicitly.");
 
-        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", (Renderer) null);
+        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", (DiagnosticParameterRenderer) null);
         MAP.put(NO_TYPE_ARGUMENTS_ON_RHS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected. " +
                                                            "Use ''{1}'' if you don''t want to pass type arguments", null, STRING);
 
@@ -731,7 +719,7 @@ public class DefaultErrorMessages {
         MAP.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated");
 
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
-        MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "kotlin.Array class literal requires a type argument, please specify one in angle brackets");
+        MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "Array class literal requires a type argument, please specify one in angle brackets");
 
         //Inline
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

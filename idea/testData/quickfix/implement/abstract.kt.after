@@ -1,0 +1,19 @@
+// "Implement abstract class" "true"
+// SHOULD_BE_AVAILABLE_AFTER_EXECUTION
+
+private abstract class Base {
+    abstract var x: Int
+
+    abstract fun toInt(arg: String): Int
+}
+
+private class BaseImpl : Base() {
+    override var x: Int
+        get() = throw UnsupportedOperationException()
+        set(value) {
+        }
+
+    override fun toInt(arg: String): Int {
+        throw UnsupportedOperationException()
+    }
+}

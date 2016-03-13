@@ -32,27 +32,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnalyzingUtils {
+    private static final boolean WRITE_DEBUG_TRACE_NAMES = false;
 
     public abstract static class PsiErrorElementVisitor extends KtTreeVisitorVoid {
         @Override
-        public abstract void visitErrorElement(PsiErrorElement element);
+        public abstract void visitErrorElement(@NotNull PsiErrorElement element);
     }
-
 
     public static void checkForSyntacticErrors(@NotNull PsiElement root) {
         root.acceptChildren(new PsiErrorElementVisitor() {
             @Override
-            public void visitErrorElement(PsiErrorElement element) {
-                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " + element.getNode().getElementType() + " '" + element.getText() + DiagnosticUtils.atLocation(element));
+            public void visitErrorElement(@NotNull PsiErrorElement element) {
+                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " +
+                                                   element.getNode().getElementType() + " '" +
+                                                   element.getText() + DiagnosticUtils.atLocation(element));
             }
         });
     }
     
     public static List<PsiErrorElement> getSyntaxErrorRanges(@NotNull PsiElement root) {
-        final ArrayList<PsiErrorElement> r = new ArrayList<PsiErrorElement>();
+        final List<PsiErrorElement> r = new ArrayList<PsiErrorElement>();
         root.acceptChildren(new PsiErrorElementVisitor() {
             @Override
-            public void visitErrorElement(PsiErrorElement element) {
+            public void visitErrorElement(@NotNull PsiErrorElement element) {
                 r.add(element);
             }
         });
@@ -70,17 +72,22 @@ public class AnalyzingUtils {
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-
     public static String formDebugNameForBindingTrace(@NotNull String debugName, @Nullable Object resolutionSubjectForMessage) {
-        StringBuilder debugInfo = new StringBuilder(debugName);
-        if (resolutionSubjectForMessage instanceof KtElement) {
-            KtElement element = (KtElement) resolutionSubjectForMessage;
-            debugInfo.append(" ").append(DebugTextUtilKt.getDebugText(element));
-            debugInfo.append(" in ").append(element.getContainingFile().getName());
+        if (WRITE_DEBUG_TRACE_NAMES) {
+            StringBuilder debugInfo = new StringBuilder(debugName);
+            if (resolutionSubjectForMessage instanceof KtElement) {
+                KtElement element = (KtElement) resolutionSubjectForMessage;
+                debugInfo.append(" ").append(DebugTextUtilKt.getDebugText(element));
+                //debugInfo.append(" in ").append(element.getContainingFile().getName());
+                debugInfo.append(" in ").append(element.getContainingKtFile().getName()).append(" ").append(element.getTextOffset());
+            }
+            else if (resolutionSubjectForMessage != null) {
+                debugInfo.append(" ").append(resolutionSubjectForMessage);
+            }
+
+            return debugInfo.toString();
         }
-        else if (resolutionSubjectForMessage != null) {
-            debugInfo.append(" ").append(resolutionSubjectForMessage);
-        }
-        return debugInfo.toString();
+
+        return "";
     }
 }

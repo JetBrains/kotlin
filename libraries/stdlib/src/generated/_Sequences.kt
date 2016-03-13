@@ -92,7 +92,7 @@ public fun <T> Sequence<T>.first(): T {
  */
 public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found.")
+    throw NoSuchElementException("Sequence contains no element matching the predicate.")
 }
 
 /**
@@ -180,7 +180,7 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
+    if (!found) throw NoSuchElementException("Sequence contains no element matching the predicate.")
     return last as T
 }
 
@@ -245,12 +245,12 @@ public inline fun <T> Sequence<T>.single(predicate: (T) -> Boolean): T {
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
+            if (found) throw IllegalArgumentException("Sequence contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
+    if (!found) throw NoSuchElementException("Sequence contains no element matching the predicate.")
     return single as T
 }
 
@@ -288,7 +288,7 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
  * Returns a sequence containing all elements except first [n] elements.
  */
 public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     return when {
         n == 0 -> this
         this is DropTakeSequence -> this.drop(n)
@@ -312,6 +312,8 @@ public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
 
 /**
  * Returns a sequence containing only elements matching the given [predicate].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
  */
 public fun <T> Sequence<T>.filterIndexed(predicate: (Int, T) -> Boolean): Sequence<T> {
     // TODO: Rewrite with generalized MapFilterIndexingSequence
@@ -320,6 +322,8 @@ public fun <T> Sequence<T>.filterIndexed(predicate: (Int, T) -> Boolean): Sequen
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
  */
 public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -339,6 +343,7 @@ public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
  * Returns a sequence containing all elements that are not `null`.
  */
 public fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T> {
+    @Suppress("UNCHECKED_CAST")
     return filterNot { it == null } as Sequence<T>
 }
 
@@ -370,7 +375,7 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
  * Returns a sequence containing first [n] elements.
  */
 public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0) { "Requested element count $n is less than zero." }
     return when {
         n == 0 -> emptySequence()
         this is DropTakeSequence -> this.take(n)
@@ -537,6 +542,7 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
+@kotlin.jvm.JvmVersion
 public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
@@ -629,6 +635,8 @@ public fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R> {
 /**
  * Returns a sequence containing the results of applying the given [transform] function
  * to each element and its index in the original sequence.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R> {
     return TransformingIndexedSequence(this, transform)
@@ -637,6 +645,8 @@ public fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R> 
 /**
  * Returns a sequence containing only the non-null results of applying the given [transform] function
  * to each element and its index in the original sequence.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (Int, T) -> R?): Sequence<R> {
     return TransformingIndexedSequence(this, transform).filterNotNull()
@@ -645,6 +655,8 @@ public fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (Int, T) -> R?)
 /**
  * Applies the given [transform] function to each element and its index in the original sequence
  * and appends only the non-null results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
@@ -654,6 +666,8 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndex
 /**
  * Applies the given [transform] function to each element and its index in the original sequence
  * and appends the results to the given [destination].
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
@@ -776,6 +790,8 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original sequence.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
  */
 public inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
     var index = 0
@@ -793,6 +809,8 @@ public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
  */
 public inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
@@ -914,7 +932,7 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
  */
 public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty sequence can't be reduced.")
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -925,10 +943,12 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original sequence.
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself and calculates the next accumulator value.
  */
 public inline fun <S, T: S> Sequence<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty sequence can't be reduced.")
     var index = 1
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
@@ -1161,6 +1181,7 @@ public inline fun <T> Sequence<T>.asSequence(): Sequence<T> {
  */
 @kotlin.jvm.JvmVersion
 public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
+    @Suppress("UNCHECKED_CAST")
     return filter { it is R } as Sequence<R>
 }
 
@@ -1169,6 +1190,7 @@ public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.i
  */
 @kotlin.jvm.JvmVersion
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
+    @Suppress("UNCHECKED_CAST")
     return filter { klass.isInstance(it) } as Sequence<R>
 }
 
@@ -1186,6 +1208,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsI
  */
 @kotlin.jvm.JvmVersion
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }

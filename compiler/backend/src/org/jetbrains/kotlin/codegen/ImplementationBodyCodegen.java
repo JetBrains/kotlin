@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -297,7 +298,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @NotNull
     private JvmClassSignature signature() {
-        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
+        JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
 
         typeMapper.writeFormalTypeParameters(descriptor.getDeclaredTypeParameters(), sw);
 
@@ -657,7 +658,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
             else {
                 //noinspection ConstantConditions
-                Method method = typeMapper.mapSignature(propertyDescriptor.getGetter()).getAsmMethod();
+                Method method = typeMapper.mapAsmMethod(propertyDescriptor.getGetter());
                 iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor(), false);
                 return method.getReturnType();
             }
@@ -726,7 +727,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         parameterIndex += type.getSize();
                     }
 
-                    Method constructorAsmMethod = typeMapper.mapSignature(constructor).getAsmMethod();
+                    Method constructorAsmMethod = typeMapper.mapAsmMethod(constructor);
                     iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor(), false);
 
                     iv.areturn(thisDescriptorType);
@@ -1342,7 +1343,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
                         Type traitImplType = typeMapper.mapDefaultImpls(containingTrait);
 
-                        Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal(), OwnerKind.DEFAULT_IMPLS).getAsmMethod();
+                        Method traitMethod = typeMapper.mapAsmMethod(traitFun.getOriginal(), OwnerKind.DEFAULT_IMPLS);
 
                         Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                         Type[] originalArgTypes = traitMethod.getArgumentTypes();

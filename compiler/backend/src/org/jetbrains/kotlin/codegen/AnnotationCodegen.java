@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.annotation.WrappedAnnotated;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -67,9 +67,9 @@ public abstract class AnnotationCodegen {
 
     private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {};
 
-    private final JetTypeMapper typeMapper;
+    private final KotlinTypeMapper typeMapper;
 
-    private AnnotationCodegen(JetTypeMapper mapper) {
+    private AnnotationCodegen(KotlinTypeMapper mapper) {
         typeMapper = mapper;
     }
 
@@ -160,7 +160,7 @@ public abstract class AnnotationCodegen {
     }
 
     private static boolean isInvisibleFromTheOutside(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor && JetTypeMapper.isAccessor((CallableMemberDescriptor) descriptor)) return false;
+        if (descriptor instanceof CallableMemberDescriptor && KotlinTypeMapper.isAccessor((CallableMemberDescriptor) descriptor)) return false;
         if (descriptor instanceof MemberDescriptor) {
             return AsmUtil.getVisibilityAccessFlag((MemberDescriptor) descriptor) == Opcodes.ACC_PRIVATE;
         }
@@ -480,7 +480,7 @@ public abstract class AnnotationCodegen {
     @NotNull
     abstract AnnotationVisitor visitAnnotation(String descr, boolean visible);
 
-    public static AnnotationCodegen forClass(final ClassVisitor cv, JetTypeMapper mapper) {
+    public static AnnotationCodegen forClass(final ClassVisitor cv, KotlinTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
             @NotNull
             @Override
@@ -490,7 +490,7 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forMethod(final MethodVisitor mv, JetTypeMapper mapper) {
+    public static AnnotationCodegen forMethod(final MethodVisitor mv, KotlinTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
             @NotNull
             @Override
@@ -500,7 +500,7 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forField(final FieldVisitor fv, JetTypeMapper mapper) {
+    public static AnnotationCodegen forField(final FieldVisitor fv, KotlinTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
             @NotNull
             @Override
@@ -510,7 +510,7 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forParameter(final int parameter, final MethodVisitor mv, JetTypeMapper mapper) {
+    public static AnnotationCodegen forParameter(final int parameter, final MethodVisitor mv, KotlinTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
             @NotNull
             @Override
@@ -520,7 +520,7 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forAnnotationDefaultValue(final MethodVisitor mv, JetTypeMapper mapper) {
+    public static AnnotationCodegen forAnnotationDefaultValue(final MethodVisitor mv, KotlinTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
             @NotNull
             @Override

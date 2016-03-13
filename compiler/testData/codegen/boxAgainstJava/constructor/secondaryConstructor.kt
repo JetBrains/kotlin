@@ -1,6 +1,35 @@
-import test.secondaryConstructor;
+// FILE: test/Foo.java
 
-class Child : secondaryConstructor {
+package test;
+
+public class Foo {
+    private final String x;
+    private final String y;
+
+    public Foo(String x, String y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Foo(String x) {
+        this(x, "def_y");
+    }
+
+    public Foo() {
+        this("def_x");
+    }
+
+    @Override
+    public String toString() {
+        return x + "#" + y;
+    }
+}
+
+// FILE: 1.kt
+
+import test.Foo;
+
+class Child : Foo {
     constructor(): super() {}
     constructor(x: String): super(x) {}
     constructor(x: String, y: String): super(x, y) {}

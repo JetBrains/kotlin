@@ -553,7 +553,7 @@ public final class StaticContext {
                         return null;
                     }
 
-                    if (isNativeObject(descriptor) || isBuiltin(descriptor)) {
+                    if (isNativeObject(descriptor)) {
                         return null;
                     }
                     ClassDescriptor cls = (ClassDescriptor) descriptor;

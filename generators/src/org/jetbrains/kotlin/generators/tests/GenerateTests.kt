@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxInlineCodegenTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
@@ -75,6 +73,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiled
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
+import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
@@ -113,7 +112,10 @@ import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.*
-import org.jetbrains.kotlin.jvm.compiler.*
+import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadKotlinWithTypeTableTest
+import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
@@ -196,47 +198,23 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBlackBoxInlineCodegenTest>("BlackBoxInlineCodegenTestGenerated") {
-            model("codegen/boxInline", extension = "1.kt", testMethod = "doTestMultiFileWithInlineCheck")
+            model("codegen/boxInline")
         }
 
         testClass<AbstractCompileKotlinAgainstInlineKotlinTest>("CompileKotlinAgainstInlineKotlinTestGenerated") {
-            model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
+            model("codegen/boxInline")
         }
 
-        testClass(AbstractBlackBoxMultifileClassCodegenTest::class.java, "BlackBoxMultifileClassKotlinTestGenerated") {
-            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doTestMultifileClassAgainstSources")
-        }
-
-        testClass(AbstractCompileKotlinAgainstMultifileKotlinTest::class.java, "CompileKotlinAgainstMultifileKotlinTestGenerated") {
-            model("codegen/boxMultifileClasses", extension = "1.kt", testMethod = "doBoxTest")
-        }
-
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxMultiFileCodegenTestGenerated") {
-            model("codegen/boxMultiFile", extension = null, recursive = false, testMethod = "doTestMultiFile")
-        }
-
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxAgainstJavaCodegenTestGenerated") {
-            model("codegen/boxAgainstJava", testMethod = "doTestAgainstJava")
-        }
-
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJavaCodegenTestGenerated") {
-            model("codegen/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
-        }
-
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithStdlibCodegenTestGenerated") {
-            model("codegen/boxWithStdlib", testMethod = "doTestWithStdlib")
+        testClass<AbstractBlackBoxAgainstJavaCodegenTest>() {
+            model("codegen/boxAgainstJava")
         }
 
         testClass<AbstractScriptCodegenTest>() {
             model("codegen/script", extension = "kts")
         }
 
-        testClass(AbstractBytecodeTextTest::class.java) {
+        testClass<AbstractBytecodeTextTest>() {
             model("codegen/bytecodeText")
-        }
-
-        testClass(AbstractBytecodeTextTest::class.java, "BytecodeTextMultifileTestGenerated") {
-            model("codegen/bytecodeTextMultifile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
 
         testClass<AbstractBytecodeListingTest>() {
@@ -284,7 +262,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompileKotlinAgainstKotlinTest>() {
-            model("compileKotlinAgainstKotlin", extension = "A.kt")
+            model("compileKotlinAgainstKotlin")
         }
 
         testClass<AbstractDescriptorRendererTest>() {
@@ -359,7 +337,7 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/java8-tests/tests", "compiler/testData") {
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJava8CodegenTestGenerated") {
-            model("codegen/java8/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
+            model("codegen/java8/box")
         }
         testClass<AbstractDiagnosticsWithFullJdkTest>("DiagnosticsWithJava8TestGenerated") {
             model("diagnostics/testsWithJava8")
@@ -426,7 +404,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractParameterInfoTest>() {
-            model("parameterInfo", recursive = true)
+            model("parameterInfo", recursive = true, excludeDirs = listOf("withLib/sharedLib"))
         }
 
         testClass<AbstractKotlinGotoTest>() {
@@ -521,6 +499,10 @@ fun main(args: Array<String>) {
             model("codeInsight/unwrapAndRemove/unwrapFinally", testMethod = "doTestFinallyUnwrapper")
             model("codeInsight/unwrapAndRemove/removeFinally", testMethod = "doTestFinallyRemover")
             model("codeInsight/unwrapAndRemove/unwrapLambda", testMethod = "doTestLambdaUnwrapper")
+        }
+
+        testClass<AbstractBackspaceHandlerTest>() {
+            model("editor/backspaceHandler")
         }
 
         testClass<AbstractQuickDocProviderTest>() {

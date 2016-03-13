@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -165,7 +165,7 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
 
     private class SyntheticProperty(
             val receiver: StackValue,
-            val typeMapper: JetTypeMapper,
+            val typeMapper: KotlinTypeMapper,
             val propertyDescriptor: PropertyDescriptor,
             val receiverDescriptor: ClassDescriptor,
             val androidClassType: AndroidClassType,
