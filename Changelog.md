@@ -1,8 +1,8 @@
 # CHANGELOG
 
-## 1.1
+## 1.1 (unreleased)
 
-## 1.0.2
+## 1.0.2 (2016-03-07)
 
 ### JS
 - Safe calls (`x?.let { it }`) are now inlined
