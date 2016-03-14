@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -251,7 +250,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
 
         boolean allowBareTypes = BARE_TYPES_ALLOWED.contains(operationType);
-        TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, allowBareTypes);
+        TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, allowBareTypes, context.isDebuggerContext);
         PossiblyBareType possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, right);
 
         KotlinTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
@@ -432,7 +431,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 KtUserType userType = (KtUserType) typeElement;
                 // This may be just a superclass name even if the superclass is generic
                 if (userType.getTypeArguments().isEmpty()) {
-                    classifierCandidate = components.typeResolver.resolveClass(context.scope, userType, context.trace);
+                    classifierCandidate = components.typeResolver.resolveClass(context.scope, userType, context.trace, context.isDebuggerContext);
                 }
                 else {
                     supertype = components.typeResolver.resolveType(context.scope, superTypeQualifier, context.trace, true);
@@ -612,7 +611,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         TypeResolutionContext context =
-                new TypeResolutionContext(c.scope, c.trace, /* checkBounds = */ false, /* allowBareTypes = */ true);
+                new TypeResolutionContext(c.scope, c.trace, /* checkBounds = */ false, /* allowBareTypes = */ true, /* isDebuggerContext */ false);
         PossiblyBareType possiblyBareType =
                 components.typeResolver.resolvePossiblyBareType(context, typeReference);
 

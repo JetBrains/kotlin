@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
 import org.jetbrains.kotlin.resolve.calls.unrollToLeftMostQualifiedExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -64,12 +65,14 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
     fun resolveDescriptorForType(
             userType: KtUserType,
             scope: LexicalScope,
-            trace: BindingTrace
+            trace: BindingTrace,
+            isDebuggerContext: Boolean
     ): TypeQualifierResolutionResult {
+        val ownerDescriptor = if (!isDebuggerContext) scope.ownerDescriptor else null
         if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
             val descriptor = userType.referenceExpression?.let {
                 val classifier = scope.findClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
-                storeResult(trace, it, classifier, scope.ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
+                storeResult(trace, it, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
                 classifier
             }
 
@@ -80,7 +83,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         val (qualifierPartList, hasError) = userType.asQualifierPartList()
         if (hasError) {
             val descriptor = resolveToPackageOrClass(
-                    qualifierPartList, module, trace, scope.ownerDescriptor, scope, position = QualifierPosition.TYPE
+                    qualifierPartList, module, trace, ownerDescriptor, scope, position = QualifierPosition.TYPE
             ) as? ClassifierDescriptor
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
@@ -90,7 +93,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
 
         val qualifier = resolveToPackageOrClass(
                 qualifierPartList.subList(0, qualifierPartList.size - 1), module,
-                trace, scope.ownerDescriptor, scope.check { !userType.startWithPackage }, position = QualifierPosition.TYPE
+                trace, ownerDescriptor, scope.check { !userType.startWithPackage }, position = QualifierPosition.TYPE
         ) ?: return TypeQualifierResolutionResult(qualifierPartList, null)
 
         val lastPart = qualifierPartList.last()
@@ -99,7 +102,7 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
             is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getContributedClassifier(lastPart.name, lastPart.location)
             else -> null
         }
-        storeResult(trace, lastPart.expression, classifier, scope.ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
+        storeResult(trace, lastPart.expression, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
         return TypeQualifierResolutionResult(qualifierPartList, classifier)
     }
 
@@ -141,11 +144,12 @@ class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator
         val path = importedReference.asQualifierPartList(trace)
         val lastPart = path.lastOrNull() ?: return null
         val packageFragmentForCheck =
-                if (packageFragmentForVisibilityCheck is DeclarationDescriptorWithSource && packageFragmentForVisibilityCheck.source == SourceElement.NO_SOURCE) {
-                    PackageFragmentWithCustomSource(packageFragmentForVisibilityCheck, KotlinSourceElement(importDirective.getContainingKtFile()))
-                }
-                else {
-                    packageFragmentForVisibilityCheck
+                when {
+                    importDirective.suppressDiagnosticsInDebugMode() -> null
+                    packageFragmentForVisibilityCheck is DeclarationDescriptorWithSource && packageFragmentForVisibilityCheck.source == SourceElement.NO_SOURCE -> {
+                        PackageFragmentWithCustomSource(packageFragmentForVisibilityCheck, KotlinSourceElement(importDirective.getContainingKtFile()))
+                    }
+                    else -> packageFragmentForVisibilityCheck
                 }
 
         if (importDirective.isAllUnder) {

@@ -346,7 +346,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             typeReferenceAfterIs: KtTypeReference,
             subjectDataFlowValue: DataFlowValue
     ): ConditionalDataFlowInfo {
-        val typeResolutionContext = TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true)
+        val typeResolutionContext = TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true, context.isDebuggerContext)
         val possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs)
         val targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace, components.builtIns)
 

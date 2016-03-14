@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.*
@@ -67,7 +68,7 @@ class CodeFragmentAnalyzer(
             }
 
             is KtTypeReference -> {
-                val context = TypeResolutionContext(scopeForContextElement, trace, true, true).noBareTypes()
+                val context = TypeResolutionContext(scopeForContextElement, trace, true, true, codeFragment.suppressDiagnosticsInDebugMode()).noBareTypes()
                 typeResolver.resolvePossiblyBareType(context, codeFragmentElement)
             }
         }

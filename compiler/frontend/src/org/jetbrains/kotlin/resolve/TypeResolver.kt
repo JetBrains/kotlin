@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
+import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
@@ -65,7 +66,7 @@ class TypeResolver(
 
     fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
         // bare types are not allowed
-        return resolveType(TypeResolutionContext(scope, trace, checkBounds, false), typeReference)
+        return resolveType(TypeResolutionContext(scope, trace, checkBounds, false, typeReference.suppressDiagnosticsInDebugMode()), typeReference)
     }
 
     private fun resolveType(c: TypeResolutionContext, typeReference: KtTypeReference): KotlinType {
@@ -157,7 +158,7 @@ class TypeResolver(
         var result: PossiblyBareType? = null
         typeElement?.accept(object : KtVisitorVoid() {
             override fun visitUserType(type: KtUserType) {
-                val qualifierResolutionResults = resolveDescriptorForType(c.scope, type, c.trace)
+                val qualifierResolutionResults = resolveDescriptorForType(c.scope, type, c.trace, c.isDebuggerContext)
                 val (qualifierParts, classifierDescriptor) = qualifierResolutionResults
 
                 if (classifierDescriptor == null) {
@@ -564,11 +565,11 @@ class TypeResolver(
     }
 
     fun resolveClass(
-            scope: LexicalScope, userType: KtUserType, trace: BindingTrace
-    ): ClassifierDescriptor? = resolveDescriptorForType(scope, userType, trace).classifierDescriptor
+            scope: LexicalScope, userType: KtUserType, trace: BindingTrace, isDebuggerContext: Boolean
+    ): ClassifierDescriptor? = resolveDescriptorForType(scope, userType, trace, isDebuggerContext).classifierDescriptor
 
     fun resolveDescriptorForType(
-            scope: LexicalScope, userType: KtUserType, trace: BindingTrace
+            scope: LexicalScope, userType: KtUserType, trace: BindingTrace, isDebuggerContext: Boolean
     ): QualifiedExpressionResolver.TypeQualifierResolutionResult {
         if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
             for (typeArgument in userType.qualifier!!.typeArguments) {
@@ -578,7 +579,7 @@ class TypeResolver(
             }
         }
 
-        val result = qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace)
+        val result = qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace, isDebuggerContext)
         if (result.classifierDescriptor != null) {
             PlatformTypesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
                     moduleDescriptor, trace, userType, result.classifierDescriptor)
