@@ -22,7 +22,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
@@ -86,8 +86,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
         config.descriptor.receiverParameter?.let {
             val receiverType = it.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames)
             val receiverTypeAsString = receiverType.typeAsString()
-            val isFunctionType = receiverType.isExactFunctionOrExtensionFunctionType
-            receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
+            receiver(if (receiverType.isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
         }
 
         name(config.generatorOptions.dummyName ?: config.descriptor.name)

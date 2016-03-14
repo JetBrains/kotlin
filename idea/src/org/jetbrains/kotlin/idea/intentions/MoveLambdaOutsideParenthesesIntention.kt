@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
@@ -48,7 +48,7 @@ class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCallExpre
                 // if there are functions among candidates but none of them have last function parameter then not show the intention
                 if (candidates.isNotEmpty() && candidates.none {
                     val lastParameter = it.valueParameters.lastOrNull()
-                    lastParameter != null && lastParameter.type.isExactFunctionOrExtensionFunctionType
+                    lastParameter != null && lastParameter.type.isFunctionType
                 }) {
                     return false
                 }

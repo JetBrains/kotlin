@@ -612,7 +612,7 @@ public class DescriptorResolver {
         if (DynamicTypesKt.isDynamic(upperBoundType)) {
             trace.report(DYNAMIC_UPPER_BOUND.on(upperBound));
         }
-        if (FunctionTypesKt.isExactExtensionFunctionType(upperBoundType)) {
+        if (FunctionTypesKt.isExtensionFunctionType(upperBoundType)) {
             trace.report(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE.on(upperBound));
         }
     }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
-import org.jetbrains.kotlin.builtins.isExactExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -30,7 +30,7 @@ class InvokeConventionChecker : CallChecker {
             val functionCall = resolvedCall.functionCall
             val variableCall = resolvedCall.variableCall
             if (functionCall.dispatchReceiver != null && functionCall.extensionReceiver != null &&
-                variableCall.resultingDescriptor.type.isExactExtensionFunctionType) {
+                variableCall.resultingDescriptor.type.isExtensionFunctionType) {
                 if (variableCall.dispatchReceiver is ExpressionReceiver || variableCall.extensionReceiver is ExpressionReceiver) {
                     val callElement = variableCall.call.callElement
                     context.trace.report(Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.on(callElement))

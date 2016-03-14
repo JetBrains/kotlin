@@ -23,7 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
@@ -68,7 +68,7 @@ class LookupElementFactory(
     companion object {
         fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
             val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
-            return parameter.type.isExactFunctionOrExtensionFunctionType
+            return parameter.type.isFunctionType
         }
     }
 
@@ -108,7 +108,7 @@ class LookupElementFactory(
         val lastParameter = descriptor.valueParameters.lastOrNull() ?: return
         if (!descriptor.valueParameters.all { it == lastParameter || it.hasDefaultValue() }) return
 
-        if (lastParameter.original.type.isExactFunctionOrExtensionFunctionType) {
+        if (lastParameter.original.type.isFunctionType) {
             val isSingleParameter = descriptor.valueParameters.size == 1
 
             val parameterType = lastParameter.type

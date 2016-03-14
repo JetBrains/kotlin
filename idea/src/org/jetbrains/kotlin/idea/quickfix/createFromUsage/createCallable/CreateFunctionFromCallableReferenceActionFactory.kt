@@ -20,7 +20,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
@@ -43,7 +43,7 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
         val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
         return element
                 .guessTypes(context, resolutionFacade.moduleDescriptor)
-                .filter(KotlinType::isExactFunctionOrExtensionFunctionType)
+                .filter(KotlinType::isFunctionType)
                 .mapNotNull {
                     val expectedReceiverType = getReceiverTypeFromFunctionType(it)
                     val actualReceiverTypeRef = element.typeReference

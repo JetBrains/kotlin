@@ -36,7 +36,7 @@ public class InlineUtil {
     public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
         return !(valueParameterOrReceiver instanceof ValueParameterDescriptor
                  && ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline()) &&
-               FunctionTypesKt.isExactFunctionOrExtensionFunctionType(valueParameterOrReceiver.getOriginal().getType());
+               FunctionTypesKt.isFunctionType(valueParameterOrReceiver.getOriginal().getType());
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {

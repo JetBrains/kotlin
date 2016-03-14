@@ -183,7 +183,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun shouldRenderAsPrettyFunctionType(type: KotlinType): Boolean {
-        return type.isExactFunctionOrExtensionFunctionType && type.arguments.none { it.isStarProjection }
+        return type.isFunctionType && type.arguments.none { it.isStarProjection }
     }
 
     private fun renderFlexibleType(type: KotlinType): String {

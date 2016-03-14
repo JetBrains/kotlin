@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ideService
@@ -320,7 +320,7 @@ class ExpectedInfos(
             if (parameter.hasDefaultValue()) return false // parameter is optional
             if (parameter.varargElementType != null) return false // vararg arguments list can be empty
             // last parameter of functional type can be placed outside parenthesis:
-            if (!isArrayAccess && parameter == parameters.last() && parameter.type.isExactFunctionOrExtensionFunctionType) return false
+            if (!isArrayAccess && parameter == parameters.last() && parameter.type.isFunctionType) return false
             return true
         }
 
@@ -364,7 +364,7 @@ class ExpectedInfos(
                 parameter.type
 
             if (isFunctionLiteralArgument) {
-                if (parameterType.isExactFunctionOrExtensionFunctionType) {
+                if (parameterType.isFunctionType) {
                     add(ExpectedInfo.createForArgument(parameterType, expectedName, null, argumentPositionData))
                 }
             }
@@ -483,7 +483,7 @@ class ExpectedInfos(
             val literalExpression = functionLiteral.parent as KtLambdaExpression
             return calculate(literalExpression)
                     .mapNotNull { it.fuzzyType }
-                    .filter { it.type.isExactFunctionOrExtensionFunctionType }
+                    .filter { it.type.isFunctionType }
                     .map {
                         val returnType = getReturnTypeFromFunctionType(it.type)
                         ExpectedInfo(FuzzyType(returnType, it.freeParameters), null, Tail.RBRACE)

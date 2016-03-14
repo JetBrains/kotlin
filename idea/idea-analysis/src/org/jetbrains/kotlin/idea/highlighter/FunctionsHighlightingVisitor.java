@@ -74,7 +74,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                 DeclarationDescriptor container = calleeDescriptor.getContainingDeclaration();
                 boolean containedInFunctionClassOrSubclass =
                         container instanceof ClassDescriptor &&
-                        FunctionTypesKt.isFunctionOrExtensionFunctionType(((ClassDescriptor) container).getDefaultType());
+                        FunctionTypesKt.isFunctionTypeOrSubtype(((ClassDescriptor) container).getDefaultType());
                 NameHighlighter.highlightName(holder, callee, containedInFunctionClassOrSubclass
                                                               ? KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
                                                               : KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);

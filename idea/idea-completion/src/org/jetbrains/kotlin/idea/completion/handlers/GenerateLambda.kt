@@ -26,7 +26,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -84,7 +84,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 
     val functionTypes = expectedInfos
             .mapNotNull { it.fuzzyType?.type }
-            .filter(KotlinType::isExactFunctionOrExtensionFunctionType)
+            .filter(KotlinType::isFunctionType)
             .toSet()
     if (functionTypes.size <= 1) return false
 

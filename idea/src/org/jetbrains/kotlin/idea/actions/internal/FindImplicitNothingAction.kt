@@ -35,7 +35,7 @@ import com.intellij.usages.UsageViewManager
 import com.intellij.usages.UsageViewPresentation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.*
@@ -128,13 +128,8 @@ class FindImplicitNothingAction : AnAction() {
     }
 
     private fun KotlinType.isNothingOrNothingFunctionType(): Boolean {
-        return when {
-            KotlinBuiltIns.isNothing(this) -> true
-
-            this.isExactFunctionOrExtensionFunctionType -> getReturnTypeFromFunctionType(this).isNothingOrNothingFunctionType()
-
-            else -> false
-        }
+        return KotlinBuiltIns.isNothing(this) ||
+               (isFunctionType && getReturnTypeFromFunctionType(this).isNothingOrNothingFunctionType())
     }
 
     override fun update(e: AnActionEvent) {

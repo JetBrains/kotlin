@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.editor.fixers
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -38,7 +38,7 @@ class KotlinLastLambdaParameterFixer : SmartEnterProcessorWithFixers.Fixer<Kotli
 
         if (resolvedCall.valueArguments.size == valueParameters.size - 1) {
             val type = valueParameters.last().type
-            if (type.isExactFunctionOrExtensionFunctionType) {
+            if (type.isFunctionType) {
                 val doc = editor.document
 
                 var offset = element.endOffset

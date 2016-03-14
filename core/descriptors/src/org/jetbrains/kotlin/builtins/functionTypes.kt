@@ -30,28 +30,22 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.*
 import java.util.*
 
-val KotlinType.isFunctionOrExtensionFunctionType: Boolean
-    get() = isFunctionType || isExtensionFunctionType
+val KotlinType.isFunctionTypeOrSubtype: Boolean
+    get() = isFunctionType || constructor.supertypes.any(KotlinType::isFunctionTypeOrSubtype)
 
 val KotlinType.isFunctionType: Boolean
-    get() = isExactFunctionType || constructor.supertypes.any(KotlinType::isFunctionType)
-
-val KotlinType.isExtensionFunctionType: Boolean
-    get() = isExactExtensionFunctionType || constructor.supertypes.any(KotlinType::isExtensionFunctionType)
-
-val KotlinType.isExactFunctionOrExtensionFunctionType: Boolean
     get() {
         val descriptor = constructor.declarationDescriptor
         return descriptor != null && isNumberedFunctionClassFqName(descriptor.fqNameUnsafe)
     }
 
-val KotlinType.isExactFunctionType: Boolean
-    get() = isExactFunctionOrExtensionFunctionType && !isTypeAnnotatedWithExtension
+val KotlinType.isNonExtensionFunctionType: Boolean
+    get() = isFunctionType && !isTypeAnnotatedWithExtensionFunctionType
 
-val KotlinType.isExactExtensionFunctionType: Boolean
-    get() = isExactFunctionOrExtensionFunctionType && isTypeAnnotatedWithExtension
+val KotlinType.isExtensionFunctionType: Boolean
+    get() = isFunctionType && isTypeAnnotatedWithExtensionFunctionType
 
-private val KotlinType.isTypeAnnotatedWithExtension: Boolean
+private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
     get() = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
 
 /**
@@ -69,16 +63,15 @@ fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
 }
 
 fun getReceiverTypeFromFunctionType(type: KotlinType): KotlinType? {
-    assert(type.isFunctionOrExtensionFunctionType) { type }
+    assert(type.isFunctionTypeOrSubtype) { type }
     if (type.isExtensionFunctionType) {
-        // TODO: this is incorrect when a class extends from an extension function and swaps type arguments
-        return type.arguments[0].type
+        return type.arguments.first().type
     }
     return null
 }
 
 fun getValueParametersFromFunctionType(functionDescriptor: FunctionDescriptor, type: KotlinType): List<ValueParameterDescriptor> {
-    assert(type.isFunctionOrExtensionFunctionType) { type }
+    assert(type.isFunctionTypeOrSubtype) { type }
     return getParameterTypeProjectionsFromFunctionType(type).mapIndexed { i, typeProjection ->
         ValueParameterDescriptorImpl(
                 functionDescriptor, null, i, Annotations.EMPTY,
@@ -92,12 +85,12 @@ fun getValueParametersFromFunctionType(functionDescriptor: FunctionDescriptor, t
 }
 
 fun getReturnTypeFromFunctionType(type: KotlinType): KotlinType {
-    assert(type.isFunctionOrExtensionFunctionType) { type }
+    assert(type.isFunctionTypeOrSubtype) { type }
     return type.arguments.last().type
 }
 
 fun getParameterTypeProjectionsFromFunctionType(type: KotlinType): List<TypeProjection> {
-    assert(type.isFunctionOrExtensionFunctionType) { type }
+    assert(type.isFunctionTypeOrSubtype) { type }
     val arguments = type.arguments
     val first = if (type.isExtensionFunctionType) 1 else 0
     val last = arguments.size - 2

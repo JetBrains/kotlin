@@ -117,7 +117,7 @@ class ReflectionTypes(private val module: ModuleDescriptor) {
         }
 
         fun isCallableType(type: KotlinType): Boolean =
-                type.isFunctionOrExtensionFunctionType || isKCallableType(type)
+                type.isFunctionTypeOrSubtype || isKCallableType(type)
 
         private fun isKCallableType(type: KotlinType): Boolean =
                 isExactKCallableType(type) ||

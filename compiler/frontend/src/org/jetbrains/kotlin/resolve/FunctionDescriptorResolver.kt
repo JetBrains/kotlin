@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParametersFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionOrExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
@@ -220,7 +220,7 @@ class FunctionDescriptorResolver(
         )
     }
 
-    private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isFunctionOrExtensionFunctionType
+    private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isFunctionTypeOrSubtype
     private fun KotlinType.getReceiverType(): KotlinType? =
             if (functionTypeExpected()) getReceiverTypeFromFunctionType(this) else null
 

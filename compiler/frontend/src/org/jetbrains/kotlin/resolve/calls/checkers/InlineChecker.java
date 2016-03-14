@@ -235,7 +235,7 @@ class InlineChecker implements CallChecker {
         boolean isInvoke =
                 descriptor.getName().equals(OperatorNameConventions.INVOKE) &&
                 containingDeclaration instanceof ClassDescriptor &&
-                FunctionTypesKt.isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
+                FunctionTypesKt.isFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
 
         return isInvoke || InlineUtil.isInline(descriptor);
     }
