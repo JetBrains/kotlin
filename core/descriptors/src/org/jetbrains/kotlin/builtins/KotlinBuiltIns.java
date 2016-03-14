@@ -24,14 +24,12 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFac
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -41,7 +39,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.io.InputStream;
 import java.util.*;
 
-import static kotlin.collections.CollectionsKt.*;
+import static kotlin.collections.CollectionsKt.single;
 import static kotlin.collections.SetsKt.setOf;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
@@ -808,63 +806,6 @@ public abstract class KotlinBuiltIns {
     public KotlinType getAnnotationType() {
         return getAnnotation().getDefaultType();
     }
-
-    @NotNull
-    private AnnotationDescriptor createExtensionFunctionTypeAnnotation() {
-        return new AnnotationDescriptorImpl(getBuiltInClassByName(FQ_NAMES.extensionFunctionType.shortName()).getDefaultType(),
-                                            Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
-    }
-
-    @NotNull
-    public KotlinType getFunctionType(
-            @NotNull Annotations annotations,
-            @Nullable KotlinType receiverType,
-            @NotNull List<KotlinType> parameterTypes,
-            @NotNull KotlinType returnType
-    ) {
-        List<TypeProjection> arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType);
-        int size = parameterTypes.size();
-        ClassDescriptor classDescriptor = receiverType == null ? getFunction(size) : getExtensionFunction(size);
-
-        Annotations typeAnnotations = receiverType == null ? annotations : addExtensionFunctionTypeAnnotation(annotations);
-
-        return KotlinTypeImpl.create(typeAnnotations, classDescriptor, false, arguments);
-    }
-
-    @NotNull
-    private Annotations addExtensionFunctionTypeAnnotation(@NotNull Annotations annotations) {
-        if (annotations.findAnnotation(FQ_NAMES.extensionFunctionType) != null) return annotations;
-
-        // TODO: preserve laziness of given annotations
-        return new AnnotationsImpl(plus(annotations, listOf(createExtensionFunctionTypeAnnotation())));
-    }
-
-    @NotNull
-    public static List<TypeProjection> getFunctionTypeArgumentProjections(
-            @Nullable KotlinType receiverType,
-            @NotNull List<KotlinType> parameterTypes,
-            @NotNull KotlinType returnType
-    ) {
-        List<TypeProjection> arguments = new ArrayList<TypeProjection>(parameterTypes.size() + (receiverType != null ? 1 : 0) + 1);
-        if (receiverType != null) {
-            arguments.add(defaultProjection(receiverType));
-        }
-        for (KotlinType parameterType : parameterTypes) {
-            arguments.add(defaultProjection(parameterType));
-        }
-        arguments.add(defaultProjection(returnType));
-        return arguments;
-    }
-
-    private static TypeProjection defaultProjection(KotlinType returnType) {
-        return new TypeProjectionImpl(Variance.INVARIANT, returnType);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // IS TYPE
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static boolean isArray(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FQ_NAMES.array);

@@ -74,7 +74,7 @@ class ReflectionTypes(private val module: ModuleDescriptor) {
             parameterTypes: List<KotlinType>,
             returnType: KotlinType
     ): KotlinType {
-        val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
+        val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
 
         val classDescriptor = getKFunction(arguments.size - 1 /* return type */)
 

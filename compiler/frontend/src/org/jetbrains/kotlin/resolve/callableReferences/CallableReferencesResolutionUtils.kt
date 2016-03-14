@@ -319,5 +319,5 @@ fun getResolvedCallableReferenceShapeType(
             expectedTypeUnknown /* && overload resolution was ambiguous */ ->
                 functionPlaceholders.createFunctionPlaceholderType(emptyList(), false)
             else ->
-                builtIns.getFunctionType(Annotations.EMPTY, null, emptyList(), TypeUtils.DONT_CARE)
+                createFunctionType(builtIns, Annotations.EMPTY, null, emptyList(), TypeUtils.DONT_CARE)
         }

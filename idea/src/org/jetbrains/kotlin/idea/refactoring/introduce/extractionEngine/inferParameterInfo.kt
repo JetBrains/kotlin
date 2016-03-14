@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.SingleType
 import org.jetbrains.kotlin.cfg.pseudocode.getElementValuesRecursively
@@ -297,10 +298,13 @@ private fun suggestParameterType(
     return when {
                extractFunctionRef -> {
                    originalDescriptor as FunctionDescriptor
-                   builtIns.getFunctionType(Annotations.EMPTY,
-                                            originalDescriptor.extensionReceiverParameter?.type,
-                                            originalDescriptor.valueParameters.map { it.type },
-                                            originalDescriptor.returnType ?: builtIns.defaultReturnType)
+                   createFunctionType(
+                           builtIns,
+                           Annotations.EMPTY,
+                           originalDescriptor.extensionReceiverParameter?.type,
+                           originalDescriptor.valueParameters.map { it.type },
+                           originalDescriptor.returnType ?: builtIns.defaultReturnType
+                   )
                }
 
                parameterExpression != null ->

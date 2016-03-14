@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -76,7 +77,8 @@ public class JvmRuntimeTypes {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
 
         //noinspection ConstantConditions
-        KotlinType functionType = DescriptorUtilsKt.getBuiltIns(descriptor).getFunctionType(
+        KotlinType functionType = FunctionTypesKt.createFunctionType(
+                DescriptorUtilsKt.getBuiltIns(descriptor),
                 Annotations.Companion.getEMPTY(),
                 receiverParameter == null ? null : receiverParameter.getType(),
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
@@ -95,7 +97,8 @@ public class JvmRuntimeTypes {
                 extensionReceiver != null ? extensionReceiver.getType() : dispatchReceiver != null ? dispatchReceiver.getType() : null;
 
         //noinspection ConstantConditions
-        KotlinType functionType = DescriptorUtilsKt.getBuiltIns(descriptor).getFunctionType(
+        KotlinType functionType = FunctionTypesKt.createFunctionType(
+                DescriptorUtilsKt.getBuiltIns(descriptor),
                 Annotations.Companion.getEMPTY(),
                 receiverType,
                 ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),

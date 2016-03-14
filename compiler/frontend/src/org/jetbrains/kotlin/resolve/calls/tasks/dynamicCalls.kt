@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tasks
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -174,7 +175,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             val receiverType = funLiteral.receiverTypeReference?.let { dynamicType }
             val parameterTypes = funLiteral.valueParameters.map { dynamicType }
 
-            return owner.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, dynamicType)
+            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, dynamicType)
         }
 
         for (arg in call.valueArguments) {

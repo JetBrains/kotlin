@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -433,5 +434,5 @@ internal fun createTypeForFunctionPlaceholder(
         functionPlaceholderTypeConstructor.argumentTypes
     }
     val receiverType = if (isExtension) DONT_CARE else null
-    return functionPlaceholder.builtIns.getFunctionType(Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)
+    return createFunctionType(functionPlaceholder.builtIns, Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)
 }

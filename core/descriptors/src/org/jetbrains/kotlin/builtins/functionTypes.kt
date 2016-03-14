@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFac
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.*
 import java.util.*
 
 val KotlinType.isFunctionOrExtensionFunctionType: Boolean
@@ -107,4 +108,46 @@ fun getParameterTypeProjectionsFromFunctionType(type: KotlinType): List<TypeProj
         parameterTypes.add(arguments[i])
     }
     return parameterTypes
+}
+
+fun createFunctionType(
+        builtIns: KotlinBuiltIns,
+        annotations: Annotations,
+        receiverType: KotlinType?,
+        parameterTypes: List<KotlinType>,
+        returnType: KotlinType
+): KotlinType {
+    val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
+    val size = parameterTypes.size
+    val classDescriptor = builtIns.getFunction(if (receiverType == null) size else size + 1)
+
+    val typeAnnotations =
+            if (receiverType == null || annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null) {
+                annotations
+            }
+            else {
+                val extensionFunctionAnnotation = AnnotationDescriptorImpl(
+                        builtIns.getBuiltInClassByName(KotlinBuiltIns.FQ_NAMES.extensionFunctionType.shortName()).defaultType,
+                        emptyMap(), SourceElement.NO_SOURCE
+                )
+
+                // TODO: preserve laziness of given annotations
+                AnnotationsImpl(annotations + extensionFunctionAnnotation)
+            }
+
+    return KotlinTypeImpl.create(typeAnnotations, classDescriptor, false, arguments)
+}
+
+internal fun getFunctionTypeArgumentProjections(
+        receiverType: KotlinType?,
+        parameterTypes: List<KotlinType>,
+        returnType: KotlinType
+): List<TypeProjection> {
+    fun KotlinType.defaultProjection() = TypeProjectionImpl(Variance.INVARIANT, this)
+
+    val arguments = ArrayList<TypeProjection>(parameterTypes.size + (if (receiverType != null) 1 else 0) + 1)
+    receiverType?.let { arguments.add(it.defaultProjection()) }
+    parameterTypes.mapTo(arguments, KotlinType::defaultProjection)
+    arguments.add(returnType.defaultProjection())
+    return arguments
 }
