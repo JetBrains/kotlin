@@ -74,8 +74,6 @@ abstract class AbstractIncrementalJpsTest(
         val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
 
         val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
-
-        private val BUILD_LOG_FILE_NAME = "build.log"
     }
 
     protected open val enableExperimentalIncrementalCompilation = false
@@ -90,7 +88,8 @@ abstract class AbstractIncrementalJpsTest(
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
-    protected open val experimentalBuildLogFileName = "experimental-ic-build.log"
+    protected open val buildLogFinder: BuildLogFinder
+        get() = BuildLogFinder(isExperimentalEnabled = enableExperimentalIncrementalCompilation)
 
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
@@ -274,17 +273,14 @@ abstract class AbstractIncrementalJpsTest(
         initialMake()
 
         val otherMakeResults = performModificationsAndMake(moduleNames)
-
-        val buildLogFile = File(testDataDir, BUILD_LOG_FILE_NAME)
-        val experimentalBuildLog = File(testDataDir, experimentalBuildLogFileName)
-
+        val buildLogFile = buildLogFinder.findBuildLog(testDataDir)
         val logs = createBuildLog(otherMakeResults)
 
-        if (enableExperimentalIncrementalCompilation && experimentalBuildLog.exists()) {
-            UsefulTestCase.assertSameLinesWithFile(experimentalBuildLog.absolutePath, logs)
-        }
-        else if (buildLogFile.exists() || !allowNoBuildLogFileInTestData) {
+        if (buildLogFile != null && buildLogFile.exists()) {
             UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
+        }
+        else if (!allowNoBuildLogFileInTestData) {
+            throw IllegalStateException("No build log file in $testDataDir")
         }
 
         if (!enableExperimentalIncrementalCompilation && File(testDataDir, "dont-check-caches-in-non-experimental-ic.txt").exists()) return

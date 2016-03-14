@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractExperimentalIncrementalJpsTest : AbstractIncrementalJpsTest() {
@@ -40,7 +41,8 @@ abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : Abstract
 }
 
 abstract class AbstractDataContainerVersionChangedTest : AbstractExperimentalIncrementalCacheVersionChangedTest() {
-    override val experimentalBuildLogFileName = "data-container-version-build.log"
+    override val buildLogFinder: BuildLogFinder
+        get() = BuildLogFinder(isExperimentalEnabled = true, isDataContainerBuildLogEnabled = true)
 
     override fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
             listOf(cacheVersionProvider.dataContainerVersion())

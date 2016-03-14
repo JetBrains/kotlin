@@ -3,18 +3,14 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.incremental.BuildStep
 import org.jetbrains.kotlin.gradle.incremental.parseTestBuildLog
-import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
-import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
-import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
-import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
+import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.junit.Assume
 import java.io.File
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 abstract class BaseIncrementalGradleIT : BaseGradleIT() {
 
-    inner class JpsTestProject(val resourcesBase: File, val relPath: String, wrapperVersion: String = "2.10", minLogLevel: LogLevel = LogLevel.DEBUG) : Project(File(relPath).name, wrapperVersion, minLogLevel) {
+    inner class JpsTestProject(val buildLogFinder: BuildLogFinder, val resourcesBase: File, val relPath: String, wrapperVersion: String = "2.10", minLogLevel: LogLevel = LogLevel.DEBUG) : Project(File(relPath).name, wrapperVersion, minLogLevel) {
         override val resourcesRoot = File(resourcesBase, relPath)
         val mapWorkingToOriginalFile = hashMapOf<File, File>()
 
@@ -39,10 +35,9 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
             assertReportExists()
         }
 
-        val buildLogFile = resourcesRoot.listFiles { f: File -> f.name.endsWith("build.log") }?.sortedBy { it.length() }?.firstOrNull()
-        assertNotNull(buildLogFile, "*build.log file not found" )
-
-        val buildLogSteps = parseTestBuildLog(buildLogFile!!)
+        val buildLogFile = buildLogFinder.findBuildLog(resourcesRoot) ?:
+                throw IllegalStateException("build log file not found in $resourcesRoot")
+        val buildLogSteps = parseTestBuildLog(buildLogFile)
         val modifications = getModificationsToPerform(resourcesRoot,
                                                       moduleNames = null,
                                                       allowNoFilesWithSuffixInTestData = false,
