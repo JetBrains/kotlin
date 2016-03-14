@@ -319,7 +319,7 @@ internal class DescriptorRendererImpl(
             }
 
             append("(")
-            appendTypeProjections(getParameterTypeProjectionsFromFunctionType(type), this)
+            appendTypeProjections(getValueParameterTypesFromFunctionType(type), this)
             append(") ").append(arrow()).append(" ")
             append(renderNormalizedType(getReturnTypeFromFunctionType(type)))
 

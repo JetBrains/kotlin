@@ -22,7 +22,7 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
@@ -112,7 +112,7 @@ class LookupElementFactory(
             val isSingleParameter = descriptor.valueParameters.size == 1
 
             val parameterType = lastParameter.type
-            val functionParameterCount = getParameterTypeProjectionsFromFunctionType(parameterType).size
+            val functionParameterCount = getValueParametersCountFromFunctionType(parameterType)
             // we don't need special item inserting lambda for single functional parameter that does not need multiple arguments because the default item will be special in this case
             if (!isSingleParameter || functionParameterCount > 1) {
                 add(createFunctionCallElementWithLambda(descriptor, parameterType, functionParameterCount > 1, useReceiverTypes))

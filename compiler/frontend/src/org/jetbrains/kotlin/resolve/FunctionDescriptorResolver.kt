@@ -223,7 +223,7 @@ class FunctionDescriptorResolver(
 
     private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
             if (functionTypeExpected()) {
-                createValueParametersFromFunctionType(owner, getParameterTypeProjectionsFromFunctionType(this))
+                createValueParametersFromFunctionType(owner, getValueParameterTypesFromFunctionType(this))
             }
             else null
 

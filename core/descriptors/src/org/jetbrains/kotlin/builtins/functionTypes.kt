@@ -104,7 +104,13 @@ fun getReturnTypeFromFunctionType(type: KotlinType): KotlinType {
     return type.arguments.last().type
 }
 
-fun getParameterTypeProjectionsFromFunctionType(type: KotlinType): List<TypeProjection> {
+fun getValueParametersCountFromFunctionType(type: KotlinType): Int {
+    assert(type.isFunctionType) { "Not a function type: $type" }
+    // Function type arguments = receiver? + parameters + return-type
+    return type.arguments.size - (if (type.isExtensionFunctionType) 1 else 0) - 1
+}
+
+fun getValueParameterTypesFromFunctionType(type: KotlinType): List<TypeProjection> {
     assert(type.isFunctionType) { "Not a function type: $type" }
     val arguments = type.arguments
     val first = if (type.isExtensionFunctionType) 1 else 0

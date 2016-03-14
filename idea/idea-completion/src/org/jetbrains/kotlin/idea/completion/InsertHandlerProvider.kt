@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.*
@@ -54,10 +54,12 @@ class InsertHandlerProvider(
                                 if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
                                     val parameterType = parameters.single().type
                                     if (parameterType.isFunctionType) {
-                                        val parameterCount = getParameterTypeProjectionsFromFunctionType(parameterType).size
-                                        if (parameterCount <= 1) {
+                                        if (getValueParametersCountFromFunctionType(parameterType) <= 1) {
                                             // otherwise additional item with lambda template is to be added
-                                            return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                            return KotlinFunctionInsertHandler.Normal(
+                                                    needTypeArguments, inputValueArguments = false,
+                                                    lambdaInfo = GenerateLambdaInfo(parameterType, false)
+                                            )
                                         }
                                     }
                                 }
@@ -98,7 +100,7 @@ class InsertHandlerProvider(
                 potentiallyInferred.add(descriptor)
             }
 
-            if (type.isFunctionType && getParameterTypeProjectionsFromFunctionType(type).size <= 1) {
+            if (type.isFunctionType && getValueParametersCountFromFunctionType(type) <= 1) {
                 // do not rely on inference from input of function type with one or no arguments - use only return type of functional type
                 addPotentiallyInferred(getReturnTypeFromFunctionType(type))
                 return

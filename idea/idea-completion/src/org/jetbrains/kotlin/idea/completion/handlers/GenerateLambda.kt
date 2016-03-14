@@ -25,7 +25,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -88,8 +90,8 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
             .toSet()
     if (functionTypes.size <= 1) return false
 
-    val lambdaParameterCount = getParameterTypeProjectionsFromFunctionType(lambdaType).size
-    return functionTypes.filter { getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
+    val lambdaParameterCount = getValueParametersCountFromFunctionType(lambdaType)
+    return functionTypes.filter { getValueParametersCountFromFunctionType(it) == lambdaParameterCount }.size > 1
 }
 
 private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolean, project: Project): Template {
@@ -128,5 +130,5 @@ private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expr
             = Array<LookupElement>(nameSuggestions.size, { LookupElementBuilder.create(nameSuggestions[it]) })
 }
 
-fun functionParameterTypes(functionType: KotlinType): List<KotlinType>
-        = getParameterTypeProjectionsFromFunctionType(functionType).map { it.type }
+fun functionParameterTypes(functionType: KotlinType): List<KotlinType> =
+        getValueParameterTypesFromFunctionType(functionType).map(TypeProjection::getType)

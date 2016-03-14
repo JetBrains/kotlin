@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -55,7 +55,7 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
                             add(ParameterInfo(TypeInfo(expectedReceiverType, Variance.IN_VARIANCE)))
                         }
 
-                        getParameterTypeProjectionsFromFunctionType(it)
+                        getValueParameterTypesFromFunctionType(it)
                                 .let {
                                     if (actualReceiverTypeRef != null && expectedReceiverType == null && it.isNotEmpty())
                                         it.subList(1, it.size)
