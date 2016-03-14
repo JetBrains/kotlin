@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,8 @@ class AnnotationsImpl : Annotations {
     override fun toString() = annotations.toString()
 
     companion object {
-        @JvmStatic fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
+        @JvmStatic
+        fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
             return AnnotationsImpl(annotationsWithTargets, 0)
         }
     }
