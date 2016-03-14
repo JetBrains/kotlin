@@ -63,16 +63,14 @@ fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
 }
 
 fun getReceiverTypeFromFunctionType(type: KotlinType): KotlinType? {
-    assert(type.isFunctionTypeOrSubtype) { type }
-    if (type.isExtensionFunctionType) {
-        return type.arguments.first().type
-    }
-    return null
+    assert(type.isFunctionType) { "Not a function type: $type" }
+    return if (type.isTypeAnnotatedWithExtensionFunctionType) type.arguments.first().type else null
 }
 
-fun getValueParametersFromFunctionType(functionDescriptor: FunctionDescriptor, type: KotlinType): List<ValueParameterDescriptor> {
-    assert(type.isFunctionTypeOrSubtype) { type }
-    return getParameterTypeProjectionsFromFunctionType(type).mapIndexed { i, typeProjection ->
+fun createValueParametersFromFunctionType(
+        functionDescriptor: FunctionDescriptor, parameterTypes: List<TypeProjection>
+): List<ValueParameterDescriptor> {
+    return parameterTypes.mapIndexed { i, typeProjection ->
         ValueParameterDescriptorImpl(
                 functionDescriptor, null, i, Annotations.EMPTY,
                 Name.identifier("p${i + 1}"), typeProjection.type,
@@ -85,22 +83,17 @@ fun getValueParametersFromFunctionType(functionDescriptor: FunctionDescriptor, t
 }
 
 fun getReturnTypeFromFunctionType(type: KotlinType): KotlinType {
-    assert(type.isFunctionTypeOrSubtype) { type }
+    assert(type.isFunctionType) { "Not a function type: $type" }
     return type.arguments.last().type
 }
 
 fun getParameterTypeProjectionsFromFunctionType(type: KotlinType): List<TypeProjection> {
-    assert(type.isFunctionTypeOrSubtype) { type }
+    assert(type.isFunctionType) { "Not a function type: $type" }
     val arguments = type.arguments
     val first = if (type.isExtensionFunctionType) 1 else 0
-    val last = arguments.size - 2
-    // TODO: fix bugs associated with this here and in neighboring methods, see KT-9820
-    assert(first <= last + 1) { "Not an exact function type: $type" }
-    val parameterTypes = ArrayList<TypeProjection>(last - first + 1)
-    for (i in first..last) {
-        parameterTypes.add(arguments[i])
-    }
-    return parameterTypes
+    val last = arguments.size - 1
+    assert(first <= last) { "Not an exact function type: $type" }
+    return arguments.subList(first, last)
 }
 
 fun createFunctionType(

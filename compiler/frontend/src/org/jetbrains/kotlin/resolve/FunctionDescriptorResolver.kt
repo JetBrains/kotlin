@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParametersFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
@@ -220,12 +217,15 @@ class FunctionDescriptorResolver(
         )
     }
 
-    private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isFunctionTypeOrSubtype
+    private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isFunctionType
     private fun KotlinType.getReceiverType(): KotlinType? =
             if (functionTypeExpected()) getReceiverTypeFromFunctionType(this) else null
 
     private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
-            if (functionTypeExpected()) getValueParametersFromFunctionType(owner, this) else null
+            if (functionTypeExpected()) {
+                createValueParametersFromFunctionType(owner, getParameterTypeProjectionsFromFunctionType(this))
+            }
+            else null
 
     fun resolvePrimaryConstructorDescriptor(
             scope: LexicalScope,

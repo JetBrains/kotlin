@@ -1,0 +1,12 @@
+package
+
+public /*synthesized*/ fun J(/*0*/ function: (kotlin.Int!) -> java.lang.Void!): J
+public fun jj(): kotlin.Unit
+public fun useJ(/*0*/ j: J): kotlin.Unit
+
+public interface J : (kotlin.Int!) -> java.lang.Void! {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: kotlin.Int!): java.lang.Void!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

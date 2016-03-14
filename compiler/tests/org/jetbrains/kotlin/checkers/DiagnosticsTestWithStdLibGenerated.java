@@ -1036,6 +1036,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("ea70485_functionTypeInheritor.kt")
+        public void testEa70485_functionTypeInheritor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/ea70485_functionTypeInheritor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ea70880_illegalJvmName.kt")
         public void testEa70880_illegalJvmName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/ea70880_illegalJvmName.kt");
@@ -1051,6 +1057,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("kt9345.kt")
         public void testKt9345() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/kt9345.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt9820_javaFunctionTypeInheritor.kt")
+        public void testKt9820_javaFunctionTypeInheritor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/regression/kt9820_javaFunctionTypeInheritor.kt");
             doTest(fileName);
         }
     }

@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.callableReferences
 
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.builtins.createValueParametersFromFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -210,11 +213,9 @@ private fun bindFunctionReference(expression: KtCallableReferenceExpression, typ
     )
 
     functionDescriptor.initialize(
-            getReceiverTypeFromFunctionType(type),
-            null,
-            emptyList(),
-            getValueParametersFromFunctionType(functionDescriptor, type),
-            getReturnTypeFromFunctionType(type),
+            null, null, emptyList(),
+            createValueParametersFromFunctionType(functionDescriptor, type.arguments.dropLast(1)),
+            type.arguments.last().type,
             Modality.FINAL,
             Visibilities.PUBLIC
     )
