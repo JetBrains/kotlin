@@ -409,23 +409,8 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public static String getExtensionFunctionName(int parameterCount) {
-        return getFunctionName(parameterCount + 1);
-    }
-
-    @NotNull
     public ClassDescriptor getFunction(int parameterCount) {
         return getBuiltInClassByName(getFunctionName(parameterCount));
-    }
-
-    /**
-     * @return the descriptor representing the class kotlin.Function{parameterCount + 1}
-     * @deprecated there are no ExtensionFunction classes anymore, use {@link #getFunction(int)} instead
-     */
-    @Deprecated
-    @NotNull
-    public ClassDescriptor getExtensionFunction(int parameterCount) {
-        return getBuiltInClassByName(getExtensionFunctionName((parameterCount)));
     }
 
     @NotNull

@@ -165,15 +165,14 @@ object InvokeIntrinsic : FunctionCallCase() {
         val callableDescriptor = callInfo.callableDescriptor
         if (callableDescriptor.name != OperatorNameConventions.INVOKE)
             return false
-        val parameterCount = callableDescriptor.valueParameters.size
+        val isExtension = callableDescriptor.extensionReceiverParameter != null
+        val parameterCount = callableDescriptor.valueParameters.size + (if (isExtension) 1 else 0)
         val funDeclaration = callableDescriptor.containingDeclaration
 
-        val reflectionTypes = callInfo.context.reflectionTypes
-        return if (callableDescriptor.extensionReceiverParameter == null)
-            funDeclaration == callableDescriptor.builtIns.getFunction(parameterCount) ||
-            funDeclaration == reflectionTypes.getKFunction(parameterCount)
-        else
-            funDeclaration == callableDescriptor.builtIns.getExtensionFunction(parameterCount)
+        if (!isExtension && funDeclaration == callInfo.context.reflectionTypes.getKFunction(parameterCount))
+            return true
+
+        return funDeclaration == callableDescriptor.builtIns.getFunction(parameterCount)
     }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
@@ -181,8 +180,8 @@ object InvokeIntrinsic : FunctionCallCase() {
     }
 
     /**
-     * A call of extension lambda in compiler looks like as call of invoke function of some ExtensionFunctionN instance.
-     * So that call have both receivers -- some ExtensionFunctionN instance as this and receiverObject as receiver.
+     * A call of extension lambda in compiler looks like as call of invoke function of some FunctionN instance.
+     * So that call have both receivers -- some FunctionN instance as this and receiverObject as receiver.
      *
      * in Kotlin code:
      *      obj.extLambda(some, args)

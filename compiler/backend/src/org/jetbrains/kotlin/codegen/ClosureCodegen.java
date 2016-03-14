@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
-import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -281,7 +281,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         Type[] myParameterTypes = bridge.getArgumentTypes();
 
-        List<ParameterDescriptor> calleeParameters = CollectionsKt.<ParameterDescriptor>plus(
+        List<ParameterDescriptor> calleeParameters = CollectionsKt.plus(
                 org.jetbrains.kotlin.utils.CollectionsKt.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
                 funDescriptor.getValueParameters()
         );
@@ -450,12 +450,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     }
 
     @NotNull
-    public static FunctionDescriptor getErasedInvokeFunction(@NotNull FunctionDescriptor elementDescriptor) {
-        int arity = elementDescriptor.getValueParameters().size();
-        ClassDescriptor elementClass = elementDescriptor.getExtensionReceiverParameter() == null
-                                   ? DescriptorUtilsKt.getBuiltIns(elementDescriptor).getFunction(arity)
-                                   : DescriptorUtilsKt.getBuiltIns(elementDescriptor).getExtensionFunction(arity);
-        MemberScope scope = elementClass.getDefaultType().getMemberScope();
+    public static FunctionDescriptor getErasedInvokeFunction(@NotNull FunctionDescriptor function) {
+        ClassDescriptor functionClass = DescriptorUtilsKt.getBuiltIns(function).getFunction(
+                function.getValueParameters().size() + (function.getExtensionReceiverParameter() != null ? 1 : 0)
+        );
+        MemberScope scope = functionClass.getDefaultType().getMemberScope();
         return scope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
 }
