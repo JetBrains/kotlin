@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
@@ -52,7 +50,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
 class MultifileClassCodegen(
@@ -89,15 +86,11 @@ class MultifileClassCodegen(
         val singleSourceFile = if (previouslyCompiledCallables.isNotEmpty()) null else filesWithCallables.singleOrNull()
 
         classBuilder.defineClass(singleSourceFile, Opcodes.V1_6,
-                                 if (state.generateOpenMultifileClasses) OPEN_FACADE_CLASS_ATTRIBUTES else FACADE_CLASS_ATTRIBUTES,
+                                 FACADE_CLASS_ATTRIBUTES,
                                  facadeClassType.internalName,
                                  null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY)
         if (singleSourceFile != null) {
             classBuilder.visitSource(singleSourceFile.name, null)
-        }
-
-        if (state.generateOpenMultifileClasses) {
-            generateMultifileFacadeClassConstructor(classBuilder, originFile)
         }
 
         classBuilder
@@ -157,16 +150,6 @@ class MultifileClassCodegen(
 
     fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>) {
         MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null)
-    }
-
-
-    private fun generateMultifileFacadeClassConstructor(classBuilder: ClassBuilder, originFile: KtFile?) {
-        val mv = classBuilder.newMethod(JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
-        val v = InstructionAdapter(mv)
-        v.load(0, facadeClassType)
-        v.invokespecial("java/lang/Object", "<init>", "()V", false)
-        v.visitInsn(Opcodes.RETURN)
-        FunctionCodegen.endVisit(v, "multifile class constructor", originFile)
     }
 
     private fun generatePart(
@@ -300,7 +283,6 @@ class MultifileClassCodegen(
 
     companion object {
         private val FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_SUPER
-        private val OPEN_FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC or Opcodes.ACC_SUPER
 
         private fun getOnlyPackageFragment(packageFqName: FqName, files: Collection<KtFile>, bindingContext: BindingContext): PackageFragmentDescriptor? {
             val fragments = SmartList<PackageFragmentDescriptor>()

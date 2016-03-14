@@ -279,7 +279,6 @@ open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
             configuration.put(JVMConfigurationKeys.DISABLE_INLINE, arguments.noInline)
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
-            configuration.put(JVMConfigurationKeys.MULTIFILE_FACADES_OPEN, arguments.multifileFacadesOpen);
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage);
             configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf);
         }

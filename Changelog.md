@@ -4,6 +4,9 @@
 
 ## 1.0.2
 
+### JVM
+- Remove the compiler option "Xmultifile-facades-open"
+
 ### JS
 - Safe calls (`x?.let { it }`) are now inlined
 

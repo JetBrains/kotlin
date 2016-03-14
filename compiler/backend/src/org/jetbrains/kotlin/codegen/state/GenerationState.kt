@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,6 @@ class GenerationState @JvmOverloads constructor(
         // TODO: get rid of it with the proper module infrastructure
         val outDirectory: File? = null,
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
-        val generateOpenMultifileClasses: Boolean = false,
         val progress: Progress = Progress.DEAF,
         private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
 ) {
