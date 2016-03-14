@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.completion.smart
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.builtins.getValueParametersCountFromFunctionType
 import org.jetbrains.kotlin.idea.completion.handlers.insertLambdaTemplate
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.fuzzyType
+import org.jetbrains.kotlin.resolve.getValueParametersCountFromFunctionType
 import java.util.*
 
 object LambdaItems {

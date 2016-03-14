@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.TargetPlatformKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
@@ -77,7 +77,7 @@ public class JvmRuntimeTypes {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
 
         //noinspection ConstantConditions
-        KotlinType functionType = FunctionTypesKt.createFunctionType(
+        KotlinType functionType = FunctionTypeResolveUtilsKt.createFunctionType(
                 DescriptorUtilsKt.getBuiltIns(descriptor),
                 Annotations.Companion.getEMPTY(),
                 receiverParameter == null ? null : receiverParameter.getType(),
@@ -97,7 +97,7 @@ public class JvmRuntimeTypes {
                 extensionReceiver != null ? extensionReceiver.getType() : dispatchReceiver != null ? dispatchReceiver.getType() : null;
 
         //noinspection ConstantConditions
-        KotlinType functionType = FunctionTypesKt.createFunctionType(
+        KotlinType functionType = FunctionTypeResolveUtilsKt.createFunctionType(
                 DescriptorUtilsKt.getBuiltIns(descriptor),
                 Annotations.Companion.getEMPTY(),
                 receiverType,

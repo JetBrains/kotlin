@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.FunctionTypeResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesResolutionUtilsKt;
@@ -276,7 +276,7 @@ public class ArgumentTypeResolver {
             return expectedTypeIsUnknown
                    ? functionPlaceholders
                            .createFunctionPlaceholderType(Collections.<KotlinType>emptyList(), /* hasDeclaredArguments = */ false)
-                   : FunctionTypesKt.createFunctionType(
+                   : FunctionTypeResolveUtilsKt.createFunctionType(
                            builtIns, Annotations.Companion.getEMPTY(), null, Collections.<KotlinType>emptyList(), DONT_CARE
                    );
         }
@@ -293,7 +293,9 @@ public class ArgumentTypeResolver {
 
         return expectedTypeIsUnknown && isFunctionLiteral
                ? functionPlaceholders.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
-               : FunctionTypesKt.createFunctionType(builtIns, Annotations.Companion.getEMPTY(), receiverType, parameterTypes, returnType);
+               : FunctionTypeResolveUtilsKt.createFunctionType(
+                       builtIns, Annotations.Companion.getEMPTY(), receiverType, parameterTypes, returnType
+               );
     }
 
     @Nullable

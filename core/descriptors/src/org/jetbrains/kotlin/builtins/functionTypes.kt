@@ -17,17 +17,12 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 import java.util.*
 
@@ -84,30 +79,9 @@ fun getReceiverTypeFromFunctionType(type: KotlinType): KotlinType? {
     return if (type.isTypeAnnotatedWithExtensionFunctionType) type.arguments.first().type else null
 }
 
-fun createValueParametersFromFunctionType(
-        functionDescriptor: FunctionDescriptor, parameterTypes: List<TypeProjection>
-): List<ValueParameterDescriptor> {
-    return parameterTypes.mapIndexed { i, typeProjection ->
-        ValueParameterDescriptorImpl(
-                functionDescriptor, null, i, Annotations.EMPTY,
-                Name.identifier("p${i + 1}"), typeProjection.type,
-                /* declaresDefaultValue = */ false,
-                /* isCrossinline = */ false,
-                /* isNoinline = */ false,
-                null, SourceElement.NO_SOURCE
-        )
-    }
-}
-
 fun getReturnTypeFromFunctionType(type: KotlinType): KotlinType {
     assert(type.isFunctionType) { "Not a function type: $type" }
     return type.arguments.last().type
-}
-
-fun getValueParametersCountFromFunctionType(type: KotlinType): Int {
-    assert(type.isFunctionType) { "Not a function type: $type" }
-    // Function type arguments = receiver? + parameters + return-type
-    return type.arguments.size - (if (type.isExtensionFunctionType) 1 else 0) - 1
 }
 
 fun getValueParameterTypesFromFunctionType(type: KotlinType): List<TypeProjection> {
@@ -119,35 +93,7 @@ fun getValueParameterTypesFromFunctionType(type: KotlinType): List<TypeProjectio
     return arguments.subList(first, last)
 }
 
-fun createFunctionType(
-        builtIns: KotlinBuiltIns,
-        annotations: Annotations,
-        receiverType: KotlinType?,
-        parameterTypes: List<KotlinType>,
-        returnType: KotlinType
-): KotlinType {
-    val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
-    val size = parameterTypes.size
-    val classDescriptor = builtIns.getFunction(if (receiverType == null) size else size + 1)
-
-    val typeAnnotations =
-            if (receiverType == null || annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null) {
-                annotations
-            }
-            else {
-                val extensionFunctionAnnotation = AnnotationDescriptorImpl(
-                        builtIns.getBuiltInClassByName(KotlinBuiltIns.FQ_NAMES.extensionFunctionType.shortName()).defaultType,
-                        emptyMap(), SourceElement.NO_SOURCE
-                )
-
-                // TODO: preserve laziness of given annotations
-                AnnotationsImpl(annotations + extensionFunctionAnnotation)
-            }
-
-    return KotlinTypeImpl.create(typeAnnotations, classDescriptor, false, arguments)
-}
-
-internal fun getFunctionTypeArgumentProjections(
+fun getFunctionTypeArgumentProjections(
         receiverType: KotlinType?,
         parameterTypes: List<KotlinType>,
         returnType: KotlinType

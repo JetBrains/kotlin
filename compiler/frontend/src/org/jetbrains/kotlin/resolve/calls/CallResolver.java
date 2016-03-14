@@ -21,7 +21,6 @@ import kotlin.Pair;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -289,7 +288,7 @@ public class CallResolver {
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);
             }
-            expectedType = FunctionTypesKt.createFunctionType(
+            expectedType = FunctionTypeResolveUtilsKt.createFunctionType(
                     builtIns, Annotations.Companion.getEMPTY(), null, parameterTypes, context.expectedType
             );
         }
