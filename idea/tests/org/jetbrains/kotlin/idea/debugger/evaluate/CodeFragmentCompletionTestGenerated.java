@@ -83,6 +83,12 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
         doTest(fileName);
     }
 
+    @TestMetadata("privatesInSecondPressCompletion.kt")
+    public void testPrivatesInSecondPressCompletion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/privatesInSecondPressCompletion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/topLevel.kt");

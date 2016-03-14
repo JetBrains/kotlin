@@ -23,3 +23,4 @@
 ### IDE
 - Debugger can distinguish nested inline arguments
 - Add kotlinClassName() and kotlinFunctionName() macros for use in live templates
+- Complete private members from libraries in Evaluate Expression dialog

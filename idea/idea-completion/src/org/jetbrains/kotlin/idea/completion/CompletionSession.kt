@@ -191,7 +191,7 @@ abstract class CompletionSession(
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val visible = descriptor.isVisible(position, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
             if (visible) return true
-            return completeNonAccessible && !descriptor.isFromLibrary()
+            return completeNonAccessible && (!descriptor.isFromLibrary() || file is KtCodeFragment)
         }
 
         return true
