@@ -26,3 +26,9 @@ class A {
 
 // EXPRESSION: A().PrivateInnerClass().prop
 // RESULT: 1: I
+
+// EXPRESSION: forTests.MyJavaClass.PrivateJavaClass()
+// RESULT: instance of forTests.MyJavaClass$PrivateJavaClass(id=ID): LforTests/MyJavaClass$PrivateJavaClass;
+
+// EXPRESSION: forTests.MyJavaClass.PrivateJavaClass().prop
+// RESULT: 1: I

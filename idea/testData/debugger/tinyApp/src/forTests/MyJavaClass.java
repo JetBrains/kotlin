@@ -19,4 +19,8 @@ public class MyJavaClass {
     public static <T> T runReadAction(@NotNull Computable<T> computation) {
         return computation.compute();
     }
+
+    private static class PrivateJavaClass {
+        public final int prop = 1;
+    }
 }

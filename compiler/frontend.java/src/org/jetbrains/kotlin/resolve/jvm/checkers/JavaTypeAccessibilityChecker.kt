@@ -40,6 +40,8 @@ class JavaTypeAccessibilityChecker : AdditionalTypeChecker {
         // To avoid superfluous diagnostics in case of invisible member class and so on,
         // we consider only Java classes as possibly inaccessible.
 
+        if (c.isDebuggerContext) return
+
         val inaccessibleTypes = findInaccessibleJavaTypes(expressionType, c)
         if (inaccessibleTypes.isNotEmpty()) {
             c.trace.report(Errors.INACCESSIBLE_TYPE.on(expression, expressionType, inaccessibleTypes))
