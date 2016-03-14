@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.util.CallType
@@ -45,7 +45,7 @@ class ExtensionFunctionTypeValueCompletion(
 
         for (variable in variablesProvider.allFunctionTypeVariables) {
             val variableType = variable.type
-            if (!KotlinBuiltIns.isExtensionFunctionType(variableType)) continue
+            if (!variableType.isExtensionFunctionType) continue
 
             val invokes = variableType.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_IDE)
             for (invoke in createSynthesizedInvokes(invokes)) {

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -232,9 +232,10 @@ class InlineChecker implements CallChecker {
         }
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        boolean isInvoke = descriptor.getName().equals(OperatorNameConventions.INVOKE) &&
-                           containingDeclaration instanceof ClassDescriptor &&
-                           KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
+        boolean isInvoke =
+                descriptor.getName().equals(OperatorNameConventions.INVOKE) &&
+                containingDeclaration instanceof ClassDescriptor &&
+                FunctionTypesKt.isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
 
         return isInvoke || InlineUtil.isInline(descriptor);
     }

@@ -29,13 +29,12 @@ import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExactFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
@@ -249,7 +248,7 @@ open class KotlinChangeInfo(
             if (kind == Kind.FUNCTION) {
                 receiverParameterInfo?.let {
                     val typeInfo = it.currentTypeInfo
-                    if (typeInfo.type != null && KotlinBuiltIns.isExactFunctionType(typeInfo.type)) {
+                    if (typeInfo.type != null && typeInfo.type.isExactFunctionType) {
                         buffer.append("(${typeInfo.render()})")
                     }
                     else {

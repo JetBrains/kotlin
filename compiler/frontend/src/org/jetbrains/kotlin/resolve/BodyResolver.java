@@ -24,6 +24,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
@@ -443,7 +444,7 @@ public class BodyResolver {
             if (classDescriptor != null) {
                 if (ErrorUtils.isError(classDescriptor)) continue;
 
-                if (KotlinBuiltIns.isExactExtensionFunctionType(supertype)) {
+                if (FunctionTypesKt.isExactExtensionFunctionType(supertype)) {
                     trace.report(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.on(typeReference));
                 }
 

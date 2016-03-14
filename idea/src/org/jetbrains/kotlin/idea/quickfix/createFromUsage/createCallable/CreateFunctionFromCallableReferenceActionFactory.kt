@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -39,22 +43,27 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
         val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
         return element
                 .guessTypes(context, resolutionFacade.moduleDescriptor)
-                .filter(KotlinBuiltIns::isExactFunctionOrExtensionFunctionType)
+                .filter(KotlinType::isExactFunctionOrExtensionFunctionType)
                 .mapNotNull {
-                    val expectedReceiverType = KotlinBuiltIns.getReceiverType(it)
+                    val expectedReceiverType = getReceiverTypeFromFunctionType(it)
                     val actualReceiverTypeRef = element.typeReference
                     val receiverTypeInfo = actualReceiverTypeRef?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo.Empty
-                    val returnTypeInfo = TypeInfo(KotlinBuiltIns.getReturnTypeFromFunctionType(it), Variance.OUT_VARIANCE)
+                    val returnTypeInfo = TypeInfo(getReturnTypeFromFunctionType(it), Variance.OUT_VARIANCE)
                     val containers = element.getExtractionContainers(includeAll = true).ifEmpty { return@mapNotNull null }
                     val parameterInfos = SmartList<ParameterInfo>().apply {
                         if (actualReceiverTypeRef == null && expectedReceiverType != null) {
                             add(ParameterInfo(TypeInfo(expectedReceiverType, Variance.IN_VARIANCE)))
                         }
 
-                        KotlinBuiltIns
-                                .getParameterTypeProjectionsFromFunctionType(it)
-                                .let { if (actualReceiverTypeRef != null && expectedReceiverType == null && it.isNotEmpty()) it.subList(1, it.size) else it }
-                                .mapTo(this) { ParameterInfo(TypeInfo(it.type, it.projectionKind)) }
+                        getParameterTypeProjectionsFromFunctionType(it)
+                                .let {
+                                    if (actualReceiverTypeRef != null && expectedReceiverType == null && it.isNotEmpty())
+                                        it.subList(1, it.size)
+                                    else it
+                                }
+                                .mapTo(this) {
+                                    ParameterInfo(TypeInfo(it.type, it.projectionKind))
+                                }
                     }
 
                     FunctionInfo(name, receiverTypeInfo, returnTypeInfo, containers, parameterInfos)

@@ -20,6 +20,7 @@ import com.google.protobuf.MessageLite
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
@@ -77,7 +78,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
 
         val classId = c.nameResolver.getClassId(type.className)
-        val shouldBuildAsFunctionType = KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
+        val shouldBuildAsFunctionType = isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
                                         && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
             val extension = annotations.any { annotation ->

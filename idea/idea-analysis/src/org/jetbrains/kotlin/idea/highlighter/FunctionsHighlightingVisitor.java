@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -74,7 +74,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                 DeclarationDescriptor container = calleeDescriptor.getContainingDeclaration();
                 boolean containedInFunctionClassOrSubclass =
                         container instanceof ClassDescriptor &&
-                        KotlinBuiltIns.isFunctionOrExtensionFunctionType(((ClassDescriptor) container).getDefaultType());
+                        FunctionTypesKt.isFunctionOrExtensionFunctionType(((ClassDescriptor) container).getDefaultType());
                 NameHighlighter.highlightName(holder, callee, containedInFunctionClassOrSubclass
                                                               ? KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
                                                               : KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);

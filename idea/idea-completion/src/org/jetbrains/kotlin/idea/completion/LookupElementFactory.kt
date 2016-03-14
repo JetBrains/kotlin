@@ -22,7 +22,8 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
+import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
@@ -67,7 +68,7 @@ class LookupElementFactory(
     companion object {
         fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
             val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
-            return KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.type)
+            return parameter.type.isExactFunctionOrExtensionFunctionType
         }
     }
 
@@ -107,11 +108,11 @@ class LookupElementFactory(
         val lastParameter = descriptor.valueParameters.lastOrNull() ?: return
         if (!descriptor.valueParameters.all { it == lastParameter || it.hasDefaultValue() }) return
 
-        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(lastParameter.original.type)) {
+        if (lastParameter.original.type.isExactFunctionOrExtensionFunctionType) {
             val isSingleParameter = descriptor.valueParameters.size == 1
 
             val parameterType = lastParameter.type
-            val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size
+            val functionParameterCount = getParameterTypeProjectionsFromFunctionType(parameterType).size
             // we don't need special item inserting lambda for single functional parameter that does not need multiple arguments because the default item will be special in this case
             if (!isSingleParameter || functionParameterCount > 1) {
                 add(createFunctionCallElementWithLambda(descriptor, parameterType, functionParameterCount > 1, useReceiverTypes))

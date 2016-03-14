@@ -27,6 +27,7 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
@@ -611,7 +612,7 @@ public class DescriptorResolver {
         if (DynamicTypesKt.isDynamic(upperBoundType)) {
             trace.report(DYNAMIC_UPPER_BOUND.on(upperBound));
         }
-        if (KotlinBuiltIns.isExactExtensionFunctionType(upperBoundType)) {
+        if (FunctionTypesKt.isExactExtensionFunctionType(upperBoundType)) {
             trace.report(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE.on(upperBound));
         }
     }

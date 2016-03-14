@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -116,7 +117,7 @@ private class ClassClsStubBuilder(
         val shortName = fqName.shortName().ref()
         val superTypeRefs = supertypeIds.filterNot {
             //TODO: filtering function types should go away
-            KotlinBuiltIns.isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
+            isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
         }.map { it.shortClassName.ref() }.toTypedArray()
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> {

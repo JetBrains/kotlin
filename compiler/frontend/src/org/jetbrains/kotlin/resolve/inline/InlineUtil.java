@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
@@ -35,7 +36,7 @@ public class InlineUtil {
     public static boolean isInlineLambdaParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
         return !(valueParameterOrReceiver instanceof ValueParameterDescriptor
                  && ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline()) &&
-               KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(valueParameterOrReceiver.getOriginal().getType());
+               FunctionTypesKt.isExactFunctionOrExtensionFunctionType(valueParameterOrReceiver.getOriginal().getType());
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {

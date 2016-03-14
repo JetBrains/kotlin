@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExactExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
@@ -141,7 +141,7 @@ private class InvokeExtensionScopeTowerProcessor<C>(
 private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
         extensionFunctionReceiver: ReceiverValue
 ): CandidateWithBoundDispatchReceiver<FunctionDescriptor>? {
-    if (!KotlinBuiltIns.isExactExtensionFunctionType(extensionFunctionReceiver.type)) return null
+    if (!extensionFunctionReceiver.type.isExactExtensionFunctionType) return null
 
     val invokeDescriptor = extensionFunctionReceiver.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
     val synthesizedInvoke = createSynthesizedInvokes(listOf(invokeDescriptor)).single()

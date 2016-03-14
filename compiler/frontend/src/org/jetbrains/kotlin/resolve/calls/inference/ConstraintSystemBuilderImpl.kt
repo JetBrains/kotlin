@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
@@ -419,7 +419,7 @@ internal fun createTypeForFunctionPlaceholder(
 
     val functionPlaceholderTypeConstructor = functionPlaceholder.constructor as FunctionPlaceholderTypeConstructor
 
-    val isExtension = KotlinBuiltIns.isExtensionFunctionType(expectedType)
+    val isExtension = expectedType.isExtensionFunctionType
     val newArgumentTypes = if (!functionPlaceholderTypeConstructor.hasDeclaredArguments) {
         val typeParamSize = expectedType.constructor.parameters.size
         // the first parameter is receiver (if present), the last one is return type,

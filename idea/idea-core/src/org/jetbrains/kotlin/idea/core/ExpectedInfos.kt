@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ideService
@@ -319,7 +320,7 @@ class ExpectedInfos(
             if (parameter.hasDefaultValue()) return false // parameter is optional
             if (parameter.varargElementType != null) return false // vararg arguments list can be empty
             // last parameter of functional type can be placed outside parenthesis:
-            if (!isArrayAccess && parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.type)) return false
+            if (!isArrayAccess && parameter == parameters.last() && parameter.type.isExactFunctionOrExtensionFunctionType) return false
             return true
         }
 
@@ -363,7 +364,7 @@ class ExpectedInfos(
                 parameter.type
 
             if (isFunctionLiteralArgument) {
-                if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                if (parameterType.isExactFunctionOrExtensionFunctionType) {
                     add(ExpectedInfo.createForArgument(parameterType, expectedName, null, argumentPositionData))
                 }
             }
@@ -482,9 +483,9 @@ class ExpectedInfos(
             val literalExpression = functionLiteral.parent as KtLambdaExpression
             return calculate(literalExpression)
                     .mapNotNull { it.fuzzyType }
-                    .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
+                    .filter { it.type.isExactFunctionOrExtensionFunctionType }
                     .map {
-                        val returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(it.type)
+                        val returnType = getReturnTypeFromFunctionType(it.type)
                         ExpectedInfo(FuzzyType(returnType, it.freeParameters), null, Tail.RBRACE)
                     }
         }

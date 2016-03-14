@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -27,16 +27,14 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 
 object InlineParameterChecker : DeclarationChecker {
-    override fun check(declaration: KtDeclaration,
-                       descriptor: DeclarationDescriptor,
-                       diagnosticHolder: DiagnosticSink,
-                       bindingContext: BindingContext
+    override fun check(
+            declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
     ) {
         if (declaration is KtFunction) {
             val inline = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
             for (parameter in declaration.valueParameters) {
                 val parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, parameter)
-                if (!inline || (parameterDescriptor != null && !KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterDescriptor.type))) {
+                if (!inline || (parameterDescriptor != null && !parameterDescriptor.type.isFunctionOrExtensionFunctionType)) {
                     parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, diagnosticHolder)
                     parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, diagnosticHolder)
                 }

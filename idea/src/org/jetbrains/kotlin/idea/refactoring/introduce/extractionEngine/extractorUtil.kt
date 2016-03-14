@@ -22,11 +22,9 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.refactoring.isMultiLine
-import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
@@ -34,6 +32,8 @@ import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
+import org.jetbrains.kotlin.idea.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
@@ -86,7 +86,7 @@ private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: D
         config.descriptor.receiverParameter?.let {
             val receiverType = it.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames)
             val receiverTypeAsString = receiverType.typeAsString()
-            val isFunctionType = KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(receiverType)
+            val isFunctionType = receiverType.isExactFunctionOrExtensionFunctionType
             receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
         }
 

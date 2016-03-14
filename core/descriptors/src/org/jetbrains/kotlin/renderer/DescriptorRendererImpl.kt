@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -183,7 +183,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun shouldRenderAsPrettyFunctionType(type: KotlinType): Boolean {
-        return KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) && type.arguments.none { it.isStarProjection }
+        return type.isExactFunctionOrExtensionFunctionType && type.arguments.none { it.isStarProjection }
     }
 
     private fun renderFlexibleType(type: KotlinType): String {
@@ -305,7 +305,7 @@ internal class DescriptorRendererImpl(
             val isNullable = type.isMarkedNullable
             if (isNullable) append("(")
 
-            val receiverType = KotlinBuiltIns.getReceiverType(type)
+            val receiverType = getReceiverTypeFromFunctionType(type)
             if (receiverType != null) {
                 val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable
                 if (surroundReceiver) {
@@ -319,9 +319,9 @@ internal class DescriptorRendererImpl(
             }
 
             append("(")
-            appendTypeProjections(KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(type), this)
+            appendTypeProjections(getParameterTypeProjectionsFromFunctionType(type), this)
             append(") ").append(arrow()).append(" ")
-            append(renderNormalizedType(KotlinBuiltIns.getReturnTypeFromFunctionType(type)))
+            append(renderNormalizedType(getReturnTypeFromFunctionType(type)))
 
             if (isNullable) append(")?")
         }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tasks;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -87,7 +87,7 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
     }
 
     private void functionExpectedOrNoReceiverAllowed(BindingTrace trace) {
-        if (KotlinBuiltIns.isFunctionType(calleeType)) {
+        if (FunctionTypesKt.isFunctionType(calleeType)) {
             trace.report(NO_RECEIVER_ALLOWED.on(reference));
         }
         else {

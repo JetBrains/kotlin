@@ -20,7 +20,8 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.intellij.util.containers.SLRUCache
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
@@ -141,9 +142,9 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
         if (!CallExpressionTranslator.shouldBeInlined(descriptor)) continue
 
         val type = param.type
-        if (!KotlinBuiltIns.isFunctionOrExtensionFunctionType(type)) continue
+        if (!type.isFunctionOrExtensionFunctionType) continue
 
-        val namesSet = if (KotlinBuiltIns.isExtensionFunctionType(type)) inlineExtensionFuns else inlineFuns
+        val namesSet = if (type.isExtensionFunctionType) inlineExtensionFuns else inlineFuns
         namesSet.add(paramsJs[i + offset].name)
     }
 

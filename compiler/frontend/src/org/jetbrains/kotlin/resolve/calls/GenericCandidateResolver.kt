@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.isFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -238,11 +238,10 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
     ) = if (!TypeUtils.noExpectedType(context.expectedType) &&
             ownerReturnType != null &&
             TypeUtils.isTypeParameter(ownerReturnType) &&
-            KotlinBuiltIns.isFunctionOrExtensionFunctionType(literalExpectedType) &&
+            literalExpectedType.isFunctionOrExtensionFunctionType &&
             getReturnTypeForCallable(literalExpectedType) == ownerReturnType)
-
-             context.expectedType
-        else DONT_CARE
+        context.expectedType
+    else DONT_CARE
 
     private fun <D : CallableDescriptor> addConstraintForFunctionLiteralArgument(
             functionLiteral: KtFunction,
@@ -259,8 +258,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
             expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, false)
         }
-        if (expectedType == null || !KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType) ||
-            hasUnknownFunctionParameter(expectedType)) {
+        if (expectedType == null || !expectedType.isFunctionOrExtensionFunctionType || hasUnknownFunctionParameter(expectedType)) {
             return
         }
         val dataFlowInfoForArguments = context.candidateCall.dataFlowInfoForArguments
@@ -330,7 +328,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
             return substitutedType
 
         val shapeType = argumentTypeResolver.getShapeTypeOfCallableReference(callableReference, context, false)
-        if (shapeType != null && KotlinBuiltIns.isFunctionOrExtensionFunctionType(shapeType) && !hasUnknownFunctionParameter(shapeType))
+        if (shapeType != null && shapeType.isFunctionOrExtensionFunctionType && !hasUnknownFunctionParameter(shapeType))
             return shapeType
 
         return null

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.types.expressions
 import com.google.common.collect.Lists
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -142,7 +144,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType
-        val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
+        val functionTypeExpected = !noExpectedType(expectedType) && expectedType.isFunctionOrExtensionFunctionType
 
         val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
         expression.valueParameters.forEach {
@@ -191,7 +193,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             functionDescriptor: SimpleFunctionDescriptorImpl,
             functionTypeExpected: Boolean
     ): KotlinType {
-        val expectedReturnType = if (functionTypeExpected) KotlinBuiltIns.getReturnTypeFromFunctionType(context.expectedType) else null
+        val expectedReturnType = if (functionTypeExpected) getReturnTypeFromFunctionType(context.expectedType) else null
         val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
         if (!expression.functionLiteral.hasDeclaredReturnType() && functionTypeExpected) {

@@ -25,7 +25,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getParameterTypeProjectionsFromFunctionType
+import org.jetbrains.kotlin.builtins.isExactFunctionOrExtensionFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -83,12 +84,12 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 
     val functionTypes = expectedInfos
             .mapNotNull { it.fuzzyType?.type }
-            .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }
+            .filter(KotlinType::isExactFunctionOrExtensionFunctionType)
             .toSet()
     if (functionTypes.size <= 1) return false
 
-    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size
-    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
+    val lambdaParameterCount = getParameterTypeProjectionsFromFunctionType(lambdaType).size
+    return functionTypes.filter { getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
 }
 
 private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolean, project: Project): Template {
@@ -128,4 +129,4 @@ private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expr
 }
 
 fun functionParameterTypes(functionType: KotlinType): List<KotlinType>
-        = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(functionType).map { it.type }
+        = getParameterTypeProjectionsFromFunctionType(functionType).map { it.type }

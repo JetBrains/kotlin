@@ -815,10 +815,6 @@ public abstract class KotlinBuiltIns {
                                             Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
     }
 
-    private static boolean isTypeAnnotatedWithExtension(@NotNull KotlinType type) {
-        return type.getAnnotations().findAnnotation(FQ_NAMES.extensionFunctionType) != null;
-    }
-
     @NotNull
     public KotlinType getFunctionType(
             @NotNull Annotations annotations,
@@ -890,111 +886,6 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isPrimitiveClass(@NotNull ClassDescriptor descriptor) {
         return getPrimitiveTypeByFqName(getFqName(descriptor)) != null;
-    }
-
-    // Functions
-
-    public static boolean isFunctionOrExtensionFunctionType(@NotNull KotlinType type) {
-        return isFunctionType(type) || isExtensionFunctionType(type);
-    }
-
-    public static boolean isFunctionType(@NotNull KotlinType type) {
-        if (isExactFunctionType(type)) return true;
-
-        for (KotlinType superType : type.getConstructor().getSupertypes()) {
-            if (isFunctionType(superType)) return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isExtensionFunctionType(@NotNull KotlinType type) {
-        if (isExactExtensionFunctionType(type)) return true;
-
-        for (KotlinType superType : type.getConstructor().getSupertypes()) {
-            if (isExtensionFunctionType(superType)) return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isExactFunctionOrExtensionFunctionType(@NotNull KotlinType type) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && isNumberedFunctionClassFqName(getFqName(descriptor));
-    }
-
-    public static boolean isExactFunctionType(@NotNull KotlinType type) {
-        return isExactFunctionOrExtensionFunctionType(type) && !isTypeAnnotatedWithExtension(type);
-    }
-
-    public static boolean isExactExtensionFunctionType(@NotNull KotlinType type) {
-        return isExactFunctionOrExtensionFunctionType(type) && isTypeAnnotatedWithExtension(type);
-    }
-
-    /**
-     * @return true if this is an FQ name of a fictitious class representing the function type,
-     * e.g. kotlin.Function1 (but NOT kotlin.reflect.KFunction1)
-     */
-    public static boolean isNumberedFunctionClassFqName(@NotNull FqNameUnsafe fqName) {
-        List<Name> segments = fqName.pathSegments();
-        if (segments.size() != 2) return false;
-
-        if (!BUILT_INS_PACKAGE_NAME.equals(first(segments))) return false;
-
-        String shortName = last(segments).asString();
-        return BuiltInFictitiousFunctionClassFactory.isFunctionClassName(shortName, BUILT_INS_PACKAGE_FQ_NAME);
-    }
-
-    @Nullable
-    public static KotlinType getReceiverType(@NotNull KotlinType type) {
-        assert isFunctionOrExtensionFunctionType(type) : type;
-        if (isExtensionFunctionType(type)) {
-            // TODO: this is incorrect when a class extends from an extension function and swaps type arguments
-            return type.getArguments().get(0).getType();
-        }
-        return null;
-    }
-
-    @NotNull
-    public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull KotlinType type) {
-        assert isFunctionOrExtensionFunctionType(type);
-        List<TypeProjection> parameterTypes = getParameterTypeProjectionsFromFunctionType(type);
-        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(parameterTypes.size());
-        for (int i = 0; i < parameterTypes.size(); i++) {
-            TypeProjection parameterType = parameterTypes.get(i);
-            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    functionDescriptor, null, i, Annotations.Companion.getEMPTY(),
-                    Name.identifier("p" + (i + 1)), parameterType.getType(),
-                    /* declaresDefaultValue = */ false,
-                    /* isCrossinline = */ false,
-                    /* isNoinline = */ false,
-                    null, SourceElement.NO_SOURCE
-            );
-            valueParameters.add(valueParameterDescriptor);
-        }
-        return valueParameters;
-    }
-
-    @NotNull
-    public static KotlinType getReturnTypeFromFunctionType(@NotNull KotlinType type) {
-        assert isFunctionOrExtensionFunctionType(type);
-        List<TypeProjection> arguments = type.getArguments();
-        return arguments.get(arguments.size() - 1).getType();
-    }
-
-    @NotNull
-    public static List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull KotlinType type) {
-        assert isFunctionOrExtensionFunctionType(type);
-        List<TypeProjection> arguments = type.getArguments();
-        int first = isExtensionFunctionType(type) ? 1 : 0;
-        int last = arguments.size() - 2;
-        // TODO: fix bugs associated with this here and in neighboring methods, see KT-9820
-        assert first <= last + 1 : "Not an exact function type: " + type;
-        List<TypeProjection> parameterTypes = new ArrayList<TypeProjection>(last - first + 1);
-        for (int i = first; i <= last; i++) {
-            parameterTypes.add(arguments.get(i));
-        }
-        return parameterTypes;
     }
 
     private static boolean isConstructedFromGivenClass(@NotNull KotlinType type, @NotNull FqNameUnsafe fqName) {
