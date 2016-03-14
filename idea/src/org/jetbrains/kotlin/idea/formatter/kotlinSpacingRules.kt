@@ -54,6 +54,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
         custom {
             inPosition(left = CLASS, right = CLASS).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = CLASS, right = OBJECT_DECLARATION).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = OBJECT_DECLARATION, right = OBJECT_DECLARATION).emptyLinesIfLineBreakInLeft(1)
+            inPosition(left = OBJECT_DECLARATION, right = CLASS).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = FUN, right = FUN).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = PROPERTY, right = FUN).emptyLinesIfLineBreakInLeft(1)
             inPosition(left = FUN, right = PROPERTY).emptyLinesIfLineBreakInLeft(1)
@@ -95,7 +98,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             before(DOC_COMMENT).lineBreakInCode()
             between(PROPERTY, PROPERTY).lineBreakInCode()
 
-            // CLASS - CLASS is exception
+            // CLASS - CLASS, CLASS - OBJECT_DECLARATION are exception
             between(CLASS, DECLARATIONS).blankLines(1)
 
             // FUN - FUN, FUN - PROPERTY, FUN - CLASS are exceptions
@@ -104,6 +107,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             // PROPERTY - PROPERTY, PROPERTY - FUN are exceptions
             between(PROPERTY, DECLARATIONS).blankLines(1)
 
+            // OBJECT_DECLARATION - OBJECT_DECLARATION, CLASS - OBJECT_DECLARATION are exception
             between(OBJECT_DECLARATION, DECLARATIONS).blankLines(1)
             between(SECONDARY_CONSTRUCTOR, DECLARATIONS).blankLines(1)
             between(CLASS_INITIALIZER, DECLARATIONS).blankLines(1)

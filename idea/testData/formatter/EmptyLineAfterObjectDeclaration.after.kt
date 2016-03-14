@@ -1,6 +1,11 @@
 object O1
-
 object O2
+
+// -----
+object O1M {
+}
+
+object O2M
 
 // -----
 
@@ -17,14 +22,26 @@ val p1 = 1
 // -----
 
 object O5
-
 class C1
 
 // -----
 
-object O6
+object O5M {
+}
 
+class C1M
+
+// -----
+
+object O6
 interface T1
+
+// -----
+
+object O6M {
+}
+
+interface T1M
 
 // -----
 
@@ -37,6 +54,12 @@ enum class E1 {
 // -----
 
 object O8 {}
+object O9
+
+// -----
+
+object O8 {
+}
 
 object O9
 
@@ -55,12 +78,24 @@ val p2 = 1
 // -----
 
 object O12 {}
-
 class C2
 
 // -----
 
+object O12M {
+}
+
+class C2M
+
+// -----
+
 object O13 {}
+interface T2
+
+// -----
+
+object O14 {
+}
 
 interface T2
 
@@ -114,4 +149,20 @@ enum class E3 {
 
     object O21 {
     }
+}
+
+// -----
+
+sealed class C4 {
+    class C5 : C4()
+    object O22 : C4()
+}
+
+// -----
+
+sealed class C6 {
+    class C7 : C6() {
+    }
+
+    object O23 : C6()
 }
