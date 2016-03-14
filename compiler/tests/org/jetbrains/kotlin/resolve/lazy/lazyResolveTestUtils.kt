@@ -45,12 +45,12 @@ fun createResolveSessionForFiles(
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()
 }
 
-private class TestModule(val dependsOnBuiltins: Boolean) : ModuleInfo {
+private class TestModule(val dependsOnBuiltIns: Boolean) : ModuleInfo {
     override val name: Name = Name.special("<Test module for lazy resolve>")
     override fun dependencies() = listOf(this)
-    override fun dependencyOnBuiltins() =
-            if (dependsOnBuiltins)
-                ModuleInfo.DependenciesOnBuiltins.LAST
+    override fun dependencyOnBuiltIns() =
+            if (dependsOnBuiltIns)
+                ModuleInfo.DependenciesOnBuiltIns.LAST
             else
-                ModuleInfo.DependenciesOnBuiltins.NONE
+                ModuleInfo.DependenciesOnBuiltIns.NONE
 }

@@ -22,7 +22,7 @@ import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment;
+import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
@@ -279,7 +279,7 @@ public class KotlinTypeMapper {
                 : "Package member expected, got " + descriptor + " in " + containingDeclaration;
         PackageFragmentDescriptor packageFragmentDescriptor = (PackageFragmentDescriptor) containingDeclaration;
 
-        if (packageFragmentDescriptor instanceof BuiltinsPackageFragment) {
+        if (packageFragmentDescriptor instanceof BuiltInsPackageFragment) {
             return new ContainingClassesInfo(FAKE_CLASS_ID_FOR_BUILTINS, FAKE_CLASS_ID_FOR_BUILTINS);
         }
 

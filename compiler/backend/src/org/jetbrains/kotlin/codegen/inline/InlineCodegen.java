@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment;
+import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt;
@@ -272,7 +272,7 @@ public class InlineCodegen extends CallGenerator {
         if (functionDescriptor instanceof FictitiousArrayConstructor) return true;
         String name = functionDescriptor.getName().asString();
         return (name.equals("arrayOf") || name.equals("emptyArray")) &&
-               functionDescriptor.getContainingDeclaration() instanceof BuiltinsPackageFragment;
+               functionDescriptor.getContainingDeclaration() instanceof BuiltInsPackageFragment;
     }
 
     private InlineResult inlineCall(SMAPAndMethodNode nodeAndSmap) {

@@ -34,7 +34,7 @@ fun createBuiltInPackageFragmentProvider(
         loadResource: (String) -> InputStream?
 ): PackageFragmentProvider {
     val packageFragments = packageFqNames.map { fqName ->
-        BuiltinsPackageFragment(fqName, storageManager, module, loadResource)
+        BuiltInsPackageFragment(fqName, storageManager, module, loadResource)
     }
     val provider = PackageFragmentProviderImpl(packageFragments)
 

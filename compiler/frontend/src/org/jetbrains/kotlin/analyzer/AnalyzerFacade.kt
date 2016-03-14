@@ -115,16 +115,16 @@ interface ModuleInfo {
     val name: Name
     fun dependencies(): List<ModuleInfo>
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
-    fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
+    fun dependencyOnBuiltIns(): DependencyOnBuiltIns = DependenciesOnBuiltIns.LAST
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = emptyMap()
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
-    interface DependencyOnBuiltins {
+    interface DependencyOnBuiltIns {
         fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>)
     }
 
-    enum class DependenciesOnBuiltins : DependencyOnBuiltins {
+    enum class DependenciesOnBuiltIns : DependencyOnBuiltIns {
 
         NONE {
             override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
@@ -174,7 +174,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             }
 
             val builtinsModule = targetPlatform.builtIns.builtInsModule
-            module.dependencyOnBuiltins().adjustDependencies(builtinsModule, dependenciesDescriptors)
+            module.dependencyOnBuiltIns().adjustDependencies(builtinsModule, dependenciesDescriptors)
             return dependenciesDescriptors
         }
 

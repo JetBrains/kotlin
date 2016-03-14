@@ -67,11 +67,11 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
     }
 
-    private inner class BuiltinsSourcesModule : ModuleInfo {
+    private inner class BuiltInsSourcesModule : ModuleInfo {
         override val name = Name.special("<module for resolving builtin source files>")
         override fun dependencies() = listOf(this)
-        override fun dependencyOnBuiltins(): ModuleInfo.DependencyOnBuiltins =
-                if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltins.LAST else ModuleInfo.DependenciesOnBuiltins.NONE
+        override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
+                if (dependOnOldBuiltIns) ModuleInfo.DependenciesOnBuiltIns.LAST else ModuleInfo.DependenciesOnBuiltIns.NONE
     }
 
     private fun serialize(disposable: Disposable, destDir: File, srcDirs: List<File>, extraClassPath: List<File>) {
@@ -85,7 +85,7 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val files = environment.getSourceFiles()
 
-        val builtInModule = BuiltinsSourcesModule()
+        val builtInModule = BuiltInsSourcesModule()
         val resolver = JvmAnalyzerFacade.setupResolverForProject(
                 "builtIns source",
                 ProjectContext(environment.project), listOf(builtInModule),
