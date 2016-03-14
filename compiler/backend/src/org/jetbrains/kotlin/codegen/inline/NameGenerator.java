@@ -23,7 +23,8 @@ public class NameGenerator {
 
     private final String ownerMethod;
 
-    private int nextIndex = 1;
+    private int nextLambdaIndex = 1;
+    private int nextWhenIndex = 1;
 
     private final Map<String, NameGenerator> subGenerators = new HashMap<String, NameGenerator>();
 
@@ -32,7 +33,11 @@ public class NameGenerator {
     }
 
     public String genLambdaClassName() {
-        return ownerMethod + "$" + nextIndex++;
+        return ownerMethod + "$" + nextLambdaIndex++;
+    }
+
+    public String genWhenClassNamePrefix() {
+        return ownerMethod + "$" + nextWhenIndex++;
     }
 
     public NameGenerator subGenerator(String inliningMethod) {

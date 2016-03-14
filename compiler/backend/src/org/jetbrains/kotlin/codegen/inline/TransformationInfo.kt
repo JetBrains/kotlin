@@ -43,7 +43,7 @@ class WhenMappingTransformationInfo(
 ) : TransformationInfo {
 
     override val newClassName by lazy {
-        nameGenerator.genLambdaClassName() + oldClassName.substringAfterLast("/")
+        nameGenerator.genWhenClassNamePrefix() + TRANSFORMED_WHEN_MAPPING_MARKER + oldClassName.substringAfterLast("/").substringAfterLast(TRANSFORMED_WHEN_MAPPING_MARKER)
     }
 
     override fun shouldRegenerate(sameModule: Boolean): Boolean {
@@ -56,6 +56,10 @@ class WhenMappingTransformationInfo(
 
     override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> {
         return WhenMappingTransformer(this, inliningContext)
+    }
+
+    companion object {
+        const val TRANSFORMED_WHEN_MAPPING_MARKER = "\$wm$"
     }
 }
 
