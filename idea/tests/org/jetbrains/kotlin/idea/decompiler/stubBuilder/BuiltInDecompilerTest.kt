@@ -59,7 +59,7 @@ class BuiltInDecompilerTest : AbstractBuiltInDecompilerTest() {
 }
 
 class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() {
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/builtins/"
+    override fun getTestDataPath() = PluginTestCaseBase.TEST_DATA_DIR + "/decompiler/builtins/"
 
     override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
         myFixture.configureByFile(testDataPath + BuiltInSerializerProtocol.getBuiltInsFilePath(FqName(packageFqName)))

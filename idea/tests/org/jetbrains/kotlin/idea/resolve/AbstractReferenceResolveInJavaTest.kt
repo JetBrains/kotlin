@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.junit.Assert
 
-private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() + "/resolve/referenceInJava/dependency/dependencies.kt"
+private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.TEST_DATA_DIR + "/resolve/referenceInJava/dependency/dependencies.kt"
 
 abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
     override fun doTest(path: String) {
