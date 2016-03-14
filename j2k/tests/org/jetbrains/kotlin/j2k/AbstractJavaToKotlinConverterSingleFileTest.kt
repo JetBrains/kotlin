@@ -89,7 +89,8 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
     }
 
     private fun reformat(text: String, project: Project, inFunContext: Boolean): String {
-        val textToFormat = if (inFunContext) "fun convertedTemp() {\n$text\n}" else text
+        val funBody = text.lines().joinToString(separator = "\n", transform = { "  $it" })
+        val textToFormat = if (inFunContext) "fun convertedTemp() {\n$funBody\n}" else text
 
         val convertedFile = KotlinTestUtils.createFile("converted", textToFormat, project)
         WriteCommandAction.runWriteCommandAction(project) {
@@ -111,18 +112,31 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {$text}", settings, project).replace("internal class C {", "").replace("internal object C {", "")
-        return result.substring(0, (result.lastIndexOf("}"))).trim()
+        val result = fileToKotlin("final class C {$text}", settings, project)
+        return result
+                .substringBeforeLast("}")
+                .replace("internal class C {", "\n")
+                .replace("internal object C {", "\n")
+                .trimIndent().trim()
     }
 
     private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = methodToKotlin("void main() {$text}", settings, project)
-        return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main() {", "").trim()
+        val funBody = text.lines().joinToString(separator = "\n", transform = { "  $it" })
+        val result = methodToKotlin("void main() {\n$funBody\n}", settings, project)
+
+        return result
+                .substringBeforeLast("}")
+                .replaceFirst("fun main() {", "\n")
+                .trimIndent().trim()
     }
 
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
         val result = statementToKotlin("final Object o =$code}", settings, project)
-        return result.replaceFirst("val o:Any? = ", "").replaceFirst("val o:Any = ", "").replaceFirst("val o = ", "").trim()
+        return result
+                .replaceFirst("val o:Any? = ", "")
+                .replaceFirst("val o:Any = ", "")
+                .replaceFirst("val o = ", "")
+                .trim()
     }
 
     override fun getProjectDescriptor()
