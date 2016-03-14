@@ -736,7 +736,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
                     KtExpression stubExpression = ExpressionTypingUtils.createFakeExpressionOfType(
                             baseExpression.getProject(), context.trace, "e", type);
-                    checkLValue(context.trace, context, baseExpression, stubExpression);
+                    checkLValue(context.trace, context, baseExpression, stubExpression, expression);
                 }
                 // x++ type is x type, but ++x type is x.inc() type
                 DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(
@@ -854,9 +854,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull BindingTrace trace,
             @NotNull ExpressionTypingContext context,
             @NotNull KtExpression expression,
-            @Nullable KtExpression rightHandSide
+            @Nullable KtExpression rightHandSide,
+            @NotNull KtOperationExpression operationExpression
     ) {
-        return checkLValue(trace, context, expression, rightHandSide, false);
+        return checkLValue(trace, context, expression, rightHandSide, operationExpression, false);
     }
 
     private boolean checkLValue(
@@ -864,6 +865,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             @NotNull KtExpression expressionWithParenthesis,
             @Nullable KtExpression rightHandSide,
+            @NotNull KtOperationExpression operationExpression,
             boolean canBeThis
     ) {
         KtExpression expression = KtPsiUtil.deparenthesize(expressionWithParenthesis);
@@ -875,6 +877,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(trace, "Trace for checking set function");
             ExpressionTypingContext findSetterContext = context.replaceBindingTrace(ignoreReportsTrace);
             KotlinTypeInfo info = resolveArrayAccessSetMethod(arrayAccessExpression, rightHandSide, findSetterContext, ignoreReportsTrace);
+
+            IElementType operationType = operationExpression.getOperationReference().getReferencedNameElementType();
+            if (KtTokens.AUGMENTED_ASSIGNMENTS.contains(operationType)
+                    || operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS) {
+                ResolvedCall<?> resolvedCall = ignoreReportsTrace.get(INDEXED_LVALUE_SET, expression);
+                if (resolvedCall != null) {
+                    CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+                    // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
+                    // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
+                    components.symbolUsageValidator.validateCall(resolvedCall, descriptor, trace, expression);
+                }
+            }
+
             return info.getType() != null;
         }
 
