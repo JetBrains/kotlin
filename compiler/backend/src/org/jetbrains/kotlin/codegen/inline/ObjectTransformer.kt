@@ -92,8 +92,12 @@ class WhenMappingTransformer(
         assert(clinit.name == "<clinit>", { "When mapping should contains only <clinit> method, but contains '${clinit.name}'" })
 
         var transformedClinit = cutOtherMappings(clinit)
-        val result = classBuilder.visitor.visitMethod(transformedClinit.access, transformedClinit.name, transformedClinit.desc, transformedClinit.signature, transformedClinit.exceptions.toTypedArray())
+        val result = classBuilder.newMethod(
+                JvmDeclarationOrigin.NO_ORIGIN, transformedClinit.access, transformedClinit.name, transformedClinit.desc,
+                transformedClinit.signature, transformedClinit.exceptions.toTypedArray()
+        )
         transformedClinit.accept(result)
+        classBuilder.done()
 
         return transformationResult
     }
