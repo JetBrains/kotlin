@@ -9,7 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="android-extensions-compiler" exported="" />
-    <orderEntry type="module" module-name="kotlin-android-plugin" />
+    <orderEntry type="module" module-name="idea-android" />
     <orderEntry type="library" scope="PROVIDED" name="idea-full" level="project" />
     <orderEntry type="module" module-name="idea" scope="PROVIDED" />
     <orderEntry type="module" module-name="idea-core" scope="PROVIDED" />

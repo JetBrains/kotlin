@@ -974,7 +974,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("idea/kotlin-android-plugin/tests", "idea/testData") {
+    testGroup("idea/idea-android/tests", "idea/testData") {
         testClass<AbstractConfigureProjectTest>() {
             model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
         }
