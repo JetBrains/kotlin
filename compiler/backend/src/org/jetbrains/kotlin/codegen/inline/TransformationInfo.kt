@@ -55,7 +55,7 @@ class WhenMappingTransformationInfo(
     }
 
     override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> {
-        return WhenMappingTransformer(this, inliningContext);
+        return WhenMappingTransformer(this, inliningContext)
     }
 }
 

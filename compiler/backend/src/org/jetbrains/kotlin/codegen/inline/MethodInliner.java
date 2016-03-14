@@ -270,16 +270,17 @@ public class MethodInliner {
                     }
                 }
                 else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
-                    assert transformationInfo != null : "<init> call not corresponds to new call" + owner + " " + name;
+                    //TODO add proper message
+                    assert transformationInfo instanceof AnonymousObjectTransformationInfo :
+                            "<init> call doesn't correspond to object transformation info: " + owner + "." + name + ", info " + transformationInfo;
                     if (transformationInfo.shouldRegenerate(isSameModule)) {
-                        if (transformationInfo instanceof AnonymousObjectTransformationInfo) {
-                            //put additional captured parameters on stack
-                            for (CapturedParamDesc capturedParamDesc : ((AnonymousObjectTransformationInfo) transformationInfo).getAllRecapturedParameters()) {
-                                visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
-                                               "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor());
-                            }
-                            super.visitMethodInsn(opcode, transformationInfo.getNewClassName(), name, ((AnonymousObjectTransformationInfo) transformationInfo).getNewConstructorDescriptor(), itf);
+                        //put additional captured parameters on stack
+                        for (CapturedParamDesc capturedParamDesc : ((AnonymousObjectTransformationInfo) transformationInfo).getAllRecapturedParameters()) {
+                            visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
+                                           "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor());
                         }
+                        super.visitMethodInsn(opcode, transformationInfo.getNewClassName(), name,
+                                              ((AnonymousObjectTransformationInfo) transformationInfo).getNewConstructorDescriptor(), itf);
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.getParent() instanceof RegeneratedClassContext) {

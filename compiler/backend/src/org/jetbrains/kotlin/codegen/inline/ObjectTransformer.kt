@@ -25,14 +25,13 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
 
 abstract class ObjectTransformer<T : TransformationInfo>(@JvmField val transformationInfo: T, val state: GenerationState) {
 
     abstract fun doTransform(parentRemapper: FieldRemapper): InlineResult
 
     @JvmField
-    val transformationResult = InlineResult.create()
+    protected val transformationResult = InlineResult.create()
 
     protected fun createRemappingClassBuilderViaFactory(inliningContext: InliningContext): ClassBuilder {
         val classBuilder = state.factory.newVisitor(
@@ -89,10 +88,12 @@ class WhenMappingTransformer(
         }, ClassReader.SKIP_FRAMES)
 
         assert(methodNodes.size == 1, { "When mapping ${fieldNode.owner} class should contain only one method but: " + methodNodes.joinToString { it.name } })
+        val clinit = methodNodes.first()
+        assert(clinit.name == "<clinit>", { "When mapping should contains only <clinit> method, but contains '${clinit.name}'" })
 
-        var transformedNode = cutOtherMappings(methodNodes.first())
-        val result = classBuilder.visitor.visitMethod(transformedNode.access, transformedNode.name, transformedNode.desc, transformedNode.signature, transformedNode.exceptions.toTypedArray())
-        transformedNode.accept(result)
+        var transformedClinit = cutOtherMappings(clinit)
+        val result = classBuilder.visitor.visitMethod(transformedClinit.access, transformedClinit.name, transformedClinit.desc, transformedClinit.signature, transformedClinit.exceptions.toTypedArray())
+        transformedClinit.accept(result)
 
         return transformationResult
     }
@@ -107,12 +108,12 @@ class WhenMappingTransformer(
             isValues(it)
         }
 
-        val nextValuesOrEnd = generateSequence(myArrayAccess) { it.next }.first {
+        val nextValuesAccessOrEnd = generateSequence(myArrayAccess) { it.next }.first {
             isValues(it) || it.opcode == Opcodes.RETURN
         }
 
         val result = MethodNode(node.access, node.name, node.desc, node.signature, node.exceptions.toTypedArray())
-        InsnSequence(myValuesAccess, nextValuesOrEnd).forEach { it.accept(result) }
+        InsnSequence(myValuesAccess, nextValuesAccessOrEnd).forEach { it.accept(result) }
         result.visitInsn(Opcodes.RETURN)
 
         return result
