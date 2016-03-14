@@ -1495,9 +1495,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifWhen/ifToWhen"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
+                @TestMetadata("combinedIf.kt")
+                public void testCombinedIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/combinedIf.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("comment.kt")
                 public void testComment() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/comment.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifElseSwallowComments.kt")
+                public void testIfElseSwallowComments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/ifElseSwallowComments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ifElseSwallowReturnComment.kt")
+                public void testIfElseSwallowReturnComment() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/ifElseSwallowReturnComment.kt");
                     doTest(fileName);
                 }
 
@@ -1552,6 +1570,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 @TestMetadata("ifWithoutElse.kt")
                 public void testIfWithoutElse() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithoutElse.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multipleIfFake.kt")
+                public void testMultipleIfFake() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/multipleIfFake.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multipleIfWithLongBranches.kt")
+                public void testMultipleIfWithLongBranches() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/multipleIfWithLongBranches.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multipleIfWithReturns.kt")
+                public void testMultipleIfWithReturns() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/multipleIfWithReturns.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("multipleIfWithSingleReturns.kt")
+                public void testMultipleIfWithSingleReturns() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/multipleIfWithSingleReturns.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("secondIfNoThen.kt")
+                public void testSecondIfNoThen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/ifToWhen/secondIfNoThen.kt");
                     doTest(fileName);
                 }
 

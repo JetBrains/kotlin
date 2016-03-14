@@ -18,12 +18,18 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import java.util.*
 
 class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with 'when'") {
@@ -32,15 +38,70 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         return element.ifKeyword.textRange
     }
 
-    override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val commentSaver = CommentSaver(element)
+    private fun canPassThrough(expression: KtExpression?): Boolean =
+            when (expression) {
+                is KtReturnExpression, is KtThrowExpression ->
+                    false
+                is KtBlockExpression ->
+                    expression.statements.all { canPassThrough(it) }
+                is KtIfExpression ->
+                    canPassThrough(expression.then) || canPassThrough(expression.`else`)
+                else ->
+                    true
+            }
 
+    private fun buildNextBranch(ifExpression: KtIfExpression): KtExpression? {
+        var nextSibling = ifExpression.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
+        return when (nextSibling) {
+            is KtIfExpression ->
+                if (nextSibling.then == null) null else nextSibling
+            else -> {
+                val builder = StringBuilder()
+                while (true) {
+                    builder.append(nextSibling.text)
+                    nextSibling = nextSibling.nextSibling ?: break
+                }
+                KtPsiFactory(ifExpression).createBlock(builder.toString())
+            }
+        }
+    }
+
+    private fun KtExpression?.unwrapBlockIfNeeded(): KtExpression? =
+            (this as? KtBlockExpression)?.statements?.singleOrNull() ?: this
+
+    private fun KtIfExpression.siblingsUpTo(other: KtExpression): List<PsiElement> {
+        val result = ArrayList<PsiElement>()
+        var nextSibling = nextSibling
+        // We delete elements up to the next if (or up to the end of the surrounding block)
+        while (nextSibling != null && nextSibling != other) {
+            // RBRACE closes the surrounding block, so it should not be copied / deleted
+            if (nextSibling !is PsiWhiteSpace && nextSibling.node.elementType != KtTokens.RBRACE) {
+                result.add(nextSibling)
+            }
+            nextSibling = nextSibling.nextSibling
+        }
+        return result
+    }
+
+    private fun BuilderByPattern<*>.appendElseBlock(block: KtExpression?) {
+        appendFixedText("else->")
+        appendExpression(block.unwrapBlockIfNeeded())
+        appendFixedText("\n")
+    }
+
+    override fun applyTo(element: KtIfExpression, editor: Editor?) {
+        val siblings = element.siblings()
+        val commentSaver = CommentSaver(PsiChildRange(element, siblings.last()), saveLineBreaks = true)
+
+        val toDelete = ArrayList<PsiElement>()
         var whenExpression = KtPsiFactory(element).buildExpression {
             appendFixedText("when {\n")
 
-            var ifExpression = element
+            var currentIfExpression = element
+            var baseIfExpressionForSyntheticBranch = currentIfExpression
+            var canPassThrough = false
             while (true) {
-                val condition = ifExpression.condition
+                val condition = currentIfExpression.condition
                 val orBranches = ArrayList<KtExpression>()
                 if (condition != null) {
                     orBranches.addOrBranches(condition)
@@ -50,18 +111,33 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
 
                 appendFixedText("->")
 
-                val thenBranch = ifExpression.then
-                appendExpression(thenBranch)
+                val currentThenBranch = currentIfExpression.then
+                appendExpression(currentThenBranch.unwrapBlockIfNeeded())
                 appendFixedText("\n")
 
-                val elseBranch = ifExpression.`else` ?: break
-                if (elseBranch is KtIfExpression) {
-                    ifExpression = elseBranch
+                canPassThrough = canPassThrough || canPassThrough(currentThenBranch)
+
+                val currentElseBranch = currentIfExpression.`else`
+                if (currentElseBranch == null) {
+                    // Try to build synthetic if / else according to KT-10750
+                    val syntheticElseBranch = if (canPassThrough) break else buildNextBranch(baseIfExpressionForSyntheticBranch) ?: break
+                    toDelete.addAll(baseIfExpressionForSyntheticBranch.siblingsUpTo(syntheticElseBranch))
+                    if (syntheticElseBranch is KtIfExpression) {
+                        baseIfExpressionForSyntheticBranch = syntheticElseBranch
+                        currentIfExpression = syntheticElseBranch
+                        toDelete.add(syntheticElseBranch)
+                    }
+                    else {
+                        appendElseBlock(syntheticElseBranch)
+                        break
+                    }
+                }
+                else if (currentElseBranch is KtIfExpression) {
+                    currentIfExpression = currentElseBranch
                 }
                 else {
-                    appendFixedText("else->")
-                    appendExpression(elseBranch)
-                    appendFixedText("\n")
+                    toDelete.addAll(baseIfExpressionForSyntheticBranch.siblingsUpTo(currentElseBranch))
+                    appendElseBlock(currentElseBranch)
                     break
                 }
             }
@@ -76,6 +152,9 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
 
         val result = element.replace(whenExpression)
         commentSaver.restore(result)
+        toDelete.forEach {
+            it.delete()
+        }
     }
 
     private fun MutableList<KtExpression>.addOrBranches(expression: KtExpression): List<KtExpression> {
