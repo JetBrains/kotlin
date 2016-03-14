@@ -39,6 +39,11 @@ fun DeclarationDescriptor.hasJvmSyntheticAnnotation() = findJvmSyntheticAnnotati
 fun DeclarationDescriptor.findJvmSyntheticAnnotation() =
         DescriptorUtils.getAnnotationByFqName(annotations, JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
 
+private val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
+
+fun DeclarationDescriptor.findStrictfpAnnotation() =
+        DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
+
 fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
         isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClassOrEnumClass(it) }
 

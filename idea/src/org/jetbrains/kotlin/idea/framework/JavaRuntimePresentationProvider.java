@@ -38,7 +38,7 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     @Nullable
     @Override
     public Icon getIcon() {
-        return KotlinIcons.SMALL_LOGO_13;
+        return KotlinIcons.SMALL_LOGO;
     }
 
     @Nullable

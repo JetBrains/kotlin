@@ -41,7 +41,7 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
     @Nullable
     @Override
     public Icon getIcon() {
-        return KotlinIcons.SMALL_LOGO_13;
+        return KotlinIcons.SMALL_LOGO;
     }
 
     @Nullable

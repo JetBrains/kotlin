@@ -1,4 +1,4 @@
-package kotlinx.testing.tests
+package kotlin.test.tests
 
 import kotlin.test.*
 import org.junit.*
@@ -30,17 +30,5 @@ class BasicAssertionsJVMTest {
         (assertFailsWith((Class.forName("java.lang.IllegalArgumentException") as Class<Throwable>).kotlin) {
             throw IllegalArgumentException()
         })
-    }
-
-    @Test
-    fun testToDo() {
-        todo {
-            fail("Shouldn't pass here")
-        }
-    }
-
-    @Test
-    fun testCurrentStackTrace() {
-        assertEquals("BasicAssertionsJVMTest.kt", currentStackTrace()[0].fileName)
     }
 }

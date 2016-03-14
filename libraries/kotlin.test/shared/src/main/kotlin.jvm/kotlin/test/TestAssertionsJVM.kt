@@ -28,6 +28,7 @@ fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?,
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
+@kotlin.internal.InlineOnly
 inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T = assertFailsWith(T::class, message, block)
 
 
@@ -35,11 +36,18 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
  * Comments out a [block] of test code until it is implemented while keeping a link to the code
  * to implement in your unit test output
  */
+@kotlin.internal.InlineOnly
 inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
-    System.out.println("TODO at " + currentStackTrace()[1])
+    System.out.println("TODO at " + currentStackTrace()[0])
 }
 
-@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "NOTHING_TO_INLINE")
+/**
+ * Returns an array of stack trace elements, each representing one stack frame.
+ * The first element of the array (assuming the array is not empty) represents the top of the
+ * stack, which is the place where [currentStackTrace] function was called from.
+ */
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+@kotlin.internal.InlineOnly
 inline fun currentStackTrace() = (java.lang.Exception() as java.lang.Throwable).stackTrace
 
 /**
