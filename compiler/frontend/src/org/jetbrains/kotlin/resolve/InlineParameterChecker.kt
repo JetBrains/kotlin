@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -34,7 +34,7 @@ object InlineParameterChecker : DeclarationChecker {
             val inline = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
             for (parameter in declaration.valueParameters) {
                 val parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, parameter)
-                if (!inline || (parameterDescriptor != null && !parameterDescriptor.type.isFunctionTypeOrSubtype)) {
+                if (!inline || (parameterDescriptor != null && !parameterDescriptor.type.isFunctionType)) {
                     parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, diagnosticHolder)
                     parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, diagnosticHolder)
                 }
