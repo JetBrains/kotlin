@@ -59,7 +59,8 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
 
         if (element instanceof KtParameter) {
             KtParameter parameter = (KtParameter) element;
-            if (KtPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
+
+            if (isFieldParameter(parameter)) {
                 return processPropertyImplementations((KtParameter) element, scope, consumer);
             }
         }
@@ -82,6 +83,16 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
 
     private static boolean isDelegated(@NotNull PsiElement element) {
         return element instanceof KtLightMethod && ((KtLightMethod) element).isDelegated();
+    }
+
+    private static boolean isFieldParameter(final KtParameter parameter) {
+        return ApplicationManager.getApplication().runReadAction(
+                new Computable<Boolean>() {
+                    @Override
+                    public Boolean compute() {
+                        return KtPsiUtil.getClassIfParameterIsProperty(parameter) != null;
+                    }
+                });
     }
 
     private static boolean processClassImplementations(@NotNull final KtClass klass, Processor<PsiElement> consumer) {
