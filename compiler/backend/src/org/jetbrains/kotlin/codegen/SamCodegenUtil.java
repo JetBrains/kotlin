@@ -35,15 +35,6 @@ public class SamCodegenUtil {
             return ((SamAdapterExtensionFunctionDescriptor) original).getSourceFunction();
         }
 
-        if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            for (FunctionDescriptor overridden : original.getOverriddenDescriptors()) {
-                FunctionDescriptor originalIfSamAdapter = getOriginalIfSamAdapter(overridden);
-                if (originalIfSamAdapter != null) {
-                    return originalIfSamAdapter;
-                }
-            }
-        }
-
         return null;
     }
 
