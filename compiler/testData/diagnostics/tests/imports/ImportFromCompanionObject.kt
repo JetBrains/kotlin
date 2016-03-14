@@ -1,4 +1,4 @@
-// FILE: a.Kt
+// FILE: a.kt
 package a
 
 class C1 {
