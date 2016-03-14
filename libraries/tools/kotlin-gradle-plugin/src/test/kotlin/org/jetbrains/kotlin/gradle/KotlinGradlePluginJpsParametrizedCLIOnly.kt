@@ -34,7 +34,7 @@ class KotlinGradlePluginJpsParametrizedCLIOnly : BaseIncrementalGradleIT() {
                                         File(jpsResourcesPath, "changeIncrementalOption"),
                                         File(jpsResourcesPath, "custom"),
                                         File(jpsResourcesPath, "lookupTracker"))
-        private val buildLogFinder = BuildLogFinder(isExperimentalEnabled = true)
+        private val buildLogFinder = BuildLogFinder(isExperimentalEnabled = true, isGradleEnabled = true)
 
         @Suppress("unused")
         @Parameterized.Parameters(name = "{index}: {0}")
