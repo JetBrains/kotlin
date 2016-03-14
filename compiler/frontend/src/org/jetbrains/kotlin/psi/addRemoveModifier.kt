@@ -20,6 +20,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -61,6 +62,15 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
             ?.mapNotNull { modifierList.getModifier(it) }
             ?.firstOrNull()
 
+    if (modifier == FINAL_KEYWORD && !modifierList.hasModifier(OVERRIDE_KEYWORD)) {
+        if (modifierToReplace != null) {
+            modifierToReplace.delete()
+            if (modifierList.firstChild == null) {
+                modifierList.delete()
+            }
+        }
+        return
+    }
     if (modifierToReplace != null) {
         modifierToReplace.replace(newModifier)
     }
@@ -99,9 +109,10 @@ fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken)
 }
 
 private val MODIFIERS_TO_REPLACE = mapOf(
-        ABSTRACT_KEYWORD to listOf(OPEN_KEYWORD, FINAL_KEYWORD),
         OVERRIDE_KEYWORD to listOf(OPEN_KEYWORD),
-        OPEN_KEYWORD to listOf(FINAL_KEYWORD),
+        ABSTRACT_KEYWORD to listOf(OPEN_KEYWORD, FINAL_KEYWORD),
+        OPEN_KEYWORD to listOf(FINAL_KEYWORD, ABSTRACT_KEYWORD),
+        FINAL_KEYWORD to listOf(ABSTRACT_KEYWORD, OPEN_KEYWORD),
         PUBLIC_KEYWORD to listOf(PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
         PROTECTED_KEYWORD to listOf(PUBLIC_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD),
         PRIVATE_KEYWORD to listOf(PUBLIC_KEYWORD, PROTECTED_KEYWORD, INTERNAL_KEYWORD),

@@ -5166,6 +5166,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("openVarWithPrivateSetter.kt")
+        public void testOpenVarWithPrivateSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/openVarWithPrivateSetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("operatorModifier.kt")
         public void testOperatorModifier() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/operatorModifier.kt");
@@ -5193,6 +5199,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("operatorModifierInherited.kt")
         public void testOperatorModifierInherited() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/operatorModifierInherited.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overrideWithPrivateSetter.kt")
+        public void testOverrideWithPrivateSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/overrideWithPrivateSetter.kt");
             doTest(fileName);
         }
 

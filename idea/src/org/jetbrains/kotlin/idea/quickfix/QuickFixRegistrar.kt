@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageInWho
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
@@ -118,7 +119,8 @@ class QuickFixRegistrar : QuickFixContributor {
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
         SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
         PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY.registerFactory(removeModifierFactory)
-        PRIVATE_SETTER_FOR_OPEN_PROPERTY.registerFactory(removeModifierFactory)
+        PRIVATE_SETTER_FOR_OPEN_PROPERTY.registerFactory(AddModifierFix.createFactory(FINAL_KEYWORD, KtProperty::class.java),
+                                                         removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
