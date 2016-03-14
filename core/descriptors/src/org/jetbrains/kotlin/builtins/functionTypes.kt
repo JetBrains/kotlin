@@ -28,10 +28,27 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.DFS
 import java.util.*
 
 val KotlinType.isFunctionTypeOrSubtype: Boolean
-    get() = isFunctionType || constructor.supertypes.any(KotlinType::isFunctionTypeOrSubtype)
+    get() = isFunctionType || DFS.dfsFromNode(
+            this,
+            DFS.Neighbors { it.constructor.supertypes },
+            DFS.VisitedWithSet(),
+            object : DFS.AbstractNodeHandler<KotlinType, Boolean>() {
+                private var result = false
+
+                override fun beforeChildren(current: KotlinType): Boolean {
+                    if (current.isFunctionType) {
+                        result = true
+                    }
+                    return !result
+                }
+
+                override fun result() = result
+            }
+    )
 
 val KotlinType.isFunctionType: Boolean
     get() {
