@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -89,6 +90,7 @@ class GenerationState @JvmOverloads constructor(
     }
 
     val fileClassesProvider: CodegenFileClassesProvider = CodegenFileClassesProvider()
+    val inlineCache: InlineCache = InlineCache()
 
     private fun getIncrementalCacheForThisTarget() =
             if (incrementalCompilationComponents != null && targetId != null)

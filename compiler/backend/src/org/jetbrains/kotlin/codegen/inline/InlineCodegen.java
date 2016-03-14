@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.codegen.inline;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ArrayUtil;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -64,6 +66,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.API;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
@@ -184,88 +187,161 @@ public class InlineCodegen extends CallGenerator {
 
     @NotNull
     static SMAPAndMethodNode createMethodNode(
-            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull final FunctionDescriptor functionDescriptor,
             @NotNull JvmMethodSignature jvmSignature,
             @NotNull ExpressionCodegen codegen,
             @NotNull CodegenContext context,
             boolean callDefault,
-            @NotNull GenerationState state) throws IOException {
+            @NotNull final GenerationState state
+    ) {
+
         KotlinTypeMapper typeMapper = state.getTypeMapper();
-        Method asmMethod = callDefault
+        final Method asmMethod = callDefault
                            ? typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind())
                            : jvmSignature.getAsmMethod();
 
+        MethodId methodId = new MethodId(DescriptorUtils.getFqNameSafe(functionDescriptor.getContainingDeclaration()), asmMethod);
+
+        if (!isBuiltInArrayIntrinsic(functionDescriptor) && !(functionDescriptor instanceof DeserializedSimpleFunctionDescriptor)) {
+            return doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, codegen, context, callDefault, state, asmMethod);
+        }
+
+        SMAPAndMethodNode resultInCache =
+                InlineCacheKt
+                        .getOrPut(state.getInlineCache().getMethodNodeById(), methodId, new Function0<SMAPAndMethodNode>() {
+                            @Override
+                            public SMAPAndMethodNode invoke() {
+                                return doCreateMethodNodeFromCompiled(functionDescriptor,
+                                                                      state, asmMethod);
+                            }
+                        });
+
+        return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.getNode()));
+    }
+
+    @NotNull
+    private static MethodNode cloneMethodNode(@NotNull MethodNode methodNode) {
+        methodNode.instructions.resetLabels();
+        MethodNode result = new MethodNode(
+                API, methodNode.access, methodNode.name, methodNode.desc, methodNode.signature,
+                methodNode.exceptions.toArray(ArrayUtil.EMPTY_STRING_ARRAY));
+        methodNode.accept(result);
+        return result;
+    }
+
+    @NotNull
+    private static SMAPAndMethodNode doCreateMethodNodeFromCompiled(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull final GenerationState state,
+            @NotNull Method asmMethod
+    ) {
+        KotlinTypeMapper typeMapper = state.getTypeMapper();
+
         SMAPAndMethodNode nodeAndSMAP;
         if (isBuiltInArrayIntrinsic(functionDescriptor)) {
+            ClassId classId = IntrinsicArrayConstructorsKt.getClassId();
+            byte[] bytes = InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), classId, new Function0<byte[]>() {
+                @Override
+                public byte[] invoke() {
+                    return IntrinsicArrayConstructorsKt.getBytecode();
+                }
+            });
+
             nodeAndSMAP = InlineCodegenUtil.getMethodNode(
-                    IntrinsicArrayConstructorsKt.getBytecode(),
+                    bytes,
                     asmMethod.getName(),
                     asmMethod.getDescriptor(),
-                    IntrinsicArrayConstructorsKt.getClassId()
+                    classId
             );
 
             if (nodeAndSMAP == null) {
                 throw new IllegalStateException("Couldn't obtain array constructor body for " + descriptorName(functionDescriptor));
             }
+
+            return nodeAndSMAP;
         }
-        else if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
-            KotlinTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
-                    (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
-            ClassId containerId = containingClasses.getImplClassId();
-            VirtualFile file = InlineCodegenUtil.findVirtualFile(state, containerId);
-            if (file == null) {
-                throw new IllegalStateException("Couldn't find declaration file for " + containerId);
+        assert functionDescriptor instanceof DeserializedSimpleFunctionDescriptor;
+
+        KotlinTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
+                (DeserializedSimpleFunctionDescriptor) functionDescriptor);
+
+        final ClassId containerId = containingClasses.getImplClassId();
+
+        byte[] bytes = InlineCacheKt.getOrPut(state.getInlineCache().getClassBytes(), containerId, new Function0<byte[]>() {
+            @Override
+            public byte[] invoke() {
+                VirtualFile file = InlineCodegenUtil.findVirtualFile(state, containerId);
+                if (file == null) {
+                    throw new IllegalStateException("Couldn't find declaration file for " + containerId);
+                }
+                try {
+                    return file.contentsToByteArray();
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
+        });
 
-            nodeAndSMAP = InlineCodegenUtil.getMethodNode(
-                    file.contentsToByteArray(), asmMethod.getName(), asmMethod.getDescriptor(), containerId
+        nodeAndSMAP = InlineCodegenUtil.getMethodNode(
+                bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId
+        );
+
+        if (nodeAndSMAP == null) {
+            throw new IllegalStateException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
+        }
+
+        return nodeAndSMAP;
+    }
+
+    @NotNull
+    private static SMAPAndMethodNode doCreateMethodNodeFromSource(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull JvmMethodSignature jvmSignature,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull CodegenContext context,
+            boolean callDefault,
+            @NotNull GenerationState state,
+            @NotNull Method asmMethod
+    ) {
+        PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
+
+        if (!(element instanceof KtNamedFunction)) {
+            throw new IllegalStateException("Couldn't find declaration for function " + descriptorName(functionDescriptor));
+        }
+        KtNamedFunction inliningFunction = (KtNamedFunction) element;
+
+        MethodNode node = new MethodNode(InlineCodegenUtil.API,
+                                       getMethodAsmFlags(functionDescriptor, context.getContextKind()) | (callDefault ? Opcodes.ACC_STATIC : 0),
+                                       asmMethod.getName(),
+                                       asmMethod.getDescriptor(),
+                                       null,
+                                       null);
+
+        //for maxLocals calculation
+        MethodVisitor maxCalcAdapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node);
+        MethodContext methodContext = context.getParentContext().intoFunction(functionDescriptor);
+
+        SMAP smap;
+        if (callDefault) {
+            Type implementationOwner = state.getTypeMapper().mapImplementationOwner(functionDescriptor);
+            FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
+                                                                    (FieldOwnerContext) methodContext.getParentContext(),
+                                                                    implementationOwner.getInternalName());
+            FunctionCodegen.generateDefaultImplBody(
+                    methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
+                    inliningFunction, parentCodegen, asmMethod
             );
-
-            if (nodeAndSMAP == null) {
-                throw new IllegalStateException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
-            }
+            smap = createSMAPWithDefaultMapping(inliningFunction, parentCodegen.getOrCreateSourceMapper().getResultMappings());
         }
         else {
-            PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
-
-            if (!(element instanceof KtNamedFunction)) {
-                throw new IllegalStateException("Couldn't find declaration for function " + descriptorName(functionDescriptor));
-            }
-            KtNamedFunction inliningFunction = (KtNamedFunction) element;
-
-            MethodNode node = new MethodNode(InlineCodegenUtil.API,
-                                           getMethodAsmFlags(functionDescriptor, context.getContextKind()) | (callDefault ? Opcodes.ACC_STATIC : 0),
-                                           asmMethod.getName(),
-                                           asmMethod.getDescriptor(),
-                                           null,
-                                           null);
-
-            //for maxLocals calculation
-            MethodVisitor maxCalcAdapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node);
-            MethodContext methodContext = context.getParentContext().intoFunction(functionDescriptor);
-
-            SMAP smap;
-            if (callDefault) {
-                Type implementationOwner = typeMapper.mapImplementationOwner(functionDescriptor);
-                FakeMemberCodegen parentCodegen = new FakeMemberCodegen(codegen.getParentCodegen(), inliningFunction,
-                                                                        (FieldOwnerContext) methodContext.getParentContext(),
-                                                                        implementationOwner.getInternalName());
-                FunctionCodegen.generateDefaultImplBody(
-                        methodContext, functionDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
-                        inliningFunction, parentCodegen, asmMethod
-                );
-                smap = createSMAPWithDefaultMapping(inliningFunction, parentCodegen.getOrCreateSourceMapper().getResultMappings());
-            }
-            else {
-                smap = generateMethodBody(maxCalcAdapter, functionDescriptor, methodContext, inliningFunction, jvmSignature, false, codegen, state);
-            }
-
-            nodeAndSMAP = new SMAPAndMethodNode(node, smap);
-            maxCalcAdapter.visitMaxs(-1, -1);
-            maxCalcAdapter.visitEnd();
+            smap = generateMethodBody(maxCalcAdapter, functionDescriptor, methodContext, inliningFunction, jvmSignature, false, codegen, state);
         }
-        return nodeAndSMAP;
+        maxCalcAdapter.visitMaxs(-1, -1);
+        maxCalcAdapter.visitEnd();
+
+        return new SMAPAndMethodNode(node, smap);
     }
 
     private static boolean isBuiltInArrayIntrinsic(@NotNull FunctionDescriptor functionDescriptor) {

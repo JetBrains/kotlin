@@ -86,7 +86,7 @@ public class InlineCodegenUtil {
             final String methodName,
             final String methodDescriptor,
             ClassId classId
-    ) throws IOException {
+    ) {
         ClassReader cr = new ClassReader(classData);
         final MethodNode[] node = new MethodNode[1];
         final String[] debugInfo = new String[2];

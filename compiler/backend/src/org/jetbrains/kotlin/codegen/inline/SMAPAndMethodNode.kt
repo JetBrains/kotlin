@@ -23,19 +23,22 @@ import java.util.*
 
 //TODO comment
 class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
-    private val lineNumbers =
-        InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { node ->
-            val index = classSMAP.intervals.binarySearch(RangeMapping(node.line, node.line, 1), Comparator {
-                value, key ->
-                if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
-            })
-            if (index < 0) {
-                error("Unmapped label in inlined function $node ${node.line}")
-            }
-            LabelAndMapping(node, classSMAP.intervals[index])
-        }.toList()
+    val ranges = createLineNumberSequence(node, classSMAP).map { it.mapper }.distinct().toList()
 
-    val ranges = lineNumbers.asSequence().map { it.mapper }.distinct().toList()
+    fun copyWithNewNode(newMethodNode: MethodNode) = SMAPAndMethodNode(newMethodNode, classSMAP)
+}
+
+private fun createLineNumberSequence(node: MethodNode, classSMAP: SMAP): Sequence<LabelAndMapping> {
+    return InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { node ->
+        val index = classSMAP.intervals.binarySearch(RangeMapping(node.line, node.line, 1), Comparator {
+            value, key ->
+            if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
+        })
+        if (index < 0) {
+            error("Unmapped label in inlined function $node ${node.line}")
+        }
+        LabelAndMapping(node, classSMAP.intervals[index])
+    }
 }
 
 class LabelAndMapping(val lineNumberNode: LineNumberNode, val mapper: RangeMapping)
