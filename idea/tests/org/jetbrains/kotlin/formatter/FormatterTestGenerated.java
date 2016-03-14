@@ -403,6 +403,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PropertyAccessors.after.kt")
+        public void testPropertyAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAccessors.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PropertyTypeParameterList.after.kt")
         public void testPropertyTypeParameterList() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyTypeParameterList.after.kt");

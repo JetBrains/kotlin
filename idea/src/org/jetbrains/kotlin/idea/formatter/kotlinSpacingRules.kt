@@ -145,6 +145,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(VAR_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)
             betweenInside(VAL_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
             betweenInside(VAR_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
+            beforeInside(PROPERTY_ACCESSOR, PROPERTY).spacing(1, 0, 0, true, 0)
             betweenInside(VAL_KEYWORD, IDENTIFIER, VALUE_PARAMETER).spaces(1)
             betweenInside(VAR_KEYWORD, IDENTIFIER, VALUE_PARAMETER).spaces(1)
             betweenInside(VAL_KEYWORD, TYPE_REFERENCE, VALUE_PARAMETER).spaces(1)
