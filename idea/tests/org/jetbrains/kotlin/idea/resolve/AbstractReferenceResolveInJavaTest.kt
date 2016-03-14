@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.resolve
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.getTestDataPathBase() +  "/resolve/referenceInJava/dependencies.kt"
+private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE +  "/resolve/referenceInJava/dependencies.kt"
 
 abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
     override fun doTest(path: String) {

@@ -121,8 +121,8 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
             val prefix = if (index > 0) "// REF$index:" else "// REF:"
             val prefixes = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, prefix)
             return prefixes.map {
-                val replaced = it.replace("<test dir>", PluginTestCaseBase.getTestDataPathBase())
-                PathUtil.toSystemDependentName(replaced).replace("//", "/") //happens on Unix
+                val replaced = it.replace("<test dir>", PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE)
+                PathUtil.toSystemDependentName(replaced.replace("//", "/")) //happens on Unix
             }
         }
 
