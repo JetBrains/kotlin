@@ -70,6 +70,10 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xskip-metadata-version-check", description = "Try loading binary incompatible classes, may cause crashes")
     public boolean skipMetadataVersionCheck;
 
+    @Argument(value = "Xdump-declarations-to", description = "Path to JSON file to dump Java to Kotlin declaration mappings")
+    @ValueDescription("<path>")
+    public String declarationsOutputPath;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 

@@ -877,7 +877,7 @@
     </target>
 
     <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib">
+        <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xdump-declarations-to ${output}/declarations/stdlib-declarations.json">
             <src>
                 <include name="libraries/stdlib/src"/>
             </src>
