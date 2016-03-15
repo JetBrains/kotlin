@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractLazyType
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.LazyType
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType(
@@ -30,20 +30,16 @@ class DeserializedType(
         private val typeProto: ProtoBuf.Type,
         private val additionalAnnotations: Annotations = Annotations.EMPTY
 ) : AbstractLazyType(c.storageManager), LazyType {
-    private val typeDeserializer: TypeDeserializer get() = c.typeDeserializer
+    override fun computeTypeConstructor() = c.typeDeserializer.typeConstructor(typeProto)
 
-    override fun computeTypeConstructor() = typeDeserializer.typeConstructor(typeProto)
-
-    override fun computeArguments() = typeProto.collectAllArguments().deserialize()
+    override fun computeArguments() =
+            typeProto.collectAllArguments().mapIndexed {
+                index, proto ->
+                c.typeDeserializer.typeArgument(constructor.parameters.getOrNull(index), proto)
+            }.toReadOnlyList()
 
     private fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
             argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
-
-    private fun List<ProtoBuf.Type.Argument>.deserialize(): List<TypeProjection> =
-            mapIndexed {
-                index, proto ->
-                typeDeserializer.typeArgument(constructor.parameters.getOrNull(index), proto)
-            }.toReadOnlyList()
 
     private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
         c.components.annotationAndConstantLoader
@@ -62,30 +58,7 @@ class DeserializedType(
 
     override fun getCapabilities() = typeCapabilities()
 
-    private val typeCapabilities = c.storageManager.createLazyValue { computeCapabilities() }
-
-    private fun computeCapabilities(): TypeCapabilities {
-        val capabilities = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
-
-        return computePossiblyInnerType()?.let { it: PossiblyInnerType ->
-            CompositeTypeCapabilities(
-                    SingletonTypeCapabilities(
-                            PossiblyInnerTypeCapability::class.java,
-                            PossiblyInnerTypeCapabilityImpl(it)),
-                    capabilities)
-        } ?: capabilities
+    private val typeCapabilities = c.storageManager.createLazyValue {
+        c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
     }
-
-    private fun computePossiblyInnerType(): PossiblyInnerType? {
-        if (!typeProto.hasClassName()) return null
-
-        val outerType = typeProto.outerType(c.typeTable)?.let { DeserializedType(c, it).computePossiblyInnerType() }
-
-        return PossiblyInnerType(
-                constructor.declarationDescriptor as ClassDescriptor,
-                typeProto.argumentList.deserialize(),
-                outerType)
-    }
-
-    private class PossiblyInnerTypeCapabilityImpl(override val possiblyInnerType: PossiblyInnerType?) : PossiblyInnerTypeCapability
 }

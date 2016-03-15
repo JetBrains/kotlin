@@ -64,14 +64,7 @@ abstract class DeserializerForDecompilerBase(
 
     init {
         moduleDescriptor.initialize(packageFragmentProvider)
-        val moduleContainingMissingDependencies = createDummyModule("module containing missing dependencies for decompiled sources")
-        moduleContainingMissingDependencies.setDependencies(moduleContainingMissingDependencies)
-        moduleContainingMissingDependencies.initialize(
-                PackageFragmentProviderForMissingDependencies(moduleContainingMissingDependencies)
-        )
-        moduleDescriptor.setDependencies(
-                moduleDescriptor, targetPlatform.builtIns.builtInsModule, moduleContainingMissingDependencies
-        )
+        moduleDescriptor.setDependencies(moduleDescriptor, targetPlatform.builtIns.builtInsModule)
     }
 }
 

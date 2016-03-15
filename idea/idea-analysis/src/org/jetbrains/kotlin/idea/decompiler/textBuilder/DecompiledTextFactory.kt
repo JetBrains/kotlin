@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.renderer.ExcludedTypeAnnotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
-import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
 
@@ -75,9 +74,6 @@ fun buildDecompiledText(
     }
 
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
-        if (descriptor is MissingDependencyErrorClass) {
-            throw IllegalStateException("${descriptor.javaClass.simpleName} cannot be rendered. FqName: ${descriptor.fullFqName}")
-        }
         val startOffset = builder.length
         if (isEnumEntry(descriptor)) {
             for (annotation in descriptor.annotations) {
